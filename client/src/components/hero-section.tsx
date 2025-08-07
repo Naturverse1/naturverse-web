@@ -1,5 +1,7 @@
 import { Button } from "@/components/ui/button";
-// Assets will be re-uploaded
+import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
+import turianImage from "@/assets/Turian the Durian.png";
+import hankImage from "@/assets/hank.png";
 
 interface HeroSectionProps {
   onStartExploring: () => void;
@@ -33,10 +35,12 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
           <div className="inline-block relative">
             {/* Glowing background for logo */}
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl animate-pulse scale-110"></div>
-            <div className="relative z-10 w-56 h-56 md:w-72 md:h-72 mx-auto mb-6 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              data-testid="logo-placeholder">
-              <div className="text-6xl md:text-8xl">🌿</div>
-            </div>
+            <img 
+              src={naturverseLogo} 
+              alt="The Naturverse™ Logo" 
+              className="relative z-10 w-56 h-56 md:w-72 md:h-72 mx-auto mb-6 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              data-testid="logo-image"
+            />
             {/* Magical sparkles around logo */}
             <div className="absolute top-4 left-4 text-yellow-300 text-2xl animate-ping">✨</div>
             <div className="absolute top-8 right-8 text-pink-300 text-xl animate-ping" style={{ animationDelay: '1s' }}>🌟</div>
@@ -51,9 +55,12 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
             <div className="text-center relative">
               {/* Special glow for Turian as main character */}
               <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse scale-110"></div>
-              <div className="relative z-10 w-64 h-80 mx-auto bg-gradient-to-br from-cyan-400 to-blue-500 rounded-3xl shadow-2xl border-4 border-cyan-400/50 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-cyan-400/70 flex items-center justify-center">
-                <div className="text-8xl">🧙‍♂️</div>
-              </div>
+              <img 
+                src={turianImage} 
+                alt="Turian - Your Wise Guide" 
+                className="relative z-10 w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-cyan-400/50 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-cyan-400/70"
+                data-testid="turian-image"
+              />
               <div className="relative z-10">
                 <p className="text-white font-bold text-xl mb-1">Meet Turian!</p>
                 <p className="text-cyan-300 text-sm font-medium">🧙‍♂️ Your Wise Forest Guardian</p>
@@ -88,9 +95,12 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
           {/* Right character - Franko */}
           <div className="hidden lg:block animate-fade-in-delay-2" data-testid="franko-character">
             <div className="text-center">
-              <div className="w-64 h-80 mx-auto bg-gradient-to-br from-green-400 to-emerald-500 rounded-3xl shadow-2xl border-4 border-white/30 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-green-400/50 flex items-center justify-center">
-                <div className="text-8xl">🐸</div>
-              </div>
+              <img 
+                src={hankImage} 
+                alt="Hank Character" 
+                className="w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-white/30 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-green-400/50"
+                data-testid="hank-image"
+              />
               <p className="text-white/80 font-medium text-xl">Meet Franko!</p>
             </div>
           </div>

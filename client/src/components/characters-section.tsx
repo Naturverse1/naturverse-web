@@ -1,72 +1,82 @@
-// Assets will be re-uploaded
+import turianImage from "@/assets/Turian the Durian.png";
+import inkieImage from "@/assets/Inkie.png";
+import blueButterfly from "@/assets/Blu Butterfly.png";
+import drPImage from "@/assets/Dr P.png";
+import pineapplePapa from "@/assets/Pineapple Pa-Pa.png";
+import slitherkinImage from "@/assets/Slitherkin.png";
+import hankImage from "@/assets/hank.png";
+import jenSuexImage from "@/assets/Jen-Suex.png";
+import tommyTukTuk from "@/assets/Tommy Tuk Tuk.png";
+import laoCow from "@/assets/Lao Cow.png";
+import mangoMike from "@/assets/Mango Mike.png";
 
 export function CharactersSection() {
   const characters = [
     {
       id: "turian",
       name: "Turian",
-      image: "https://via.placeholder.com/160x160/06b6d4/ffffff?text=🧙‍♂️",
+      image: turianImage,
       description: "🧙‍♂️ Your Primary Guide & Wise Forest Guardian",
       featured: true
     },
     {
-      id: "franko", 
-      name: "Franko",
-      image: "https://via.placeholder.com/160x160/10b981/ffffff?text=🐸",
+      id: "hank", 
+      name: "Hank",
+      image: hankImage,
       description: "The adventurous explorer"
     },
     {
-      id: "franny",
-      name: "Franny",
-      image: "https://via.placeholder.com/160x160/a855f7/ffffff?text=🐘",
+      id: "lao-cow",
+      name: "Lao Cow",
+      image: laoCow,
       description: "The magical storyteller"
     },
     {
       id: "inkie",
       name: "Inkie",
-      image: "https://via.placeholder.com/160x160/3b82f6/ffffff?text=🖋️",
+      image: inkieImage,
       description: "The creative artist"
     },
     {
       id: "blue-butterfly",
       name: "Blue Butterfly",
-      image: "https://via.placeholder.com/160x160/06b6d4/ffffff?text=🦋",
+      image: blueButterfly,
       description: "The gentle guide"
     },
     {
-      id: "coconut-cruze",
-      name: "Coconut Cruze",
-      image: "https://via.placeholder.com/160x160/f97316/ffffff?text=🥥",
+      id: "tommy-tuk-tuk",
+      name: "Tommy Tuk Tuk",
+      image: tommyTukTuk,
       description: "The island adventurer"
     },
     {
-      id: "dr-p-dread",
-      name: "Dr. P. Dread",
-      image: "https://via.placeholder.com/160x160/dc2626/ffffff?text=🔬",
+      id: "dr-p",
+      name: "Dr. P",
+      image: drPImage,
       description: "The nature scientist"
     },
     {
-      id: "fanglings",
-      name: "Fanglings",
-      image: "https://via.placeholder.com/160x160/7c3aed/ffffff?text=👹",
+      id: "jen-suex",
+      name: "Jen Suex",
+      image: jenSuexImage,
       description: "The playful creatures"
     },
     {
-      id: "jay-sing",
-      name: "Jay Sing",
-      image: "https://via.placeholder.com/160x160/0ea5e9/ffffff?text=🐦",
+      id: "mango-mike",
+      name: "Mango Mike",
+      image: mangoMike,
       description: "The musical bird"
     },
     {
-      id: "pineapple-pete",
-      name: "Pineapple Pete",
-      image: "https://via.placeholder.com/160x160/eab308/ffffff?text=🍍",
+      id: "pineapple-papa",
+      name: "Pineapple Pa-Pa",
+      image: pineapplePapa,
       description: "The tropical friend"
     },
     {
       id: "slitherkin",
       name: "Slitherkin",
-      image: "https://via.placeholder.com/160x160/059669/ffffff?text=🐍",
+      image: slitherkinImage,
       description: "The wise serpent"
     }
   ];
