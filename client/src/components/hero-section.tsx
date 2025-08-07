@@ -1,6 +1,6 @@
 import { Button } from "@/components/ui/button";
 import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
-import turianImage from "@/assets/Turian the Durian.png";
+import turianImage from "@/assets/Turian.jpg";
 
 interface HeroSectionProps {
   onStartExploring: () => void;

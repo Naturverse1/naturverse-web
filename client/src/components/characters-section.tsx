@@ -1,4 +1,4 @@
-import turianImage from "@/assets/Turian the Durian.png";
+import turianImage from "@/assets/Turian.jpg";
 import inkieImage from "@/assets/Inkie.png";
 import blueButterfly from "@/assets/Blu Butterfly.png";
 import drPImage from "@/assets/Dr P.png";
