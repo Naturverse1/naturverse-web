@@ -8,9 +8,9 @@ export default function Home() {
   const sections = ["hero", "characters", "learning", "parents"];
 
   const handleStartExploring = () => {
-    const charactersSection = document.getElementById('characters');
-    if (charactersSection) {
-      charactersSection.scrollIntoView({
+    const exploreSection = document.getElementById('characters');
+    if (exploreSection) {
+      exploreSection.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
