@@ -1,0 +1,64 @@
+# Overview
+
+The Naturverse is an educational web application designed for children to explore and learn about nature through interactive stories, games, and virtual expeditions. The platform combines engaging visuals, magical themes, and educational content to create an immersive learning experience. The application features a modern, colorful design with nature-inspired themes and smooth animations to captivate young users.
+
+# User Preferences
+
+Preferred communication style: Simple, everyday language.
+
+# System Architecture
+
+## Frontend Architecture
+
+**React with TypeScript**: The frontend is built using React with TypeScript for type safety and better development experience. The application uses functional components with hooks for state management.
+
+**Vite Build System**: Vite is used as the build tool and development server, providing fast hot module replacement and optimized production builds. The configuration includes Replit-specific plugins for development environment integration.
+
+**Component Organization**: The UI follows a modular component structure with shadcn/ui components providing a consistent design system. Components are organized into:
+- Page components (`client/src/pages/`)
+- Reusable UI components (`client/src/components/ui/`)
+- Feature-specific components (`client/src/components/`)
+
+**Styling Framework**: Tailwind CSS is used for styling with a custom theme configuration that includes nature-inspired colors and magical design elements. The design system uses CSS variables for theming and includes custom fonts (Fredoka One for headings, Inter for body text).
+
+**Routing**: Client-side routing is implemented using Wouter, a lightweight React router alternative.
+
+## Backend Architecture
+
+**Express.js Server**: The backend uses Express.js with TypeScript, providing a RESTful API structure. The server includes middleware for JSON parsing, request logging, and error handling.
+
+**Modular Route System**: Routes are organized in a separate module (`server/routes.ts`) with a clear separation between route definitions and business logic.
+
+**Storage Abstraction**: The application uses a storage interface pattern that currently implements an in-memory storage system but can be easily extended to use databases. This provides flexibility for future database integration.
+
+## Data Storage Solutions
+
+**In-Memory Storage**: Currently uses a memory-based storage implementation for development and testing purposes. The storage interface is designed to be database-agnostic.
+
+**Database Ready**: The project includes Drizzle ORM configuration for PostgreSQL, indicating preparation for database integration. Schema definitions are centralized in `shared/schema.ts`.
+
+**User Management**: Basic user schema is defined with username and password fields, prepared for authentication implementation.
+
+## Authentication and Authorization
+
+**Schema Prepared**: User authentication schema is defined using Drizzle with Zod validation, but authentication middleware is not yet implemented.
+
+**Session Management**: The project includes connect-pg-simple for PostgreSQL session storage, indicating preparation for session-based authentication.
+
+## External Dependencies
+
+**UI Components**: Extensive use of Radix UI primitives for accessible, unstyled components that are then styled with Tailwind CSS through shadcn/ui.
+
+**State Management**: TanStack React Query for server state management, providing caching, synchronization, and background updates.
+
+**Development Tools**: 
+- Replit integration for development environment
+- Runtime error overlay for better debugging experience
+- Hot module replacement for fast development cycles
+
+**Build and Development**:
+- esbuild for production server bundling
+- PostCSS with autoprefixer for CSS processing
+- TypeScript for type checking across the entire stack
+
+The architecture prioritizes developer experience, maintainability, and scalability while providing a solid foundation for an educational platform focused on children's engagement with nature-based learning content.
