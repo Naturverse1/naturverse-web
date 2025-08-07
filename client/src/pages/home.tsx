@@ -1,14 +1,16 @@
 import { HeroSection } from "@/components/hero-section";
-import { ExploreSection } from "@/components/explore-section";
+import { CharactersSection } from "@/components/characters-section";
+import { LearningSection } from "@/components/learning-section";
+import { ParentsSection } from "@/components/parents-section";
 import { NavigationDots } from "@/components/navigation-dots";
 
 export default function Home() {
-  const sections = ["hero", "explore"];
+  const sections = ["hero", "characters", "learning", "parents"];
 
   const handleStartExploring = () => {
-    const exploreSection = document.getElementById('explore');
-    if (exploreSection) {
-      exploreSection.scrollIntoView({
+    const charactersSection = document.getElementById('characters');
+    if (charactersSection) {
+      charactersSection.scrollIntoView({
         behavior: 'smooth',
         block: 'start'
       });
@@ -18,7 +20,9 @@ export default function Home() {
   return (
     <div className="relative">
       <HeroSection onStartExploring={handleStartExploring} />
-      <ExploreSection />
+      <CharactersSection />
+      <LearningSection />
+      <ParentsSection />
       <NavigationDots sections={sections} />
     </div>
   );
