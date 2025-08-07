@@ -24,7 +24,7 @@ export function ParentsSection() {
       {/* Gentle background elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
         <div className="absolute top-32 left-20 w-64 h-64 bg-gradient-to-br from-blue-100 to-indigo-100 rounded-full opacity-30 animate-float"></div>
-        <div className="absolute bottom-32 right-20 w-48 h-48 bg-gradient-to-br from-purple-100 to-pink-100 rounded-full opacity-40 animate-float" style={{ animationDelay: '3s' }}></div>
+        <div className="absolute bottom-32 right-20 w-48 h-48 bg-gradient-to-br from-sky-100 to-cyan-100 rounded-full opacity-40 animate-float" style={{ animationDelay: '3s' }}></div>
       </div>
 
       <div className="max-w-6xl mx-auto px-6 relative z-10">
@@ -38,7 +38,7 @@ export function ParentsSection() {
               className="w-16 h-16 mx-auto object-contain opacity-80"
             />
           </div>
-          <h2 className="font-fredoka text-5xl md:text-7xl bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8" data-testid="text-parents-title">
+          <h2 className="font-fredoka text-5xl md:text-7xl bg-gradient-to-r from-blue-700 via-sky-600 to-cyan-600 bg-clip-text text-transparent mb-8" data-testid="text-parents-title">
             👪 For Parents
           </h2>
           <div className="max-w-4xl mx-auto">
