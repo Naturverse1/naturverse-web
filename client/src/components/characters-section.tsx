@@ -1,11 +1,11 @@
-import turianImage from "@/assets/turian_media_logo_transparent.png";
+// Assets will be re-uploaded
 
 export function CharactersSection() {
   const characters = [
     {
       id: "turian",
       name: "Turian",
-      image: turianImage,
+      image: "https://via.placeholder.com/160x160/06b6d4/ffffff?text=🧙‍♂️",
       description: "🧙‍♂️ Your Primary Guide & Wise Forest Guardian",
       featured: true
     },

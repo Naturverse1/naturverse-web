@@ -1,5 +1,5 @@
 import { Button } from "@/components/ui/button";
-import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
+// Assets will be re-uploaded
 
 interface HeroSectionProps {
   onStartExploring: () => void;
@@ -33,12 +33,10 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
           <div className="inline-block relative">
             {/* Glowing background for logo */}
             <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl animate-pulse scale-110"></div>
-            <img 
-              src={naturverseLogo} 
-              alt="The Naturverse™ Logo" 
-              className="relative z-10 w-56 h-56 md:w-72 md:h-72 mx-auto mb-6 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
-              data-testid="logo-image"
-            />
+            <div className="relative z-10 w-56 h-56 md:w-72 md:h-72 mx-auto mb-6 bg-gradient-to-br from-yellow-400 to-orange-400 rounded-full flex items-center justify-center drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              data-testid="logo-placeholder">
+              <div className="text-6xl md:text-8xl">🌿</div>
+            </div>
             {/* Magical sparkles around logo */}
             <div className="absolute top-4 left-4 text-yellow-300 text-2xl animate-ping">✨</div>
             <div className="absolute top-8 right-8 text-pink-300 text-xl animate-ping" style={{ animationDelay: '1s' }}>🌟</div>

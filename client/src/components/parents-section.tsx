@@ -1,4 +1,4 @@
-import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
+// Assets will be re-uploaded
 
 export function ParentsSection() {
   const safetyFeatures = [
@@ -32,11 +32,9 @@ export function ParentsSection() {
         <div className="text-center mb-16 animate-fade-in" data-testid="parents-header">
           {/* Small logo for branding */}
           <div className="mb-6">
-            <img 
-              src={naturverseLogo} 
-              alt="The Naturverse™" 
-              className="w-16 h-16 mx-auto object-contain opacity-80"
-            />
+            <div className="w-16 h-16 mx-auto bg-gradient-to-br from-blue-400 to-indigo-400 rounded-full flex items-center justify-center opacity-80">
+              <div className="text-2xl">🌿</div>
+            </div>
           </div>
           <h2 className="font-fredoka text-5xl md:text-7xl bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8" data-testid="text-parents-title">
             👪 For Parents
