@@ -1,4 +1,4 @@
-import naturverseLogo from "@/assets/naturverse-logo.png";
+import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
 
 export function ParentsSection() {
   const safetyFeatures = [

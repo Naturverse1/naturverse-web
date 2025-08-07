@@ -1,14 +1,4 @@
-import turianImage from "@/assets/turian.png";
-import frankoImage from "@/assets/franko.png";
-import frannyImage from "@/assets/franny.png";
-import inkieImage from "@/assets/inkie.png";
-import blueButterfly from "@/assets/blue-butterfly.png";
-import coconutCruze from "@/assets/coconut-cruze.png";
-import drPDread from "@/assets/dr-p-dread.png";
-import fanglings from "@/assets/fanglings.png";
-import jaySing from "@/assets/jay-sing.png";
-import pineapplePete from "@/assets/pineapple-pete.png";
-import slitherkin from "@/assets/slitherkin.png";
+import turianImage from "@/assets/turian_media_logo_transparent.png";
 
 export function CharactersSection() {
   const characters = [
@@ -22,61 +12,61 @@ export function CharactersSection() {
     {
       id: "franko", 
       name: "Franko",
-      image: frankoImage,
+      image: "https://via.placeholder.com/160x160/10b981/ffffff?text=🐸",
       description: "The adventurous explorer"
     },
     {
       id: "franny",
       name: "Franny",
-      image: frannyImage,
+      image: "https://via.placeholder.com/160x160/a855f7/ffffff?text=🐘",
       description: "The magical storyteller"
     },
     {
       id: "inkie",
       name: "Inkie",
-      image: inkieImage,
+      image: "https://via.placeholder.com/160x160/3b82f6/ffffff?text=🖋️",
       description: "The creative artist"
     },
     {
       id: "blue-butterfly",
       name: "Blue Butterfly",
-      image: blueButterfly,
+      image: "https://via.placeholder.com/160x160/06b6d4/ffffff?text=🦋",
       description: "The gentle guide"
     },
     {
       id: "coconut-cruze",
       name: "Coconut Cruze",
-      image: coconutCruze,
+      image: "https://via.placeholder.com/160x160/f97316/ffffff?text=🥥",
       description: "The island adventurer"
     },
     {
       id: "dr-p-dread",
       name: "Dr. P. Dread",
-      image: drPDread,
+      image: "https://via.placeholder.com/160x160/dc2626/ffffff?text=🔬",
       description: "The nature scientist"
     },
     {
       id: "fanglings",
       name: "Fanglings",
-      image: fanglings,
+      image: "https://via.placeholder.com/160x160/7c3aed/ffffff?text=👹",
       description: "The playful creatures"
     },
     {
       id: "jay-sing",
       name: "Jay Sing",
-      image: jaySing,
+      image: "https://via.placeholder.com/160x160/0ea5e9/ffffff?text=🐦",
       description: "The musical bird"
     },
     {
       id: "pineapple-pete",
       name: "Pineapple Pete",
-      image: pineapplePete,
+      image: "https://via.placeholder.com/160x160/eab308/ffffff?text=🍍",
       description: "The tropical friend"
     },
     {
       id: "slitherkin",
       name: "Slitherkin",
-      image: slitherkin,
+      image: "https://via.placeholder.com/160x160/059669/ffffff?text=🐍",
       description: "The wise serpent"
     }
   ];
