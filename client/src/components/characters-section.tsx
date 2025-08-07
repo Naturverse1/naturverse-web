@@ -126,7 +126,11 @@ export function CharactersSection() {
                     className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                   />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-pink-300/20 rounded-2xl animate-pulse"></div>
+                <div className={`absolute inset-0 rounded-2xl animate-pulse ${
+                  character.id === 'turian' 
+                    ? 'bg-gradient-to-br from-cyan-300/30 to-blue-300/30' 
+                    : 'bg-gradient-to-br from-yellow-300/20 to-pink-300/20'
+                }`}></div>
               </div>
               
               {/* Character info */}
