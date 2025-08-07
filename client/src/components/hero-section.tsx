@@ -1,7 +1,6 @@
 import { Button } from "@/components/ui/button";
 import naturverseLogo from "@/assets/turian_media_logo_transparent.png";
 import turianImage from "@/assets/Turian the Durian.png";
-import frankieFrogs from "@/assets/Frankie Frogs.png";
 
 interface HeroSectionProps {
   onStartExploring: () => void;
@@ -49,29 +48,29 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
         </div>
 
         {/* Main content with characters */}
-        <div className="grid lg:grid-cols-3 gap-12 items-center">
+        <div className="grid lg:grid-cols-2 gap-12 items-center max-w-5xl mx-auto">
           {/* Left character - Turian (Primary Guide) */}
-          <div className="hidden lg:block animate-fade-in-delay" data-testid="turian-character">
+          <div className="animate-fade-in-delay" data-testid="turian-character">
             <div className="text-center relative">
               {/* Special glow for Turian as main character */}
               <div className="absolute inset-0 bg-gradient-to-r from-sky-400/20 to-blue-400/20 rounded-3xl blur-2xl animate-pulse scale-110"></div>
               <img 
                 src={turianImage} 
                 alt="Turian - Your Wise Guide" 
-                className="relative z-10 w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-cyan-400/50 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-cyan-400/70"
+                className="relative z-10 w-80 h-96 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-cyan-400/50 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-cyan-400/70"
                 data-testid="turian-image"
               />
               <div className="relative z-10">
-                <p className="text-white font-bold text-xl mb-1">Meet Turian!</p>
-                <p className="text-sky-300 text-sm font-medium">🧙‍♂️ Your Wise Forest Guardian</p>
+                <p className="text-white font-bold text-2xl mb-1">Meet Turian!</p>
+                <p className="text-sky-300 text-lg font-medium">🧙‍♂️ Your Wise Forest Guardian</p>
               </div>
               {/* Crown icon to show Turian is the main guide */}
-              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 text-yellow-400 text-2xl animate-bounce">👑</div>
+              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 text-yellow-400 text-3xl animate-bounce">👑</div>
             </div>
           </div>
 
           {/* Center content */}
-          <div className="text-center animate-fade-in-delay" data-testid="main-content">
+          <div className="text-center lg:text-left animate-fade-in-delay" data-testid="main-content">
             <h1 className="font-fredoka text-4xl md:text-6xl lg:text-7xl text-white mb-6 drop-shadow-2xl" data-testid="text-headline">
               <span className="bg-gradient-to-r from-blue-300 via-sky-300 to-cyan-300 bg-clip-text text-transparent">
                 Welcome to The Naturverse™
@@ -92,18 +91,6 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
             </Button>
           </div>
 
-          {/* Right character - Franko */}
-          <div className="hidden lg:block animate-fade-in-delay-2" data-testid="franko-character">
-            <div className="text-center">
-              <img 
-                src={frankieFrogs} 
-                alt="Frankie Frogs Character" 
-                className="w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-white/30 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-blue-400/50"
-                data-testid="frankie-frogs-image"
-              />
-              <p className="text-white/80 font-medium text-xl">Meet Frankie Frogs!</p>
-            </div>
-          </div>
         </div>
 
         {/* Scroll Indicator */}
