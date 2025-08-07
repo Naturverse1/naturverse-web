@@ -3,7 +3,7 @@ import inkieImage from "@/assets/Inkie.png";
 import blueButterfly from "@/assets/Blu Butterfly.png";
 import drPImage from "@/assets/Dr P.png";
 import pineapplePapa from "@/assets/Pineapple Pa-Pa.png";
-import pineapplePetey from "@/assets/Pineapple Petey.png";
+import mangoMike from "@/assets/Mango Mike.png";
 import slitherkinImage from "@/assets/Slitherkin.png";
 import frankieFrogs from "@/assets/Frankie Frogs.png";
 import jenSuexImage from "@/assets/Jen-Suex.png";
@@ -70,10 +70,16 @@ export function CharactersSection() {
       description: "The musical bird"
     },
     {
-      id: "pineapple-petey",
-      name: "Pineapple Petey",
-      image: pineapplePetey,
-      description: "The tropical friend"
+      id: "pineapple-pa-pa",
+      name: "Pineapple Pa-Pa",
+      image: pineapplePapa,
+      description: "The wise tropical elder"
+    },
+    {
+      id: "mango-mike",
+      name: "Mango Mike",
+      image: mangoMike,
+      description: "The sweet tropical guardian"
     },
     {
       id: "slitherkin",
