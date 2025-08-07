@@ -1,24 +1,82 @@
+import turianImage from "@/assets/turian.png";
+import frankoImage from "@/assets/franko.png";
+import frannyImage from "@/assets/franny.png";
+import inkieImage from "@/assets/inkie.png";
+import blueButterfly from "@/assets/blue-butterfly.png";
+import coconutCruze from "@/assets/coconut-cruze.png";
+import drPDread from "@/assets/dr-p-dread.png";
+import fanglings from "@/assets/fanglings.png";
+import jaySing from "@/assets/jay-sing.png";
+import pineapplePete from "@/assets/pineapple-pete.png";
+import slitherkin from "@/assets/slitherkin.png";
+
 export function CharactersSection() {
   const characters = [
     {
-      id: "character1",
-      name: "Upload character1.png",
-      placeholder: "🧙‍♂️"
+      id: "turian",
+      name: "Turian",
+      image: turianImage,
+      description: "The wise forest guardian"
     },
     {
-      id: "character2", 
-      name: "Upload character2.png",
-      placeholder: "🦋"
+      id: "franko", 
+      name: "Franko",
+      image: frankoImage,
+      description: "The adventurous explorer"
     },
     {
-      id: "character3",
-      name: "Upload character3.png", 
-      placeholder: "🌳"
+      id: "franny",
+      name: "Franny",
+      image: frannyImage,
+      description: "The magical storyteller"
     },
     {
-      id: "character4",
-      name: "Upload character4.png",
-      placeholder: "🐨"
+      id: "inkie",
+      name: "Inkie",
+      image: inkieImage,
+      description: "The creative artist"
+    },
+    {
+      id: "blue-butterfly",
+      name: "Blue Butterfly",
+      image: blueButterfly,
+      description: "The gentle guide"
+    },
+    {
+      id: "coconut-cruze",
+      name: "Coconut Cruze",
+      image: coconutCruze,
+      description: "The island adventurer"
+    },
+    {
+      id: "dr-p-dread",
+      name: "Dr. P. Dread",
+      image: drPDread,
+      description: "The nature scientist"
+    },
+    {
+      id: "fanglings",
+      name: "Fanglings",
+      image: fanglings,
+      description: "The playful creatures"
+    },
+    {
+      id: "jay-sing",
+      name: "Jay Sing",
+      image: jaySing,
+      description: "The musical bird"
+    },
+    {
+      id: "pineapple-pete",
+      name: "Pineapple Pete",
+      image: pineapplePete,
+      description: "The tropical friend"
+    },
+    {
+      id: "slitherkin",
+      name: "Slitherkin",
+      image: slitherkin,
+      description: "The wise serpent"
     }
   ];
 
@@ -47,29 +105,30 @@ export function CharactersSection() {
           {characters.map((character, index) => (
             <div
               key={character.id}
-              className="group bg-white/80 backdrop-blur-sm rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-4 border-gradient-to-r from-yellow-200 to-pink-200 hover:border-yellow-300 animate-fade-in-stagger"
+              className="group bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-4 border-gradient-to-r from-yellow-200 to-pink-200 hover:border-yellow-300 animate-fade-in-stagger"
               style={{ animationDelay: `${index * 0.2}s` }}
               data-testid={`card-${character.id}`}
             >
-              {/* Character image placeholder */}
+              {/* Character image */}
               <div className="relative mb-6 group-hover:scale-110 transition-transform duration-500" data-testid={`image-${character.id}`}>
-                <div className="w-32 h-32 mx-auto bg-gradient-to-br from-emerald-400 to-teal-500 rounded-full flex items-center justify-center text-6xl shadow-xl border-4 border-white">
-                  <span className="animate-bounce-gentle">{character.placeholder}</span>
+                <div className="w-40 h-40 mx-auto rounded-2xl overflow-hidden shadow-xl border-4 border-white">
+                  <img 
+                    src={character.image} 
+                    alt={character.name}
+                    className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                  />
                 </div>
-                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-pink-300/20 rounded-full animate-pulse"></div>
+                <div className="absolute inset-0 bg-gradient-to-br from-yellow-300/20 to-pink-300/20 rounded-2xl animate-pulse"></div>
               </div>
               
-              {/* Upload instruction */}
+              {/* Character info */}
               <div className="text-center">
-                <div className="bg-gradient-to-r from-green-600 to-emerald-600 rounded-xl p-4 mb-4">
-                  <div className="text-white text-sm font-medium mb-2">Upload to:</div>
-                  <div className="font-mono text-xs bg-black/20 rounded px-2 py-1 text-white">
-                    client/src/assets/{character.id}.png
-                  </div>
-                </div>
-                <h3 className="font-fredoka text-2xl bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent" data-testid={`name-${character.id}`}>
+                <h3 className="font-fredoka text-2xl bg-gradient-to-r from-green-700 to-emerald-600 bg-clip-text text-transparent mb-2" data-testid={`name-${character.id}`}>
                   {character.name}
                 </h3>
+                <p className="text-gray-600 text-sm leading-relaxed" data-testid={`description-${character.id}`}>
+                  {character.description}
+                </p>
               </div>
 
               {/* Magical sparkles */}
