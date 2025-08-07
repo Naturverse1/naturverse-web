@@ -30,30 +30,43 @@ export function HeroSection({ onStartExploring }: HeroSectionProps) {
 
       {/* Main content container */}
       <div className="relative z-10 px-6 max-w-7xl mx-auto">
-        {/* Logo */}
+        {/* Logo with enhanced branding */}
         <div className="text-center mb-12 animate-fade-in" data-testid="logo-container">
-          <div className="inline-block">
+          <div className="inline-block relative">
+            {/* Glowing background for logo */}
+            <div className="absolute inset-0 bg-gradient-to-r from-yellow-400/30 to-orange-400/30 rounded-full blur-2xl animate-pulse scale-110"></div>
             <img 
               src={naturverseLogo} 
-              alt="The Naturverse Logo" 
-              className="w-48 h-48 md:w-64 md:h-64 mx-auto mb-6 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
+              alt="The Naturverse™ Logo" 
+              className="relative z-10 w-56 h-56 md:w-72 md:h-72 mx-auto mb-6 object-contain drop-shadow-2xl hover:scale-105 transition-transform duration-500"
               data-testid="logo-image"
             />
+            {/* Magical sparkles around logo */}
+            <div className="absolute top-4 left-4 text-yellow-300 text-2xl animate-ping">✨</div>
+            <div className="absolute top-8 right-8 text-pink-300 text-xl animate-ping" style={{ animationDelay: '1s' }}>🌟</div>
+            <div className="absolute bottom-8 left-8 text-blue-300 text-lg animate-ping" style={{ animationDelay: '2s' }}>💫</div>
           </div>
         </div>
 
         {/* Main content with characters */}
         <div className="grid lg:grid-cols-3 gap-12 items-center">
-          {/* Left character - Turian */}
+          {/* Left character - Turian (Primary Guide) */}
           <div className="hidden lg:block animate-fade-in-delay" data-testid="turian-character">
-            <div className="text-center">
+            <div className="text-center relative">
+              {/* Special glow for Turian as main character */}
+              <div className="absolute inset-0 bg-gradient-to-r from-blue-400/20 to-cyan-400/20 rounded-3xl blur-2xl animate-pulse scale-110"></div>
               <img 
                 src={turianImage} 
-                alt="Turian Character" 
-                className="w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-white/30 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-blue-400/50"
+                alt="Turian - Your Wise Guide" 
+                className="relative z-10 w-64 h-80 mx-auto object-cover rounded-3xl shadow-2xl border-4 border-cyan-400/50 mb-4 hover:scale-105 transition-transform duration-500 hover:shadow-cyan-400/70"
                 data-testid="turian-image"
               />
-              <p className="text-white/80 font-medium text-xl">Meet Turian!</p>
+              <div className="relative z-10">
+                <p className="text-white font-bold text-xl mb-1">Meet Turian!</p>
+                <p className="text-cyan-300 text-sm font-medium">🧙‍♂️ Your Wise Forest Guardian</p>
+              </div>
+              {/* Crown icon to show Turian is the main guide */}
+              <div className="absolute -top-2 left-1/2 transform -translate-x-1/2 text-yellow-400 text-2xl animate-bounce">👑</div>
             </div>
           </div>
 

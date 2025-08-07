@@ -48,9 +48,14 @@ export function LearningSection() {
               📚 What You'll Learn
             </span>
           </h2>
-          <p className="text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg" data-testid="text-learning-description">
+          <p className="text-2xl text-white/90 max-w-4xl mx-auto leading-relaxed font-medium drop-shadow-lg mb-6" data-testid="text-learning-description">
             Magical adventures that make learning fun, engaging, and memorable!
           </p>
+          <div className="text-cyan-300 text-lg font-medium">
+            <span className="inline-flex items-center gap-2">
+              🧙‍♂️ <span>Guided by Turian and The Naturverse™ Team</span>
+            </span>
+          </div>
         </div>
 
         {/* Learning areas grid */}

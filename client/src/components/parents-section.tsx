@@ -1,3 +1,5 @@
+import naturverseLogo from "@/assets/naturverse-logo.png";
+
 export function ParentsSection() {
   const safetyFeatures = [
     {
@@ -28,6 +30,14 @@ export function ParentsSection() {
       <div className="max-w-6xl mx-auto px-6 relative z-10">
         {/* Section header */}
         <div className="text-center mb-16 animate-fade-in" data-testid="parents-header">
+          {/* Small logo for branding */}
+          <div className="mb-6">
+            <img 
+              src={naturverseLogo} 
+              alt="The Naturverse™" 
+              className="w-16 h-16 mx-auto object-contain opacity-80"
+            />
+          </div>
           <h2 className="font-fredoka text-5xl md:text-7xl bg-gradient-to-r from-blue-700 via-indigo-600 to-purple-600 bg-clip-text text-transparent mb-8" data-testid="text-parents-title">
             👪 For Parents
           </h2>

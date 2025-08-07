@@ -16,7 +16,8 @@ export function CharactersSection() {
       id: "turian",
       name: "Turian",
       image: turianImage,
-      description: "The wise forest guardian"
+      description: "🧙‍♂️ Your Primary Guide & Wise Forest Guardian",
+      featured: true
     },
     {
       id: "franko", 
@@ -95,9 +96,12 @@ export function CharactersSection() {
           <h2 className="font-fredoka text-5xl md:text-7xl bg-gradient-to-r from-green-700 via-emerald-600 to-teal-600 bg-clip-text text-transparent mb-6" data-testid="text-characters-title">
             🌟 Meet Your Magical Guides
           </h2>
-          <p className="text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium" data-testid="text-characters-description">
-            Your friendly companions will guide you through every magical adventure in The Naturverse!
+          <p className="text-2xl text-gray-700 max-w-4xl mx-auto leading-relaxed font-medium mb-4" data-testid="text-characters-description">
+            Your friendly companions will guide you through every magical adventure in The Naturverse™!
           </p>
+          <div className="inline-flex items-center gap-2 bg-gradient-to-r from-cyan-100 to-blue-100 px-6 py-3 rounded-full border-2 border-cyan-200">
+            <span className="text-cyan-700 font-bold">👑 Turian leads the way!</span>
+          </div>
         </div>
 
         {/* Characters grid */}
@@ -105,7 +109,11 @@ export function CharactersSection() {
           {characters.map((character, index) => (
             <div
               key={character.id}
-              className="group bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-4 border-gradient-to-r from-yellow-200 to-pink-200 hover:border-yellow-300 animate-fade-in-stagger"
+              className={`group bg-white/80 backdrop-blur-sm rounded-3xl p-6 shadow-xl hover:shadow-2xl transition-all duration-500 hover:-translate-y-4 border-4 animate-fade-in-stagger ${
+                character.featured 
+                  ? 'border-gradient-to-r from-cyan-300 to-blue-300 hover:border-cyan-400 ring-4 ring-cyan-200/50 scale-105' 
+                  : 'border-gradient-to-r from-yellow-200 to-pink-200 hover:border-yellow-300'
+              }`}
               style={{ animationDelay: `${index * 0.2}s` }}
               data-testid={`card-${character.id}`}
             >
