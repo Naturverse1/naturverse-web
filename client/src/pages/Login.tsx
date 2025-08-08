@@ -8,6 +8,8 @@ import { useLocation, Link } from "wouter";
 import { supabase } from "../lib/supabaseClient";
 import TurianLogo from "@assets/turian_media_logo_transparent.png";
 import MagicalForestImg from "@assets/download_1754675331614.jpg";
+import CharacterImg from "@assets/Character img_1754673794865.jpg";
+import StorybookImg from "@assets/Storybook img_1754673794866.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -104,24 +106,39 @@ export default function Login() {
         )`
       }} />
       
-      {/* Gentle Floating Nature Elements */}
+      {/* Floating Storybook Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="text-4xl absolute top-20 left-20 animate-float-bounce opacity-40" style={{animationDelay: '0s'}}>🍃</div>
-        <div className="text-3xl absolute top-40 right-20 animate-gentle-pulse opacity-50" style={{animationDelay: '1s'}}>🌿</div>
-        <div className="text-4xl absolute bottom-32 left-16 animate-float-bounce opacity-40" style={{animationDelay: '2s'}}>🌱</div>
-        <div className="text-3xl absolute top-1/3 right-1/3 animate-gentle-pulse opacity-30" style={{animationDelay: '3s'}}>🦋</div>
-        <div className="text-4xl absolute bottom-20 right-32 animate-float-bounce opacity-40" style={{animationDelay: '4s'}}>🍃</div>
+        <div className="absolute top-20 left-20 animate-float-bounce opacity-60" style={{animationDelay: '0s'}}>
+          <img src={StorybookImg} alt="Storybook element" className="w-12 h-12 rounded-full border-2 border-white/40 shadow-lg" />
+        </div>
+        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-50" style={{animationDelay: '1s'}}>
+          <div className="w-8 h-8 bg-green-200/60 rounded-full border border-green-300 flex items-center justify-center text-lg">🌿</div>
+        </div>
+        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-60" style={{animationDelay: '2s'}}>
+          <img src={TurianLogo} alt="Turian decoration" className="w-10 h-10 rounded-full bg-white/40 p-1 border border-yellow-300 shadow-lg" />
+        </div>
+        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-40" style={{animationDelay: '3s'}}>
+          <div className="w-6 h-6 bg-purple-200/60 rounded-full border border-purple-300 flex items-center justify-center text-sm">🦋</div>
+        </div>
+        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-50" style={{animationDelay: '4s'}}>
+          <div className="w-8 h-8 bg-blue-200/60 rounded-full border border-blue-300 flex items-center justify-center text-lg">🍃</div>
+        </div>
       </div>
 
       {/* Naturverse Logo in Top Corner */}
       <div className="absolute top-6 left-6 z-50">
-        <Link to="/" className="flex items-center gap-2 hover:scale-105 transition-transform duration-300">
-          <img 
-            src={TurianLogo} 
-            alt="The Naturverse" 
-            className="w-12 h-12 drop-shadow-2xl animate-gentle-pulse"
-          />
-          <span className="text-display text-xl font-bold text-gradient">The Naturverse™</span>
+        <Link to="/" className="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
+          <div className="relative">
+            <img 
+              src={TurianLogo} 
+              alt="The Naturverse" 
+              className="w-16 h-16 drop-shadow-2xl animate-gentle-pulse rounded-full border-2 border-white/60 bg-white/20 p-1"
+            />
+            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-sparkle-twinkle flex items-center justify-center text-xs">✨</div>
+          </div>
+          <div className="bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-white/60">
+            <span className="text-display text-xl font-bold text-gradient">The Naturverse™</span>
+          </div>
         </Link>
       </div>
 
@@ -174,23 +191,35 @@ export default function Login() {
             </CardHeader>
 
             <CardContent className="space-y-6" style={{ padding: '0 2rem 2rem' }}>
-              {/* Google Button - Friendly Fruit Style */}
+              {/* Google Button with Storybook Theme */}
               <Button
                 onClick={handleGoogleSignIn}
-                className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 relative overflow-hidden"
                 style={{
                   background: 'linear-gradient(135deg, #4285F4 0%, #34A853 50%, #FBBC05 100%)',
                   color: 'white',
                   borderRadius: '2rem',
                   fontFamily: 'Fredoka, cursive',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
+                  border: '3px solid rgba(255,255,255,0.4)',
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                  boxShadow: '0 8px 25px rgba(66,133,244,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
                 }}
                 data-testid="button-google-signin"
               >
-                <span className="text-xl mr-3">🌸</span>
-                Continue with Google
-                <span className="text-xl ml-3">🌸</span>
+                <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
+                <div className="flex items-center justify-center">
+                  <img 
+                    src={StorybookImg} 
+                    alt="Storybook decoration" 
+                    className="w-6 h-6 mr-3 rounded-full border border-white/30"
+                  />
+                  Continue with Google
+                  <img 
+                    src={StorybookImg} 
+                    alt="Storybook decoration" 
+                    className="w-6 h-6 ml-3 rounded-full border border-white/30"
+                  />
+                </div>
               </Button>
 
               {/* Divider */}
@@ -291,27 +320,39 @@ export default function Login() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
+                  className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 relative overflow-hidden"
                   style={{
                     background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
                     color: 'white',
                     borderRadius: '2rem',
                     fontFamily: 'Fredoka, cursive',
-                    border: '2px solid rgba(255,255,255,0.3)',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
+                    border: '3px solid rgba(255,255,255,0.4)',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
+                    boxShadow: '0 8px 25px rgba(34,197,94,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
                   }}
                   data-testid="button-submit"
                 >
                   {loading ? (
                     <>
-                      <span className="mr-3 animate-spin">🔄</span>
+                      <div className="animate-spin mr-3 w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
                       Loading your adventure...
                     </>
                   ) : (
                     <>
-                      <span className="text-xl mr-3">🌿</span>
-                      Continue with Email
-                      <span className="text-xl ml-3">🌿</span>
+                      <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
+                      <div className="flex items-center justify-center">
+                        <img 
+                          src={TurianLogo} 
+                          alt="Turian logo" 
+                          className="w-6 h-6 mr-3 rounded-full bg-white/20 p-1"
+                        />
+                        Continue with Email
+                        <img 
+                          src={TurianLogo} 
+                          alt="Turian logo" 
+                          className="w-6 h-6 ml-3 rounded-full bg-white/20 p-1"
+                        />
+                      </div>
                     </>
                   )}
                 </Button>
@@ -360,35 +401,47 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Turian's Friendly Greeting - Bottom Right */}
+      {/* Turian Character - Bottom Right */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative animate-float-bounce">
-          {/* Friendly Speech Bubble */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg border-2 border-green-300 max-w-xs relative" style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,255,240,0.95) 100%)',
-            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
-          }}>
-            <div className="text-center">
-              <div className="text-4xl mb-2 animate-gentle-pulse">🥭</div>
-              <div className="text-sm font-bold mb-1" style={{
-                fontFamily: 'Fredoka, sans-serif',
-                color: '#2F5233'
-              }}>
-                I'm Turian!
-              </div>
-              <div className="text-xs" style={{
-                fontFamily: 'Fredoka, sans-serif',
-                color: '#2F5233',
-                lineHeight: '1.3'
-              }}>
-                "Let's explore The Naturverse together!"
-              </div>
-            </div>
+          {/* Character Image with magical border */}
+          <div className="relative">
+            <img 
+              src={CharacterImg} 
+              alt="Turian mascot character" 
+              className="w-32 h-32 rounded-full object-cover border-4 border-yellow-400 shadow-2xl"
+              style={{
+                filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.6))',
+                background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,248,220,0.9) 100%)'
+              }}
+            />
             
-            {/* Speech bubble pointer */}
-            <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
-              <div className="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[15px] border-l-transparent border-r-transparent border-t-green-300"></div>
-              <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+            {/* Speech Bubble */}
+            <div className="absolute -top-16 -left-32 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg border-2 border-green-300 max-w-xs" style={{
+              background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,255,240,0.95) 100%)',
+              boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+            }}>
+              <div className="text-center">
+                <div className="text-sm font-bold mb-1" style={{
+                  fontFamily: 'Fredoka, sans-serif',
+                  color: '#2F5233'
+                }}>
+                  I'm Turian!
+                </div>
+                <div className="text-xs" style={{
+                  fontFamily: 'Fredoka, sans-serif',
+                  color: '#2F5233',
+                  lineHeight: '1.3'
+                }}>
+                  "Let's explore The Naturverse together!"
+                </div>
+              </div>
+              
+              {/* Speech bubble pointer */}
+              <div className="absolute bottom-0 right-8 transform translate-y-full">
+                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-green-300"></div>
+                <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+              </div>
             </div>
           </div>
         </div>
