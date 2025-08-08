@@ -49,8 +49,8 @@ export default function ResetPassword() {
         return;
       }
 
-      // Success - redirect to dashboard
-      setLocation('/dashboard');
+      // Success - redirect to map
+      setLocation('/map');
     } catch (err) {
       setError('An unexpected error occurred');
     } finally {
