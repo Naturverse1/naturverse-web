@@ -6,14 +6,28 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "../context/AuthContext";
 import { useLocation, Link } from "wouter";
 import { supabase } from "../lib/supabaseClient";
+
+// Official Naturverse™ Assets
 import TurianLogo from "@assets/turian_media_logo_transparent.png";
 import MagicalForestImg from "@assets/download_1754675331614.jpg";
 import TurianCharacter from "@assets/Turian_1754677394027.jpg";
+import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
+import ShroomForest from "@assets/Shroom forest_1754673794866.jpg";
+
+// Character Assets
 import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
 import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
 import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
-import MangoMike from "@assets/Mango Mike_1754677394025.png";
+import DrP from "@assets/Dr P_1754677394022.png";
+import Inkie from "@assets/Inkie_1754677394023.png";
+import JaySing from "@assets/Jay-Sing_1754677394023.png";
+import NikkiMT from "@assets/Nikki MT_1754677394025.png";
+import NonBua from "@assets/Non-Bua_1754677394025.png";
 import PineapplePapa from "@assets/Pineapple Pa-Pa_1754677394026.png";
+import PineapplePetey from "@assets/Pineapple Petey_1754677394026.png";
+import Snakers from "@assets/Snakers_1754677394026.png";
+import Teeyor from "@assets/Teeyor_1754677394026.png";
+import TommyTukTuk from "@assets/Tommy Tuk Tuk_1754677394026.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -75,6 +89,9 @@ export default function Login() {
   };
 
   const handleGoogleSignIn = async () => {
+    setLoading(true);
+    setError("");
+    
     try {
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
@@ -82,416 +99,303 @@ export default function Login() {
           redirectTo: window.location.origin + '/profile'
         }
       });
-      if (error) setError(error.message);
+      
+      if (error) {
+        setError(error.message);
+      }
     } catch (err) {
-      setError('Google sign-in failed');
+      setError('Failed to sign in with Google');
+    } finally {
+      setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen relative overflow-hidden">
-      {/* Magical Forest Background */}
+    <div className="min-h-screen flex flex-col relative overflow-hidden">
+      {/* Naturverse™ Logo Header - Always Visible */}
+      <div className="absolute top-6 left-1/2 transform -translate-x-1/2 z-50">
+        <div className="flex items-center justify-center bg-white/95 backdrop-blur-sm px-8 py-4 rounded-3xl shadow-2xl border-4 border-yellow-400/80">
+          <img 
+            src={TurianLogo} 
+            alt="The Naturverse™" 
+            className="w-16 h-16 mr-4"
+          />
+          <h1 className="text-3xl font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+            The Naturverse™
+          </h1>
+        </div>
+      </div>
+
+      {/* Magical Storybook Background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
         style={{
-          backgroundImage: `url(${MagicalForestImg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center'
+          backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(34, 197, 94, 0.2) 0%,
+              rgba(59, 130, 246, 0.25) 30%,
+              rgba(251, 146, 60, 0.2) 60%,
+              rgba(234, 179, 8, 0.25) 100%
+            ),
+            url(${StorybookScene})
+          `,
         }}
       />
       
-      {/* Warm storybook overlay */}
-      <div className="absolute inset-0" style={{
-        background: `linear-gradient(135deg, 
-          rgba(255,248,220,0.6) 0%, 
-          rgba(255,255,255,0.4) 30%, 
-          rgba(245,245,220,0.5) 70%, 
-          rgba(255,240,230,0.6) 100%
-        )`
+      {/* Enhanced Magical Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br" style={{
+        background: `
+          radial-gradient(circle at 15% 25%, rgba(34,197,94,0.3) 0%, transparent 50%),
+          radial-gradient(circle at 85% 15%, rgba(59,130,246,0.2) 0%, transparent 50%),
+          radial-gradient(circle at 75% 85%, rgba(251,146,60,0.25) 0%, transparent 50%),
+          radial-gradient(circle at 25% 75%, rgba(234,179,8,0.2) 0%, transparent 50%),
+          linear-gradient(
+            135deg, 
+            rgba(195, 225, 245, 0.7) 0%, 
+            rgba(220, 255, 220, 0.6) 25%, 
+            rgba(255, 235, 200, 0.6) 75%, 
+            rgba(255, 248, 220, 0.7) 100%
+          )`
       }} />
-      
-      {/* Floating Naturverse Character Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 animate-float-bounce opacity-80" style={{animationDelay: '0s'}}>
-          <img 
-            src={CoconutCruze} 
-            alt="Coconut Cruze" 
-            className="w-18 h-18 rounded-full border-3 border-blue-300/70 shadow-xl bg-blue-50/30 p-1"
-            style={{ filter: 'drop-shadow(0 6px 15px rgba(59,130,246,0.4))' }}
-          />
-        </div>
-        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-70" style={{animationDelay: '1s'}}>
-          <img 
-            src={BluButterfly} 
-            alt="Blue Butterfly" 
-            className="w-16 h-16 rounded-2xl border-2 border-purple-400/70 shadow-lg bg-purple-50/30"
-            style={{ filter: 'drop-shadow(0 4px 12px rgba(147,51,234,0.4))' }}
-          />
-        </div>
-        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-80" style={{animationDelay: '2s'}}>
-          <img 
-            src={MangoMike} 
-            alt="Mango Mike" 
-            className="w-16 h-16 rounded-full bg-orange-100/80 p-1 border-3 border-orange-400/70 shadow-xl"
-            style={{ filter: 'drop-shadow(0 6px 15px rgba(251,146,60,0.5))' }}
-          />
-        </div>
-        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-70" style={{animationDelay: '3s'}}>
-          <img 
-            src={FrankieFrogs} 
-            alt="Frankie Frogs" 
-            className="w-14 h-14 rounded-lg border-2 border-green-400/70 shadow-lg bg-green-50/30"
-            style={{ filter: 'drop-shadow(0 4px 10px rgba(34,197,94,0.4))' }}
-          />
-        </div>
-        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-75" style={{animationDelay: '4s'}}>
-          <img 
-            src={PineapplePapa} 
-            alt="Pineapple Pa-Pa" 
-            className="w-14 h-14 rounded-full border-2 border-yellow-400/70 shadow-lg bg-yellow-50/30 object-cover"
-            style={{ filter: 'drop-shadow(0 4px 10px rgba(234,179,8,0.4))' }}
-          />
-        </div>
-      </div>
 
-      {/* Naturverse Logo in Top Corner */}
-      <div className="absolute top-6 left-6 z-50">
-        <Link to="/" className="flex items-center gap-3 hover:scale-105 transition-transform duration-300">
-          <div className="relative">
+      {/* Floating Character Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none z-10">
+        <div className="absolute top-32 left-16 animate-float-bounce opacity-90" style={{animationDelay: '0s'}}>
+          <div className="w-24 h-24 p-2 bg-white/80 rounded-3xl border-4 border-blue-300 shadow-2xl">
             <img 
-              src={TurianLogo} 
-              alt="The Naturverse" 
-              className="w-16 h-16 drop-shadow-2xl animate-gentle-pulse rounded-full border-2 border-white/60 bg-white/20 p-1"
+              src={CoconutCruze} 
+              alt="Coconut Cruze" 
+              className="w-full h-full object-cover rounded-2xl"
             />
-            <div className="absolute -top-1 -right-1 animate-sparkle-twinkle">
-              <img 
-                src={MangoMike} 
-                alt="Mango Mike sparkle" 
-                className="w-6 h-6 rounded-full border border-yellow-400 bg-yellow-100"
-              />
-            </div>
           </div>
-          <div className="bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-white/60">
-            <span className="text-display text-xl font-bold text-gradient">The Naturverse™</span>
+        </div>
+        
+        <div className="absolute top-48 right-20 animate-gentle-pulse opacity-80" style={{animationDelay: '1s'}}>
+          <div className="w-20 h-20 p-2 bg-white/80 rounded-full border-4 border-purple-300 shadow-xl">
+            <img 
+              src={BluButterfly} 
+              alt="Blue Butterfly" 
+              className="w-full h-full object-cover rounded-full"
+            />
           </div>
-        </Link>
+        </div>
+        
+        <div className="absolute bottom-40 left-20 animate-float-bounce opacity-85" style={{animationDelay: '2s'}}>
+          <div className="w-22 h-22 p-2 bg-white/80 rounded-2xl border-4 border-green-400 shadow-xl">
+            <img 
+              src={FrankieFrogs} 
+              alt="Frankie Frogs" 
+              className="w-full h-full object-cover rounded-xl"
+            />
+          </div>
+        </div>
+        
+        <div className="absolute top-1/3 right-1/4 animate-gentle-pulse opacity-75" style={{animationDelay: '3s'}}>
+          <div className="w-18 h-18 p-2 bg-white/80 rounded-full border-4 border-orange-400 shadow-lg">
+            <img 
+              src={DrP} 
+              alt="Dr P" 
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+        </div>
+        
+        <div className="absolute bottom-32 right-28 animate-float-bounce opacity-80" style={{animationDelay: '4s'}}>
+          <div className="w-20 h-20 p-2 bg-white/80 rounded-2xl border-4 border-yellow-400 shadow-xl">
+            <img 
+              src={PineapplePapa} 
+              alt="Pineapple Pa-Pa" 
+              className="w-full h-full object-cover rounded-xl"
+            />
+          </div>
+        </div>
       </div>
 
-      {/* Centered Login Card */}
-      <div className="flex items-center justify-center min-h-screen p-6 relative z-10">
-        <div className="w-full max-w-md animate-card-float-in">
-          {/* Magical Login Card */}
-          <Card className="relative backdrop-blur-lg border-0 shadow-2xl" style={{
-            background: `
-              linear-gradient(135deg, 
-                rgba(255,248,220,0.98) 0%, 
-                rgba(245,245,220,0.96) 25%,
-                rgba(255,250,240,0.98) 50%,
-                rgba(240,248,255,0.96) 75%,
-                rgba(255,240,245,0.98) 100%
-              )
-            `,
-            borderRadius: '2rem',
-            boxShadow: '0 30px 60px rgba(0,0,0,0.2), 0 0 50px rgba(255,215,0,0.3), inset 0 1px 0 rgba(255,255,255,0.6)',
-            border: '3px solid rgba(255,215,0,0.4)',
-            backgroundImage: `
-              radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 0%, transparent 50%),
-              radial-gradient(circle at 80% 80%, rgba(255,215,0,0.2) 0%, transparent 50%)
-            `
-          }}>
-            {/* Character decorative elements */}
-            <div className="absolute -top-4 -right-4 animate-gentle-pulse opacity-80" style={{animationDelay: '1s'}}>
-              <img 
-                src={BluButterfly} 
-                alt="Blue Butterfly decoration" 
-                className="w-10 h-10 rounded-full border-2 border-blue-300 shadow-lg bg-blue-100/70"
-              />
-            </div>
-            <div className="absolute -bottom-4 -left-4 animate-gentle-pulse opacity-80" style={{animationDelay: '2s'}}>
-              <img 
-                src={CoconutCruze} 
-                alt="Coconut Cruze decoration" 
-                className="w-10 h-10 rounded-full border-2 border-green-300 shadow-lg bg-green-100/70"
-              />
-            </div>
-            
-            <CardHeader className="text-center pb-6" style={{ paddingTop: '2rem' }}>
-              <CardTitle className="text-4xl font-bold mb-4" style={{
-                fontFamily: 'Fredoka, cursive',
-                background: 'linear-gradient(135deg, #228B22 0%, #32CD32 25%, #FFD700 50%, #FF6347 75%, #8A2BE2 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.1)'
-              }}>
-                Welcome to The Naturverse™
-              </CardTitle>
+      <div className="flex-1 flex items-center justify-center pt-24 pb-8">
+        <div className="w-full max-w-md px-6 relative z-20">
+          <Card className="bg-white/95 backdrop-blur-md border-4 border-green-300/60 shadow-2xl rounded-3xl overflow-hidden">
+            {/* Magical Header */}
+            <CardHeader className="text-center pb-4 bg-gradient-to-br from-green-50 to-blue-50">
+              <div className="flex justify-center mb-4">
+                <div className="relative">
+                  <img 
+                    src={TurianCharacter} 
+                    alt="Turian the Durian" 
+                    className="w-24 h-24 rounded-full object-cover border-4 border-green-400 shadow-xl bg-gradient-to-br from-green-100 to-yellow-100 p-1"
+                  />
+                  <div className="absolute -top-2 -right-2 w-8 h-8 bg-yellow-400 rounded-full border-2 border-white animate-bounce">
+                    <span className="text-lg">✨</span>
+                  </div>
+                </div>
+              </div>
               
-              {/* Turian's Welcome Message */}
-              <CardDescription className="text-lg mb-4" style={{
-                fontFamily: 'Fredoka, sans-serif',
-                color: '#2F5233',
-                fontWeight: '500'
-              }}>
-                "Login and let Turian guide you on your adventure!"
+              <CardTitle className="text-3xl font-bold text-green-700 mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Welcome to The Naturverse!
+              </CardTitle>
+              <CardDescription className="text-lg text-green-600" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Join Turian and friends on magical adventures! 🌿
               </CardDescription>
             </CardHeader>
 
-            <CardContent className="space-y-6" style={{ padding: '0 2rem 2rem' }}>
-              {/* Google Button with Storybook Theme */}
-              <Button
+            <CardContent className="space-y-6 p-8">
+              {error && (
+                <div className="bg-red-50 border-2 border-red-200 text-red-700 px-4 py-3 rounded-xl font-medium">
+                  {error}
+                </div>
+              )}
+              
+              {resetMessage && (
+                <div className="bg-green-50 border-2 border-green-200 text-green-700 px-4 py-3 rounded-xl font-medium">
+                  {resetMessage}
+                </div>
+              )}
+
+              {/* Google Sign In */}
+              <Button 
                 onClick={handleGoogleSignIn}
-                className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 relative overflow-hidden"
-                style={{
-                  background: 'linear-gradient(135deg, #4285F4 0%, #34A853 50%, #FBBC05 100%)',
-                  color: 'white',
-                  borderRadius: '2rem',
-                  fontFamily: 'Fredoka, cursive',
-                  border: '3px solid rgba(255,255,255,0.4)',
-                  textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
-                  boxShadow: '0 8px 25px rgba(66,133,244,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
-                }}
+                disabled={loading}
+                className="w-full py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-blue-500 to-purple-600 hover:from-blue-600 hover:to-purple-700 transition-all duration-300 hover:scale-105 shadow-xl border-2 border-blue-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
                 data-testid="button-google-signin"
               >
-                <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
-                <div className="flex items-center justify-center">
-                  <img 
-                    src={BluButterfly} 
-                    alt="Blue Butterfly decoration" 
-                    className="w-8 h-8 mr-3 rounded-xl border-2 border-white/60 bg-white/30 p-1 shadow-lg"
-                    style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
-                  />
-                  Continue with Google
-                  <img 
-                    src={FrankieFrogs} 
-                    alt="Frankie Frogs decoration" 
-                    className="w-8 h-8 ml-3 rounded-xl border-2 border-white/60 bg-white/30 p-1 shadow-lg"
-                    style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
-                  />
+                <div className="flex items-center justify-center space-x-3">
+                  <div className="w-8 h-8 p-1 bg-white/90 rounded-lg">
+                    <img 
+                      src={BluButterfly} 
+                      alt="Magic" 
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
+                  <span>Continue with Google</span>
+                  <div className="w-8 h-8 p-1 bg-white/90 rounded-lg">
+                    <img 
+                      src={FrankieFrogs} 
+                      alt="Magic" 
+                      className="w-full h-full object-cover rounded-md"
+                    />
+                  </div>
                 </div>
               </Button>
 
-              {/* Divider */}
-              <div className="relative text-center">
-                <div className="absolute inset-0 flex items-center">
-                  <div className="w-full border-t-2" style={{ borderColor: 'rgba(34,139,34,0.2)' }}></div>
-                </div>
-                <div className="relative inline-block px-4" style={{ 
-                  background: 'rgba(255,255,255,0.9)',
-                  fontFamily: 'Fredoka, sans-serif',
-                  color: '#2F5233',
-                  fontWeight: '600'
-                }}>
-                  <span className="text-xl mr-2">✨</span>
-                  Or use your email
-                  <span className="text-xl ml-2">✨</span>
-                </div>
+              <div className="text-center text-gray-500 font-medium">
+                <span style={{ fontFamily: 'Fredoka, sans-serif' }}>or</span>
               </div>
 
-              {/* Email Login Form */}
+              {/* Email Form */}
               <form onSubmit={handleSubmit} className="space-y-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email" className="text-base font-bold" style={{
-                    color: '#2F5233',
-                    fontFamily: 'Fredoka, sans-serif'
-                  }}>
-                    <span className="mr-2">📧</span>
-                    Your Email
+                  <Label htmlFor="email" className="text-lg font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                    Email Address
                   </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="explorer@naturverse.com"
+                    placeholder="your@email.com"
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
-                    className="text-base py-3 px-4 border-2 focus:border-green-400 focus:ring-green-200"
-                    style={{
-                      borderRadius: '1rem',
-                      borderColor: 'rgba(34,139,34,0.3)',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                    required
+                    className="py-3 text-lg rounded-xl border-2 border-green-200 focus:border-green-400 bg-white/90"
+                    style={{ fontFamily: 'Fredoka, sans-serif' }}
                     data-testid="input-email"
+                    required
                   />
                 </div>
-
+                
                 <div className="space-y-2">
-                  <Label htmlFor="password" className="text-base font-bold" style={{
-                    color: '#2F5233',
-                    fontFamily: 'Fredoka, sans-serif'
-                  }}>
-                    <span className="mr-2">🔐</span>
-                    Your Secret Code
+                  <Label htmlFor="password" className="text-lg font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                    Password
                   </Label>
                   <Input
                     id="password"
                     type="password"
-                    placeholder="Your magical password"
+                    placeholder="Enter your password"
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
-                    className="text-base py-3 px-4 border-2 focus:border-green-400 focus:ring-green-200"
-                    style={{
-                      borderRadius: '1rem',
-                      borderColor: 'rgba(34,139,34,0.3)',
-                      fontFamily: 'Inter, sans-serif'
-                    }}
-                    required
+                    className="py-3 text-lg rounded-xl border-2 border-green-200 focus:border-green-400 bg-white/90"
+                    style={{ fontFamily: 'Fredoka, sans-serif' }}
                     data-testid="input-password"
+                    required
                   />
                 </div>
 
-                {error && (
-                  <div className="p-3 text-center rounded-xl" style={{
-                    background: 'rgba(239, 68, 68, 0.1)',
-                    color: '#DC2626',
-                    border: '2px solid rgba(239, 68, 68, 0.2)',
-                    fontFamily: 'Fredoka, sans-serif',
-                    fontWeight: '500'
-                  }}>
-                    <span className="mr-2">⚠️</span>
-                    {error}
-                  </div>
-                )}
-
-                {resetMessage && (
-                  <div className="p-3 text-center rounded-xl" style={{
-                    background: 'rgba(34, 197, 94, 0.1)',
-                    color: '#059669',
-                    border: '2px solid rgba(34, 197, 94, 0.2)',
-                    fontFamily: 'Fredoka, sans-serif',
-                    fontWeight: '500'
-                  }}>
-                    <span className="mr-2">📬</span>
-                    {resetMessage}
-                  </div>
-                )}
-
-                <Button
-                  type="submit"
+                <Button 
+                  type="submit" 
                   disabled={loading}
-                  className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105 relative overflow-hidden"
-                  style={{
-                    background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
-                    color: 'white',
-                    borderRadius: '2rem',
-                    fontFamily: 'Fredoka, cursive',
-                    border: '3px solid rgba(255,255,255,0.4)',
-                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)',
-                    boxShadow: '0 8px 25px rgba(34,197,94,0.3), inset 0 1px 0 rgba(255,255,255,0.3)'
-                  }}
-                  data-testid="button-submit"
+                  className="w-full py-4 text-lg font-bold rounded-2xl bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 transition-all duration-300 hover:scale-105 shadow-xl border-2 border-green-300/50"
+                  style={{ fontFamily: 'Fredoka, sans-serif' }}
+                  data-testid="button-email-signin"
                 >
-                  {loading ? (
-                    <>
-                      <div className="animate-spin mr-3 w-5 h-5 border-2 border-white border-t-transparent rounded-full"></div>
-                      Loading your adventure...
-                    </>
-                  ) : (
-                    <>
-                      <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
-                      <div className="flex items-center justify-center">
-                        <img 
-                          src={TurianCharacter} 
-                          alt="Turian character" 
-                          className="w-8 h-8 mr-3 rounded-xl border-2 border-white/60 bg-white/30 object-cover shadow-lg"
-                          style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
-                        />
-                        Continue with Email
-                        <img 
-                          src={MangoMike} 
-                          alt="Mango Mike decoration" 
-                          className="w-8 h-8 ml-3 rounded-xl border-2 border-white/60 bg-white/30 object-cover shadow-lg"
-                          style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
-                        />
-                      </div>
-                    </>
-                  )}
+                  <div className="flex items-center justify-center space-x-3">
+                    <div className="w-8 h-8 p-1 bg-white/90 rounded-lg">
+                      <img 
+                        src={TurianCharacter} 
+                        alt="Turian" 
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                    </div>
+                    <span>{loading ? 'Entering The Naturverse...' : 'Enter The Naturverse'}</span>
+                    <div className="w-8 h-8 p-1 bg-white/90 rounded-lg">
+                      <img 
+                        src={CoconutCruze} 
+                        alt="Magic" 
+                        className="w-full h-full object-cover rounded-md"
+                      />
+                    </div>
+                  </div>
                 </Button>
               </form>
 
-              {/* Forgot Password Link */}
-              <div className="text-center">
+              <div className="text-center space-y-3">
                 <button
                   onClick={handleForgotPassword}
                   disabled={resetLoading}
-                  className="text-green-700 hover:text-green-800 underline transition-colors duration-200"
-                  style={{
-                    fontFamily: 'Fredoka, sans-serif',
-                    fontWeight: '500'
-                  }}
+                  className="text-green-600 hover:text-green-700 font-bold underline transition-colors"
+                  style={{ fontFamily: 'Fredoka, sans-serif' }}
                   data-testid="button-forgot-password"
                 >
-                  {resetLoading ? (
-                    <>🔄 Sending magical reset...</>
-                  ) : (
-                    <>🔮 Forgot your magical password?</>
-                  )}
+                  {resetLoading ? 'Sending...' : 'Forgot Password?'}
                 </button>
-              </div>
-
-              {/* Sign Up Link */}
-              <div className="text-center pt-4">
-                <p style={{
-                  fontFamily: 'Fredoka, sans-serif',
-                  color: '#2F5233',
-                  fontSize: '1rem'
-                }}>
-                  New to our magical world?{' '}
-                  <Link 
-                    to="/signup"
-                    className="text-green-700 hover:text-green-800 underline font-bold transition-colors duration-200"
-                    data-testid="link-signup"
-                  >
-                    <span className="mr-1">✨</span>
-                    Create Your Adventure
+                
+                <div className="text-gray-600" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  Don't have an account?{' '}
+                  <Link href="/signup">
+                    <span className="text-green-600 hover:text-green-700 font-bold underline cursor-pointer transition-colors">
+                      Join The Adventure!
+                    </span>
                   </Link>
-                </p>
+                </div>
               </div>
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Turian Character - Bottom Right */}
+      {/* Turian Guide - Bottom Right */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative animate-float-bounce">
-          {/* Turian Character Image with magical border */}
-          <div className="relative">
+          <div className="w-40 h-40 p-2 bg-white/95 rounded-full border-4 border-green-400 shadow-2xl">
             <img 
               src={TurianCharacter} 
-              alt="Turian the durian mascot" 
-              className="w-36 h-36 rounded-full object-cover border-4 border-green-400 shadow-2xl bg-gradient-to-br from-green-100 to-yellow-100 p-1"
-              style={{
-                filter: 'drop-shadow(0 0 25px rgba(34,197,94,0.7))',
-              }}
+              alt="Turian the Durian Guide" 
+              className="w-full h-full object-cover rounded-full"
             />
+          </div>
+          
+          {/* Speech Bubble */}
+          <div className="absolute -top-24 -left-40 bg-white/95 backdrop-blur-sm rounded-3xl p-6 shadow-2xl border-4 border-green-400 max-w-sm">
+            <div className="text-center">
+              <div className="text-xl font-bold mb-2 text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Hi! I'm Turian! 🌿
+              </div>
+              <div className="text-base text-green-600" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Ready to explore The Naturverse together?
+              </div>
+            </div>
             
-            {/* Speech Bubble */}
-            <div className="absolute -top-20 -left-36 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-3 border-green-400 max-w-xs" style={{
-              background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,255,240,0.95) 100%)',
-              boxShadow: '0 15px 35px rgba(34,197,94,0.2)'
-            }}>
-              <div className="text-center">
-                <div className="text-lg font-bold mb-2" style={{
-                  fontFamily: 'Fredoka, sans-serif',
-                  color: '#166534'
-                }}>
-                  Hi! I'm Turian! 🌿
-                </div>
-                <div className="text-sm" style={{
-                  fontFamily: 'Fredoka, sans-serif',
-                  color: '#166534',
-                  lineHeight: '1.4'
-                }}>
-                  "Ready to explore The Naturverse together?"
-                </div>
-              </div>
-              
-              {/* Speech bubble pointer */}
-              <div className="absolute bottom-0 right-12 transform translate-y-full">
-                <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-green-400"></div>
-                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
-              </div>
+            {/* Speech bubble pointer */}
+            <div className="absolute bottom-0 right-16 transform translate-y-full">
+              <div className="w-0 h-0 border-l-[16px] border-r-[16px] border-t-[16px] border-l-transparent border-r-transparent border-t-green-400"></div>
+              <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[2px]"></div>
             </div>
           </div>
         </div>

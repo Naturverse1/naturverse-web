@@ -3,16 +3,9 @@ import { Link } from 'wouter';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 
-// Import logo
-import TurianLogo from '../assets/turian_media_logo_transparent.png';
-import TurianImg from '../assets/Turian.jpg';
-import MangoMikeImg from '../assets/Mango Mike.png';
-import DrPImg from '../assets/Dr P.png';
-import FrankieFrogsImg from '../assets/Frankie Frogs.png';
-import BluButterflyImg from '../assets/Blu Butterfly.png';
-import HankImg from '../assets/hank.png';
-import PineapplePaImg from '../assets/Pineapple Pa-Pa.png';
-import LaoCowImg from '../assets/Lao Cow.png';
+// Official Naturverse™ Assets
+import TurianLogo from "@assets/turian_media_logo_transparent.png";
+import TurianCharacter from "@assets/Turian_1754677394027.jpg";
 
 const NavBar: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -22,51 +15,118 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="nav-modern sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-emerald/20 shadow-xl">
-      <div className="container mx-auto px-6 py-4">
+    <nav className="sticky top-0 z-50 bg-white/95 backdrop-blur-lg border-b-4 border-green-300/60 shadow-2xl">
+      <div className="container mx-auto px-6 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-display text-3xl md:text-4xl font-bold text-gradient hover:scale-105 transition-all duration-300">
-            <span className="flex items-center gap-2 md:gap-3">
-              <div className="relative flex-shrink-0">
-                <img src={TurianLogo} alt="The Naturverse" className="w-16 h-16 md:w-20 md:h-20 drop-shadow-2xl" />
-                <div className="absolute -top-2 -right-2 text-2xl animate-sparkle-twinkle">✨</div>
+          {/* Logo and Brand */}
+          <Link 
+            to="/" 
+            className="flex items-center space-x-4 hover:scale-105 transition-all duration-300"
+            data-testid="nav-logo"
+          >
+            <div className="flex items-center space-x-3">
+              <img 
+                src={TurianLogo} 
+                alt="The Naturverse™" 
+                className="w-14 h-14 drop-shadow-xl" 
+              />
+              <div>
+                <h1 className="text-2xl md:text-3xl font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  The Naturverse™
+                </h1>
+                <p className="text-xs text-green-600 hidden md:block" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  Where Learning Becomes Adventure!
+                </p>
               </div>
-              <span className="text-3xl md:text-5xl flex-shrink-0">🌿</span>
-              <span className="text-transparent bg-gradient-to-r from-emerald via-forest to-sage bg-clip-text font-bold min-w-0 truncate">The Naturverse™</span>
-            </span>
+            </div>
           </Link>
           
+          {/* Navigation Links */}
           {user ? (
-            <div className="flex items-center space-x-3 overflow-x-auto">
-              <Link to="/map" className="nav-link" data-testid="nav-map">
-                <span className="mr-2 text-lg">🗺️</span>Map
+            <div className="flex items-center space-x-2 md:space-x-4">
+              <Link 
+                to="/map" 
+                className="px-4 py-2 text-lg font-bold text-green-700 hover:text-white hover:bg-green-500 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg border-2 border-green-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+                data-testid="nav-map"
+              >
+                <span className="mr-2">🗺️</span>
+                <span className="hidden sm:inline">Map</span>
               </Link>
-              <Link to="/quests" className="nav-link" data-testid="nav-quests">
-                <span className="mr-2 text-lg">🏆</span>Quests
+              
+              <Link 
+                to="/quests" 
+                className="px-4 py-2 text-lg font-bold text-blue-700 hover:text-white hover:bg-blue-500 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg border-2 border-blue-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+                data-testid="nav-quests"
+              >
+                <span className="mr-2">🏆</span>
+                <span className="hidden sm:inline">Quests</span>
               </Link>
-              <Link to="/profile" className="nav-link" data-testid="nav-profile">
-                <span className="mr-2 text-lg">👤</span>Profile
+              
+              <Link 
+                to="/storybook" 
+                className="px-4 py-2 text-lg font-bold text-purple-700 hover:text-white hover:bg-purple-500 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg border-2 border-purple-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+                data-testid="nav-storybook"
+              >
+                <span className="mr-2">📚</span>
+                <span className="hidden sm:inline">Stories</span>
               </Link>
+              
+              <Link 
+                to="/profile" 
+                className="px-3 py-2 rounded-full border-3 border-green-400 hover:scale-110 transition-all duration-300 shadow-lg"
+                data-testid="nav-profile"
+              >
+                <img 
+                  src={TurianCharacter} 
+                  alt="Profile" 
+                  className="w-10 h-10 rounded-full object-cover"
+                />
+              </Link>
+              
               <Button 
                 onClick={handleSignOut}
-                className="btn-secondary"
+                className="bg-red-500 hover:bg-red-600 text-white font-bold px-4 py-2 rounded-2xl shadow-lg border-2 border-red-300/50 transition-all duration-300 hover:scale-105"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
                 data-testid="button-sign-out"
               >
-                Sign Out
+                <span className="mr-2">🚪</span>
+                <span className="hidden sm:inline">Sign Out</span>
               </Button>
             </div>
           ) : (
             <div className="flex items-center space-x-3">
-              <Link to="/about" className="nav-link" data-testid="nav-about">
-                About
+              <Link 
+                to="/about" 
+                className="px-4 py-2 text-lg font-bold text-blue-700 hover:text-white hover:bg-blue-500 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg border-2 border-blue-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+                data-testid="nav-about"
+              >
+                <span className="mr-2">ℹ️</span>
+                <span className="hidden sm:inline">About</span>
               </Link>
-              <Link to="/signup" className="nav-link" data-testid="nav-signup">
-                Sign Up
+              
+              <Link 
+                to="/signup" 
+                className="px-4 py-2 text-lg font-bold text-orange-700 hover:text-white hover:bg-orange-500 rounded-2xl transition-all duration-300 hover:scale-105 shadow-lg border-2 border-orange-300/50"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+                data-testid="nav-signup"
+              >
+                <span className="mr-2">✨</span>
+                <span className="hidden sm:inline">Join</span>
               </Link>
-              <Button asChild className="btn-primary">
+              
+              <Button 
+                asChild 
+                className="bg-gradient-to-r from-green-500 to-green-600 hover:from-green-600 hover:to-green-700 text-white font-bold px-6 py-3 rounded-2xl shadow-xl border-2 border-green-300/50 transition-all duration-300 hover:scale-105"
+                style={{ fontFamily: 'Fredoka, sans-serif' }}
+              >
                 <Link to="/login" data-testid="nav-login">
                   <span className="mr-2">🚀</span>
-                  Start Exploring
+                  <span className="hidden sm:inline">Start Exploring</span>
+                  <span className="sm:hidden">Login</span>
                 </Link>
               </Button>
             </div>
