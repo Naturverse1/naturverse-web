@@ -916,6 +916,161 @@
     font-weight: 800;
     text-shadow: none;
   }
+
+  /* Storybook Magical Utility Classes */
+  .card-playful {
+    background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, hsl(var(--mint) / 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 3px solid hsl(var(--emerald) / 0.3);
+    border-radius: 2rem;
+    padding: 2rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 0 25px hsl(var(--emerald) / 0.15);
+    color: hsl(var(--foreground));
+  }
+  
+  .card-playful::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: transform 0.6s;
+  }
+  
+  .card-playful:hover::before {
+    transform: translateX(100%);
+  }
+  
+  .card-playful:hover {
+    transform: translateY(-8px) scale(1.02);
+    box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 0 50px hsl(var(--emerald) / 0.3);
+    border-color: hsl(var(--magic) / 0.6);
+    background: linear-gradient(145deg, rgba(255,255,255,0.98) 0%, hsl(var(--sparkle) / 0.3) 100%);
+  }
+
+  .storybook-button {
+    background: linear-gradient(135deg, hsl(var(--emerald)) 0%, hsl(var(--magic)) 50%, hsl(var(--sparkle)) 100%);
+    color: white;
+    border: 2px solid hsl(var(--emerald) / 0.6);
+    border-radius: 2rem;
+    padding: 1rem 2rem;
+    font-weight: 700;
+    font-family: var(--font-display);
+    text-transform: none;
+    letter-spacing: 0.02em;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 30px hsl(var(--emerald) / 0.4);
+    position: relative;
+    overflow: hidden;
+  }
+  
+  .storybook-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+    transition: left 0.5s;
+  }
+  
+  .storybook-button:hover {
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 12px 35px rgba(0,0,0,0.3), 0 0 40px hsl(var(--emerald) / 0.6);
+    background: linear-gradient(135deg, hsl(var(--magic)) 0%, hsl(var(--emerald)) 50%, hsl(var(--sparkle)) 100%);
+    border-color: hsl(var(--sparkle) / 0.8);
+  }
+  
+  .storybook-button:hover::before {
+    left: 100%;
+  }
+
+  .storybook-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    text-shadow: 0 4px 8px rgba(0,0,0,0.2), 0 0 20px hsl(var(--emerald) / 0.3);
+    position: relative;
+    overflow: visible;
+  }
+
+  .text-storybook-glow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3), 0 0 15px hsl(var(--emerald) / 0.5);
+  }
+
+  .text-magic-glow {
+    text-shadow: 0 2px 6px rgba(0,0,0,0.4), 0 0 20px hsl(var(--magic) / 0.6);
+  }
+
+  .text-shadow {
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  .floating-sparkles {
+    position: relative;
+  }
+
+  .floating-sparkles::before,
+  .floating-sparkles::after {
+    content: '✨';
+    position: absolute;
+    color: hsl(var(--sparkle) / 0.7);
+    font-size: 0.5em;
+    animation: sparkle-twinkle 2s ease-in-out infinite;
+    pointer-events: none;
+  }
+
+  .floating-sparkles::before {
+    top: -10px;
+    left: -20px;
+    animation-delay: 0.5s;
+  }
+
+  .floating-sparkles::after {
+    bottom: -10px;
+    right: -20px;
+    animation-delay: 1s;
+  }
+
+  .book-open-effect {
+    animation: book-open 1s ease-out forwards;
+  }
+
+  .character-entrance {
+    animation: character-entrance 1s ease-out forwards;
+  }
+
+  .shadow-magical {
+    box-shadow: 0 12px 40px rgba(0,0,0,0.2), 0 0 30px hsl(var(--magic) / 0.4);
+  }
+
+  .hover-lift:hover {
+    transform: translateY(-8px);
+    transition: transform 0.3s ease;
+  }
+
+  .btn-bounce {
+    animation: btn-bounce 2s ease-in-out infinite;
+  }
+
+  /* Gradient Background Classes */
+  .gradient-warm {
+    background: linear-gradient(135deg, hsl(var(--sunset)) 0%, hsl(var(--coral)) 50%, hsl(var(--amber)) 100%);
+  }
+
+  .gradient-playful {
+    background: linear-gradient(135deg, hsl(var(--magic)) 0%, hsl(var(--sparkle)) 50%, hsl(var(--lavender)) 100%);
+  }
+
+  .gradient-cool {
+    background: linear-gradient(135deg, hsl(var(--ocean)) 0%, hsl(var(--turquoise)) 50%, hsl(var(--sky)) 100%);
+  }
 }
 
 /* Modern Keyframes */
@@ -1087,6 +1242,25 @@
   0% { opacity: 0; transform: translateY(100px) scale(0.3) rotate(-10deg); }
   50% { opacity: 0.8; transform: translateY(-20px) scale(1.1) rotate(5deg); }
   100% { opacity: 1; transform: translateY(0px) scale(1) rotate(0deg); }
+}
+
+@keyframes book-open {
+  0% { opacity: 0; transform: rotateX(-90deg) scale(0.8); }
+  50% { opacity: 0.8; transform: rotateX(-30deg) scale(0.9); }
+  100% { opacity: 1; transform: rotateX(0deg) scale(1); }
+}
+
+@keyframes character-entrance {
+  0% { opacity: 0; transform: translateY(30px) scale(0.9) rotateY(10deg); }
+  50% { opacity: 0.8; transform: translateY(-5px) scale(1.02) rotateY(-2deg); }
+  100% { opacity: 1; transform: translateY(0px) scale(1) rotateY(0deg); }
+}
+
+@keyframes btn-bounce {
+  0%, 100% { transform: translateY(0px) scale(1); }
+  25% { transform: translateY(-4px) scale(1.02); }
+  50% { transform: translateY(-2px) scale(1.01); }
+  75% { transform: translateY(-3px) scale(1.015); }
 }
 
 /* Magical Animation Classes */
