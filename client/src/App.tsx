@@ -1,37 +1,26 @@
-import { Router, Route, Switch } from "wouter";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { AuthProvider } from "./context/AuthContext";
-import Navbar from "./components/Navbar";
-import Home from "./pages/Home";
-import Login from "./pages/Login";
-import Signup from "./pages/Signup";
-import Dashboard from "./pages/Dashboard";
-import Profile from "./pages/Profile";
-import NotFound from "./pages/NotFound";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
 
-const queryClient = new QueryClient();
+const Home: React.FC = () => <h2>Welcome to the Naturverse</h2>;
+const About: React.FC = () => <h2>About the Project</h2>;
+const SignUp: React.FC = () => <h2>Sign Up Page</h2>;
+const Login: React.FC = () => <h2>Login Page</h2>;
 
-const App = () => {
-  return (
-    <AuthProvider>
-      <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Router>
-            <Navbar />
-            <Switch>
-              <Route path="/" component={Home} />
-              <Route path="/login" component={Login} />
-              <Route path="/signup" component={Signup} />
-              <Route path="/dashboard" component={Dashboard} />
-              <Route path="/profile" component={Profile} />
-              <Route component={NotFound} />
-            </Switch>
-          </Router>
-        </TooltipProvider>
-      </QueryClientProvider>
-    </AuthProvider>
-  );
+const App: React.FC = () => {
+return (
+<Router>
+<NavBar />
+<div style={{ padding: '2rem' }}>
+<Routes>
+<Route path="/" element={<Home />} />
+<Route path="/about" element={<About />} />
+<Route path="/signup" element={<SignUp />} />
+<Route path="/login" element={<Login />} />
+</Routes>
+</div>
+</Router>
+);
 };
 
 export default App;
