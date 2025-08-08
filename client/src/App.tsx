@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { AuthProvider, useAuth } from './context/AuthContext';
 import NavBar from './components/NavBar';
+import { TurianAiGuide } from './components/TurianAiGuide';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
@@ -81,6 +82,7 @@ return (
 <Router>
 <div className="min-h-screen bg-background">
 <NavBar />
+<TurianAiGuide />
 <main>
 <Routes>
 {/* Public Routes */}

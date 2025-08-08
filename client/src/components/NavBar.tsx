@@ -25,19 +25,19 @@ const NavBar: React.FC = () => {
     <nav className="nav-modern sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-emerald/20 shadow-xl">
       <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-display text-4xl font-bold text-gradient hover:scale-105 transition-all duration-300 floating-sparkles">
-            <span className="flex items-center gap-3">
-              <div className="relative">
-                <img src={TurianLogo} alt="Turian Media" className="w-20 h-20 animate-gentle-pulse drop-shadow-2xl hover:animate-bounce-playful" />
-                <div className="absolute -top-2 -right-2 text-3xl animate-sparkle-twinkle">✨</div>
-                <div className="absolute -bottom-1 -left-1 text-2xl animate-sparkle-twinkle stagger-1">🌟</div>
+          <Link to="/" className="text-display text-3xl md:text-4xl font-bold text-gradient hover:scale-105 transition-all duration-300 floating-sparkles">
+            <span className="flex items-center gap-2 md:gap-3">
+              <div className="relative flex-shrink-0">
+                <img src={TurianLogo} alt="Turian Media" className="w-16 h-16 md:w-20 md:h-20 animate-gentle-pulse drop-shadow-2xl hover:animate-bounce-playful" />
+                <div className="absolute -top-2 -right-2 text-2xl md:text-3xl animate-sparkle-twinkle">✨</div>
+                <div className="absolute -bottom-1 -left-1 text-xl md:text-2xl animate-sparkle-twinkle stagger-1">🌟</div>
               </div>
-              <span className="text-5xl animate-sparkle-twinkle">🌿</span>
-              <span className="text-transparent bg-gradient-to-r from-emerald via-magic to-forest bg-clip-text font-bold text-magic-glow">Naturverse</span>
-              <div className="flex gap-1 ml-3">
-                <span className="text-2xl animate-sparkle-twinkle">🌟</span>
-                <span className="text-2xl animate-sparkle-twinkle stagger-1">✨</span>
-                <span className="text-xl animate-sparkle-twinkle stagger-2">🦋</span>
+              <span className="text-3xl md:text-5xl animate-sparkle-twinkle flex-shrink-0">🌿</span>
+              <span className="text-transparent bg-gradient-to-r from-emerald via-magic to-forest bg-clip-text font-bold text-magic-glow min-w-0 truncate">Naturverse</span>
+              <div className="hidden sm:flex gap-1 ml-2 md:ml-3 flex-shrink-0">
+                <span className="text-xl md:text-2xl animate-sparkle-twinkle">🌟</span>
+                <span className="text-xl md:text-2xl animate-sparkle-twinkle stagger-1">✨</span>
+                <span className="text-lg md:text-xl animate-sparkle-twinkle stagger-2">🦋</span>
               </div>
             </span>
           </Link>
