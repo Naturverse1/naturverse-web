@@ -67,62 +67,62 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen magic-gradient flex items-center justify-center p-6">
+    <div className="min-h-screen bg-gradient-to-br from-mint via-background to-sage/5 flex items-center justify-center p-6">
       <div className="w-full max-w-md">
-        <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
+        <Card className="modern-card-elevated">
           <CardHeader className="text-center pb-6">
-            <CardTitle className="text-3xl font-fredoka text-forest mb-2">
-              🌟 Welcome Back
+            <CardTitle className="text-2xl font-display text-foreground mb-2">
+              <span className="text-emerald">🌟</span> Welcome Back
             </CardTitle>
-            <CardDescription className="text-forest/80 text-lg">
-              Sign in to continue your magical journey in The Naturverse
+            <CardDescription className="text-muted-foreground text-base">
+              Sign in to continue your journey in Naturverse
             </CardDescription>
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="bg-coral/10 border border-coral/20 text-coral px-4 py-3 rounded-lg mb-4">
+              <div className="bg-destructive/10 border border-destructive/20 text-destructive px-4 py-3 rounded-lg mb-4">
                 {error}
               </div>
             )}
             {resetMessage && (
-              <div className="bg-nature/10 border border-nature/20 text-forest px-4 py-3 rounded-lg mb-4">
+              <div className="bg-emerald/10 border border-emerald/20 text-emerald px-4 py-3 rounded-lg mb-4">
                 {resetMessage}
               </div>
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-forest font-medium">Email</Label>
+                <Label htmlFor="email" className="text-foreground font-medium">Email</Label>
                 <Input
                   id="email"
                   type="email"
                   placeholder="Enter your email"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  className="border-nature/20 focus:border-nature focus:ring-nature/20"
+                  className="focus-ring"
                   required
                   data-testid="input-email"
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-forest font-medium">Password</Label>
+                <Label htmlFor="password" className="text-foreground font-medium">Password</Label>
                 <Input
                   id="password"
                   type="password"
                   placeholder="Enter your password"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  className="border-nature/20 focus:border-nature focus:ring-nature/20"
+                  className="focus-ring"
                   required
                   data-testid="input-password"
                 />
               </div>
               <Button 
                 type="submit" 
-                className="w-full bg-nature hover:bg-forest text-white transition-colors duration-200 py-3" 
+                className="w-full btn-primary py-3" 
                 disabled={loading} 
                 data-testid="button-submit"
               >
-                {loading ? "🌿 Signing In..." : "🚀 Sign In"}
+                {loading ? "Signing In..." : "🚀 Sign In"}
               </Button>
             </form>
             
@@ -132,17 +132,17 @@ export default function Login() {
                 variant="ghost"
                 onClick={handleForgotPassword}
                 disabled={resetLoading}
-                className="text-sm text-magic hover:text-coral transition-colors duration-200"
+                className="text-sm text-muted-foreground hover:text-foreground transition-colors duration-200"
                 data-testid="button-forgot-password"
               >
                 {resetLoading ? "Sending..." : "🔑 Forgot password?"}
               </Button>
               
-              <div className="pt-4 border-t border-nature/10">
-                <p className="text-sm text-forest/70">
+              <div className="pt-4 border-t border-border">
+                <p className="text-sm text-muted-foreground">
                   Don't have an account?{" "}
-                  <Link to="/signup" className="text-magic hover:text-coral font-medium transition-colors duration-200">
-                    🌱 Join The Adventure
+                  <Link to="/signup" className="text-primary hover:text-primary/80 font-medium transition-colors duration-200">
+                    🌱 Join Naturverse
                   </Link>
                 </p>
               </div>
