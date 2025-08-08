@@ -135,11 +135,11 @@ export default function Home() {
             {/* Hero Title with Enhanced Magic */}
             <div className="relative mb-8">
               <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
-                <img src={TurianLogo} alt="Turian Media" className="w-20 h-20 animate-gentle-pulse drop-shadow-2xl opacity-90" />
+                <img src={TurianLogo} alt="Turian Media" className="w-24 h-24 animate-gentle-pulse drop-shadow-2xl opacity-90 hover:scale-110 transition-transform" />
               </div>
-              <h1 className="text-6xl md:text-8xl font-display text-foreground mb-6 animate-hero-entrance" data-testid="text-welcome">
+              <h1 className="text-hero text-display text-foreground mb-6 animate-hero-entrance floating-sparkles" data-testid="text-welcome">
                 <span className="text-7xl animate-sparkle-twinkle inline-block">🌿</span> 
-                <span className="text-gradient drop-shadow-2xl">Welcome to Naturverse</span>
+                <span className="text-gradient drop-shadow-2xl text-magic-glow">Welcome to Naturverse</span>
                 <span className="text-7xl animate-sparkle-twinkle inline-block ml-4">✨</span>
               </h1>
               {/* Enhanced floating sparkles around title */}
@@ -152,11 +152,11 @@ export default function Home() {
             </div>
             
             <div className="relative mb-16">
-              <p className="text-foreground text-2xl md:text-3xl animate-hero-entrance stagger-1 text-balance leading-relaxed font-bold bg-gradient-to-r from-forest via-emerald to-magic bg-clip-text text-transparent">
-                🧚‍♀️ Enter a <span className="text-magic font-black">magical world</span> where nature comes alive! 
-                Join your favorite characters on <span className="text-emerald font-black">epic adventures</span>, 
-                <span className="text-sparkle font-black">learn amazing facts</span>, and become a true 
-                <span className="bg-gradient-to-r from-sunset to-amber bg-clip-text text-transparent font-black">Nature Hero</span>! 🌟
+              <p className="text-sub-hero text-body-relaxed animate-hero-entrance stagger-1 text-balance leading-relaxed font-bold bg-gradient-to-r from-forest via-emerald to-magic bg-clip-text text-transparent">
+                <span className="text-4xl animate-sparkle-twinkle">🧚‍♀️</span> Enter a <span className="text-magic font-black text-magic-glow">magical world</span> where nature comes alive! 
+                Join your favorite characters on <span className="text-emerald font-black text-magic-glow">epic adventures</span>, 
+                <span className="text-sparkle font-black text-magic-glow">learn amazing facts</span>, and become a true 
+                <span className="bg-gradient-to-r from-sunset to-amber bg-clip-text text-transparent font-black text-magic-glow">Nature Hero</span>! <span className="text-4xl animate-sparkle-twinkle">🌟</span>
               </p>
               <div className="absolute -left-8 top-2 animate-character-float">
                 <img src={InkieImg} alt="Inkie" className="w-12 h-12 object-contain drop-shadow-lg opacity-80" />
@@ -168,85 +168,93 @@ export default function Home() {
             
             {/* Enhanced Call to Action */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20 animate-hero-entrance stagger-2">
-              <Button asChild size="lg" className="btn-primary text-xl px-12 py-6 hover-lift animate-magical-pulse">
-                <Link to="/signup" data-testid="button-get-started">
-                  <span className="text-2xl mr-3 animate-sparkle-twinkle">✨</span>
-                  <span className="font-bold">Begin Your Magic Adventure!</span>
-                  <span className="text-2xl ml-3 animate-sparkle-twinkle">🌟</span>
+              <Button asChild size="lg" className="btn-rainbow text-2xl px-16 py-8 hover-lift animate-magical-pulse shadow-2xl btn-bounce">
+                <Link to="/signup" data-testid="button-get-started" className="text-playful">
+                  <span className="text-3xl mr-4 animate-sparkle-twinkle">✨</span>
+                  <span className="font-bold text-shadow">Begin Your Magic Adventure!</span>
+                  <span className="text-3xl ml-4 animate-sparkle-twinkle">🌟</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="btn-outline text-xl px-12 py-6 hover-lift border-2 border-emerald hover:bg-emerald/10">
-                <Link to="/login" data-testid="button-sign-in">
-                  <span className="text-2xl mr-3">🚀</span>
-                  <span className="font-bold">Return to Naturverse</span>
+              <Button asChild variant="outline" size="lg" className="gradient-playful text-white hover:text-white text-2xl px-16 py-8 hover-lift border-2 border-white/30 shadow-xl btn-bounce">
+                <Link to="/login" data-testid="button-sign-in" className="text-playful">
+                  <span className="text-3xl mr-4 animate-sparkle-twinkle">🚀</span>
+                  <span className="font-bold text-shadow">Return to Naturverse</span>
                 </Link>
               </Button>
             </div>
             
             {/* Enhanced Character Showcase Row */}
-            <div className="flex justify-center items-center gap-6 mb-16 animate-hero-entrance stagger-3 flex-wrap">
-              <div className="character-card animate-character-float float-1 text-center p-6 hover:scale-110 transition-all duration-300">
-                <img src={HankImg} alt="Hank" className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg" />
-                <p className="text-sm font-bold text-emerald">Meet Hank!</p>
-                <p className="text-xs text-muted-foreground mt-1">Market Expert</p>
+            <div className="flex justify-center items-center gap-8 mb-16 animate-hero-entrance stagger-3 flex-wrap">
+              <div className="card-playful animate-character-float float-1 text-center p-8 hover:scale-115 transition-all duration-500">
+                <img src={HankImg} alt="Hank" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-emerald/30 rounded-full p-1 bg-gradient-to-br from-emerald/10 to-mint/20" />
+                <p className="text-lg font-bold text-emerald text-playful">Meet Hank!</p>
+                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Market Expert</p>
+                <div className="text-2xl mt-2 animate-sparkle-twinkle">🛒</div>
               </div>
-              <div className="character-card animate-character-float float-2 text-center p-6 hover:scale-110 transition-all duration-300">
-                <img src={LaoCowImg} alt="Lao Cow" className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg" />
-                <p className="text-sm font-bold text-forest">Wise Lao Cow</p>
-                <p className="text-xs text-muted-foreground mt-1">Story Master</p>
+              <div className="card-playful animate-character-float float-2 text-center p-8 hover:scale-115 transition-all duration-500">
+                <img src={LaoCowImg} alt="Lao Cow" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-forest/30 rounded-full p-1 bg-gradient-to-br from-forest/10 to-sage/20" />
+                <p className="text-lg font-bold text-forest text-playful">Wise Lao Cow</p>
+                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Story Master</p>
+                <div className="text-2xl mt-2 animate-sparkle-twinkle">📚</div>
               </div>
-              <div className="character-card animate-character-float float-3 text-center p-6 hover:scale-110 transition-all duration-300">
-                <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg" />
-                <p className="text-sm font-bold text-amber">Pineapple Pa-Pa</p>
-                <p className="text-xs text-muted-foreground mt-1">Knowledge Keeper</p>
+              <div className="card-playful animate-character-float float-3 text-center p-8 hover:scale-115 transition-all duration-500">
+                <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-amber/30 rounded-full p-1 bg-gradient-to-br from-amber/10 to-sunny/20" />
+                <p className="text-lg font-bold text-amber text-playful">Pineapple Pa-Pa</p>
+                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Knowledge Keeper</p>
+                <div className="text-2xl mt-2 animate-sparkle-twinkle">🍍</div>
               </div>
-              <div className="character-card animate-character-float float-1 text-center p-6 hover:scale-110 transition-all duration-300">
-                <img src={TwokayImg} alt="2kay" className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg" />
-                <p className="text-sm font-bold text-magic">2kay</p>
-                <p className="text-xs text-muted-foreground mt-1">Adventure Guide</p>
+              <div className="card-playful animate-character-float float-1 text-center p-8 hover:scale-115 transition-all duration-500">
+                <img src={TwokayImg} alt="2kay" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-magic/30 rounded-full p-1 bg-gradient-to-br from-magic/10 to-sparkle/20" />
+                <p className="text-lg font-bold text-magic text-playful">2kay</p>
+                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Adventure Guide</p>
+                <div className="text-2xl mt-2 animate-sparkle-twinkle">🗺️</div>
               </div>
-              <div className="character-card animate-character-float float-2 text-center p-6 hover:scale-110 transition-all duration-300">
-                <img src={NikkiMTImg} alt="Nikki MT" className="w-20 h-20 mx-auto mb-3 object-contain drop-shadow-lg" />
-                <p className="text-sm font-bold text-ocean">Nikki MT</p>
-                <p className="text-xs text-muted-foreground mt-1">Explorer</p>
+              <div className="card-playful animate-character-float float-2 text-center p-8 hover:scale-115 transition-all duration-500">
+                <img src={NikkiMTImg} alt="Nikki MT" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-ocean/30 rounded-full p-1 bg-gradient-to-br from-ocean/10 to-turquoise/20" />
+                <p className="text-lg font-bold text-ocean text-playful">Nikki MT</p>
+                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Explorer</p>
+                <div className="text-2xl mt-2 animate-sparkle-twinkle">🔍</div>
               </div>
             </div>
           
             {/* Enhanced Magical Feature Grid with Characters */}
-            <div className="grid grid-auto-fit gap-8 animate-hero-entrance stagger-4">
-              <div className="character-card p-10 text-center group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-coral/20 to-sunset/10">
-                <div className="relative mb-6">
-                  <img src={LaoCowImg} alt="Story Master" className="w-16 h-16 mx-auto object-contain animate-character-float drop-shadow-xl" />
-                  <div className="text-4xl absolute -top-2 -right-2 animate-sparkle-twinkle">📚</div>
+            <div className="grid grid-auto-fit gap-10 animate-hero-entrance stagger-4">
+              <div className="card-playful p-12 text-center group hover:scale-110 transition-all duration-500 gradient-warm">
+                <div className="relative mb-8">
+                  <img src={LaoCowImg} alt="Story Master" className="w-20 h-20 mx-auto object-contain animate-character-float drop-shadow-2xl border-4 border-white/30 rounded-full p-2 bg-white/80" />
+                  <div className="text-5xl absolute -top-3 -right-3 animate-sparkle-twinkle">📚</div>
+                  <div className="text-3xl absolute -bottom-2 -left-2 animate-sparkle-twinkle stagger-1">✨</div>
                 </div>
-                <h3 className="text-emerald font-display text-2xl mb-6 font-bold">🌟 Magical Stories</h3>
-                <p className="text-foreground leading-relaxed text-lg font-medium">Join Turian and friends on enchanted adventures through mystical forests, underwater kingdoms, and floating cloud cities!</p>
-                <div className="mt-6 flex items-center justify-center gap-2">
-                  <span className="text-magic animate-sparkle-twinkle font-bold">✨ Read Now ✨</span>
-                </div>
-              </div>
-              
-              <div className="character-card p-10 text-center group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-magic/20 to-sparkle/10">
-                <div className="relative mb-6">
-                  <img src={FrankieFrogsImg} alt="Brain Games" className="w-16 h-16 mx-auto object-contain animate-character-float drop-shadow-xl" />
-                  <div className="text-4xl absolute -top-2 -right-2 animate-sparkle-twinkle stagger-1">🎮</div>
-                </div>
-                <h3 className="text-ocean font-display text-2xl mb-6 font-bold">🏆 Epic Quests</h3>
-                <p className="text-foreground leading-relaxed text-lg font-medium">Complete magical missions, solve nature puzzles, and unlock special powers while learning about our amazing planet!</p>
-                <div className="mt-6 flex items-center justify-center gap-2">
-                  <span className="text-sparkle animate-sparkle-twinkle stagger-1 font-bold">⭐ Play Now ⭐</span>
+                <h3 className="text-white font-display text-3xl mb-8 font-bold text-shadow floating-sparkles">🌟 Magical Stories</h3>
+                <p className="text-white/90 leading-relaxed text-xl font-medium text-body-relaxed text-shadow">Join Turian and friends on enchanted adventures through mystical forests, underwater kingdoms, and floating cloud cities!</p>
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <span className="text-lemon animate-sparkle-twinkle font-bold text-xl text-shadow btn-bounce">✨ Read Now ✨</span>
                 </div>
               </div>
               
-              <div className="character-card p-10 text-center group hover:scale-105 transition-all duration-300 bg-gradient-to-br from-emerald/20 to-forest/10">
-                <div className="relative mb-6">
-                  <img src={TurianDurianImg} alt="Explorer" className="w-16 h-16 mx-auto object-contain animate-character-float drop-shadow-xl" />
-                  <div className="text-4xl absolute -top-2 -right-2 animate-sparkle-twinkle stagger-2">🌍</div>
+              <div className="card-playful p-12 text-center group hover:scale-110 transition-all duration-500 gradient-playful">
+                <div className="relative mb-8">
+                  <img src={FrankieFrogsImg} alt="Brain Games" className="w-20 h-20 mx-auto object-contain animate-character-float drop-shadow-2xl border-4 border-white/30 rounded-full p-2 bg-white/80" />
+                  <div className="text-5xl absolute -top-3 -right-3 animate-sparkle-twinkle stagger-1">🎮</div>
+                  <div className="text-3xl absolute -bottom-2 -left-2 animate-sparkle-twinkle stagger-2">⭐</div>
                 </div>
-                <h3 className="text-forest font-display text-2xl mb-6 font-bold">🗺️ Explore Worlds</h3>
-                <p className="text-foreground leading-relaxed text-lg font-medium">Travel to incredible realms from tropical rainforests to snowy mountains, each filled with hidden treasures and new friends!</p>
-                <div className="mt-6 flex items-center justify-center gap-2">
-                  <span className="text-emerald animate-sparkle-twinkle stagger-2 font-bold">🧭 Explore Now 🧭</span>
+                <h3 className="text-white font-display text-3xl mb-8 font-bold text-shadow floating-sparkles">🏆 Epic Quests</h3>
+                <p className="text-white/90 leading-relaxed text-xl font-medium text-body-relaxed text-shadow">Complete magical missions, solve nature puzzles, and unlock special powers while learning about our amazing planet!</p>
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <span className="text-lime animate-sparkle-twinkle stagger-1 font-bold text-xl text-shadow btn-bounce">⭐ Play Now ⭐</span>
+                </div>
+              </div>
+              
+              <div className="card-playful p-12 text-center group hover:scale-110 transition-all duration-500 gradient-cool">
+                <div className="relative mb-8">
+                  <img src={TurianDurianImg} alt="Explorer" className="w-20 h-20 mx-auto object-contain animate-character-float drop-shadow-2xl border-4 border-white/30 rounded-full p-2 bg-white/80" />
+                  <div className="text-5xl absolute -top-3 -right-3 animate-sparkle-twinkle stagger-2">🌍</div>
+                  <div className="text-3xl absolute -bottom-2 -left-2 animate-sparkle-twinkle stagger-3">🧭</div>
+                </div>
+                <h3 className="text-white font-display text-3xl mb-8 font-bold text-shadow floating-sparkles">🗺️ Explore Worlds</h3>
+                <p className="text-white/90 leading-relaxed text-xl font-medium text-body-relaxed text-shadow">Travel to incredible realms from tropical rainforests to snowy mountains, each filled with hidden treasures and new friends!</p>
+                <div className="mt-8 flex items-center justify-center gap-2">
+                  <span className="text-cherry animate-sparkle-twinkle stagger-2 font-bold text-xl text-shadow btn-bounce">🧭 Explore Now 🧭</span>
                 </div>
               </div>
             </div>
