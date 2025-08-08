@@ -94,25 +94,23 @@ export default function Login() {
         }}
       />
       
-      {/* Subtle overlay for better text readability */}
+      {/* Warm storybook overlay */}
       <div className="absolute inset-0" style={{
         background: `linear-gradient(135deg, 
-          rgba(0,0,0,0.1) 0%, 
-          rgba(255,255,255,0.1) 50%, 
-          rgba(0,0,0,0.1) 100%
+          rgba(255,248,220,0.6) 0%, 
+          rgba(255,255,255,0.4) 30%, 
+          rgba(245,245,220,0.5) 70%, 
+          rgba(255,240,230,0.6) 100%
         )`
       }} />
       
-      {/* Floating Magical Elements */}
+      {/* Gentle Floating Nature Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="text-6xl absolute top-10 left-20 animate-float-bounce opacity-60">🍎</div>
-        <div className="text-5xl absolute top-32 right-16 animate-sparkle-twinkle opacity-70" style={{animationDelay: '0.5s'}}>✨</div>
-        <div className="text-4xl absolute bottom-20 left-32 animate-float-bounce opacity-60" style={{animationDelay: '1s'}}>🍊</div>
-        <div className="text-6xl absolute top-20 right-40 animate-gentle-pulse opacity-50" style={{animationDelay: '1.5s'}}>☁️</div>
-        <div className="text-5xl absolute bottom-32 right-20 animate-sparkle-twinkle opacity-60" style={{animationDelay: '2s'}}>🌟</div>
-        <div className="text-4xl absolute top-1/2 left-10 animate-float-bounce opacity-70" style={{animationDelay: '2.5s'}}>🍇</div>
-        <div className="text-3xl absolute bottom-10 left-1/2 animate-gentle-pulse opacity-60" style={{animationDelay: '3s'}}>💫</div>
-        <div className="text-5xl absolute top-40 left-1/2 animate-sparkle-twinkle opacity-50" style={{animationDelay: '0.8s'}}>🦋</div>
+        <div className="text-4xl absolute top-20 left-20 animate-float-bounce opacity-40" style={{animationDelay: '0s'}}>🍃</div>
+        <div className="text-3xl absolute top-40 right-20 animate-gentle-pulse opacity-50" style={{animationDelay: '1s'}}>🌿</div>
+        <div className="text-4xl absolute bottom-32 left-16 animate-float-bounce opacity-40" style={{animationDelay: '2s'}}>🌱</div>
+        <div className="text-3xl absolute top-1/3 right-1/3 animate-gentle-pulse opacity-30" style={{animationDelay: '3s'}}>🦋</div>
+        <div className="text-4xl absolute bottom-20 right-32 animate-float-bounce opacity-40" style={{animationDelay: '4s'}}>🍃</div>
       </div>
 
       {/* Naturverse Logo in Top Corner */}
@@ -149,9 +147,9 @@ export default function Login() {
               radial-gradient(circle at 80% 80%, rgba(255,215,0,0.2) 0%, transparent 50%)
             `
           }}>
-            {/* Orbiting sparkles around the card */}
-            <div className="absolute -top-3 -right-3 text-3xl animate-sparkle-orbit">✨</div>
-            <div className="absolute -bottom-3 -left-3 text-3xl animate-sparkle-orbit-reverse">🌟</div>
+            {/* Gentle decorative elements */}
+            <div className="absolute -top-2 -right-2 text-2xl animate-gentle-pulse opacity-60" style={{animationDelay: '1s'}}>🌸</div>
+            <div className="absolute -bottom-2 -left-2 text-2xl animate-gentle-pulse opacity-60" style={{animationDelay: '2s'}}>🌿</div>
             
             <CardHeader className="text-center pb-6" style={{ paddingTop: '2rem' }}>
               <CardTitle className="text-4xl font-bold mb-4" style={{
@@ -171,37 +169,28 @@ export default function Login() {
                 color: '#2F5233',
                 fontWeight: '500'
               }}>
-                <span className="text-2xl mr-2">🥭</span>
-                "Log in with your secret durian power to begin your adventure!"
+                "Login and let Turian guide you on your adventure!"
               </CardDescription>
             </CardHeader>
 
             <CardContent className="space-y-6" style={{ padding: '0 2rem 2rem' }}>
-              {/* Google Magic Orb Button */}
+              {/* Google Button - Friendly Fruit Style */}
               <Button
                 onClick={handleGoogleSignIn}
-                className="w-full text-xl py-8 font-bold shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-110 transform hover:-translate-y-1"
+                className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                 style={{
-                  background: `
-                    radial-gradient(circle at 30% 30%, 
-                      rgba(255,255,255,0.9) 0%, 
-                      rgba(66,133,244,1) 30%, 
-                      rgba(52,168,83,1) 70%, 
-                      rgba(25,103,210,1) 100%
-                    )
-                  `,
+                  background: 'linear-gradient(135deg, #4285F4 0%, #34A853 50%, #FBBC05 100%)',
                   color: 'white',
                   borderRadius: '2rem',
                   fontFamily: 'Fredoka, cursive',
-                  border: '3px solid rgba(255,255,255,0.6)',
-                  textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                  boxShadow: '0 15px 35px rgba(66,133,244,0.4), 0 0 25px rgba(255,255,255,0.5), inset 0 2px 0 rgba(255,255,255,0.3)'
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
                 }}
                 data-testid="button-google-signin"
               >
-                <span className="text-3xl mr-3 animate-sparkle-twinkle">✨</span>
-                Continue with Google Magic
-                <span className="text-3xl ml-3 animate-sparkle-twinkle">✨</span>
+                <span className="text-xl mr-3">🌸</span>
+                Continue with Google
+                <span className="text-xl ml-3">🌸</span>
               </Button>
 
               {/* Divider */}
@@ -302,35 +291,27 @@ export default function Login() {
                 <Button
                   type="submit"
                   disabled={loading}
-                  className="w-full text-xl py-8 font-bold shadow-xl hover:shadow-2xl transition-all duration-500 hover:scale-110 transform hover:-translate-y-1"
+                  className="w-full text-lg py-6 font-bold shadow-lg hover:shadow-xl transition-all duration-300 hover:scale-105"
                   style={{
-                    background: `
-                      radial-gradient(circle at 30% 30%, 
-                        rgba(255,255,255,0.9) 0%, 
-                        rgba(34,197,94,1) 30%, 
-                        rgba(22,163,74,1) 70%, 
-                        rgba(15,118,110,1) 100%
-                      )
-                    `,
+                    background: 'linear-gradient(135deg, #22C55E 0%, #16A34A 100%)',
                     color: 'white',
                     borderRadius: '2rem',
                     fontFamily: 'Fredoka, cursive',
-                    border: '3px solid rgba(255,255,255,0.6)',
-                    textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                    boxShadow: '0 15px 35px rgba(34,197,94,0.4), 0 0 25px rgba(255,255,255,0.5), inset 0 2px 0 rgba(255,255,255,0.3)'
+                    border: '2px solid rgba(255,255,255,0.3)',
+                    textShadow: '1px 1px 2px rgba(0,0,0,0.2)'
                   }}
                   data-testid="button-submit"
                 >
                   {loading ? (
                     <>
-                      <span className="mr-3 animate-spin">🌀</span>
-                      Entering the magical realm...
+                      <span className="mr-3 animate-spin">🔄</span>
+                      Loading your adventure...
                     </>
                   ) : (
                     <>
-                      <span className="text-3xl mr-3 animate-gentle-pulse">🥭</span>
+                      <span className="text-xl mr-3">🌿</span>
                       Continue with Email
-                      <span className="text-3xl ml-3 animate-gentle-pulse">🥭</span>
+                      <span className="text-xl ml-3">🌿</span>
                     </>
                   )}
                 </Button>
@@ -379,34 +360,34 @@ export default function Login() {
         </div>
       </div>
 
-      {/* Turian's Greeting Balloon - Bottom Right */}
+      {/* Turian's Friendly Greeting - Bottom Right */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative animate-float-bounce">
-          {/* Speech Bubble */}
-          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-2xl border-3 border-yellow-300 max-w-xs relative" style={{
-            background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(255,248,220,0.95) 100%)',
-            boxShadow: '0 20px 40px rgba(0,0,0,0.15), 0 0 30px rgba(255,215,0,0.3)'
+          {/* Friendly Speech Bubble */}
+          <div className="bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-lg border-2 border-green-300 max-w-xs relative" style={{
+            background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,255,240,0.95) 100%)',
+            boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
           }}>
             <div className="text-center">
-              <div className="text-4xl mb-2 animate-gentle-pulse">🧙‍♂️</div>
+              <div className="text-4xl mb-2 animate-gentle-pulse">🥭</div>
               <div className="text-sm font-bold mb-1" style={{
                 fontFamily: 'Fredoka, sans-serif',
                 color: '#2F5233'
               }}>
-                Turian says:
+                I'm Turian!
               </div>
               <div className="text-xs" style={{
                 fontFamily: 'Fredoka, sans-serif',
                 color: '#2F5233',
                 lineHeight: '1.3'
               }}>
-                "Welcome, brave explorer! Your magical journey awaits!"
+                "Let's explore The Naturverse together!"
               </div>
             </div>
             
             {/* Speech bubble pointer */}
             <div className="absolute bottom-0 left-1/2 transform -translate-x-1/2 translate-y-full">
-              <div className="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[15px] border-l-transparent border-r-transparent border-t-yellow-300"></div>
+              <div className="w-0 h-0 border-l-[15px] border-r-[15px] border-t-[15px] border-l-transparent border-r-transparent border-t-green-300"></div>
               <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
             </div>
           </div>
