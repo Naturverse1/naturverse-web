@@ -1,456 +1,498 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
-import { Badge } from "@/components/ui/badge";
-import { supabase } from "../lib/supabaseClient";
-import { useAuth } from "../context/AuthContext";
 
-interface Quiz {
-  id: string;
-  title: string;
-  description: string;
-  difficulty: "easy" | "medium" | "hard";
-  questions: QuizQuestion[];
-  category: string;
-}
+// Official Naturverse™ Character Assets
+import TurianLogo from "@assets/turian_media_logo_transparent.png";
+import TurianCharacter from "@assets/Turian_1754677394027.jpg";
+import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
+import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
+import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
+import JaySing from "@assets/Jay-Sing_1754677394023.png";
+import MangoMike from "@assets/Mango Mike_1754677394025.png";
+import DrP from "@assets/Dr P_1754677394022.png";
 
-interface QuizQuestion {
-  id: string;
-  question: string;
-  options: string[];
-  correctAnswer: number;
-}
-
-interface UserQuizAttempt {
-  id: string;
-  quiz_id: string;
-  score: number;
-  completed_at: string;
-}
+// Background Assets
+import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
+import ShroomForest from "@assets/Shroom forest_1754673794866.jpg";
 
 export default function Quiz() {
-  const { user } = useAuth();
-  const [quizzes, setQuizzes] = useState<Quiz[]>([]);
-  const [selectedQuiz, setSelectedQuiz] = useState<Quiz | null>(null);
+  const [currentQuiz, setCurrentQuiz] = useState<string | null>(null);
   const [currentQuestion, setCurrentQuestion] = useState(0);
   const [selectedAnswer, setSelectedAnswer] = useState<number | null>(null);
   const [score, setScore] = useState(0);
-  const [showResult, setShowResult] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const [isQuizMode, setIsQuizMode] = useState(false);
-  const [error, setError] = useState("");
+  const [showResults, setShowResults] = useState(false);
 
-  useEffect(() => {
-    loadQuizzes();
-  }, []);
-
-  const loadQuizzes = async () => {
-    if (!user) {
-      setLoading(false);
-      return;
-    }
-    
-    try {
-      setError("");
-      
-      // Load quizzes from Supabase
-      const { data: quizzesData, error: quizzesError } = await supabase
-        .from('quizzes')
-        .select('*')
-        .order('created_at', { ascending: true });
-        
-      if (quizzesError) {
-        throw quizzesError;
-      }
-      
-      // Transform and use Supabase data if available, otherwise use mock data
-      if (quizzesData && quizzesData.length > 0) {
-        const transformedQuizzes: Quiz[] = quizzesData.map(quiz => ({
-          id: quiz.id,
-          title: quiz.title,
-          description: quiz.description,
-          difficulty: quiz.difficulty || "easy",
-          category: quiz.category || "general",
-          questions: quiz.questions || []
-        }));
-        setQuizzes(transformedQuizzes);
-      } else {
-        // Use mock data as fallback
-        const mockQuizzes: Quiz[] = [
-          {
-            id: "1",
-            title: "🌿 Plant Kingdom Basics",
-            description: "Test your knowledge of plants and their amazing features!",
-            difficulty: "easy",
-            category: "botany",
-            questions: [
-              {
-                id: "q1",
-                question: "What do plants need to make their own food?",
-                options: ["Sunlight, water, and carbon dioxide", "Only water", "Only sunlight", "Soil and rocks"],
-                correctAnswer: 0
-              },
-              {
-                id: "q2",
-                question: "Which part of the plant absorbs water from the soil?",
-                options: ["Leaves", "Flowers", "Roots", "Stem"],
-                correctAnswer: 2
-              }
-            ]
-          },
-          {
-            id: "2",
-            title: "🦋 Amazing Insects",
-            description: "Discover fascinating facts about the world of insects!",
-            difficulty: "medium",
-            category: "entomology",
-            questions: [
-              {
-                id: "q3",
-                question: "How many legs do insects have?",
-                options: ["4", "6", "8", "10"],
-                correctAnswer: 1
-              },
-              {
-                id: "q4",
-                question: "What is the process called when a caterpillar becomes a butterfly?",
-                options: ["Evolution", "Metamorphosis", "Transformation", "Migration"],
-                correctAnswer: 1
-              }
-            ]
-          }
-        ];
-        
-        setQuizzes(mockQuizzes);
-      }
-      
-    } catch (err: any) {
-      setError(err.message || "Failed to load quizzes");
-      console.error('Error loading quizzes:', err);
-      
-      // Fallback to mock data
-      const mockQuizzes: Quiz[] = [
+  const quizzes = [
+    {
+      id: 'tropical-fruits',
+      title: 'Tropical Fruit Adventure',
+      character: MangoMike,
+      characterName: 'Mango Mike',
+      description: 'Test your knowledge about delicious tropical fruits with Mango Mike!',
+      difficulty: 'Beginner',
+      totalQuestions: 5,
+      emoji: '🥭',
+      color: 'from-orange-400 to-red-600',
+      questions: [
         {
-          id: "1",
-          title: "🌿 Plant Kingdom Basics",
-          description: "Test your knowledge of plants and their amazing features!",
-          difficulty: "easy",
-          category: "botany",
-          questions: [
-            {
-              id: "q1",
-              question: "What do plants need to make their own food?",
-              options: ["Sunlight, water, and carbon dioxide", "Only water", "Only sunlight", "Soil and rocks"],
-              correctAnswer: 0
-            },
-            {
-              id: "q2",
-              question: "Which part of the plant absorbs water from the soil?",
-              options: ["Leaves", "Flowers", "Roots", "Stem"],
-              correctAnswer: 2
-            }
-          ]
-        },
-        {
-          id: "2",
-          title: "🦋 Amazing Insects",
-          description: "Discover fascinating facts about the world of insects!",
-          difficulty: "medium",
-          category: "entomology",
-          questions: [
-            {
-              id: "q3",
-              question: "How many legs do insects have?",
-              options: ["4", "6", "8", "10"],
-              correctAnswer: 1
-            },
-            {
-              id: "q4",
-              question: "What is the process called when a caterpillar becomes a butterfly?",
-              options: ["Evolution", "Metamorphosis", "Transformation", "Migration"],
-              correctAnswer: 1
-            }
-          ]
+          question: "Which tropical fruit is known as the 'King of Fruits'?",
+          options: ["Mango", "Durian", "Pineapple", "Papaya"],
+          correct: 1,
+          explanation: "Durian is called the 'King of Fruits' because of its large size and strong aroma!"
         }
-      ];
-      
-      setQuizzes(mockQuizzes);
-    } finally {
-      setLoading(false);
+      ]
+    },
+    {
+      id: 'ocean-creatures',
+      title: 'Ocean Exploration Quiz',
+      character: CoconutCruze,
+      characterName: 'Coconut Cruze',
+      description: 'Dive deep with Coconut Cruze and discover amazing ocean creatures!',
+      difficulty: 'Intermediate',
+      totalQuestions: 5,
+      emoji: '🌊',
+      color: 'from-blue-400 to-cyan-600',
+      questions: [
+        {
+          question: "Which ocean animal can change colors?",
+          options: ["Shark", "Octopus", "Whale", "Dolphin"],
+          correct: 1,
+          explanation: "Octopuses can change their color and texture to camouflage with their surroundings!"
+        }
+      ]
+    },
+    {
+      id: 'forest-friends',
+      title: 'Forest Friends Challenge',
+      character: FrankieFrogs,
+      characterName: 'Frankie Frogs',
+      description: 'Hop along with Frankie and learn about amazing forest animals!',
+      difficulty: 'Beginner',
+      totalQuestions: 5,
+      emoji: '🐸',
+      color: 'from-green-400 to-emerald-600',
+      questions: [
+        {
+          question: "What do frogs use to breathe underwater?",
+          options: ["Lungs", "Gills", "Their skin", "Special tubes"],
+          correct: 2,
+          explanation: "Frogs can breathe through their skin when underwater! This is called cutaneous respiration."
+        }
+      ]
+    },
+    {
+      id: 'butterfly-magic',
+      title: 'Butterfly Transformation',
+      character: BluButterfly,
+      characterName: 'Blu Butterfly',
+      description: 'Learn about the magical process of metamorphosis with Blu Butterfly!',
+      difficulty: 'Intermediate',
+      totalQuestions: 4,
+      emoji: '🦋',
+      color: 'from-purple-400 to-pink-600',
+      questions: [
+        {
+          question: "What is the correct order of butterfly metamorphosis?",
+          options: [
+            "Egg → Butterfly → Caterpillar → Chrysalis",
+            "Egg → Caterpillar → Chrysalis → Butterfly",
+            "Caterpillar → Egg → Butterfly → Chrysalis",
+            "Chrysalis → Egg → Caterpillar → Butterfly"
+          ],
+          correct: 1,
+          explanation: "The beautiful process goes: Egg → Caterpillar → Chrysalis → Butterfly!"
+        }
+      ]
+    },
+    {
+      id: 'nature-sounds',
+      title: 'Nature\'s Musical Symphony',
+      character: JaySing,
+      characterName: 'Jay-Sing',
+      description: 'Discover the beautiful sounds of nature with Jay-Sing!',
+      difficulty: 'Beginner',
+      totalQuestions: 4,
+      emoji: '🎵',
+      color: 'from-yellow-400 to-orange-600',
+      questions: [
+        {
+          question: "Why do birds sing in the morning?",
+          options: [
+            "They're just happy",
+            "To find food",
+            "To communicate with other birds",
+            "Because they can't sleep"
+          ],
+          correct: 2,
+          explanation: "Birds sing to communicate with their family and friends, and to mark their territory!"
+        }
+      ]
+    },
+    {
+      id: 'plant-power',
+      title: 'Amazing Plant Powers',
+      character: DrP,
+      characterName: 'Dr P',
+      description: 'Explore the incredible world of plants with Dr P!',
+      difficulty: 'Advanced',
+      totalQuestions: 6,
+      emoji: '🌱',
+      color: 'from-green-400 to-teal-600',
+      questions: [
+        {
+          question: "What process do plants use to make their own food?",
+          options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
+          correct: 1,
+          explanation: "Photosynthesis is how plants use sunlight, water, and carbon dioxide to make their food!"
+        }
+      ]
+    }
+  ];
+
+  const getDifficultyColor = (difficulty: string) => {
+    switch (difficulty) {
+      case 'Beginner': return 'bg-green-100 text-green-800 border-green-300';
+      case 'Intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'Advanced': return 'bg-red-100 text-red-800 border-red-300';
+      default: return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
-  const startQuiz = (quiz: Quiz) => {
-    setSelectedQuiz(quiz);
+  const startQuiz = (quizId: string) => {
+    setCurrentQuiz(quizId);
     setCurrentQuestion(0);
-    setScore(0);
     setSelectedAnswer(null);
-    setShowResult(false);
-    setIsQuizMode(true);
+    setScore(0);
+    setShowResults(false);
   };
 
-  const handleAnswerSelect = (answerIndex: number) => {
+  const selectAnswer = (answerIndex: number) => {
     setSelectedAnswer(answerIndex);
   };
 
-  const handleNextQuestion = async () => {
-    if (selectedAnswer === null || !selectedQuiz) return;
+  const nextQuestion = () => {
+    const quiz = quizzes.find(q => q.id === currentQuiz);
+    if (!quiz) return;
 
-    if (selectedAnswer === selectedQuiz.questions[currentQuestion].correctAnswer) {
+    if (selectedAnswer === quiz.questions[currentQuestion].correct) {
       setScore(score + 1);
     }
 
-    if (currentQuestion + 1 < selectedQuiz.questions.length) {
+    if (currentQuestion < quiz.totalQuestions - 1) {
       setCurrentQuestion(currentQuestion + 1);
       setSelectedAnswer(null);
     } else {
-      setShowResult(true);
-      
-      // Save attempt to Supabase user_quiz_attempts table
-      if (user && selectedQuiz) {
-        try {
-          const { error: attemptError } = await supabase
-            .from('user_quiz_attempts')
-            .insert({
-              user_id: user.id,
-              quiz_id: selectedQuiz.id,
-              score: Math.round((score / selectedQuiz.questions.length) * 100),
-              completed_at: new Date().toISOString()
-            });
-            
-          if (attemptError) {
-            console.warn('Could not save quiz attempt:', attemptError);
-          }
-        } catch (err) {
-          console.warn('Error saving quiz attempt:', err);
-        }
-      }
+      setShowResults(true);
     }
   };
 
   const resetQuiz = () => {
-    setIsQuizMode(false);
-    setSelectedQuiz(null);
-    setShowResult(false);
+    setCurrentQuiz(null);
+    setCurrentQuestion(0);
+    setSelectedAnswer(null);
+    setScore(0);
+    setShowResults(false);
   };
 
-  const getDifficultyColor = (difficulty: string) => {
-    switch (difficulty) {
-      case "easy": return "bg-nature text-white";
-      case "medium": return "bg-sunny text-black";
-      case "hard": return "bg-coral text-white";
-      default: return "bg-gray-500 text-white";
-    }
-  };
+  const currentQuizData = quizzes.find(q => q.id === currentQuiz);
+  const currentQuestionData = currentQuizData?.questions[currentQuestion];
 
-  if (loading) {
-    return (
-      <div className="min-h-screen magic-gradient py-12 flex items-center justify-center relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-element absolute top-20 left-10 text-4xl animate-sparkle">✨</div>
-          <div className="floating-element absolute bottom-20 right-10 text-4xl animate-sparkle">🧠</div>
-          <div className="floating-element absolute top-40 right-20 text-3xl animate-sparkle">📚</div>
-        </div>
-        <div className="text-center relative z-10">
-          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto mb-6 magical-shadow"></div>
-          <p className="text-white text-xl font-fredoka animate-bounce-gentle">🔍 Finding Amazing Quizzes! 🔍</p>
-        </div>
-      </div>
-    );
-  }
-
-  if (showResult && selectedQuiz) {
-    const percentage = Math.round((score / selectedQuiz.questions.length) * 100);
-    return (
-      <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-element absolute top-20 left-10 text-4xl animate-sparkle">🎉</div>
-          <div className="floating-element absolute top-32 right-20 text-3xl animate-sparkle">⭐</div>
-          <div className="floating-element absolute bottom-32 left-20 text-5xl animate-sparkle">🏆</div>
-          <div className="floating-element absolute bottom-20 right-10 text-4xl animate-sparkle">✨</div>
-        </div>
-        <div className="container mx-auto px-6 max-w-2xl relative z-10">
-          <Card className="kid-friendly-card magical-shadow-lg animate-bounce-in">
-            <CardHeader className="text-center">
-              <CardTitle className="text-4xl font-fredoka text-gradient-rainbow animate-bounce-gentle">
-                🎉 Amazing Work! 🎉
-              </CardTitle>
-            </CardHeader>
-            <CardContent className="text-center">
-              <div className="text-8xl mb-6 animate-bounce-gentle">
-                {percentage >= 90 ? "🏆" : percentage >= 70 ? "⭐" : "👍"}
-              </div>
-              <div className="text-3xl font-fredoka text-magic mb-3">
-                Your Score: {score} / {selectedQuiz.questions.length}
-              </div>
-              <div className="text-2xl text-coral mb-6 font-bold">
-                {percentage}% Correct!
-              </div>
-              <div className="mb-6">
-                {percentage >= 90 ? (
-                  <p className="text-lg text-forest font-fredoka">🌟 Outstanding! You're a nature expert! 🌟</p>
-                ) : percentage >= 70 ? (
-                  <p className="text-lg text-forest font-fredoka">⭐ Great job! You know so much about nature! ⭐</p>
-                ) : (
-                  <p className="text-lg text-forest font-fredoka">👍 Good try! Keep learning and you'll get even better! 👍</p>
-                )}
-              </div>
-              <div className="space-y-4">
-                <Button 
-                  onClick={() => startQuiz(selectedQuiz)}
-                  className="kid-friendly-button mr-4 animate-bounce-gentle"
-                  data-testid="button-retry"
-                >
-                  🔄 Try Again! 🔄
-                </Button>
-                <Button 
-                  onClick={resetQuiz}
-                  className="kid-friendly-button bg-turquoise hover:bg-teal-500 animate-bounce-gentle"
-                  data-testid="button-back-to-quizzes"
-                >
-                  📚 More Quizzes! 📚
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-      </div>
-    );
-  }
-
-  if (isQuizMode && selectedQuiz) {
-    const currentQ = selectedQuiz.questions[currentQuestion];
-    const progress = ((currentQuestion + 1) / selectedQuiz.questions.length) * 100;
-
-    return (
-      <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
-        <div className="absolute inset-0 pointer-events-none">
-          <div className="floating-element absolute top-20 left-10 text-3xl animate-sparkle">🤔</div>
-          <div className="floating-element absolute bottom-20 right-10 text-3xl animate-sparkle">💡</div>
-          <div className="floating-element absolute top-40 right-20 text-4xl animate-sparkle">🧠</div>
-        </div>
-        <div className="container mx-auto px-6 max-w-2xl relative z-10">
-          <Card className="kid-friendly-card magical-shadow-lg">
-            <CardHeader>
-              <div className="flex justify-between items-center mb-4">
-                <CardTitle className="text-2xl font-fredoka text-magic">
-                  {selectedQuiz.title}
+  if (currentQuiz && currentQuizData) {
+    if (showResults) {
+      return (
+        <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-green-100 via-blue-100 to-purple-100">
+          <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
+            <Card className="quest-card w-full max-w-2xl animate-character-entrance">
+              <CardHeader className="text-center pb-6">
+                <div className="flex justify-center mb-4">
+                  <img 
+                    src={currentQuizData.character}
+                    alt={currentQuizData.characterName}
+                    className="w-24 h-24 rounded-full border-4 border-green-400 shadow-xl animate-gentle-pulse"
+                  />
+                </div>
+                
+                <CardTitle className="text-3xl font-magical text-green-700">
+                  🎉 Quiz Complete! 🎉
                 </CardTitle>
-                <Button 
-                  onClick={resetQuiz}
-                  className="kid-friendly-button bg-coral hover:bg-red-500 text-sm px-4 py-2"
-                  data-testid="button-exit-quiz"
-                >
-                  ❌ Exit
-                </Button>
-              </div>
-              <div className="space-y-3">
-                <div className="flex justify-between text-lg text-forest font-fredoka">
-                  <span>Question {currentQuestion + 1} of {selectedQuiz.questions.length}</span>
-                  <span>Score: {score} ⭐</span>
+              </CardHeader>
+
+              <CardContent className="text-center space-y-6">
+                <div className="bg-gradient-to-br from-yellow-50 to-green-50 p-8 rounded-2xl border-4 border-yellow-200/60">
+                  <div className="text-6xl mb-4">
+                    {score === currentQuizData.totalQuestions ? '🌟' : score >= currentQuizData.totalQuestions * 0.7 ? '🎯' : '📚'}
+                  </div>
+                  
+                  <h3 className="text-2xl font-magical text-green-700 mb-4">
+                    Your Score: {score} / {currentQuizData.totalQuestions}
+                  </h3>
+                  
+                  <p className="text-lg font-story text-green-600">
+                    {score === currentQuizData.totalQuestions 
+                      ? "Perfect! You're a nature expert!" 
+                      : score >= currentQuizData.totalQuestions * 0.7 
+                        ? "Great job! You know a lot about nature!"
+                        : "Good try! Keep learning and you'll become a nature expert!"}
+                  </p>
                 </div>
-                <Progress value={progress} className="h-4 magical-shadow" />
-              </div>
-            </CardHeader>
-            <CardContent>
-              <div className="mb-8">
-                <h3 className="text-xl font-fredoka text-forest mb-6 animate-fade-in">
-                  {currentQ.question}
-                </h3>
-                <div className="space-y-4">
-                  {currentQ.options.map((option, index) => (
-                    <button
-                      key={index}
-                      onClick={() => handleAnswerSelect(index)}
-                      className={`w-full p-5 text-left rounded-2xl border-3 transition-all duration-300 font-medium magical-shadow hover:scale-105 ${
-                        selectedAnswer === index
-                          ? 'border-magic bg-magic/20 text-forest sparkle-hover'
-                          : 'border-gray-200 hover:border-nature text-forest/90 hover:bg-nature/10'
-                      }`}
-                      data-testid={`button-answer-${index}`}
-                    >
-                      <span className="mr-3 text-xl">{String.fromCharCode(65 + index)}</span>
-                      {option}
-                    </button>
-                  ))}
+
+                <div className="flex justify-center space-x-4">
+                  <Button 
+                    onClick={resetQuiz}
+                    className="btn-nature text-lg font-bold"
+                    data-testid="back-to-quizzes"
+                  >
+                    <span className="mr-2">🏠</span>
+                    Back to Quizzes
+                  </Button>
+                  
+                  <Button 
+                    onClick={() => startQuiz(currentQuiz)}
+                    className="btn-tropical text-lg font-bold"
+                    data-testid="retake-quiz"
+                  >
+                    <span className="mr-2">🔄</span>
+                    Try Again
+                  </Button>
                 </div>
+              </CardContent>
+            </Card>
+          </div>
+        </div>
+      );
+    }
+
+    return (
+      <div className="min-h-screen relative overflow-hidden bg-gradient-to-br from-blue-100 via-purple-100 to-green-100">
+        <div className="relative z-10 min-h-screen p-6">
+          <div className="max-w-4xl mx-auto">
+            {/* Quiz Header */}
+            <div className="text-center mb-8">
+              <div className="flex justify-center mb-4">
+                <img 
+                  src={currentQuizData.character}
+                  alt={currentQuizData.characterName}
+                  className="w-20 h-20 rounded-full border-4 border-blue-400 shadow-xl animate-gentle-pulse"
+                />
               </div>
-              <Button
-                onClick={handleNextQuestion}
+              
+              <h1 className="text-3xl font-magical text-blue-700 mb-2">
+                {currentQuizData.title}
+              </h1>
+              
+              <div className="flex justify-center items-center space-x-4 mb-4">
+                <Progress 
+                  value={((currentQuestion + 1) / currentQuizData.totalQuestions) * 100} 
+                  className="w-64"
+                />
+                <span className="text-blue-600 font-bold">
+                  {currentQuestion + 1} / {currentQuizData.totalQuestions}
+                </span>
+              </div>
+            </div>
+
+            {/* Question Card */}
+            <Card className="quiz-card mb-8">
+              <CardHeader>
+                <CardTitle className="text-2xl font-magical text-center text-gray-700">
+                  {currentQuestionData?.question}
+                </CardTitle>
+              </CardHeader>
+
+              <CardContent className="space-y-4">
+                {currentQuestionData?.options.map((option, index) => (
+                  <div 
+                    key={index}
+                    className={`quiz-option ${selectedAnswer === index ? 'selected' : ''}`}
+                    onClick={() => selectAnswer(index)}
+                    data-testid={`quiz-option-${index}`}
+                  >
+                    <div className="flex items-center space-x-3">
+                      <div className="w-8 h-8 rounded-full bg-blue-500 text-white font-bold flex items-center justify-center">
+                        {String.fromCharCode(65 + index)}
+                      </div>
+                      <span className="text-lg font-playful">{option}</span>
+                    </div>
+                  </div>
+                ))}
+              </CardContent>
+            </Card>
+
+            {/* Next Button */}
+            <div className="text-center">
+              <Button 
+                onClick={nextQuestion}
                 disabled={selectedAnswer === null}
-                className="w-full kid-friendly-button text-xl py-6 animate-bounce-gentle"
-                data-testid="button-next-question"
+                className="btn-magical text-xl py-4 px-8"
+                data-testid="next-question"
               >
-                {currentQuestion + 1 === selectedQuiz.questions.length ? "🏁 Finish Quiz! 🏁" : "➡️ Next Question! ➡️"}
+                <span className="mr-2">
+                  {currentQuestion < currentQuizData.totalQuestions - 1 ? '➡️' : '🏁'}
+                </span>
+                {currentQuestion < currentQuizData.totalQuestions - 1 ? 'Next Question' : 'Finish Quiz'}
+                <span className="ml-2">✨</span>
               </Button>
-            </CardContent>
-          </Card>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="floating-element absolute top-16 left-8 text-4xl animate-sparkle">🧠</div>
-        <div className="floating-element absolute top-28 right-12 text-3xl animate-sparkle">📝</div>
-        <div className="floating-element absolute bottom-32 left-16 text-5xl animate-sparkle">🌟</div>
-        <div className="floating-element absolute bottom-16 right-8 text-4xl animate-sparkle">💡</div>
-        <div className="floating-element absolute top-48 left-1/4 text-3xl animate-sparkle">🏆</div>
-        <div className="floating-element absolute bottom-48 right-1/4 text-4xl animate-sparkle">⭐</div>
-      </div>
-      <div className="container mx-auto px-6 max-w-4xl relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-fredoka text-gradient-rainbow mb-4 animate-bounce-in" data-testid="text-title">
-            🧠 Quiz Adventure! 🧠
-          </h1>
-          <p className="text-white/90 text-xl animate-fade-in-delay magical-shadow">
-            ✨ Test your nature knowledge and learn amazing facts! ✨
-          </p>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Magical Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+        style={{
+          backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(59, 130, 246, 0.4) 0%,
+              rgba(147, 51, 234, 0.3) 25%,
+              rgba(239, 68, 68, 0.3) 50%,
+              rgba(34, 197, 94, 0.3) 75%,
+              rgba(251, 146, 60, 0.4) 100%
+            ),
+            url(${ShroomForest})
+          `,
+        }}
+      />
+
+      {/* Floating Sparkles */}
+      <div className="floating-sparkles" style={{ top: '15%', left: '20%' }}>🧠</div>
+      <div className="floating-sparkles" style={{ top: '25%', right: '25%', animationDelay: '1s' }}>🎯</div>
+      <div className="floating-sparkles" style={{ bottom: '35%', left: '15%', animationDelay: '2s' }}>⭐</div>
+      <div className="floating-sparkles" style={{ top: '65%', right: '20%', animationDelay: '1.5s' }}>✨</div>
+      <div className="floating-sparkles" style={{ bottom: '25%', right: '15%', animationDelay: '3s' }}>🌟</div>
+
+      <div className="relative z-10 min-h-screen py-8 px-6">
+        {/* Header Section */}
+        <div className="text-center mb-12 animate-character-entrance">
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src={TurianLogo} 
+              alt="The Naturverse™" 
+              className="w-16 h-16 mr-4 animate-gentle-pulse"
+            />
+            <div>
+              <h1 className="text-4xl md:text-6xl font-magical text-white drop-shadow-2xl text-magical-rainbow">
+                🧠 Nature Quiz Challenge 🧠
+              </h1>
+              <p className="text-xl text-white drop-shadow-lg font-playful mt-2">
+                Test your nature knowledge with our amazing quizzes!
+              </p>
+            </div>
+          </div>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {quizzes.map((quiz, index) => (
-            <Card 
-              key={quiz.id}
-              className="kid-friendly-card hover:scale-110 transition-all duration-500 animate-fade-in-stagger hover-wiggle"
-              data-testid={`card-quiz-${quiz.id}`}
-              style={{ animationDelay: `${index * 0.2}s` }}
-            >
-              <CardHeader>
-                <div className="flex justify-between items-start mb-3">
-                  <CardTitle className="text-2xl font-fredoka text-magic">
+        {/* Quiz Cards Grid */}
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {quizzes.map((quiz, index) => (
+              <Card 
+                key={quiz.id}
+                className="zone-card animate-character-entrance cursor-pointer group"
+                style={{ animationDelay: `${index * 0.1}s` }}
+                data-testid={`quiz-card-${quiz.id}`}
+              >
+                <CardHeader className="pb-4">
+                  <div className="flex justify-center mb-4">
+                    <div className="relative">
+                      <img 
+                        src={quiz.character}
+                        alt={quiz.characterName}
+                        className="w-20 h-20 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-300"
+                      />
+                      <div className="absolute -top-2 -right-2 text-2xl animate-sparkle-dance">
+                        {quiz.emoji}
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <CardTitle className="text-2xl font-magical text-center text-blue-700 group-hover:text-purple-700 transition-colors duration-300">
                     {quiz.title}
                   </CardTitle>
-                  <Badge className={`${getDifficultyColor(quiz.difficulty)} text-lg px-3 py-1 rounded-xl font-fredoka`}>
-                    {quiz.difficulty}
-                  </Badge>
-                </div>
-                <p className="text-forest text-base">
-                  {quiz.description}
-                </p>
-              </CardHeader>
-              <CardContent>
-                <div className="flex justify-between items-center mb-6">
-                  <span className="text-base text-turquoise font-bold">
-                    📝 {quiz.questions.length} questions
-                  </span>
-                  <span className="text-base text-coral font-bold">
-                    🏷️ {quiz.category}
-                  </span>
-                </div>
-                <Button
-                  onClick={() => startQuiz(quiz)}
-                  className="w-full kid-friendly-button text-xl py-4 animate-bounce-gentle"
-                  data-testid={`button-start-quiz-${quiz.id}`}
-                >
-                  🚀 Start Quiz Adventure! 🚀
-                </Button>
-              </CardContent>
-            </Card>
-          ))}
+                  
+                  <div className="flex justify-center space-x-3 mt-3">
+                    <div className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getDifficultyColor(quiz.difficulty)}`}>
+                      {quiz.difficulty}
+                    </div>
+                    <div className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border-2 border-blue-300">
+                      {quiz.totalQuestions} Questions
+                    </div>
+                  </div>
+                </CardHeader>
+
+                <CardContent className="pt-0">
+                  <p className="text-gray-600 font-story text-center leading-relaxed mb-6">
+                    {quiz.description}
+                  </p>
+
+                  <div className="text-center">
+                    <Button 
+                      onClick={() => startQuiz(quiz.id)}
+                      className="btn-magical w-full font-bold"
+                      data-testid={`start-quiz-${quiz.id}`}
+                    >
+                      <span className="mr-2">🎯</span>
+                      Start Quiz
+                      <span className="ml-2">🧠</span>
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        </div>
+
+        {/* Fun Learning Stats */}
+        <div className="max-w-4xl mx-auto mt-16 grid grid-cols-1 md:grid-cols-3 gap-6">
+          <div className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-blue-300/60 shadow-xl animate-character-entrance">
+            <div className="text-4xl mb-3">🧠</div>
+            <div className="text-2xl font-bold text-blue-700 font-magical">25+</div>
+            <div className="text-blue-600 font-playful">Brain Teasers</div>
+          </div>
+          
+          <div className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-green-300/60 shadow-xl animate-character-entrance" style={{ animationDelay: '0.2s' }}>
+            <div className="text-4xl mb-3">🏆</div>
+            <div className="text-2xl font-bold text-green-700 font-magical">6</div>
+            <div className="text-green-600 font-playful">Different Topics</div>
+          </div>
+          
+          <div className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-purple-300/60 shadow-xl animate-character-entrance" style={{ animationDelay: '0.4s' }}>
+            <div className="text-4xl mb-3">⭐</div>
+            <div className="text-2xl font-bold text-purple-700 font-magical">Fun</div>
+            <div className="text-purple-600 font-playful">Learning Experience</div>
+          </div>
+        </div>
+      </div>
+
+      {/* Turian Guide */}
+      <div className="fixed bottom-6 right-6 z-50">
+        <div className="relative animate-float-bounce">
+          <div className="w-24 h-24 p-2 bg-white/95 rounded-full border-4 border-blue-400 shadow-2xl">
+            <img 
+              src={TurianCharacter} 
+              alt="Turian Guide" 
+              className="w-full h-full object-cover rounded-full"
+            />
+          </div>
+          
+          <div className="absolute -top-16 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-blue-400 max-w-xs">
+            <div className="text-center">
+              <div className="text-sm font-bold text-blue-700 font-playful">
+                Pick a quiz to test your nature knowledge! 🧠🌟
+              </div>
+            </div>
+            
+            <div className="absolute bottom-0 right-8 transform translate-y-full">
+              <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-blue-400"></div>
+              <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+            </div>
+          </div>
         </div>
       </div>
     </div>
