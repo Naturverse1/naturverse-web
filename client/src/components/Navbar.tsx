@@ -1,15 +1,26 @@
 import { Link, useLocation } from "wouter";
 import { Button } from "@/components/ui/button";
+import { useAuth } from "../context/AuthContext";
 
 export default function Navbar() {
   const [location] = useLocation();
+  const { user, signOut } = useAuth();
 
-  const navLinks = [
-    { path: "/", label: "Home" },
-    { path: "/signup", label: "Sign Up" },
-    { path: "/login", label: "Login" },
-    { path: "/dashboard", label: "Dashboard" },
-  ];
+  const navLinks = user
+    ? [
+        { path: "/", label: "Home" },
+        { path: "/dashboard", label: "Dashboard" },
+      ]
+    : [
+        { path: "/", label: "Home" },
+        { path: "/login", label: "Login" },
+        { path: "/signup", label: "Sign Up" },
+      ];
+
+  const handleLogout = async () => {
+    await signOut();
+    // Navigation to "/" will happen automatically via auth state change
+  };
 
   const isActive = (path: string) => {
     if (path === "/" && location === "/") return true;
@@ -40,6 +51,16 @@ export default function Navbar() {
                   </Button>
                 </Link>
               ))}
+              {user && (
+                <Button
+                  onClick={handleLogout}
+                  variant="ghost"
+                  className="text-gray-600 hover:text-red-600"
+                  data-testid="nav-logout"
+                >
+                  Logout
+                </Button>
+              )}
             </div>
           </div>
         </div>
