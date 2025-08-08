@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useNavigate } from "react-router-dom";
+import { useLocation } from "wouter";
 
 // Import character assets for storybook integration
 import TurianDurianImg from "../assets/Turian the Durian.png";
@@ -23,7 +23,7 @@ interface Zone {
 }
 
 export default function Map() {
-  const navigate = useNavigate();
+  const [location, setLocation] = useLocation();
   const [selectedZone, setSelectedZone] = useState<string | null>(null);
 
   const zones: Zone[] = [
@@ -84,7 +84,7 @@ export default function Map() {
 
   const handleExplore = () => {
     if (selectedZone) {
-      navigate(`/zone/${selectedZone}`);
+      setLocation(`/zone/${selectedZone}`);
     }
   };
 

@@ -1,0 +1,24 @@
+🪄 Give this to your agent:
+"Style the homepage like a magical children’s storybook. Use a vibrant background with soft illustrated skies, floating fruit and animal icons, and a warm, glowing color palette. Replace plain sections with themed zones like 'Enter Thailandia', 'Create Your Navatar', 'Explore the Map', and 'Meet Turian'. Make the Naturverse logo large and centered at the top, NOT hidden by the navbar. Include a gentle fade-in animation on load. Use assets I’ve uploaded for visuals — character cards, maps, logos — and display them clearly, not hidden or tiny."
+
+🎯 Step 2: FIX NAVBAR + FLOATING TURIAN
+We want an accessible menu and a visible AI guide:
+
+🪄 Give this to your agent:
+"Fix the navbar so it's semi-transparent, doesn’t block content, and floats at the top. Add rounded soft edges and glowing hover effects. Keep it sticky, but let the main logo shine clearly below it. Also, keep Turian the AI Bot always visible in the bottom right corner like a floating assistant with a speech bubble that says: 'Need help? I’m Turian!'"
+
+🎯 Step 3: BOOST CHARACTER CARD ZONE
+Let’s make them big, beautiful, and clickable:
+
+🪄 Give this to your agent:
+"Make the character cards section look like a collectible gallery. Each card should be larger, easy to see, and styled like a magical trading card. Use a soft glowing border and hover animation. Clicking a card should open a pop-up with a bio, catchphrase, and full image."
+
+🎯 Step 4: INTRODUCE ZONES (VISIBLE)
+Music, Maps, Avatar, and more!
+
+🪄 Give this to your agent:
+"Display each core zone on the homepage: Music Island, Avatar Creator, Storybook Library, and Mind & Body Zone. Each should have a fun illustrated icon and button saying ‘Explore’. Do NOT hide these elements on hover — make them always visible. Use existing uploaded assets and label the sections clearly."
+
+Bonus (if agent allows):
+“Use Tailwind or CSS animation to gently animate elements like floating clouds, sparkling stars, and pulsing buttons. Make it feel alive, fun, and magical — like a fairytale world you want to enter.”
+

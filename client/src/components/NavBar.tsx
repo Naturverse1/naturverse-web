@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-router-dom';
+import { Link } from 'wouter';
 import { useAuth } from '../context/AuthContext';
 import { Button } from '@/components/ui/button';
 
@@ -22,118 +22,207 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="nav-modern sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-emerald/20 shadow-xl">
-      <div className="container mx-auto px-6 py-4">
+    <nav className="sticky top-0 z-50 backdrop-blur-lg shadow-xl" style={{
+      background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,240,220,0.9) 50%, rgba(240,255,240,0.9) 100%)',
+      border: 'none',
+      borderBottom: '3px solid rgba(139, 69, 19, 0.2)'
+    }}>
+      <div className="container mx-auto px-6 py-3">
         <div className="flex justify-between items-center">
-          <Link to="/" className="text-display text-3xl md:text-4xl font-bold text-gradient hover:scale-105 transition-all duration-300 floating-sparkles">
-            <span className="flex items-center gap-2 md:gap-3">
-              <div className="relative flex-shrink-0">
-                <img src={TurianLogo} alt="Turian Media" className="w-16 h-16 md:w-20 md:h-20 animate-gentle-pulse drop-shadow-2xl hover:animate-bounce-playful" />
-                <div className="absolute -top-2 -right-2 text-2xl md:text-3xl animate-sparkle-twinkle">✨</div>
-                <div className="absolute -bottom-1 -left-1 text-xl md:text-2xl animate-sparkle-twinkle stagger-1">🌟</div>
+          <Link to="/" className="hover:scale-105 transition-all duration-300">
+            <div className="flex items-center gap-3">
+              <div className="relative">
+                <img src={TurianLogo} alt="Naturverse" className="w-14 h-14 animate-gentle-pulse drop-shadow-2xl" />
+                <div className="absolute -top-1 -right-1 text-lg animate-sparkle-orbit">✨</div>
+                <div className="absolute -bottom-1 -left-1 text-lg animate-sparkle-orbit-reverse">🌟</div>
               </div>
-              <span className="text-3xl md:text-5xl animate-sparkle-twinkle flex-shrink-0">🌿</span>
-              <span className="text-transparent bg-gradient-to-r from-emerald via-magic to-forest bg-clip-text font-bold text-magic-glow min-w-0 truncate">Naturverse</span>
-              <div className="hidden sm:flex gap-1 ml-2 md:ml-3 flex-shrink-0">
-                <span className="text-xl md:text-2xl animate-sparkle-twinkle">🌟</span>
-                <span className="text-xl md:text-2xl animate-sparkle-twinkle stagger-1">✨</span>
-                <span className="text-lg md:text-xl animate-sparkle-twinkle stagger-2">🦋</span>
+              <div className="font-bold text-3xl" style={{
+                background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F39C12 100%)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                backgroundClip: 'text',
+                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
+                fontFamily: 'Fredoka, cursive'
+              }}>
+                <span className="text-2xl animate-float-bounce mr-2">🌿</span>
+                Naturverse
+                <span className="text-2xl animate-float-bounce ml-2">📖</span>
               </div>
-            </span>
+            </div>
           </Link>
           
           {user ? (
             /* Magical Navigation for Authenticated Users */
-            <div className="flex items-center space-x-2 overflow-x-auto">
-              {/* Core Magical Regions */}
-              <div className="flex items-center space-x-2">
-                <Link to="/profile" className="region-button" data-testid="nav-profile">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">👤</span>Profile
-                </Link>
-                <Link to="/map" className="region-button animate-region-glow" data-testid="nav-map">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🗺️</span>Adventure Map
-                </Link>
-                <Link to="/quests" className="region-button" data-testid="nav-quests">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🏆</span>Epic Quests
-                </Link>
-              </div>
+            <div className="flex items-center space-x-3 overflow-x-auto">
+              <Link 
+                to="/map" 
+                className="magical-nav-btn" 
+                data-testid="nav-map"
+                style={{
+                  background: 'linear-gradient(135deg, #27AE60, #2ECC71)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">🗺️</span>Map
+              </Link>
               
-              {/* Learning Realms & Activities */}
-              <div className="flex items-center space-x-2">
-                <Link to="/modules" className="region-button gradient-cool text-white hover:text-white shadow-lg" data-testid="nav-modules">
-                  <img src={DrPImg} alt="Dr P" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Learning Zone</span>
-                </Link>
-                <Link to="/quiz" className="region-button gradient-playful text-white hover:text-white shadow-lg" data-testid="nav-quiz">
-                  <img src={FrankieFrogsImg} alt="Frankie Frogs" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Brain Games</span>
-                </Link>
-                <Link to="/storybook" className="region-button gradient-warm text-white hover:text-white shadow-lg" data-testid="nav-storybook">
-                  <img src={LaoCowImg} alt="Wise Lao Cow" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Story Realm</span>
-                </Link>
-              </div>
+              <Link 
+                to="/quests" 
+                className="magical-nav-btn" 
+                data-testid="nav-quests"
+                style={{
+                  background: 'linear-gradient(135deg, #F39C12, #E67E22)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">🏆</span>Quests
+              </Link>
               
-              {/* Creative & Musical Realms */}
-              <div className="flex items-center space-x-2">
-                <Link to="/navatar" className="region-button bg-gradient-to-r from-grape to-bubblegum text-white hover:text-white shadow-lg btn-bounce" data-testid="nav-navatar">
-                  <img src={BluButterflyImg} alt="Blu Butterfly" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Avatar Studio</span>
-                </Link>
-                <Link to="/music" className="region-button bg-gradient-to-r from-tangerine to-lemon text-white hover:text-white shadow-lg btn-bounce" data-testid="nav-music">
-                  <img src={MangoMikeImg} alt="Mango Mike" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Music Island</span>
-                </Link>
-                <Link to="/codex" className="region-button bg-gradient-to-r from-lime to-emerald text-white hover:text-white shadow-lg" data-testid="nav-codex">
-                  <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Knowledge Codex</span>
-                </Link>
-              </div>
+              <Link 
+                to="/storybook" 
+                className="magical-nav-btn" 
+                data-testid="nav-storybook"
+                style={{
+                  background: 'linear-gradient(135deg, #9B59B6, #8E44AD)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">📚</span>Stories
+              </Link>
               
-              {/* Special Magical Places */}
-              <div className="flex items-center space-x-2">
-                <Link to="/ai" className="region-button btn-rainbow text-white hover:text-white shadow-xl animate-magical-pulse" data-testid="nav-ai">
-                  <img src={TurianImg} alt="Turian" className="w-8 h-8 mr-2 object-contain animate-character-float rounded-full border-2 border-white/50" />
-                  <span className="text-playful font-bold text-shadow">Turian's Tower</span>
-                </Link>
-                <Link to="/market" className="region-button bg-gradient-to-r from-emerald to-mint text-white hover:text-white shadow-lg btn-bounce" data-testid="nav-market">
-                  <img src={HankImg} alt="Hank" className="w-7 h-7 mr-2 object-contain animate-bounce-gentle hover:scale-110 transition-transform" />
-                  <span className="text-playful font-bold">Magic Market</span>
-                </Link>
-              </div>
+              <Link 
+                to="/ai" 
+                className="magical-nav-btn" 
+                data-testid="nav-ai"
+                style={{
+                  background: 'linear-gradient(135deg, #E74C3C, #C0392B)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">🤖</span>Turian
+              </Link>
               
-              {/* User Actions */}
-              <div className="flex items-center ml-6">
-                <Button 
-                  onClick={handleSignOut}
-                  variant="outline"
-                  size="sm"
-                  className="bg-gradient-to-r from-coral to-cherry text-white hover:text-white border-2 border-white/30 hover:border-white/60 transition-all duration-300 hover:scale-105 text-playful font-bold shadow-lg btn-bounce"
-                  data-testid="button-sign-out"
-                >
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🚪</span>Sign Out
-                </Button>
-              </div>
+              <Link 
+                to="/profile" 
+                className="magical-nav-btn" 
+                data-testid="nav-profile"
+                style={{
+                  background: 'linear-gradient(135deg, #3498DB, #2980B9)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">👤</span>Profile
+              </Link>
+              
+              <Button 
+                onClick={handleSignOut}
+                className="magical-nav-btn" 
+                data-testid="button-sign-out"
+                style={{
+                  background: 'linear-gradient(135deg, #E67E22, #D35400)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">🚪</span>Logout
+              </Button>
             </div>
           ) : (
             /* Public Navigation for Unauthenticated Users */
             <div className="flex items-center space-x-3">
-              <Link to="/" className="region-button gradient-cool text-white hover:text-white shadow-lg" data-testid="nav-home">
-                <span className="mr-2 text-xl animate-sparkle-twinkle">🏠</span>
-                <span className="text-playful font-bold">Home</span>
+              <Link 
+                to="/about" 
+                className="magical-nav-btn" 
+                data-testid="nav-about"
+                style={{
+                  background: 'linear-gradient(135deg, #3498DB, #2980B9)',
+                  color: 'white',
+                  padding: '0.5rem 1rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '0.9rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">ℹ️</span>About
               </Link>
-              <Link to="/about" className="region-button gradient-playful text-white hover:text-white shadow-lg" data-testid="nav-about">
-                <span className="mr-2 text-xl animate-sparkle-twinkle">ℹ️</span>
-                <span className="text-playful font-bold">About</span>
+              
+              <Link 
+                to="/signup" 
+                className="magical-nav-btn" 
+                data-testid="nav-signup"
+                style={{
+                  background: 'linear-gradient(135deg, #9B59B6, #8E44AD)',
+                  color: 'white',
+                  padding: '0.5rem 1.5rem',
+                  borderRadius: '1.5rem',
+                  fontWeight: 'bold',
+                  fontSize: '1rem',
+                  border: '2px solid rgba(255,255,255,0.3)',
+                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
+                  fontFamily: 'Fredoka, cursive'
+                }}
+              >
+                <span className="text-lg mr-2 animate-sparkle-dance">✨</span>Join Adventure
               </Link>
-              <Link to="/signup" className="region-button btn-rainbow text-white hover:text-white shadow-xl animate-magical-pulse" data-testid="nav-signup">
-                <span className="mr-2 text-xl animate-sparkle-twinkle">✨</span>
-                <span className="text-playful font-bold">Join Adventure</span>
-              </Link>
-              <Button asChild className="btn-primary ml-4 text-xl px-8 py-4 hover:scale-105 transition-all duration-300 shadow-xl btn-bounce">
-                <Link to="/login" data-testid="nav-login">
-                  <span className="mr-3 text-2xl animate-sparkle-twinkle">🚀</span>
-                  <span className="text-playful font-bold">Enter Naturverse</span>
+              
+              <Button asChild style={{
+                background: 'linear-gradient(135deg, #E74C3C, #C0392B)',
+                color: 'white',
+                padding: '0.75rem 2rem',
+                borderRadius: '1.5rem',
+                fontWeight: 'bold',
+                fontSize: '1.1rem',
+                border: '2px solid rgba(255,255,255,0.3)',
+                boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
+                fontFamily: 'Fredoka, cursive'
+              }}>
+                <Link to="/login" data-testid="nav-login" className="hover:scale-105 transition-transform duration-300">
+                  <span className="text-xl mr-2 animate-float-bounce">🚀</span>
+                  Enter Naturverse
                 </Link>
               </Button>
             </div>

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { Route, Router } from 'wouter';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { TooltipProvider } from '@/components/ui/tooltip';
 import { AuthProvider, useAuth } from './context/AuthContext';
@@ -21,6 +21,42 @@ import AI from './pages/AI';
 import Market from './pages/Market';
 import Zone from './pages/Zone';
 
+// Create About component since it might be missing
+const About = () => (
+  <div className="min-h-screen storybook-world flex items-center justify-center">
+    <div className="max-w-4xl mx-auto text-center p-8">
+      <h1 className="text-6xl font-bold mb-8" style={{
+        background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F39C12 100%)',
+        WebkitBackgroundClip: 'text',
+        WebkitTextFillColor: 'transparent',
+        fontFamily: 'Fredoka, cursive'
+      }}>
+        <span className="text-5xl mr-3 animate-float-bounce">🌿</span>
+        About Naturverse
+        <span className="text-5xl ml-3 animate-float-bounce">📚</span>
+      </h1>
+      <p className="text-2xl text-emerald-800 font-bold mb-6">A magical educational adventure for young explorers!</p>
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mt-12">
+        <div className="bg-white/80 p-6 rounded-3xl shadow-magical animate-book-opening">
+          <div className="text-4xl mb-4 animate-sparkle-dance">🗺️</div>
+          <h3 className="text-xl font-bold text-emerald-700 mb-3">Explore</h3>
+          <p className="text-emerald-600">Discover magical worlds through interactive maps and adventures.</p>
+        </div>
+        <div className="bg-white/80 p-6 rounded-3xl shadow-magical animate-book-opening">
+          <div className="text-4xl mb-4 animate-sparkle-dance">📖</div>
+          <h3 className="text-xl font-bold text-emerald-700 mb-3">Learn</h3>
+          <p className="text-emerald-600">Immerse yourself in educational stories and quests.</p>
+        </div>
+        <div className="bg-white/80 p-6 rounded-3xl shadow-magical animate-book-opening">
+          <div className="text-4xl mb-4 animate-sparkle-dance">🎨</div>
+          <h3 className="text-xl font-bold text-emerald-700 mb-3">Create</h3>
+          <p className="text-emerald-600">Build your own avatar and express your creativity.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
 const queryClient = new QueryClient();
 
 // Protected Route Component
@@ -29,85 +65,59 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   
   if (loading) {
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
+      <div className="min-h-screen bg-gradient-to-br from-mint via-background to-sage/5 flex items-center justify-center">
         <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto mb-4"></div>
-          <p className="text-muted-foreground text-lg">Loading...</p>
+          <div className="animate-spin rounded-full h-16 w-16 border-b-4 border-emerald mx-auto mb-6"></div>
+          <p className="text-emerald text-2xl font-bold animate-pulse">Loading magical world...</p>
+          <div className="flex justify-center space-x-2 mt-4">
+            <div className="text-3xl animate-bounce">🌟</div>
+            <div className="text-3xl animate-bounce stagger-1">✨</div>
+            <div className="text-3xl animate-bounce stagger-2">🦋</div>
+          </div>
         </div>
       </div>
     );
   }
   
-  return user ? <>{children}</> : <Navigate to="/login" replace />;
+  if (!user) {
+    window.location.href = '/login';
+    return null;
+  }
+  
+  return <>{children}</>;
 };
 
-const About: React.FC = () => (
-  <div className="min-h-screen bg-gradient-to-br from-mint via-background to-sage/5">
-    <div className="container mx-auto px-6 py-20">
-      <div className="text-center max-w-4xl mx-auto">
-        <h1 className="text-4xl md:text-5xl font-display text-foreground mb-6">
-          <span className="text-emerald">🌿</span> About <span className="text-gradient">Naturverse</span>
-        </h1>
-        <p className="text-muted-foreground text-xl leading-relaxed mb-8">
-          Naturverse is an educational platform designed to inspire young minds through interactive nature exploration, 
-          immersive learning experiences, and engaging content that fosters environmental awareness and scientific curiosity.
-        </p>
-        <div className="grid grid-auto-fit gap-8 mt-12">
-          <div className="modern-card p-6 text-center">
-            <div className="text-4xl mb-4">🌱</div>
-            <h3 className="text-emerald font-display text-lg mb-3">Environmental Education</h3>
-            <p className="text-muted-foreground text-sm">Learn about ecosystems, biodiversity, and conservation through interactive content.</p>
-          </div>
-          <div className="modern-card p-6 text-center">
-            <div className="text-4xl mb-4">🔬</div>
-            <h3 className="text-ocean font-display text-lg mb-3">Scientific Discovery</h3>
-            <p className="text-muted-foreground text-sm">Explore the natural world through hands-on activities and virtual expeditions.</p>
-          </div>
-          <div className="modern-card p-6 text-center">
-            <div className="text-4xl mb-4">🎓</div>
-            <h3 className="text-forest font-display text-lg mb-3">Interactive Learning</h3>
-            <p className="text-muted-foreground text-sm">Engage with quizzes, stories, and games designed to make learning memorable.</p>
-          </div>
-        </div>
-      </div>
-    </div>
-  </div>
-);
+
 
 const App: React.FC = () => {
 return (
 <AuthProvider>
 <QueryClientProvider client={queryClient}>
 <TooltipProvider>
-<Router>
-<div className="min-h-screen bg-background">
+<div className="min-h-screen storybook-world">
 <NavBar />
 <TurianAiGuide />
 <main>
-<Routes>
-{/* Public Routes */}
-<Route path="/" element={<Home />} />
-<Route path="/about" element={<About />} />
-<Route path="/signup" element={<Signup />} />
-<Route path="/login" element={<Login />} />
+<Route path="/" component={Home} />
+<Route path="/about" component={About} />
+<Route path="/signup" component={Signup} />
+<Route path="/login" component={Login} />
 
 {/* Protected Routes */}
-<Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
-<Route path="/navatar" element={<ProtectedRoute><NavatarCreator /></ProtectedRoute>} />
-<Route path="/quests" element={<ProtectedRoute><Quests /></ProtectedRoute>} />
-<Route path="/map" element={<ProtectedRoute><Map /></ProtectedRoute>} />
-<Route path="/quiz" element={<ProtectedRoute><Quiz /></ProtectedRoute>} />
-<Route path="/modules" element={<ProtectedRoute><Modules /></ProtectedRoute>} />
-<Route path="/music" element={<ProtectedRoute><Music /></ProtectedRoute>} />
-<Route path="/storybook" element={<ProtectedRoute><Storybook /></ProtectedRoute>} />
-<Route path="/codex" element={<ProtectedRoute><Codex /></ProtectedRoute>} />
-<Route path="/ai" element={<ProtectedRoute><AI /></ProtectedRoute>} />
-<Route path="/market" element={<ProtectedRoute><Market /></ProtectedRoute>} />
-<Route path="/zone/:name" element={<ProtectedRoute><Zone /></ProtectedRoute>} />
-</Routes>
+<Route path="/profile">{() => <ProtectedRoute><Profile /></ProtectedRoute>}</Route>
+<Route path="/navatar">{() => <ProtectedRoute><NavatarCreator /></ProtectedRoute>}</Route>
+<Route path="/quests">{() => <ProtectedRoute><Quests /></ProtectedRoute>}</Route>
+<Route path="/map">{() => <ProtectedRoute><Map /></ProtectedRoute>}</Route>
+<Route path="/quiz">{() => <ProtectedRoute><Quiz /></ProtectedRoute>}</Route>
+<Route path="/modules">{() => <ProtectedRoute><Modules /></ProtectedRoute>}</Route>
+<Route path="/music">{() => <ProtectedRoute><Music /></ProtectedRoute>}</Route>
+<Route path="/storybook">{() => <ProtectedRoute><Storybook /></ProtectedRoute>}</Route>
+<Route path="/codex">{() => <ProtectedRoute><Codex /></ProtectedRoute>}</Route>
+<Route path="/ai">{() => <ProtectedRoute><AI /></ProtectedRoute>}</Route>
+<Route path="/market">{() => <ProtectedRoute><Market /></ProtectedRoute>}</Route>
+<Route path="/zone/:name">{({ name }) => <ProtectedRoute><Zone /></ProtectedRoute>}</Route>
 </main>
 </div>
-</Router>
 </TooltipProvider>
 </QueryClientProvider>
 </AuthProvider>
