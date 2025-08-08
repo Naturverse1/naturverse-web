@@ -79,51 +79,64 @@ export default function Map() {
   };
 
   return (
-    <div className="min-h-screen magic-gradient py-12">
-      <div className="container mx-auto px-6 max-w-6xl">
+    <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
+      {/* Floating magical elements */}
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="floating-element absolute top-16 left-8 text-4xl animate-sparkle">✨</div>
+        <div className="floating-element absolute top-28 right-12 text-3xl animate-sparkle">🌟</div>
+        <div className="floating-element absolute bottom-32 left-16 text-5xl animate-sparkle">🦋</div>
+        <div className="floating-element absolute bottom-16 right-8 text-4xl animate-sparkle">🌈</div>
+        <div className="floating-element absolute top-48 left-1/4 text-3xl animate-sparkle">🍃</div>
+        <div className="floating-element absolute bottom-48 right-1/4 text-4xl animate-sparkle">🌺</div>
+        <div className="floating-element absolute top-80 right-1/3 text-3xl animate-sparkle">⭐</div>
+        <div className="floating-element absolute bottom-80 left-1/3 text-4xl animate-sparkle">🎄</div>
+      </div>
+      
+      <div className="container mx-auto px-6 max-w-6xl relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-fredoka text-white mb-4" data-testid="text-title">
-            🗺️ Interactive Map of Thailandia
+          <h1 className="text-5xl font-fredoka text-gradient-rainbow mb-4 animate-bounce-in" data-testid="text-title">
+            🗺️ Magical Map of Thailandia 🗺️
           </h1>
-          <p className="text-white/90 text-lg">
-            Explore the magical realms and discover hidden secrets in each zone!
+          <p className="text-white/90 text-xl animate-fade-in-delay magical-shadow">
+            ✨ Explore the magical realms and discover hidden secrets in each zone! ✨
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 mb-8">
-          {zones.map((zone) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 mb-8">
+          {zones.map((zone, index) => (
             <Card 
               key={zone.id}
-              className={`cursor-pointer transition-all duration-300 ${
+              className={`cursor-pointer transition-all duration-500 animate-fade-in-stagger ${
                 zone.unlocked 
-                  ? 'hover:scale-105 backdrop-blur-sm bg-white/95 shadow-lg' 
-                  : 'opacity-60 backdrop-blur-sm bg-gray-100/50'
-              } ${selectedZone === zone.id ? 'ring-2 ring-nature' : ''}`}
+                  ? 'kid-friendly-card hover:scale-110 hover-wiggle' 
+                  : 'opacity-50 kid-friendly-card'
+              } ${selectedZone === zone.id ? 'ring-4 ring-magic ring-opacity-50 animate-pulse-glow' : ''}`}
               onClick={() => handleZoneClick(zone)}
               data-testid={`card-zone-${zone.id}`}
+              style={{ animationDelay: `${index * 0.2}s` }}
             >
               <CardHeader className="text-center">
-                <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br ${zone.color} flex items-center justify-center text-3xl mb-3 ${
-                  zone.unlocked ? 'animate-pulse-slow' : ''
+                <div className={`w-24 h-24 mx-auto rounded-full bg-gradient-to-br ${zone.color} flex items-center justify-center text-4xl mb-4 magical-shadow-lg ${
+                  zone.unlocked ? 'animate-bounce-gentle' : 'opacity-60'
                 }`}>
                   {zone.emoji}
                 </div>
-                <CardTitle className={`text-xl font-fredoka ${zone.unlocked ? 'text-forest' : 'text-gray-500'}`}>
+                <CardTitle className={`text-2xl font-fredoka ${zone.unlocked ? 'text-magic' : 'text-gray-500'}`}>
                   {zone.name}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
-                <p className={`text-sm mb-4 ${zone.unlocked ? 'text-forest/80' : 'text-gray-400'}`}>
+                <p className={`text-sm mb-4 ${zone.unlocked ? 'text-forest' : 'text-gray-400'}`}>
                   {zone.description}
                 </p>
                 <div className="flex justify-center">
                   {zone.unlocked ? (
-                    <div className="px-3 py-1 bg-nature/20 text-nature rounded-full text-sm font-medium">
-                      ✨ Available
+                    <div className="px-4 py-2 bg-nature/30 text-nature rounded-2xl text-sm font-fredoka font-bold magical-shadow hover-bounce">
+                      ✨ Ready to Explore! ✨
                     </div>
                   ) : (
-                    <div className="px-3 py-1 bg-gray-200 text-gray-500 rounded-full text-sm">
-                      🔒 Locked
+                    <div className="px-4 py-2 bg-gray-200 text-gray-500 rounded-2xl text-sm font-fredoka">
+                      🔒 Complete More Quests 🔒
                     </div>
                   )}
                 </div>
@@ -133,24 +146,25 @@ export default function Map() {
         </div>
 
         {selectedZone && (
-          <div className="text-center">
-            <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
-              <CardContent className="pt-6">
-                <div className="mb-4">
-                  <h3 className="text-2xl font-fredoka text-forest mb-2">
+          <div className="text-center animate-bounce-in">
+            <Card className="kid-friendly-card magical-shadow-lg">
+              <CardContent className="pt-8">
+                <div className="mb-6">
+                  <div className="text-6xl mb-4 animate-wiggle">{zones.find(z => z.id === selectedZone)?.emoji}</div>
+                  <h3 className="text-3xl font-fredoka text-gradient-rainbow mb-3">
                     Ready to explore {zones.find(z => z.id === selectedZone)?.name}?
                   </h3>
-                  <p className="text-forest/80 mb-4">
-                    Begin your adventure in this magical realm!
+                  <p className="text-forest text-lg mb-6">
+                    ✨ Begin your magical adventure in this enchanted realm! ✨
                   </p>
                 </div>
                 
                 <Button
                   onClick={handleExplore}
-                  className="bg-nature hover:bg-forest text-white px-8 py-3"
+                  className="kid-friendly-button text-xl px-12 py-6 animate-bounce-gentle"
                   data-testid="button-explore"
                 >
-                  🚀 Start Exploring
+                  🚀 Start Your Adventure! 🚀
                 </Button>
               </CardContent>
             </Card>

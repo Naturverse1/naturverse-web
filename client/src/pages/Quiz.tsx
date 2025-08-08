@@ -246,10 +246,15 @@ export default function Quiz() {
 
   if (loading) {
     return (
-      <div className="min-h-screen magic-gradient py-12 flex items-center justify-center">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-          <p className="text-white text-lg">Loading quizzes...</p>
+      <div className="min-h-screen magic-gradient py-12 flex items-center justify-center relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-element absolute top-20 left-10 text-4xl animate-sparkle">✨</div>
+          <div className="floating-element absolute bottom-20 right-10 text-4xl animate-sparkle">🧠</div>
+          <div className="floating-element absolute top-40 right-20 text-3xl animate-sparkle">📚</div>
+        </div>
+        <div className="text-center relative z-10">
+          <div className="animate-spin rounded-full h-16 w-16 border-4 border-white border-t-transparent mx-auto mb-6 magical-shadow"></div>
+          <p className="text-white text-xl font-fredoka animate-bounce-gentle">🔍 Finding Amazing Quizzes! 🔍</p>
         </div>
       </div>
     );
@@ -258,39 +263,53 @@ export default function Quiz() {
   if (showResult && selectedQuiz) {
     const percentage = Math.round((score / selectedQuiz.questions.length) * 100);
     return (
-      <div className="min-h-screen magic-gradient py-12">
-        <div className="container mx-auto px-6 max-w-2xl">
-          <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
+      <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-element absolute top-20 left-10 text-4xl animate-sparkle">🎉</div>
+          <div className="floating-element absolute top-32 right-20 text-3xl animate-sparkle">⭐</div>
+          <div className="floating-element absolute bottom-32 left-20 text-5xl animate-sparkle">🏆</div>
+          <div className="floating-element absolute bottom-20 right-10 text-4xl animate-sparkle">✨</div>
+        </div>
+        <div className="container mx-auto px-6 max-w-2xl relative z-10">
+          <Card className="kid-friendly-card magical-shadow-lg animate-bounce-in">
             <CardHeader className="text-center">
-              <CardTitle className="text-3xl font-fredoka text-forest">
-                🎉 Quiz Complete!
+              <CardTitle className="text-4xl font-fredoka text-gradient-rainbow animate-bounce-gentle">
+                🎉 Amazing Work! 🎉
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center">
-              <div className="text-6xl mb-4">
+              <div className="text-8xl mb-6 animate-bounce-gentle">
                 {percentage >= 90 ? "🏆" : percentage >= 70 ? "⭐" : "👍"}
               </div>
-              <div className="text-2xl font-fredoka text-forest mb-2">
+              <div className="text-3xl font-fredoka text-magic mb-3">
                 Your Score: {score} / {selectedQuiz.questions.length}
               </div>
-              <div className="text-lg text-forest/80 mb-6">
-                {percentage}% Correct
+              <div className="text-2xl text-coral mb-6 font-bold">
+                {percentage}% Correct!
               </div>
-              <div className="space-y-3">
+              <div className="mb-6">
+                {percentage >= 90 ? (
+                  <p className="text-lg text-forest font-fredoka">🌟 Outstanding! You're a nature expert! 🌟</p>
+                ) : percentage >= 70 ? (
+                  <p className="text-lg text-forest font-fredoka">⭐ Great job! You know so much about nature! ⭐</p>
+                ) : (
+                  <p className="text-lg text-forest font-fredoka">👍 Good try! Keep learning and you'll get even better! 👍</p>
+                )}
+              </div>
+              <div className="space-y-4">
                 <Button 
                   onClick={() => startQuiz(selectedQuiz)}
-                  className="bg-nature hover:bg-forest text-white mr-4"
+                  className="kid-friendly-button mr-4 animate-bounce-gentle"
                   data-testid="button-retry"
                 >
-                  🔄 Try Again
+                  🔄 Try Again! 🔄
                 </Button>
                 <Button 
                   onClick={resetQuiz}
-                  variant="outline"
-                  className="border-nature text-nature hover:bg-nature hover:text-white"
+                  className="kid-friendly-button bg-turquoise hover:bg-teal-500 animate-bounce-gentle"
                   data-testid="button-back-to-quizzes"
                 >
-                  📚 Back to Quizzes
+                  📚 More Quizzes! 📚
                 </Button>
               </div>
             </CardContent>
@@ -305,48 +324,53 @@ export default function Quiz() {
     const progress = ((currentQuestion + 1) / selectedQuiz.questions.length) * 100;
 
     return (
-      <div className="min-h-screen magic-gradient py-12">
-        <div className="container mx-auto px-6 max-w-2xl">
-          <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
+      <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
+        <div className="absolute inset-0 pointer-events-none">
+          <div className="floating-element absolute top-20 left-10 text-3xl animate-sparkle">🤔</div>
+          <div className="floating-element absolute bottom-20 right-10 text-3xl animate-sparkle">💡</div>
+          <div className="floating-element absolute top-40 right-20 text-4xl animate-sparkle">🧠</div>
+        </div>
+        <div className="container mx-auto px-6 max-w-2xl relative z-10">
+          <Card className="kid-friendly-card magical-shadow-lg">
             <CardHeader>
               <div className="flex justify-between items-center mb-4">
-                <CardTitle className="text-xl font-fredoka text-forest">
+                <CardTitle className="text-2xl font-fredoka text-magic">
                   {selectedQuiz.title}
                 </CardTitle>
                 <Button 
                   onClick={resetQuiz}
-                  variant="outline"
-                  size="sm"
+                  className="kid-friendly-button bg-coral hover:bg-red-500 text-sm px-4 py-2"
                   data-testid="button-exit-quiz"
                 >
                   ❌ Exit
                 </Button>
               </div>
-              <div className="space-y-2">
-                <div className="flex justify-between text-sm text-forest/70">
+              <div className="space-y-3">
+                <div className="flex justify-between text-lg text-forest font-fredoka">
                   <span>Question {currentQuestion + 1} of {selectedQuiz.questions.length}</span>
-                  <span>Score: {score}</span>
+                  <span>Score: {score} ⭐</span>
                 </div>
-                <Progress value={progress} className="h-2" />
+                <Progress value={progress} className="h-4 magical-shadow" />
               </div>
             </CardHeader>
             <CardContent>
-              <div className="mb-6">
-                <h3 className="text-lg font-medium text-forest mb-4">
+              <div className="mb-8">
+                <h3 className="text-xl font-fredoka text-forest mb-6 animate-fade-in">
                   {currentQ.question}
                 </h3>
-                <div className="space-y-3">
+                <div className="space-y-4">
                   {currentQ.options.map((option, index) => (
                     <button
                       key={index}
                       onClick={() => handleAnswerSelect(index)}
-                      className={`w-full p-4 text-left rounded-lg border-2 transition-all duration-200 ${
+                      className={`w-full p-5 text-left rounded-2xl border-3 transition-all duration-300 font-medium magical-shadow hover:scale-105 ${
                         selectedAnswer === index
-                          ? 'border-nature bg-nature/10 text-forest'
-                          : 'border-gray-200 hover:border-nature/50 text-forest/80'
+                          ? 'border-magic bg-magic/20 text-forest sparkle-hover'
+                          : 'border-gray-200 hover:border-nature text-forest/90 hover:bg-nature/10'
                       }`}
                       data-testid={`button-answer-${index}`}
                     >
+                      <span className="mr-3 text-xl">{String.fromCharCode(65 + index)}</span>
                       {option}
                     </button>
                   ))}
@@ -355,10 +379,10 @@ export default function Quiz() {
               <Button
                 onClick={handleNextQuestion}
                 disabled={selectedAnswer === null}
-                className="w-full bg-nature hover:bg-forest text-white"
+                className="w-full kid-friendly-button text-xl py-6 animate-bounce-gentle"
                 data-testid="button-next-question"
               >
-                {currentQuestion + 1 === selectedQuiz.questions.length ? "🏁 Finish Quiz" : "➡️ Next Question"}
+                {currentQuestion + 1 === selectedQuiz.questions.length ? "🏁 Finish Quiz! 🏁" : "➡️ Next Question! ➡️"}
               </Button>
             </CardContent>
           </Card>
@@ -368,52 +392,61 @@ export default function Quiz() {
   }
 
   return (
-    <div className="min-h-screen magic-gradient py-12">
-      <div className="container mx-auto px-6 max-w-4xl">
+    <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
+      <div className="absolute inset-0 pointer-events-none">
+        <div className="floating-element absolute top-16 left-8 text-4xl animate-sparkle">🧠</div>
+        <div className="floating-element absolute top-28 right-12 text-3xl animate-sparkle">📝</div>
+        <div className="floating-element absolute bottom-32 left-16 text-5xl animate-sparkle">🌟</div>
+        <div className="floating-element absolute bottom-16 right-8 text-4xl animate-sparkle">💡</div>
+        <div className="floating-element absolute top-48 left-1/4 text-3xl animate-sparkle">🏆</div>
+        <div className="floating-element absolute bottom-48 right-1/4 text-4xl animate-sparkle">⭐</div>
+      </div>
+      <div className="container mx-auto px-6 max-w-4xl relative z-10">
         <div className="text-center mb-8">
-          <h1 className="text-4xl font-fredoka text-white mb-4" data-testid="text-title">
-            🧠 Quiz Player
+          <h1 className="text-5xl font-fredoka text-gradient-rainbow mb-4 animate-bounce-in" data-testid="text-title">
+            🧠 Quiz Adventure! 🧠
           </h1>
-          <p className="text-white/90 text-lg">
-            Test your nature knowledge and learn amazing facts!
+          <p className="text-white/90 text-xl animate-fade-in-delay magical-shadow">
+            ✨ Test your nature knowledge and learn amazing facts! ✨
           </p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {quizzes.map((quiz) => (
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          {quizzes.map((quiz, index) => (
             <Card 
               key={quiz.id}
-              className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl hover:scale-105 transition-all duration-200"
+              className="kid-friendly-card hover:scale-110 transition-all duration-500 animate-fade-in-stagger hover-wiggle"
               data-testid={`card-quiz-${quiz.id}`}
+              style={{ animationDelay: `${index * 0.2}s` }}
             >
               <CardHeader>
-                <div className="flex justify-between items-start mb-2">
-                  <CardTitle className="text-xl font-fredoka text-forest">
+                <div className="flex justify-between items-start mb-3">
+                  <CardTitle className="text-2xl font-fredoka text-magic">
                     {quiz.title}
                   </CardTitle>
-                  <Badge className={getDifficultyColor(quiz.difficulty)}>
+                  <Badge className={`${getDifficultyColor(quiz.difficulty)} text-lg px-3 py-1 rounded-xl font-fredoka`}>
                     {quiz.difficulty}
                   </Badge>
                 </div>
-                <p className="text-forest/80 text-sm">
+                <p className="text-forest text-base">
                   {quiz.description}
                 </p>
               </CardHeader>
               <CardContent>
-                <div className="flex justify-between items-center mb-4">
-                  <span className="text-sm text-forest/70">
-                    {quiz.questions.length} questions
+                <div className="flex justify-between items-center mb-6">
+                  <span className="text-base text-turquoise font-bold">
+                    📝 {quiz.questions.length} questions
                   </span>
-                  <span className="text-sm text-forest/70">
-                    Category: {quiz.category}
+                  <span className="text-base text-coral font-bold">
+                    🏷️ {quiz.category}
                   </span>
                 </div>
                 <Button
                   onClick={() => startQuiz(quiz)}
-                  className="w-full bg-turquoise hover:bg-teal-600 text-white"
+                  className="w-full kid-friendly-button text-xl py-4 animate-bounce-gentle"
                   data-testid={`button-start-quiz-${quiz.id}`}
                 >
-                  🚀 Start Quiz
+                  🚀 Start Quiz Adventure! 🚀
                 </Button>
               </CardContent>
             </Card>
