@@ -1,0 +1,116 @@
+Fix routing and NavBar. Do the following EXACTLY. Overwrite files if they already exist. Do not create placeholders.
+
+1) Install deps:
+- Run: npm i react-router-dom@6
+
+2) Ensure entry point renders <App/>:
+Open src/main.tsx (or src/main.jsx if present). Replace its content with:
+
+---- FILE: src/main.tsx ----
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+import App from './App'
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
+<React.StrictMode>
+<App />
+</React.StrictMode>
+)
+---- END FILE ----
+
+3) Create/overwrite NavBar component with inline styles (no CSS import):
+---- FILE: src/components/NavBar.tsx ----
+import React from 'react';
+import { Link } from 'react-router-dom';
+
+const NavBar: React.FC = () => {
+const styles = {
+navbar: {
+backgroundColor: '#222',
+color: '#fff',
+display: 'flex',
+justifyContent: 'space-between',
+alignItems: 'center',
+padding: '1rem 2rem',
+},
+logo: {
+color: '#fff',
+textDecoration: 'none',
+fontSize: '1.5rem',
+fontWeight: 'bold',
+},
+links: {
+listStyle: 'none' as const,
+display: 'flex',
+gap: '1.5rem',
+margin: 0,
+padding: 0,
+},
+link: {
+color: '#fff',
+textDecoration: 'none',
+fontWeight: 500 as const,
+}
+};
+
+return (
+<nav style={styles.navbar}>
+<div>
+<Link to="/" style={styles.logo}>Naturverse</Link>
+</div>
+<ul style={styles.links}>
+<li><Link to="/" style={styles.link}>Home</Link></li>
+<li><Link to="/about" style={styles.link}>About</Link></li>
+<li><Link to="/signup" style={styles.link}>Sign Up</Link></li>
+<li><Link to="/login" style={styles.link}>Login</Link></li>
+</ul>
+</nav>
+);
+};
+
+export default NavBar;
+---- END FILE ----
+
+4) Wire router and NavBar:
+Overwrite src/App.tsx with:
+
+---- FILE: src/App.tsx ----
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './components/NavBar';
+
+const Home: React.FC = () => <h2>Welcome to the Naturverse</h2>;
+const About: React.FC = () => <h2>About the Project</h2>;
+const SignUp: React.FC = () => <h2>Sign Up Page</h2>;
+const Login: React.FC = () => <h2>Login Page</h2>;
+
+const App: React.FC = () => {
+return (
+<Router>
+<NavBar />
+<div style={{ padding: '2rem' }}>
+<Routes>
+<Route path="/" element={<Home />} />
+<Route path="/about" element={<About />} />
+<Route path="/signup" element={<SignUp />} />
+<Route path="/login" element={<Login />} />
+</Routes>
+</div>
+</Router>
+);
+};
+
+export default App;
+---- END FILE ----
+
+5) Ensure index.html has <div id="root"></div>:
+Open index.html at project root. Make sure there is:
+<body>
+<div id="root"></div>
+<script type="module" src="/src/main.tsx"></script>
+</body>
+
+6) Restart dev server:
+- Stop the current run if needed
+- Run: npm run dev
+- Open the preview in a new tab
