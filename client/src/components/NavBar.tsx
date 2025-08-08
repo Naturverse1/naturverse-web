@@ -22,207 +22,51 @@ const NavBar: React.FC = () => {
   };
 
   return (
-    <nav className="sticky top-0 z-50 backdrop-blur-lg shadow-xl" style={{
-      background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,240,220,0.9) 50%, rgba(240,255,240,0.9) 100%)',
-      border: 'none',
-      borderBottom: '3px solid rgba(139, 69, 19, 0.2)'
-    }}>
-      <div className="container mx-auto px-6 py-3">
+    <nav className="nav-modern sticky top-0 z-50 backdrop-blur-lg bg-white/80 border-b border-emerald/20 shadow-xl">
+      <div className="container mx-auto px-6 py-4">
         <div className="flex justify-between items-center">
-          <Link to="/" className="hover:scale-105 transition-all duration-300">
-            <div className="flex items-center gap-3">
-              <div className="relative">
-                <img src={TurianLogo} alt="Naturverse" className="w-14 h-14 animate-gentle-pulse drop-shadow-2xl" />
-                <div className="absolute -top-1 -right-1 text-lg animate-sparkle-orbit">✨</div>
-                <div className="absolute -bottom-1 -left-1 text-lg animate-sparkle-orbit-reverse">🌟</div>
+          <Link to="/" className="text-display text-3xl md:text-4xl font-bold text-gradient hover:scale-105 transition-all duration-300">
+            <span className="flex items-center gap-2 md:gap-3">
+              <div className="relative flex-shrink-0">
+                <img src={TurianLogo} alt="The Naturverse" className="w-16 h-16 md:w-20 md:h-20 drop-shadow-2xl" />
+                <div className="absolute -top-2 -right-2 text-2xl animate-sparkle-twinkle">✨</div>
               </div>
-              <div className="font-bold text-3xl" style={{
-                background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F39C12 100%)',
-                WebkitBackgroundClip: 'text',
-                WebkitTextFillColor: 'transparent',
-                backgroundClip: 'text',
-                textShadow: '2px 2px 4px rgba(0,0,0,0.3)',
-                fontFamily: 'Fredoka, cursive'
-              }}>
-                <span className="text-2xl animate-float-bounce mr-2">🌿</span>
-                Naturverse
-                <span className="text-2xl animate-float-bounce ml-2">📖</span>
-              </div>
-            </div>
+              <span className="text-3xl md:text-5xl flex-shrink-0">🌿</span>
+              <span className="text-transparent bg-gradient-to-r from-emerald via-forest to-sage bg-clip-text font-bold min-w-0 truncate">The Naturverse™</span>
+            </span>
           </Link>
           
           {user ? (
-            /* Magical Navigation for Authenticated Users */
             <div className="flex items-center space-x-3 overflow-x-auto">
-              <Link 
-                to="/map" 
-                className="magical-nav-btn" 
-                data-testid="nav-map"
-                style={{
-                  background: 'linear-gradient(135deg, #27AE60, #2ECC71)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">🗺️</span>Map
+              <Link to="/map" className="nav-link" data-testid="nav-map">
+                <span className="mr-2 text-lg">🗺️</span>Map
               </Link>
-              
-              <Link 
-                to="/quests" 
-                className="magical-nav-btn" 
-                data-testid="nav-quests"
-                style={{
-                  background: 'linear-gradient(135deg, #F39C12, #E67E22)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">🏆</span>Quests
+              <Link to="/quests" className="nav-link" data-testid="nav-quests">
+                <span className="mr-2 text-lg">🏆</span>Quests
               </Link>
-              
-              <Link 
-                to="/storybook" 
-                className="magical-nav-btn" 
-                data-testid="nav-storybook"
-                style={{
-                  background: 'linear-gradient(135deg, #9B59B6, #8E44AD)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">📚</span>Stories
+              <Link to="/profile" className="nav-link" data-testid="nav-profile">
+                <span className="mr-2 text-lg">👤</span>Profile
               </Link>
-              
-              <Link 
-                to="/ai" 
-                className="magical-nav-btn" 
-                data-testid="nav-ai"
-                style={{
-                  background: 'linear-gradient(135deg, #E74C3C, #C0392B)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">🤖</span>Turian
-              </Link>
-              
-              <Link 
-                to="/profile" 
-                className="magical-nav-btn" 
-                data-testid="nav-profile"
-                style={{
-                  background: 'linear-gradient(135deg, #3498DB, #2980B9)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">👤</span>Profile
-              </Link>
-              
               <Button 
                 onClick={handleSignOut}
-                className="magical-nav-btn" 
+                className="btn-secondary"
                 data-testid="button-sign-out"
-                style={{
-                  background: 'linear-gradient(135deg, #E67E22, #D35400)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
               >
-                <span className="text-lg mr-2 animate-sparkle-dance">🚪</span>Logout
+                Sign Out
               </Button>
             </div>
           ) : (
-            /* Public Navigation for Unauthenticated Users */
             <div className="flex items-center space-x-3">
-              <Link 
-                to="/about" 
-                className="magical-nav-btn" 
-                data-testid="nav-about"
-                style={{
-                  background: 'linear-gradient(135deg, #3498DB, #2980B9)',
-                  color: 'white',
-                  padding: '0.5rem 1rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '0.9rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">ℹ️</span>About
+              <Link to="/about" className="nav-link" data-testid="nav-about">
+                About
               </Link>
-              
-              <Link 
-                to="/signup" 
-                className="magical-nav-btn" 
-                data-testid="nav-signup"
-                style={{
-                  background: 'linear-gradient(135deg, #9B59B6, #8E44AD)',
-                  color: 'white',
-                  padding: '0.5rem 1.5rem',
-                  borderRadius: '1.5rem',
-                  fontWeight: 'bold',
-                  fontSize: '1rem',
-                  border: '2px solid rgba(255,255,255,0.3)',
-                  boxShadow: '0 4px 12px rgba(0,0,0,0.2)',
-                  fontFamily: 'Fredoka, cursive'
-                }}
-              >
-                <span className="text-lg mr-2 animate-sparkle-dance">✨</span>Join Adventure
+              <Link to="/signup" className="nav-link" data-testid="nav-signup">
+                Sign Up
               </Link>
-              
-              <Button asChild style={{
-                background: 'linear-gradient(135deg, #E74C3C, #C0392B)',
-                color: 'white',
-                padding: '0.75rem 2rem',
-                borderRadius: '1.5rem',
-                fontWeight: 'bold',
-                fontSize: '1.1rem',
-                border: '2px solid rgba(255,255,255,0.3)',
-                boxShadow: '0 6px 20px rgba(0,0,0,0.3)',
-                fontFamily: 'Fredoka, cursive'
-              }}>
-                <Link to="/login" data-testid="nav-login" className="hover:scale-105 transition-transform duration-300">
-                  <span className="text-xl mr-2 animate-float-bounce">🚀</span>
-                  Enter Naturverse
+              <Button asChild className="btn-primary">
+                <Link to="/login" data-testid="nav-login">
+                  <span className="mr-2">🚀</span>
+                  Start Exploring
                 </Link>
               </Button>
             </div>
