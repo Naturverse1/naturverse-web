@@ -112,26 +112,26 @@ export default function Map() {
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <CardHeader className="text-center">
-                <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center text-4xl mb-4 shadow-md ${
-                  zone.unlocked ? 'animate-gentle-pulse' : 'opacity-60'
+                <div className={`w-28 h-28 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center text-6xl mb-6 shadow-lg hover:shadow-xl transition-all duration-300 ${
+                  zone.unlocked ? 'animate-gentle-pulse hover:scale-110' : 'opacity-60'
                 }`}>
                   {zone.emoji}
                 </div>
-                <CardTitle className={`text-xl font-display ${zone.unlocked ? 'text-foreground' : 'text-muted-foreground'}`}>
+                <CardTitle className={`text-2xl font-display font-bold ${zone.unlocked ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {zone.name}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
-                <p className={`text-sm mb-4 leading-relaxed ${zone.unlocked ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
+                <p className={`text-lg mb-6 leading-relaxed ${zone.unlocked ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
                   {zone.description}
                 </p>
                 <div className="flex justify-center">
                   {zone.unlocked ? (
-                    <div className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium border border-primary/20">
+                    <div className="px-6 py-3 bg-primary/10 text-primary rounded-xl text-lg font-bold border border-primary/20 hover:bg-primary/20 transition-all duration-300">
                       ✨ Ready to Explore
                     </div>
                   ) : (
-                    <div className="px-4 py-2 bg-muted text-muted-foreground rounded-lg text-sm">
+                    <div className="px-6 py-3 bg-muted text-muted-foreground rounded-xl text-lg font-medium">
                       🔒 Complete More Quests
                     </div>
                   )}
@@ -146,22 +146,22 @@ export default function Map() {
             <Card className="modern-card-elevated max-w-lg mx-auto">
               <CardContent className="pt-8">
                 <div className="mb-8">
-                  <div className="text-5xl mb-4 animate-gentle-pulse">{zones.find(z => z.id === selectedZone)?.emoji}</div>
-                  <h3 className="text-2xl font-display text-foreground mb-4">
+                  <div className="text-7xl mb-6 animate-gentle-pulse hover:scale-110 transition-all duration-300">{zones.find(z => z.id === selectedZone)?.emoji}</div>
+                  <h3 className="text-3xl font-display text-foreground mb-6 font-bold">
                     Ready to explore <span className="text-gradient">{zones.find(z => z.id === selectedZone)?.name}</span>?
                   </h3>
-                  <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                  <p className="text-muted-foreground text-xl mb-8 leading-relaxed font-medium">
                     Begin your educational adventure in this fascinating ecosystem.
                   </p>
                 </div>
                 
                 <Button
                   onClick={handleExplore}
-                  size="lg"
-                  className="btn-primary text-lg px-8 py-4 hover-lift"
+                  size="xl"
+                  className="btn-primary text-2xl px-12 py-6 hover-lift font-bold shadow-lg"
                   data-testid="button-explore"
                 >
-                  <span className="mr-2">🚀</span>Start Exploration
+                  <span className="mr-4 text-3xl">🚀</span>Start Exploration
                 </Button>
               </CardContent>
             </Card>

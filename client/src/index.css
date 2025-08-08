@@ -1742,3 +1742,163 @@
     transition-duration: 0.01ms !important;
   }
 }
+
+/* ==============================================
+   CHILD-FRIENDLY UI ENHANCEMENTS
+   ==============================================
+   These classes ensure all text is always visible
+   and elements are properly scaled for children
+   ============================================== */
+
+/* Always Visible Text - No Hover Dependencies */
+.text-child-friendly,
+.character-label-enhanced,
+.zone-title-enhanced,
+.always-visible-text {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  color: var(--foreground) !important;
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+  line-height: 1.4;
+}
+
+/* Enhanced Button Magical Effects */
+.btn-magical-glow {
+  position: relative;
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-magical);
+}
+
+.btn-magical-glow:hover {
+  transform: translateY(-6px) scale(1.05);
+  box-shadow: 
+    var(--shadow-glow),
+    0 0 50px rgba(var(--sparkle), 0.6);
+  filter: brightness(1.1);
+}
+
+/* Enhanced Card Effects */
+.card-enhanced {
+  transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  border-radius: var(--radius-2xl);
+  box-shadow: var(--shadow-magical);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+}
+
+.card-enhanced:hover {
+  transform: translateY(-8px) scale(1.03);
+  box-shadow: var(--shadow-glow);
+  border-color: rgba(var(--sparkle), 0.5);
+}
+
+/* Zone Card Emoji Enhancements */
+.zone-enhanced .zone-emoji,
+.character-enhanced .character-emoji {
+  font-size: 4rem !important;
+  filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.3));
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.6, 1);
+}
+
+.zone-enhanced:hover .zone-emoji,
+.character-enhanced:hover .character-emoji {
+  transform: scale(1.2) rotate(10deg);
+  filter: drop-shadow(0 12px 24px rgba(0, 0, 0, 0.4));
+}
+
+/* Large Touch-Friendly Elements */
+.touch-friendly {
+  min-height: 44px;
+  min-width: 44px;
+  font-size: 1.125rem;
+  padding: 0.75rem 1.5rem;
+  border-radius: var(--radius-lg);
+  cursor: pointer;
+  user-select: none;
+  -webkit-tap-highlight-color: rgba(var(--sparkle), 0.3);
+}
+
+/* Magical Sparkle Effects */
+.sparkle-enhanced {
+  position: relative;
+  overflow: visible;
+}
+
+.sparkle-enhanced::after {
+  content: '✨🌟⭐💫';
+  position: absolute;
+  top: -20px;
+  right: -20px;
+  font-size: 0.8rem;
+  opacity: 0;
+  animation: sparkle-float 3s ease-in-out infinite;
+  pointer-events: none;
+  z-index: 10;
+}
+
+.sparkle-enhanced:hover::after {
+  opacity: 0.8;
+}
+
+@keyframes sparkle-float {
+  0%, 100% {
+    transform: translateY(0) rotate(0deg);
+    opacity: 0;
+  }
+  25%, 75% {
+    opacity: 0.8;
+  }
+  50% {
+    transform: translateY(-10px) rotate(180deg);
+    opacity: 1;
+  }
+}
+
+/* Character and Zone Label Visibility */
+.character-card .character-label,
+.zone-card .zone-title,
+.zone-card .zone-description {
+  opacity: 1 !important;
+  visibility: visible !important;
+  display: block !important;
+  color: var(--foreground) !important;
+  font-weight: 700;
+  text-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+/* Ensure Contrast in Dark Mode */
+.dark .character-label,
+.dark .zone-title,
+.dark .zone-description,
+.dark .always-visible-text {
+  color: rgba(255, 255, 255, 0.95) !important;
+  text-shadow: 
+    0 2px 8px rgba(0, 0, 0, 0.8),
+    0 0 20px rgba(var(--sparkle), 0.3);
+}
+
+/* Focus States for Accessibility */
+.focus-enhanced:focus {
+  outline: none;
+  box-shadow: 
+    0 0 0 4px rgba(var(--sparkle), 0.4),
+    0 0 0 8px rgba(255, 255, 255, 0.9),
+    var(--shadow-glow);
+  border-color: var(--sparkle);
+  transform: scale(1.02);
+}
+
+/* Ensure All Interactive Elements Are Visible */
+.interactive-element {
+  opacity: 1 !important;
+  visibility: visible !important;
+  pointer-events: auto !important;
+  transition: all 0.3s ease;
+}
+
+.interactive-element:hover {
+  transform: scale(1.05);
+  filter: brightness(1.1);
+}

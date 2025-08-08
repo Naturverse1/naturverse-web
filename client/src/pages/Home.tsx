@@ -98,33 +98,33 @@ export default function Home() {
         {/* Character Parade at Top - Enhanced with More Characters */}
         <div className="absolute top-0 left-0 right-0 h-40 overflow-hidden bg-gradient-to-b from-sparkle/20 via-transparent to-transparent">
           <div className="flex justify-between items-center h-full px-4">
-            <div className="character-card p-3 animate-character-bounce-in char-1">
-              <img src={TurianDurianImg} alt="Turian the Durian" className="w-16 h-16 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-emerald mt-1 text-center">Turian</div>
+            <div className="character-card p-6 animate-character-bounce-in char-1 transform hover:scale-110 transition-all duration-300">
+              <img src={TurianDurianImg} alt="Turian the Durian" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-emerald mt-3 text-center text-shadow">Turian</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-2">
-              <img src={DrPImg} alt="Dr P" className="w-14 h-14 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-ocean mt-1 text-center">Dr P</div>
+            <div className="character-card p-6 animate-character-bounce-in char-2 transform hover:scale-110 transition-all duration-300">
+              <img src={DrPImg} alt="Dr P" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-ocean mt-3 text-center text-shadow">Dr P</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-3">
-              <img src={FrankieFrogsImg} alt="Frankie Frogs" className="w-16 h-16 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-magic mt-1 text-center">Frankie</div>
+            <div className="character-card p-6 animate-character-bounce-in char-3 transform hover:scale-110 transition-all duration-300">
+              <img src={FrankieFrogsImg} alt="Frankie Frogs" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-magic mt-3 text-center text-shadow">Frankie</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-4">
-              <img src={BluButterflyImg} alt="Blu Butterfly" className="w-12 h-12 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-sky mt-1 text-center">Blu</div>
+            <div className="character-card p-6 animate-character-bounce-in char-4 transform hover:scale-110 transition-all duration-300">
+              <img src={BluButterflyImg} alt="Blu Butterfly" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-sky mt-3 text-center text-shadow">Blu</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-5">
-              <img src={MangoMikeImg} alt="Mango Mike" className="w-14 h-14 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-amber mt-1 text-center">Mike</div>
+            <div className="character-card p-6 animate-character-bounce-in char-5 transform hover:scale-110 transition-all duration-300">
+              <img src={MangoMikeImg} alt="Mango Mike" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-amber mt-3 text-center text-shadow">Mike</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-6">
-              <img src={TommyTukTukImg} alt="Tommy Tuk Tuk" className="w-14 h-14 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-coral mt-1 text-center">Tommy</div>
+            <div className="character-card p-6 animate-character-bounce-in char-6 transform hover:scale-110 transition-all duration-300">
+              <img src={TommyTukTukImg} alt="Tommy Tuk Tuk" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-coral mt-3 text-center text-shadow">Tommy</div>
             </div>
-            <div className="character-card p-3 animate-character-bounce-in char-7">
-              <img src={GuideImg} alt="Guide" className="w-14 h-14 object-contain drop-shadow-2xl" />
-              <div className="text-xs font-bold text-forest mt-1 text-center">Guide</div>
+            <div className="character-card p-6 animate-character-bounce-in char-7 transform hover:scale-110 transition-all duration-300">
+              <img src={GuideImg} alt="Guide" className="w-24 h-24 object-contain drop-shadow-2xl" />
+              <div className="text-lg font-bold text-forest mt-3 text-center text-shadow">Guide</div>
             </div>
           </div>
         </div>
@@ -168,16 +168,16 @@ export default function Home() {
             
             {/* Enhanced Call to Action */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20 animate-hero-entrance stagger-2">
-              <Button asChild size="lg" className="btn-rainbow text-2xl px-16 py-8 hover-lift animate-magical-pulse shadow-2xl btn-bounce">
+              <Button asChild size="xxl" className="btn-rainbow text-3xl px-20 py-10 hover-lift animate-magical-pulse shadow-2xl btn-bounce">
                 <Link to="/signup" data-testid="button-get-started" className="text-playful">
-                  <span className="text-3xl mr-4 animate-sparkle-twinkle">✨</span>
+                  <span className="text-4xl mr-6 animate-sparkle-twinkle">✨</span>
                   <span className="font-bold text-shadow">Begin Your Magic Adventure!</span>
-                  <span className="text-3xl ml-4 animate-sparkle-twinkle">🌟</span>
+                  <span className="text-4xl ml-6 animate-sparkle-twinkle">🌟</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="lg" className="gradient-playful text-white hover:text-white text-2xl px-16 py-8 hover-lift border-2 border-white/30 shadow-xl btn-bounce">
+              <Button asChild variant="outline" size="xl" className="gradient-playful text-white hover:text-white text-2xl px-20 py-8 hover-lift border-2 border-white/30 shadow-xl btn-bounce">
                 <Link to="/login" data-testid="button-sign-in" className="text-playful">
-                  <span className="text-3xl mr-4 animate-sparkle-twinkle">🚀</span>
+                  <span className="text-4xl mr-6 animate-sparkle-twinkle">🚀</span>
                   <span className="font-bold text-shadow">Return to Naturverse</span>
                 </Link>
               </Button>
@@ -185,35 +185,35 @@ export default function Home() {
             
             {/* Enhanced Character Showcase Row */}
             <div className="flex justify-center items-center gap-8 mb-16 animate-hero-entrance stagger-3 flex-wrap">
-              <div className="card-playful animate-character-float float-1 text-center p-8 hover:scale-115 transition-all duration-500">
-                <img src={HankImg} alt="Hank" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-emerald/30 rounded-full p-1 bg-gradient-to-br from-emerald/10 to-mint/20" />
-                <p className="text-lg font-bold text-emerald text-playful">Meet Hank!</p>
-                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Market Expert</p>
-                <div className="text-2xl mt-2 animate-sparkle-twinkle">🛒</div>
+              <div className="card-playful animate-character-float float-1 text-center p-10 hover:scale-115 transition-all duration-500 min-w-[200px]">
+                <img src={HankImg} alt="Hank" className="w-32 h-32 mx-auto mb-6 object-contain drop-shadow-xl border-4 border-emerald/30 rounded-full p-2 bg-gradient-to-br from-emerald/10 to-mint/20" />
+                <p className="text-2xl font-bold text-emerald text-playful mb-2">Meet Hank!</p>
+                <p className="text-lg text-muted-foreground mt-2 text-body-relaxed font-medium">Market Expert</p>
+                <div className="text-4xl mt-4 animate-sparkle-twinkle">🛒</div>
               </div>
-              <div className="card-playful animate-character-float float-2 text-center p-8 hover:scale-115 transition-all duration-500">
-                <img src={LaoCowImg} alt="Lao Cow" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-forest/30 rounded-full p-1 bg-gradient-to-br from-forest/10 to-sage/20" />
-                <p className="text-lg font-bold text-forest text-playful">Wise Lao Cow</p>
-                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Story Master</p>
-                <div className="text-2xl mt-2 animate-sparkle-twinkle">📚</div>
+              <div className="card-playful animate-character-float float-2 text-center p-10 hover:scale-115 transition-all duration-500 min-w-[200px]">
+                <img src={LaoCowImg} alt="Lao Cow" className="w-32 h-32 mx-auto mb-6 object-contain drop-shadow-xl border-4 border-forest/30 rounded-full p-2 bg-gradient-to-br from-forest/10 to-sage/20" />
+                <p className="text-2xl font-bold text-forest text-playful mb-2">Wise Lao Cow</p>
+                <p className="text-lg text-muted-foreground mt-2 text-body-relaxed font-medium">Story Master</p>
+                <div className="text-4xl mt-4 animate-sparkle-twinkle">📚</div>
               </div>
-              <div className="card-playful animate-character-float float-3 text-center p-8 hover:scale-115 transition-all duration-500">
-                <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-amber/30 rounded-full p-1 bg-gradient-to-br from-amber/10 to-sunny/20" />
-                <p className="text-lg font-bold text-amber text-playful">Pineapple Pa-Pa</p>
-                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Knowledge Keeper</p>
-                <div className="text-2xl mt-2 animate-sparkle-twinkle">🍍</div>
+              <div className="card-playful animate-character-float float-3 text-center p-10 hover:scale-115 transition-all duration-500 min-w-[200px]">
+                <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-32 h-32 mx-auto mb-6 object-contain drop-shadow-xl border-4 border-amber/30 rounded-full p-2 bg-gradient-to-br from-amber/10 to-sunny/20" />
+                <p className="text-2xl font-bold text-amber text-playful mb-2">Pineapple Pa-Pa</p>
+                <p className="text-lg text-muted-foreground mt-2 text-body-relaxed font-medium">Knowledge Keeper</p>
+                <div className="text-4xl mt-4 animate-sparkle-twinkle">🍍</div>
               </div>
-              <div className="card-playful animate-character-float float-1 text-center p-8 hover:scale-115 transition-all duration-500">
-                <img src={TwokayImg} alt="2kay" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-magic/30 rounded-full p-1 bg-gradient-to-br from-magic/10 to-sparkle/20" />
-                <p className="text-lg font-bold text-magic text-playful">2kay</p>
-                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Adventure Guide</p>
-                <div className="text-2xl mt-2 animate-sparkle-twinkle">🗺️</div>
+              <div className="card-playful animate-character-float float-1 text-center p-10 hover:scale-115 transition-all duration-500 min-w-[200px]">
+                <img src={TwokayImg} alt="2kay" className="w-32 h-32 mx-auto mb-6 object-contain drop-shadow-xl border-4 border-magic/30 rounded-full p-2 bg-gradient-to-br from-magic/10 to-sparkle/20" />
+                <p className="text-2xl font-bold text-magic text-playful mb-2">2kay</p>
+                <p className="text-lg text-muted-foreground mt-2 text-body-relaxed font-medium">Adventure Guide</p>
+                <div className="text-4xl mt-4 animate-sparkle-twinkle">🗺️</div>
               </div>
-              <div className="card-playful animate-character-float float-2 text-center p-8 hover:scale-115 transition-all duration-500">
-                <img src={NikkiMTImg} alt="Nikki MT" className="w-24 h-24 mx-auto mb-4 object-contain drop-shadow-xl border-4 border-ocean/30 rounded-full p-1 bg-gradient-to-br from-ocean/10 to-turquoise/20" />
-                <p className="text-lg font-bold text-ocean text-playful">Nikki MT</p>
-                <p className="text-sm text-muted-foreground mt-2 text-body-relaxed">Explorer</p>
-                <div className="text-2xl mt-2 animate-sparkle-twinkle">🔍</div>
+              <div className="card-playful animate-character-float float-2 text-center p-10 hover:scale-115 transition-all duration-500 min-w-[200px]">
+                <img src={NikkiMTImg} alt="Nikki MT" className="w-32 h-32 mx-auto mb-6 object-contain drop-shadow-xl border-4 border-ocean/30 rounded-full p-2 bg-gradient-to-br from-ocean/10 to-turquoise/20" />
+                <p className="text-2xl font-bold text-ocean text-playful mb-2">Nikki MT</p>
+                <p className="text-lg text-muted-foreground mt-2 text-body-relaxed font-medium">Explorer</p>
+                <div className="text-4xl mt-4 animate-sparkle-twinkle">🔍</div>
               </div>
             </div>
           
