@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "../context/AuthContext";
-import { useLocation } from "wouter";
+import { useNavigate } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Login() {
@@ -15,7 +15,7 @@ export default function Login() {
   const [resetLoading, setResetLoading] = useState(false);
   const [resetMessage, setResetMessage] = useState("");
   const { signIn } = useAuth();
-  const [, setLocation] = useLocation();
+  const navigate = useNavigate();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -31,7 +31,7 @@ export default function Login() {
       }
       
       if (user) {
-        setLocation('/dashboard');
+        navigate('/profile');
       }
     } catch (err) {
       setError('An unexpected error occurred');
