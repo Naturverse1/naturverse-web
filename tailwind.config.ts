@@ -61,7 +61,16 @@ export default {
           border: "var(--sidebar-border)",
           ring: "var(--sidebar-ring)",
         },
+        // Modern nature-inspired colors
+        emerald: "var(--emerald)",
         forest: "var(--forest)",
+        sage: "var(--sage)",
+        mint: "var(--mint)",
+        ocean: "var(--ocean)",
+        sky: "var(--sky)",
+        sunset: "var(--sunset)",
+        amber: "var(--amber)",
+        // Legacy colors (for backward compatibility)
         nature: "var(--nature)",
         coral: "var(--coral)",
         turquoise: "var(--turquoise)",
@@ -72,6 +81,7 @@ export default {
         sans: ["var(--font-sans)"],
         serif: ["var(--font-serif)"],
         mono: ["var(--font-mono)"],
+        display: ["var(--font-display)"],
         fredoka: ["var(--font-fredoka)"],
       },
       keyframes: {
