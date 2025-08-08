@@ -141,16 +141,17 @@ export default function Login() {
                 </Alert>
               )}
 
-              {/* Temporary Demo Button */}
+              {/* Google Sign In Button */}
               <div className="text-center">
                 <Button 
-                  onClick={() => setLocation('/map')}
+                  onClick={handleGoogleSignIn}
+                  disabled={loading}
                   className="btn-magical w-full text-xl py-6 text-white font-bold relative overflow-hidden"
-                  data-testid="demo-signin-button"
+                  data-testid="google-signin-button"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <span className="text-2xl">🌟</span>
-                    <span>Start Adventure (Demo Mode)</span>
+                    <span>{loading ? 'Signing in...' : 'Sign in with Google'}</span>
                     <span className="text-2xl">✨</span>
                   </div>
                   
@@ -159,15 +160,16 @@ export default function Login() {
                 </Button>
               </div>
               
-              {/* Google Setup Notice */}
-              <div className="bg-blue-50/90 border-2 border-blue-200 rounded-2xl p-4">
-                <div className="text-center">
-                  <div className="text-2xl mb-2">🔧</div>
-                  <p className="text-sm font-bold text-blue-700 mb-2">Google Sign-In Setup Needed</p>
-                  <p className="text-xs text-blue-600 font-story">
-                    To enable Google authentication, go to your Supabase project → Authentication → Providers → Enable Google provider
-                  </p>
-                </div>
+              {/* Demo Mode Option */}
+              <div className="text-center">
+                <Button 
+                  onClick={() => setLocation('/map')}
+                  variant="outline"
+                  className="w-full py-3 text-lg font-bold border-2 border-white/30 bg-white/10 hover:bg-white/20 text-white"
+                  data-testid="demo-signin-button"
+                >
+                  <span>Or try Demo Mode</span>
+                </Button>
               </div>
 
               <div className="text-center">
