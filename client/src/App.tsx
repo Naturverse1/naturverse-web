@@ -1,59 +1,26 @@
-import { Switch, Route, Redirect } from "wouter";
-import { queryClient } from "./lib/queryClient";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { Toaster } from "@/components/ui/toaster";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import Navbar from "@/components/Navbar";
-import Home from "@/pages/Home";
-import Signup from "@/pages/Signup";
-import Login from "@/pages/Login";
-import Dashboard from "@/pages/Dashboard";
-import Profile from "@/pages/Profile";
-import ResetPassword from "@/pages/ResetPassword";
-import NotFound from "@/pages/NotFound";
-import { useAuth, AuthProvider } from "./context/AuthContext";
+import React from 'react';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import NavBar from './NavBar';
 
-function PrivateRoute({ component: Component }: { component: () => JSX.Element }) {
-  const { user, loading } = useAuth();
-  
-  if (loading) return <div className="min-h-screen flex items-center justify-center"><div className="text-blue-600">Loading...</div></div>;
-  if (!user) return <Redirect to="/login" />;
-  return <Component />;
-}
+const Home = () => <h2>Welcome to the Naturverse</h2>;
+const About = () => <h2>About the Project</h2>;
+const SignUp = () => <h2>Sign Up Page</h2>;
+const Login = () => <h2>Login Page</h2>;
 
-function Router() {
+const App: React.FC = () => {
   return (
-    <div>
-      <Navbar />
-      <Switch>
-        <Route path="/" component={Home} />
-        <Route path="/signup" component={Signup} />
-        <Route path="/login" component={Login} />
-        <Route path="/dashboard">
-          <PrivateRoute component={Dashboard} />
-        </Route>
-        <Route path="/profile">
-          <PrivateRoute component={Profile} />
-        </Route>
-        <Route path="/reset" component={ResetPassword} />
-        {/* Fallback to 404 */}
-        <Route component={NotFound} />
-      </Switch>
-    </div>
+    <Router>
+      <NavBar />
+      <div style={{ padding: '2rem' }}>
+        <Routes>
+          <Route path="/" element={<Home />} />
+          <Route path="/about" element={<About />} />
+          <Route path="/signup" element={<SignUp />} />
+          <Route path="/login" element={<Login />} />
+        </Routes>
+      </div>
+    </Router>
   );
-}
-
-function App() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <TooltipProvider>
-        <AuthProvider>
-          <Toaster />
-          <Router />
-        </AuthProvider>
-      </TooltipProvider>
-    </QueryClientProvider>
-  );
-}
+};
 
 export default App;
