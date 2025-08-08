@@ -3,23 +3,33 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useLocation } from "wouter";
 
-// Import character assets for storybook integration
-import TurianDurianImg from "../assets/Turian the Durian.png";
-import DrPImg from "../assets/Dr P.png";
-import FrankieFrogsImg from "../assets/Frankie Frogs.png";
-import BluButterflyImg from "../assets/Blu Butterfly.png";
-import MangoMikeImg from "../assets/Mango Mike.png";
-import TommyTukTukImg from "../assets/Tommy Tuk Tuk.png";
-import GuideImg from "../assets/Guide.png";
-import JaySingImg from "../assets/Jay-Sing.png";
+// Official Naturverse™ Assets
+import TurianLogo from "@assets/turian_media_logo_transparent.png";
+import TurianCharacter from "@assets/Turian_1754677394027.jpg";
+import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
+import ShroomForest from "@assets/Shroom forest_1754673794866.jpg";
+
+// Character Assets
+import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
+import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
+import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
+import DrP from "@assets/Dr P_1754677394022.png";
+import JaySing from "@assets/Jay-Sing_1754677394023.png";
+import NikkiMT from "@assets/Nikki MT_1754677394025.png";
+import PineapplePapa from "@assets/Pineapple Pa-Pa_1754677394026.png";
+import TommyTukTuk from "@assets/Tommy Tuk Tuk_1754677394026.png";
+import Snakers from "@assets/Snakers_1754677394026.png";
+import Teeyor from "@assets/Teeyor_1754677394026.png";
 
 interface Zone {
   id: string;
   name: string;
   description: string;
   unlocked: boolean;
-  emoji: string;
+  character: string;
+  characterImage: string;
   color: string;
+  borderColor: string;
 }
 
 export default function Map() {
@@ -28,53 +38,85 @@ export default function Map() {
 
   const zones: Zone[] = [
     {
-      id: "thailandia",
-      name: "Thailandia",
-      description: "🏰 The enchanted kingdom where Turian guides brave explorers through magical temples and golden lotus fields!",
+      id: "turian-kingdom",
+      name: "Turian's Kingdom",
+      description: "The magical durian kingdom where Turian teaches about tropical fruits and nature's wisdom!",
       unlocked: true,
-      emoji: "🏛️",
-      color: "from-emerald/20 to-turquoise/20"
+      character: "Turian the Durian",
+      characterImage: TurianCharacter,
+      color: "from-green-400 to-green-600",
+      borderColor: "border-green-400"
     },
     {
-      id: "crystal-caves",
-      name: "Crystal Caves",
-      description: "💎 Deep underground wonderland where Dr P teaches the secrets of sparkling gemstones and crystal magic!",
+      id: "coconut-shores",
+      name: "Coconut Shores",
+      description: "Cruise with Coconut Cruze along beautiful beaches and learn about ocean life!",
       unlocked: true,
-      emoji: "💎",
-      color: "from-magic/20 to-coral/20"
+      character: "Coconut Cruze",
+      characterImage: CoconutCruze,
+      color: "from-blue-400 to-cyan-600",
+      borderColor: "border-blue-400"
     },
     {
-      id: "floating-gardens",
-      name: "Floating Gardens",
-      description: "🌺 Sky-high botanical paradise where Blu Butterfly dances among clouds and rainbow blooms!",
-      unlocked: false,
-      emoji: "🌸",
-      color: "from-sunny/20 to-magic/20"
+      id: "butterfly-meadows",
+      name: "Butterfly Meadows",
+      description: "Dance with Blue Butterfly through colorful flower fields and discover pollination magic!",
+      unlocked: true,
+      character: "Blue Butterfly",
+      characterImage: BluButterfly,
+      color: "from-purple-400 to-pink-600",
+      borderColor: "border-purple-400"
     },
     {
-      id: "whispering-woods",
-      name: "Whispering Woods",
-      description: "🌲 Ancient enchanted forest where Guide shares the old tree's wisdom and forest creature secrets!",
-      unlocked: false,
-      emoji: "🌲",
-      color: "from-forest/20 to-sage/20"
+      id: "frog-pond",
+      name: "Frankie's Frog Pond",
+      description: "Splash with Frankie Frogs and learn about amphibian life cycles and wetland ecosystems!",
+      unlocked: true,
+      character: "Frankie Frogs",
+      characterImage: FrankieFrogs,
+      color: "from-green-500 to-emerald-600",
+      borderColor: "border-green-500"
     },
     {
-      id: "starlight-seas",
-      name: "Starlight Seas",
-      description: "🌊 Glowing oceanic realm where Mango Mike explores bioluminescent waters and starfish villages!",
+      id: "doctor-lab",
+      name: "Dr P's Lab",
+      description: "Conduct exciting experiments with Dr P and discover the wonders of science!",
       unlocked: false,
-      emoji: "🌊",
-      color: "from-ocean/20 to-turquoise/20"
+      character: "Dr P",
+      characterImage: DrP,
+      color: "from-orange-400 to-red-500",
+      borderColor: "border-orange-400"
     },
     {
-      id: "ember-peaks",
-      name: "Ember Peaks",
-      description: "🌋 Fiery mountain adventure where Tommy Tuk Tuk races through volcanic valleys and lava streams!",
+      id: "singing-valley",
+      name: "Jay-Sing Valley",
+      description: "Make beautiful music with Jay-Sing and learn about sound, rhythm, and nature's orchestra!",
       unlocked: false,
-      emoji: "🌋",
-      color: "from-coral/20 to-sunset/20"
-    }
+      character: "Jay-Sing",
+      characterImage: JaySing,
+      color: "from-yellow-400 to-orange-500",
+      borderColor: "border-yellow-400"
+    },
+    {
+      id: "mountain-peaks",
+      name: "Nikki's Mountain",
+      description: "Climb high peaks with Nikki MT and explore mountain ecosystems and weather patterns!",
+      unlocked: false,
+      character: "Nikki MT",
+      characterImage: NikkiMT,
+      color: "from-indigo-400 to-blue-600",
+      borderColor: "border-indigo-400"
+    },
+    {
+      id: "pineapple-paradise",
+      name: "Pineapple Paradise",
+      description: "Explore tropical paradise with Pineapple Pa-Pa and learn about sustainable farming!",
+      unlocked: false,
+      character: "Pineapple Pa-Pa",
+      characterImage: PineapplePapa,
+      color: "from-yellow-500 to-amber-600",
+      borderColor: "border-yellow-500"
+    },
   ];
 
   const handleZoneClick = (zone: Zone) => {
@@ -88,196 +130,209 @@ export default function Map() {
     }
   };
 
+  const unlockedZones = zones.filter(z => z.unlocked).length;
+  const totalZones = zones.length;
+
   return (
-    <div className="min-h-screen hero-magical-bg relative overflow-hidden" style={{
-      background: `
-        radial-gradient(circle at 30% 40%, hsl(var(--emerald) / 0.15) 0%, transparent 50%),
-        radial-gradient(circle at 70% 70%, hsl(var(--magic) / 0.12) 0%, transparent 50%),
-        radial-gradient(circle at 20% 80%, hsl(var(--sparkle) / 0.1) 0%, transparent 40%),
-        radial-gradient(circle at 90% 20%, hsl(var(--ocean) / 0.1) 0%, transparent 45%),
-        radial-gradient(circle at 50% 10%, hsl(var(--coral) / 0.08) 0%, transparent 35%),
-        linear-gradient(135deg, hsl(var(--mint)) 0%, hsl(var(--background)) 40%, hsl(var(--storybook-blue) / 0.3) 70%, hsl(var(--storybook-purple) / 0.2) 100%)
-      `,
-      backgroundAttachment: 'fixed',
-      backgroundSize: '200% 200%, 200% 200%, 150% 150%, 150% 150%, 100% 100%, 100% 100%',
-      animation: 'gradient-shift 12s ease-in-out infinite'
-    }}>
-      {/* Enhanced Magical Background Elements */}
-      <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        {/* Floating Map Elements */}
-        <div className="absolute top-20 left-10 text-emerald/40 text-5xl animate-sparkle-twinkle float-1">🗺️</div>
-        <div className="absolute top-32 right-20 text-magic/40 text-4xl animate-sparkle-twinkle float-2">✨</div>
-        <div className="absolute bottom-40 left-20 text-ocean/40 text-6xl animate-sparkle-twinkle float-3">🏝️</div>
-        <div className="absolute bottom-20 right-10 text-emerald/40 text-4xl animate-sparkle-twinkle stagger-1">🌟</div>
-        <div className="absolute top-1/2 left-5 text-coral/30 text-3xl animate-magical-bounce stagger-2">🧭</div>
-        <div className="absolute top-1/3 right-5 text-sparkle/30 text-5xl animate-magical-bounce stagger-3">⭐</div>
-        
-        {/* Adventure Elements */}
-        <div className="absolute top-16 left-1/4 text-forest/30 text-4xl animate-character-float stagger-4">🌲</div>
-        <div className="absolute top-40 right-1/4 text-turquoise/30 text-3xl animate-character-float stagger-5">🌊</div>
-        <div className="absolute bottom-60 left-1/3 text-sunset/30 text-5xl animate-character-float stagger-6">🌋</div>
-        <div className="absolute bottom-80 right-1/3 text-magic/30 text-4xl animate-character-float stagger-7">💎</div>
-        <div className="absolute top-60 left-16 text-sunny/30 text-3xl animate-sparkle-pop stagger-8">🌸</div>
-        <div className="absolute top-80 right-16 text-emerald/40 text-4xl animate-sparkle-pop stagger-1">🏛️</div>
-        
-        {/* Character Shadows in Background */}
-        <div className="absolute top-1/4 left-8 opacity-20 animate-character-float">
-          <img src={TurianDurianImg} alt="" className="w-12 h-12 object-contain filter blur-sm" />
-        </div>
-        <div className="absolute bottom-1/4 right-8 opacity-20 animate-character-float float-2">
-          <img src={BluButterflyImg} alt="" className="w-10 h-10 object-contain filter blur-sm" />
-        </div>
-        <div className="absolute top-2/3 left-1/4 opacity-15 animate-character-float float-3">
-          <img src={DrPImg} alt="" className="w-8 h-8 object-contain filter blur-sm" />
-        </div>
-        <div className="absolute bottom-1/3 right-1/4 opacity-15 animate-character-float float-1">
-          <img src={GuideImg} alt="" className="w-8 h-8 object-contain filter blur-sm" />
-        </div>
-      </div>
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Magical Storybook Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+        style={{
+          backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(34, 197, 94, 0.3) 0%,
+              rgba(59, 130, 246, 0.2) 30%,
+              rgba(251, 146, 60, 0.25) 60%,
+              rgba(234, 179, 8, 0.2) 100%
+            ),
+            url(${ShroomForest})
+          `,
+        }}
+      />
       
-      <div className="container mx-auto px-6 max-w-7xl relative z-10">
-        {/* Storybook Map Header */}
-        <div className="text-center mb-16 book-open-effect pt-12">
-          <div className="relative mb-8">
-            <h1 className="storybook-title text-hero text-display mb-8 animate-hero-entrance floating-sparkles character-entrance" data-testid="text-title">
-              <span className="text-6xl animate-sparkle-twinkle inline-block">🗺️</span>
-              <span className="text-gradient drop-shadow-2xl">Adventure Map</span>
-              <span className="text-6xl animate-sparkle-twinkle inline-block ml-4">🌟</span>
-            </h1>
-            {/* Floating sparkles around title */}
-            <div className="absolute -top-8 left-1/4 text-sparkle/60 text-4xl animate-sparkle-pop stagger-1">✨</div>
-            <div className="absolute -top-4 right-1/4 text-magic/60 text-3xl animate-sparkle-pop stagger-2">🌟</div>
-            <div className="absolute -bottom-4 left-1/3 text-emerald/60 text-3xl animate-sparkle-pop stagger-3">⭐</div>
-            <div className="absolute -top-6 left-1/6 text-coral/60 text-2xl animate-sparkle-pop stagger-4">🏝️</div>
-            <div className="absolute -bottom-2 right-1/3 text-ocean/60 text-2xl animate-sparkle-pop stagger-5">🧭</div>
-          </div>
-          
-          <div className="relative mb-12">
-            <p className="text-sub-hero text-body-relaxed animate-hero-entrance stagger-1 text-balance leading-relaxed font-bold text-storybook-glow character-entrance max-w-4xl mx-auto">
-              <span className="text-4xl animate-sparkle-twinkle">🧚‍♀️</span> Choose your next <span className="text-magic font-black text-magic-glow">magical destination</span>! 
-              Each realm holds <span className="text-emerald font-black text-magic-glow">incredible secrets</span>, 
-              <span className="text-sparkle font-black text-magic-glow">amazing creatures</span>, and 
-              <span className="bg-gradient-to-r from-sunset to-amber bg-clip-text text-transparent font-black text-magic-glow">epic adventures</span> waiting for you! <span className="text-4xl animate-sparkle-twinkle">✨</span>
-            </p>
-            <div className="absolute -left-8 top-2 animate-character-float">
-              <img src={JaySingImg} alt="Jay-Sing" className="w-12 h-12 object-contain drop-shadow-lg opacity-80" />
+      {/* Enhanced Magical Overlay */}
+      <div className="absolute inset-0" style={{
+        background: `
+          radial-gradient(circle at 20% 30%, rgba(34,197,94,0.4) 0%, transparent 50%),
+          radial-gradient(circle at 80% 20%, rgba(59,130,246,0.3) 0%, transparent 50%),
+          radial-gradient(circle at 70% 80%, rgba(251,146,60,0.3) 0%, transparent 50%),
+          linear-gradient(
+            135deg, 
+            rgba(220, 255, 220, 0.8) 0%, 
+            rgba(240, 248, 255, 0.7) 50%, 
+            rgba(255, 248, 220, 0.8) 100%
+          )`
+      }} />
+
+      <div className="relative z-10 min-h-screen py-8 px-6">
+        {/* Header */}
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src={TurianLogo} 
+              alt="The Naturverse™" 
+              className="w-16 h-16 mr-4"
+            />
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                🗺️ The Naturverse Map 🌍
+              </h1>
+              <p className="text-lg text-green-600" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Choose your magical adventure destination!
+              </p>
             </div>
-            <div className="absolute -right-8 bottom-2 animate-character-float float-2">
-              <img src={FrankieFrogsImg} alt="Frankie Frogs" className="w-10 h-10 object-contain drop-shadow-lg opacity-80" />
+          </div>
+
+          {/* Progress */}
+          <div className="max-w-md mx-auto bg-white/90 backdrop-blur-sm p-4 rounded-2xl border-4 border-green-300/60 shadow-xl">
+            <p className="text-lg font-bold text-green-700 mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+              Exploration Progress: {unlockedZones}/{totalZones} Zones Unlocked
+            </p>
+            <div className="w-full bg-green-200 rounded-full h-4">
+              <div 
+                className="bg-gradient-to-r from-green-500 to-green-600 h-4 rounded-full transition-all duration-500"
+                style={{ width: `${(unlockedZones / totalZones) * 100}%` }}
+              ></div>
             </div>
           </div>
         </div>
 
-        {/* Enhanced Storybook Zone Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-10 mb-16">
-          {zones.map((zone, index) => (
-            <Card 
+        {/* Map Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto mb-8">
+          {zones.map((zone) => (
+            <Card
               key={zone.id}
-              className={`cursor-pointer transition-all duration-500 animate-hero-entrance character-entrance ${
-                zone.unlocked 
-                  ? 'card-playful hover:scale-105 hover-lift' 
-                  : 'opacity-60 card-playful'
-              } ${selectedZone === zone.id ? 'ring-4 ring-magic/60 shadow-2xl scale-105' : ''} p-8`}
+              className={`${
+                zone.unlocked
+                  ? `cursor-pointer hover:scale-105 ${selectedZone === zone.id ? 'ring-4 ring-yellow-400' : ''}`
+                  : 'opacity-60 cursor-not-allowed'
+              } transition-all duration-300 bg-white/95 backdrop-blur-sm border-4 ${zone.borderColor}/60 shadow-2xl rounded-3xl overflow-hidden`}
               onClick={() => handleZoneClick(zone)}
-              data-testid={`card-zone-${zone.id}`}
-              style={{ animationDelay: `${index * 0.15}s` }}
             >
-              <CardHeader className="text-center pb-6">
-                <div className={`relative w-36 h-36 mx-auto rounded-full bg-gradient-to-br ${zone.color} backdrop-blur-sm border-4 border-white/30 flex items-center justify-center text-7xl mb-8 shadow-2xl transition-all duration-500 ${
-                  zone.unlocked ? 'animate-magical-pulse hover:scale-110 hover:shadow-magical' : 'opacity-60'
-                }`}>
-                  {zone.emoji}
-                  {zone.unlocked && (
-                    <>
-                      <div className="absolute -top-3 -right-3 text-3xl animate-sparkle-twinkle">✨</div>
-                      <div className="absolute -bottom-3 -left-3 text-2xl animate-sparkle-twinkle stagger-1">⭐</div>
-                    </>
-                  )}
-                  {!zone.unlocked && (
-                    <div className="absolute -top-2 -right-2 text-3xl opacity-80">🔒</div>
-                  )}
+              <CardHeader className={`text-center pb-4 bg-gradient-to-br ${zone.color}/20`}>
+                <div className="flex justify-center mb-4">
+                  <div className="relative">
+                    <img 
+                      src={zone.characterImage} 
+                      alt={zone.character} 
+                      className="w-20 h-20 rounded-full object-cover border-4 border-white shadow-xl bg-gradient-to-br from-white to-gray-100 p-1"
+                    />
+                    {zone.unlocked && (
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-green-400 rounded-full border-2 border-white flex items-center justify-center">
+                        <span className="text-sm">✓</span>
+                      </div>
+                    )}
+                    {!zone.unlocked && (
+                      <div className="absolute -top-2 -right-2 w-8 h-8 bg-gray-400 rounded-full border-2 border-white flex items-center justify-center">
+                        <span className="text-sm">🔒</span>
+                      </div>
+                    )}
+                  </div>
                 </div>
-                <CardTitle className={`text-3xl font-display font-bold mb-4 ${
-                  zone.unlocked ? 'text-gradient drop-shadow-lg' : 'text-muted-foreground'
-                }`}>
+                
+                <CardTitle className="text-xl font-bold text-gray-700 mb-2" style={{ fontFamily: 'Fredoka, sans-serif' }}>
                   {zone.name}
                 </CardTitle>
+                <p className="text-sm text-gray-500 font-bold" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  Guide: {zone.character}
+                </p>
               </CardHeader>
-              <CardContent className="text-center">
-                <p className={`text-lg mb-8 leading-relaxed font-medium ${
-                  zone.unlocked ? 'text-foreground/90' : 'text-muted-foreground/60'
-                } text-balance`}>
+
+              <CardContent className="text-center p-6">
+                <p className="text-sm text-gray-600 mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
                   {zone.description}
                 </p>
-                <div className="flex justify-center">
-                  {zone.unlocked ? (
-                    <div className="storybook-button text-lg px-8 py-4 rounded-2xl font-bold text-emerald border-2 border-emerald/30 bg-gradient-to-r from-emerald/10 to-mint/20 hover:from-emerald to-magic hover:text-white transition-all duration-300 hover:scale-105 hover:shadow-xl backdrop-blur-sm">
-                      <span className="text-2xl mr-3 animate-sparkle-twinkle">✨</span>
-                      Ready to Explore!
-                      <span className="text-2xl ml-3 animate-sparkle-twinkle">🌟</span>
-                    </div>
-                  ) : (
-                    <div className="px-8 py-4 bg-muted/60 text-muted-foreground rounded-2xl text-lg font-medium border border-muted-foreground/20">
-                      <span className="text-xl mr-2">🔒</span>
-                      Complete More Adventures
-                    </div>
-                  )}
-                </div>
+                
+                {zone.unlocked ? (
+                  <div className="text-green-600 font-bold" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                    ✨ Ready to Explore! ✨
+                  </div>
+                ) : (
+                  <div className="text-gray-500 font-bold" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                    🔒 Complete previous adventures to unlock
+                  </div>
+                )}
               </CardContent>
             </Card>
           ))}
         </div>
 
+        {/* Explore Button */}
         {selectedZone && (
-          <div className="text-center animate-hero-entrance character-entrance">
-            <Card className="card-playful max-w-2xl mx-auto p-12 border-4 border-magic/40 shadow-magical relative overflow-hidden">
-              <div className="absolute top-0 left-0 right-0 bottom-0 bg-gradient-to-br from-sparkle/10 to-magic/10 pointer-events-none"></div>
-              <CardContent className="relative z-10">
-                <div className="mb-12">
-                  <div className="relative mb-8">
-                    <div className="text-8xl mb-6 animate-magical-pulse hover:scale-110 transition-all duration-500 drop-shadow-2xl">
-                      {zones.find(z => z.id === selectedZone)?.emoji}
-                    </div>
-                    {/* Floating sparkles around selected emoji */}
-                    <div className="absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-4 text-sparkle/80 text-3xl animate-sparkle-twinkle">✨</div>
-                    <div className="absolute bottom-0 left-1/4 text-magic/80 text-2xl animate-sparkle-twinkle stagger-1">⭐</div>
-                    <div className="absolute bottom-0 right-1/4 text-emerald/80 text-2xl animate-sparkle-twinkle stagger-2">🌟</div>
-                  </div>
-                  
-                  <h3 className="storybook-title text-4xl font-display mb-8 font-bold floating-sparkles">
-                    <span className="text-4xl animate-sparkle-twinkle mr-4">🎭</span>
-                    Ready for <span className="text-gradient drop-shadow-lg">{zones.find(z => z.id === selectedZone)?.name}</span>?
-                    <span className="text-4xl animate-sparkle-twinkle ml-4">🎭</span>
-                  </h3>
-                  
-                  <p className="text-foreground/90 text-2xl mb-12 leading-relaxed font-bold text-storybook-glow text-balance">
-                    <span className="text-3xl animate-sparkle-twinkle">🧚‍♀️</span> Begin your <span className="text-magic font-black text-magic-glow">magical adventure</span> in this 
-                    <span className="text-emerald font-black text-magic-glow"> enchanting realm</span>! <span className="text-3xl animate-sparkle-twinkle">✨</span>
-                  </p>
-                </div>
-                
-                <Button
-                  onClick={handleExplore}
-                  size="xxl"
-                  className="storybook-button text-3xl px-20 py-10 hover-lift animate-magical-pulse shadow-2xl font-bold"
-                  data-testid="button-explore"
-                >
-                  <span className="mr-6 text-4xl animate-sparkle-twinkle">🚀</span>
-                  <span className="font-bold text-shadow">Start Epic Journey!</span>
-                  <span className="ml-6 text-4xl animate-sparkle-twinkle">⭐</span>
-                </Button>
-              </CardContent>
-              
-              {/* Floating character for selected zone */}
-              <div className="absolute top-4 right-4 animate-character-float opacity-60">
-                <img src={TommyTukTukImg} alt="Adventure Guide" className="w-16 h-16 object-contain drop-shadow-lg" />
-              </div>
-              <div className="absolute bottom-4 left-4 animate-character-float float-2 opacity-60">
-                <img src={MangoMikeImg} alt="Guide" className="w-12 h-12 object-contain drop-shadow-lg" />
-              </div>
-            </Card>
+          <div className="text-center">
+            <Button 
+              onClick={handleExplore}
+              className="btn-magical text-2xl px-12 py-6 animate-bounce"
+            >
+              <span className="mr-3">🚀</span>
+              Start Adventure!
+              <span className="ml-3">✨</span>
+            </Button>
           </div>
         )}
+
+        {/* Turian Guide */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="relative animate-float-bounce">
+            <div className="w-24 h-24 p-2 bg-white/95 rounded-full border-4 border-green-400 shadow-2xl">
+              <img 
+                src={TurianCharacter} 
+                alt="Turian Guide" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            
+            {/* Speech Bubble */}
+            <div className="absolute -top-16 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-green-400 max-w-xs">
+              <div className="text-center">
+                <div className="text-sm font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  Choose your destination! 🗺️
+                </div>
+              </div>
+              
+              {/* Speech bubble pointer */}
+              <div className="absolute bottom-0 right-8 transform translate-y-full">
+                <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-green-400"></div>
+                <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Floating Characters */}
+        <div className="absolute inset-0 overflow-hidden pointer-events-none z-0">
+          <div className="absolute top-1/4 left-8 animate-float-bounce opacity-60" style={{animationDelay: '0s'}}>
+            <div className="w-12 h-12 p-1 bg-white/60 rounded-2xl border-2 border-yellow-400 shadow-lg">
+              <img 
+                src={Snakers} 
+                alt="Snakers" 
+                className="w-full h-full object-cover rounded-xl"
+              />
+            </div>
+          </div>
+          
+          <div className="absolute top-1/3 right-12 animate-gentle-pulse opacity-50" style={{animationDelay: '2s'}}>
+            <div className="w-10 h-10 p-1 bg-white/60 rounded-full border-2 border-pink-400 shadow-lg">
+              <img 
+                src={Teeyor} 
+                alt="Teeyor" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+          </div>
+          
+          <div className="absolute bottom-1/4 left-1/4 animate-float-bounce opacity-40" style={{animationDelay: '1s'}}>
+            <div className="w-14 h-14 p-1 bg-white/60 rounded-full border-2 border-blue-400 shadow-lg">
+              <img 
+                src={TommyTukTuk} 
+                alt="Tommy Tuk Tuk" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+          </div>
+        </div>
       </div>
     </div>
   );
