@@ -186,17 +186,11 @@ export default function Home() {
             </div>
           </div>
 
-          <h1 className="text-3xl md:text-5xl lg:text-6xl font-magical text-white drop-shadow-2xl mb-6 text-magical-rainbow">
-            Welcome to The Naturverse™!
-          </h1>
-          
-          <p className="text-lg md:text-xl font-playful text-white drop-shadow-lg mb-8 max-w-3xl mx-auto leading-relaxed">
-            🌟 Where Learning Becomes Adventure! 🌟
-            <br />
-            <span className="text-base md:text-lg">
-              Discover nature's wonders through magical stories, fun quizzes, and amazing adventures!
-            </span>
-          </p>
+          <div className="mb-8">
+            <p className="text-2xl md:text-3xl font-magical text-white drop-shadow-lg text-center">
+              🌟 Where Learning Becomes Adventure! 🌟
+            </p>
+          </div>
 
           {/* Call to Action */}
           {!user ? (

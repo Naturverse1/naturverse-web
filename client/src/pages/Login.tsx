@@ -37,9 +37,10 @@ export default function Login() {
     try {
       setError("");
       await signInWithGoogle();
-      setLocation("/");
+      // The auth context will handle redirecting after successful auth
     } catch (err: any) {
-      setError(err.message || "Failed to sign in with Google");
+      console.error('Google sign-in error:', err);
+      setError(`Google authentication failed: ${err.message || 'Please check Supabase OAuth configuration'}`);
     }
   };
 
@@ -141,17 +142,16 @@ export default function Login() {
                 </Alert>
               )}
 
-              {/* Google Sign In Button */}
+              {/* Demo Mode - Primary Option */}
               <div className="text-center">
                 <Button 
-                  onClick={handleGoogleSignIn}
-                  disabled={loading}
+                  onClick={() => setLocation('/map')}
                   className="btn-magical w-full text-xl py-6 text-white font-bold relative overflow-hidden"
-                  data-testid="google-signin-button"
+                  data-testid="demo-signin-button"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <span className="text-2xl">🌟</span>
-                    <span>{loading ? 'Signing in...' : 'Sign in with Google'}</span>
+                    <span>Start Your Adventure!</span>
                     <span className="text-2xl">✨</span>
                   </div>
                   
@@ -160,15 +160,16 @@ export default function Login() {
                 </Button>
               </div>
               
-              {/* Demo Mode Option */}
+              {/* Google Sign In Alternative */}
               <div className="text-center">
                 <Button 
-                  onClick={() => setLocation('/map')}
+                  onClick={handleGoogleSignIn}
+                  disabled={loading}
                   variant="outline"
                   className="w-full py-3 text-lg font-bold border-2 border-white/30 bg-white/10 hover:bg-white/20 text-white"
-                  data-testid="demo-signin-button"
+                  data-testid="google-signin-button"
                 >
-                  <span>Or try Demo Mode</span>
+                  <span>{loading ? 'Signing in...' : 'Or sign in with Google'}</span>
                 </Button>
               </div>
 
