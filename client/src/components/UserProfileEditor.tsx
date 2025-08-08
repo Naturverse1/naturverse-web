@@ -5,302 +5,301 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { useAuth } from "../context/AuthContext";
 import { supabase } from "../lib/supabaseClient";
+
+// Official Naturverse™ Assets
+import TurianLogo from "@assets/turian_media_logo_transparent.png";
+import TurianCharacter from "@assets/Turian_1754677394027.jpg";
+import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
 
 interface UserProfileEditorProps {
   className?: string;
 }
 
 export default function UserProfileEditor({ className }: UserProfileEditorProps) {
-  const [user, setUser] = useState<any>(null);
+  const { user, profile, signOut } = useAuth();
   const [name, setName] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
-  const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarPreview, setAvatarPreview] = useState("");
-  const [loading, setLoading] = useState(true);
-  const [uploading, setUploading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
 
   useEffect(() => {
-    loadUserProfile();
-  }, []);
-
-  const loadUserProfile = async () => {
-    try {
-      setLoading(true);
+    if (profile) {
+      setName(profile.display_name || "");
       setError("");
-
-      // Get current user
-      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
-      
-      if (authError) {
-        throw authError;
-      }
-
-      if (!authUser) {
-        throw new Error("No authenticated user found");
-      }
-
-      setUser(authUser);
-      const { id } = authUser;
-
-      // Get user profile from users table
-      const { data: userProfile, error: profileError } = await supabase
-        .from('users')
-        .select('name, avatar_url')
-        .eq('id', id)
-        .single();
-
-      if (profileError && profileError.code !== 'PGRST116') {
-        throw profileError;
-      }
-
-      // Set current values
-      setName(userProfile?.name || "");
-      setAvatarUrl(userProfile?.avatar_url || "");
-    } catch (err: any) {
-      setError(err.message || "Failed to load user profile");
-    } finally {
-      setLoading(false);
+      setSuccess("");
     }
-  };
-
-  const handleAvatarChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
-    if (!file) return;
-
-    // Validate file type
-    if (!file.type.startsWith('image/')) {
-      setError('Please select an image file');
-      return;
-    }
-
-    // Validate file size (5MB limit)
-    if (file.size > 5 * 1024 * 1024) {
-      setError('File size must be less than 5MB');
-      return;
-    }
-
-    setAvatarFile(file);
-    setError("");
-
-    // Create preview
-    const reader = new FileReader();
-    reader.onload = (e) => {
-      setAvatarPreview(e.target?.result as string);
-    };
-    reader.readAsDataURL(file);
-  };
-
-  const uploadAvatar = async () => {
-    if (!avatarFile || !user) return null;
-
-    const fileExt = avatarFile.name.split('.').pop();
-    const fileName = `${user.id}.${fileExt}`;
-    const filePath = `avatars/public/${fileName}`;
-
-    // Upload file to Supabase Storage
-    const { error: uploadError } = await supabase.storage
-      .from('avatars')
-      .upload(filePath, avatarFile, { 
-        cacheControl: '3600',
-        upsert: true 
-      });
-
-    if (uploadError) {
-      throw uploadError;
-    }
-
-    // Get public URL
-    const { data } = supabase.storage
-      .from('avatars')
-      .getPublicUrl(filePath);
-
-    return data.publicUrl;
-  };
+  }, [profile]);
 
   const handleSave = async () => {
+    if (!user || !name.trim()) {
+      setError("Please enter a display name");
+      return;
+    }
+
     try {
       setSaving(true);
       setError("");
-      setSuccess("");
-
-      // Get current user
-      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
       
-      if (authError) {
-        throw authError;
-      }
-
-      if (!authUser) {
-        throw new Error("No authenticated user found");
-      }
-
-      const { id } = authUser;
-      let newAvatarUrl = avatarUrl;
-
-      // Upload new avatar if selected
-      if (avatarFile) {
-        setUploading(true);
-        
-        // Ensure avatars bucket exists
-        const { data: buckets } = await supabase.storage.listBuckets();
-        const avatarsBucketExists = buckets?.some(bucket => bucket.name === 'avatars');
-        
-        if (!avatarsBucketExists) {
-          const { error: createError } = await supabase.storage.createBucket('avatars', { 
-            public: true 
-          });
-          if (createError && !createError.message.includes('already exists')) {
-            throw createError;
-          }
+      // Update user metadata in Supabase Auth
+      const { error } = await supabase.auth.updateUser({
+        data: {
+          full_name: name,
+          display_name: name
         }
+      });
 
-        const uploadedUrl = await uploadAvatar();
-        if (uploadedUrl) {
-          newAvatarUrl = uploadedUrl;
-        }
-        setUploading(false);
+      if (error) {
+        throw error;
       }
 
-      // Save or update user profile
-      const { error: updateError } = await supabase
-        .from('users')
-        .upsert({
-          id,
-          name: name || null,
-          avatar_url: newAvatarUrl,
-          email: authUser.email,
-        });
-
-      if (updateError) {
-        throw updateError;
-      }
-
-      // Update local state
-      setAvatarUrl(newAvatarUrl || "");
-      setAvatarFile(null);
-      setAvatarPreview("");
       setSuccess("Profile updated successfully!");
+      
+      // Clear success message after 3 seconds
+      setTimeout(() => {
+        setSuccess("");
+      }, 3000);
 
     } catch (err: any) {
-      setError(err.message || "Failed to save profile");
+      setError(err.message || "Failed to update profile");
     } finally {
-      setUploading(false);
       setSaving(false);
     }
   };
 
-  if (loading) {
+  const handleSignOut = async () => {
+    try {
+      await signOut();
+    } catch (err) {
+      setError("Failed to sign out");
+    }
+  };
+
+  if (!user || !profile) {
     return (
-      <Card className={className}>
-        <CardContent className="flex items-center justify-center py-8">
-          <div className="text-center">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-nature mx-auto mb-2"></div>
-            <p className="text-forest">Loading profile...</p>
-          </div>
-        </CardContent>
-      </Card>
+      <div className="min-h-screen relative overflow-hidden">
+        {/* Magical Background */}
+        <div 
+          className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+          style={{
+            backgroundImage: `
+              linear-gradient(
+                135deg,
+                rgba(34, 197, 94, 0.3) 0%,
+                rgba(59, 130, 246, 0.2) 30%,
+                rgba(251, 146, 60, 0.25) 60%,
+                rgba(234, 179, 8, 0.2) 100%
+              ),
+              url(${StorybookScene})
+            `,
+          }}
+        />
+        
+        <div className="relative z-10 min-h-screen flex items-center justify-center">
+          <Card className="bg-white/95 backdrop-blur-sm border-4 border-red-300/60 shadow-xl rounded-3xl max-w-md mx-4">
+            <CardContent className="p-8 text-center">
+              <img 
+                src={TurianCharacter}
+                alt="Turian" 
+                className="w-24 h-24 rounded-full mx-auto mb-4 border-4 border-red-400"
+              />
+              <h2 className="text-2xl font-bold text-red-700 mb-4" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Authentication Required
+              </h2>
+              <p className="text-red-600 mb-6" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Please sign in to view your profile
+              </p>
+              <Button onClick={() => window.location.href = '/login'} className="btn-magical">
+                Go to Sign In
+              </Button>
+            </CardContent>
+          </Card>
+        </div>
+      </div>
     );
   }
 
   return (
-    <Card className={className}>
-      <CardHeader>
-        <CardTitle className="text-2xl font-fredoka text-forest">
-          🌟 Edit Your Profile
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {error && (
-          <Alert variant="destructive">
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
-        )}
-        
-        {success && (
-          <Alert className="border-nature/20 bg-nature/10">
-            <AlertDescription className="text-forest">{success}</AlertDescription>
-          </Alert>
-        )}
-
-        {/* Avatar Section */}
-        <div className="flex flex-col items-center space-y-4">
-          <Avatar className="w-24 h-24">
-            <AvatarImage src={avatarPreview || avatarUrl || undefined} />
-            <AvatarFallback className="text-2xl bg-nature/10 text-forest">
-              {name?.[0]?.toUpperCase() || user?.email?.[0]?.toUpperCase() || 'U'}
-            </AvatarFallback>
-          </Avatar>
-          
-          <div className="flex flex-col items-center space-y-2">
-            <input
-              type="file"
-              id="avatar-upload"
-              accept="image/*"
-              onChange={handleAvatarChange}
-              className="hidden"
+    <div className="min-h-screen relative overflow-hidden">
+      {/* Magical Storybook Background */}
+      <div 
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+        style={{
+          backgroundImage: `
+            linear-gradient(
+              135deg,
+              rgba(34, 197, 94, 0.3) 0%,
+              rgba(59, 130, 246, 0.2) 30%,
+              rgba(251, 146, 60, 0.25) 60%,
+              rgba(234, 179, 8, 0.2) 100%
+            ),
+            url(${StorybookScene})
+          `,
+        }}
+      />
+      
+      <div className="relative z-10 min-h-screen py-8 px-6">
+        <div className="text-center mb-8">
+          <div className="flex items-center justify-center mb-6">
+            <img 
+              src={TurianLogo} 
+              alt="The Naturverse™" 
+              className="w-16 h-16 mr-4"
             />
-            <Label
-              htmlFor="avatar-upload"
-              className="cursor-pointer bg-turquoise hover:bg-teal-600 text-white px-4 py-2 rounded-lg transition-colors duration-200"
-            >
-              📷 Choose New Avatar
-            </Label>
-            <p className="text-sm text-forest/60 text-center">
-              PNG, JPG up to 5MB
-            </p>
+            <div>
+              <h1 className="text-4xl md:text-6xl font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                👤 Your Profile 🌟
+              </h1>
+              <p className="text-lg text-green-600" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Manage your Naturverse adventure profile!
+              </p>
+            </div>
           </div>
         </div>
 
-        {/* Name Input */}
-        <div className="space-y-2">
-          <Label htmlFor="name" className="text-forest font-medium">
-            Display Name
-          </Label>
-          <Input
-            id="name"
-            type="text"
-            placeholder="Enter your name"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            className="border-nature/20 focus:border-nature focus:ring-nature/20"
-            data-testid="input-name"
-          />
+        <div className="max-w-2xl mx-auto">
+          <Card className={`bg-white/95 backdrop-blur-sm border-4 border-green-300/60 shadow-2xl rounded-3xl ${className}`}>
+            <CardHeader className="text-center bg-gradient-to-br from-green-50 to-blue-50">
+              <div className="flex justify-center mb-4">
+                <Avatar className="w-32 h-32 border-4 border-green-400 shadow-xl">
+                  <AvatarImage 
+                    src={profile.avatar_url || undefined} 
+                    alt={profile.display_name || "User Avatar"}
+                  />
+                  <AvatarFallback className="text-4xl font-bold bg-gradient-to-br from-green-200 to-blue-200">
+                    <img 
+                      src={TurianCharacter} 
+                      alt="Default Avatar" 
+                      className="w-full h-full object-cover rounded-full"
+                    />
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+              
+              <CardTitle className="text-3xl font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                Welcome, {profile.display_name || "Naturverse Explorer"}!
+              </CardTitle>
+            </CardHeader>
+
+            <CardContent className="space-y-6 p-8">
+              {error && (
+                <Alert className="border-red-200 bg-red-50">
+                  <AlertDescription className="text-red-700 font-bold">
+                    {error}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              {success && (
+                <Alert className="border-green-200 bg-green-50">
+                  <AlertDescription className="text-green-700 font-bold">
+                    {success}
+                  </AlertDescription>
+                </Alert>
+              )}
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="space-y-4">
+                  <div>
+                    <Label className="text-lg font-bold text-green-700 mb-2 block" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                      Email Address
+                    </Label>
+                    <div className="p-3 bg-gray-100 rounded-xl border-2 border-gray-200 text-gray-600 font-medium">
+                      {user.email}
+                    </div>
+                  </div>
+
+                  <div>
+                    <Label className="text-lg font-bold text-green-700 mb-2 block" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                      Account Type
+                    </Label>
+                    <div className="p-3 bg-blue-100 rounded-xl border-2 border-blue-200 text-blue-700 font-bold">
+                      Naturverse Explorer ✨
+                    </div>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <Label htmlFor="displayName" className="text-lg font-bold text-green-700 mb-2 block" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                      Display Name
+                    </Label>
+                    <Input
+                      id="displayName"
+                      type="text"
+                      placeholder="Enter your display name"
+                      value={name}
+                      onChange={(e) => setName(e.target.value)}
+                      className="py-3 text-lg rounded-xl border-2 border-green-200 focus:border-green-400 bg-white"
+                      style={{ fontFamily: 'Fredoka, sans-serif' }}
+                      data-testid="input-display-name"
+                    />
+                  </div>
+
+                  <div>
+                    <Label className="text-lg font-bold text-green-700 mb-2 block" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                      Member Since
+                    </Label>
+                    <div className="p-3 bg-yellow-100 rounded-xl border-2 border-yellow-200 text-yellow-700 font-bold">
+                      {new Date(user.created_at).toLocaleDateString()} 🎉
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="flex flex-col sm:flex-row gap-4 pt-6">
+                <Button 
+                  onClick={handleSave} 
+                  disabled={saving || !name.trim()}
+                  className="flex-1 btn-magical text-lg py-3"
+                  data-testid="button-save-profile"
+                >
+                  <span className="mr-2">💾</span>
+                  {saving ? 'Saving...' : 'Save Changes'}
+                  <span className="ml-2">✨</span>
+                </Button>
+
+                <Button 
+                  onClick={handleSignOut}
+                  className="flex-1 bg-red-500 hover:bg-red-600 text-white text-lg py-3 rounded-2xl font-bold shadow-lg hover:shadow-xl transition-all duration-300"
+                  style={{ fontFamily: 'Fredoka, sans-serif' }}
+                  data-testid="button-sign-out"
+                >
+                  <span className="mr-2">🚪</span>
+                  Sign Out
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
         </div>
 
-        {/* Email (readonly) */}
-        <div className="space-y-2">
-          <Label htmlFor="email" className="text-forest font-medium">
-            Email
-          </Label>
-          <Input
-            id="email"
-            type="email"
-            value={user?.email || ""}
-            disabled
-            className="bg-gray-50 border-nature/10"
-            data-testid="input-email"
-          />
+        {/* Turian Guide */}
+        <div className="fixed bottom-6 right-6 z-50">
+          <div className="relative animate-float-bounce">
+            <div className="w-24 h-24 p-2 bg-white/95 rounded-full border-4 border-green-400 shadow-2xl">
+              <img 
+                src={TurianCharacter} 
+                alt="Turian Guide" 
+                className="w-full h-full object-cover rounded-full"
+              />
+            </div>
+            
+            <div className="absolute -top-16 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-green-400 max-w-xs">
+              <div className="text-center">
+                <div className="text-sm font-bold text-green-700" style={{ fontFamily: 'Fredoka, sans-serif' }}>
+                  Update your profile to personalize your adventure! 👤
+                </div>
+              </div>
+              
+              <div className="absolute bottom-0 right-8 transform translate-y-full">
+                <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-green-400"></div>
+                <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+              </div>
+            </div>
+          </div>
         </div>
-
-        {/* Save Button */}
-        <Button
-          onClick={handleSave}
-          disabled={saving || uploading}
-          className="w-full bg-nature hover:bg-forest text-white transition-colors duration-200 py-3"
-          data-testid="button-save"
-        >
-          {uploading 
-            ? "📤 Uploading Avatar..." 
-            : saving 
-            ? "💾 Saving Profile..." 
-            : "✨ Save Profile"
-          }
-        </Button>
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 }

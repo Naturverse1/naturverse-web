@@ -91,34 +91,24 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const loadProfile = async (userId: string) => {
     try {
-      // First, try to create the profiles table if it doesn't exist
-      await supabase.from('profiles').select('*').limit(0);
+      // Get user info from auth
+      const { data: { user }, error: userError } = await supabase.auth.getUser();
       
-      // Get or create profile
-      let { data: profile, error } = await supabase
-        .from('profiles')
-        .select('*')
-        .eq('id', userId)
-        .single();
-      
-      if (error && (error.code === 'PGRST116' || error.code === 'PGRST101')) {
-        // Profile doesn't exist, create it
-        const { data: newProfile, error: createError } = await supabase
-          .from('profiles')
-          .insert([{ id: userId, display_name: null, avatar_url: null }])
-          .select()
-          .single();
-        
-        if (createError) {
-          console.error('Error creating profile:', createError);
-          // Set empty profile if creation fails
-          setProfile({ id: userId, display_name: null, avatar_url: null });
-        } else {
-          profile = newProfile;
-        }
+      if (userError || !user) {
+        console.error('Error getting user:', userError);
+        setProfile({ id: userId, display_name: null, avatar_url: null });
+        setLoading(false);
+        return;
       }
-      
-      setProfile(profile || { id: userId, display_name: null, avatar_url: null });
+
+      // Create profile from auth user data
+      const profile: Profile = {
+        id: user.id,
+        display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || null,
+        avatar_url: user.user_metadata?.avatar_url || null
+      };
+
+      setProfile(profile);
     } catch (err) {
       console.error('Error loading profile:', err);
       // Set empty profile even if there's an error

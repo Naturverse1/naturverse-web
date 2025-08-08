@@ -62,6 +62,28 @@ export default function Login() {
     }
   };
 
+  const handleGoogleLogin = async () => {
+    setLoading(true);
+    setError("");
+    
+    try {
+      const { data, error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/profile`
+        }
+      });
+      
+      if (error) {
+        setError(error.message);
+      }
+    } catch (err) {
+      setError('Failed to sign in with Google');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const handleForgotPassword = async () => {
     if (!email) {
       setError("Please enter your email first");
