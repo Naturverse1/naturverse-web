@@ -7,9 +7,7 @@ import { useAuth } from "../context/AuthContext";
 import { useLocation, Link } from "wouter";
 import { supabase } from "../lib/supabaseClient";
 import TurianLogo from "@assets/turian_media_logo_transparent.png";
-import BookImg from "@assets/book img_1754673794864.jpg";
-import ShroomForestImg from "@assets/Shroom forest_1754673794866.jpg";
-import StorybookImg from "@assets/Storybook img_1754673794866.jpg";
+import MagicalForestImg from "@assets/download_1754675331614.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -86,35 +84,23 @@ export default function Login() {
 
   return (
     <div className="min-h-screen relative overflow-hidden">
-      {/* Magical Storybook Background Layers */}
+      {/* Magical Forest Background */}
       <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-40"
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
-          backgroundImage: `url(${BookImg})`,
-          filter: 'sepia(20%) saturate(120%) hue-rotate(15deg)'
+          backgroundImage: `url(${MagicalForestImg})`,
+          backgroundSize: 'cover',
+          backgroundPosition: 'center'
         }}
       />
       
-      {/* Enchanted Forest Overlay */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat opacity-30 mix-blend-soft-light"
-        style={{
-          backgroundImage: `url(${ShroomForestImg})`,
-          backgroundPosition: 'center bottom'
-        }}
-      />
-      
-      {/* Magical Gradient Overlay */}
+      {/* Subtle overlay for better text readability */}
       <div className="absolute inset-0" style={{
-        background: `
-          linear-gradient(135deg, 
-            rgba(255,182,193,0.3) 0%,    /* Light pink */
-            rgba(173,216,230,0.3) 25%,   /* Light blue */
-            rgba(152,251,152,0.3) 50%,   /* Pale green */
-            rgba(255,218,185,0.3) 75%,   /* Peach */
-            rgba(221,160,221,0.3) 100%   /* Plum */
-          )
-        `
+        background: `linear-gradient(135deg, 
+          rgba(0,0,0,0.1) 0%, 
+          rgba(255,255,255,0.1) 50%, 
+          rgba(0,0,0,0.1) 100%
+        )`
       }} />
       
       {/* Floating Magical Elements */}
