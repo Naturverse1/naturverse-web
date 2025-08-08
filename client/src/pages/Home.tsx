@@ -131,15 +131,15 @@ export default function Home() {
         
         {/* Main Hero Content */}
         <div className="container mx-auto px-6 pt-48 pb-20 relative z-10">
-          <div className="text-center max-w-5xl mx-auto">
+          <div className="text-center max-w-5xl mx-auto book-open-effect">
             {/* Hero Title with Enhanced Magic */}
             <div className="relative mb-8">
               <div className="absolute -top-12 left-1/2 transform -translate-x-1/2">
                 <img src={TurianLogo} alt="Turian Media" className="w-24 h-24 animate-gentle-pulse drop-shadow-2xl opacity-90 hover:scale-110 transition-transform" />
               </div>
-              <h1 className="text-hero text-display text-foreground mb-6 animate-hero-entrance floating-sparkles" data-testid="text-welcome">
+              <h1 className="storybook-title text-hero text-display mb-6 animate-hero-entrance floating-sparkles character-entrance" data-testid="text-welcome">
                 <span className="text-7xl animate-sparkle-twinkle inline-block">🌿</span> 
-                <span className="text-gradient drop-shadow-2xl text-magic-glow">Welcome to Naturverse</span>
+                <span className="text-gradient drop-shadow-2xl">Welcome to Naturverse</span>
                 <span className="text-7xl animate-sparkle-twinkle inline-block ml-4">✨</span>
               </h1>
               {/* Enhanced floating sparkles around title */}
@@ -152,7 +152,7 @@ export default function Home() {
             </div>
             
             <div className="relative mb-16">
-              <p className="text-sub-hero text-body-relaxed animate-hero-entrance stagger-1 text-balance leading-relaxed font-bold bg-gradient-to-r from-forest via-emerald to-magic bg-clip-text text-transparent">
+              <p className="text-sub-hero text-body-relaxed animate-hero-entrance stagger-1 text-balance leading-relaxed font-bold text-storybook-glow character-entrance">
                 <span className="text-4xl animate-sparkle-twinkle">🧚‍♀️</span> Enter a <span className="text-magic font-black text-magic-glow">magical world</span> where nature comes alive! 
                 Join your favorite characters on <span className="text-emerald font-black text-magic-glow">epic adventures</span>, 
                 <span className="text-sparkle font-black text-magic-glow">learn amazing facts</span>, and become a true 
@@ -168,14 +168,14 @@ export default function Home() {
             
             {/* Enhanced Call to Action */}
             <div className="flex flex-col sm:flex-row gap-6 justify-center mb-20 animate-hero-entrance stagger-2">
-              <Button asChild size="xxl" className="btn-rainbow text-3xl px-20 py-10 hover-lift animate-magical-pulse shadow-2xl btn-bounce">
+              <Button asChild size="xxl" className="storybook-button text-3xl px-20 py-10 hover-lift animate-magical-pulse shadow-2xl">
                 <Link to="/signup" data-testid="button-get-started" className="text-playful">
                   <span className="text-4xl mr-6 animate-sparkle-twinkle">✨</span>
                   <span className="font-bold text-shadow">Begin Your Magic Adventure!</span>
                   <span className="text-4xl ml-6 animate-sparkle-twinkle">🌟</span>
                 </Link>
               </Button>
-              <Button asChild variant="outline" size="xl" className="gradient-playful text-white hover:text-white text-2xl px-20 py-8 hover-lift border-2 border-white/30 shadow-xl btn-bounce">
+              <Button asChild variant="outline" size="xl" className="btn-storybook text-2xl px-20 py-8 hover-lift shadow-xl">
                 <Link to="/login" data-testid="button-sign-in" className="text-playful">
                   <span className="text-4xl mr-6 animate-sparkle-twinkle">🚀</span>
                   <span className="font-bold text-shadow">Return to Naturverse</span>

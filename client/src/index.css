@@ -5,26 +5,26 @@
 @tailwind utilities;
 
 :root {
-  /* Magical Naturverse Design System - Enhanced for Kids */
-  --background: hsl(200 55% 99%);
-  --foreground: hsl(220 25% 15%);
+  /* Storybook Magic Design System - Bright & Cheerful */
+  --background: hsl(120 40% 98%);
+  --foreground: hsl(240 15% 20%);
   --card: hsl(0 0% 100%);
-  --card-foreground: hsl(220 25% 15%);
+  --card-foreground: hsl(240 15% 20%);
   --popover: hsl(0 0% 100%);
-  --popover-foreground: hsl(220 25% 15%);
-  --primary: hsl(142 85% 50%);
+  --popover-foreground: hsl(240 15% 20%);
+  --primary: hsl(140 60% 65%);
   --primary-foreground: hsl(0 0% 100%);
-  --secondary: hsl(280 65% 94%);
-  --secondary-foreground: hsl(280 25% 25%);
-  --muted: hsl(200 35% 97%);
-  --muted-foreground: hsl(220 20% 45%);
-  --accent: hsl(60 95% 90%);
-  --accent-foreground: hsl(60 35% 20%);
-  --destructive: hsl(0 90% 65%);
-  --destructive-foreground: hsl(210 25% 98%);
-  --border: hsl(200 35% 88%);
-  --input: hsl(200 35% 94%);
-  --ring: hsl(142 85% 50%);
+  --secondary: hsl(270 50% 85%);
+  --secondary-foreground: hsl(270 40% 25%);
+  --muted: hsl(120 30% 96%);
+  --muted-foreground: hsl(240 10% 50%);
+  --accent: hsl(50 80% 85%);
+  --accent-foreground: hsl(50 40% 25%);
+  --destructive: hsl(350 80% 70%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(120 25% 90%);
+  --input: hsl(120 20% 95%);
+  --ring: hsl(140 60% 65%);
   --chart-1: hsl(142 80% 40%);
   --chart-2: hsl(173 65% 45%);
   --chart-3: hsl(197 45% 30%);
@@ -62,53 +62,58 @@
   --shadow-magical: 0 8px 32px -4px hsl(var(--magic) / 0.3), 0 4px 16px -2px hsl(var(--emerald) / 0.2);
   --shadow-glow: 0 0 20px hsl(var(--sparkle) / 0.4), 0 0 40px hsl(var(--magic) / 0.2);
   
-  /* Enhanced Bright & Warm Magical Palette - Pixar Style */
-  --emerald: hsl(142 90% 52%);
-  --forest: hsl(158 80% 48%);
-  --sage: hsl(142 55% 68%);
-  --mint: hsl(142 70% 90%);
-  --ocean: hsl(198 100% 72%);
-  --sky: hsl(213 100% 82%);
-  --sunset: hsl(24 100% 68%);
-  --amber: hsl(45 100% 62%);
-  --magic: hsl(280 90% 78%);
-  --sparkle: hsl(60 100% 88%);
-  --coral: hsl(15 100% 72%);
-  --turquoise: hsl(175 90% 68%);
-  --sunny: hsl(50 100% 78%);
-  --lavender: hsl(260 80% 88%);
+  /* Storybook Pastel Palette - Bright & Cheerful */
+  --emerald: hsl(140 50% 70%);
+  --forest: hsl(155 45% 65%);
+  --sage: hsl(140 40% 75%);
+  --mint: hsl(140 60% 92%);
+  --ocean: hsl(200 70% 80%);
+  --sky: hsl(210 80% 85%);
+  --sunset: hsl(25 80% 75%);
+  --amber: hsl(45 70% 80%);
+  --magic: hsl(280 60% 82%);
+  --sparkle: hsl(60 70% 90%);
+  --coral: hsl(15 70% 78%);
+  --turquoise: hsl(175 60% 80%);
+  --sunny: hsl(50 70% 85%);
+  --lavender: hsl(260 55% 88%);
+  --nature: hsl(140 50% 70%);
   
-  /* Additional Bright Colors for Kid-Friendly UI */
-  --bubblegum: hsl(340 95% 78%);
-  --lime: hsl(85 95% 68%);
-  --peach: hsl(25 100% 78%);
-  --blueberry: hsl(230 90% 75%);
-  --cherry: hsl(350 95% 75%);
-  --lemon: hsl(55 100% 85%);
-  --grape: hsl(270 85% 78%);
-  --tangerine: hsl(35 100% 75%);
+  /* Storybook Bright Colors for Kid-Friendly UI */
+  --bubblegum: hsl(340 70% 82%);
+  --lime: hsl(85 60% 78%);
+  --peach: hsl(25 70% 82%);
+  --blueberry: hsl(230 60% 80%);
+  --cherry: hsl(350 70% 80%);
+  --lemon: hsl(55 70% 88%);
+  --grape: hsl(270 60% 82%);
+  --tangerine: hsl(35 70% 80%);
+  --storybook-purple: hsl(280 60% 82%);
+  --storybook-green: hsl(140 50% 70%);
+  --storybook-blue: hsl(210 80% 85%);
+  --storybook-yellow: hsl(50 70% 85%);
 }
 
 .dark {
-  --background: hsl(240 25% 8%);
-  --foreground: hsl(0 0% 98%);
-  --card: hsl(240 20% 12%);
-  --card-foreground: hsl(0 0% 98%);
-  --popover: hsl(240 20% 12%);
-  --popover-foreground: hsl(0 0% 98%);
-  --primary: hsl(142 90% 60%);
-  --primary-foreground: hsl(240 25% 8%);
-  --secondary: hsl(280 45% 22%);
-  --secondary-foreground: hsl(280 65% 95%);
-  --muted: hsl(240 20% 15%);
-  --muted-foreground: hsl(240 15% 75%);
-  --accent: hsl(60 85% 22%);
-  --accent-foreground: hsl(60 95% 95%);
-  --destructive: hsl(0 90% 65%);
-  --destructive-foreground: hsl(210 25% 98%);
-  --border: hsl(240 20% 22%);
-  --input: hsl(240 20% 15%);
-  --ring: hsl(142 90% 60%);
+  --background: hsl(240 30% 12%);
+  --foreground: hsl(0 0% 96%);
+  --card: hsl(240 25% 16%);
+  --card-foreground: hsl(0 0% 96%);
+  --popover: hsl(240 25% 16%);
+  --popover-foreground: hsl(0 0% 96%);
+  --primary: hsl(140 70% 65%);
+  --primary-foreground: hsl(240 30% 12%);
+  --secondary: hsl(280 40% 28%);
+  --secondary-foreground: hsl(280 60% 92%);
+  --muted: hsl(240 25% 18%);
+  --muted-foreground: hsl(240 10% 70%);
+  --accent: hsl(50 60% 35%);
+  --accent-foreground: hsl(50 80% 90%);
+  --destructive: hsl(350 70% 65%);
+  --destructive-foreground: hsl(0 0% 100%);
+  --border: hsl(240 20% 25%);
+  --input: hsl(240 25% 18%);
+  --ring: hsl(140 70% 65%);
   
   /* Enhanced Typography - Playful & Kid-Friendly */
   --font-sans: 'Baloo 2', 'Inter', system-ui, sans-serif;
@@ -123,31 +128,36 @@
   --radius-xl: 2rem;
   --radius-2xl: 2.5rem;
   
-  /* Enhanced Magical Nature Palette (Dark) */
-  --emerald: hsl(142 90% 60%);
-  --forest: hsl(158 80% 45%);
-  --sage: hsl(142 50% 70%);
-  --mint: hsl(142 70% 25%);
-  --ocean: hsl(198 100% 75%);
-  --sky: hsl(213 100% 85%);
-  --sunset: hsl(24 100% 70%);
-  --amber: hsl(45 100% 65%);
-  --magic: hsl(280 90% 80%);
-  --sparkle: hsl(60 100% 90%);
-  --coral: hsl(15 100% 75%);
-  --turquoise: hsl(175 90% 70%);
-  --sunny: hsl(50 100% 80%);
-  --lavender: hsl(260 80% 90%);
+  /* Storybook Pastel Palette (Dark Mode) */
+  --emerald: hsl(140 60% 65%);
+  --forest: hsl(155 50% 60%);
+  --sage: hsl(140 45% 70%);
+  --mint: hsl(140 50% 35%);
+  --ocean: hsl(200 80% 75%);
+  --sky: hsl(210 85% 80%);
+  --sunset: hsl(25 85% 70%);
+  --amber: hsl(45 80% 75%);
+  --magic: hsl(280 70% 78%);
+  --sparkle: hsl(60 80% 85%);
+  --coral: hsl(15 80% 75%);
+  --turquoise: hsl(175 70% 75%);
+  --sunny: hsl(50 80% 80%);
+  --lavender: hsl(260 65% 85%);
+  --nature: hsl(140 60% 65%);
   
-  /* Additional Bright Colors for Kid-Friendly UI (Dark) */
-  --bubblegum: hsl(340 95% 80%);
-  --lime: hsl(85 95% 70%);
-  --peach: hsl(25 100% 80%);
-  --blueberry: hsl(230 90% 78%);
-  --cherry: hsl(350 95% 78%);
-  --lemon: hsl(55 100% 88%);
-  --grape: hsl(270 85% 80%);
-  --tangerine: hsl(35 100% 78%);
+  /* Storybook Bright Colors for Kid-Friendly UI (Dark) */
+  --bubblegum: hsl(340 80% 78%);
+  --lime: hsl(85 70% 75%);
+  --peach: hsl(25 85% 78%);
+  --blueberry: hsl(230 70% 78%);
+  --cherry: hsl(350 80% 78%);
+  --lemon: hsl(55 85% 85%);
+  --grape: hsl(270 70% 78%);
+  --tangerine: hsl(35 85% 78%);
+  --storybook-purple: hsl(280 70% 78%);
+  --storybook-green: hsl(140 60% 65%);
+  --storybook-blue: hsl(210 85% 80%);
+  --storybook-yellow: hsl(50 80% 80%);
 }
 
 @layer base {
@@ -160,14 +170,25 @@
     font-weight: 500;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    background: linear-gradient(135deg, 
-      hsl(var(--mint)) 0%, 
-      hsl(var(--sparkle) / 0.3) 25%,
-      hsl(var(--background)) 50%, 
-      hsl(var(--peach) / 0.2) 75%,
-      hsl(var(--accent)) 100%
-    );
+    /* Storybook-inspired background with open book pages effect */
+    background: 
+      /* Subtle paper texture overlay */
+      radial-gradient(circle at 20% 50%, hsl(var(--storybook-yellow) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 80% 20%, hsl(var(--storybook-purple) / 0.1) 0%, transparent 50%),
+      radial-gradient(circle at 40% 80%, hsl(var(--storybook-blue) / 0.1) 0%, transparent 50%),
+      /* Main storybook gradient */
+      linear-gradient(135deg, 
+        hsl(var(--mint)) 0%, 
+        hsl(var(--storybook-blue) / 0.3) 15%,
+        hsl(var(--background)) 30%, 
+        hsl(var(--storybook-yellow) / 0.2) 45%,
+        hsl(var(--background)) 60%,
+        hsl(var(--storybook-purple) / 0.2) 75%,
+        hsl(var(--storybook-green) / 0.3) 90%,
+        hsl(var(--mint)) 100%
+      );
     background-attachment: fixed;
+    background-size: 100% 100%, 100% 100%, 100% 100%, 100% 100%;
     color: hsl(var(--foreground));
     font-feature-settings: 'cv02', 'cv03', 'cv04', 'cv11';
     font-optical-sizing: auto;
@@ -1901,4 +1922,284 @@
 .interactive-element:hover {
   transform: scale(1.05);
   filter: brightness(1.1);
+}
+
+/* ========================================
+   STORYBOOK-INSPIRED ANIMATIONS & EFFECTS
+   ======================================== */
+
+/* Page Turn Effect for Cards */
+@keyframes page-turn {
+  0% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+  50% {
+    transform: perspective(400px) rotateY(-15deg) scale(1.02);
+  }
+  100% {
+    transform: perspective(400px) rotateY(0deg);
+  }
+}
+
+.page-turn-effect {
+  transform-style: preserve-3d;
+  transition: transform 0.6s cubic-bezier(0.23, 1, 0.32, 1);
+}
+
+.page-turn-effect:hover {
+  animation: page-turn 0.8s ease-in-out;
+}
+
+/* Storybook Character Introduction Animation */
+@keyframes character-entrance {
+  0% {
+    transform: translateY(30px) scale(0.8);
+    opacity: 0;
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    opacity: 0.8;
+  }
+  100% {
+    transform: translateY(0) scale(1);
+    opacity: 1;
+  }
+}
+
+.character-entrance {
+  animation: character-entrance 0.8s cubic-bezier(0.68, -0.55, 0.265, 1.55) forwards;
+}
+
+/* Magical Book Opening Effect */
+@keyframes book-open {
+  0% {
+    transform: perspective(1000px) rotateX(-90deg);
+    opacity: 0;
+  }
+  50% {
+    transform: perspective(1000px) rotateX(-45deg);
+    opacity: 0.7;
+  }
+  100% {
+    transform: perspective(1000px) rotateX(0deg);
+    opacity: 1;
+  }
+}
+
+.book-open-effect {
+  animation: book-open 1.2s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+  transform-origin: bottom center;
+}
+
+/* Gentle Story Page Flip */
+@keyframes story-flip {
+  0% {
+    transform: translateX(0) rotateY(0deg);
+  }
+  25% {
+    transform: translateX(-5px) rotateY(5deg);
+  }
+  75% {
+    transform: translateX(5px) rotateY(-5deg);
+  }
+  100% {
+    transform: translateX(0) rotateY(0deg);
+  }
+}
+
+.story-flip {
+  animation: story-flip 2s ease-in-out infinite;
+}
+
+/* Storybook Button Bounces */
+.btn-storybook {
+  background: linear-gradient(135deg, 
+    hsl(var(--storybook-purple)) 0%, 
+    hsl(var(--storybook-blue)) 50%, 
+    hsl(var(--storybook-green)) 100%);
+  border-radius: var(--radius-2xl);
+  color: white;
+  font-weight: 700;
+  text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 
+    0 8px 20px rgba(var(--storybook-purple), 0.3),
+    0 4px 12px rgba(var(--storybook-blue), 0.2);
+  transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  position: relative;
+  overflow: hidden;
+}
+
+.btn-storybook::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(90deg, 
+    transparent, 
+    rgba(255, 255, 255, 0.2), 
+    transparent);
+  transition: left 0.6s;
+}
+
+.btn-storybook:hover::before {
+  left: 100%;
+}
+
+.btn-storybook:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 
+    0 12px 25px rgba(var(--storybook-purple), 0.4),
+    0 6px 15px rgba(var(--storybook-blue), 0.3);
+}
+
+.btn-storybook:active {
+  transform: translateY(-1px) scale(1.02);
+}
+
+/* Magical Zone Glow */
+.zone-magical {
+  position: relative;
+  border-radius: var(--radius-2xl);
+  background: linear-gradient(135deg,
+    hsl(var(--storybook-green) / 0.1) 0%,
+    hsl(var(--storybook-yellow) / 0.1) 50%,
+    hsl(var(--storybook-blue) / 0.1) 100%);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  box-shadow: 
+    0 8px 32px rgba(var(--storybook-purple), 0.1),
+    inset 0 2px 0 rgba(255, 255, 255, 0.1);
+}
+
+.zone-magical:hover {
+  background: linear-gradient(135deg,
+    hsl(var(--storybook-green) / 0.2) 0%,
+    hsl(var(--storybook-yellow) / 0.2) 50%,
+    hsl(var(--storybook-blue) / 0.2) 100%);
+  border-color: rgba(var(--storybook-purple), 0.4);
+  box-shadow: 
+    0 12px 40px rgba(var(--storybook-purple), 0.2),
+    0 0 30px rgba(var(--sparkle), 0.3),
+    inset 0 2px 0 rgba(255, 255, 255, 0.2);
+}
+
+/* Storybook Text Glow */
+.text-storybook-glow {
+  text-shadow: 
+    0 2px 8px rgba(var(--storybook-purple), 0.3),
+    0 0 20px rgba(var(--sparkle), 0.2);
+  background: linear-gradient(135deg,
+    hsl(var(--storybook-purple)) 0%,
+    hsl(var(--storybook-blue)) 50%,
+    hsl(var(--storybook-green)) 100%);
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  font-weight: 800;
+}
+
+/* Character Card Storybook Style */
+.character-storybook {
+  background: 
+    radial-gradient(circle at top right, 
+      hsl(var(--storybook-yellow) / 0.2) 0%, 
+      transparent 50%),
+    linear-gradient(135deg,
+      hsl(var(--storybook-green) / 0.1) 0%,
+      hsl(var(--storybook-blue) / 0.1) 100%);
+  backdrop-filter: blur(15px);
+  border: 3px solid rgba(255, 255, 255, 0.4);
+  border-radius: var(--radius-2xl);
+  box-shadow: 
+    0 16px 40px rgba(var(--storybook-purple), 0.15),
+    inset 0 4px 0 rgba(255, 255, 255, 0.1);
+  overflow: hidden;
+  position: relative;
+}
+
+.character-storybook::after {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: linear-gradient(90deg,
+    transparent 0%,
+    rgba(255, 255, 255, 0.3) 20%,
+    rgba(255, 255, 255, 0.8) 50%,
+    rgba(255, 255, 255, 0.3) 80%,
+    transparent 100%);
+}
+
+/* Floating Storybook Elements */
+@keyframes storybook-float {
+  0%, 100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+  33% {
+    transform: translateY(-8px) rotate(1deg);
+  }
+  66% {
+    transform: translateY(4px) rotate(-1deg);
+  }
+}
+
+.storybook-float {
+  animation: storybook-float 6s ease-in-out infinite;
+}
+
+.storybook-float:nth-child(2n) {
+  animation-delay: 1s;
+}
+
+.storybook-float:nth-child(3n) {
+  animation-delay: 2s;
+}
+
+/* Utility Classes for Storybook Theme */
+.storybook-card {
+  @apply character-storybook page-turn-effect;
+}
+
+.storybook-button {
+  @apply btn-storybook touch-friendly;
+}
+
+.storybook-zone {
+  @apply zone-magical storybook-float;
+}
+
+.storybook-title {
+  @apply text-storybook-glow font-display text-4xl;
+}
+
+/* Accessibility Improvements */
+@media (prefers-reduced-motion: reduce) {
+  .page-turn-effect:hover,
+  .character-entrance,
+  .book-open-effect,
+  .story-flip,
+  .storybook-float {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
+/* High Contrast Mode Support */
+@media (prefers-contrast: high) {
+  .character-storybook,
+  .zone-magical,
+  .btn-storybook {
+    border-width: 3px;
+    border-color: currentColor;
+  }
+  
+  .text-storybook-glow {
+    background: none;
+    color: currentColor;
+    text-shadow: none;
+  }
 }
