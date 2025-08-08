@@ -44,12 +44,13 @@ export default function UserProfileEditor({ className }: UserProfileEditorProps)
       }
 
       setUser(authUser);
+      const { id } = authUser;
 
       // Get user profile from users table
       const { data: userProfile, error: profileError } = await supabase
         .from('users')
         .select('name, avatar_url')
-        .eq('id', authUser.id)
+        .eq('id', id)
         .single();
 
       if (profileError && profileError.code !== 'PGRST116') {
@@ -121,13 +122,23 @@ export default function UserProfileEditor({ className }: UserProfileEditorProps)
   };
 
   const handleSave = async () => {
-    if (!user) return;
-
     try {
       setSaving(true);
       setError("");
       setSuccess("");
 
+      // Get current user
+      const { data: { user: authUser }, error: authError } = await supabase.auth.getUser();
+      
+      if (authError) {
+        throw authError;
+      }
+
+      if (!authUser) {
+        throw new Error("No authenticated user found");
+      }
+
+      const { id } = authUser;
       let newAvatarUrl = avatarUrl;
 
       // Upload new avatar if selected
@@ -154,15 +165,14 @@ export default function UserProfileEditor({ className }: UserProfileEditorProps)
         setUploading(false);
       }
 
-      // Update users table
+      // Save or update user profile
       const { error: updateError } = await supabase
         .from('users')
         .upsert({
-          id: user.id,
+          id,
           name: name || null,
           avatar_url: newAvatarUrl,
-          email: user.email,
-          updated_at: new Date().toISOString(),
+          email: authUser.email,
         });
 
       if (updateError) {
