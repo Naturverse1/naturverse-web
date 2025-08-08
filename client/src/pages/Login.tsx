@@ -10,6 +10,8 @@ import TurianLogo from "@assets/turian_media_logo_transparent.png";
 import MagicalForestImg from "@assets/download_1754675331614.jpg";
 import CharacterImg from "@assets/Character img_1754673794865.jpg";
 import StorybookImg from "@assets/Storybook img_1754673794866.jpg";
+import ShroomForestImg from "@assets/Shroom forest_1754673794866.jpg";
+import BookImg from "@assets/book img_1754673794864.jpg";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -106,22 +108,47 @@ export default function Login() {
         )`
       }} />
       
-      {/* Floating Storybook Elements */}
+      {/* Floating Real Asset Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 animate-float-bounce opacity-60" style={{animationDelay: '0s'}}>
-          <img src={StorybookImg} alt="Storybook element" className="w-12 h-12 rounded-full border-2 border-white/40 shadow-lg" />
+        <div className="absolute top-20 left-20 animate-float-bounce opacity-70" style={{animationDelay: '0s'}}>
+          <img 
+            src={StorybookImg} 
+            alt="Storybook element" 
+            className="w-16 h-16 rounded-2xl border-3 border-pink-300/60 shadow-xl bg-white/20 p-1"
+            style={{ filter: 'drop-shadow(0 4px 12px rgba(255,192,203,0.4))' }}
+          />
         </div>
-        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-50" style={{animationDelay: '1s'}}>
-          <div className="w-8 h-8 bg-green-200/60 rounded-full border border-green-300 flex items-center justify-center text-lg">🌿</div>
+        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-60" style={{animationDelay: '1s'}}>
+          <img 
+            src={ShroomForestImg} 
+            alt="Magical forest" 
+            className="w-12 h-12 rounded-full border-2 border-green-400/60 shadow-lg bg-white/20"
+            style={{ filter: 'drop-shadow(0 4px 8px rgba(34,197,94,0.4))' }}
+          />
         </div>
-        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-60" style={{animationDelay: '2s'}}>
-          <img src={TurianLogo} alt="Turian decoration" className="w-10 h-10 rounded-full bg-white/40 p-1 border border-yellow-300 shadow-lg" />
+        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-70" style={{animationDelay: '2s'}}>
+          <img 
+            src={TurianLogo} 
+            alt="Turian mascot" 
+            className="w-14 h-14 rounded-full bg-yellow-100/80 p-2 border-2 border-yellow-400/60 shadow-xl"
+            style={{ filter: 'drop-shadow(0 4px 12px rgba(255,215,0,0.5))' }}
+          />
         </div>
-        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-40" style={{animationDelay: '3s'}}>
-          <div className="w-6 h-6 bg-purple-200/60 rounded-full border border-purple-300 flex items-center justify-center text-sm">🦋</div>
+        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-50" style={{animationDelay: '3s'}}>
+          <img 
+            src={BookImg} 
+            alt="Storybook page" 
+            className="w-10 h-10 rounded-lg border-2 border-purple-300/60 shadow-lg bg-white/30"
+            style={{ filter: 'drop-shadow(0 3px 8px rgba(147,51,234,0.3))' }}
+          />
         </div>
-        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-50" style={{animationDelay: '4s'}}>
-          <div className="w-8 h-8 bg-blue-200/60 rounded-full border border-blue-300 flex items-center justify-center text-lg">🍃</div>
+        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-60" style={{animationDelay: '4s'}}>
+          <img 
+            src={CharacterImg} 
+            alt="Character" 
+            className="w-12 h-12 rounded-full border-2 border-blue-300/60 shadow-lg bg-white/20 object-cover"
+            style={{ filter: 'drop-shadow(0 4px 8px rgba(59,130,246,0.4))' }}
+          />
         </div>
       </div>
 
@@ -134,7 +161,13 @@ export default function Login() {
               alt="The Naturverse" 
               className="w-16 h-16 drop-shadow-2xl animate-gentle-pulse rounded-full border-2 border-white/60 bg-white/20 p-1"
             />
-            <div className="absolute -top-1 -right-1 w-4 h-4 bg-yellow-400 rounded-full animate-sparkle-twinkle flex items-center justify-center text-xs">✨</div>
+            <div className="absolute -top-1 -right-1 animate-sparkle-twinkle">
+              <img 
+                src={StorybookImg} 
+                alt="Magic sparkle" 
+                className="w-5 h-5 rounded-full border border-yellow-400 bg-yellow-100"
+              />
+            </div>
           </div>
           <div className="bg-white/80 backdrop-blur-sm px-3 py-1 rounded-full border border-white/60">
             <span className="text-display text-xl font-bold text-gradient">The Naturverse™</span>
@@ -164,9 +197,21 @@ export default function Login() {
               radial-gradient(circle at 80% 80%, rgba(255,215,0,0.2) 0%, transparent 50%)
             `
           }}>
-            {/* Gentle decorative elements */}
-            <div className="absolute -top-2 -right-2 text-2xl animate-gentle-pulse opacity-60" style={{animationDelay: '1s'}}>🌸</div>
-            <div className="absolute -bottom-2 -left-2 text-2xl animate-gentle-pulse opacity-60" style={{animationDelay: '2s'}}>🌿</div>
+            {/* Real asset decorative elements */}
+            <div className="absolute -top-3 -right-3 animate-gentle-pulse opacity-70" style={{animationDelay: '1s'}}>
+              <img 
+                src={StorybookImg} 
+                alt="Decorative storybook" 
+                className="w-8 h-8 rounded-full border border-pink-300 shadow-lg bg-pink-100/60"
+              />
+            </div>
+            <div className="absolute -bottom-3 -left-3 animate-gentle-pulse opacity-70" style={{animationDelay: '2s'}}>
+              <img 
+                src={ShroomForestImg} 
+                alt="Decorative forest" 
+                className="w-8 h-8 rounded-full border border-green-300 shadow-lg bg-green-100/60"
+              />
+            </div>
             
             <CardHeader className="text-center pb-6" style={{ paddingTop: '2rem' }}>
               <CardTitle className="text-4xl font-bold mb-4" style={{
@@ -211,13 +256,15 @@ export default function Login() {
                   <img 
                     src={StorybookImg} 
                     alt="Storybook decoration" 
-                    className="w-6 h-6 mr-3 rounded-full border border-white/30"
+                    className="w-8 h-8 mr-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
+                    style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
                   />
                   Continue with Google
                   <img 
-                    src={StorybookImg} 
-                    alt="Storybook decoration" 
-                    className="w-6 h-6 ml-3 rounded-full border border-white/30"
+                    src={BookImg} 
+                    alt="Book decoration" 
+                    className="w-8 h-8 ml-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
+                    style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
                   />
                 </div>
               </Button>
@@ -343,14 +390,16 @@ export default function Login() {
                       <div className="flex items-center justify-center">
                         <img 
                           src={TurianLogo} 
-                          alt="Turian logo" 
-                          className="w-6 h-6 mr-3 rounded-full bg-white/20 p-1"
+                          alt="Turian mascot" 
+                          className="w-8 h-8 mr-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
+                          style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
                         />
                         Continue with Email
                         <img 
-                          src={TurianLogo} 
-                          alt="Turian logo" 
-                          className="w-6 h-6 ml-3 rounded-full bg-white/20 p-1"
+                          src={CharacterImg} 
+                          alt="Character decoration" 
+                          className="w-8 h-8 ml-3 rounded-xl border-2 border-white/50 bg-white/20 object-cover shadow-lg"
+                          style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
                         />
                       </div>
                     </>
