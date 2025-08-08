@@ -863,6 +863,28 @@
   100% { content: ''; }
 }
 
+@keyframes character-float {
+  0%, 100% { transform: translateY(0px) rotate(0deg) scale(1); }
+  33% { transform: translateY(-15px) rotate(2deg) scale(1.02); }
+  66% { transform: translateY(-5px) rotate(-1deg) scale(0.98); }
+}
+
+@keyframes region-glow {
+  0%, 100% { box-shadow: 0 0 20px rgba(255, 255, 255, 0.1); }
+  50% { box-shadow: 0 0 40px rgba(255, 255, 255, 0.3), 0 0 60px hsl(var(--emerald) / 0.4); }
+}
+
+@keyframes hero-entrance {
+  0% { opacity: 0; transform: translateY(50px) scale(0.9); }
+  100% { opacity: 1; transform: translateY(0px) scale(1); }
+}
+
+@keyframes character-bounce-in {
+  0% { opacity: 0; transform: translateY(100px) scale(0.3) rotate(-10deg); }
+  50% { opacity: 0.8; transform: translateY(-20px) scale(1.1) rotate(5deg); }
+  100% { opacity: 1; transform: translateY(0px) scale(1) rotate(0deg); }
+}
+
 /* Magical Animation Classes */
 .animate-subtle-float {
   animation: float-gentle 4s ease-in-out infinite;
@@ -877,6 +899,11 @@
   background-size: 200% 100%;
   animation: shimmer 1.5s infinite;
 }
+
+.animate-character-float { animation: character-float 4s ease-in-out infinite; }
+.animate-region-glow { animation: region-glow 3s ease-in-out infinite; }
+.animate-hero-entrance { animation: hero-entrance 1s ease-out forwards; }
+.animate-character-bounce-in { animation: character-bounce-in 1.2s ease-out forwards; }
 
 .animate-gradient {
   background-size: 200% 200%;
@@ -940,6 +967,102 @@
   .btn-primary {
     border: 2px solid hsl(var(--primary));
   }
+}
+
+/* Enhanced Stagger Animation Delays */
+.stagger-5 { animation-delay: 0.5s; }
+.stagger-6 { animation-delay: 0.6s; }
+.stagger-7 { animation-delay: 0.7s; }
+.stagger-8 { animation-delay: 0.8s; }
+.float-1 { animation-delay: 0.3s; }
+.float-2 { animation-delay: 0.7s; }
+.float-3 { animation-delay: 1.1s; }
+.char-1 { animation-delay: 0.2s; }
+.char-2 { animation-delay: 0.4s; }
+.char-3 { animation-delay: 0.6s; }
+.char-4 { animation-delay: 0.8s; }
+.char-5 { animation-delay: 1.0s; }
+
+/* Magical Character Cards */
+.character-card {
+  background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
+  backdrop-filter: blur(10px);
+  border: 1px solid rgba(255,255,255,0.2);
+  border-radius: 2rem;
+  padding: 2rem;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+}
+
+.character-card::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: linear-gradient(45deg, transparent 30%, rgba(255,255,255,0.1) 50%, transparent 70%);
+  transform: translateX(-100%);
+  transition: transform 0.6s;
+}
+
+.character-card:hover::before {
+  transform: translateX(100%);
+}
+
+.character-card:hover {
+  transform: translateY(-10px) scale(1.02);
+  box-shadow: 0 20px 40px rgba(0,0,0,0.2), 0 0 50px hsl(var(--emerald) / 0.3);
+}
+
+/* Hero Banner Background */
+.hero-magical-bg {
+  background: radial-gradient(ellipse 80% 50% at 50% 0%, hsl(var(--magic) / 0.1) 0%, transparent 50%),
+              radial-gradient(circle at 10% 90%, hsl(var(--emerald) / 0.1) 0%, transparent 40%),
+              radial-gradient(circle at 90% 10%, hsl(var(--sparkle) / 0.1) 0%, transparent 40%),
+              linear-gradient(135deg, hsl(var(--mint)) 0%, hsl(var(--background)) 50%, hsl(var(--sage) / 0.3) 100%);
+  position: relative;
+}
+
+/* Region Navigation Buttons */
+.region-button {
+  background: linear-gradient(135deg, hsl(var(--emerald)) 0%, hsl(var(--forest)) 100%);
+  border: 2px solid transparent;
+  border-radius: 1.5rem;
+  padding: 1rem 1.5rem;
+  color: white;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  transition: all 0.3s ease;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 0 30px hsl(var(--emerald) / 0.3);
+}
+
+.region-button::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 0;
+  height: 0;
+  background: radial-gradient(circle, rgba(255,255,255,0.3) 0%, transparent 70%);
+  transition: all 0.5s ease;
+  border-radius: 50%;
+  transform: translate(-50%, -50%);
+}
+
+.region-button:hover::before {
+  width: 300px;
+  height: 300px;
+}
+
+.region-button:hover {
+  transform: translateY(-3px) scale(1.05);
+  box-shadow: 0 8px 30px rgba(0,0,0,0.25), 0 0 50px hsl(var(--emerald) / 0.5);
 }
 
 /* Reduced motion support */
