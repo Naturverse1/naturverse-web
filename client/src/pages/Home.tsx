@@ -172,7 +172,7 @@ export default function Home() {
 
       <div className="relative z-10 min-h-screen py-8 px-6">
         {/* Hero Section */}
-        <div className="text-center mb-16 animate-character-entrance">
+        <div className="text-center mb-12 animate-character-entrance">
           {/* Logo and Brand */}
           <div className="flex justify-center mb-8">
             <div className="relative">
@@ -186,14 +186,14 @@ export default function Home() {
             </div>
           </div>
 
-          <h1 className="text-5xl md:text-7xl lg:text-8xl font-magical text-white drop-shadow-2xl mb-6 text-magical-rainbow">
+          <h1 className="text-3xl md:text-5xl lg:text-6xl font-magical text-white drop-shadow-2xl mb-6 text-magical-rainbow">
             Welcome to The Naturverse™!
           </h1>
           
-          <p className="text-2xl md:text-3xl font-playful text-white drop-shadow-lg mb-8 max-w-4xl mx-auto leading-relaxed">
+          <p className="text-lg md:text-xl font-playful text-white drop-shadow-lg mb-8 max-w-3xl mx-auto leading-relaxed">
             🌟 Where Learning Becomes Adventure! 🌟
             <br />
-            <span className="text-xl md:text-2xl">
+            <span className="text-base md:text-lg">
               Discover nature's wonders through magical stories, fun quizzes, and amazing adventures!
             </span>
           </p>
@@ -233,7 +233,7 @@ export default function Home() {
         {/* Adventure Zones Grid */}
         <div className="max-w-6xl mx-auto mb-16">
           <div className="text-center mb-12 animate-character-entrance" style={{ animationDelay: '0.5s' }}>
-            <h2 className="text-4xl md:text-5xl font-magical text-white drop-shadow-xl mb-4">
+            <h2 className="text-3xl md:text-4xl font-magical text-white drop-shadow-xl mb-4">
               🌟 Explore Amazing Worlds 🌟
             </h2>
             <p className="text-xl text-white drop-shadow-lg font-playful">

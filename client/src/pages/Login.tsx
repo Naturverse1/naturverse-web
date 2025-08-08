@@ -141,23 +141,33 @@ export default function Login() {
                 </Alert>
               )}
 
-              {/* Google Sign In Button */}
+              {/* Temporary Demo Button */}
               <div className="text-center">
                 <Button 
-                  onClick={handleGoogleSignIn}
-                  disabled={loading}
+                  onClick={() => setLocation('/map')}
                   className="btn-magical w-full text-xl py-6 text-white font-bold relative overflow-hidden"
-                  data-testid="google-signin-button"
+                  data-testid="demo-signin-button"
                 >
                   <div className="flex items-center justify-center space-x-3">
                     <span className="text-2xl">🌟</span>
-                    <span>{loading ? 'Signing in...' : 'Sign in with Google'}</span>
+                    <span>Start Adventure (Demo Mode)</span>
                     <span className="text-2xl">✨</span>
                   </div>
                   
                   {/* Magical Shimmer Effect */}
                   <div className="absolute inset-0 animate-magical-shimmer"></div>
                 </Button>
+              </div>
+              
+              {/* Google Setup Notice */}
+              <div className="bg-blue-50/90 border-2 border-blue-200 rounded-2xl p-4">
+                <div className="text-center">
+                  <div className="text-2xl mb-2">🔧</div>
+                  <p className="text-sm font-bold text-blue-700 mb-2">Google Sign-In Setup Needed</p>
+                  <p className="text-xs text-blue-600 font-story">
+                    To enable Google authentication, go to your Supabase project → Authentication → Providers → Enable Google provider
+                  </p>
+                </div>
               </div>
 
               <div className="text-center">
