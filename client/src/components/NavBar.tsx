@@ -5,6 +5,14 @@ import { Button } from '@/components/ui/button';
 
 // Import logo
 import TurianLogo from '../assets/turian_media_logo_transparent.png';
+import TurianImg from '../assets/Turian.jpg';
+import MangoMikeImg from '../assets/Mango Mike.png';
+import DrPImg from '../assets/Dr P.png';
+import FrankieFrogsImg from '../assets/Frankie Frogs.png';
+import BluButterflyImg from '../assets/Blu Butterfly.png';
+import HankImg from '../assets/hank.png';
+import PineapplePaImg from '../assets/Pineapple Pa-Pa.png';
+import LaoCowImg from '../assets/Lao Cow.png';
 
 const NavBar: React.FC = () => {
   const { user, signOut } = useAuth();
@@ -19,9 +27,16 @@ const NavBar: React.FC = () => {
         <div className="flex justify-between items-center">
           <Link to="/" className="font-display text-3xl font-bold text-gradient hover:scale-105 transition-all duration-300">
             <span className="flex items-center gap-3">
-              <img src={TurianLogo} alt="Turian Media" className="w-10 h-10 animate-gentle-pulse" />
-              <span className="animate-sparkle-twinkle">🌿</span>
-              <span>Naturverse</span>
+              <div className="relative">
+                <img src={TurianLogo} alt="Turian Media" className="w-16 h-16 animate-gentle-pulse drop-shadow-lg" />
+                <div className="absolute -top-1 -right-1 text-2xl animate-sparkle-twinkle">✨</div>
+              </div>
+              <span className="text-4xl animate-sparkle-twinkle">🌿</span>
+              <span className="text-transparent bg-gradient-to-r from-emerald via-magic to-forest bg-clip-text font-bold">Naturverse</span>
+              <div className="flex gap-1 ml-2">
+                <span className="text-lg animate-sparkle-twinkle">🌟</span>
+                <span className="text-lg animate-sparkle-twinkle stagger-1">✨</span>
+              </div>
             </span>
           </Link>
           
@@ -44,36 +59,44 @@ const NavBar: React.FC = () => {
               {/* Learning Realms & Activities */}
               <div className="flex items-center space-x-2">
                 <Link to="/modules" className="region-button bg-gradient-to-r from-ocean to-sky" data-testid="nav-modules">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">📚</span>Learning Zone
+                  <img src={DrPImg} alt="Dr P" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Learning Zone</span>
                 </Link>
                 <Link to="/quiz" className="region-button bg-gradient-to-r from-magic to-sparkle" data-testid="nav-quiz">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🧠</span>Brain Games
+                  <img src={FrankieFrogsImg} alt="Frankie Frogs" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Brain Games</span>
                 </Link>
                 <Link to="/storybook" className="region-button bg-gradient-to-r from-coral to-sunset" data-testid="nav-storybook">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">📖</span>Story Realm
+                  <img src={LaoCowImg} alt="Wise Lao Cow" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Story Realm</span>
                 </Link>
               </div>
               
               {/* Creative & Musical Realms */}
               <div className="flex items-center space-x-2">
                 <Link to="/navatar" className="region-button bg-gradient-to-r from-lavender to-magic" data-testid="nav-navatar">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🎨</span>Avatar Studio
+                  <img src={BluButterflyImg} alt="Blu Butterfly" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Avatar Studio</span>
                 </Link>
                 <Link to="/music" className="region-button bg-gradient-to-r from-sunny to-amber" data-testid="nav-music">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🎵</span>Music Island
+                  <img src={MangoMikeImg} alt="Mango Mike" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Music Island</span>
                 </Link>
                 <Link to="/codex" className="region-button bg-gradient-to-r from-forest to-sage" data-testid="nav-codex">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">📖</span>Knowledge Codex
+                  <img src={PineapplePaImg} alt="Pineapple Pa-Pa" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Knowledge Codex</span>
                 </Link>
               </div>
               
               {/* Special Magical Places */}
               <div className="flex items-center space-x-2">
                 <Link to="/ai" className="region-button bg-gradient-to-r from-turquoise to-ocean animate-magical-pulse" data-testid="nav-ai">
-                  <span className="mr-2 text-lg animate-character-float">🤖</span>Turian's Tower
+                  <img src={TurianImg} alt="Turian" className="w-6 h-6 mr-2 object-contain animate-character-float rounded-full" />
+                  <span>Turian's Tower</span>
                 </Link>
                 <Link to="/market" className="region-button bg-gradient-to-r from-emerald to-mint" data-testid="nav-market">
-                  <span className="mr-2 text-lg animate-sparkle-twinkle">🏪</span>Magic Market
+                  <img src={HankImg} alt="Hank" className="w-6 h-6 mr-2 object-contain animate-bounce-gentle" />
+                  <span>Magic Market</span>
                 </Link>
               </div>
               

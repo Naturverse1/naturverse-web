@@ -1221,6 +1221,189 @@
   text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
+/* Enhanced Keyframe Animations for Kid-Friendly Magic */
+@keyframes character-bounce-in {
+  0% {
+    opacity: 0;
+    transform: translateY(-100px) scale(0.5);
+  }
+  50% {
+    opacity: 0.8;
+    transform: translateY(20px) scale(1.1);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes gentle-pulse {
+  0%, 100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  50% {
+    transform: scale(1.05);
+    opacity: 0.9;
+  }
+}
+
+@keyframes magical-pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 0 20px hsl(var(--magic) / 0.3);
+  }
+  50% {
+    transform: scale(1.02);
+    box-shadow: 0 0 30px hsl(var(--magic) / 0.5), 0 0 40px hsl(var(--sparkle) / 0.3);
+  }
+}
+
+@keyframes region-glow {
+  0%, 100% {
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 20px hsl(var(--emerald) / 0.2);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15), 0 0 30px hsl(var(--magic) / 0.4);
+  }
+}
+
+@keyframes sparkle-twinkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1) rotate(0deg);
+  }
+  25% {
+    opacity: 0.7;
+    transform: scale(0.8) rotate(90deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.2) rotate(180deg);
+  }
+  75% {
+    opacity: 0.8;
+    transform: scale(0.9) rotate(270deg);
+  }
+}
+
+@keyframes sparkle-pop {
+  0% {
+    opacity: 0;
+    transform: scale(0) rotate(0deg);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.3) rotate(180deg);
+  }
+  100% {
+    opacity: 0.7;
+    transform: scale(1) rotate(360deg);
+  }
+}
+
+@keyframes hero-entrance {
+  0% {
+    opacity: 0;
+    transform: translateY(50px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes magical-bounce {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+    animation-timing-function: cubic-bezier(0.8, 0, 1, 1);
+  }
+  50% {
+    transform: translateY(-10px) scale(1.05);
+    animation-timing-function: cubic-bezier(0, 0, 0.2, 1);
+  }
+}
+
+/* Animation Utility Classes */
+.animate-gentle-pulse {
+  animation: gentle-pulse 3s ease-in-out infinite;
+}
+
+.animate-magical-pulse {
+  animation: magical-pulse 2s ease-in-out infinite;
+}
+
+.animate-region-glow {
+  animation: region-glow 4s ease-in-out infinite;
+}
+
+.animate-character-bounce-in {
+  animation: character-bounce-in 1s ease-out;
+}
+
+.animate-bounce-gentle {
+  animation: magical-bounce 2s ease-in-out infinite;
+}
+
+.animate-sparkle-twinkle {
+  animation: sparkle-twinkle 2s ease-in-out infinite;
+}
+
+.animate-sparkle-pop {
+  animation: sparkle-pop 1.5s ease-in-out infinite;
+}
+
+.animate-hero-entrance {
+  animation: hero-entrance 1s ease-out;
+}
+
+.animate-magical-bounce {
+  animation: magical-bounce 2s ease-in-out infinite;
+}
+
+.animate-character-float {
+  animation: character-float 4s ease-in-out infinite;
+}
+
+/* Enhanced Character Classes */
+.char-1 { animation-delay: 0.1s; }
+.char-2 { animation-delay: 0.2s; }
+.char-3 { animation-delay: 0.3s; }
+.char-4 { animation-delay: 0.4s; }
+.char-5 { animation-delay: 0.5s; }
+.char-6 { animation-delay: 0.6s; }
+.char-7 { animation-delay: 0.7s; }
+.char-8 { animation-delay: 0.8s; }
+
+/* Enhanced Magical Backgrounds for Different Zones */
+.magical-forest-bg {
+  background: 
+    radial-gradient(circle at 20% 80%, hsl(var(--emerald) / 0.3) 0%, transparent 50%),
+    radial-gradient(circle at 80% 20%, hsl(var(--magic) / 0.2) 0%, transparent 50%),
+    radial-gradient(circle at 40% 40%, hsl(var(--sparkle) / 0.1) 0%, transparent 50%),
+    linear-gradient(135deg, hsl(var(--mint)) 0%, hsl(var(--background)) 100%);
+  background-size: 100% 100%, 100% 100%, 50% 50%, 100% 100%;
+  background-attachment: fixed;
+}
+
+.magical-underwater-bg {
+  background: 
+    radial-gradient(circle at 30% 70%, hsl(var(--ocean) / 0.4) 0%, transparent 60%),
+    radial-gradient(circle at 70% 30%, hsl(var(--turquoise) / 0.3) 0%, transparent 50%),
+    linear-gradient(135deg, hsl(var(--sky) / 0.2) 0%, hsl(var(--ocean) / 0.1) 100%);
+  background-size: 120% 120%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+
+.magical-sky-bg {
+  background: 
+    radial-gradient(circle at 60% 20%, hsl(var(--sunny) / 0.3) 0%, transparent 40%),
+    radial-gradient(circle at 20% 60%, hsl(var(--amber) / 0.2) 0%, transparent 50%),
+    linear-gradient(135deg, hsl(var(--sky) / 0.3) 0%, hsl(var(--sparkle) / 0.1) 100%);
+  background-size: 80% 80%, 100% 100%, 100% 100%;
+  background-attachment: fixed;
+}
+
 /* Reduced motion support */
 @media (prefers-reduced-motion: reduce) {
   * {
