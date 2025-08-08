@@ -4,7 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "../context/AuthContext";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { supabase } from "../lib/supabaseClient";
 
 export default function Login() {
@@ -67,69 +67,89 @@ export default function Login() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-blue-50 to-sky-100 flex items-center justify-center p-6">
-      <Card className="w-full max-w-md">
-        <CardHeader>
-          <CardTitle className="text-2xl font-bold text-center">Login</CardTitle>
-          <CardDescription className="text-center">
-            Sign in to your account
-          </CardDescription>
-        </CardHeader>
-        <CardContent>
-          {error && (
-            <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
-              {error}
+    <div className="min-h-screen magic-gradient flex items-center justify-center p-6">
+      <div className="w-full max-w-md">
+        <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
+          <CardHeader className="text-center pb-6">
+            <CardTitle className="text-3xl font-fredoka text-forest mb-2">
+              🌟 Welcome Back
+            </CardTitle>
+            <CardDescription className="text-forest/80 text-lg">
+              Sign in to continue your magical journey in The Naturverse
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            {error && (
+              <div className="bg-coral/10 border border-coral/20 text-coral px-4 py-3 rounded-lg mb-4">
+                {error}
+              </div>
+            )}
+            {resetMessage && (
+              <div className="bg-nature/10 border border-nature/20 text-forest px-4 py-3 rounded-lg mb-4">
+                {resetMessage}
+              </div>
+            )}
+            <form onSubmit={handleSubmit} className="space-y-4">
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-forest font-medium">Email</Label>
+                <Input
+                  id="email"
+                  type="email"
+                  placeholder="Enter your email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className="border-nature/20 focus:border-nature focus:ring-nature/20"
+                  required
+                  data-testid="input-email"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label htmlFor="password" className="text-forest font-medium">Password</Label>
+                <Input
+                  id="password"
+                  type="password"
+                  placeholder="Enter your password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className="border-nature/20 focus:border-nature focus:ring-nature/20"
+                  required
+                  data-testid="input-password"
+                />
+              </div>
+              <Button 
+                type="submit" 
+                className="w-full bg-nature hover:bg-forest text-white transition-colors duration-200 py-3" 
+                disabled={loading} 
+                data-testid="button-submit"
+              >
+                {loading ? "🌿 Signing In..." : "🚀 Sign In"}
+              </Button>
+            </form>
+            
+            <div className="text-center mt-6 space-y-4">
+              <Button
+                type="button"
+                variant="ghost"
+                onClick={handleForgotPassword}
+                disabled={resetLoading}
+                className="text-sm text-magic hover:text-coral transition-colors duration-200"
+                data-testid="button-forgot-password"
+              >
+                {resetLoading ? "Sending..." : "🔑 Forgot password?"}
+              </Button>
+              
+              <div className="pt-4 border-t border-nature/10">
+                <p className="text-sm text-forest/70">
+                  Don't have an account?{" "}
+                  <Link to="/signup" className="text-magic hover:text-coral font-medium transition-colors duration-200">
+                    🌱 Join The Adventure
+                  </Link>
+                </p>
+              </div>
             </div>
-          )}
-          {resetMessage && (
-            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
-              {resetMessage}
-            </div>
-          )}
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div className="space-y-2">
-              <Label htmlFor="email">Email</Label>
-              <Input
-                id="email"
-                type="email"
-                placeholder="Enter your email"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-                data-testid="input-email"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="password">Password</Label>
-              <Input
-                id="password"
-                type="password"
-                placeholder="Enter your password"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                required
-                data-testid="input-password"
-              />
-            </div>
-            <Button type="submit" className="w-full" disabled={loading} data-testid="button-submit">
-              {loading ? "Signing In..." : "Login"}
-            </Button>
-          </form>
-          
-          <div className="text-center mt-4">
-            <Button
-              type="button"
-              variant="link"
-              onClick={handleForgotPassword}
-              disabled={resetLoading}
-              className="text-sm text-blue-600"
-              data-testid="button-forgot-password"
-            >
-              {resetLoading ? "Sending..." : "Forgot password?"}
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 }
