@@ -8,10 +8,12 @@ import { useLocation, Link } from "wouter";
 import { supabase } from "../lib/supabaseClient";
 import TurianLogo from "@assets/turian_media_logo_transparent.png";
 import MagicalForestImg from "@assets/download_1754675331614.jpg";
-import CharacterImg from "@assets/Character img_1754673794865.jpg";
-import StorybookImg from "@assets/Storybook img_1754673794866.jpg";
-import ShroomForestImg from "@assets/Shroom forest_1754673794866.jpg";
-import BookImg from "@assets/book img_1754673794864.jpg";
+import TurianCharacter from "@assets/Turian_1754677394027.jpg";
+import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
+import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
+import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
+import MangoMike from "@assets/Mango Mike_1754677394025.png";
+import PineapplePapa from "@assets/Pineapple Pa-Pa_1754677394026.png";
 
 export default function Login() {
   const [email, setEmail] = useState("");
@@ -108,46 +110,46 @@ export default function Login() {
         )`
       }} />
       
-      {/* Floating Real Asset Elements */}
+      {/* Floating Naturverse Character Elements */}
       <div className="absolute inset-0 overflow-hidden pointer-events-none">
-        <div className="absolute top-20 left-20 animate-float-bounce opacity-70" style={{animationDelay: '0s'}}>
+        <div className="absolute top-20 left-20 animate-float-bounce opacity-80" style={{animationDelay: '0s'}}>
           <img 
-            src={StorybookImg} 
-            alt="Storybook element" 
-            className="w-16 h-16 rounded-2xl border-3 border-pink-300/60 shadow-xl bg-white/20 p-1"
-            style={{ filter: 'drop-shadow(0 4px 12px rgba(255,192,203,0.4))' }}
+            src={CoconutCruze} 
+            alt="Coconut Cruze" 
+            className="w-18 h-18 rounded-full border-3 border-blue-300/70 shadow-xl bg-blue-50/30 p-1"
+            style={{ filter: 'drop-shadow(0 6px 15px rgba(59,130,246,0.4))' }}
           />
         </div>
-        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-60" style={{animationDelay: '1s'}}>
+        <div className="absolute top-40 right-20 animate-gentle-pulse opacity-70" style={{animationDelay: '1s'}}>
           <img 
-            src={ShroomForestImg} 
-            alt="Magical forest" 
-            className="w-12 h-12 rounded-full border-2 border-green-400/60 shadow-lg bg-white/20"
-            style={{ filter: 'drop-shadow(0 4px 8px rgba(34,197,94,0.4))' }}
+            src={BluButterfly} 
+            alt="Blue Butterfly" 
+            className="w-16 h-16 rounded-2xl border-2 border-purple-400/70 shadow-lg bg-purple-50/30"
+            style={{ filter: 'drop-shadow(0 4px 12px rgba(147,51,234,0.4))' }}
           />
         </div>
-        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-70" style={{animationDelay: '2s'}}>
+        <div className="absolute bottom-32 left-16 animate-float-bounce opacity-80" style={{animationDelay: '2s'}}>
           <img 
-            src={TurianLogo} 
-            alt="Turian mascot" 
-            className="w-14 h-14 rounded-full bg-yellow-100/80 p-2 border-2 border-yellow-400/60 shadow-xl"
-            style={{ filter: 'drop-shadow(0 4px 12px rgba(255,215,0,0.5))' }}
+            src={MangoMike} 
+            alt="Mango Mike" 
+            className="w-16 h-16 rounded-full bg-orange-100/80 p-1 border-3 border-orange-400/70 shadow-xl"
+            style={{ filter: 'drop-shadow(0 6px 15px rgba(251,146,60,0.5))' }}
           />
         </div>
-        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-50" style={{animationDelay: '3s'}}>
+        <div className="absolute top-1/3 right-1/3 animate-gentle-pulse opacity-70" style={{animationDelay: '3s'}}>
           <img 
-            src={BookImg} 
-            alt="Storybook page" 
-            className="w-10 h-10 rounded-lg border-2 border-purple-300/60 shadow-lg bg-white/30"
-            style={{ filter: 'drop-shadow(0 3px 8px rgba(147,51,234,0.3))' }}
+            src={FrankieFrogs} 
+            alt="Frankie Frogs" 
+            className="w-14 h-14 rounded-lg border-2 border-green-400/70 shadow-lg bg-green-50/30"
+            style={{ filter: 'drop-shadow(0 4px 10px rgba(34,197,94,0.4))' }}
           />
         </div>
-        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-60" style={{animationDelay: '4s'}}>
+        <div className="absolute bottom-20 right-32 animate-float-bounce opacity-75" style={{animationDelay: '4s'}}>
           <img 
-            src={CharacterImg} 
-            alt="Character" 
-            className="w-12 h-12 rounded-full border-2 border-blue-300/60 shadow-lg bg-white/20 object-cover"
-            style={{ filter: 'drop-shadow(0 4px 8px rgba(59,130,246,0.4))' }}
+            src={PineapplePapa} 
+            alt="Pineapple Pa-Pa" 
+            className="w-14 h-14 rounded-full border-2 border-yellow-400/70 shadow-lg bg-yellow-50/30 object-cover"
+            style={{ filter: 'drop-shadow(0 4px 10px rgba(234,179,8,0.4))' }}
           />
         </div>
       </div>
@@ -163,9 +165,9 @@ export default function Login() {
             />
             <div className="absolute -top-1 -right-1 animate-sparkle-twinkle">
               <img 
-                src={StorybookImg} 
-                alt="Magic sparkle" 
-                className="w-5 h-5 rounded-full border border-yellow-400 bg-yellow-100"
+                src={MangoMike} 
+                alt="Mango Mike sparkle" 
+                className="w-6 h-6 rounded-full border border-yellow-400 bg-yellow-100"
               />
             </div>
           </div>
@@ -197,19 +199,19 @@ export default function Login() {
               radial-gradient(circle at 80% 80%, rgba(255,215,0,0.2) 0%, transparent 50%)
             `
           }}>
-            {/* Real asset decorative elements */}
-            <div className="absolute -top-3 -right-3 animate-gentle-pulse opacity-70" style={{animationDelay: '1s'}}>
+            {/* Character decorative elements */}
+            <div className="absolute -top-4 -right-4 animate-gentle-pulse opacity-80" style={{animationDelay: '1s'}}>
               <img 
-                src={StorybookImg} 
-                alt="Decorative storybook" 
-                className="w-8 h-8 rounded-full border border-pink-300 shadow-lg bg-pink-100/60"
+                src={BluButterfly} 
+                alt="Blue Butterfly decoration" 
+                className="w-10 h-10 rounded-full border-2 border-blue-300 shadow-lg bg-blue-100/70"
               />
             </div>
-            <div className="absolute -bottom-3 -left-3 animate-gentle-pulse opacity-70" style={{animationDelay: '2s'}}>
+            <div className="absolute -bottom-4 -left-4 animate-gentle-pulse opacity-80" style={{animationDelay: '2s'}}>
               <img 
-                src={ShroomForestImg} 
-                alt="Decorative forest" 
-                className="w-8 h-8 rounded-full border border-green-300 shadow-lg bg-green-100/60"
+                src={CoconutCruze} 
+                alt="Coconut Cruze decoration" 
+                className="w-10 h-10 rounded-full border-2 border-green-300 shadow-lg bg-green-100/70"
               />
             </div>
             
@@ -254,17 +256,17 @@ export default function Login() {
                 <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
                 <div className="flex items-center justify-center">
                   <img 
-                    src={StorybookImg} 
-                    alt="Storybook decoration" 
-                    className="w-8 h-8 mr-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
-                    style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
+                    src={BluButterfly} 
+                    alt="Blue Butterfly decoration" 
+                    className="w-8 h-8 mr-3 rounded-xl border-2 border-white/60 bg-white/30 p-1 shadow-lg"
+                    style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
                   />
                   Continue with Google
                   <img 
-                    src={BookImg} 
-                    alt="Book decoration" 
-                    className="w-8 h-8 ml-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
-                    style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
+                    src={FrankieFrogs} 
+                    alt="Frankie Frogs decoration" 
+                    className="w-8 h-8 ml-3 rounded-xl border-2 border-white/60 bg-white/30 p-1 shadow-lg"
+                    style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
                   />
                 </div>
               </Button>
@@ -389,17 +391,17 @@ export default function Login() {
                       <div className="absolute top-1 left-3 w-6 h-6 rounded-full bg-white/20 animate-gentle-pulse"></div>
                       <div className="flex items-center justify-center">
                         <img 
-                          src={TurianLogo} 
-                          alt="Turian mascot" 
-                          className="w-8 h-8 mr-3 rounded-xl border-2 border-white/50 bg-white/20 p-1 shadow-lg"
-                          style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
+                          src={TurianCharacter} 
+                          alt="Turian character" 
+                          className="w-8 h-8 mr-3 rounded-xl border-2 border-white/60 bg-white/30 object-cover shadow-lg"
+                          style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
                         />
                         Continue with Email
                         <img 
-                          src={CharacterImg} 
-                          alt="Character decoration" 
-                          className="w-8 h-8 ml-3 rounded-xl border-2 border-white/50 bg-white/20 object-cover shadow-lg"
-                          style={{ filter: 'drop-shadow(0 2px 6px rgba(255,255,255,0.3))' }}
+                          src={MangoMike} 
+                          alt="Mango Mike decoration" 
+                          className="w-8 h-8 ml-3 rounded-xl border-2 border-white/60 bg-white/30 object-cover shadow-lg"
+                          style={{ filter: 'drop-shadow(0 3px 8px rgba(255,255,255,0.4))' }}
                         />
                       </div>
                     </>
@@ -453,43 +455,42 @@ export default function Login() {
       {/* Turian Character - Bottom Right */}
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative animate-float-bounce">
-          {/* Character Image with magical border */}
+          {/* Turian Character Image with magical border */}
           <div className="relative">
             <img 
-              src={CharacterImg} 
-              alt="Turian mascot character" 
-              className="w-32 h-32 rounded-full object-cover border-4 border-yellow-400 shadow-2xl"
+              src={TurianCharacter} 
+              alt="Turian the durian mascot" 
+              className="w-36 h-36 rounded-full object-cover border-4 border-green-400 shadow-2xl bg-gradient-to-br from-green-100 to-yellow-100 p-1"
               style={{
-                filter: 'drop-shadow(0 0 20px rgba(255,215,0,0.6))',
-                background: 'linear-gradient(135deg, rgba(255,255,255,0.9) 0%, rgba(255,248,220,0.9) 100%)'
+                filter: 'drop-shadow(0 0 25px rgba(34,197,94,0.7))',
               }}
             />
             
             {/* Speech Bubble */}
-            <div className="absolute -top-16 -left-32 bg-white/95 backdrop-blur-sm rounded-2xl p-3 shadow-lg border-2 border-green-300 max-w-xs" style={{
+            <div className="absolute -top-20 -left-36 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-3 border-green-400 max-w-xs" style={{
               background: 'linear-gradient(135deg, rgba(255,255,255,0.98) 0%, rgba(240,255,240,0.95) 100%)',
-              boxShadow: '0 10px 25px rgba(0,0,0,0.1)'
+              boxShadow: '0 15px 35px rgba(34,197,94,0.2)'
             }}>
               <div className="text-center">
-                <div className="text-sm font-bold mb-1" style={{
+                <div className="text-lg font-bold mb-2" style={{
                   fontFamily: 'Fredoka, sans-serif',
-                  color: '#2F5233'
+                  color: '#166534'
                 }}>
-                  I'm Turian!
+                  Hi! I'm Turian! 🌿
                 </div>
-                <div className="text-xs" style={{
+                <div className="text-sm" style={{
                   fontFamily: 'Fredoka, sans-serif',
-                  color: '#2F5233',
-                  lineHeight: '1.3'
+                  color: '#166534',
+                  lineHeight: '1.4'
                 }}>
-                  "Let's explore The Naturverse together!"
+                  "Ready to explore The Naturverse together?"
                 </div>
               </div>
               
               {/* Speech bubble pointer */}
-              <div className="absolute bottom-0 right-8 transform translate-y-full">
-                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-green-300"></div>
-                <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
+              <div className="absolute bottom-0 right-12 transform translate-y-full">
+                <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-green-400"></div>
+                <div className="w-0 h-0 border-l-[10px] border-r-[10px] border-t-[10px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>
               </div>
             </div>
           </div>
