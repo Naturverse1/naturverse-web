@@ -1,0 +1,71 @@
+✅ MASTER MVP COMMAND (for Replit Agent)
+Build my full Naturverse MVP app using React + Supabase, with the following setup:
+
+🔐 AUTH + PROFILE
+Supabase Auth: enable email/password, magic link, and OAuth logins
+
+After login, redirect to a Profile Page where users can:
+
+Upload/edit their avatar (store in Supabase Storage)
+
+Edit and save their username
+
+Store user data in Supabase users table (id, username, email, avatar_url)
+
+Enable Row-Level Security (RLS) with policies allowing users to read/update their own data only
+
+🌐 ROUTES & PAGES
+Create modular React routes for:
+
+/ → Home (welcome screen, description, login button if not authenticated)
+
+/profile → Profile page (edit avatar + username)
+
+/navatar → Navatar Creator (with category: fruit, animal, spirit, insect — store to avatars table)
+
+/quests → Quest & Stamp Tracker (pull stamps from stamps table)
+
+/map → Interactive Map of Thailandia
+
+/quiz → Quiz Player (pull from quizzes and user_quiz_attempts tables)
+
+/modules → List of Learning Modules (from learning_modules)
+
+/music → Music Zone (basic layout for composing or playing music)
+
+/storybook → Story Module Reader
+
+/codex → User's saved content (like a personal library)
+
+/ai → Turian AI Assistant (chat interface)
+
+/market → Placeholder for Marketplace
+
+/zone/:name → Dynamic route for each fantasy island/region (e.g. /zone/thailandia)
+
+🧭 NAVIGATION + ROUTE PROTECTION
+Navbar that shows only after login
+
+Nav should link to all the main pages
+
+Protected routes: redirect to login if not authenticated
+
+💾 DATABASE
+Use existing Supabase tables:
+
+users (id, username, email, avatar_url, created_at)
+
+avatars (id, user_id, name, category, image_url, appearance_data, created_at)
+
+quizzes, user_quiz_attempts, stamps, learning_modules, notifications, feedback
+
+🎨 STYLE + BEHAVIOR
+Use TailwindCSS
+
+Clean layout, loading states, error states
+
+Modular components
+
+All data connected via Supabase client with full CRUD
+
+Let me know if you need the schema or file assets. Otherwise, generate and wire everything above now.
