@@ -712,6 +712,148 @@
   .grid-auto-fill {
     grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
   }
+
+  /* Missing Magical Button Styles */
+  .region-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.75rem 1.5rem;
+    background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, hsl(var(--mint) / 0.8) 100%);
+    color: hsl(var(--foreground));
+    font-weight: 700;
+    font-family: var(--font-display);
+    border: 2px solid hsl(var(--emerald) / 0.4);
+    border-radius: 1.5rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 20px hsl(var(--emerald) / 0.2);
+    backdrop-filter: blur(12px);
+    position: relative;
+    overflow: hidden;
+    min-width: 140px;
+  }
+  
+  .region-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--sparkle) / 0.4), transparent);
+    transition: left 0.6s;
+  }
+  
+  .region-button:hover {
+    transform: translateY(-3px) scale(1.05);
+    background: linear-gradient(135deg, hsl(var(--emerald)) 0%, hsl(var(--magic)) 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 30px hsl(var(--emerald) / 0.5);
+    border-color: hsl(var(--magic) / 0.8);
+  }
+  
+  .region-button:hover::before {
+    left: 100%;
+  }
+
+  /* Character Card Styles */
+  .character-card {
+    background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, hsl(var(--mint) / 0.9) 100%);
+    backdrop-filter: blur(15px);
+    border: 3px solid hsl(var(--emerald) / 0.3);
+    border-radius: 2rem;
+    padding: 1.5rem;
+    transition: all 0.4s ease;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 0 25px hsl(var(--emerald) / 0.15);
+    color: hsl(var(--foreground));
+  }
+  
+  .character-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, hsl(var(--sparkle) / 0.3), transparent);
+    transition: left 0.7s;
+  }
+  
+  .character-card:hover {
+    transform: translateY(-6px) scale(1.03);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.15), 0 0 35px hsl(var(--emerald) / 0.3);
+    border-color: hsl(var(--magic) / 0.6);
+    background: linear-gradient(145deg, rgba(255,255,255,0.98) 0%, hsl(var(--sparkle) / 0.3) 100%);
+  }
+  
+  .character-card:hover::before {
+    left: 100%;
+  }
+
+  /* Hero Background */
+  .hero-magical-bg {
+    background: linear-gradient(
+      135deg,
+      hsl(var(--mint)) 0%,
+      hsl(var(--background)) 25%,
+      hsl(var(--accent) / 0.3) 50%,
+      hsl(var(--sparkle) / 0.2) 75%,
+      hsl(var(--mint)) 100%
+    );
+    background-attachment: fixed;
+    background-size: 400% 400%;
+    animation: gradient-shift 8s ease-in-out infinite;
+  }
+
+  /* Enhanced Stagger Classes */
+  .stagger-4 { animation-delay: 0.4s; }
+  .stagger-5 { animation-delay: 0.5s; }
+  .stagger-6 { animation-delay: 0.6s; }
+  .stagger-7 { animation-delay: 0.7s; }
+  .stagger-8 { animation-delay: 0.8s; }
+
+  /* Enhanced Float Classes */
+  .float-1 { animation: character-float 4s ease-in-out infinite; }
+  .float-2 { animation: character-float 5s ease-in-out infinite 0.5s; }
+  .float-3 { animation: character-float 6s ease-in-out infinite 1s; }
+
+  /* Enhanced Character Animation Delays */
+  .char-1 { animation-delay: 0.1s; }
+  .char-2 { animation-delay: 0.3s; }
+  .char-3 { animation-delay: 0.5s; }
+  .char-4 { animation-delay: 0.7s; }
+  .char-5 { animation-delay: 0.9s; }
+
+  /* Enhanced Text Contrast for Navigation */
+  .nav-modern .region-button {
+    color: hsl(var(--foreground));
+    font-weight: 700;
+    text-shadow: 0 1px 2px rgba(0,0,0,0.1);
+  }
+
+  .nav-modern .region-button:hover {
+    color: white;
+    text-shadow: 0 2px 4px rgba(0,0,0,0.3);
+  }
+
+  /* Ensure good contrast for all text elements */
+  .text-foreground {
+    color: hsl(var(--foreground)) !important;
+    text-shadow: 0 1px 2px rgba(255,255,255,0.5);
+  }
+
+  /* Enhanced visibility for magical elements */
+  .text-gradient {
+    background: linear-gradient(135deg, hsl(142 80% 35%), hsl(280 80% 60%), hsl(198 95% 55%));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 800;
+    text-shadow: none;
+  }
 }
 
 /* Modern Keyframes */
@@ -904,6 +1046,9 @@
 .animate-region-glow { animation: region-glow 3s ease-in-out infinite; }
 .animate-hero-entrance { animation: hero-entrance 1s ease-out forwards; }
 .animate-character-bounce-in { animation: character-bounce-in 1.2s ease-out forwards; }
+.animate-sparkle-twinkle { animation: sparkle-twinkle 2s ease-in-out infinite; }
+.animate-sparkle-pop { animation: sparkle-pop 0.6s ease-out; }
+.animate-magical-pulse { animation: magical-pulse 3s ease-in-out infinite; }
 
 .animate-gradient {
   background-size: 200% 200%;
@@ -985,15 +1130,16 @@
 
 /* Magical Character Cards */
 .character-card {
-  background: linear-gradient(145deg, rgba(255,255,255,0.1) 0%, rgba(255,255,255,0.05) 100%);
-  backdrop-filter: blur(10px);
-  border: 1px solid rgba(255,255,255,0.2);
+  background: linear-gradient(145deg, rgba(255,255,255,0.95) 0%, hsl(var(--mint) / 0.9) 100%);
+  backdrop-filter: blur(15px);
+  border: 3px solid hsl(var(--emerald) / 0.3);
   border-radius: 2rem;
-  padding: 2rem;
-  transition: all 0.3s ease;
+  padding: 1.5rem;
+  transition: all 0.4s ease;
   position: relative;
   overflow: hidden;
-  box-shadow: 0 8px 32px rgba(0,0,0,0.1);
+  box-shadow: 0 8px 32px rgba(0,0,0,0.1), 0 0 25px hsl(var(--emerald) / 0.15);
+  color: hsl(var(--foreground));
 }
 
 .character-card::before {
@@ -1028,18 +1174,24 @@
 
 /* Region Navigation Buttons */
 .region-button {
-  background: linear-gradient(135deg, hsl(var(--emerald)) 0%, hsl(var(--forest)) 100%);
-  border: 2px solid transparent;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.75rem 1.5rem;
+  background: linear-gradient(135deg, rgba(255,255,255,0.9) 0%, hsl(var(--mint) / 0.8) 100%);
+  color: hsl(var(--foreground));
+  font-weight: 700;
+  font-family: var(--font-display);
+  border: 2px solid hsl(var(--emerald) / 0.4);
   border-radius: 1.5rem;
-  padding: 1rem 1.5rem;
-  color: white;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
   transition: all 0.3s ease;
+  text-decoration: none;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.1), 0 0 20px hsl(var(--emerald) / 0.2);
+  backdrop-filter: blur(12px);
   position: relative;
   overflow: hidden;
-  box-shadow: 0 4px 20px rgba(0,0,0,0.15), 0 0 30px hsl(var(--emerald) / 0.3);
+  min-width: 140px;
+  text-shadow: 0 1px 2px rgba(0,0,0,0.1);
 }
 
 .region-button::before {
@@ -1062,7 +1214,11 @@
 
 .region-button:hover {
   transform: translateY(-3px) scale(1.05);
-  box-shadow: 0 8px 30px rgba(0,0,0,0.25), 0 0 50px hsl(var(--emerald) / 0.5);
+  background: linear-gradient(135deg, hsl(var(--emerald)) 0%, hsl(var(--magic)) 100%);
+  color: white;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.2), 0 0 30px hsl(var(--emerald) / 0.5);
+  border-color: hsl(var(--magic) / 0.8);
+  text-shadow: 0 2px 4px rgba(0,0,0,0.3);
 }
 
 /* Reduced motion support */
