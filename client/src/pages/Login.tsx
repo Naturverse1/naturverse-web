@@ -5,12 +5,15 @@ import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { useAuth } from "../context/AuthContext";
 import { useLocation } from "wouter";
+import { supabase } from "../lib/supabaseClient";
 
 export default function Login() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
+  const [resetLoading, setResetLoading] = useState(false);
+  const [resetMessage, setResetMessage] = useState("");
   const { signIn } = useAuth();
   const [, setLocation] = useLocation();
 
@@ -37,6 +40,32 @@ export default function Login() {
     }
   };
 
+  const handleForgotPassword = async () => {
+    if (!email) {
+      setError("Please enter your email first");
+      return;
+    }
+    setResetLoading(true);
+    setResetMessage("");
+    setError("");
+    
+    try {
+      const { error } = await supabase.auth.resetPasswordForEmail(email, {
+        redirectTo: window.location.origin + '/reset'
+      });
+      
+      if (error) {
+        setError(error.message);
+      } else {
+        setResetMessage("Check your email for password reset link");
+      }
+    } catch (err) {
+      setError("Failed to send reset email");
+    } finally {
+      setResetLoading(false);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 to-sky-100 flex items-center justify-center p-6">
       <Card className="w-full max-w-md">
@@ -50,6 +79,11 @@ export default function Login() {
           {error && (
             <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
               {error}
+            </div>
+          )}
+          {resetMessage && (
+            <div className="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded mb-4">
+              {resetMessage}
             </div>
           )}
           <form onSubmit={handleSubmit} className="space-y-4">
@@ -81,6 +115,19 @@ export default function Login() {
               {loading ? "Signing In..." : "Login"}
             </Button>
           </form>
+          
+          <div className="text-center mt-4">
+            <Button
+              type="button"
+              variant="link"
+              onClick={handleForgotPassword}
+              disabled={resetLoading}
+              className="text-sm text-blue-600"
+              data-testid="button-forgot-password"
+            >
+              {resetLoading ? "Sending..." : "Forgot password?"}
+            </Button>
+          </div>
         </CardContent>
       </Card>
     </div>

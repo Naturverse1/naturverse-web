@@ -1,0 +1,26 @@
+Upgrade the app without removing anything. Keep routing with wouter.
+Add: Profile page, avatar upload to Supabase Storage, navbar user menu, and password reset.
+
+Use existing env: VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY.
+
+Tasks
+Supabase client already exists; reuse it. If missing, create client/src/lib/supabaseClient.ts using the env vars.
+Storage: Create a Supabase Storage bucket named avatars if it doesn’t exist (code should handle “already exists” safely).
+Profile page: client/src/pages/Profile.tsx
+Shows current user email + displayName (from public.users table or a profiles table if present; if not, create profiles(id uuid pk, display_name text, avatar_url text) with id = auth.user.id).
+Form to update display_name.
+Avatar uploader: select image, upload to avatars/{user.id}.png, make it public, save avatar_url in profiles.
+Navbar: client/src/components/Navbar.tsx
+If logged out: links Home, Login, Sign Up.
+If logged in: show small avatar (or initials) + display name as a dropdown with Profile, Dashboard, Logout.
+Routes: Update client/src/App.tsx
+Add route /profile protected by existing PrivateRoute (redirect to /login when not authenticated).
+Forgot password: client/src/pages/Login.tsx
+Add “Forgot password?” link that calls supabase.auth.resetPasswordForEmail(email, { redirectTo: window.location.origin + '/reset' }).
+Create client/src/pages/ResetPassword.tsx that reads the session from the magic link and lets the user set a new password via supabase.auth.updateUser({ password }), then navigates to /dashboard.
+Context: Ensure AuthContext exposes user, profile, loading, signOut(), and a helper to refresh the profile after updates.
+Types: Add minimal TypeScript types so it compiles cleanly.
+UI: Use the existing styling/utility classes; keep everything simple and consistent.
+Show me diffs for Navbar.tsx, App.tsx, Login.tsx, and any new files before saving. Do not delete or rename existing files.
+
+After implementing, start the dev server and print test steps.

@@ -8,6 +8,8 @@ import Home from "@/pages/Home";
 import Signup from "@/pages/Signup";
 import Login from "@/pages/Login";
 import Dashboard from "@/pages/Dashboard";
+import Profile from "@/pages/Profile";
+import ResetPassword from "@/pages/ResetPassword";
 import NotFound from "@/pages/NotFound";
 import { useAuth, AuthProvider } from "./context/AuthContext";
 
@@ -30,6 +32,10 @@ function Router() {
         <Route path="/dashboard">
           <PrivateRoute component={Dashboard} />
         </Route>
+        <Route path="/profile">
+          <PrivateRoute component={Profile} />
+        </Route>
+        <Route path="/reset" component={ResetPassword} />
         {/* Fallback to 404 */}
         <Route component={NotFound} />
       </Switch>
