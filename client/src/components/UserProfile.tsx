@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../supabaseClient";
+import { User } from "@supabase/supabase-js";
+import { supabase } from "../lib/supabaseClient";
 
 export default function UserProfile() {
-  const [user, setUser] = useState(null);
+  const [user, setUser] = useState<User | null>(null);
   const [username, setUsername] = useState("");
   const [avatarUrl, setAvatarUrl] = useState("");
   const [loading, setLoading] = useState(true);
@@ -38,7 +39,7 @@ export default function UserProfile() {
     const { error } = await supabase.from("users").update({
       username,
       avatar_url: avatarUrl,
-    }).eq("id", user.id);
+    }).eq("id", user?.id);
 
     if (error) {
       alert("Update failed: " + error.message);
