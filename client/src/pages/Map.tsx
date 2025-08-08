@@ -79,26 +79,22 @@ export default function Map() {
   };
 
   return (
-    <div className="min-h-screen magic-gradient py-12 relative overflow-hidden">
-      {/* Floating magical elements */}
-      <div className="absolute inset-0 pointer-events-none">
-        <div className="floating-element absolute top-16 left-8 text-4xl animate-sparkle">✨</div>
-        <div className="floating-element absolute top-28 right-12 text-3xl animate-sparkle">🌟</div>
-        <div className="floating-element absolute bottom-32 left-16 text-5xl animate-sparkle">🦋</div>
-        <div className="floating-element absolute bottom-16 right-8 text-4xl animate-sparkle">🌈</div>
-        <div className="floating-element absolute top-48 left-1/4 text-3xl animate-sparkle">🍃</div>
-        <div className="floating-element absolute bottom-48 right-1/4 text-4xl animate-sparkle">🌺</div>
-        <div className="floating-element absolute top-80 right-1/3 text-3xl animate-sparkle">⭐</div>
-        <div className="floating-element absolute bottom-80 left-1/3 text-4xl animate-sparkle">🎄</div>
+    <div className="min-h-screen bg-gradient-to-br from-sage/5 via-background to-mint relative">
+      {/* Background Elements */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        <div className="absolute top-16 left-8 text-emerald/20 text-3xl animate-subtle-float">🇺🇭</div>
+        <div className="absolute top-28 right-12 text-forest/20 text-2xl animate-subtle-float stagger-1">🌿</div>
+        <div className="absolute bottom-32 left-16 text-ocean/20 text-3xl animate-subtle-float stagger-2">🌍</div>
+        <div className="absolute bottom-16 right-8 text-emerald/20 text-2xl animate-subtle-float stagger-3">✨</div>
       </div>
       
       <div className="container mx-auto px-6 max-w-6xl relative z-10">
-        <div className="text-center mb-8">
-          <h1 className="text-5xl font-fredoka text-gradient-rainbow mb-4 animate-bounce-in" data-testid="text-title">
-            🗺️ Magical Map of Thailandia 🗺️
+        <div className="text-center mb-12">
+          <h1 className="text-4xl md:text-5xl font-display text-foreground mb-6 animate-fade-in" data-testid="text-title">
+            <span className="text-emerald">🗺️</span> Explore <span className="text-gradient">Thailandia</span>
           </h1>
-          <p className="text-white/90 text-xl animate-fade-in-delay magical-shadow">
-            ✨ Explore the magical realms and discover hidden secrets in each zone! ✨
+          <p className="text-muted-foreground text-xl md:text-2xl animate-fade-in stagger-1 text-balance leading-relaxed max-w-3xl mx-auto">
+            Discover diverse ecosystems and embark on educational adventures across different zones of our natural world.
           </p>
         </div>
 
@@ -106,37 +102,37 @@ export default function Map() {
           {zones.map((zone, index) => (
             <Card 
               key={zone.id}
-              className={`cursor-pointer transition-all duration-500 animate-fade-in-stagger ${
+              className={`cursor-pointer transition-all duration-300 animate-fade-in stagger-${Math.min(index + 1, 3)} ${
                 zone.unlocked 
-                  ? 'kid-friendly-card hover:scale-110 hover-wiggle' 
-                  : 'opacity-50 kid-friendly-card'
-              } ${selectedZone === zone.id ? 'ring-4 ring-magic ring-opacity-50 animate-pulse-glow' : ''}`}
+                  ? 'modern-card-interactive hover-lift hover-glow' 
+                  : 'opacity-50 modern-card'
+              } ${selectedZone === zone.id ? 'ring-2 ring-primary shadow-lg' : ''}`}
               onClick={() => handleZoneClick(zone)}
               data-testid={`card-zone-${zone.id}`}
               style={{ animationDelay: `${index * 0.2}s` }}
             >
               <CardHeader className="text-center">
-                <div className={`w-24 h-24 mx-auto rounded-full bg-gradient-to-br ${zone.color} flex items-center justify-center text-4xl mb-4 magical-shadow-lg ${
-                  zone.unlocked ? 'animate-bounce-gentle' : 'opacity-60'
+                <div className={`w-20 h-20 mx-auto rounded-full bg-gradient-to-br from-primary/10 to-primary/20 flex items-center justify-center text-4xl mb-4 shadow-md ${
+                  zone.unlocked ? 'animate-gentle-pulse' : 'opacity-60'
                 }`}>
                   {zone.emoji}
                 </div>
-                <CardTitle className={`text-2xl font-fredoka ${zone.unlocked ? 'text-magic' : 'text-gray-500'}`}>
+                <CardTitle className={`text-xl font-display ${zone.unlocked ? 'text-foreground' : 'text-muted-foreground'}`}>
                   {zone.name}
                 </CardTitle>
               </CardHeader>
               <CardContent className="text-center">
-                <p className={`text-sm mb-4 ${zone.unlocked ? 'text-forest' : 'text-gray-400'}`}>
+                <p className={`text-sm mb-4 leading-relaxed ${zone.unlocked ? 'text-muted-foreground' : 'text-muted-foreground/60'}`}>
                   {zone.description}
                 </p>
                 <div className="flex justify-center">
                   {zone.unlocked ? (
-                    <div className="px-4 py-2 bg-nature/30 text-nature rounded-2xl text-sm font-fredoka font-bold magical-shadow hover-bounce">
-                      ✨ Ready to Explore! ✨
+                    <div className="px-4 py-2 bg-primary/10 text-primary rounded-lg text-sm font-medium border border-primary/20">
+                      ✨ Ready to Explore
                     </div>
                   ) : (
-                    <div className="px-4 py-2 bg-gray-200 text-gray-500 rounded-2xl text-sm font-fredoka">
-                      🔒 Complete More Quests 🔒
+                    <div className="px-4 py-2 bg-muted text-muted-foreground rounded-lg text-sm">
+                      🔒 Complete More Quests
                     </div>
                   )}
                 </div>
@@ -146,25 +142,26 @@ export default function Map() {
         </div>
 
         {selectedZone && (
-          <div className="text-center animate-bounce-in">
-            <Card className="kid-friendly-card magical-shadow-lg">
+          <div className="text-center animate-scale-in">
+            <Card className="modern-card-elevated max-w-lg mx-auto">
               <CardContent className="pt-8">
-                <div className="mb-6">
-                  <div className="text-6xl mb-4 animate-wiggle">{zones.find(z => z.id === selectedZone)?.emoji}</div>
-                  <h3 className="text-3xl font-fredoka text-gradient-rainbow mb-3">
-                    Ready to explore {zones.find(z => z.id === selectedZone)?.name}?
+                <div className="mb-8">
+                  <div className="text-5xl mb-4 animate-gentle-pulse">{zones.find(z => z.id === selectedZone)?.emoji}</div>
+                  <h3 className="text-2xl font-display text-foreground mb-4">
+                    Ready to explore <span className="text-gradient">{zones.find(z => z.id === selectedZone)?.name}</span>?
                   </h3>
-                  <p className="text-forest text-lg mb-6">
-                    ✨ Begin your magical adventure in this enchanted realm! ✨
+                  <p className="text-muted-foreground text-lg mb-6 leading-relaxed">
+                    Begin your educational adventure in this fascinating ecosystem.
                   </p>
                 </div>
                 
                 <Button
                   onClick={handleExplore}
-                  className="kid-friendly-button text-xl px-12 py-6 animate-bounce-gentle"
+                  size="lg"
+                  className="btn-primary text-lg px-8 py-4 hover-lift"
                   data-testid="button-explore"
                 >
-                  🚀 Start Your Adventure! 🚀
+                  <span className="mr-2">🚀</span>Start Exploration
                 </Button>
               </CardContent>
             </Card>
