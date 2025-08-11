@@ -2,6 +2,20 @@
 
 The Naturverse is an educational web application designed for children to explore and learn about nature through interactive stories, games, and virtual expeditions. The platform combines engaging visuals, magical themes, and educational content to create an immersive learning experience. The application features a modern, colorful design with nature-inspired themes and smooth animations to captivate young users.
 
+## Recent Changes (August 2025)
+
+**Production Deployment**: Successfully deployed to Vercel as a static site with clean @vercel/static configuration. No server functions or API dependencies. Build time: 10.42 seconds with optimized asset delivery.
+
+**Current Production URL**: https://naturverse-explore-j1om2y4m0-scotts-projects-1d09703b.vercel.app
+
+**Asset Bundle**: 
+- JavaScript: 545.43 kB (157.93 kB gzipped)
+- CSS: 139.00 kB (19.25 kB gzipped)  
+- HTML: 1.57 kB (0.78 kB gzipped)
+- Character/media assets: 5.8+ MB total (17 authentic character images + 4 background scenes)
+
+**Authentication**: Demo mode serves as primary access method. Google OAuth configured but users can explore platform without authentication barriers.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
