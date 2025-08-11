@@ -1,0 +1,82 @@
+# === Naturverse: Prep for Vercel (Vite SPA, proper rewrites) ===
+set -e
+
+echo "🧱 1) Ensure Vite build outputs to dist (default)..."
+if [ -f vite.config.ts ] || [ -f vite.config.js ]; then
+  VITECFG=$( [ -f vite.config.ts ] && echo vite.config.ts || echo vite.config.js )
+  # make sure base is "/" and outDir is "dist"
+  node <<'NODE'
+const fs=require('fs'); const path=require('path');
+const cfgPath = fs.existsSync('vite.config.ts') ? 'vite.config.ts' : (fs.existsSync('vite.config.js') ? 'vite.config.js' : null);
+if (cfgPath) {
+  let code = fs.readFileSync(cfgPath,'utf8');
+  // add/normalize build.outDir and base:'/'
+  if (!/build:\s*{[^}]*outDir\s*:\s*['"]dist['"]/.test(code)) {
+    if (/build:\s*{/.test(code)) code = code.replace(/build:\s*{/, "build: { outDir: 'dist', ");
+    else code = code.replace(/defineConfig\(\{/, "defineConfig({ build: { outDir: 'dist' }, ");
+  }
+  if (!/base:\s*['"]\/['"]/.test(code)) {
+    code = code.replace(/defineConfig\(\{/, "defineConfig({ base: '/', ");
+  }
+  fs.writeFileSync(cfgPath, code);
+}
+NODE
+  echo "✅ $VITECFG normalized."
+else
+  echo "ℹ️ No vite.config present — Vite defaults will use dist/."
+fi
+
+echo "📝 2) Package scripts for Vercel static build..."
+node <<'NODE'
+const fs=require('fs');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts.build = "vite build";
+pkg.scripts["vercel-build"] = pkg.scripts["vercel-build"] || "vite build";
+fs.writeFileSync('package.json', JSON.stringify(pkg,null,2));
+console.log("✅ scripts:", pkg.scripts);
+NODE
+
+echo "🛣️ 3) Create vercel.json with SPA rewrites (all routes -> index.html)..."
+cat > vercel.json <<'EOF'
+{
+  "version": 2,
+  "builds": [
+    { "src": "index.html", "use": "@vercel/static-build", "config": { "distDir": "dist" } }
+  ],
+  "routes": [
+    { "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?)", "dest": "/$1.$2" },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}
+EOF
+echo "✅ vercel.json written."
+
+echo "🙈 4) Tidy ignores..."
+cat > .vercelignore <<'EOF'
+node_modules
+.replit
+replit.nix
+dist
+.env
+EOF
+
+# keep standard .gitignore if present; otherwise create a sane one
+[ -f .gitignore ] || cat > .gitignore <<'EOF'
+node_modules
+dist
+.env
+.DS_Store
+.vercel
+.replit
+replit.nix
+EOF
+
+echo "🧪 5) Test local build..."
+npm run build
+
+echo "📦 6) Summary"
+echo " - Vercel will detect a Vite static build."
+echo " - 'vercel-build' runs vite build, output in dist/."
+echo " - vercel.json rewrites all SPA routes to /index.html (no 404s)."
+echo "✅ Ready to push to GitHub and deploy on Vercel."

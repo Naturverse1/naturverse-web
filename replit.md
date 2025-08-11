@@ -18,6 +18,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Routing Optimization**: Fixed preview flashing and redirect loops by removing problematic window.location.href redirect in fallback route. Wouter now handles all routing cleanly with direct component rendering for unmatched paths.
 
+**Vercel Deployment Setup**: Configured for static SPA deployment with proper rewrites. Build outputs to dist/public/ with vercel.json handling all SPA routes through index.html fallback. Asset bundle optimized at 5.8+ MB total with all authentic Naturverse character images.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
