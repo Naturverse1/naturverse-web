@@ -16,6 +16,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Authentication**: Demo mode serves as primary access method. Google OAuth configured but users can explore platform without authentication barriers.
 
+**Routing Optimization**: Fixed preview flashing and redirect loops by removing problematic window.location.href redirect in fallback route. Wouter now handles all routing cleanly with direct component rendering for unmatched paths.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

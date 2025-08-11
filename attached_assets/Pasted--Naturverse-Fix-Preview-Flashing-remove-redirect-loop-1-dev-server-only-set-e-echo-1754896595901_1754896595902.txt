@@ -1,0 +1,68 @@
+# === Naturverse: Fix Preview Flashing (remove redirect loop, 1 dev server only) ===
+set -e
+
+echo "🧹 1) Kill any stray dev processes (vite/node)..."
+pkill -f "vite" >/dev/null 2>&1 || true
+pkill -f "node .*vite" >/dev/null 2>&1 || true
+pkill -f "node server/index.js" >/dev/null 2>&1 || true
+
+echo "🔎 2) Find router file using <Routes>..."
+export ROUTER_FILE="$(grep -rl "<Routes>" --include=\*.tsx src . | head -n 1 || true)"
+if [ -z "$ROUTER_FILE" ]; then
+  echo "❌ Could not auto-detect router file. If you know it (e.g., src/App.tsx), tell me."
+  exit 1
+fi
+echo "📄 Router file: $ROUTER_FILE"
+cp "$ROUTER_FILE" "${ROUTER_FILE}.backup_fix"
+
+echo "🧽 3) Remove any Navigate redirect on '/' (causes loops), make '/' render <Home /> directly..."
+node <<'NODE'
+const fs = require('fs');
+const path = process.env.ROUTER_FILE;
+let code = fs.readFileSync(path, 'utf8');
+
+// Ensure Navigate is imported safely (or removed if unused later)
+if (!/from ['"]react-router-dom['"]/.test(code)) {
+  code = `import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";\n` + code;
+} else {
+  // keep as-is; we won't rely on Navigate for "/"
+}
+
+// 1) Replace any redirect at "/" with direct Home render
+code = code.replace(/<Route[^>]*path="\/"[^>]*element={<Navigate[^>]*>}[^>]*\/>/g, '<Route path="/" element={<Home />} />');
+
+// 2) If there is no explicit "/" Home route, add one at top of <Routes>
+if (!/path="\/"\s+element={<Home/.test(code)) {
+  code = code.replace(
+    /<Routes>/,
+    '<Routes>\n      <Route path="/" element={<Home />} />'
+  );
+}
+
+// 3) Keep wildcard route but make sure it points to <Home /> and not a Navigate loop
+// Remove any wildcard Navigate to "/" and replace with direct Home render
+code = code.replace(/<Route[^>]*path="\*"[^\n]*Navigate[^\n]*\/>/g, '<Route path="*" element={<Home />} />');
+
+// If no wildcard, add one at bottom
+if (!/path="\*"/.test(code)) {
+  code = code.replace(
+    /<\/Routes>/,
+    '      <Route path="*" element={<Home />} />\n    </Routes>'
+  );
+}
+
+fs.writeFileSync(path, code);
+NODE
+echo "✅ Router sanitized: '/' renders <Home />, wildcard renders <Home />."
+
+echo "🧱 4) Ensure only ONE dev server runs (Replit uses .replit -> npm run dev)."
+# Make sure .replit runs vite dev (not express start)
+if [ -f .replit ]; then
+  sed -i 's|^run = .*|run = "npm run dev"|' .replit
+fi
+
+echo "🧪 5) Sanity check build (ignore warnings)..."
+npm run build >/dev/null 2>&1 || true
+
+echo "▶️ 6) Start dev cleanly..."
+npm run dev

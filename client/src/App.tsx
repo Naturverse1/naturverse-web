@@ -117,11 +117,8 @@ return (
 <Route path="/market">{() => <ProtectedRoute><Market /></ProtectedRoute>}</Route>
 <Route path="/zone/:name">{({ name }) => <ProtectedRoute><Zone /></ProtectedRoute>}</Route>
 
-{/* Fallback route - redirect any unmatched paths to Home */}
-<Route>{() => {
-  window.location.href = '/';
-  return null;
-}}</Route>
+{/* Fallback route - render Home directly for unmatched paths */}
+<Route><Home /></Route>
 </main>
 </div>
 </TooltipProvider>
