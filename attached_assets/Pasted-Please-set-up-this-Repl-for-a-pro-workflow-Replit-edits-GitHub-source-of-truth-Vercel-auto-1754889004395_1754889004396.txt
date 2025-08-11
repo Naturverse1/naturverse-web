@@ -1,0 +1,71 @@
+Please set up this Repl for a pro workflow: Replit (edits) → GitHub (source of truth) → Vercel (auto deploy). Do everything below and report back with links.
+
+A) GIT + GITHUB
+1) If not already a git repo: run `git init && git add . && git commit -m "chore: initial commit from Replit"`.
+2) Create or use a GitHub repo named `naturverse-explore`. If GitHub auth/remote is missing, connect it and add:
+   git branch -M main
+   git remote add origin https://github.com/<MY_GH_USERNAME>/naturverse-explore.git
+3) Push main:
+   git push -u origin main
+
+B) .GITIGNORE + ENV EXAMPLE
+1) Ensure a robust `.gitignore` with at least:
+   node_modules/
+   .vercel/
+   .replit
+   dist/
+   .env
+   *.log
+   .DS_Store
+2) Create `.env.example` from the current `.env`:
+   - Keep the same keys
+   - Replace all values with clear placeholders (e.g., VITE_SUPABASE_URL="YOUR_URL_HERE")
+   - Do NOT leak real secrets
+
+C) CONTRIBUTING.md (VS Code quick start)
+Create `CONTRIBUTING.md` with:
+- Prereqs: Node 18+ or 20+, npm
+- Setup:
+  npm install
+- Dev:
+  npm run dev
+- Build:
+  npm run build
+- Preview:
+  npm run preview
+- Environment: copy `.env.example` → `.env` and fill in values
+
+D) VERCEL CONFIG (STATIC VITE)
+1) Ensure `vercel.json` contains ONLY this (replace file content exactly):
+{
+  "version": 2,
+  "builds": [{ "src": "dist/**", "use": "@vercel/static" }],
+  "routes": [
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/index.html" }
+  ]
+}
+2) Confirm there is NO "functions" key anywhere in this repo.
+
+E) BUILD + VERIFY
+1) Run:
+   npm install
+   npm run build
+   # Confirm a fresh dist/ exists with index.html
+
+F) VERCEL (GIT-BASED)
+1) If not already linked to Vercel by GitHub, set up the project so Vercel auto-deploys from the GitHub repo (Framework: Vite, Build: `vite build`, Output: `dist`).
+2) Trigger a fresh production deployment from the GitHub `main` branch. If needed via CLI:
+   npx vercel --prod -y
+   # but prefer Git-based deploys; ensure Production Branch = main
+
+G) RETURN THESE LINKS + FACTS
+- GitHub repo URL
+- Vercel project URL
+- New production deployment URL
+- Build time in seconds
+- Deployment type (should read: Clean @vercel/static deployment)
+- Total asset bundle size summary (JS/CSS/HTML + media total)
+- Confirm no functions were deployed (static only)
+
+If any step requires my confirmation (e.g., GitHub OAuth), pause and prompt me. Otherwise complete all steps end-to-end and report back with the links and summary.
