@@ -2,24 +2,14 @@
   "version": 2,
   "framework": "vite",
   "buildCommand": "vite build",
-  "outputDirectory": "client/dist",
   "installCommand": "npm install",
+  "outputDirectory": "dist",
   "functions": {
-    "server/index.ts": {
-      "runtime": "@vercel/node"
-    }
+    "server/index.ts": { "runtime": "vercel/node" }
   },
   "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "/server/index.ts"
-    },
-    {
-      "handle": "filesystem"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "/client/index.html"
-    }
+    { "src": "/api/(.*)", "dest": "/server/index.ts" },
+    { "handle": "filesystem" },
+    { "src": "/(.*)", "dest": "/dist/index.html" }
   ]
 }
