@@ -1,0 +1,101 @@
+# === Naturverse Replit Stabilizer (Next.js/Vite autodetect) ===
+set -e
+
+echo "🔎 1) Checking project root..."
+test -f package.json || { echo "❌ No package.json in this folder. Open the repl's root (where package.json lives) and re-run."; exit 1; }
+echo "✅ package.json found."
+
+echo "🔎 2) Detecting stack (Next.js vs Vite)..."
+STACK="vite"
+node -e "const p=require('./package.json'); if((p.dependencies&&p.dependencies.next)||(p.devDependencies&&p.devDependencies.next)) process.exit(0); process.exit(1)" && STACK="next"
+echo "➡️ Detected: $STACK"
+
+echo "🧩 3) Pin Node & npm (Nix) for Replit..."
+cat > replit.nix <<'EOF'
+{ pkgs }: {
+  deps = [
+    pkgs.nodejs-18_x
+    pkgs.nodePackages.npm
+  ];
+}
+EOF
+echo "✅ replit.nix written (Node 18)."
+
+echo "⚙️ 4) Ensure Replit runs the dev server on the right host/port..."
+cat > .replit <<'EOF'
+run = "npm run dev"
+entrypoint = "index.js"
+language = "nodejs"
+
+[env]
+PORT = "8080"
+EOF
+echo "✅ .replit written."
+
+echo "🛠️ 5) Normalize npm scripts for $STACK..."
+node <<'NODE'
+const fs=require('fs');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+pkg.scripts = pkg.scripts || {};
+const hasNext = !!((pkg.dependencies&&pkg.dependencies.next)||(pkg.devDependencies&&pkg.devDependencies.next));
+if (hasNext) {
+  pkg.scripts.dev = "next dev -H 0.0.0.0 -p $PORT";
+  pkg.scripts.build = pkg.scripts.build || "next build";
+  pkg.scripts.start = "next start -H 0.0.0.0 -p $PORT";
+} else {
+  // Assume Vite
+  pkg.scripts.dev = "vite --host 0.0.0.0 --port $PORT";
+  pkg.scripts.build = pkg.scripts.build || "vite build";
+  pkg.scripts.preview = "vite preview --host 0.0.0.0 --port $PORT";
+}
+fs.writeFileSync('package.json', JSON.stringify(pkg,null,2));
+console.log("Scripts now:", pkg.scripts);
+NODE
+echo "✅ package.json scripts updated."
+
+echo "🧹 6) Clean caches/locks to avoid weird Replit failures..."
+rm -f package-lock.json
+npm cache verify || true
+
+echo "📦 7) Install dependencies..."
+npm install
+
+echo "🧪 8) Quick sanity check for public/ assets (non-blocking)"
+mkdir -p public
+# (If you rely on /logo.png etc., ensure those files are in ./public)
+
+echo "🚫 9) Ensure Replit 'Deployments' won't conflict during dev..."
+# Agent note: If a Deployment is actively running, stop/disable it in the Deployments tab.
+echo "   If a Deployment is active, please stop it manually in the Deployments tab."
+
+echo "▶️ 10) Start dev server..."
+# In Replit, the Run button uses .replit. We'll also start it here for immediate verification.
+# (If this is running inside the Agent shell, background it so we can probe it.)
+( npm run dev & ) >/dev/null 2>&1
+
+# Wait for server to boot
+echo "⏳ Waiting for server to start..."
+ATTEMPTS=30
+until [ $ATTEMPTS -eq 0 ]; do
+  if [ -n "$PORT" ]; then
+    curl -sS "http://localhost:${PORT}" >/dev/null 2>&1 && break
+  else
+    curl -sS "http://localhost:8080" >/dev/null 2>&1 && break
+  fi
+  ATTEMPTS=$((ATTEMPTS-1))
+  sleep 1
+done
+
+if [ $ATTEMPTS -eq 0 ]; then
+  echo "⚠️ The server might still be starting (or uses a custom route). This is common for Next.js."
+  echo "   Try the Replit Webview or 'Open in new tab' now."
+else
+  echo "✅ Dev server responded locally."
+fi
+
+echo "🌐 11) Final notes:"
+echo " - Use Replit Webview or 'Open in new tab' to preview."
+echo " - Next.js apps may 404 on '/', try '/app' or a specific page if needed."
+echo " - Keep Deployments OFF while developing to avoid port clashes."
+echo " - When ready to deploy to Vercel, do it from GitHub or local, not from Replit dev."
+echo "🎉 Done. Take a screenshot of the running app (or first error block) and send it back."
