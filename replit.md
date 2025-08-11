@@ -22,6 +22,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Development Stabilization**: Configured one-click dev and deploy workflow. Verified wouter routing with proper fallback handling (no redirect loops). Build process stabilized with clean dist/public output. All 17 Naturverse character assets properly bundled and deployment-ready.
 
+**CSS Error Fix**: Resolved `border-border` CSS error that was preventing Vercel deployment. Fixed invalid Tailwind class usage in both index.css and chart.tsx components. Build now completes successfully without CSS compilation errors.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
