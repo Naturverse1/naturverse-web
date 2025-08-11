@@ -1,0 +1,114 @@
+# === Naturverse: Make "Home" the default route + Redirect after Auth to Home ===
+set -e
+
+echo "🔎 1) Locate the router file (the one using <Routes> from react-router-dom)..."
+ROUTER_FILE=$(grep -rl "<Routes>" --include=\*.tsx src . | head -n 1 || true)
+if [ -z "$ROUTER_FILE" ]; then
+  echo "❌ Could not find a TSX file containing <Routes>. Tell me where your routes live (e.g., src/App.tsx)."
+  exit 1
+fi
+echo "📄 Router file detected: $ROUTER_FILE"
+
+echo "🧠 2) Determine your existing Home route path..."
+# We infer where Home already lives, so we can redirect to that exact path without breaking imports.
+TARGET="/"
+if grep -q '<Route[^>]*path="/home"' "$ROUTER_FILE"; then
+  TARGET="/home"
+elif grep -q '<Route[^>]*path="/Home"' "$ROUTER_FILE"; then
+  TARGET="/Home"
+elif grep -q '<Route[^>]*index' "$ROUTER_FILE" && grep -q '<Home[[:space:]>]' "$ROUTER_FILE"; then
+  TARGET="/"
+else
+  # If we see an explicit <Home /> element somewhere with a path, try to capture it
+  CANDIDATE=$(grep -oE '<Route[^>]*path="[^"]+"' "$ROUTER_FILE" | grep -i home | head -n1 | sed -E 's/.*path="([^"]+)".*/\1/')
+  if [ -n "$CANDIDATE" ]; then
+    TARGET="$CANDIDATE"
+  fi
+fi
+echo "🎯 Home route target resolved as: $TARGET"
+
+echo "✍️ 3) Ensure Navigate is imported from react-router-dom..."
+node <<'NODE'
+const fs = require('fs');
+const path = process.env.ROUTER_FILE;
+let code = fs.readFileSync(path, 'utf8');
+
+// Add Navigate to import if needed
+code = code.replace(
+  /from ['"]react-router-dom['"];?/,
+  (m)=> code.includes('Navigate') ? m : m.replace(/;?$/, ', Navigate;')
+);
+
+fs.writeFileSync(path, code);
+NODE
+
+echo "🧭 4) Add default and wildcard routes to go to Home..."
+node <<'NODE'
+const fs = require('fs');
+const path = process.env.ROUTER_FILE;
+const target = process.env.TARGET;
+let code = fs.readFileSync(path, 'utf8');
+
+// Insert default "/" redirect if not present
+if (!code.includes('path="/"') || !code.match(/path="\/"\s+element=/)) {
+  code = code.replace(
+    /<Routes>([\s\S]*?)<\/Routes>/,
+    (m, inner) => `<Routes>\n      <Route path="/" element={<Navigate to="${target}" replace />} />\n${inner}\n      <Route path="*" element={<Navigate to="${target}" replace />} />\n    </Routes>`
+  );
+}
+
+// If target is "/", prefer rendering Home directly on "/"
+if (target === "/") {
+  // Try to find a Home element route, and ensure "/" renders it
+  if (!code.includes('path="/"') || !code.match(/path="\/"\s+element={<Home/)) {
+    // If we can detect a Home component import, render it
+    if (code.includes('<Home') ) {
+      code = code.replace(
+        /<Routes>([\s\S]*?)<\/Routes>/,
+        (m, inner) => `<Routes>\n      <Route path="/" element={<Home />} />\n${inner}\n      <Route path="*" element={<Home />} />\n    </Routes>`
+      );
+    }
+  }
+}
+
+fs.writeFileSync(path, code);
+NODE
+
+echo "🛠️ 5) Update post-auth navigation to return to Home..."
+# Replace common navigate targets after auth with "/"
+AUTH_FILES=$(ls src 2>/dev/null || true)
+# Search in typical auth-related files
+CANDIDATES=$(grep -ril --include=\*.tsx --include=\*.ts "signIn\\|signin\\|login\\|signup\\|auth" src . 2>/dev/null | tr '\n' ' ')
+if [ -z "$CANDIDATES" ]; then
+  # Fallback to known file names in your tree
+  CANDIDATES="src/Signup.tsx src/SignIn.tsx src/Login.tsx Signup.tsx SignIn.tsx Login.tsx"
+fi
+
+for f in $CANDIDATES; do
+  [ -f "$f" ] || continue
+  node <<'NODE'
+const fs = require('fs');
+const path = process.argv[1];
+let code = fs.readFileSync(path, 'utf8');
+
+// Normalize common post-auth redirects to "/"
+code = code
+  .replace(/navigate\(['"]\/profile['"]\)/g, "navigate('/')")
+  .replace(/navigate\(["']\/dashboard["']\)/g, "navigate('/')")
+  .replace(/navigate\(["']\/home["']\)/g, "navigate('/')")
+  .replace(/navigate\(["']\/map["']\)/g, "navigate('/')")
+  .replace(/to=["']\/profile["']/g, 'to="/"')
+  .replace(/to=["']\/dashboard["']/g, 'to="/"')
+  .replace(/to=["']\/home["']/g, 'to="/"');
+
+fs.writeFileSync(path, code);
+NODE
+done
+
+echo "🧹 6) Type-check & build sanity (no-op if not configured)..."
+npm run build >/dev/null 2>&1 || true
+
+echo "▶️ 7) Restart dev server..."
+# Replit uses .replit for Run; start here for immediate feedback
+pkill -f "vite" >/dev/null 2>&1 || true
+npm run dev

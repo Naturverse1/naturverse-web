@@ -49,7 +49,7 @@ export default function Signup() {
           .select()
           .single();
         
-        setLocation('/profile');
+        setLocation('/');
       }
     } catch (err) {
       setError('An unexpected error occurred');
