@@ -1,0 +1,64 @@
+# === Naturverse: Fix Vercel 404 by letting Vercel build (keep SPA rewrites only) ===
+set -e
+
+echo "1) Remove any checked-in .vercel/output (causes instant 'fake' builds)..."
+rm -rf .vercel/output 2>/dev/null || true
+git rm -r --cached .vercel/output 2>/dev/null || true
+
+echo "2) Update vercel.json: drop 'builds' block, keep SPA routes only..."
+cat > vercel.json <<'EOF'
+{
+  "version": 2,
+  "routes": [
+    {
+      "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot)$",
+      "dest": "/$1.$2",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
+    },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}
+EOF
+echo "✅ vercel.json rewritten (SPA rewrites only)."
+
+echo "3) Ensure package scripts are sane for Vercel (Vite)..."
+node <<'NODE'
+const fs=require('fs');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts.build = "vite build";
+pkg.scripts["vercel-build"] = "vite build";
+fs.writeFileSync('package.json', JSON.stringify(pkg,null,2));
+console.log("✅ scripts:", pkg.scripts);
+NODE
+
+echo "4) Make sure Vite outputs to dist/public..."
+if [ -f vite.config.ts ] || [ -f vite.config.js ]; then
+  FILE=$( [ -f vite.config.ts ] && echo vite.config.ts || echo vite.config.js )
+  node <<'NODE'
+const fs=require('fs');
+const p = fs.existsSync('vite.config.ts') ? 'vite.config.ts' : 'vite.config.js';
+let code = fs.readFileSync(p,'utf8');
+if (!/build:\s*{[^}]*outDir\s*:\s*['"]dist\/public['"]/.test(code)) {
+  if (/build:\s*{/.test(code)) code = code.replace(/build:\s*{/, "build: { outDir: 'dist/public', ");
+  else code = code.replace(/defineConfig\(\{/, "defineConfig({ build: { outDir: 'dist/public' }, ");
+}
+if (!/base:\s*['"]\/['"]/.test(code)) code = code.replace(/defineConfig\(\{/, "defineConfig({ base: '/', ");
+fs.writeFileSync(p, code);
+NODE
+  echo "✅ vite.config normalized (outDir=dist/public, base=/)."
+fi
+
+echo "5) Clean & local test build..."
+rm -rf dist
+npm ci || npm install
+npm run build
+test -f dist/public/index.html || { echo "❌ dist/public/index.html missing"; exit 1; }
+echo "✅ Local build produced dist/public/index.html"
+
+echo "6) Commit & push changes..."
+git add -A
+git commit -m "Vercel fix: remove builds; SPA rewrites only; ensure outDir=dist/public" || echo "ℹ️ No changes to commit."
+git push origin HEAD
+
+echo "🎯 Done. Now go to Vercel and Redeploy. Build logs should show 'Installing dependencies' and 'vite build', and deploy dist/public."
