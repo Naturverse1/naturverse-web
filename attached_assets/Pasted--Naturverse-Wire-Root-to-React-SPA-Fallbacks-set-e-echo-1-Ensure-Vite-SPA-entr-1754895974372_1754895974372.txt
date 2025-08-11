@@ -1,0 +1,95 @@
+# === Naturverse: Wire Root to React + SPA Fallbacks ===
+set -e
+
+echo "🔧 1) Ensure Vite SPA entry is correct..."
+test -f index.html || { echo "❌ index.html (Vite entry) missing at project root."; exit 1; }
+grep -q 'id="root"' index.html || {
+  sed -i 's/<body>/<body>\n  <div id="root"><\/div>/' index.html
+  echo "✅ Injected <div id=\"root\"></div> into index.html"
+}
+
+echo "🧱 2) Ensure React mounts to #root (main.tsx/js)..."
+if [ -f src/main.tsx ]; then ENTRY=src/main.tsx
+elif [ -f main.tsx ]; then ENTRY=main.tsx
+elif [ -f src/main.jsx ]; then ENTRY=src/main.jsx
+elif [ -f main.jsx ]; then ENTRY=main.jsx
+else ENTRY=src/main.tsx; mkdir -p src; fi
+
+cat > "$ENTRY" <<'EOF'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App";
+
+const el = document.getElementById("root");
+if (!el) throw new Error("Root element #root not found");
+ReactDOM.createRoot(el).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
+EOF
+echo "✅ $ENTRY ensured."
+
+echo "🖼️ 3) Ensure App component exists..."
+if [ -f src/App.tsx ]; then APP=src/App.tsx
+elif [ -f App.tsx ]; then APP=App.tsx
+elif [ -f src/App.jsx ]; then APP=src/App.jsx
+elif [ -f App.jsx ]; then APP=App.jsx
+else APP=src/App.tsx; fi
+
+mkdir -p "$(dirname "$APP")"
+cat > "$APP" <<'EOF'
+import React from "react";
+export default function App() {
+  return (
+    <div style={{minHeight:"100vh",display:"grid",placeItems:"center",background:"linear-gradient(#a8e6ff,#fff)"}}>
+      <div style={{textAlign:"center"}}>
+        <h1 style={{margin:0,fontSize:"3rem",color:"#2b4a2b"}}>🌱 The Naturverse</h1>
+        <p style={{fontSize:"1.1rem",color:"#333"}}>Magical learning world is live in Replit (Vite + React).</p>
+      </div>
+    </div>
+  );
+}
+EOF
+echo "✅ $APP ensured."
+
+echo "🚏 4) Add Express static server with SPA fallback for production..."
+mkdir -p server
+cat > server/index.js <<'EOF'
+const path = require("path");
+const express = require("express");
+const app = express();
+
+const distDir = path.join(__dirname, "..", "dist");
+app.use(express.static(distDir));
+
+app.get("*", (_req, res) => {
+  res.sendFile(path.join(distDir, "index.html"));
+});
+
+const port = process.env.PORT || 5000;
+app.listen(port, () => {
+  console.log(`Naturverse Express server running on http://localhost:${port}`);
+});
+EOF
+echo "✅ server/index.js written."
+
+echo "📝 5) Normalize npm scripts for dev/prod..."
+node <<'NODE'
+const fs=require('fs');
+const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts.dev = "vite --host 0.0.0.0 --port $PORT";
+pkg.scripts.build = "vite build";
+pkg.scripts.preview = "vite preview --host 0.0.0.0 --port $PORT";
+pkg.scripts.start = "node server/index.js";
+fs.writeFileSync('package.json', JSON.stringify(pkg,null,2));
+console.log("✅ scripts:", pkg.scripts);
+NODE
+
+echo "🧹 6) Install (in case React deps missing) and restart dev..."
+npm install react react-dom >/dev/null 2>&1 || true
+npm install
+
+echo "▶️ 7) Run dev server (Vite serves / and SPA routes)..."
+npm run dev
