@@ -20,6 +20,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Vercel Deployment Setup**: Configured for static SPA deployment with proper rewrites. Build outputs to dist/public/ with vercel.json handling all SPA routes through index.html fallback. Asset bundle optimized at 5.8+ MB total with all authentic Naturverse character images.
 
+**Development Stabilization**: Configured one-click dev and deploy workflow. Verified wouter routing with proper fallback handling (no redirect loops). Build process stabilized with clean dist/public output. All 17 Naturverse character assets properly bundled and deployment-ready.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

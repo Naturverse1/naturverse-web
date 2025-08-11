@@ -1,0 +1,125 @@
+# === NATURVERSE: One-Click Dev + Deploy Stabilizer (Replit + Vercel + Vite) ===
+set -e
+
+echo "🧭 0) Sanity"
+test -f package.json || { echo "❌ No package.json here. Open the project root and re-run."; exit 1; }
+
+echo "🧹 1) Kill stray dev servers (stop flashing/loops)"
+pkill -f "vite" >/dev/null 2>&1 || true
+pkill -f "node .*vite" >/dev/null 2>&1 || true
+pkill -f "node server/index" >/dev/null 2>&1 || true
+
+echo "⚙️ 2) Replit config (1 dev server, correct Node)"
+cat > .replit <<'EOF'
+run = "npm run dev"
+entrypoint = "index.js"
+language = "nodejs"
+[env]
+PORT = "8080"
+EOF
+
+cat > replit.nix <<'EOF'
+{ pkgs }: {
+  deps = [
+    pkgs.nodejs-20_x
+    pkgs.nodePackages.npm
+  ];
+}
+EOF
+echo "✅ Replit pinned to Node 20 and 'npm run dev'"
+
+echo "🧰 3) Normalize package scripts (Vite SPA)"
+node <<'NODE'
+const fs=require('fs'); const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));
+pkg.scripts = pkg.scripts || {};
+pkg.scripts.dev = "vite --host 0.0.0.0 --port $PORT";
+pkg.scripts.build = "vite build";
+pkg.scripts["vercel-build"] = "vite build";
+pkg.scripts.start = pkg.scripts.start || "node server/index.js";
+fs.writeFileSync('package.json', JSON.stringify(pkg,null,2));
+console.log("Scripts:", pkg.scripts);
+NODE
+
+echo "🎛️ 4) Vite config: base='/' and outDir='dist/public'"
+CFG=""; [ -f vite.config.ts ] && CFG=vite.config.ts || { [ -f vite.config.js ] && CFG=vite.config.js || true; }
+if [ -n "$CFG" ]; then
+node <<'NODE'
+const fs=require('fs'); const p=fs.existsSync('vite.config.ts')?'vite.config.ts':'vite.config.js';
+let code=fs.readFileSync(p,'utf8');
+if(!/base:\s*['"]\/['"]/.test(code)) code=code.replace(/defineConfig\(\{/, "defineConfig({ base: '/', ");
+if(!/build:\s*{[^}]*outDir\s*:\s*['"]dist\/public['"]/.test(code)){
+  if(/build:\s*{/.test(code)) code=code.replace(/build:\s*{/, "build: { outDir: 'dist/public', ");
+  else code=code.replace(/defineConfig\(\{/, "defineConfig({ build: { outDir: 'dist/public' }, ");
+}
+fs.writeFileSync(p,code);
+console.log("Updated",p);
+NODE
+else
+cat > vite.config.ts <<'EOF'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+export default defineConfig({
+  base: "/",
+  plugins: [react()],
+  build: { outDir: "dist/public" }
+});
+EOF
+echo "✅ Created vite.config.ts"
+fi
+
+echo "🏷️ 5) Router safety: '/' and '*' render <Home /> (no Navigate loops)"
+export ROUTER_FILE="$(grep -rl "<Routes>" --include=\*.tsx src . | head -n 1 || true)"
+if [ -n "$ROUTER_FILE" ]; then
+  cp "$ROUTER_FILE" "${ROUTER_FILE}.bak"
+  node <<'NODE'
+const fs=require('fs'); const path=process.env.ROUTER_FILE;
+let code=fs.readFileSync(path,'utf8');
+// Replace redirect at "/" with direct Home render
+code = code.replace(/<Route[^>]*path="\/"[^>]*Navigate[^>]*\/>/g, '<Route path="/" element={<Home />} />');
+// Ensure "/" exists
+if(!/path="\/"\s+element={<Home/.test(code)){
+  code = code.replace(/<Routes>/, '<Routes>\n      <Route path="/" element={<Home />} />');
+}
+// Ensure wildcard renders Home
+if(/<Route[^>]*path="\*"[^>]*Navigate[^>]*\/>/.test(code)){
+  code = code.replace(/<Route[^>]*path="\*"[^>]*Navigate[^>]*\/>/g, '<Route path="*" element={<Home />} />');
+} else if(!/path="\*"/.test(code)){
+  code = code.replace(/<\/Routes>/, '      <Route path="*" element={<Home />} />\n    </Routes>');
+}
+fs.writeFileSync(path,code);
+console.log("Router sanitized:",path);
+NODE
+else
+  echo "ℹ️ No <Routes> file auto-detected; skipping router edit."
+fi
+
+echo "🚫 6) Fix Vercel 404: remove 'builds' override & .vercel/output"
+rm -rf .vercel/output 2>/dev/null || true
+git rm -r --cached .vercel/output 2>/dev/null || true
+
+cat > vercel.json <<'EOF'
+{
+  "version": 2,
+  "routes": [
+    { "src": "/(.*)\\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot)$", "dest": "/$1.$2",
+      "headers": { "Cache-Control": "public, max-age=31536000, immutable" } },
+    { "src": "/.*", "dest": "/index.html" }
+  ]
+}
+EOF
+echo "✅ vercel.json: SPA rewrites only (no 'builds')"
+
+echo "🧪 7) Clean install & local build"
+rm -rf dist
+npm ci || npm install
+npm run build
+test -f dist/public/index.html || { echo "❌ dist/public/index.html missing"; exit 1; }
+ls -la dist/public | head -n 20
+
+echo "📤 8) Commit & push"
+git add -A
+git commit -m "Stabilize dev + Vercel: Vite outDir=dist/public; SPA rewrites; remove builds; Replit config" || echo "ℹ️ No changes to commit."
+git push origin HEAD
+
+echo "▶️ 9) Start Replit dev server"
+npm run dev
