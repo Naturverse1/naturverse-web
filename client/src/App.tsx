@@ -24,7 +24,7 @@ import Zone from './pages/Zone';
 // Create About component since it might be missing
 const About = () => (
   <div className="min-h-screen storybook-world flex items-center justify-center">
-    <div className="max-w-4xl mx-auto text-center p-8">
+    <div className="text-center p-8">
       <h1 className="text-6xl font-bold mb-8" style={{
         background: 'linear-gradient(135deg, #8B4513 0%, #D2691E 50%, #F39C12 100%)',
         WebkitBackgroundClip: 'text',
@@ -97,7 +97,7 @@ return (
 <div className="min-h-screen storybook-world">
 <NavBar />
 <TurianAiGuide />
-<main>
+<main className="container">
 <Route path="/" component={Home} />
 <Route path="/about" component={About} />
 <Route path="/signup" component={Signup} />

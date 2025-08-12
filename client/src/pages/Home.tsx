@@ -97,7 +97,7 @@ export default function Home() {
             <img 
               src={TurianCharacter}
               alt="Loading Turian..." 
-              className="w-32 h-32 rounded-full mx-auto border-4 border-green-400 shadow-2xl animate-gentle-pulse"
+              className="hero rounded-full mx-auto border-4 border-green-400 shadow-2xl animate-gentle-pulse"
             />
             <div className="absolute -top-2 -right-2 text-4xl animate-sparkle-dance">✨</div>
           </div>
@@ -179,7 +179,7 @@ export default function Home() {
               <img 
                 src={TurianLogo} 
                 alt="The Naturverse™" 
-                className="w-28 h-28 md:w-36 md:h-36 drop-shadow-2xl animate-gentle-pulse"
+                className="hero drop-shadow-2xl animate-gentle-pulse"
               />
               <div className="absolute -top-3 -right-3 text-4xl animate-sparkle-dance">✨</div>
               <div className="absolute -bottom-2 -left-2 text-3xl animate-sparkle-dance" style={{ animationDelay: '1s' }}>🌟</div>
