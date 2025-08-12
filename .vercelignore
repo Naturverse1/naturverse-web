@@ -18,8 +18,7 @@ yarn-error.log*
 Thumbs.db
 tailwind.config.ts
 tailwind.config.js
-postcss.config.js
-postcss.config.ts
+
 *.tsbuildinfo
 .eslintcache
 .vercel

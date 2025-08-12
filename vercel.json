@@ -2,14 +2,15 @@
   "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": null,
-  "buildCommand": "rm -rf dist node_modules/.cache .vercel tailwind.config.* postcss.config.* && npm ci --force && npm run build",
+  "buildCommand": "rm -rf dist node_modules/.cache .vercel && npm ci --force && npm run build",
   "outputDirectory": "dist/public",
   "installCommand": "npm ci --force",
   "nodeVersion": "20.x",
   "functions": {},
   "env": {
     "NODE_ENV": "production",
-    "DISABLE_TAILWIND": "true"
+    "DISABLE_TAILWIND": "true",
+    "VITE_CSS_INLINE": "true"
   },
   "rewrites": [
     {
