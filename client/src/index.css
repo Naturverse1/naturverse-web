@@ -678,7 +678,7 @@ html {
 /* Base styles for clean look */
 @layer base {
   * {
-    @apply border-gray-200;
+    border-color: hsl(195 30% 85%);
   }
   
   body {

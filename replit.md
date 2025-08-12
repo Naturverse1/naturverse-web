@@ -22,7 +22,9 @@ The Naturverse is an educational web application designed for children to explor
 
 **Development Stabilization**: Configured one-click dev and deploy workflow. Verified wouter routing with proper fallback handling (no redirect loops). Build process stabilized with clean dist/public output. All 17 Naturverse character assets properly bundled and deployment-ready.
 
-**CSS Error Fix**: Resolved `border-border` CSS error that was preventing Vercel deployment. Fixed invalid Tailwind class usage in both index.css and chart.tsx components. Build now completes successfully without CSS compilation errors.
+**CSS Error Fix**: Resolved `border-border` CSS error that was preventing Vercel deployment. Fixed invalid Tailwind class usage in both index.css and chart.tsx components. Updated CSS to use direct HSL values instead of problematic Tailwind apply directives. Build now completes successfully without CSS compilation errors.
+
+**Vercel Build Optimization**: Updated vercel.json with explicit build configuration using direct `vite build` command instead of npm script. This ensures Vercel uses the most compatible build process for the static SPA deployment.
 
 # User Preferences
 
