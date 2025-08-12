@@ -1,10 +1,10 @@
 {
   "version": 2,
   "framework": null,
-  "buildCommand": "npx vite build",
+  "buildCommand": "npm ci --production=false && npx vite build",
   "outputDirectory": "dist/public",
   "installCommand": "npm ci --production=false",
-  "nodeVersion": "18.x",
+  "nodeVersion": "20.x",
   "routes": [
     {
       "src": "/assets/(.*)",
