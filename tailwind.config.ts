@@ -41,7 +41,7 @@ export default {
           DEFAULT: "var(--destructive)",
           foreground: "var(--destructive-foreground)",
         },
-        border: "var(--border)",
+        border: "hsl(195 30% 85%)",
         input: "var(--input)",
         ring: "var(--ring)",
         chart: {
@@ -58,7 +58,7 @@ export default {
           "primary-foreground": "var(--sidebar-primary-foreground)",
           accent: "var(--sidebar-accent)",
           "accent-foreground": "var(--sidebar-accent-foreground)",
-          border: "var(--sidebar-border)",
+          border: "hsl(195 30% 85%)",
           ring: "var(--sidebar-ring)",
         },
         // Modern nature-inspired colors

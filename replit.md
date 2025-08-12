@@ -24,7 +24,7 @@ The Naturverse is an educational web application designed for children to explor
 
 **CSS Error Fix**: Resolved `border-border` CSS error that was preventing Vercel deployment. Fixed invalid Tailwind class usage in both index.css and chart.tsx components. Updated CSS to use direct HSL values instead of problematic Tailwind apply directives. Build now completes successfully without CSS compilation errors.
 
-**Vercel Build Optimization**: Updated vercel.json with explicit build configuration using direct `vite build` command instead of npm script. This ensures Vercel uses the most compatible build process for the static SPA deployment.
+**Vercel Build Optimization**: Updated vercel.json with explicit build configuration using `npx vite build` command and removed CSS variable conflicts in Tailwind config. Fixed border color definitions to use static HSL values instead of CSS variables that were causing compilation issues on Vercel's build system.
 
 # User Preferences
 

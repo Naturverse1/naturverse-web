@@ -677,10 +677,6 @@ html {
 
 /* Base styles for clean look */
 @layer base {
-  * {
-    border-color: hsl(195 30% 85%);
-  }
-  
   body {
     @apply bg-background text-foreground;
     font-family: 'Baloo 2', 'Fredoka', 'Inter', sans-serif;
