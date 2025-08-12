@@ -36,6 +36,21 @@
   --magical-purple: hsl(280 60% 70%);
   --warm-pink: hsl(340 70% 75%);
   --nature-brown: hsl(30 40% 60%);
+  
+  /* Extended color system */
+  --emerald: 142 70% 55%;
+  --forest: 140 45% 35%;
+  --sage: 120 20% 70%;
+  --mint: 150 40% 80%;
+  --ocean: 200 70% 60%;
+  --sky: 200 100% 70%;
+  --sunset: 25 100% 65%;
+  --amber: 45 100% 55%;
+  --nature: 140 65% 50%;
+  --coral: 340 70% 75%;
+  --turquoise: 180 60% 65%;
+  --sunny: 45 100% 75%;
+  --magic: 280 60% 70%;
 }
 
 .dark {
@@ -58,6 +73,21 @@
   --border: hsl(217.2 32.6% 17.5%);
   --input: hsl(217.2 32.6% 17.5%);
   --ring: hsl(142 70% 55%);
+  
+  /* Extended color system for dark mode */
+  --emerald: 142 70% 55%;
+  --forest: 140 45% 35%;
+  --sage: 120 20% 70%;
+  --mint: 150 40% 80%;
+  --ocean: 200 70% 60%;
+  --sky: 200 100% 70%;
+  --sunset: 25 100% 65%;
+  --amber: 45 100% 55%;
+  --nature: 140 65% 50%;
+  --coral: 340 70% 75%;
+  --turquoise: 180 60% 65%;
+  --sunny: 45 100% 75%;
+  --magic: 280 60% 70%;
 }
 
 /* Clean modern body styling */

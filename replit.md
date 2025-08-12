@@ -34,6 +34,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Vercel Cache Prevention**: Updated vercel.json to use rewrites instead of routes and added aggressive cache clearing in build command. Added .vercelignore to exclude development artifacts. This ensures fresh builds without cached CSS compilation issues.
 
+**CSS Variable Definition Fix**: Resolved the final root cause by adding missing CSS variable definitions in index.css. The tailwind config was referencing variables like `--emerald`, `--forest`, etc. that weren't defined in the CSS, causing "border-border" compilation errors. Added complete extended color system definitions for both light and dark modes.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
