@@ -40,6 +40,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Responsive Layout Implementation**: Added comprehensive responsive fixes including container constraints, responsive hero image scaling, and proper mobile viewport handling. Updated main app container structure and applied responsive hero classes to key character images. CSS includes responsive utility classes with proper media queries and flexible image sizing for optimal mobile experience.
 
+**Layout Architecture Update**: Restructured app with `<main className="content">` wrapper and created new `client/src/index.css` with responsive base styles. Implemented 3-column responsive hero grid that adapts to 2-column on tablets and single column on mobile. Container system uses max-width 1200px with flexible clamp padding for optimal viewing across all devices.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.

@@ -94,10 +94,10 @@ return (
 <AuthProvider>
 <QueryClientProvider client={queryClient}>
 <TooltipProvider>
+<main className="content">
 <div className="min-h-screen storybook-world">
 <NavBar />
 <TurianAiGuide />
-<main className="container">
 <Route path="/" component={Home} />
 <Route path="/about" component={About} />
 <Route path="/signup" component={Signup} />
@@ -119,8 +119,8 @@ return (
 
 {/* Fallback route - render Home directly for unmatched paths */}
 <Route><Home /></Route>
-</main>
 </div>
+</main>
 </TooltipProvider>
 </QueryClientProvider>
 </AuthProvider>
