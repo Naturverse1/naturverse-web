@@ -28,6 +28,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Complete CSS Variable Fix**: Systematically replaced all problematic CSS variable references (`bg-border`, `border-sidebar-border`, `bg-sidebar-border`) with static `bg-gray-200` and `border-gray-200` classes across 8 component files (separator.tsx, sidebar.tsx, resizable.tsx, context-menu.tsx, command.tsx, scroll-area.tsx, navigation-menu.tsx). Build now completes successfully without any CSS compilation errors.
 
+**Import Resolution Fix**: Resolved Vercel build issue with tooltip component imports by replacing alias-based imports (`@/components/ui/tooltip`) with relative imports (`./components/ui/tooltip`). This ensures compatibility with Vercel's build system which sometimes has issues resolving Vite path aliases during production builds.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
