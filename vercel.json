@@ -1,21 +1,24 @@
 {
+  "$schema": "https://openapi.vercel.sh/vercel.json",
   "version": 2,
   "framework": null,
-  "buildCommand": "npm ci --production=false && npx vite build",
+  "buildCommand": "rm -rf dist node_modules/.cache && npm ci --production=false && npx vite build --clearScreen=false",
   "outputDirectory": "dist/public",
   "installCommand": "npm ci --production=false",
   "nodeVersion": "20.x",
-  "routes": [
+  "functions": {},
+  "rewrites": [
     {
-      "src": "/assets/(.*)",
-      "dest": "/assets/$1",
-      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
+      "source": "/assets/(.*)",
+      "destination": "/assets/$1"
     },
     {
-      "src": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot))$",
-      "dest": "/$1",
-      "headers": { "Cache-Control": "public, max-age=31536000, immutable" }
+      "source": "/(.*\\.(js|css|png|jpg|jpeg|gif|svg|ico|webp|woff2?|ttf|eot))$",
+      "destination": "/$1"
     },
-    { "src": "/.*", "dest": "/index.html" }
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
   ]
 }

@@ -1,8 +1,13 @@
+# Ignore development files
 node_modules
-.replit
-replit.nix
 dist
-.env
-server
+.env*
+.cache
+.replit
 *.log
-.git
+
+# Ignore Replit-specific files
+.replit.toml
+
+# Build artifacts
+*.tsbuildinfo
