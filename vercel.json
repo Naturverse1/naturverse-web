@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "name": "naturverse-fresh",
+  "name": "naturverse-cloudflare",
   "framework": null,
-  "buildCommand": "rm -rf dist node_modules/.cache && npm ci && npm run build",
+  "buildCommand": "npm ci && npm run build",
   "outputDirectory": "dist/public",
   "installCommand": "npm ci",
   "nodeVersion": "20.x",

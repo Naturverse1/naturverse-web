@@ -4,9 +4,9 @@ The Naturverse is an educational web application designed for children to explor
 
 ## Recent Changes (August 2025)
 
-**Production Deployment**: Successfully deployed to Vercel as a static site with clean @vercel/static configuration. No server functions or API dependencies. Build time: 10.42 seconds with optimized asset delivery.
+**Production Deployment**: Migrated to Cloudflare Pages for optimal performance and to resolve Vercel cache issues. Configured as static SPA with _redirects file for proper routing. No server functions or API dependencies. Build time: 9.39 seconds with optimized asset delivery.
 
-**Current Production URL**: https://naturverse-explore-j1om2y4m0-scotts-projects-1d09703b.vercel.app
+**Deployment Platform**: Cloudflare Pages (migrated from Vercel to resolve persistent cache issues)
 
 **Asset Bundle**: 
 - JavaScript: 545.43 kB (157.93 kB gzipped)
