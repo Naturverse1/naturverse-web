@@ -32,3 +32,28 @@ body{
   object-fit:contain;
   display:block;
 }
+
+/* --- Quick layout fix overrides --- */
+#root > * {
+max-width: 1100px;
+margin-inline: auto;
+padding: clamp(12px, 3vw, 24px);
+}
+
+main, .content, .container {
+display: grid;
+gap: clamp(12px, 2.5vw, 24px);
+justify-items: center;
+}
+
+/* Make images scale nicely */
+img {
+display: block;
+max-width: 100%;
+height: auto;
+}
+
+/* Common hero/card limits so big images don't blow up */
+.hero, .mascot, .card, .panel {
+max-width: min(100%, 360px);
+}
