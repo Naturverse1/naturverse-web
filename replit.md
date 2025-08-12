@@ -30,6 +30,8 @@ The Naturverse is an educational web application designed for children to explor
 
 **Import Resolution Fix**: Resolved Vercel build issue with tooltip component imports by replacing alias-based imports (`@/components/ui/tooltip`) with relative imports (`./components/ui/tooltip`). This ensures compatibility with Vercel's build system which sometimes has issues resolving Vite path aliases during production builds.
 
+**Chart CSS Border Fix**: Fixed the final Vercel CSS compilation error by replacing `stroke-border` references in chart.tsx with `stroke-gray-300` and `border-[--color-border]` with `border-gray-300`. These stroke-border classes were being interpreted by Tailwind as invalid `border-border` classes, causing the build failures.
+
 # User Preferences
 
 Preferred communication style: Simple, everyday language.
