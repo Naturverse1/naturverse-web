@@ -86,7 +86,7 @@ app.use((req, res, next) => {
   // this serves both the API and the client.
   // It is the only port that is not firewalled.
   const PORT = Number(process.env.PORT) || 5000;
-  const HOST = '127.0.0.1';
+  const HOST = '0.0.0.0';
   app.listen(PORT, HOST, () => console.log(`API listening on http://${HOST}:${PORT}`));
 
   // Graceful shutdown
