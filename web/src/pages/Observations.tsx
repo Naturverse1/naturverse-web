@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
 import type { Observation } from '../types';
 
 type User = { id: string; email: string } | null;
@@ -13,20 +12,28 @@ export default function Observations() {
   const [error, setError] = useState<string | null>(null);
   const [optimisticObs, setOptimisticObs] = useState<Observation[]>([]);
 
-  // Get user on mount and on auth state change
+  // Get user from /functions/user endpoint (simulate session)
   useEffect(() => {
     let mounted = true;
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      if (mounted) setUser(data.user ? { id: data.user.id, email: data.user.email } : null);
+    const fetchUser = async () => {
+      // For demo, get user_id from localStorage (simulate session)
+      const user_id = localStorage.getItem('user_id');
+      if (!user_id) {
+        setUser(null);
+        return;
+      }
+      const res = await fetch(`/functions/user?user_id=${user_id}`);
+      const json = await res.json();
+      if (mounted && json.data) setUser({ id: json.data.id, email: json.data.email });
+      else setUser(null);
     };
-    getUser();
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ? { id: session.user.id, email: session.user.email } : null);
-    });
+    fetchUser();
+    // No realtime auth state, so listen to storage events for demo
+    const onStorage = () => fetchUser();
+    window.addEventListener('storage', onStorage);
     return () => {
       mounted = false;
-      listener?.subscription.unsubscribe();
+      window.removeEventListener('storage', onStorage);
     };
   }, []);
 
@@ -35,33 +42,22 @@ export default function Observations() {
     if (!user) return;
     setLoading(true);
     setError(null);
-    const { data, error } = await supabase
-      .from('observations')
-      .select('id, title, description, user_id, created_at')
-      .eq('user_id', user.id)
-      .order('created_at', { ascending: false });
-    if (error) setError(error.message);
-    else setObservations(data || []);
+    try {
+      const res = await fetch(`/functions/observations?user_id=${user.id}`);
+      const json = await res.json();
+      if (json.error) setError(json.error);
+      else setObservations(json.data || []);
+    } catch (e) {
+      setError('Failed to fetch observations');
+    }
     setLoading(false);
   }
 
-  // Subscribe to realtime changes for this user's rows
+  // Fetch observations on user change
   useEffect(() => {
     if (!user) return;
     fetchObservations();
-    const sub = supabase
-      .channel('observations-changes')
-      .on(
-        'postgres_changes',
-        { event: '*', schema: 'public', table: 'observations', filter: `user_id=eq.${user.id}` },
-        () => {
-          fetchObservations();
-        }
-      )
-      .subscribe();
-    return () => {
-      supabase.removeChannel(sub);
-    };
+    // No realtime, but could use polling or websockets if needed
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [user?.id]);
 
@@ -80,10 +76,19 @@ export default function Observations() {
     setOptimisticObs((prev) => [optimistic, ...prev]);
     setTitle('');
     setDescription('');
-    const { error } = await supabase.from('observations').insert([{ title, description }]);
-    if (error) setError(error.message);
+    try {
+      const res = await fetch('/functions/observations', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ title, description, user_id: user?.id }),
+      });
+      const json = await res.json();
+      if (json.error) setError(json.error);
+    } catch (e) {
+      setError('Failed to add observation');
+    }
     setOptimisticObs((prev) => prev.filter((o) => o.id !== tempId));
-    // fetchObservations(); // Will be handled by realtime
+    fetchObservations();
   }
 
   // Optimistic delete
@@ -91,9 +96,18 @@ export default function Observations() {
     setError(null);
     setOptimisticObs((prev) => prev.filter((o) => o.id !== id));
     setObservations((prev) => prev.filter((o) => o.id !== id));
-    const { error } = await supabase.from('observations').delete().eq('id', id);
-    if (error) setError(error.message);
-    // fetchObservations(); // Will be handled by realtime
+    try {
+      const res = await fetch('/functions/observations', {
+        method: 'DELETE',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, user_id: user?.id }),
+      });
+      const json = await res.json();
+      if (json.error) setError(json.error);
+    } catch (e) {
+      setError('Failed to delete observation');
+    }
+    fetchObservations();
   }
 
   if (!user) {

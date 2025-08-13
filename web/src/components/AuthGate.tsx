@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+// ...existing code...
 
 export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [user, setUser] = useState<any>(null);
@@ -7,37 +7,59 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  useEffect(() => {
-    const getUser = async () => {
-      const { data } = await supabase.auth.getUser();
-      setUser(data.user);
-      setLoading(false);
-    };
-    getUser();
-    const { data: listener } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => {
-      listener?.subscription.unsubscribe();
-    };
-  }, []);
+    useEffect(() => {
+      const fetchUser = async () => {
+        const user_id = localStorage.getItem('user_id');
+        if (!user_id) {
+          setUser(null);
+          setLoading(false);
+          return;
+        }
+        const res = await fetch(`/functions/user?user_id=${user_id}`);
+        const json = await res.json();
+        if (json.data) setUser(json.data);
+        else setUser(null);
+        setLoading(false);
+      };
+      fetchUser();
+      const onStorage = () => fetchUser();
+      window.addEventListener('storage', onStorage);
+      return () => {
+        window.removeEventListener('storage', onStorage);
+      };
+    }, []);
 
-  const signInWithGoogle = async () => {
-    setError(null);
-    const { error } = await supabase.auth.signInWithOAuth({ provider: 'google' });
-    if (error) setError(error.message);
-  };
-
+  // Demo: Use /functions/auth for sign in/up, and /functions/logout for sign out
   const signInWithEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
-    const { error } = await supabase.auth.signInWithOtp({ email });
-    if (error) setError(error.message);
+    try {
+      const res = await fetch('/functions/auth', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password: 'password', type: 'signIn' }),
+      });
+      const json = await res.json();
+      if (json.error) setError(json.error);
+      else {
+        // Save user_id to localStorage for demo session
+        localStorage.setItem('user_id', json.data.user.id);
+        window.dispatchEvent(new Event('storage'));
+      }
+    } catch (e) {
+      setError('Failed to sign in');
+    }
   };
 
   const signOut = async () => {
     setError(null);
-    await supabase.auth.signOut();
+    try {
+      await fetch('/functions/logout', { method: 'POST' });
+      localStorage.removeItem('user_id');
+      window.dispatchEvent(new Event('storage'));
+    } catch (e) {
+      setError('Failed to sign out');
+    }
   };
 
   if (loading) return <div>Loading...</div>;
@@ -45,7 +67,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     return (
       <div style={{ maxWidth: 320, margin: '2rem auto', padding: 16, border: '1px solid #ccc', borderRadius: 8 }}>
         <h2>Sign in</h2>
-        <button onClick={signInWithGoogle} style={{ width: '100%', marginBottom: 8 }}>Sign in with Google</button>
+        {/* Google sign-in omitted in demo */}
         <form onSubmit={signInWithEmail} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
           <input
             type="email"
