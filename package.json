@@ -6,7 +6,7 @@
   "scripts": {
     "dev:replit": "concurrently -k \"cd web && vite --host 0.0.0.0 --port 3000\" \"npm run dev:api\"",
     "dev:api": "cross-env PORT=5000 NODE_ENV=development tsx server/index.ts",
-    "build": "cd web && vite build",
+    "build": "vite build"
     "preview": "cd web && vite preview --host 0.0.0.0 --port 3000",
     "lint": "eslint . --ext .ts,.tsx,.js,.jsx",
     "lint:fix": "eslint . --ext .ts,.tsx,.js,.jsx --fix",
