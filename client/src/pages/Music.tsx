@@ -1,14 +1,15 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { useState } from 'react';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 interface MusicTool {
   id: string;
   name: string;
   description: string;
   icon: string;
-  category: "compose" | "play" | "learn";
+  category: 'compose' | 'play' | 'learn';
 }
 
 export default function Music() {
@@ -17,55 +18,59 @@ export default function Music() {
 
   const musicTools: MusicTool[] = [
     {
-      id: "nature-composer",
-      name: "Nature Composer",
-      description: "Create melodies inspired by natural sounds and rhythms",
-      icon: "🎵",
-      category: "compose"
+      id: 'nature-composer',
+      name: 'Nature Composer',
+      description: 'Create melodies inspired by natural sounds and rhythms',
+      icon: '🎵',
+      category: 'compose',
     },
     {
-      id: "forest-piano",
-      name: "Forest Piano",
-      description: "Play virtual piano with nature-themed sound effects",
-      icon: "🎹",
-      category: "play"
+      id: 'forest-piano',
+      name: 'Forest Piano',
+      description: 'Play virtual piano with nature-themed sound effects',
+      icon: '🎹',
+      category: 'play',
     },
     {
-      id: "animal-drums",
-      name: "Animal Drums",
-      description: "Drum beats that sound like different animal calls",
-      icon: "🥁",
-      category: "play"
+      id: 'animal-drums',
+      name: 'Animal Drums',
+      description: 'Drum beats that sound like different animal calls',
+      icon: '🥁',
+      category: 'play',
     },
     {
-      id: "wind-chimes",
-      name: "Magic Wind Chimes",
-      description: "Create ethereal melodies with mystical wind chimes",
-      icon: "🎐",
-      category: "compose"
+      id: 'wind-chimes',
+      name: 'Magic Wind Chimes',
+      description: 'Create ethereal melodies with mystical wind chimes',
+      icon: '🎐',
+      category: 'compose',
     },
     {
-      id: "rhythm-academy",
-      name: "Rhythm Academy",
-      description: "Learn basic music theory through interactive lessons",
-      icon: "📚",
-      category: "learn"
+      id: 'rhythm-academy',
+      name: 'Rhythm Academy',
+      description: 'Learn basic music theory through interactive lessons',
+      icon: '📚',
+      category: 'learn',
     },
     {
-      id: "sound-garden",
-      name: "Sound Garden",
-      description: "Mix and match nature sounds to create ambient music",
-      icon: "🌺",
-      category: "compose"
-    }
+      id: 'sound-garden',
+      name: 'Sound Garden',
+      description: 'Mix and match nature sounds to create ambient music',
+      icon: '🌺',
+      category: 'compose',
+    },
   ];
 
   const getCategoryColor = (category: string) => {
     switch (category) {
-      case "compose": return "bg-nature text-white";
-      case "play": return "bg-turquoise text-white";
-      case "learn": return "bg-sunny text-black";
-      default: return "bg-gray-500 text-white";
+      case 'compose':
+        return 'bg-nature text-white';
+      case 'play':
+        return 'bg-turquoise text-white';
+      case 'learn':
+        return 'bg-sunny text-black';
+      default:
+        return 'bg-gray-500 text-white';
     }
   };
 
@@ -95,29 +100,21 @@ export default function Music() {
         {!selectedTool ? (
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
             {musicTools.map((tool) => (
-              <Card 
+              <Card
                 key={tool.id}
                 className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl hover:scale-105 transition-all duration-200 cursor-pointer"
                 onClick={() => handleToolSelect(tool.id)}
                 data-testid={`card-tool-${tool.id}`}
               >
                 <CardHeader className="text-center">
-                  <div className="text-5xl mb-3 animate-bounce-gentle">
-                    {tool.icon}
-                  </div>
+                  <div className="text-5xl mb-3 animate-bounce-gentle">{tool.icon}</div>
                   <div className="flex justify-center mb-2">
-                    <Badge className={getCategoryColor(tool.category)}>
-                      {tool.category}
-                    </Badge>
+                    <Badge className={getCategoryColor(tool.category)}>{tool.category}</Badge>
                   </div>
-                  <CardTitle className="text-xl font-fredoka text-forest">
-                    {tool.name}
-                  </CardTitle>
+                  <CardTitle className="text-xl font-fredoka text-forest">{tool.name}</CardTitle>
                 </CardHeader>
                 <CardContent className="text-center">
-                  <p className="text-forest/80 text-sm mb-4">
-                    {tool.description}
-                  </p>
+                  <p className="text-forest/80 text-sm mb-4">{tool.description}</p>
                   <Button
                     className="bg-turquoise hover:bg-teal-600 text-white"
                     data-testid={`button-select-${tool.id}`}
@@ -133,7 +130,7 @@ export default function Music() {
             <Card className="backdrop-blur-sm bg-white/95 border-nature/20 shadow-xl">
               <CardHeader className="text-center">
                 <div className="flex justify-between items-center mb-4">
-                  <Button 
+                  <Button
                     onClick={() => setSelectedTool(null)}
                     variant="outline"
                     className="border-nature text-nature hover:bg-nature hover:text-white"
@@ -141,18 +138,22 @@ export default function Music() {
                   >
                     ← Back to Tools
                   </Button>
-                  <Badge className={getCategoryColor(musicTools.find(t => t.id === selectedTool)?.category || "")}>
-                    {musicTools.find(t => t.id === selectedTool)?.category}
+                  <Badge
+                    className={getCategoryColor(
+                      musicTools.find((t) => t.id === selectedTool)?.category || '',
+                    )}
+                  >
+                    {musicTools.find((t) => t.id === selectedTool)?.category}
                   </Badge>
                 </div>
                 <div className="text-6xl mb-4 animate-pulse-slow">
-                  {musicTools.find(t => t.id === selectedTool)?.icon}
+                  {musicTools.find((t) => t.id === selectedTool)?.icon}
                 </div>
                 <CardTitle className="text-3xl font-fredoka text-forest">
-                  {musicTools.find(t => t.id === selectedTool)?.name}
+                  {musicTools.find((t) => t.id === selectedTool)?.name}
                 </CardTitle>
                 <p className="text-forest/80 text-lg mt-2">
-                  {musicTools.find(t => t.id === selectedTool)?.description}
+                  {musicTools.find((t) => t.id === selectedTool)?.description}
                 </p>
               </CardHeader>
               <CardContent>
@@ -164,15 +165,21 @@ export default function Music() {
                       Interactive Music Interface
                     </h3>
                     <p className="text-forest/70 mb-6">
-                      This is where the music creation magic happens! 
-                      {selectedTool === "nature-composer" && " Drag and drop nature sounds to create your melody."}
-                      {selectedTool === "forest-piano" && " Click the keys or use your keyboard to play beautiful sounds."}
-                      {selectedTool === "animal-drums" && " Tap the drums to hear different animal sounds and beats."}
-                      {selectedTool === "wind-chimes" && " Touch the chimes to create mystical, flowing melodies."}
-                      {selectedTool === "rhythm-academy" && " Follow along with the lessons to learn music fundamentals."}
-                      {selectedTool === "sound-garden" && " Mix nature sounds to create your perfect ambient soundscape."}
+                      This is where the music creation magic happens!
+                      {selectedTool === 'nature-composer' &&
+                        ' Drag and drop nature sounds to create your melody.'}
+                      {selectedTool === 'forest-piano' &&
+                        ' Click the keys or use your keyboard to play beautiful sounds.'}
+                      {selectedTool === 'animal-drums' &&
+                        ' Tap the drums to hear different animal sounds and beats.'}
+                      {selectedTool === 'wind-chimes' &&
+                        ' Touch the chimes to create mystical, flowing melodies.'}
+                      {selectedTool === 'rhythm-academy' &&
+                        ' Follow along with the lessons to learn music fundamentals.'}
+                      {selectedTool === 'sound-garden' &&
+                        ' Mix nature sounds to create your perfect ambient soundscape.'}
                     </p>
-                    
+
                     <div className="flex justify-center space-x-4">
                       <Button
                         onClick={handlePlayDemo}
@@ -180,7 +187,7 @@ export default function Music() {
                         className="bg-nature hover:bg-forest text-white px-6 py-3"
                         data-testid="button-play-demo"
                       >
-                        {isPlaying ? "🎵 Playing..." : "▶️ Play Demo"}
+                        {isPlaying ? '🎵 Playing...' : '▶️ Play Demo'}
                       </Button>
                       <Button
                         variant="outline"
@@ -200,12 +207,18 @@ export default function Music() {
                         <span className="font-fredoka text-forest">Quick Tip</span>
                       </div>
                       <p className="text-forest/80 text-sm text-center">
-                        {selectedTool === "nature-composer" && "Try layering bird songs with water sounds for a peaceful forest ambiance!"}
-                        {selectedTool === "forest-piano" && "Hold down keys longer to create sustained, dreamy notes."}
-                        {selectedTool === "animal-drums" && "Combine different animal sounds to create unique rhythm patterns."}
-                        {selectedTool === "wind-chimes" && "Gentle touches create softer tones, while quick taps make brighter sounds."}
-                        {selectedTool === "rhythm-academy" && "Practice daily for just 5 minutes to improve your musical skills!"}
-                        {selectedTool === "sound-garden" && "Start with rain sounds as your base, then add other nature elements slowly."}
+                        {selectedTool === 'nature-composer' &&
+                          'Try layering bird songs with water sounds for a peaceful forest ambiance!'}
+                        {selectedTool === 'forest-piano' &&
+                          'Hold down keys longer to create sustained, dreamy notes.'}
+                        {selectedTool === 'animal-drums' &&
+                          'Combine different animal sounds to create unique rhythm patterns.'}
+                        {selectedTool === 'wind-chimes' &&
+                          'Gentle touches create softer tones, while quick taps make brighter sounds.'}
+                        {selectedTool === 'rhythm-academy' &&
+                          'Practice daily for just 5 minutes to improve your musical skills!'}
+                        {selectedTool === 'sound-garden' &&
+                          'Start with rain sounds as your base, then add other nature elements slowly.'}
                       </p>
                     </CardContent>
                   </Card>

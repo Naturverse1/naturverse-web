@@ -1,54 +1,57 @@
-import { useState } from "react";
-import { useAuth } from "../context/AuthContext";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Alert, AlertDescription } from "@/components/ui/alert";
-import { useLocation } from "wouter";
-
 // Official Naturverse™ Assets
-import TurianLogo from "@assets/turian_media_logo_transparent.png";
-import TurianCharacter from "@assets/Turian_1754677394027.jpg";
-import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
-import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
-import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
-import JaySing from "@assets/Jay-Sing_1754677394023.png";
-import MangoMike from "@assets/Mango Mike_1754677394025.png";
-import NikkiMT from "@assets/Nikki MT_1754677394025.png";
-import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
-import ShroomForest from "@assets/Shroom forest_1754673794866.jpg";
+import BluButterfly from '@assets/Blu Butterfly_1754677394021.png';
+import CoconutCruze from '@assets/Coconut Cruze_1754677394021.png';
+import FrankieFrogs from '@assets/Frankie Frogs_1754677394022.png';
+import JaySing from '@assets/Jay-Sing_1754677394023.png';
+import MangoMike from '@assets/Mango Mike_1754677394025.png';
+import NikkiMT from '@assets/Nikki MT_1754677394025.png';
+import ShroomForest from '@assets/Shroom forest_1754673794866.jpg';
+import StorybookScene from '@assets/Storybook img_1754673794866.jpg';
+import TurianCharacter from '@assets/Turian_1754677394027.jpg';
+import TurianLogo from '@assets/turian_media_logo_transparent.png';
+import { useState } from 'react';
+import { useLocation } from 'wouter';
+
+import { useAuth } from '../context/AuthContext';
+
+import { Alert, AlertDescription } from '@/components/ui/alert';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Login() {
   const { signInWithGoogle, loading } = useAuth();
   const [, setLocation] = useLocation();
-  const [error, setError] = useState("");
-  
+  const [error, setError] = useState('');
+
   // Array of all our magical characters
   const characters = [
-    { src: TurianCharacter, name: "Turian", position: "top-10 left-10", delay: "0s" },
-    { src: CoconutCruze, name: "Coconut Cruze", position: "top-20 right-16", delay: "0.5s" },
-    { src: BluButterfly, name: "Blu Butterfly", position: "bottom-32 left-16", delay: "1s" },
-    { src: FrankieFrogs, name: "Frankie Frogs", position: "bottom-20 right-20", delay: "1.5s" },
-    { src: JaySing, name: "Jay-Sing", position: "top-32 left-1/3", delay: "2s" },
-    { src: MangoMike, name: "Mango Mike", position: "bottom-40 right-1/3", delay: "2.5s" },
-    { src: NikkiMT, name: "Nikki MT", position: "top-40 right-10", delay: "3s" },
+    { src: TurianCharacter, name: 'Turian', position: 'top-10 left-10', delay: '0s' },
+    { src: CoconutCruze, name: 'Coconut Cruze', position: 'top-20 right-16', delay: '0.5s' },
+    { src: BluButterfly, name: 'Blu Butterfly', position: 'bottom-32 left-16', delay: '1s' },
+    { src: FrankieFrogs, name: 'Frankie Frogs', position: 'bottom-20 right-20', delay: '1.5s' },
+    { src: JaySing, name: 'Jay-Sing', position: 'top-32 left-1/3', delay: '2s' },
+    { src: MangoMike, name: 'Mango Mike', position: 'bottom-40 right-1/3', delay: '2.5s' },
+    { src: NikkiMT, name: 'Nikki MT', position: 'top-40 right-10', delay: '3s' },
   ];
 
   const handleGoogleSignIn = async () => {
     try {
-      setError("");
+      setError('');
       await signInWithGoogle();
       // The auth context will handle redirecting after successful auth
     } catch (err: any) {
       console.error('Google sign-in error:', err);
-      setError(`Google authentication failed: ${err.message || 'Please check Supabase OAuth configuration'}`);
+      setError(
+        `Google authentication failed: ${err.message || 'Please check Supabase OAuth configuration'}`,
+      );
     }
   };
 
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Magical Storybook Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `
             linear-gradient(
@@ -65,16 +68,16 @@ export default function Login() {
           backgroundPosition: 'center',
         }}
       />
-      
+
       {/* Floating Character Elements */}
       {characters.map((character, index) => (
-        <div 
+        <div
           key={character.name}
           className={`floating-character ${character.position} w-16 h-16 md:w-20 md:h-20 animate-character-entrance`}
           style={{ animationDelay: character.delay }}
         >
-          <img 
-            src={character.src} 
+          <img
+            src={character.src}
             alt={character.name}
             className="w-full h-full object-cover rounded-full border-4 border-white/60 shadow-2xl animate-float-bounce"
           />
@@ -82,12 +85,36 @@ export default function Login() {
       ))}
 
       {/* Floating Sparkles */}
-      <div className="floating-sparkles" style={{ top: '10%', left: '20%' }}>✨</div>
-      <div className="floating-sparkles" style={{ top: '20%', right: '30%', animationDelay: '1s' }}>🌟</div>
-      <div className="floating-sparkles" style={{ bottom: '30%', left: '15%', animationDelay: '2s' }}>⭐</div>
-      <div className="floating-sparkles" style={{ top: '60%', right: '15%', animationDelay: '1.5s' }}>✨</div>
-      <div className="floating-sparkles" style={{ bottom: '20%', left: '60%', animationDelay: '3s' }}>🌟</div>
-      <div className="floating-sparkles" style={{ top: '40%', left: '70%', animationDelay: '0.5s' }}>⭐</div>
+      <div className="floating-sparkles" style={{ top: '10%', left: '20%' }}>
+        ✨
+      </div>
+      <div className="floating-sparkles" style={{ top: '20%', right: '30%', animationDelay: '1s' }}>
+        🌟
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ bottom: '30%', left: '15%', animationDelay: '2s' }}
+      >
+        ⭐
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ top: '60%', right: '15%', animationDelay: '1.5s' }}
+      >
+        ✨
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ bottom: '20%', left: '60%', animationDelay: '3s' }}
+      >
+        🌟
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ top: '40%', left: '70%', animationDelay: '0.5s' }}
+      >
+        ⭐
+      </div>
 
       {/* Main Login Content */}
       <div className="relative z-10 min-h-screen flex items-center justify-center p-6">
@@ -96,15 +123,15 @@ export default function Login() {
           <div className="text-center mb-8 animate-character-entrance">
             <div className="flex justify-center mb-6">
               <div className="relative">
-                <img 
-                  src={TurianLogo} 
-                  alt="The Naturverse™" 
+                <img
+                  src={TurianLogo}
+                  alt="The Naturverse™"
                   className="w-24 h-24 md:w-32 md:h-32 drop-shadow-2xl animate-gentle-pulse"
                 />
                 <div className="absolute -top-2 -right-2 text-3xl animate-sparkle-dance">✨</div>
               </div>
             </div>
-            
+
             <h1 className="text-4xl md:text-6xl font-magical text-white drop-shadow-2xl mb-4 text-magical-rainbow">
               Welcome to The Naturverse™!
             </h1>
@@ -114,37 +141,38 @@ export default function Login() {
           </div>
 
           {/* Login Card */}
-          <Card className="story-card animate-character-entrance" style={{ animationDelay: '0.5s' }}>
+          <Card
+            className="story-card animate-character-entrance"
+            style={{ animationDelay: '0.5s' }}
+          >
             <CardHeader className="text-center pb-6">
               <div className="flex justify-center mb-4">
-                <img 
-                  src={TurianCharacter} 
-                  alt="Turian Guide" 
+                <img
+                  src={TurianCharacter}
+                  alt="Turian Guide"
                   className="w-20 h-20 rounded-full border-4 border-green-400 shadow-xl animate-gentle-pulse"
                 />
               </div>
-              
+
               <CardTitle className="text-3xl font-magical text-green-700">
                 🌺 Join the Adventure! 🌺
               </CardTitle>
               <p className="text-lg font-story text-green-600 mt-4">
-                Hi there, brave explorer! I'm Turian, your magical durian guide. 
-                Ready to discover the wonders of nature together?
+                Hi there, brave explorer! I'm Turian, your magical durian guide. Ready to discover
+                the wonders of nature together?
               </p>
             </CardHeader>
 
             <CardContent className="space-y-6">
               {error && (
                 <Alert className="border-red-200 bg-red-50 animate-character-entrance">
-                  <AlertDescription className="text-red-700 font-bold">
-                    {error}
-                  </AlertDescription>
+                  <AlertDescription className="text-red-700 font-bold">{error}</AlertDescription>
                 </Alert>
               )}
 
               {/* Demo Mode - Primary Option */}
               <div className="text-center">
-                <Button 
+                <Button
                   onClick={() => setLocation('/map')}
                   className="btn-magical w-full text-xl py-6 text-white font-bold relative overflow-hidden"
                   data-testid="demo-signin-button"
@@ -154,15 +182,15 @@ export default function Login() {
                     <span>Start Your Adventure!</span>
                     <span className="text-2xl">✨</span>
                   </div>
-                  
+
                   {/* Magical Shimmer Effect */}
                   <div className="absolute inset-0 animate-magical-shimmer"></div>
                 </Button>
               </div>
-              
+
               {/* Google Sign In Alternative */}
               <div className="text-center">
-                <Button 
+                <Button
                   onClick={handleGoogleSignIn}
                   disabled={loading}
                   variant="outline"
@@ -192,17 +220,17 @@ export default function Login() {
                   <div className="text-2xl mb-2">🗺️</div>
                   <div className="text-sm font-bold text-green-700 font-playful">Explore Maps</div>
                 </div>
-                
+
                 <div className="text-center p-4 bg-blue-50/80 rounded-2xl border-2 border-blue-200">
                   <div className="text-2xl mb-2">📚</div>
                   <div className="text-sm font-bold text-blue-700 font-playful">Read Stories</div>
                 </div>
-                
+
                 <div className="text-center p-4 bg-purple-50/80 rounded-2xl border-2 border-purple-200">
                   <div className="text-2xl mb-2">⚡</div>
                   <div className="text-sm font-bold text-purple-700 font-playful">Epic Quests</div>
                 </div>
-                
+
                 <div className="text-center p-4 bg-yellow-50/80 rounded-2xl border-2 border-yellow-200">
                   <div className="text-2xl mb-2">🧠</div>
                   <div className="text-sm font-bold text-yellow-700 font-playful">Fun Quizzes</div>
@@ -225,7 +253,10 @@ export default function Login() {
           </Card>
 
           {/* Footer Message */}
-          <div className="text-center mt-8 animate-character-entrance" style={{ animationDelay: '1s' }}>
+          <div
+            className="text-center mt-8 animate-character-entrance"
+            style={{ animationDelay: '1s' }}
+          >
             <p className="text-white font-story text-lg drop-shadow-lg">
               🌺 Safe, fun, and educational - join thousands of young explorers! 🌺
             </p>

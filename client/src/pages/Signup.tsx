@@ -1,46 +1,48 @@
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useAuth } from "../context/AuthContext";
-import { useLocation, Link } from "wouter";
-import { supabase } from "../lib/supabaseClient";
+import { useState } from 'react';
+import { useLocation, Link } from 'wouter';
+
+import { useAuth } from '../context/AuthContext';
+import { supabase } from '../lib/supabaseClient';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function Signup() {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const { signUp } = useAuth();
   const [location, setLocation] = useLocation();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
-    
+    setError('');
+
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
-    
+
     if (password.length < 6) {
-      setError("Password must be at least 6 characters long");
+      setError('Password must be at least 6 characters long');
       setLoading(false);
       return;
     }
-    
+
     try {
       const { user, error } = await signUp(email, password);
-      
+
       if (error) {
         setError(error.message);
         return;
       }
-      
+
       if (user) {
         // Insert user into users table (ignore if already exists)
         await supabase
@@ -48,7 +50,7 @@ export default function Signup() {
           .insert([{ id: user.id, email: user.email }])
           .select()
           .single();
-        
+
         setLocation('/');
       }
     } catch (err) {
@@ -78,7 +80,9 @@ export default function Signup() {
             )}
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="space-y-2">
-                <Label htmlFor="email" className="text-forest font-medium">Email</Label>
+                <Label htmlFor="email" className="text-forest font-medium">
+                  Email
+                </Label>
                 <Input
                   id="email"
                   type="email"
@@ -91,7 +95,9 @@ export default function Signup() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="password" className="text-forest font-medium">Password</Label>
+                <Label htmlFor="password" className="text-forest font-medium">
+                  Password
+                </Label>
                 <Input
                   id="password"
                   type="password"
@@ -104,7 +110,9 @@ export default function Signup() {
                 />
               </div>
               <div className="space-y-2">
-                <Label htmlFor="confirmPassword" className="text-forest font-medium">Confirm Password</Label>
+                <Label htmlFor="confirmPassword" className="text-forest font-medium">
+                  Confirm Password
+                </Label>
                 <Input
                   id="confirmPassword"
                   type="password"
@@ -116,21 +124,24 @@ export default function Signup() {
                   data-testid="input-confirm-password"
                 />
               </div>
-              <Button 
-                type="submit" 
-                className="w-full bg-turquoise hover:bg-teal-600 text-white transition-colors duration-200 py-3" 
-                disabled={loading} 
+              <Button
+                type="submit"
+                className="w-full bg-turquoise hover:bg-teal-600 text-white transition-colors duration-200 py-3"
+                disabled={loading}
                 data-testid="button-submit"
               >
-                {loading ? "🌟 Creating Account..." : "✨ Create Account"}
+                {loading ? '🌟 Creating Account...' : '✨ Create Account'}
               </Button>
             </form>
-            
+
             <div className="text-center mt-6">
               <div className="pt-4 border-t border-nature/10">
                 <p className="text-sm text-forest/70">
-                  Already have an account?{" "}
-                  <Link to="/login" className="text-magic hover:text-coral font-medium transition-colors duration-200">
+                  Already have an account?{' '}
+                  <Link
+                    to="/login"
+                    className="text-magic hover:text-coral font-medium transition-colors duration-200"
+                  >
                     🚀 Sign In Here
                   </Link>
                 </p>

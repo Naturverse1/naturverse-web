@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
-import { Progress } from "@/components/ui/progress";
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Progress } from '@/components/ui/progress';
 
 interface ZoneData {
   id: string;
@@ -20,11 +21,11 @@ interface ZoneData {
 interface ZoneActivity {
   id: string;
   name: string;
-  type: "exploration" | "quiz" | "story" | "mini-game";
+  type: 'exploration' | 'quiz' | 'story' | 'mini-game';
   description: string;
   icon: string;
   completed: boolean;
-  difficulty: "easy" | "medium" | "hard";
+  difficulty: 'easy' | 'medium' | 'hard';
 }
 
 interface ZoneDiscovery {
@@ -52,142 +53,144 @@ export default function Zone() {
     // Mock data based on zone name
     const mockZoneData: Record<string, ZoneData> = {
       thailandia: {
-        id: "thailandia",
-        name: "Thailandia",
-        description: "The mystical heart of The Naturverse, where ancient wisdom meets magical nature. Explore temples surrounded by lush forests and discover the secrets of harmony between civilization and the wild.",
-        emoji: "🏛️",
-        theme: "from-nature/30 to-turquoise/30",
+        id: 'thailandia',
+        name: 'Thailandia',
+        description:
+          'The mystical heart of The Naturverse, where ancient wisdom meets magical nature. Explore temples surrounded by lush forests and discover the secrets of harmony between civilization and the wild.',
+        emoji: '🏛️',
+        theme: 'from-nature/30 to-turquoise/30',
         progress: 45,
         isUnlocked: true,
         activities: [
           {
-            id: "temple-exploration",
-            name: "Temple of Wisdom",
-            type: "exploration",
-            description: "Discover ancient knowledge hidden within mystical temple walls",
-            icon: "🏛️",
+            id: 'temple-exploration',
+            name: 'Temple of Wisdom',
+            type: 'exploration',
+            description: 'Discover ancient knowledge hidden within mystical temple walls',
+            icon: '🏛️',
             completed: true,
-            difficulty: "easy"
+            difficulty: 'easy',
           },
           {
-            id: "forest-quiz",
-            name: "Sacred Forest Quiz",
-            type: "quiz",
-            description: "Test your knowledge of the plants and animals in sacred groves",
-            icon: "🌳",
+            id: 'forest-quiz',
+            name: 'Sacred Forest Quiz',
+            type: 'quiz',
+            description: 'Test your knowledge of the plants and animals in sacred groves',
+            icon: '🌳',
             completed: true,
-            difficulty: "medium"
+            difficulty: 'medium',
           },
           {
-            id: "elephant-story",
-            name: "The Gentle Giants",
-            type: "story",
-            description: "Learn about the wisdom of elephants in Thai culture",
-            icon: "🐘",
+            id: 'elephant-story',
+            name: 'The Gentle Giants',
+            type: 'story',
+            description: 'Learn about the wisdom of elephants in Thai culture',
+            icon: '🐘',
             completed: false,
-            difficulty: "easy"
+            difficulty: 'easy',
           },
           {
-            id: "lotus-game",
-            name: "Lotus Pond Puzzle",
-            type: "mini-game",
-            description: "Help lotus flowers bloom by solving nature puzzles",
-            icon: "🪷",
+            id: 'lotus-game',
+            name: 'Lotus Pond Puzzle',
+            type: 'mini-game',
+            description: 'Help lotus flowers bloom by solving nature puzzles',
+            icon: '🪷',
             completed: false,
-            difficulty: "medium"
-          }
+            difficulty: 'medium',
+          },
         ],
         discoveries: [
           {
-            id: "golden-temple",
-            name: "Golden Temple Relic",
-            description: "An ancient artifact that glows with natural energy",
-            icon: "⚱️",
-            discovered: true
+            id: 'golden-temple',
+            name: 'Golden Temple Relic',
+            description: 'An ancient artifact that glows with natural energy',
+            icon: '⚱️',
+            discovered: true,
           },
           {
-            id: "spirit-orchid",
-            name: "Spirit Orchid",
-            description: "A rare flower that only blooms during full moons",
-            icon: "🌺",
-            discovered: true
+            id: 'spirit-orchid',
+            name: 'Spirit Orchid',
+            description: 'A rare flower that only blooms during full moons',
+            icon: '🌺',
+            discovered: true,
           },
           {
-            id: "wisdom-tree",
-            name: "Tree of Wisdom",
-            description: "A ancient tree said to hold the knowledge of ages",
-            icon: "🌳",
+            id: 'wisdom-tree',
+            name: 'Tree of Wisdom',
+            description: 'A ancient tree said to hold the knowledge of ages',
+            icon: '🌳',
             discovered: false,
-            hint: "Complete all temple activities to unlock this discovery"
+            hint: 'Complete all temple activities to unlock this discovery',
           },
           {
-            id: "sacred-spring",
-            name: "Sacred Spring",
-            description: "A mystical water source with healing properties",
-            icon: "💧",
+            id: 'sacred-spring',
+            name: 'Sacred Spring',
+            description: 'A mystical water source with healing properties',
+            icon: '💧',
             discovered: false,
-            hint: "Help 5 other explorers to find this hidden spring"
-          }
-        ]
+            hint: 'Help 5 other explorers to find this hidden spring',
+          },
+        ],
       },
-      "crystal-caves": {
-        id: "crystal-caves",
-        name: "Crystal Caves",
-        description: "Deep underground chambers where gemstones grow like flowers and echo with ancient magic. Each crystal formation tells a story of Earth's geological wonders.",
-        emoji: "💎",
-        theme: "from-magic/30 to-coral/30",
+      'crystal-caves': {
+        id: 'crystal-caves',
+        name: 'Crystal Caves',
+        description:
+          "Deep underground chambers where gemstones grow like flowers and echo with ancient magic. Each crystal formation tells a story of Earth's geological wonders.",
+        emoji: '💎',
+        theme: 'from-magic/30 to-coral/30',
         progress: 20,
         isUnlocked: true,
         activities: [
           {
-            id: "gem-identification",
-            name: "Gemstone Hunter",
-            type: "exploration",
-            description: "Learn to identify different types of crystals and minerals",
-            icon: "💎",
+            id: 'gem-identification',
+            name: 'Gemstone Hunter',
+            type: 'exploration',
+            description: 'Learn to identify different types of crystals and minerals',
+            icon: '💎',
             completed: true,
-            difficulty: "easy"
+            difficulty: 'easy',
           },
           {
-            id: "geology-quiz",
+            id: 'geology-quiz',
             name: "Earth's Treasures Quiz",
-            type: "quiz",
-            description: "Test your knowledge of how crystals and caves are formed",
-            icon: "🪨",
+            type: 'quiz',
+            description: 'Test your knowledge of how crystals and caves are formed',
+            icon: '🪨',
             completed: false,
-            difficulty: "hard"
+            difficulty: 'hard',
           },
           {
-            id: "cave-story",
-            name: "The Crystal Guardian",
-            type: "story",
+            id: 'cave-story',
+            name: 'The Crystal Guardian',
+            type: 'story',
             description: "Meet the mystical being who protects the cave's treasures",
-            icon: "🧙‍♂️",
+            icon: '🧙‍♂️',
             completed: false,
-            difficulty: "medium"
-          }
+            difficulty: 'medium',
+          },
         ],
         discoveries: [
           {
-            id: "rainbow-crystal",
-            name: "Rainbow Crystal",
-            description: "A crystal that refracts light into beautiful rainbows",
-            icon: "🌈",
-            discovered: true
+            id: 'rainbow-crystal',
+            name: 'Rainbow Crystal',
+            description: 'A crystal that refracts light into beautiful rainbows',
+            icon: '🌈',
+            discovered: true,
           },
           {
-            id: "singing-stones",
-            name: "Singing Stones",
-            description: "Crystals that create musical tones when touched",
-            icon: "🎵",
+            id: 'singing-stones',
+            name: 'Singing Stones',
+            description: 'Crystals that create musical tones when touched',
+            icon: '🎵',
             discovered: false,
-            hint: "Complete the Crystal Guardian story"
-          }
-        ]
-      }
+            hint: 'Complete the Crystal Guardian story',
+          },
+        ],
+      },
     };
 
-    const zone = mockZoneData[name || ""];
+    const zone = mockZoneData[name || ''];
     if (zone) {
       setZoneData(zone);
     }
@@ -196,20 +199,29 @@ export default function Zone() {
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "easy": return "bg-nature text-white";
-      case "medium": return "bg-sunny text-black";
-      case "hard": return "bg-coral text-white";
-      default: return "bg-gray-500 text-white";
+      case 'easy':
+        return 'bg-nature text-white';
+      case 'medium':
+        return 'bg-sunny text-black';
+      case 'hard':
+        return 'bg-coral text-white';
+      default:
+        return 'bg-gray-500 text-white';
     }
   };
 
   const getActivityIcon = (type: string) => {
     switch (type) {
-      case "exploration": return "🔍";
-      case "quiz": return "🧠";
-      case "story": return "📚";
-      case "mini-game": return "🎮";
-      default: return "⭐";
+      case 'exploration':
+        return '🔍';
+      case 'quiz':
+        return '🧠';
+      case 'story':
+        return '📚';
+      case 'mini-game':
+        return '🎮';
+      default:
+        return '⭐';
     }
   };
 
@@ -217,11 +229,11 @@ export default function Zone() {
     setSelectedActivity(activity);
     // TODO: Navigate to appropriate activity based on type
     switch (activity.type) {
-      case "quiz":
-        navigate("/quiz");
+      case 'quiz':
+        navigate('/quiz');
         break;
-      case "story":
-        navigate("/storybook");
+      case 'story':
+        navigate('/storybook');
         break;
       default:
         // Mock activity start
@@ -250,8 +262,8 @@ export default function Zone() {
             <p className="text-forest/80 mb-4">
               The zone "{name}" doesn't exist or hasn't been unlocked yet.
             </p>
-            <Button 
-              onClick={() => navigate("/map")}
+            <Button
+              onClick={() => navigate('/map')}
               className="bg-nature hover:bg-forest text-white"
             >
               🔙 Back to Map
@@ -262,9 +274,9 @@ export default function Zone() {
     );
   }
 
-  const completedActivities = zoneData.activities.filter(a => a.completed).length;
+  const completedActivities = zoneData.activities.filter((a) => a.completed).length;
   const totalActivities = zoneData.activities.length;
-  const discoveredItems = zoneData.discoveries.filter(d => d.discovered).length;
+  const discoveredItems = zoneData.discoveries.filter((d) => d.discovered).length;
   const totalDiscoveries = zoneData.discoveries.length;
 
   return (
@@ -272,21 +284,19 @@ export default function Zone() {
       <div className="container mx-auto px-6 max-w-6xl">
         {/* Zone Header */}
         <div className="text-center mb-8">
-          <Button 
-            onClick={() => navigate("/map")}
+          <Button
+            onClick={() => navigate('/map')}
             variant="outline"
             className="mb-4 border-white text-white hover:bg-white hover:text-forest"
           >
             ← Back to Map
           </Button>
-          
+
           <div className="text-8xl mb-4 animate-bounce-gentle">{zoneData.emoji}</div>
           <h1 className="text-4xl font-fredoka text-white mb-4" data-testid="text-zone-title">
             {zoneData.name}
           </h1>
-          <p className="text-white/90 text-lg max-w-3xl mx-auto">
-            {zoneData.description}
-          </p>
+          <p className="text-white/90 text-lg max-w-3xl mx-auto">{zoneData.description}</p>
         </div>
 
         {/* Progress Overview */}
@@ -300,12 +310,16 @@ export default function Zone() {
               </div>
               <div>
                 <div className="text-2xl font-fredoka text-forest mb-2">Activities</div>
-                <div className="text-3xl text-turquoise">{completedActivities}/{totalActivities}</div>
+                <div className="text-3xl text-turquoise">
+                  {completedActivities}/{totalActivities}
+                </div>
                 <p className="text-forest/70">Completed</p>
               </div>
               <div>
                 <div className="text-2xl font-fredoka text-forest mb-2">Discoveries</div>
-                <div className="text-3xl text-magic">{discoveredItems}/{totalDiscoveries}</div>
+                <div className="text-3xl text-magic">
+                  {discoveredItems}/{totalDiscoveries}
+                </div>
                 <p className="text-forest/70">Found</p>
               </div>
             </div>
@@ -323,7 +337,7 @@ export default function Zone() {
             <CardContent>
               <div className="space-y-4">
                 {zoneData.activities.map((activity) => (
-                  <Card 
+                  <Card
                     key={activity.id}
                     className={`cursor-pointer transition-all duration-200 hover:scale-105 ${
                       activity.completed ? 'bg-nature/10 border-nature/30' : 'hover:shadow-md'
@@ -333,9 +347,7 @@ export default function Zone() {
                   >
                     <CardContent className="pt-4">
                       <div className="flex items-center space-x-4">
-                        <div className="text-3xl">
-                          {activity.completed ? "✅" : activity.icon}
-                        </div>
+                        <div className="text-3xl">{activity.completed ? '✅' : activity.icon}</div>
                         <div className="flex-1">
                           <div className="flex items-center space-x-2 mb-1">
                             <h3 className="font-fredoka text-forest">{activity.name}</h3>
@@ -345,9 +357,7 @@ export default function Zone() {
                           </div>
                           <p className="text-sm text-forest/80">{activity.description}</p>
                         </div>
-                        <div className="text-2xl">
-                          {getActivityIcon(activity.type)}
-                        </div>
+                        <div className="text-2xl">{getActivityIcon(activity.type)}</div>
                       </div>
                     </CardContent>
                   </Card>
@@ -366,35 +376,42 @@ export default function Zone() {
             <CardContent>
               <div className="space-y-4">
                 {zoneData.discoveries.map((discovery) => (
-                  <Card 
+                  <Card
                     key={discovery.id}
                     className={`${
-                      discovery.discovered 
-                        ? 'bg-magic/10 border-magic/30' 
+                      discovery.discovered
+                        ? 'bg-magic/10 border-magic/30'
                         : 'bg-gray-50 border-gray-200'
                     }`}
                     data-testid={`card-discovery-${discovery.id}`}
                   >
                     <CardContent className="pt-4">
                       <div className="flex items-center space-x-4">
-                        <div className={`text-3xl ${discovery.discovered ? 'animate-pulse-slow' : 'opacity-30'}`}>
-                          {discovery.discovered ? discovery.icon : "❓"}
+                        <div
+                          className={`text-3xl ${discovery.discovered ? 'animate-pulse-slow' : 'opacity-30'}`}
+                        >
+                          {discovery.discovered ? discovery.icon : '❓'}
                         </div>
                         <div className="flex-1">
-                          <h3 className={`font-fredoka mb-1 ${
-                            discovery.discovered ? 'text-magic' : 'text-gray-500'
-                          }`}>
-                            {discovery.discovered ? discovery.name : "???"}
+                          <h3
+                            className={`font-fredoka mb-1 ${
+                              discovery.discovered ? 'text-magic' : 'text-gray-500'
+                            }`}
+                          >
+                            {discovery.discovered ? discovery.name : '???'}
                           </h3>
-                          <p className={`text-sm ${
-                            discovery.discovered ? 'text-forest/80' : 'text-gray-400'
-                          }`}>
-                            {discovery.discovered ? discovery.description : discovery.hint || "Complete more activities to reveal this discovery"}
+                          <p
+                            className={`text-sm ${
+                              discovery.discovered ? 'text-forest/80' : 'text-gray-400'
+                            }`}
+                          >
+                            {discovery.discovered
+                              ? discovery.description
+                              : discovery.hint ||
+                                'Complete more activities to reveal this discovery'}
                           </p>
                         </div>
-                        <div className="text-lg">
-                          {discovery.discovered ? "✨" : "🔒"}
-                        </div>
+                        <div className="text-lg">{discovery.discovered ? '✨' : '🔒'}</div>
                       </div>
                     </CardContent>
                   </Card>

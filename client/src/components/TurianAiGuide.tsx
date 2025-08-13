@@ -1,11 +1,19 @@
-import React, { useState, useEffect } from 'react';
-import { Button } from '@/components/ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '@/components/ui/dialog';
 import { X, MessageCircle, Sparkles, Heart } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+
+import TurianDurianImg from '../assets/Turian the Durian.png';
+import TurianImg from '../assets/Turian.jpg';
+
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+} from '@/components/ui/dialog';
 
 // Import Turian's assets
-import TurianImg from '../assets/Turian.jpg';
-import TurianDurianImg from '../assets/Turian the Durian.png';
 
 interface TurianMessage {
   id: string;
@@ -19,48 +27,48 @@ const welcomeMessages: TurianMessage[] = [
     id: '1',
     text: "สวัสดี! Hello, my magical friend! I'm Turian! 🌟",
     emoji: '👋',
-    delay: 0
+    delay: 0,
   },
   {
-    id: '2', 
-    text: "Dee mak! Welcome to our amazing Naturverse! ✨",
+    id: '2',
+    text: 'Dee mak! Welcome to our amazing Naturverse! ✨',
     emoji: '🌿',
-    delay: 2000
+    delay: 2000,
   },
   {
     id: '3',
     text: "I'm here to guide you on the most incredible adventures! Want to explore? 🗺️",
     emoji: '🧭',
-    delay: 4000
-  }
+    delay: 4000,
+  },
 ];
 
 const randomEncouragement: TurianMessage[] = [
   {
     id: 'encourage1',
     text: "Dee mak! You're doing amazing! Keep exploring! 🌟",
-    emoji: '⭐'
+    emoji: '⭐',
   },
   {
     id: 'encourage2',
     text: "Wow! I'm so proud of your curiosity! What shall we discover next? 🔍",
-    emoji: '🎉'
+    emoji: '🎉',
   },
   {
     id: 'encourage3',
     text: "Magical! You're becoming a true Nature Hero! Dee mak mak! 🌿",
-    emoji: '🏆'
+    emoji: '🏆',
   },
   {
     id: 'encourage4',
-    text: "Amazing work, friend! The forest spirits are dancing with joy! 🧚‍♀️",
-    emoji: '✨'
+    text: 'Amazing work, friend! The forest spirits are dancing with joy! 🧚‍♀️',
+    emoji: '✨',
   },
   {
     id: 'encourage5',
-    text: "Look at you go! Every step is an adventure! Dee mak! 🌈",
-    emoji: '🚀'
-  }
+    text: 'Look at you go! Every step is an adventure! Dee mak! 🌈',
+    emoji: '🚀',
+  },
 ];
 
 export function TurianAiGuide() {
@@ -84,10 +92,10 @@ export function TurianAiGuide() {
       setIsAnimating(true);
       welcomeMessages.forEach((message) => {
         setTimeout(() => {
-          setCurrentMessages(prev => [...prev, message]);
+          setCurrentMessages((prev) => [...prev, message]);
         }, message.delay || 0);
       });
-      
+
       setTimeout(() => {
         setHasShownWelcome(true);
         setIsAnimating(false);
@@ -98,7 +106,7 @@ export function TurianAiGuide() {
   // Random encouragement every 45 seconds when visible
   useEffect(() => {
     if (!isVisible) return;
-    
+
     const encouragementTimer = setInterval(() => {
       const randomMsg = randomEncouragement[Math.floor(Math.random() * randomEncouragement.length)];
       if (!isOpen) {
@@ -122,11 +130,11 @@ export function TurianAiGuide() {
 
   const getRandomGreeting = () => {
     const greetings = [
-      "Dee mak! How can I help you explore? 🌟",
-      "Hello, my magical friend! Ready for an adventure? 🗺️",
-      "Wonderful to see you again! What shall we discover today? ✨",
-      "Greetings, Nature Hero! Where shall our journey take us? 🌿",
-      "Dee mak mak! I'm so excited you're here! Let's explore! 🎉"
+      'Dee mak! How can I help you explore? 🌟',
+      'Hello, my magical friend! Ready for an adventure? 🗺️',
+      'Wonderful to see you again! What shall we discover today? ✨',
+      'Greetings, Nature Hero! Where shall our journey take us? 🌿',
+      "Dee mak mak! I'm so excited you're here! Let's explore! 🎉",
     ];
     return greetings[Math.floor(Math.random() * greetings.length)];
   };
@@ -157,21 +165,25 @@ export function TurianAiGuide() {
           data-testid="button-turian-guide"
         >
           <div className="relative w-full h-full rounded-full overflow-hidden">
-            <img 
-              src={TurianDurianImg} 
-              alt="Turian the Durian Guide" 
+            <img
+              src={TurianDurianImg}
+              alt="Turian the Durian Guide"
               className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
             />
-            
+
             {/* Magical sparkles around Turian */}
             <div className="absolute -top-1 -right-1 text-lg animate-sparkle-twinkle">✨</div>
-            <div className="absolute -bottom-1 -left-1 text-lg animate-sparkle-twinkle stagger-1">🌟</div>
-            <div className="absolute top-1 -left-2 text-sm animate-sparkle-twinkle stagger-2">⭐</div>
-            
+            <div className="absolute -bottom-1 -left-1 text-lg animate-sparkle-twinkle stagger-1">
+              🌟
+            </div>
+            <div className="absolute top-1 -left-2 text-sm animate-sparkle-twinkle stagger-2">
+              ⭐
+            </div>
+
             {/* Pulsing magic ring */}
             <div className="absolute inset-0 rounded-full border-2 border-sparkle animate-ping opacity-30"></div>
           </div>
-          
+
           {/* Chat indicator */}
           <div className="absolute -top-2 -right-2 bg-coral text-white text-xs rounded-full w-6 h-6 flex items-center justify-center animate-bounce-gentle font-bold shadow-lg">
             <MessageCircle className="w-3 h-3" />
@@ -185,22 +197,24 @@ export function TurianAiGuide() {
           <DialogHeader className="text-center pb-4">
             <div className="flex justify-center mb-4">
               <div className="relative">
-                <img 
-                  src={TurianImg} 
-                  alt="Turian the Durian" 
+                <img
+                  src={TurianImg}
+                  alt="Turian the Durian"
                   className="w-20 h-20 rounded-full border-4 border-emerald/50 shadow-xl object-cover"
                 />
                 <div className="absolute -top-2 -right-2 text-2xl animate-sparkle-twinkle">✨</div>
-                <div className="absolute -bottom-1 -left-1 text-xl animate-sparkle-twinkle stagger-1">🌟</div>
+                <div className="absolute -bottom-1 -left-1 text-xl animate-sparkle-twinkle stagger-1">
+                  🌟
+                </div>
               </div>
             </div>
-            
+
             <DialogTitle className="text-3xl font-display text-emerald font-bold flex items-center justify-center gap-2 text-shadow">
               <Sparkles className="w-6 h-6 text-magic animate-sparkle-twinkle" />
               Turian the Durian
               <Heart className="w-6 h-6 text-coral animate-pulse" />
             </DialogTitle>
-            
+
             <DialogDescription className="text-lg text-forest font-bold">
               Your Magical Nature Guide
             </DialogDescription>
@@ -215,27 +229,27 @@ export function TurianAiGuide() {
                   {getRandomGreeting()}
                 </p>
                 <div className="grid grid-cols-2 gap-3 mt-4">
-                  <button 
+                  <button
                     className="bg-gradient-to-r from-emerald to-forest text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-all shadow-lg text-sm"
-                    onClick={() => window.location.href = '/map'}
+                    onClick={() => (window.location.href = '/map')}
                   >
                     🗺️ Show me the map!
                   </button>
-                  <button 
+                  <button
                     className="bg-gradient-to-r from-magic to-sparkle text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-all shadow-lg text-sm"
-                    onClick={() => window.location.href = '/quests'}
+                    onClick={() => (window.location.href = '/quests')}
                   >
                     🏆 Start a quest!
                   </button>
-                  <button 
+                  <button
                     className="bg-gradient-to-r from-ocean to-turquoise text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-all shadow-lg text-sm"
-                    onClick={() => window.location.href = '/storybook'}
+                    onClick={() => (window.location.href = '/storybook')}
                   >
                     📚 Tell me a story!
                   </button>
-                  <button 
+                  <button
                     className="bg-gradient-to-r from-sunset to-amber text-white px-4 py-3 rounded-xl font-bold hover:scale-105 transition-all shadow-lg text-sm"
-                    onClick={() => window.location.href = '/modules'}
+                    onClick={() => (window.location.href = '/modules')}
                   >
                     🎓 Let's learn!
                   </button>
@@ -245,7 +259,7 @@ export function TurianAiGuide() {
 
             {/* Welcome message sequence */}
             {currentMessages.map((message, index) => (
-              <div 
+              <div
                 key={message.id}
                 className={`bg-white/90 backdrop-blur rounded-2xl p-4 shadow-lg animate-bounce-in`}
                 style={{ animationDelay: `${index * 0.5}s` }}
@@ -261,8 +275,14 @@ export function TurianAiGuide() {
               <div className="bg-white/70 backdrop-blur rounded-2xl p-4 shadow-lg">
                 <div className="flex items-center space-x-2 text-emerald">
                   <div className="w-2 h-2 bg-emerald rounded-full animate-bounce"></div>
-                  <div className="w-2 h-2 bg-emerald rounded-full animate-bounce" style={{animationDelay: '0.1s'}}></div>
-                  <div className="w-2 h-2 bg-emerald rounded-full animate-bounce" style={{animationDelay: '0.2s'}}></div>
+                  <div
+                    className="w-2 h-2 bg-emerald rounded-full animate-bounce"
+                    style={{ animationDelay: '0.1s' }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-emerald rounded-full animate-bounce"
+                    style={{ animationDelay: '0.2s' }}
+                  ></div>
                   <span className="text-sm font-bold ml-2">Turian is thinking...</span>
                 </div>
               </div>

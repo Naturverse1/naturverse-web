@@ -1,5 +1,6 @@
-import { Link } from "wouter";
-import { Button } from "@/components/ui/button";
+import { Link } from 'wouter';
+
+import { Button } from '@/components/ui/button';
 
 export default function NotFound() {
   return (
@@ -11,13 +12,9 @@ export default function NotFound() {
         <h2 className="text-2xl font-semibold text-gray-700 mb-6" data-testid="text-not-found">
           Page Not Found
         </h2>
-        <p className="text-gray-600 mb-8">
-          The page you're looking for doesn't exist.
-        </p>
+        <p className="text-gray-600 mb-8">The page you're looking for doesn't exist.</p>
         <Link href="/">
-          <Button data-testid="button-home">
-            Go Home
-          </Button>
+          <Button data-testid="button-home">Go Home</Button>
         </Link>
       </div>
     </div>

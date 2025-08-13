@@ -1,11 +1,12 @@
-import { useEffect, useState } from "react";
-import { User } from "@supabase/supabase-js";
-import { supabase } from "../lib/supabaseClient";
+import { User } from '@supabase/supabase-js';
+import { useEffect, useState } from 'react';
+
+import { supabase } from '../lib/supabaseClient';
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
-  const [username, setUsername] = useState("");
-  const [avatarUrl, setAvatarUrl] = useState("");
+  const [username, setUsername] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -18,14 +19,14 @@ export default function UserProfile() {
         setUser(user);
 
         const { data, error: profileError } = await supabase
-          .from("users")
-          .select("username, avatar_url")
-          .eq("id", user.id)
+          .from('users')
+          .select('username, avatar_url')
+          .eq('id', user.id)
           .single();
 
         if (data) {
-          setUsername(data.username || "");
-          setAvatarUrl(data.avatar_url || "");
+          setUsername(data.username || '');
+          setAvatarUrl(data.avatar_url || '');
         }
       }
       setLoading(false);
@@ -36,15 +37,18 @@ export default function UserProfile() {
 
   const updateProfile = async () => {
     if (!user) return;
-    const { error } = await supabase.from("users").update({
-      username,
-      avatar_url: avatarUrl,
-    }).eq("id", user?.id);
+    const { error } = await supabase
+      .from('users')
+      .update({
+        username,
+        avatar_url: avatarUrl,
+      })
+      .eq('id', user?.id);
 
     if (error) {
-      alert("Update failed: " + error.message);
+      alert('Update failed: ' + error.message);
     } else {
-      alert("Profile updated!");
+      alert('Profile updated!');
     }
   };
 

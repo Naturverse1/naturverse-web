@@ -1,31 +1,32 @@
-import { Button } from "@/components/ui/button";
+import { Button } from '@/components/ui/button';
 
 export function ExploreSection() {
   const features = [
     {
-      id: "stories",
-      icon: "📚",
-      title: "Interactive Stories",
+      id: 'stories',
+      icon: '📚',
+      title: 'Interactive Stories',
       description: "Immerse yourself in magical tales where you're the hero of every adventure!",
-      color: "nature",
-      buttonText: "Explore Stories →"
+      color: 'nature',
+      buttonText: 'Explore Stories →',
     },
     {
-      id: "games",
-      icon: "🎮",
-      title: "Nature Games",
-      description: "Learn through fun games about animals, plants, and the amazing world around us!",
-      color: "coral",
-      buttonText: "Play Games →"
+      id: 'games',
+      icon: '🎮',
+      title: 'Nature Games',
+      description:
+        'Learn through fun games about animals, plants, and the amazing world around us!',
+      color: 'coral',
+      buttonText: 'Play Games →',
     },
     {
-      id: "expeditions",
-      icon: "🔍",
-      title: "Virtual Expeditions",
-      description: "Go on virtual field trips to rainforests, oceans, and magical places!",
-      color: "magic",
-      buttonText: "Start Exploring →"
-    }
+      id: 'expeditions',
+      icon: '🔍',
+      title: 'Virtual Expeditions',
+      description: 'Go on virtual field trips to rainforests, oceans, and magical places!',
+      color: 'magic',
+      buttonText: 'Start Exploring →',
+    },
   ];
 
   const getColorClasses = (color: string) => {
@@ -42,15 +43,25 @@ export function ExploreSection() {
   };
 
   return (
-    <section id="explore" className="min-h-screen bg-gradient-to-br from-white to-turquoise/10 py-20">
+    <section
+      id="explore"
+      className="min-h-screen bg-gradient-to-br from-white to-turquoise/10 py-20"
+    >
       <div className="max-w-6xl mx-auto px-6">
         {/* Section header */}
         <div className="text-center mb-16" data-testid="section-header">
-          <h2 className="font-fredoka text-4xl md:text-6xl text-forest mb-6" data-testid="text-section-title">
+          <h2
+            className="font-fredoka text-4xl md:text-6xl text-forest mb-6"
+            data-testid="text-section-title"
+          >
             🌿 Discover Amazing Adventures
           </h2>
-          <p className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed" data-testid="text-section-description">
-            Join millions of young explorers on magical learning journeys through interactive stories, games, and discoveries!
+          <p
+            className="text-xl text-gray-600 max-w-3xl mx-auto leading-relaxed"
+            data-testid="text-section-description"
+          >
+            Join millions of young explorers on magical learning journeys through interactive
+            stories, games, and discoveries!
           </p>
         </div>
 
@@ -64,15 +75,23 @@ export function ExploreSection() {
                 className={`group bg-white rounded-3xl p-8 shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-2 border-t-4 ${colorClasses.border}`}
                 data-testid={`card-${feature.id}`}
               >
-                <div className="text-6xl mb-4" data-testid={`icon-${feature.id}`}>{feature.icon}</div>
-                <h3 className="font-fredoka text-2xl text-forest mb-4" data-testid={`title-${feature.id}`}>
+                <div className="text-6xl mb-4" data-testid={`icon-${feature.id}`}>
+                  {feature.icon}
+                </div>
+                <h3
+                  className="font-fredoka text-2xl text-forest mb-4"
+                  data-testid={`title-${feature.id}`}
+                >
                   {feature.title}
                 </h3>
-                <p className="text-gray-600 leading-relaxed" data-testid={`description-${feature.id}`}>
+                <p
+                  className="text-gray-600 leading-relaxed"
+                  data-testid={`description-${feature.id}`}
+                >
                   {feature.description}
                 </p>
                 <div className="mt-6">
-                  <button 
+                  <button
                     className={`${colorClasses.text} font-semibold ${colorClasses.hover} transition-colors`}
                     data-testid={`button-${feature.id}`}
                   >
@@ -85,7 +104,10 @@ export function ExploreSection() {
         </div>
 
         {/* Call to action section */}
-        <div className="text-center bg-gradient-to-r from-nature to-forest rounded-3xl p-12 text-white" data-testid="cta-section">
+        <div
+          className="text-center bg-gradient-to-r from-nature to-forest rounded-3xl p-12 text-white"
+          data-testid="cta-section"
+        >
           <h3 className="font-fredoka text-3xl md:text-4xl mb-6" data-testid="text-cta-title">
             Ready to Begin Your Adventure?
           </h3>

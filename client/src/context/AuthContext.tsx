@@ -1,5 +1,6 @@
-import React, { createContext, useContext, useEffect, useState } from 'react';
 import { User, Session, AuthError } from '@supabase/supabase-js';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+
 import { supabase } from '../lib/supabaseClient';
 
 interface Profile {
@@ -13,8 +14,14 @@ interface AuthContextType {
   session: Session | null;
   profile: Profile | null;
   loading: boolean;
-  signUp: (email: string, password: string) => Promise<{ user: User | null; error: AuthError | null }>;
-  signIn: (email: string, password: string) => Promise<{ user: User | null; error: AuthError | null }>;
+  signUp: (
+    email: string,
+    password: string,
+  ) => Promise<{ user: User | null; error: AuthError | null }>;
+  signIn: (
+    email: string,
+    password: string,
+  ) => Promise<{ user: User | null; error: AuthError | null }>;
   signInWithGoogle: () => Promise<void>;
   signOut: () => Promise<{ error: AuthError | null }>;
   refreshProfile: () => Promise<void>;
@@ -53,18 +60,18 @@ export function AuthProvider({ children }: AuthProviderProps) {
     });
 
     // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (_event, session) => {
-        setSession(session);
-        setUser(session?.user ?? null);
-        if (session?.user) {
-          loadProfile(session.user.id);
-        } else {
-          setProfile(null);
-          setLoading(false);
-        }
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      setSession(session);
+      setUser(session?.user ?? null);
+      if (session?.user) {
+        loadProfile(session.user.id);
+      } else {
+        setProfile(null);
+        setLoading(false);
       }
-    );
+    });
 
     return () => subscription.unsubscribe();
   }, []);
@@ -89,10 +96,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
     const { data, error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: {
-        redirectTo: `${window.location.origin}/`
-      }
+        redirectTo: `${window.location.origin}/`,
+      },
     });
-    
+
     if (error) {
       throw new Error(error.message);
     }
@@ -106,8 +113,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const loadProfile = async (userId: string) => {
     try {
       // Get user info from auth
-      const { data: { user }, error: userError } = await supabase.auth.getUser();
-      
+      const {
+        data: { user },
+        error: userError,
+      } = await supabase.auth.getUser();
+
       if (userError || !user) {
         console.error('Error getting user:', userError);
         setProfile({ id: userId, display_name: null, avatar_url: null });
@@ -119,7 +129,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const profile: Profile = {
         id: user.id,
         display_name: user.user_metadata?.full_name || user.email?.split('@')[0] || null,
-        avatar_url: user.user_metadata?.avatar_url || null
+        avatar_url: user.user_metadata?.avatar_url || null,
       };
 
       setProfile(profile);
@@ -150,9 +160,5 @@ export function AuthProvider({ children }: AuthProviderProps) {
     refreshProfile,
   };
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }

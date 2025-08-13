@@ -4,18 +4,20 @@ Welcome to The Naturverse educational platform! This guide will help you get sta
 
 ## Prerequisites
 
-- Node.js 18+ or 20+ 
+- Node.js 18+ or 20+
 - npm (comes with Node.js)
 
 ## Setup
 
 1. Clone the repository:
+
    ```bash
    git clone https://github.com/<YOUR_USERNAME>/naturverse-explore.git
    cd naturverse-explore
    ```
 
 2. Install dependencies:
+
    ```bash
    npm install
    ```
@@ -29,6 +31,7 @@ Welcome to The Naturverse educational platform! This guide will help you get sta
 ## Development
 
 Start the development server:
+
 ```bash
 npm run dev
 ```
@@ -38,6 +41,7 @@ The application will be available at `http://localhost:5000`
 ## Building
 
 Build for production:
+
 ```bash
 npm run build
 ```
@@ -45,6 +49,7 @@ npm run build
 ## Preview
 
 Preview the production build locally:
+
 ```bash
 npm run preview
 ```

@@ -1,21 +1,21 @@
-import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Progress } from "@/components/ui/progress";
+import BluButterfly from '@assets/Blu Butterfly_1754677394021.png';
+import CoconutCruze from '@assets/Coconut Cruze_1754677394021.png';
+import DrP from '@assets/Dr P_1754677394022.png';
+import FrankieFrogs from '@assets/Frankie Frogs_1754677394022.png';
+import JaySing from '@assets/Jay-Sing_1754677394023.png';
+import MangoMike from '@assets/Mango Mike_1754677394025.png';
+import ShroomForest from '@assets/Shroom forest_1754673794866.jpg';
+import StorybookScene from '@assets/Storybook img_1754673794866.jpg';
+import TurianCharacter from '@assets/Turian_1754677394027.jpg';
+import TurianLogo from '@assets/turian_media_logo_transparent.png';
+import { useState } from 'react';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Progress } from '@/components/ui/progress';
 
 // Official Naturverse™ Character Assets
-import TurianLogo from "@assets/turian_media_logo_transparent.png";
-import TurianCharacter from "@assets/Turian_1754677394027.jpg";
-import CoconutCruze from "@assets/Coconut Cruze_1754677394021.png";
-import BluButterfly from "@assets/Blu Butterfly_1754677394021.png";
-import FrankieFrogs from "@assets/Frankie Frogs_1754677394022.png";
-import JaySing from "@assets/Jay-Sing_1754677394023.png";
-import MangoMike from "@assets/Mango Mike_1754677394025.png";
-import DrP from "@assets/Dr P_1754677394022.png";
 
 // Background Assets
-import StorybookScene from "@assets/Storybook img_1754673794866.jpg";
-import ShroomForest from "@assets/Shroom forest_1754673794866.jpg";
 
 export default function Quiz() {
   const [currentQuiz, setCurrentQuiz] = useState<string | null>(null);
@@ -38,11 +38,12 @@ export default function Quiz() {
       questions: [
         {
           question: "Which tropical fruit is known as the 'King of Fruits'?",
-          options: ["Mango", "Durian", "Pineapple", "Papaya"],
+          options: ['Mango', 'Durian', 'Pineapple', 'Papaya'],
           correct: 1,
-          explanation: "Durian is called the 'King of Fruits' because of its large size and strong aroma!"
-        }
-      ]
+          explanation:
+            "Durian is called the 'King of Fruits' because of its large size and strong aroma!",
+        },
+      ],
     },
     {
       id: 'ocean-creatures',
@@ -56,12 +57,13 @@ export default function Quiz() {
       color: 'from-blue-400 to-cyan-600',
       questions: [
         {
-          question: "Which ocean animal can change colors?",
-          options: ["Shark", "Octopus", "Whale", "Dolphin"],
+          question: 'Which ocean animal can change colors?',
+          options: ['Shark', 'Octopus', 'Whale', 'Dolphin'],
           correct: 1,
-          explanation: "Octopuses can change their color and texture to camouflage with their surroundings!"
-        }
-      ]
+          explanation:
+            'Octopuses can change their color and texture to camouflage with their surroundings!',
+        },
+      ],
     },
     {
       id: 'forest-friends',
@@ -75,12 +77,13 @@ export default function Quiz() {
       color: 'from-green-400 to-emerald-600',
       questions: [
         {
-          question: "What do frogs use to breathe underwater?",
-          options: ["Lungs", "Gills", "Their skin", "Special tubes"],
+          question: 'What do frogs use to breathe underwater?',
+          options: ['Lungs', 'Gills', 'Their skin', 'Special tubes'],
           correct: 2,
-          explanation: "Frogs can breathe through their skin when underwater! This is called cutaneous respiration."
-        }
-      ]
+          explanation:
+            'Frogs can breathe through their skin when underwater! This is called cutaneous respiration.',
+        },
+      ],
     },
     {
       id: 'butterfly-magic',
@@ -94,21 +97,21 @@ export default function Quiz() {
       color: 'from-purple-400 to-pink-600',
       questions: [
         {
-          question: "What is the correct order of butterfly metamorphosis?",
+          question: 'What is the correct order of butterfly metamorphosis?',
           options: [
-            "Egg → Butterfly → Caterpillar → Chrysalis",
-            "Egg → Caterpillar → Chrysalis → Butterfly",
-            "Caterpillar → Egg → Butterfly → Chrysalis",
-            "Chrysalis → Egg → Caterpillar → Butterfly"
+            'Egg → Butterfly → Caterpillar → Chrysalis',
+            'Egg → Caterpillar → Chrysalis → Butterfly',
+            'Caterpillar → Egg → Butterfly → Chrysalis',
+            'Chrysalis → Egg → Caterpillar → Butterfly',
           ],
           correct: 1,
-          explanation: "The beautiful process goes: Egg → Caterpillar → Chrysalis → Butterfly!"
-        }
-      ]
+          explanation: 'The beautiful process goes: Egg → Caterpillar → Chrysalis → Butterfly!',
+        },
+      ],
     },
     {
       id: 'nature-sounds',
-      title: 'Nature\'s Musical Symphony',
+      title: "Nature's Musical Symphony",
       character: JaySing,
       characterName: 'Jay-Sing',
       description: 'Discover the beautiful sounds of nature with Jay-Sing!',
@@ -118,17 +121,18 @@ export default function Quiz() {
       color: 'from-yellow-400 to-orange-600',
       questions: [
         {
-          question: "Why do birds sing in the morning?",
+          question: 'Why do birds sing in the morning?',
           options: [
             "They're just happy",
-            "To find food",
-            "To communicate with other birds",
-            "Because they can't sleep"
+            'To find food',
+            'To communicate with other birds',
+            "Because they can't sleep",
           ],
           correct: 2,
-          explanation: "Birds sing to communicate with their family and friends, and to mark their territory!"
-        }
-      ]
+          explanation:
+            'Birds sing to communicate with their family and friends, and to mark their territory!',
+        },
+      ],
     },
     {
       id: 'plant-power',
@@ -142,21 +146,26 @@ export default function Quiz() {
       color: 'from-green-400 to-teal-600',
       questions: [
         {
-          question: "What process do plants use to make their own food?",
-          options: ["Respiration", "Photosynthesis", "Digestion", "Fermentation"],
+          question: 'What process do plants use to make their own food?',
+          options: ['Respiration', 'Photosynthesis', 'Digestion', 'Fermentation'],
           correct: 1,
-          explanation: "Photosynthesis is how plants use sunlight, water, and carbon dioxide to make their food!"
-        }
-      ]
-    }
+          explanation:
+            'Photosynthesis is how plants use sunlight, water, and carbon dioxide to make their food!',
+        },
+      ],
+    },
   ];
 
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case 'Beginner': return 'bg-green-100 text-green-800 border-green-300';
-      case 'Intermediate': return 'bg-yellow-100 text-yellow-800 border-yellow-300';
-      case 'Advanced': return 'bg-red-100 text-red-800 border-red-300';
-      default: return 'bg-gray-100 text-gray-800 border-gray-300';
+      case 'Beginner':
+        return 'bg-green-100 text-green-800 border-green-300';
+      case 'Intermediate':
+        return 'bg-yellow-100 text-yellow-800 border-yellow-300';
+      case 'Advanced':
+        return 'bg-red-100 text-red-800 border-red-300';
+      default:
+        return 'bg-gray-100 text-gray-800 border-gray-300';
     }
   };
 
@@ -173,7 +182,7 @@ export default function Quiz() {
   };
 
   const nextQuestion = () => {
-    const quiz = quizzes.find(q => q.id === currentQuiz);
+    const quiz = quizzes.find((q) => q.id === currentQuiz);
     if (!quiz) return;
 
     if (selectedAnswer === quiz.questions[currentQuestion].correct) {
@@ -196,7 +205,7 @@ export default function Quiz() {
     setShowResults(false);
   };
 
-  const currentQuizData = quizzes.find(q => q.id === currentQuiz);
+  const currentQuizData = quizzes.find((q) => q.id === currentQuiz);
   const currentQuestionData = currentQuizData?.questions[currentQuestion];
 
   if (currentQuiz && currentQuizData) {
@@ -207,13 +216,13 @@ export default function Quiz() {
             <Card className="quest-card w-full max-w-2xl animate-character-entrance">
               <CardHeader className="text-center pb-6">
                 <div className="flex justify-center mb-4">
-                  <img 
+                  <img
                     src={currentQuizData.character}
                     alt={currentQuizData.characterName}
                     className="w-24 h-24 rounded-full border-4 border-green-400 shadow-xl animate-gentle-pulse"
                   />
                 </div>
-                
+
                 <CardTitle className="text-3xl font-magical text-green-700">
                   🎉 Quiz Complete! 🎉
                 </CardTitle>
@@ -222,24 +231,28 @@ export default function Quiz() {
               <CardContent className="text-center space-y-6">
                 <div className="bg-gradient-to-br from-yellow-50 to-green-50 p-8 rounded-2xl border-4 border-yellow-200/60">
                   <div className="text-6xl mb-4">
-                    {score === currentQuizData.totalQuestions ? '🌟' : score >= currentQuizData.totalQuestions * 0.7 ? '🎯' : '📚'}
+                    {score === currentQuizData.totalQuestions
+                      ? '🌟'
+                      : score >= currentQuizData.totalQuestions * 0.7
+                        ? '🎯'
+                        : '📚'}
                   </div>
-                  
+
                   <h3 className="text-2xl font-magical text-green-700 mb-4">
                     Your Score: {score} / {currentQuizData.totalQuestions}
                   </h3>
-                  
+
                   <p className="text-lg font-story text-green-600">
-                    {score === currentQuizData.totalQuestions 
-                      ? "Perfect! You're a nature expert!" 
-                      : score >= currentQuizData.totalQuestions * 0.7 
-                        ? "Great job! You know a lot about nature!"
+                    {score === currentQuizData.totalQuestions
+                      ? "Perfect! You're a nature expert!"
+                      : score >= currentQuizData.totalQuestions * 0.7
+                        ? 'Great job! You know a lot about nature!'
                         : "Good try! Keep learning and you'll become a nature expert!"}
                   </p>
                 </div>
 
                 <div className="flex justify-center space-x-4">
-                  <Button 
+                  <Button
                     onClick={resetQuiz}
                     className="btn-nature text-lg font-bold"
                     data-testid="back-to-quizzes"
@@ -247,8 +260,8 @@ export default function Quiz() {
                     <span className="mr-2">🏠</span>
                     Back to Quizzes
                   </Button>
-                  
-                  <Button 
+
+                  <Button
                     onClick={() => startQuiz(currentQuiz)}
                     className="btn-tropical text-lg font-bold"
                     data-testid="retake-quiz"
@@ -271,20 +284,18 @@ export default function Quiz() {
             {/* Quiz Header */}
             <div className="text-center mb-8">
               <div className="flex justify-center mb-4">
-                <img 
+                <img
                   src={currentQuizData.character}
                   alt={currentQuizData.characterName}
                   className="w-20 h-20 rounded-full border-4 border-blue-400 shadow-xl animate-gentle-pulse"
                 />
               </div>
-              
-              <h1 className="text-3xl font-magical text-blue-700 mb-2">
-                {currentQuizData.title}
-              </h1>
-              
+
+              <h1 className="text-3xl font-magical text-blue-700 mb-2">{currentQuizData.title}</h1>
+
               <div className="flex justify-center items-center space-x-4 mb-4">
-                <Progress 
-                  value={((currentQuestion + 1) / currentQuizData.totalQuestions) * 100} 
+                <Progress
+                  value={((currentQuestion + 1) / currentQuizData.totalQuestions) * 100}
                   className="w-64"
                 />
                 <span className="text-blue-600 font-bold">
@@ -303,7 +314,7 @@ export default function Quiz() {
 
               <CardContent className="space-y-4">
                 {currentQuestionData?.options.map((option, index) => (
-                  <div 
+                  <div
                     key={index}
                     className={`quiz-option ${selectedAnswer === index ? 'selected' : ''}`}
                     onClick={() => selectAnswer(index)}
@@ -322,7 +333,7 @@ export default function Quiz() {
 
             {/* Next Button */}
             <div className="text-center">
-              <Button 
+              <Button
                 onClick={nextQuestion}
                 disabled={selectedAnswer === null}
                 className="btn-magical text-xl py-4 px-8"
@@ -331,7 +342,9 @@ export default function Quiz() {
                 <span className="mr-2">
                   {currentQuestion < currentQuizData.totalQuestions - 1 ? '➡️' : '🏁'}
                 </span>
-                {currentQuestion < currentQuizData.totalQuestions - 1 ? 'Next Question' : 'Finish Quiz'}
+                {currentQuestion < currentQuizData.totalQuestions - 1
+                  ? 'Next Question'
+                  : 'Finish Quiz'}
                 <span className="ml-2">✨</span>
               </Button>
             </div>
@@ -344,8 +357,8 @@ export default function Quiz() {
   return (
     <div className="min-h-screen relative overflow-hidden">
       {/* Magical Background */}
-      <div 
-        className="absolute inset-0 bg-cover bg-center bg-no-repeat" 
+      <div
+        className="absolute inset-0 bg-cover bg-center bg-no-repeat"
         style={{
           backgroundImage: `
             linear-gradient(
@@ -362,19 +375,38 @@ export default function Quiz() {
       />
 
       {/* Floating Sparkles */}
-      <div className="floating-sparkles" style={{ top: '15%', left: '20%' }}>🧠</div>
-      <div className="floating-sparkles" style={{ top: '25%', right: '25%', animationDelay: '1s' }}>🎯</div>
-      <div className="floating-sparkles" style={{ bottom: '35%', left: '15%', animationDelay: '2s' }}>⭐</div>
-      <div className="floating-sparkles" style={{ top: '65%', right: '20%', animationDelay: '1.5s' }}>✨</div>
-      <div className="floating-sparkles" style={{ bottom: '25%', right: '15%', animationDelay: '3s' }}>🌟</div>
+      <div className="floating-sparkles" style={{ top: '15%', left: '20%' }}>
+        🧠
+      </div>
+      <div className="floating-sparkles" style={{ top: '25%', right: '25%', animationDelay: '1s' }}>
+        🎯
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ bottom: '35%', left: '15%', animationDelay: '2s' }}
+      >
+        ⭐
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ top: '65%', right: '20%', animationDelay: '1.5s' }}
+      >
+        ✨
+      </div>
+      <div
+        className="floating-sparkles"
+        style={{ bottom: '25%', right: '15%', animationDelay: '3s' }}
+      >
+        🌟
+      </div>
 
       <div className="relative z-10 min-h-screen py-8 px-6">
         {/* Header Section */}
         <div className="text-center mb-12 animate-character-entrance">
           <div className="flex items-center justify-center mb-6">
-            <img 
-              src={TurianLogo} 
-              alt="The Naturverse™" 
+            <img
+              src={TurianLogo}
+              alt="The Naturverse™"
               className="w-16 h-16 mr-4 animate-gentle-pulse"
             />
             <div>
@@ -392,7 +424,7 @@ export default function Quiz() {
         <div className="max-w-6xl mx-auto">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {quizzes.map((quiz, index) => (
-              <Card 
+              <Card
                 key={quiz.id}
                 className="zone-card animate-character-entrance cursor-pointer group"
                 style={{ animationDelay: `${index * 0.1}s` }}
@@ -401,7 +433,7 @@ export default function Quiz() {
                 <CardHeader className="pb-4">
                   <div className="flex justify-center mb-4">
                     <div className="relative">
-                      <img 
+                      <img
                         src={quiz.character}
                         alt={quiz.characterName}
                         className="w-20 h-20 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-300"
@@ -411,13 +443,15 @@ export default function Quiz() {
                       </div>
                     </div>
                   </div>
-                  
+
                   <CardTitle className="text-2xl font-magical text-center text-blue-700 group-hover:text-purple-700 transition-colors duration-300">
                     {quiz.title}
                   </CardTitle>
-                  
+
                   <div className="flex justify-center space-x-3 mt-3">
-                    <div className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getDifficultyColor(quiz.difficulty)}`}>
+                    <div
+                      className={`px-3 py-1 rounded-full text-xs font-bold border-2 ${getDifficultyColor(quiz.difficulty)}`}
+                    >
                       {quiz.difficulty}
                     </div>
                     <div className="px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800 border-2 border-blue-300">
@@ -432,7 +466,7 @@ export default function Quiz() {
                   </p>
 
                   <div className="text-center">
-                    <Button 
+                    <Button
                       onClick={() => startQuiz(quiz.id)}
                       className="btn-magical w-full font-bold"
                       data-testid={`start-quiz-${quiz.id}`}
@@ -455,14 +489,20 @@ export default function Quiz() {
             <div className="text-2xl font-bold text-blue-700 font-magical">25+</div>
             <div className="text-blue-600 font-playful">Brain Teasers</div>
           </div>
-          
-          <div className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-green-300/60 shadow-xl animate-character-entrance" style={{ animationDelay: '0.2s' }}>
+
+          <div
+            className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-green-300/60 shadow-xl animate-character-entrance"
+            style={{ animationDelay: '0.2s' }}
+          >
             <div className="text-4xl mb-3">🏆</div>
             <div className="text-2xl font-bold text-green-700 font-magical">6</div>
             <div className="text-green-600 font-playful">Different Topics</div>
           </div>
-          
-          <div className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-purple-300/60 shadow-xl animate-character-entrance" style={{ animationDelay: '0.4s' }}>
+
+          <div
+            className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-purple-300/60 shadow-xl animate-character-entrance"
+            style={{ animationDelay: '0.4s' }}
+          >
             <div className="text-4xl mb-3">⭐</div>
             <div className="text-2xl font-bold text-purple-700 font-magical">Fun</div>
             <div className="text-purple-600 font-playful">Learning Experience</div>
@@ -474,20 +514,20 @@ export default function Quiz() {
       <div className="fixed bottom-6 right-6 z-50">
         <div className="relative animate-float-bounce">
           <div className="w-24 h-24 p-2 bg-white/95 rounded-full border-4 border-blue-400 shadow-2xl">
-            <img 
-              src={TurianCharacter} 
-              alt="Turian Guide" 
+            <img
+              src={TurianCharacter}
+              alt="Turian Guide"
               className="w-full h-full object-cover rounded-full"
             />
           </div>
-          
+
           <div className="absolute -top-16 -left-48 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-blue-400 max-w-xs">
             <div className="text-center">
               <div className="text-sm font-bold text-blue-700 font-playful">
                 Pick a quiz to test your nature knowledge! 🧠🌟
               </div>
             </div>
-            
+
             <div className="absolute bottom-0 right-8 transform translate-y-full">
               <div className="w-0 h-0 border-l-[12px] border-r-[12px] border-t-[12px] border-l-transparent border-r-transparent border-t-blue-400"></div>
               <div className="w-0 h-0 border-l-[8px] border-r-[8px] border-t-[8px] border-l-transparent border-r-transparent border-t-white absolute top-0 left-1/2 transform -translate-x-1/2 -translate-y-[1px]"></div>

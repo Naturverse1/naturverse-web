@@ -1,23 +1,25 @@
-import { useState, useEffect } from "react";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { useLocation } from "wouter";
-import { supabase } from "../lib/supabaseClient";
+import { useState, useEffect } from 'react';
+import { useLocation } from 'wouter';
+
+import { supabase } from '../lib/supabaseClient';
+
+import { Button } from '@/components/ui/button';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 
 export default function ResetPassword() {
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState("");
+  const [error, setError] = useState('');
   const [, setLocation] = useLocation();
 
   useEffect(() => {
     // Check if we have a valid session from the magic link
     supabase.auth.getSession().then(({ data: { session } }) => {
       if (!session) {
-        setError("Invalid or expired reset link. Please request a new one.");
+        setError('Invalid or expired reset link. Please request a new one.');
       }
     });
   }, []);
@@ -25,23 +27,23 @@ export default function ResetPassword() {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    setError("");
+    setError('');
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match");
+      setError('Passwords do not match');
       setLoading(false);
       return;
     }
 
     if (password.length < 6) {
-      setError("Password must be at least 6 characters");
+      setError('Password must be at least 6 characters');
       setLoading(false);
       return;
     }
 
     try {
       const { error } = await supabase.auth.updateUser({
-        password: password
+        password: password,
       });
 
       if (error) {
@@ -63,9 +65,7 @@ export default function ResetPassword() {
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl font-bold text-center">Reset Password</CardTitle>
-          <CardDescription className="text-center">
-            Enter your new password
-          </CardDescription>
+          <CardDescription className="text-center">Enter your new password</CardDescription>
         </CardHeader>
         <CardContent>
           {error && (
@@ -100,13 +100,13 @@ export default function ResetPassword() {
                 data-testid="input-confirm-password"
               />
             </div>
-            <Button 
-              type="submit" 
-              className="w-full" 
+            <Button
+              type="submit"
+              className="w-full"
               disabled={loading}
               data-testid="button-reset-password"
             >
-              {loading ? "Updating..." : "Update Password"}
+              {loading ? 'Updating...' : 'Update Password'}
             </Button>
           </form>
         </CardContent>

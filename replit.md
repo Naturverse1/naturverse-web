@@ -4,13 +4,14 @@ The Naturverse is an educational web application designed for children to explor
 
 ## Recent Changes (August 2025)
 
-**Production Deployment**: Migrated to Cloudflare Pages for optimal performance and to resolve Vercel cache issues. Configured as static SPA with _redirects file for proper routing. No server functions or API dependencies. Build time: 9.39 seconds with optimized asset delivery.
+**Production Deployment**: Migrated to Cloudflare Pages for optimal performance and to resolve Vercel cache issues. Configured as static SPA with \_redirects file for proper routing. No server functions or API dependencies. Build time: 9.39 seconds with optimized asset delivery.
 
 **Deployment Platform**: Cloudflare Pages (migrated from Vercel to resolve persistent cache issues)
 
-**Asset Bundle**: 
+**Asset Bundle**:
+
 - JavaScript: 545.43 kB (157.93 kB gzipped)
-- CSS: 139.00 kB (19.25 kB gzipped)  
+- CSS: 139.00 kB (19.25 kB gzipped)
 - HTML: 1.57 kB (0.78 kB gzipped)
 - Character/media assets: 5.8+ MB total (17 authentic character images + 4 background scenes)
 
@@ -55,6 +56,7 @@ Preferred communication style: Simple, everyday language.
 **Vite Build System**: Vite is used as the build tool and development server, providing fast hot module replacement and optimized production builds. The configuration includes Replit-specific plugins for development environment integration.
 
 **Component Organization**: The UI follows a modular component structure with shadcn/ui components providing a consistent design system. Components are organized into:
+
 - Page components (`client/src/pages/`)
 - Reusable UI components (`client/src/components/ui/`)
 - Feature-specific components (`client/src/components/`)
@@ -91,12 +93,14 @@ Preferred communication style: Simple, everyday language.
 
 **State Management**: TanStack React Query for server state management, providing caching, synchronization, and background updates.
 
-**Development Tools**: 
+**Development Tools**:
+
 - Replit integration for development environment
 - Runtime error overlay for better debugging experience
 - Hot module replacement for fast development cycles
 
 **Build and Development**:
+
 - esbuild for production server bundling
 - PostCSS with autoprefixer for CSS processing
 - TypeScript for type checking across the entire stack
