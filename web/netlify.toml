@@ -5,7 +5,7 @@ publish = "web/dist"
 NODE_VERSION = "20"
 [functions]
 directory = "web/functions"
-[redirects]
+[[redirects]]
 from = "/*"
 to = "/index.html"
 status = 200
