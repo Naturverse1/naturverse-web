@@ -1,5 +1,5 @@
-export async function onRequest() {
-  return new Response(JSON.stringify({ ok: true }), {
-    headers: { "content-type": "application/json" },
-  });
-}
+exports.handler = async () => ({
+  statusCode: 200,
+  headers: { "content-type": "application/json" },
+  body: JSON.stringify({ ok: true })
+});
