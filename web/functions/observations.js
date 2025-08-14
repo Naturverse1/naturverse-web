@@ -1,11 +1,8 @@
+
 import { createClient } from '@supabase/supabase-js';
 
-const supabase = createClient(
-  process.env.SUPABASE_URL,
-  process.env.SUPABASE_ANON_KEY
-);
-
-export async function onRequestGet(ctx) {
+export async function onRequestGet({ request, env, params, next, data }) {
+  const supabase = createClient(env.SUPABASE_URL, env.SUPABASE_ANON_KEY);
   return new Response(JSON.stringify({ items: [] }), {
     headers: { "content-type": "application/json" },
   });
