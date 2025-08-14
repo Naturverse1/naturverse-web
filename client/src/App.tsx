@@ -1,6 +1,6 @@
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import React from 'react';
-import { Route, Router } from 'wouter';
+import { Route, Router, useLocation } from 'wouter';
 
 import NavBar from './components/NavBar';
 import { TurianAiGuide } from './components/TurianAiGuide';
@@ -70,6 +70,7 @@ const queryClient = new QueryClient();
 // Protected Route Component
 const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { user, loading } = useAuth();
+  const [, setLocation] = useLocation();
 
   if (loading) {
     return (
@@ -88,7 +89,10 @@ const ProtectedRoute: React.FC<{ children: React.ReactNode }> = ({ children }) =
   }
 
   if (!user) {
-    window.location.href = '/login';
+    // Use Wouter's setLocation instead of window.location.href to avoid redirects
+    React.useEffect(() => {
+      setLocation('/login');
+    }, [setLocation]);
     return null;
   }
 
