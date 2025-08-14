@@ -1,1 +1,1 @@
-{ "version": 1, "include": [ "/auth*", "/user*", "/observations*", "/hello-world", "/health" ], "exclude": [ "/" ] }
+{ "version": 1, "include": ["/auth*", "/logout*", "/user*", "/observations*", "/hello-world", "/health"], "exclude": ["/*"] }
