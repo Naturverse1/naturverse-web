@@ -1,0 +1,1 @@
+{ "version": 1, "include": [ "/hello-world*", "/auth*", "/logout*", "/user*", "/observations*" ] }
