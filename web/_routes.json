@@ -1,0 +1,1 @@
+{"include":["/auth*","/user*","/observations*","/hello-world","/health"],"exclude":["/*"]}
