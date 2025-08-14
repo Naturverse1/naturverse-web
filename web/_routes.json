@@ -1,1 +1,1 @@
-{ "version": 1, "include": [ "/auth*", "/logout*", "/user*", "/observations*", "/hello-world*" ] }
+{ "version": 1, "include": ["/hello-world", "/health", "/auth/*", "/logout", "/user", "/observations"], "exclude": ["/", "/index.html", "/assets/*", "/favicon.ico", "/robots.txt", "/manifest*", "/icons/*"] }
