@@ -4,3 +4,6 @@ node_modules/
 # Local env
 .dev.vars
 web/.env.local
+
+# Ignore build output
+web/dist/
