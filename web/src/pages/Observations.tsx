@@ -16,24 +16,22 @@ export default function Observations() {
   useEffect(() => {
     let mounted = true;
     const fetchUser = async () => {
-      // For demo, get user_id from localStorage (simulate session)
-      const user_id = localStorage.getItem('user_id');
-      if (!user_id) {
+      try {
+        const res = await fetch('/user');
+        if (!res.ok) {
+          setUser(null);
+          return;
+        }
+        const json = await res.json();
+        if (mounted && json.data) setUser({ id: json.data.id, email: json.data.email });
+        else setUser(null);
+      } catch {
         setUser(null);
-        return;
       }
-      const res = await fetch(`/functions/user?user_id=${user_id}`);
-      const json = await res.json();
-      if (mounted && json.data) setUser({ id: json.data.id, email: json.data.email });
-      else setUser(null);
     };
     fetchUser();
-    // No realtime auth state, so listen to storage events for demo
-    const onStorage = () => fetchUser();
-    window.addEventListener('storage', onStorage);
     return () => {
       mounted = false;
-      window.removeEventListener('storage', onStorage);
     };
   }, []);
 
@@ -43,7 +41,7 @@ export default function Observations() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`/functions/observations?user_id=${user.id}`);
+      const res = await fetch(`/observations`);
       const json = await res.json();
       if (json.error) setError(json.error);
       else setObservations(json.data || []);
@@ -77,10 +75,10 @@ export default function Observations() {
     setTitle('');
     setDescription('');
     try {
-      const res = await fetch('/functions/observations', {
+      const res = await fetch('/observations', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ title, description, user_id: user?.id }),
+        body: JSON.stringify({ title, description }),
       });
       const json = await res.json();
       if (json.error) setError(json.error);
@@ -97,10 +95,10 @@ export default function Observations() {
     setOptimisticObs((prev) => prev.filter((o) => o.id !== id));
     setObservations((prev) => prev.filter((o) => o.id !== id));
     try {
-      const res = await fetch('/functions/observations', {
+      const res = await fetch('/observations', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, user_id: user?.id }),
+        body: JSON.stringify({ id }),
       });
       const json = await res.json();
       if (json.error) setError(json.error);

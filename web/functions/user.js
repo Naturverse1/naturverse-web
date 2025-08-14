@@ -8,16 +8,20 @@ const supabase = createClient(
 export async function onRequest(context) {
   const { request } = context;
   const method = request.method;
-
-  if (method === 'GET') {
-    // Get user info by id (from query param)
-    const url = new URL(request.url);
-    const user_id = url.searchParams.get('user_id');
-    if (!user_id) return new Response(JSON.stringify({ error: 'Missing user_id' }), { status: 400 });
-    const { data, error } = await supabase.from('users').select('*').eq('id', user_id).single();
-    if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
-    return new Response(JSON.stringify({ data }), { headers: { 'Content-Type': 'application/json' } });
+  console.log(`[user] ${method} ${request.url}`);
+  try {
+    if (method === 'GET') {
+      // Get user info by id (from query param)
+      const url = new URL(request.url);
+      const user_id = url.searchParams.get('user_id');
+      if (!user_id) return new Response(JSON.stringify({ error: 'Missing user_id' }), { status: 400 });
+      const { data, error } = await supabase.from('users').select('*').eq('id', user_id).single();
+      if (error) return new Response(JSON.stringify({ error: error.message }), { status: 500 });
+      return new Response(JSON.stringify({ data }), { headers: { 'Content-Type': 'application/json' } });
+    }
+    return new Response(JSON.stringify({ error: 'Not found' }), { status: 404 });
+  } catch (err) {
+    console.error('[user] Exception:', err);
+    return new Response(JSON.stringify({ error: 'Internal server error' }), { status: 500 });
   }
-
-  return new Response('Not found', { status: 404 });
 }

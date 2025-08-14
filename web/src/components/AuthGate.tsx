@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react';
 // ...existing code...
 
-export default function AuthGate({ children }: { children: React.ReactNode }) {
+import { useNavigate } from 'react-router-dom';
+
+export default function AuthGate() {
   const [user, setUser] = useState<any>(null);
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(true);
@@ -30,6 +32,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
     }, []);
 
   // Demo: Use /functions/auth for sign in/up, and /functions/logout for sign out
+  const navigate = useNavigate();
   const signInWithEmail = async (e: React.FormEvent) => {
     e.preventDefault();
     setError(null);
@@ -45,6 +48,7 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
         // Save user_id to localStorage for demo session
         localStorage.setItem('user_id', json.data.user.id);
         window.dispatchEvent(new Event('storage'));
+        navigate('/app');
       }
     } catch (e) {
       setError('Failed to sign in');
@@ -83,13 +87,5 @@ export default function AuthGate({ children }: { children: React.ReactNode }) {
       </div>
     );
   }
-  return (
-    <div>
-      <div style={{ display: 'flex', justifyContent: 'flex-end', alignItems: 'center', gap: 8, marginBottom: 16 }}>
-        <span>{user.email}</span>
-        <button onClick={signOut}>Sign out</button>
-      </div>
-      {children}
-    </div>
-  );
+  return null;
 }
