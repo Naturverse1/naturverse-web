@@ -1,1 +1,8 @@
-{}
+{
+	"type": "module",
+	"scripts": {
+		"dev": "cd web && vite",
+		"build": "cd web && vite build",
+		"preview": "cd web && vite preview --port 5173 --strictPort"
+	}
+}

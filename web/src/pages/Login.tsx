@@ -1,7 +1,5 @@
 import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../env";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { supabase } from '@/supabaseClient';
 export default function Login() {
   const [email, setEmail] = useState("");
   const [msg, setMsg] = useState<string | null>(null);

@@ -1,6 +1,4 @@
-import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../env";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { supabase } from '@/supabaseClient';
 export default function AppHome() {
   return (
     <main style={{padding:"2rem"}}>

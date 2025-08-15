@@ -1,8 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { createClient } from "@supabase/supabase-js";
-import { SUPABASE_URL, SUPABASE_ANON_KEY } from "../env";
-const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+import { supabase } from '@/supabaseClient';
 export default function RequireAuth({ children }: { children: JSX.Element }) {
   const nav = useNavigate();
   const [checking, setChecking] = useState(true);

@@ -1,7 +1,15 @@
+
 [build]
 base = "web"
-publish = "dist"
 command = "npm ci && npm run build"
+publish = "dist"
+
+[functions]
+directory = "functions"
+node_bundler = "esbuild"
+
+[build.environment]
+NODE_VERSION = "20"
 
 [[redirects]]
 from = "/api/*"
