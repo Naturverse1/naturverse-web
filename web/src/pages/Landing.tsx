@@ -5,7 +5,7 @@ export default function Landing() {
       <h1>Welcome to Naturverse</h1>
       <p>Explore the demo, then sign in to access the app.</p>
       <p>
-        <Link to="/login">Sign in</Link> · <Link to="/app">Enter app</Link>
+        <Link to="/login">Sign in</Link> · <Link to="/app">Enter app</Link> · <Link to="/profile">Profile</Link>
       </p>
     </main>
   );
