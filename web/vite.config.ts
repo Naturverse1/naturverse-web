@@ -6,9 +6,12 @@ export default defineConfig({
 root: path.resolve(__dirname),
 plugins: [react()],
 resolve: {
-alias: {
+  alias: {
 "@": path.resolve(__dirname, "src"),
 },
+},
+optimizeDeps: {
+  include: ["three", "@react-three/fiber"],
 },
 server: { port: 5173, strictPort: true },
 preview: { port: 5173, strictPort: true },

@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Suspense, lazy } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import ImmersiveBackground from "@/components/ImmersiveBackground";
@@ -23,7 +23,8 @@ import Lesson from "@/pages/naturversity/Lesson";
 import About from "@/pages/About";
 import StoryStudioPage from "@/pages/story-studio";
 import AutoQuiz from "@/pages/auto-quiz";
-import WorldHub from "@/pages/world-hub";
+
+const WorldHub = lazy(() => import("./pages/world-hub"));
 
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -44,7 +45,14 @@ export default function App() {
           <Route path="/auto-quiz" element={<AutoQuiz />} />
           <Route path="/worlds" element={<Worlds />} />
           <Route path="/worlds/:slug" element={<World />} />
-          <Route path="/hub" element={<WorldHub />} />
+          <Route
+            path="/hub"
+            element={
+              <Suspense fallback={<div style={{padding:'2rem'}}>Loading 3D Hub…</div>}>
+                <WorldHub />
+              </Suspense>
+            }
+          />
           <Route
             path="/zones"
             element={
