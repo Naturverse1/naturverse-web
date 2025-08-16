@@ -32,7 +32,7 @@ export const Navbar: React.FC = () => {
           Zones
         </NavLink>
         <NavLink to="/hub" className={linkClass}>
-          3D Hub (beta)
+          Hub
         </NavLink>
         <NavLink to="/about" className={linkClass}>
           About
