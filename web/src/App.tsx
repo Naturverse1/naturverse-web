@@ -4,7 +4,7 @@ import { useAuth } from '@/providers/AuthProvider';
 import Home from '@/pages/Home';
 import Login from '@/pages/Login';
 import Profile from '@/pages/Profile';
-import AppPage from '@/pages/AppPage';
+// import AppPage from '@/pages/AppPage';
 import AuthCallback from '@/pages/AuthCallback';
 
 function Protected({ children }: { children: JSX.Element }) {
@@ -21,7 +21,7 @@ export default function App() {
       <Route path="/" element={<Home />} />
       <Route path="/login" element={<Login />} />
       <Route path="/auth/callback" element={<AuthCallback />} />
-      <Route path="/app" element={<Protected><AppPage /></Protected>} />
+  <Route path="/app" element={<Protected><Home /></Protected>} />
       <Route path="/profile" element={<Protected><Profile /></Protected>} />
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
