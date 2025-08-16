@@ -209,15 +209,6 @@ export default function ProfilePage() {
         <img
           src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
           alt="avatar"
-          import React from "react";
-          import { useEffect, useState, useRef } from "react";
-          import { supabase } from "@/supabaseClient";
-          import { uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
-          import { useAuth } from "@/providers/AuthProvider";
-
-          export default function ProfilePage() {
-            const { user: authUser } = useAuth();
-            const [user, setUser] = useState<any>(null);
             const [loading, setLoading] = useState(true);
             const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
             const [avatarPath, setAvatarPath] = useState<string | null>(null);
