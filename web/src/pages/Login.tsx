@@ -1,39 +1,35 @@
-import { useState } from "react";
+import React from "react";
 import { supabase } from "@/supabaseClient";
 
 export default function Login() {
-  const [email, setEmail] = useState("");
-  const [sending, setSending] = useState(false);
-  const [msg, setMsg] = useState<string | null>(null);
+  const [email, setEmail] = React.useState("");
+  const [sending, setSending] = React.useState(false);
 
   async function sendLink(e: React.FormEvent) {
     e.preventDefault();
     setSending(true);
-    setMsg(null);
-    const redirectTo = `${window.location.origin}/auth/callback`;
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: redirectTo },
-    });
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` }});
     setSending(false);
-    if (error) { setMsg(error.message); return; }
-    setMsg("Magic link sent! Check your email.");
+    if (error) alert(error.message);
+    else alert("Magic link sent!");
   }
 
   return (
-    <div className="page">
-      <h1>Sign in</h1>
-      <form onSubmit={sendLink}>
+    <main className="mx-auto max-w-md px-4 py-10 text-white">
+      <h1 className="text-3xl font-bold mb-4">Sign in</h1>
+      <form onSubmit={sendLink} className="space-y-3">
         <input
-          type="email"
+          className="w-full rounded-md border border-white/20 bg-black/30 p-2 text-white"
           placeholder="you@example.com"
           value={email}
           onChange={(e)=>setEmail(e.target.value)}
+          type="email"
           required
         />
-        <button disabled={sending}>{sending ? "Sending…" : "Send magic link"}</button>
+        <button disabled={sending} className="w-full rounded-md bg-sky-500/90 py-2 font-semibold">
+          {sending ? "Sending…" : "Send magic link"}
+        </button>
       </form>
-      {msg && <p>{msg}</p>}
-    </div>
+    </main>
   );
 }
