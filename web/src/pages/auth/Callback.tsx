@@ -56,8 +56,12 @@ export default function AuthCallback() {
     );
   }
   return (
-    <div style={{ maxWidth: 400, margin: "2rem auto", padding: 24, border: "1px solid #ccc", borderRadius: 8 }}>
+    <div style={{ maxWidth: 400, margin: "2rem auto", padding: 24, border: "1px solid #ccc", borderRadius: 8, textAlign: "center" }}>
       <h2>{status}</h2>
+      <div style={{marginTop:16}}>
+        <span className="spinner" style={{display:"inline-block",width:32,height:32,border:"4px solid #ccc",borderTop:"4px solid #333",borderRadius:"50%",animation:"spin 1s linear infinite"}}></span>
+        <style>{`@keyframes spin{0%{transform:rotate(0deg);}100%{transform:rotate(360deg);}}`}</style>
+      </div>
     </div>
   );
 }

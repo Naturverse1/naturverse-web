@@ -4,7 +4,7 @@ import Landing from './pages/Landing';
 import Login from './pages/Login';
 import ProfilePage from './pages/Profile';
 import AuthCallback from './pages/auth/Callback';
-import PrivateRoute from './components/PrivateRoute';
+import ProtectedRoute from './components/ProtectedRoute';
 import AppRedirect from './components/AppRedirect';
 
 export default function App() {
@@ -13,17 +13,9 @@ export default function App() {
       {/* Public routes */}
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
-
-  {/* /app route: redirect to /profile if signed in, else /login */}
-  <Route path="/app" element={<AppRedirect />} />
-      {/* Auth callback route */}
       <Route path="/auth/callback" element={<AuthCallback />} />
-      {/* Protected profile route */}
-      <Route path="/profile" element={
-        <PrivateRoute>
-          <ProfilePage />
-        </PrivateRoute>
-      } />
+      <Route path="/app" element={<ProtectedRoute><AppRedirect /></ProtectedRoute>} />
+      <Route path="/profile" element={<ProtectedRoute><ProfilePage /></ProtectedRoute>} />
       {/* Catch-all: redirect to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
