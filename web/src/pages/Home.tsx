@@ -1,10 +1,12 @@
 import React from "react";
 import TurianHero from "@/components/TurianHero";
+import TurianTips from "@/components/TurianTips";
 
 export default function Home() {
   return (
     <main className="flex flex-col">
       <TurianHero />
+      <TurianTips />
       <div className="mx-auto max-w-5xl w-full px-4 pb-12">
         <section className="mt-8">
           <article>
