@@ -2,7 +2,7 @@ import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import ImmersiveBackground from "@/components/ImmersiveBackground";
-import Home from "@/pages/Landing";
+import Home from "@/pages/Home";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
 import Worlds from "@/pages/Worlds";
