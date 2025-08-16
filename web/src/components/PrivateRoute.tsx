@@ -10,6 +10,9 @@ export default function PrivateRoute({ children }: { children: JSX.Element }) {
     let mounted = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!mounted) return;
+      if (!user) {
+        window.localStorage.setItem("naturverse-lastPath", window.location.pathname + window.location.search + window.location.hash);
+      }
       setAuthed(!!user);
       setLoading(false);
     });

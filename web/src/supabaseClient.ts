@@ -15,6 +15,7 @@ const getSupabase = () => {
     globalThis._supabase = createClient(url, anon, {
       auth: {
         persistSession: true,
+        detectSessionInUrl: true,
         storageKey: 'naturverse-auth',
       },
     });

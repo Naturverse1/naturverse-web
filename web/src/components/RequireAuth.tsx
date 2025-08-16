@@ -7,8 +7,10 @@ export default function RequireAuth({ children }: { children: JSX.Element }) {
   useEffect(() => {
     const check = async () => {
       const { data: { user } } = await supabase.auth.getUser();
-      if (!user) nav("/login", { replace: true });
-      else setChecking(false);
+      if (!user) {
+        window.localStorage.setItem("naturverse-lastPath", window.location.pathname + window.location.search + window.location.hash);
+        nav("/login", { replace: true });
+      } else setChecking(false);
     };
     check();
   }, [nav]);

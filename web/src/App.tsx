@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import ProfilePage from './pages/Profile';
-import AuthCallback from './pages/AuthCallback';
+import AuthCallback from './pages/auth/Callback';
 import PrivateRoute from './components/PrivateRoute';
 import AppRedirect from './components/AppRedirect';
 

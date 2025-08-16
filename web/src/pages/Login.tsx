@@ -31,9 +31,9 @@ export default function Login() {
       <h1>Sign in</h1>
       <form onSubmit={onSubmit}>
         <input value={email} onChange={e=>setEmail(e.target.value)} placeholder="Email" />
-        <button type="submit" disabled={loading || cooldown > 0}>{loading ? "Sending..." : cooldown > 0 ? `Wait ${cooldown}s` : "Send magic link"}</button>
+  <button type="submit" disabled={loading || cooldown > 0}>{loading ? "Sending..." : cooldown > 0 ? `Wait ${cooldown}s` : "Send magic link"}</button>
       </form>
-      {msg && <p>{msg}</p>}
+  {msg && <p>{msg}</p>}
     </main>
   );
 }
