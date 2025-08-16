@@ -1,10 +1,16 @@
+import { Link } from "react-router-dom";
+import { useAuth } from "@/auth/session";
+
 export default function Landing() {
+  const { user } = useAuth();
   return (
     <main className="landing">
       <section className="hero">
         <h1>Welcome to The Naturverse!</h1>
         <p>Sign in to start your magical learning journey ✨🌿</p>
-        <a className="cta" href="/login">Start Your Adventure</a>
+        <Link className="cta" to={user ? "/app" : "/login"}>
+          Start Your Adventure
+        </Link>
       </section>
       <section className="grid">
         <article>
