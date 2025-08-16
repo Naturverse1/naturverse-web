@@ -1,5 +1,5 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import ProfilePage from './pages/Profile';
@@ -10,7 +10,7 @@ import Navbar from './components/Navbar';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <>
       <Navbar />
       <Routes>
         {/* Public routes */}
@@ -22,6 +22,6 @@ export default function App() {
         {/* Catch-all: redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </BrowserRouter>
+    </>
   );
 }
