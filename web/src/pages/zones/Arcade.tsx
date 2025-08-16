@@ -1,29 +1,22 @@
 import React from "react";
-import { Link } from "react-router-dom";
 
 export default function Arcade() {
   return (
-    <main className="mx-auto max-w-3xl px-4 py-10 text-white">
-      <h1 className="text-3xl font-bold">Arcade</h1>
-      <p className="text-white/80 mt-2">Quick brain-boost games (first mini-game ships next!).</p>
+    <div style={{ maxWidth: 860, margin: "0 auto", padding: "2rem 1rem" }}>
+      <h1>Arcade</h1>
+      <p>Quick brain-boost games. First mini‑game ships now!</p>
 
-      <ul className="mt-6 list-disc pl-6 space-y-2 text-white/90">
+      <ul>
         <li>
-          <span className="opacity-70">Memory Match</span> – coming soon
+          <a href="/zones/arcade/memory-match">🧠 Memory Match – play now</a>
         </li>
-        <li>
-          <span className="opacity-70">Word Builder</span> – coming soon
-        </li>
-        <li>
-          <span className="opacity-70">Eco Runner</span> – coming soon
-        </li>
+        <li>🔡 Word Builder — coming soon</li>
+        <li>🌿 Eco Runner — coming soon</li>
       </ul>
 
-      <div className="mt-6">
-        <Link to="/zones" className="underline text-sky-300">
-          Back to Zones
-        </Link>
-      </div>
-    </main>
+      <p style={{ marginTop: "2rem" }}>
+        <a href="/zones">← Back to Zones</a>
+      </p>
+    </div>
   );
 }
