@@ -23,12 +23,12 @@ import Lesson from "@/pages/naturversity/Lesson";
 import About from "@/pages/About";
 import StoryStudioPage from "@/pages/story-studio";
 import AutoQuiz from "@/pages/auto-quiz";
-
-const WorldHub = lazy(() => import("./pages/world-hub"));
-
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import { RequireAuth } from "@/lib/auth";
+import IslandHubFallback from "@/components/IslandHubFallback";
+
+const IslandHub3D = lazy(() => import("./components/IslandHub3D"));
 
 export default function App() {
   return (
@@ -48,8 +48,8 @@ export default function App() {
           <Route
             path="/hub"
             element={
-              <Suspense fallback={<div style={{padding:'2rem'}}>Loading 3D Hub…</div>}>
-                <WorldHub />
+              <Suspense fallback={<IslandHubFallback />}>
+                <IslandHub3D />
               </Suspense>
             }
           />
