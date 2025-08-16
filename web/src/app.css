@@ -1,3 +1,52 @@
+/* --- Stabilize background, disable any animation/transition on it --- */
+:root{
+	--bg-1:#0d1b2a; /* deep navy */
+	--bg-2:#14243a; /* slightly lighter navy */
+	--bg-3:#1e2746; /* accent */
+}
+
+/* Lock the background into a static (non-animated) gradient */
+html, body {
+	background:
+		radial-gradient(1200px 800px at 10% 10%, var(--bg-3) 0%, transparent 60%),
+		radial-gradient(900px 700px at 110% 0%, #243046 0%, transparent 55%),
+		linear-gradient(108deg, var(--bg-2), var(--bg-1));
+	background-repeat: no-repeat;
+	background-attachment: fixed, fixed, fixed;  /* prevents subtle parallax jank */
+	animation: none !important;
+	transition: none !important;
+}
+
+/* Base layout stability */
+html {
+	overflow-y: scroll;          /* keep scrollbar always, avoids width jumps */
+}
+html, body, #root {
+	min-height: 100vh;
+	height: auto;
+	margin: 0;
+	overflow-x: hidden;
+}
+
+/* Stop ambient page animations that can cause subpixel jitter */
+* {
+	animation: none !important;
+	transition: none !important;
+}
+
+/* Hard-disable any leftover floating/sticker layers (repeat for safety) */
+.floating-character,
+.floating-layer,
+.character-entrance,
+.sparkles,
+.emoji-strip,
+.sticker-strip,
+[class*="floating-character"],
+[class*="emoji-strip"],
+[class*="sticker"],
+[class*="sparkle"] {
+	display: none !important;
+}
 /* --- Hard-disable any leftover floating/sticker layers --- */
 .floating-character,
 .floating-layer,
