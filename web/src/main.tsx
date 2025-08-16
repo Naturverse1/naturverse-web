@@ -6,6 +6,8 @@ import { AuthProvider } from './providers/AuthProvider';
 import { ErrorBoundary } from './components/ErrorBoundary';
 const queryClient = new QueryClient();
 const Suspense = React.Suspense;
+
+import './app.css';
 import App from './App';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
