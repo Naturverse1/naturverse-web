@@ -7,13 +7,13 @@ import AuthCallback from "@/pages/AuthCallback";
 import Worlds from "@/pages/Worlds";
 import World from "@/pages/World";
 import AppHome from "@/pages/AppHome";
-import ZonesHub from "@/pages/ZonesHub";
+import ZonesHub from "@/pages/zones";
 import Naturversity from "@/pages/zones/Naturversity";
-import Music from "@/pages/zones/Music";
-import Wellness from "@/pages/zones/Wellness";
-import MakerLab from "@/pages/zones/MakerLab";
+import MusicZone from "@/pages/zones/Music";
+import WellnessZone from "@/pages/zones/Wellness";
+import CreatorLab from "@/pages/zones/CreatorLab";
 import Arcade from "@/pages/zones/Arcade";
-import Library from "@/pages/zones/Library";
+import Community from "@/pages/zones/Community";
 import Lesson from "@/pages/naturversity/Lesson";
 
 import Profile from "@/pages/Profile";
@@ -33,11 +33,11 @@ export default function App() {
           <Route path="/worlds/:slug" element={<World />} />
           <Route path="/zones" element={<ZonesHub />} />
           <Route path="/zones/naturversity" element={<Naturversity />} />
-          <Route path="/zones/music" element={<Music />} />
-          <Route path="/zones/wellness" element={<Wellness />} />
-          <Route path="/zones/maker-lab" element={<MakerLab />} />
+          <Route path="/zones/music" element={<MusicZone />} />
+          <Route path="/zones/wellness" element={<WellnessZone />} />
+          <Route path="/zones/creator-lab" element={<CreatorLab />} />
           <Route path="/zones/arcade" element={<Arcade />} />
-          <Route path="/zones/library" element={<Library />} />
+          <Route path="/zones/community" element={<Community />} />
           <Route path="/naturversity/lesson/:id" element={<Lesson />} />
           <Route
             path="/app"
