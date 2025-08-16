@@ -1,26 +1,43 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { naturversityUnits } from "@/content/naturversity";
-import { countCompleted } from "@/lib/progress";
-import ProgressBadge from "@/components/ProgressBadge";
+import { getProgress } from "@/lib/db";
 
 export default function Naturversity() {
+  const [progressMap, setProgressMap] = useState<Record<string, string>>({});
+  const zone = "naturversity";
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const rows = await getProgress(zone);
+        const map: Record<string, string> = {};
+        rows.forEach((r) => {
+          map[r.unit] = r.status;
+        });
+        setProgressMap(map);
+      } catch {
+        // not signed in or first time; leave map empty
+      }
+    })();
+  }, []);
+
   return (
     <main className="mx-auto max-w-5xl px-4 py-10 text-white">
       <h1 className="text-3xl font-bold">Naturversity</h1>
       <p className="text-white/80 mt-2">
-        Guided lessons, quests, and projects. Your progress is saved on this device.
+        Guided lessons, quests, and projects. Progress saves when you’re signed in.
       </p>
 
       <div className="mt-8 space-y-6">
         {naturversityUnits.map((u) => {
-          const lessonIds = u.lessons.map(l => l.id);
-          const done = countCompleted(lessonIds);
+          const done = progressMap[u.id] === "complete"; // simple unit-level flag
           return (
             <section key={u.id} className="rounded-lg border border-white/10 bg-white/5 p-4">
               <div className="flex items-center justify-between gap-2">
-                <h2 className="text-2xl font-semibold">{u.title}</h2>
-                <ProgressBadge done={done} total={lessonIds.length} />
+                <h2 className="text-2xl font-semibold">
+                  {u.title} {done ? "✅" : ""}
+                </h2>
               </div>
               <ul className="mt-3 divide-y divide-white/10">
                 {u.lessons.map((l) => (

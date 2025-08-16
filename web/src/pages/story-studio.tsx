@@ -1,4 +1,5 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+import { saveStory, listStories, StoryListItem } from "@/lib/db";
 
 export default function StoryStudio() {
   const [topic, setTopic] = useState("A tiny dragon who loves rainforests");
@@ -6,6 +7,18 @@ export default function StoryStudio() {
   const [tone, setTone] = useState("curious");
   const [loading, setLoading] = useState(false);
   const [story, setStory] = useState("");
+  const [saving, setSaving] = useState(false);
+  const [history, setHistory] = useState<StoryListItem[]>([]);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setHistory(await listStories());
+      } catch {
+        /* ignore if signed out */
+      }
+    })();
+  }, []);
 
   async function generate() {
     setLoading(true);
@@ -18,6 +31,27 @@ export default function StoryStudio() {
     const json = await res.json();
     setStory(json.story || "No story.");
     setLoading(false);
+  }
+
+  async function onSave() {
+    if (!story.trim()) {
+      alert("Make a story first!");
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveStory({
+        title: topic.slice(0, 60) || "Naturverse story",
+        prompt: topic,
+        content: story,
+      });
+      alert("Story saved 🌱");
+      setHistory(await listStories());
+    } catch (e: any) {
+      alert(`Save failed: ${e.message}`);
+    } finally {
+      setSaving(false);
+    }
   }
 
   return (
@@ -59,9 +93,14 @@ export default function StoryStudio() {
         </label>
       </div>
 
-      <button onClick={generate} disabled={loading}>
-        {loading ? "Generating…" : "Make Story"}
-      </button>
+      <div style={{ display: "flex", gap: 12 }}>
+        <button onClick={generate} disabled={loading}>
+          {loading ? "Generating…" : "Make Story"}
+        </button>
+        <button onClick={onSave} disabled={saving || !story}>
+          {saving ? "Saving…" : "Save to My Stories"}
+        </button>
+      </div>
 
       {story && (
         <article
@@ -75,6 +114,19 @@ export default function StoryStudio() {
         >
           {story}
         </article>
+      )}
+
+      {history.length > 0 && (
+        <div style={{ marginTop: 24 }}>
+          <h3>My Stories</h3>
+          <ul>
+            {history.map((s) => (
+              <li key={s.id}>
+                {s.title} — {new Date(s.created_at).toLocaleString()} ({s.words ?? 0} words)
+              </li>
+            ))}
+          </ul>
+        </div>
       )}
     </div>
   );
