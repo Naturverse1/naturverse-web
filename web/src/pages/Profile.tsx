@@ -1,4 +1,4 @@
-import { useEffect, useState, useRef } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/supabaseClient";
 import { uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
 
