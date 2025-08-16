@@ -1,38 +1,35 @@
-import React, { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "@/supabaseClient";
+
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { supabase } from '@/supabaseClient'
 
 export default function AuthCallback() {
-  const nav = useNavigate();
-  const [status, setStatus] = useState<'loading'|'error'>('loading');
-  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const navigate = useNavigate()
 
   useEffect(() => {
-    async function handleCallback() {
+    (async () => {
       try {
-        await supabase.auth.getSessionFromUrl({ storeSession: true });
-        nav("/app", { replace: true });
-      } catch (err: any) {
-        // Try to extract error from URL hash
-        const hash = window.location.hash;
-        let msg = err?.message || '';
-        if (hash.includes('error_description')) {
-          const params = new URLSearchParams(hash.replace('#', '?'));
-          msg = params.get('error_description') || msg;
+        const url = new URL(window.location.href)
+        const hasCode = url.searchParams.get('code')
+        if (hasCode) {
+          const { error } = await supabase.auth.exchangeCodeForSession(window.location.href)
+          if (error) throw error
+        } else if (url.hash.includes('access_token') && url.hash.includes('refresh_token')) {
+          const params = new URLSearchParams(url.hash.slice(1))
+          const access_token = params.get('access_token')!
+          const refresh_token = params.get('refresh_token')!
+          const { error } = await supabase.auth.setSession({ access_token, refresh_token })
+          if (error) throw error
         }
-        setErrorMsg(msg || "Sign-in link is invalid or expired. Please try again.");
-        setStatus('error');
-        setTimeout(() => nav("/login", { replace: true }), 2000);
+        const next = localStorage.getItem('postLoginPath') || '/'
+        localStorage.removeItem('postLoginPath')
+        navigate(next, { replace: true })
+      } catch (e: any) {
+        alert(e.message || 'Sign-in failed')
+        navigate('/login', { replace: true })
       }
-    }
-    handleCallback();
-    // eslint-disable-next-line
-  }, []);
+    })()
+  }, [navigate])
 
-  return (
-    <main style={{padding:32}}>
-      <h2>Signing you in…</h2>
-      {status === 'error' && <div style={{color:"red"}}>{errorMsg}</div>}
-    </main>
-  );
+  return <p>Signing you in…</p>
 }

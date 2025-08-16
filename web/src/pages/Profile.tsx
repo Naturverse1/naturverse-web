@@ -49,8 +49,12 @@ const Profile: React.FC = () => {
       if (!user) throw new Error("Not signed in");
       if (avatarPath || avatarUrl) await removeAvatarIfExists(supabase, avatarPath || avatarUrl);
       const { publicUrl, path } = await uploadAvatar(supabase, user.id, file);
-      await supabase.from("users").update({ avatar_url: publicUrl, avatar_path: path }).eq("id", user.id);
-      setAvatarUrl(publicUrl);
+      await supabase.from("users").update({
+        avatar_url: publicUrl,
+        avatar_path: path,
+        updated_at: new Date().toISOString()
+      }).eq("id", user.id);
+      setAvatarUrl(publicUrl); // local state so it shows immediately
       setAvatarPath(path);
       setPreviewUrl(null);
       setFile(null);
