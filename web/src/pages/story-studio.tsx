@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { saveStory, listStories, StoryListItem } from "@/lib/db";
+import { saveStory, listStories, StoryListItem } from '../lib/db';
 
 export default function StoryStudio() {
   const [topic, setTopic] = useState("A tiny dragon who loves rainforests");

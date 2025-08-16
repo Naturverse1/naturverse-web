@@ -1,5 +1,5 @@
 import React from "react";
-import ZoneTile from "@/components/ZoneTile";
+import ZoneTile from '../../components/ZoneTile';
 
 export default function ZonesHub() {
   return (

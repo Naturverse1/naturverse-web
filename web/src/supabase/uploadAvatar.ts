@@ -1,4 +1,4 @@
-import { supabase } from '@/supabaseClient';
+import { supabase } from '../supabaseClient';
 
 export async function uploadAvatar(file: File, userId: string): Promise<string> {
   const path = `${userId}.png`;

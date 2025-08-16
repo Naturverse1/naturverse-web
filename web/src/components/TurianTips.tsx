@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useReducedMotion from "@/hooks/useReducedMotion";
+import useReducedMotion from '../hooks/useReducedMotion';
 
 const localTips = [
   "Try a 60-second nature breath.",

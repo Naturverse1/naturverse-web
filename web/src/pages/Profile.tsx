@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { supabase } from "@/supabaseClient";
-import { uploadAvatar, fetchAvatar } from "@/lib/avatar";
+import { supabase } from '../supabaseClient';
+import { uploadAvatar, fetchAvatar } from '../lib/avatar';
 
 export default function Profile() {
   const [email, setEmail] = useState<string>("");

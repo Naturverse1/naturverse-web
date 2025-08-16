@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { saveQuizAttempt, setProgress } from "@/lib/db";
+import { saveQuizAttempt, setProgress } from '../lib/db';
 
 type Q = { q: string; choices: string[]; answerIndex: number; why: string };
 

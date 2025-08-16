@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useReducedMotion from "@/hooks/useReducedMotion";
+import useReducedMotion from '../hooks/useReducedMotion';
 
 export default function TurianHero() {
   const reduced = useReducedMotion();

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import useReducedMotion from "@/hooks/useReducedMotion";
+import useReducedMotion from '../../hooks/useReducedMotion';
 import GradientBackdrop from "./GradientBackdrop";
 import VignetteOverlay from "./VignetteOverlay";
 import StarfieldCanvas from "./StarfieldCanvas";

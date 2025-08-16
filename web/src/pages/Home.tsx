@@ -1,6 +1,6 @@
 import React from "react";
-import TurianHero from "@/components/TurianHero";
-import TurianTips from "@/components/TurianTips";
+import TurianHero from '../components/TurianHero';
+import TurianTips from '../components/TurianTips';
 
 export default function Home() {
   return (

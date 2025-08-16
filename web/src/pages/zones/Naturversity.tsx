@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { naturversityUnits } from "@/content/naturversity";
-import { getProgress } from "@/lib/db";
+import { naturversityUnits } from '../../content/naturversity';
+import { getProgress } from '../../lib/db';
 
 export default function Naturversity() {
   const [progressMap, setProgressMap] = useState<Record<string, string>>({});

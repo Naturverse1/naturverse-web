@@ -1,6 +1,6 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { supabase } from "@/supabaseClient";
+import { supabase } from '../supabaseClient';
 
 export function useSession() {
   const [session, setSession] = React.useState<Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"] | null>(null);

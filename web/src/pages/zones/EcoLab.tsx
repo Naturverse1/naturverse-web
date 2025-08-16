@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 const checklist = ["Sample soil", "Measure rainfall", "Sketch a leaf"];
 
