@@ -12,12 +12,7 @@ export default defineConfig({
     },
   },
   optimizeDeps: {
-    include: [
-      "three",
-      "@react-three/fiber",
-      "@react-three/drei",
-      "@babel/runtime/helpers/esm/extends",
-    ],
+    include: ["three", "@react-three/fiber", "@react-three/drei"],
   },
   build: {
     rollupOptions: {
