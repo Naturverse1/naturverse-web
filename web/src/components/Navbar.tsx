@@ -1,61 +1,49 @@
-import React, { useEffect, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { supabase } from "@/supabaseClient";
+import { useEffect, useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { useAuth } from '@/lib/useAuth';
+import { supabase } from '@/supabaseClient';
 
-const Navbar: React.FC = () => {
+export default function Navbar() {
+  const { user, signOut } = useAuth();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
-    (async () => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data } = await supabase
-        .from("users")
-        .select("avatar_url")
-        .eq("id", user.id)
-        .single();
-      setAvatarUrl((data?.avatar_url as string) ?? null);
-    })();
-    // Optionally, add a listener for auth/session changes
-  }, []);
+    if (!user) { setAvatarUrl(null); return; }
+    supabase
+      .from('users')
+      .select('avatar_url')
+      .eq('id', user.id)
+      .single()
+      .then(({ data }) => setAvatarUrl((data?.avatar_url as string) ?? null));
+  }, [user]);
+
+  const initials = user?.email?.charAt(0).toUpperCase() ?? '?';
 
   return (
-    <nav
-      style={{
-        padding: 16,
-        borderBottom: "1px solid #eee",
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-      }}
-    >
-      <div style={{ display: "flex", gap: 16 }}>
-        <Link to="/">Home</Link>
-        <Link to="/app">App</Link>
-        <Link to="/profile">Profile</Link>
-      </div>
-      <div
-        style={{ cursor: "pointer" }}
-        onClick={() => navigate("/profile")}
-      >
-        <img
-          src={avatarUrl || "/avatar-placeholder.png"}
-          alt="avatar"
-          width={32}
-          height={32}
-          style={{
-            borderRadius: 16,
-            objectFit: "cover",
-            background: "#f3f3f3",
-            border: "1px solid #ccc",
-          }}
-        />
-      </div>
+    <nav style={{display:'flex',justifyContent:'space-between',alignItems:'center',padding:'12px 16px',borderBottom:'1px solid #eee'}}>
+      <Link to="/" style={{fontWeight:700,textDecoration:'none'}}>Naturverse</Link>
+      {user ? (
+        <div style={{position:'relative'}}>
+          <button onClick={() => setOpen(o=>!o)} style={{background:'none',border:'none',cursor:'pointer'}}>
+            {avatarUrl ? (
+              <img src={avatarUrl} alt="avatar" style={{width:32,height:32,borderRadius:'50%',objectFit:'cover'}} />
+            ) : (
+              <div style={{width:32,height:32,borderRadius:'50%',background:'#ccc',display:'flex',alignItems:'center',justifyContent:'center',fontSize:14,color:'#fff'}}>{initials}</div>
+            )}
+          </button>
+          {open && (
+            <div style={{position:'absolute',right:0,marginTop:8,background:'#fff',border:'1px solid #ddd',borderRadius:4,padding:8,display:'flex',flexDirection:'column',minWidth:120}}>
+              <Link to="/profile" onClick={() => setOpen(false)} style={{marginBottom:4}}>Profile</Link>
+              <Link to="/map" onClick={() => setOpen(false)} style={{marginBottom:4}}>Map</Link>
+              <button onClick={async()=>{await signOut(); navigate('/');}} style={{textAlign:'left',background:'none',border:'none',padding:0,cursor:'pointer'}}>Sign out</button>
+            </div>
+          )}
+        </div>
+      ) : (
+        <Link to="/login">Sign in</Link>
+      )}
     </nav>
   );
-};
-
-export default Navbar;
+}
