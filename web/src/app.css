@@ -1,3 +1,58 @@
+/* --- Hard-disable any leftover floating/sticker layers --- */
+.floating-character,
+.floating-layer,
+.character-entrance,
+.sparkles,
+.emoji-strip,
+.sticker-strip,
+[class*="floating-character"],
+[class*="emoji-strip"],
+[class*="sticker"],
+[class*="sparkle"] {
+	display: none !important;
+}
+
+/* Prevent accidental layout shifts from animations */
+* {
+	animation: none !important;
+	transition: none !important;
+}
+
+/* Base layout stability */
+html, body, #root {
+	min-height: 100vh;
+	height: 100%;
+}
+
+html, body {
+	margin: 0;
+	overflow-x: hidden;
+}
+
+/* If you have a hero header or container, keep it centered and sized */
+.hero,
+.page-container {
+	max-width: 1200px;
+	margin-inline: auto;
+	padding-inline: 16px;
+}
+
+/* If you show images above the fold, avoid CLS by reserving space */
+img {
+	display: block;
+	max-width: 100%;
+	height: auto;
+	/* If you know hero image sizes, set width/height attributes in JSX too */
+}
+
+/* Respect users who prefer less motion, but also stop all “ambient” anim */
+@media (prefers-reduced-motion: reduce) {
+	* {
+		animation: none !important;
+		transition: none !important;
+		scroll-behavior: auto !important;
+	}
+}
 /* Disable all floating-character leftovers */
 .floating-character,
 .floating-layer,
