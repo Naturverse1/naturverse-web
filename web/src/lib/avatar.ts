@@ -1,4 +1,4 @@
-/* Avatar helpers for Supabase Storage */
+// helpers
 export function getFileExt(name: string) {
   const i = name.lastIndexOf('.');
   return i === -1 ? '' : name.slice(i + 1).toLowerCase();
@@ -17,35 +17,20 @@ export async function uploadAvatar(
     .storage
     .from('avatars')
     .upload(path, file, { upsert: true, contentType: file.type });
-
   if (upErr) throw upErr;
 
-  const { data } = supabase
-    .storage
-    .from('avatars')
-    .getPublicUrl(path);
-
+  const { data } = supabase.storage.from('avatars').getPublicUrl(path);
   return { publicUrl: data.publicUrl, path };
 }
 
 export async function removeAvatarIfExists(
   supabase: any,
-  existingPathOrUrl?: string | null
-) {
-  if (!existingPathOrUrl) return;
-
-  // Prefer storage path (avatars/uid/filename). If a URL was stored, convert it.
-  const toPath = (input: string) => {
-    if (input.startsWith('http')) {
-      const idx = input.indexOf('/object/public/');
-      return idx === -1 ? '' : input.slice(idx + '/object/public/'.length);
-    }
-    return input;
-  };
-
-  const storagePath = toPath(existingPathOrUrl);
+  avatarUrl?: string
+): Promise<void> {
+  if (!avatarUrl) return;
+  // convert https://…/object/public/avatars/uid/file.png -> avatars/uid/file.png
+  const idx = avatarUrl.indexOf('/object/public/');
+  const storagePath = idx === -1 ? '' : avatarUrl.substring(idx + '/object/public/'.length);
   if (!storagePath) return;
-
-  // Ignore not-found
-  await supabase.storage.from('avatars').remove([storagePath]).catch(() => {});
+  await supabase.storage.from('avatars').remove([storagePath]); // ignore not found
 }
