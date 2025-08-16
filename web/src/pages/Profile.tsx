@@ -189,6 +189,7 @@ export default function ProfilePage() {
     );
   }
 
+
   // Revoke preview object URL on unmount
   useEffect(() => {
     return () => {
@@ -210,12 +211,6 @@ export default function ProfilePage() {
           style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover", border: "1px solid #ccc" }}
           onError={e => { (e.currentTarget as HTMLImageElement).src = "/avatar-placeholder.png"; }}
         />
-  // Revoke preview object URL on unmount
-  useEffect(() => {
-    return () => {
-      if (previewUrl) URL.revokeObjectURL(previewUrl);
-    };
-  }, [previewUrl]);
         <br />
         <input
           type="file"
