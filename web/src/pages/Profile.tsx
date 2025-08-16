@@ -7,6 +7,7 @@ type UserProfile = {
   username: string | null;
   email: string | null;
   avatar_url: string | null;
+  avatar_path?: string | null;
 };
 
 export default function ProfilePage() {
@@ -34,13 +35,13 @@ export default function ProfilePage() {
     }
     const { data, error } = await supabase
       .from("users")
-      .select("id, username, email, avatar_url")
+      .select("id, username, email, avatar_url, avatar_path")
       .eq("id", authUser.id)
       .single();
     if (error) setError(error.message);
-  setUser(data as UserProfile);
-  setAvatarUrl((data?.avatar_url as string) ?? null);
-  setAvatarPath(null); // reset path on fetch
+    setUser(data as UserProfile);
+    setAvatarUrl((data?.avatar_url as string) ?? null);
+    setAvatarPath((data?.avatar_path as string) ?? null);
     setLoading(false);
   }
 
@@ -99,10 +100,12 @@ export default function ProfilePage() {
     if (!f) return;
     if (!f.type.startsWith("image/")) {
       setError("Only image files are allowed.");
+      window.alert("Only image files are allowed.");
       return;
     }
     if (f.size > 5 * 1024 * 1024) {
       setError("File too large (max 5MB).");
+      window.alert("File too large (max 5MB).");
       return;
     }
     setFile(f);
@@ -111,23 +114,37 @@ export default function ProfilePage() {
 
   // Avatar save handler
   async function handleSaveAvatar() {
-    if (!user || !file) return;
+    if (!user || !file) {
+      window.alert("No file selected.");
+      return;
+    }
     setUploading(true);
     setError(null);
     try {
-      if (user.avatar_url) {
-        await removeAvatarIfExists(supabase, user.avatar_url);
+      // Remove old avatar if path exists
+      if (user.avatar_path) {
+        await removeAvatarIfExists(supabase, user.avatar_url ?? undefined);
       }
+      // Upload new avatar
+      console.log("Uploading avatar:", file.type, file.size);
       const { publicUrl, path } = await uploadAvatar(supabase, user.id, file);
-      await supabase.from("users").update({ avatar_url: publicUrl }).eq("id", user.id);
+      if (!publicUrl) {
+        console.log("getPublicUrl returned undefined, fallback path:", path);
+      }
+      // Update DB with both url and path
+      const { error: dbErr, data: updated } = await supabase.from("users").update({ avatar_url: publicUrl, avatar_path: path }).eq("id", user.id).select();
+      if (dbErr) throw dbErr;
       setAvatarUrl(publicUrl);
       setAvatarPath(path);
       setFile(null);
       setPreviewUrl(null);
+      setUser((u) => u ? { ...u, avatar_url: publicUrl, avatar_path: path } : u);
+      console.log("Avatar uploaded:", { publicUrl, path, updated });
       fetchProfile();
-      alert("Avatar updated");
+      window.alert("Avatar updated");
     } catch (err: any) {
       setError(err.message || "Failed to upload avatar");
+      window.alert(err.message || "Failed to upload avatar");
     } finally {
       setUploading(false);
     }
@@ -172,6 +189,13 @@ export default function ProfilePage() {
     );
   }
 
+  // Revoke preview object URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
+
   return (
     <div style={{ maxWidth: 500, margin: "2rem auto", padding: 24, border: "1px solid #ccc", borderRadius: 8 }}>
       <h2>Welcome, {user.username || "Guest"}!</h2>
@@ -184,7 +208,14 @@ export default function ProfilePage() {
           src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
           alt="avatar"
           style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover", border: "1px solid #ccc" }}
+          onError={e => { (e.currentTarget as HTMLImageElement).src = "/avatar-placeholder.png"; }}
         />
+  // Revoke preview object URL on unmount
+  useEffect(() => {
+    return () => {
+      if (previewUrl) URL.revokeObjectURL(previewUrl);
+    };
+  }, [previewUrl]);
         <br />
         <input
           type="file"

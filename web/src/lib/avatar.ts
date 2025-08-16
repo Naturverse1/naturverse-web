@@ -18,7 +18,14 @@ export async function uploadAvatar(
     .upload(path, file, { upsert: true, contentType: file.type });
   if (upErr) throw upErr;
   const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-  return { publicUrl: data.publicUrl, path };
+  let publicUrl = data?.publicUrl;
+  if (!publicUrl) {
+    // fallback: construct public URL manually
+    const { data: bucket } = await supabase.storage.getBucket('avatars');
+    const base = supabase.storageUrl || '';
+    publicUrl = `${base}/object/public/${path}`;
+  }
+  return { publicUrl, path };
 }
 
 export async function removeAvatarIfExists(
