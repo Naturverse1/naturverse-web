@@ -1,90 +1,162 @@
-import { useEffect, useRef, useState } from 'react';
-import { useAuth } from '@/auth/session';
+import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
-import { uploadAvatar } from '@/supabase/uploadAvatar';
+import { uploadAvatar, removeAvatarIfExists } from '@/lib/avatar';
+
+type ProfileRow = {
+  id: string;
+  email: string | null;
+  avatar_url: string | null;
+  avatar_path: string | null; // NEW column recommended
+};
 
 export default function Profile() {
-  const { user } = useAuth();
+  const [userId, setUserId] = useState('');
+  const [email, setEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
-  const fileRef = useRef<HTMLInputElement>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
+
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-    supabase
-      .from('profiles')
-      .select('avatar_url')
-      .eq('id', user.id)
-      .single()
-      .then(({ data }) => setAvatarUrl((data?.avatar_url as string) ?? null));
-  }, [user]);
+    (async () => {
+      const {
+        data: { user },
+        error,
+      } = await supabase.auth.getUser();
+      if (error || !user) return;
 
-  const onFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file || !user) return;
-    setUploading(true);
+      setUserId(user.id);
+      setEmail(user.email ?? '');
+
+      const { data, error: qErr } = await supabase
+        .from('users')
+        .select('avatar_url, avatar_path')
+        .eq('id', user.id)
+        .single<Pick<ProfileRow, 'avatar_url' | 'avatar_path'>>();
+
+      if (!qErr && data) {
+        setAvatarUrl(data.avatar_url ?? null);
+        setAvatarPath(data.avatar_path ?? null);
+      }
+    })();
+  }, []);
+
+  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0] ?? null;
+    if (!f) {
+      setFile(null);
+      setPreviewUrl(null);
+      return;
+    }
+    if (!f.type.startsWith('image/')) {
+      alert('Please choose an image file.');
+      return;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      alert('Image too large. Please pick a file under 5 MB.');
+      return;
+    }
+    setFile(f);
+    setPreviewUrl(URL.createObjectURL(f));
+  }
+
+  async function onSave() {
+    if (!userId || !file) return;
     try {
-      const publicUrl = await uploadAvatar(file, user.id);
+      setUploading(true);
+
+      // 1) Upload new avatar
+      const { publicUrl, path } = await uploadAvatar(supabase, userId, file);
+
+      // 2) Delete previous file (use stored path if we have it)
+      if (avatarPath) {
+        await removeAvatarIfExists(supabase, avatarPath);
+      } else if (avatarUrl) {
+        await removeAvatarIfExists(supabase, avatarUrl);
+      }
+
+      // 3) Persist both public URL and storage path
+      const { error: upErr } = await supabase
+        .from('users')
+        .update({ avatar_url: publicUrl, avatar_path: path })
+        .eq('id', userId);
+
+      if (upErr) throw upErr;
+
+      // 4) Update UI
       setAvatarUrl(publicUrl);
-      await supabase.from('profiles').upsert({ id: user.id, avatar_url: publicUrl });
-    } catch (err) {
+      setAvatarPath(path);
+      setFile(null);
+      setPreviewUrl(null);
+      alert('Avatar updated!');
+    } catch (err: any) {
       console.error(err);
+      alert(err?.message ?? 'Failed to update avatar.');
     } finally {
       setUploading(false);
     }
-  };
-
-  const triggerFileSelect = () => fileRef.current?.click();
+  }
 
   return (
-    <main style={{ display: 'flex', justifyContent: 'center', padding: '2rem' }}>
+    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
       <div
         style={{
-          width: '100%',
-          maxWidth: 360,
-          background: 'rgba(255,255,255,0.05)',
-          padding: '2rem',
-          borderRadius: 8,
-          boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          gap: '1rem',
+          width: 420,
+          maxWidth: '90vw',
+          background: 'rgba(0,0,0,0.25)',
+          borderRadius: 16,
+          padding: 24,
+          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
+          color: 'white',
+          textAlign: 'center',
         }}
       >
         <img
-          src={avatarUrl || '/avatar-placeholder.png'}
+          src={
+            previewUrl ||
+            avatarUrl ||
+            'https://dummyimage.com/160x160/101a38/ffffff&text=Avatar'
+          }
           alt="avatar"
-          width={96}
-          height={96}
-          style={{ borderRadius: '50%', objectFit: 'cover', background: '#f3f3f3' }}
-        />
-        <p style={{ fontWeight: 500 }}>{user?.email}</p>
-        <button
-          onClick={triggerFileSelect}
-          disabled={uploading}
           style={{
-            background: '#3b82f6',
-            color: '#fff',
-            border: 'none',
-            padding: '8px 16px',
-            borderRadius: 9999,
-            cursor: 'pointer',
-            fontWeight: 600,
+            width: 128,
+            height: 128,
+            borderRadius: '50%',
+            display: 'block',
+            margin: '0 auto 16px',
+            objectFit: 'cover',
           }}
-          onMouseEnter={e => (e.currentTarget.style.background = '#2563eb')}
-          onMouseLeave={e => (e.currentTarget.style.background = '#3b82f6')}
-        >
-          Change Avatar
-        </button>
+        />
+
+        <div style={{ marginBottom: 12, opacity: 0.9 }}>{email}</div>
+
         <input
-          ref={fileRef}
           type="file"
           accept="image/*"
-          style={{ display: 'none' }}
           onChange={onFileChange}
+          style={{ display: 'block', margin: '0 auto 12px' }}
         />
+
+        <button
+          onClick={onSave}
+          disabled={!file || uploading}
+          style={{
+            display: 'inline-block',
+            background: uploading ? '#4b5563' : '#60a5fa',
+            color: 'white',
+            border: 'none',
+            borderRadius: 999,
+            padding: '10px 16px',
+            cursor: !file || uploading ? 'not-allowed' : 'pointer',
+            width: 140,
+          }}
+        >
+          {uploading ? 'Saving...' : 'Save'}
+        </button>
       </div>
-    </main>
+    </div>
   );
 }
+
