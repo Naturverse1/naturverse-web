@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate, useParams } from "react-router-dom";
-import { naturversityUnits } from "@/content/naturversity";
-import { isComplete, toggleComplete } from "@/lib/progress";
+import { naturversityUnits } from '../../content/naturversity';
+import { isComplete, toggleComplete } from '../../lib/progress';
 
 export default function Lesson() {
   const { id = "" } = useParams();

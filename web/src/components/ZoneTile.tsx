@@ -1,6 +1,6 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import useReducedMotion from "@/hooks/useReducedMotion";
+import useReducedMotion from '../hooks/useReducedMotion';
 
 interface ZoneTileProps {
   to: string;

@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, NavLink } from "react-router-dom";
-import { supabase } from "@/supabaseClient";
+import { supabase } from '../supabaseClient';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   `px-3 py-2 rounded-md text-sm font-medium ${isActive ? "bg-white/10 text-white" : "text-white/80 hover:text-white"}`;

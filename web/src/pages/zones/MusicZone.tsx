@@ -1,5 +1,5 @@
 import React from "react";
-import { Breadcrumbs } from "@/components/Breadcrumbs";
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 
 export default function MusicZone() {
   const samples = ["Kick", "Snare", "Hi-hat", "Bass", "Synth"];
