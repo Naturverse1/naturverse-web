@@ -1,24 +1,4 @@
-// Official Naturverse™ Assets
-import CharacterImg from '@/attached_assets/Character img_1754673794865.jpg';
-
-// Character Assets Collection
-import CoconutCruze from '@/attached_assets/Coconut Cruze_1754677394021.png';
-import BluButterfly from '@/attached_assets/Blu Butterfly_1754677394021.png';
-import FrankieFrogs from '@/attached_assets/Frankie Frogs_1754677394022.png';
-import DrP from '@/attached_assets/Dr P_1754677394022.png';
-import JaySing from '@/attached_assets/Jay-Sing_1754677394023.png';
-import NikkiMT from '@/attached_assets/Nikki MT_1754677394025.png';
-import MangoMike from '@/attached_assets/Mango Mike_1754677394025.png';
-import PineapplePaPa from '@/attached_assets/Pineapple Pa-Pa_1754677394026.png';
-import Snakers from '@/attached_assets/Snakers_1754677394026.png';
-import TommyTukTuk from '@/attached_assets/Tommy Tuk Tuk_1754677394026.png';
-import Teeyor from '@/attached_assets/Teeyor_1754677394026.png';
-import PineapplePetey from '@/attached_assets/Pineapple Petey_1754677394026.png';
-import ShroomForest from '@/attached_assets/Shroom forest_1754673794866.jpg';
-import StorybookScene from '@/attached_assets/Storybook img_1754673794866.jpg';
-import TurianCharacter from '@/attached_assets/Turian_1754677394027.jpg';
-import BookImg from '@/attached_assets/book img_1754673794864.jpg';
-import TurianLogo from '@/attached_assets/turian_media_logo_transparent.png';
+import { assetUrlOrPlaceholder } from '@/lib/assets';
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { useAuth } from '@/providers/AuthProvider';
@@ -29,21 +9,21 @@ import { useAuth } from '@/providers/AuthProvider';
 const Home: React.FC = () => {
 	// Array of all our amazing characters for floating animation
 	const floatingCharacters = [
-		{ src: TurianCharacter, name: 'Turian', position: 'top-16 left-16', delay: '0s' },
-		{ src: CoconutCruze, name: 'Coconut Cruze', position: 'top-32 right-20', delay: '1s' },
-		{ src: BluButterfly, name: 'Blu Butterfly', position: 'bottom-40 left-12', delay: '2s' },
-		{ src: FrankieFrogs, name: 'Frankie Frogs', position: 'bottom-24 right-16', delay: '1.5s' },
-		{ src: JaySing, name: 'Jay-Sing', position: 'top-48 left-1/3', delay: '3s' },
-		{ src: MangoMike, name: 'Mango Mike', position: 'bottom-56 right-1/3', delay: '2.5s' },
-		{ src: DrP, name: 'Dr P', position: 'top-72 right-12', delay: '4s' },
-		{ src: PineapplePaPa, name: 'Pineapple Pa-Pa', position: 'bottom-72 left-1/4', delay: '3.5s' },
+	 { filename: 'Turian_1754677394027.jpg', name: 'Turian', position: 'top-16 left-16', delay: '0s' },
+	 { filename: 'Coconut Cruze_1754677394021.png', name: 'Coconut Cruze', position: 'top-32 right-20', delay: '1s' },
+	 { filename: 'Blu Butterfly_1754677394021.png', name: 'Blu Butterfly', position: 'bottom-40 left-12', delay: '2s' },
+	 { filename: 'Frankie Frogs_1754677394022.png', name: 'Frankie Frogs', position: 'bottom-24 right-16', delay: '1.5s' },
+	 { filename: 'Jay-Sing_1754677394023.png', name: 'Jay-Sing', position: 'top-48 left-1/3', delay: '3s' },
+	 { filename: 'Mango Mike_1754677394025.png', name: 'Mango Mike', position: 'bottom-56 right-1/3', delay: '2.5s' },
+	 { filename: 'Dr P_1754677394022.png', name: 'Dr P', position: 'top-72 right-12', delay: '4s' },
+	 { filename: 'Pineapple Pa-Pa_1754677394026.png', name: 'Pineapple Pa-Pa', position: 'bottom-72 left-1/4', delay: '3.5s' },
 	];
 
 	const adventureZones = [
 		{
 			id: 'tropical-rainforest',
 			title: 'Tropical Rainforest',
-			character: TurianCharacter,
+			characterFilename: 'Turian_1754677394027.jpg',
 			characterName: 'Turian',
 			description: 'Explore lush rainforests with Turian and discover amazing plants and animals!',
 			route: '/storybook',
@@ -54,7 +34,7 @@ const Home: React.FC = () => {
 		{
 			id: 'ocean-adventures',
 			title: 'Ocean Adventures',
-			character: CoconutCruze,
+			characterFilename: 'Coconut Cruze_1754677394021.png',
 			characterName: 'Coconut Cruze',
 			description: 'Dive into crystal clear waters and meet incredible sea creatures!',
 			route: '/map',
@@ -65,7 +45,7 @@ const Home: React.FC = () => {
 		{
 			id: 'magical-stories',
 			title: 'Magical Stories',
-			character: BluButterfly,
+			characterFilename: 'Blu Butterfly_1754677394021.png',
 			characterName: 'Blu Butterfly',
 			description: "Read amazing stories about transformation and nature's magic!",
 			route: '/storybook',
@@ -76,7 +56,7 @@ const Home: React.FC = () => {
 		{
 			id: 'nature-quizzes',
 			title: 'Brain Challenge',
-			character: MangoMike,
+			characterFilename: 'Mango Mike_1754677394025.png',
 			characterName: 'Mango Mike',
 			description: 'Test your nature knowledge with fun and educational quizzes!',
 			route: '/quiz',
@@ -92,11 +72,12 @@ const Home: React.FC = () => {
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-blue-100 to-purple-100">
 				<div className="text-center animate-character-entrance">
 					<div className="relative mb-6">
-						<img
-							src={TurianCharacter}
-							alt="Loading Turian..."
-							className="hero rounded-full mx-auto border-4 border-green-400 shadow-2xl animate-gentle-pulse"
-						/>
+						 <img
+						 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
+						 alt="Loading Turian..."
+						 className="hero rounded-full mx-auto border-4 border-green-400 shadow-2xl animate-gentle-pulse"
+						 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+						 />
 						<div className="absolute -top-2 -right-2 text-4xl animate-sparkle-dance">✨</div>
 					</div>
 					<h2 className="text-3xl font-magical text-green-700 mb-2">Loading The Naturverse™...</h2>
@@ -111,25 +92,24 @@ const Home: React.FC = () => {
 	return (
 		<div className="min-h-screen relative overflow-hidden">
 			{/* Magical Multi-Layered Background */}
-			<div
-				className="absolute inset-0 bg-cover bg-center bg-no-repeat"
-				style={{
-					backgroundImage: `
-						linear-gradient(
-							135deg,
-							rgba(34, 197, 94, 0.3) 0%,
-							rgba(59, 130, 246, 0.25) 20%,
-							rgba(147, 51, 234, 0.2) 40%,
-							rgba(251, 146, 60, 0.25) 60%,
-							rgba(234, 179, 8, 0.2) 80%,
-							rgba(239, 68, 68, 0.15) 100%
-						),
-						url(${StorybookScene})
-					`,
-					backgroundSize: 'cover',
-					backgroundPosition: 'center',
-				}}
-			/>
+			 <div
+			 className="absolute inset-0 bg-cover bg-center bg-no-repeat"
+			 style={{
+			 backgroundImage: `
+			 linear-gradient(
+			 135deg,
+			 rgba(34, 197, 94, 0.3) 0%,
+			 rgba(59, 130, 246, 0.25) 20%,
+			 rgba(147, 51, 234, 0.2) 40%,
+			 rgba(251, 146, 60, 0.25) 60%,
+			 rgba(234, 179, 8, 0.2) 80%,
+			 rgba(239, 68, 68, 0.15) 100%
+			 )
+			 `,
+			 backgroundSize: 'cover',
+			 backgroundPosition: 'center',
+			 }}
+			 />
 
 			{/* Enhanced Magical Light Effects */}
 			<div
@@ -152,11 +132,12 @@ const Home: React.FC = () => {
 					className={`floating-character ${character.position} w-20 h-20 md:w-24 md:h-24 animate-character-entrance`}
 					style={{ animationDelay: character.delay }}
 				>
-					<img
-						src={character.src}
-						alt={character.name}
-						className="w-full h-full object-cover rounded-full border-4 border-white/70 shadow-2xl animate-float-bounce"
-					/>
+					 <img
+					 src={assetUrlOrPlaceholder(character.filename)}
+					 alt={character.name}
+					 className="w-full h-full object-cover rounded-full border-4 border-white/70 shadow-2xl animate-float-bounce"
+					 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+					 />
 				</div>
 			))}
 
@@ -205,10 +186,11 @@ const Home: React.FC = () => {
 					<div className="flex justify-center mb-8">
 						<div className="relative">
 							<img
-								src={TurianLogo}
-								alt="The Naturverse™"
-								className="hero drop-shadow-2xl animate-gentle-pulse"
-							/>
+								 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
+								 alt="The Naturverse™"
+								 className="hero drop-shadow-2xl animate-gentle-pulse"
+								 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+								 />
 							<div className="absolute -top-3 -right-3 text-4xl animate-sparkle-dance">✨</div>
 							<div
 								className="absolute -bottom-2 -left-2 text-3xl animate-sparkle-dance"
@@ -283,10 +265,11 @@ const Home: React.FC = () => {
 										<div className="flex justify-center mb-6">
 											<div className="relative">
 												<img
-													src={zone.character}
-													alt={zone.characterName}
-													className="w-24 h-24 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-300"
-												/>
+													 src={assetUrlOrPlaceholder(zone.characterFilename)}
+													 alt={zone.characterName}
+													 className="w-24 h-24 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-300"
+													 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+													 />
 												<div className="absolute -top-3 -right-3 text-3xl animate-sparkle-dance">
 													{zone.emoji}
 												</div>
@@ -326,10 +309,11 @@ const Home: React.FC = () => {
 						<div className="text-center pb-6">
 							<div className="flex justify-center mb-4">
 								<img
-									src={CharacterImg}
-									alt="Meet Our Characters"
-									className="w-24 h-24 rounded-xl border-4 border-green-400 shadow-xl animate-gentle-pulse"
-								/>
+									 src={assetUrlOrPlaceholder('Character img_1754673794865.jpg')}
+									 alt="Meet Our Characters"
+									 className="w-24 h-24 rounded-xl border-4 border-green-400 shadow-xl animate-gentle-pulse"
+									 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+									 />
 							</div>
 
 							<div className="text-3xl md:text-4xl font-magical text-green-700">
@@ -341,12 +325,12 @@ const Home: React.FC = () => {
 							<div className="bg-gradient-to-br from-green-50 to-blue-50 p-8 rounded-2xl border-4 border-green-200/60">
 								<div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-6 mb-8">
 									{[
-										{ src: TurianCharacter, name: 'Turian', role: 'Durian Guide' },
-										{ src: CoconutCruze, name: 'Coconut Cruze', role: 'Ocean Explorer' },
-										{ src: BluButterfly, name: 'Blu Butterfly', role: 'Story Teller' },
-										{ src: FrankieFrogs, name: 'Frankie Frogs', role: 'Forest Friend' },
-										{ src: JaySing, name: 'Jay-Sing', role: 'Music Maker' },
-										{ src: MangoMike, name: 'Mango Mike', role: 'Quiz Master' },
+										 { filename: 'Turian_1754677394027.jpg', name: 'Turian', role: 'Durian Guide' },
+										 { filename: 'Coconut Cruze_1754677394021.png', name: 'Coconut Cruze', role: 'Ocean Explorer' },
+										 { filename: 'Blu Butterfly_1754677394021.png', name: 'Blu Butterfly', role: 'Story Teller' },
+										 { filename: 'Frankie Frogs_1754677394022.png', name: 'Frankie Frogs', role: 'Forest Friend' },
+										 { filename: 'Jay-Sing_1754677394023.png', name: 'Jay-Sing', role: 'Music Maker' },
+										 { filename: 'Mango Mike_1754677394025.png', name: 'Mango Mike', role: 'Quiz Master' },
 									].map((character, index) => (
 										<div
 											key={character.name}
@@ -354,10 +338,11 @@ const Home: React.FC = () => {
 											style={{ animationDelay: `${2 + index * 0.1}s` }}
 										>
 											<img
-												src={character.src}
-												alt={character.name}
-												className="w-16 h-16 rounded-full border-3 border-white shadow-lg mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
-											/>
+												 src={assetUrlOrPlaceholder(character.filename)}
+												 alt={character.name}
+												 className="w-16 h-16 rounded-full border-3 border-white shadow-lg mx-auto mb-2 group-hover:scale-110 transition-transform duration-300"
+												 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+												 />
 											<div className="text-sm font-bold text-green-700 font-playful">
 												{character.name}
 											</div>
@@ -412,10 +397,11 @@ const Home: React.FC = () => {
 				<div className="relative animate-float-bounce">
 					<div className="w-28 h-28 p-2 bg-white/95 rounded-full border-4 border-green-400 shadow-2xl">
 						<img
-							src={TurianCharacter}
-							alt="Turian Guide"
-							className="w-full h-full object-cover rounded-full"
-						/>
+							 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
+							 alt="Turian Guide"
+							 className="w-full h-full object-cover rounded-full"
+							 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
+							 />
 					</div>
 
 					<div className="absolute -top-20 -left-56 bg-white/95 backdrop-blur-sm rounded-2xl p-4 shadow-xl border-2 border-green-400 max-w-xs hidden lg:block">

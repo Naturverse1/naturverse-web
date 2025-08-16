@@ -2,6 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/supabaseClient";
 import { getFileExt, uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
+import { assetUrlOrPlaceholder } from "@/lib/assets";
 
 const Profile: React.FC = () => {
   const [loading, setLoading] = useState(true);
@@ -80,11 +81,12 @@ const Profile: React.FC = () => {
       <p>Email: {userEmail || "—"}</p>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 12 }}>
         <img
-          src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
+          src={previewUrl || avatarUrl || assetUrlOrPlaceholder()}
           alt="avatar"
           width={96}
           height={96}
           style={{ borderRadius: 9999, objectFit: "cover", background: "#f3f3f3" }}
+          onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = assetUrlOrPlaceholder(); }}
         />
         <div>
           <input

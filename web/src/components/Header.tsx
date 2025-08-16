@@ -1,6 +1,7 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { useAuth } from "@/providers/AuthProvider";
+import { assetUrlOrPlaceholder } from "@/lib/assets";
 
 const Header: React.FC = () => {
   const { user, session, signOut } = useAuth();
@@ -25,6 +26,7 @@ const Header: React.FC = () => {
                 width={32}
                 height={32}
                 style={{ borderRadius: 16, objectFit: "cover", background: "#f3f3f3", border: "1px solid #ccc" }}
+                onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = assetUrlOrPlaceholder(); }}
               />
             ) : (
               <div style={{ width: 32, height: 32, borderRadius: 16, background: "#eee", display: "flex", alignItems: "center", justifyContent: "center", fontWeight: 600 }}>
