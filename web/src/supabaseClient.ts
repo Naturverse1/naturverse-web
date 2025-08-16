@@ -16,6 +16,7 @@ const getSupabase = () => {
     globalThis._supabase = createClient(url, anon, {
       auth: {
         persistSession: true,
+        autoRefreshToken: true,
         detectSessionInUrl: true,
         storageKey,
       },
