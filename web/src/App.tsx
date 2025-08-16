@@ -25,6 +25,7 @@ import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
+import MemoryMatch from './pages/MemoryMatch';
 import { RequireAuth, useSession } from './lib/auth';
 
 export default function App() {
@@ -123,6 +124,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+          <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
           <Route
             path="/zones/community"
             element={
