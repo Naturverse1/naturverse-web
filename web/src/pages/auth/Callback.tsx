@@ -33,7 +33,7 @@ const AuthCallback: React.FC = () => {
       navigate(dest);
     })();
   }, [navigate]);
-  return <div style={{ padding: 32 }}>Signing in…</div>;
+  return <div style={{ padding: 32 }}>Signing you in…</div>;
 };
 
 export default AuthCallback;

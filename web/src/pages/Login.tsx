@@ -16,12 +16,16 @@ export default function Login() {
     e.preventDefault();
     setMsg(null);
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: window.location.origin + "/auth/callback" }});
+    localStorage.setItem("postLoginPath", "/");
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: "https://thenaturverse.com/auth/callback" }});
     setLoading(false);
     setCooldown(10);
     if (error) {
-      setMsg(error.message);
-      alert("Failed to send magic link: " + error.message);
+      if (error.message.toLowerCase().includes("wait")) {
+        setMsg("Please wait a few seconds before requesting another link.");
+      } else {
+        setMsg(error.message);
+      }
     } else {
       setMsg("Check your email for the magic link!");
     }
