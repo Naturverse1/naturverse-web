@@ -14,6 +14,7 @@ import Wellness from "@/pages/zones/Wellness";
 import MakerLab from "@/pages/zones/MakerLab";
 import Arcade from "@/pages/zones/Arcade";
 import Library from "@/pages/zones/Library";
+import Lesson from "@/pages/naturversity/Lesson";
 
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -37,6 +38,7 @@ export default function App() {
           <Route path="/zones/maker-lab" element={<MakerLab />} />
           <Route path="/zones/arcade" element={<Arcade />} />
           <Route path="/zones/library" element={<Library />} />
+          <Route path="/naturversity/lesson/:id" element={<Lesson />} />
           <Route
             path="/app"
             element={
