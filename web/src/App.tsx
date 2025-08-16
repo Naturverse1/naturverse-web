@@ -9,6 +9,7 @@ import Profile from './pages/Profile';
 import MapHub from './pages/MapHub';
 import RainforestWorld from './pages/RainforestWorld';
 import OceanWorld from './pages/OceanWorld';
+import DesertWorld from './pages/DesertWorld';
 import Stories from './pages/Stories';
 import Quizzes from './pages/Quizzes';
 
@@ -26,6 +27,7 @@ export default function App() {
         <Route path="/map" element={<ProtectedRoute><MapHub /></ProtectedRoute>} />
         <Route path="/worlds/rainforest" element={<ProtectedRoute><RainforestWorld /></ProtectedRoute>} />
         <Route path="/worlds/ocean" element={<ProtectedRoute><OceanWorld /></ProtectedRoute>} />
+        <Route path="/worlds/desert" element={<ProtectedRoute><DesertWorld /></ProtectedRoute>} />
         <Route path="/stories" element={<ProtectedRoute><Stories /></ProtectedRoute>} />
         <Route path="/quizzes" element={<ProtectedRoute><Quizzes /></ProtectedRoute>} />
         <Route path="*" element={<Navigate to="/" replace />} />
