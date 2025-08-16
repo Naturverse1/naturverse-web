@@ -23,6 +23,7 @@ import Lesson from "@/pages/naturversity/Lesson";
 import About from "@/pages/About";
 import StoryStudioPage from "@/pages/story-studio";
 import AutoQuiz from "@/pages/auto-quiz";
+import WorldHub from "@/pages/world-hub";
 
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -43,6 +44,7 @@ export default function App() {
           <Route path="/auto-quiz" element={<AutoQuiz />} />
           <Route path="/worlds" element={<Worlds />} />
           <Route path="/worlds/:slug" element={<World />} />
+          <Route path="/hub" element={<WorldHub />} />
           <Route
             path="/zones"
             element={
