@@ -121,9 +121,9 @@ export default function ProfilePage() {
     setUploading(true);
     setError(null);
     try {
-      // Remove old avatar if path exists
+      // Remove old avatar if path exists (migration safeguard: skip if missing)
       if (user.avatar_path) {
-        await removeAvatarIfExists(supabase, user.avatar_url ?? undefined);
+        await removeAvatarIfExists(supabase, user.avatar_path);
       }
       // Upload new avatar
       console.log("Uploading avatar:", file.type, file.size);
