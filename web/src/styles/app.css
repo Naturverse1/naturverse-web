@@ -4,7 +4,11 @@
 --bg-2:#101a38;
 --text:#eaf2ff;
 --accent:#91f2ff;
+--nv-page-pad:1rem;
 }
+@media (min-width: 640px) { :root { --nv-page-pad: 1.25rem; } }
+@media (min-width: 1024px) { :root { --nv-page-pad: 2rem; } }
+.page-container { padding: var(--nv-page-pad); }
 
 *,
 *::before,

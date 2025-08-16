@@ -1,6 +1,7 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
+import ImmersiveBackground from "@/components/ImmersiveBackground";
 import Home from "@/pages/Landing";
 import Login from "@/pages/Login";
 import AuthCallback from "@/pages/AuthCallback";
@@ -30,7 +31,8 @@ import { RequireAuth } from "@/lib/auth";
 export default function App() {
   return (
     <BrowserRouter>
-      <div className="min-h-screen bg-gradient-to-br from-[#0b1020] via-[#101a38] to-[#1e2046]">
+      <ImmersiveBackground />
+      <div className="min-h-screen">
         <Navbar />
         <Routes>
           <Route path="/" element={<Home />} />
