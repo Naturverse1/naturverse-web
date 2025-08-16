@@ -1,59 +1,23 @@
-import React from "react";
-import { Link, NavLink } from "react-router-dom";
-import { supabase } from '../supabaseClient';
+import { NavLink } from "react-router-dom";
 
-const linkClass = ({ isActive }: { isActive: boolean }) =>
-  `px-3 py-2 rounded-md text-sm font-medium ${isActive ? "bg-white/10 text-white" : "text-white/80 hover:text-white"}`;
-
-export const Navbar: React.FC = () => {
-  const [email, setEmail] = React.useState<string | null>(null);
-
-  React.useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setEmail(data.user?.email ?? null));
-  }, []);
-
-  async function signOut() {
-    await supabase.auth.signOut();
-    window.location.href = "/";
-  }
-
+export default function Navbar({ email }: { email?: string|null }) {
   return (
-    <header className="w-full sticky top-0 z-30 bg-black/30 backdrop-blur border-b border-white/10">
-      <nav className="mx-auto max-w-5xl flex items-center gap-2 px-4 h-14">
-        <Link to="/" className="text-white font-semibold">Naturverse</Link>
-        <div className="flex-1" />
-        <NavLink to="/" className={linkClass} end>
-          Home
-        </NavLink>
-        <NavLink to="/worlds" className={linkClass}>
-          Worlds
-        </NavLink>
-        <NavLink to="/zones" className={linkClass}>
-          Zones
-        </NavLink>
-        <NavLink to="/hub" className={linkClass}>
-          Hub
-        </NavLink>
-        <NavLink to="/about" className={linkClass}>
-          About
-        </NavLink>
-        {email && (
+    <div className="nv-wrap">
+      <nav className="nv-nav">
+        <NavLink to="/" className="brand" end>The Naturverse</NavLink>
+        <NavLink to="/worlds">Worlds</NavLink>
+        <NavLink to="/zones">Zones</NavLink>
+        <div className="nv-spacer" />
+        {email ? (
           <>
-            <NavLink to="/app" className={linkClass}>
-              App
-            </NavLink>
-            <NavLink to="/profile" className={linkClass}>
-              Profile
-            </NavLink>
-            <button
-              onClick={signOut}
-              className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white/80 hover:text-white"
-            >
-              Sign out
-            </button>
+            <NavLink to="/app">App</NavLink>
+            <NavLink to="/profile">Profile</NavLink>
+            <a href="/.netlify/functions/signout">Sign out</a>
           </>
+        ) : (
+          <NavLink to="/login">Sign in</NavLink>
         )}
       </nav>
-    </header>
+    </div>
   );
-};
+}

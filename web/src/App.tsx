@@ -1,6 +1,6 @@
 import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import { Navbar } from './components/Navbar';
+import Navbar from './components/Navbar';
 import ImmersiveBackground from './components/ImmersiveBackground';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -25,14 +25,15 @@ import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-import { RequireAuth } from './lib/auth';
+import { RequireAuth, useSession } from './lib/auth';
 
 export default function App() {
+  const { session } = useSession();
   return (
     <BrowserRouter>
       <ImmersiveBackground />
       <div className="min-h-screen">
-        <Navbar />
+        <Navbar email={session?.user.email} />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />
@@ -149,6 +150,8 @@ export default function App() {
           />
           <Route path="*" element={<NotFound />} />
         </Routes>
+      {/* global styles */}
+      <link rel="stylesheet" href="/src/styles/ui.css" />
       </div>
     </BrowserRouter>
   );
