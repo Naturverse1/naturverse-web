@@ -1,60 +1,11 @@
-import React, { useEffect } from "react";
-import { Link } from "react-router-dom";
-import IslandHubFallback from "@/components/IslandHubFallback";
-
-interface PortalMeta {
-  key: string;
-  label: string;
-  color: string;
-  route: string;
-  top: string;
-  left: string;
-}
-
-const portals: PortalMeta[] = [
-  { key: "naturversity", label: "Naturversity", color: "#7dd3fc", route: "/zones/naturversity", top: "35%", left: "60%" },
-  { key: "music", label: "Music", color: "#a78bfa", route: "/zones/music", top: "40%", left: "30%" },
-  { key: "wellness", label: "Wellness", color: "#34d399", route: "/zones/wellness", top: "55%", left: "70%" },
-  { key: "creator", label: "Creator Lab", color: "#f472b6", route: "/zones/creator-lab", top: "58%", left: "40%" },
-];
+import { Link } from 'react-router-dom';
 
 export default function WorldHub() {
-  useEffect(() => {
-    document.title = "Naturverse Hub";
-  }, []);
-
   return (
-    <main className="mx-auto max-w-5xl px-4 py-12">
-      <Link to="/zones" className="text-sm text-blue-300 hover:underline">
-        ← Back to zones
-      </Link>
-      <div className="mt-4 w-full flex flex-col items-center">
-        <div className="relative w-full max-w-[1100px]">
-          <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            <IslandHubFallback />
-            <div className="absolute inset-0 pointer-events-none">
-              {portals.map((p) => (
-                <Link
-                  key={p.key}
-                  to={p.route}
-                  className="pointer-events-auto absolute text-xs text-white"
-                  style={{ top: p.top, left: p.left, transform: "translate(-50%, -50%)" }}
-                >
-                  {p.label}
-                </Link>
-              ))}
-            </div>
-          </div>
-        </div>
-        <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-white/80">
-          {portals.map((p) => (
-            <div key={p.key} className="flex items-center gap-1">
-              <span className="w-3 h-3 rounded-full" style={{ background: p.color }} />
-              <span>{p.label}</span>
-            </div>
-          ))}
-        </div>
-      </div>
+    <main style={{ padding: '2rem' }}>
+      <h1>World Hub</h1>
+      <p>3D island hub is coming soon. We’re keeping the build lean while we wire up graphics.</p>
+      <p><Link to="/zones">Back to Zones</Link></p>
     </main>
   );
 }
