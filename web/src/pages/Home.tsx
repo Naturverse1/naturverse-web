@@ -7,17 +7,7 @@ import { useAuth } from '@/providers/AuthProvider';
 // ...existing code...
 
 const Home: React.FC = () => {
-	// Array of all our amazing characters for floating animation
-	const floatingCharacters = [
-	 { filename: 'Turian_1754677394027.jpg', name: 'Turian', position: 'top-16 left-16', delay: '0s' },
-	 { filename: 'Coconut Cruze_1754677394021.png', name: 'Coconut Cruze', position: 'top-32 right-20', delay: '1s' },
-	 { filename: 'Blu Butterfly_1754677394021.png', name: 'Blu Butterfly', position: 'bottom-40 left-12', delay: '2s' },
-	 { filename: 'Frankie Frogs_1754677394022.png', name: 'Frankie Frogs', position: 'bottom-24 right-16', delay: '1.5s' },
-	 { filename: 'Jay-Sing_1754677394023.png', name: 'Jay-Sing', position: 'top-48 left-1/3', delay: '3s' },
-	 { filename: 'Mango Mike_1754677394025.png', name: 'Mango Mike', position: 'bottom-56 right-1/3', delay: '2.5s' },
-	 { filename: 'Dr P_1754677394022.png', name: 'Dr P', position: 'top-72 right-12', delay: '4s' },
-	 { filename: 'Pineapple Pa-Pa_1754677394026.png', name: 'Pineapple Pa-Pa', position: 'bottom-72 left-1/4', delay: '3.5s' },
-	];
+        // fully static landing: remove floating character logic
 
 	const adventureZones = [
 		{
@@ -70,15 +60,15 @@ const Home: React.FC = () => {
 	if (!authLoaded) {
 		return (
 			<div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-green-100 via-blue-100 to-purple-100">
-				<div className="text-center animate-character-entrance">
+                                <div className="text-center">
 					<div className="relative mb-6">
 						 <img
 						 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
 						 alt="Loading Turian..."
-						 className="hero rounded-full mx-auto border-4 border-green-400 shadow-2xl animate-gentle-pulse"
+                                                 className="hero rounded-full mx-auto border-4 border-green-400 shadow-2xl"
 						 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
 						 />
-						<div className="absolute -top-2 -right-2 text-4xl animate-sparkle-dance">✨</div>
+                                                <div className="absolute -top-2 -right-2 text-4xl">✨</div>
 					</div>
 					<h2 className="text-3xl font-magical text-green-700 mb-2">Loading The Naturverse™...</h2>
 					<p className="text-lg font-playful text-green-600">
@@ -127,63 +117,22 @@ const Home: React.FC = () => {
 
 
 
-			{/* Floating Sparkles & Magic Elements */}
-			<div className="floating-sparkles" style={{ top: '12%', left: '18%' }}>
-				✨
-			</div>
-			<div className="floating-sparkles" style={{ top: '20%', right: '25%', animationDelay: '1s' }}>
-				🌟
-			</div>
-			<div
-				className="floating-sparkles"
-				style={{ bottom: '35%', left: '20%', animationDelay: '2s' }}
-			>
-				⭐
-			</div>
-			<div
-				className="floating-sparkles"
-				style={{ top: '65%', right: '15%', animationDelay: '1.5s' }}
-			>
-				🌈
-			</div>
-			<div
-				className="floating-sparkles"
-				style={{ bottom: '25%', left: '70%', animationDelay: '3s' }}
-			>
-				🦋
-			</div>
-			<div
-				className="floating-sparkles"
-				style={{ top: '40%', left: '85%', animationDelay: '0.5s' }}
-			>
-				✨
-			</div>
-			<div
-				className="floating-sparkles"
-				style={{ bottom: '15%', right: '60%', animationDelay: '2.5s' }}
-			>
-				🌸
-			</div>
-
-			<div className="relative z-10 min-h-screen py-8 px-6">
+                        <div className="relative z-10 min-h-screen py-8 px-6">
 				{/* Hero Section */}
-				<div className="text-center mb-12 animate-character-entrance">
+                                <div className="text-center mb-12">
 					{/* Logo and Brand */}
 					<div className="flex justify-center mb-8">
 						<div className="relative">
 							<img
 								 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
 								 alt="The Naturverse™"
-								 className="hero drop-shadow-2xl animate-gentle-pulse"
+                                                        className="hero drop-shadow-2xl"
 								 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
 								 />
-							<div className="absolute -top-3 -right-3 text-4xl animate-sparkle-dance">✨</div>
-							<div
-								className="absolute -bottom-2 -left-2 text-3xl animate-sparkle-dance"
-								style={{ animationDelay: '1s' }}
-							>
-								🌟
-							</div>
+                                                        <div className="absolute -top-3 -right-3 text-4xl">✨</div>
+                                                        <div className="absolute -bottom-2 -left-2 text-3xl" style={{ animationDelay: '1s' }}>
+                                                                🌟
+                                                        </div>
 						</div>
 					</div>
 
@@ -228,7 +177,7 @@ const Home: React.FC = () => {
 				{/* Adventure Zones Grid */}
 				<div className="max-w-6xl mx-auto mb-16">
 					<div
-						className="text-center mb-12 animate-character-entrance"
+                                            className="text-center mb-12"
 						style={{ animationDelay: '0.5s' }}
 					>
 						<h2 className="text-3xl md:text-4xl font-magical text-white drop-shadow-xl mb-4">
@@ -243,7 +192,7 @@ const Home: React.FC = () => {
 						{adventureZones.map((zone, index) => (
 							<Link key={zone.id} to={zone.route}>
 								<div
-									className="zone-card animate-character-entrance cursor-pointer group"
+                                                                    className="zone-card cursor-pointer group"
 									style={{ animationDelay: `${0.7 + index * 0.2}s` }}
 									data-testid={`zone-${zone.id}`}
 								>
@@ -256,7 +205,7 @@ const Home: React.FC = () => {
 													 className="w-24 h-24 rounded-full border-4 border-white shadow-xl group-hover:scale-110 transition-transform duration-300"
 													 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
 													 />
-												<div className="absolute -top-3 -right-3 text-3xl animate-sparkle-dance">
+                                                                                            <div className="absolute -top-3 -right-3 text-3xl">
 													{zone.emoji}
 												</div>
 											</div>
@@ -291,13 +240,13 @@ const Home: React.FC = () => {
 
 				{/* Featured Characters Showcase */}
 				<div className="max-w-6xl mx-auto mb-16">
-					<div className="quest-card animate-character-entrance" style={{ animationDelay: '1.5s' }}>
+                                    <div className="quest-card" style={{ animationDelay: '1.5s' }}>
 						<div className="text-center pb-6">
 							<div className="flex justify-center mb-4">
 								<img
 									 src={assetUrlOrPlaceholder('Character img_1754673794865.jpg')}
 									 alt="Meet Our Characters"
-									 className="w-24 h-24 rounded-xl border-4 border-green-400 shadow-xl animate-gentle-pulse"
+                                                                     className="w-24 h-24 rounded-xl border-4 border-green-400 shadow-xl"
 									 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
 									 />
 							</div>
@@ -320,7 +269,7 @@ const Home: React.FC = () => {
 									].map((character, index) => (
 										<div
 											key={character.name}
-											className="text-center animate-character-entrance group"
+                                                                                    className="text-center group"
 											style={{ animationDelay: `${2 + index * 0.1}s` }}
 										>
 											<img
@@ -350,7 +299,7 @@ const Home: React.FC = () => {
 				{/* Platform Stats */}
 				<div className="max-w-4xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
 					<div
-						className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-green-300/60 shadow-xl animate-character-entrance"
+                                            className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-green-300/60 shadow-xl"
 						style={{ animationDelay: '2.2s' }}
 					>
 						<div className="text-5xl mb-4">🌟</div>
@@ -359,7 +308,7 @@ const Home: React.FC = () => {
 					</div>
 
 					<div
-						className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-blue-300/60 shadow-xl animate-character-entrance"
+                                            className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-blue-300/60 shadow-xl"
 						style={{ animationDelay: '2.4s' }}
 					>
 						<div className="text-5xl mb-4">📚</div>
@@ -368,7 +317,7 @@ const Home: React.FC = () => {
 					</div>
 
 					<div
-						className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-purple-300/60 shadow-xl animate-character-entrance"
+                                            className="text-center p-6 bg-white/90 backdrop-blur-sm rounded-3xl border-4 border-purple-300/60 shadow-xl"
 						style={{ animationDelay: '2.6s' }}
 					>
 						<div className="text-5xl mb-4">🎯</div>
@@ -380,7 +329,7 @@ const Home: React.FC = () => {
 
 			{/* Turian Floating Guide */}
 			<div className="fixed bottom-8 right-8 z-50">
-				<div className="relative animate-float-bounce">
+                            <div className="relative">
 					<div className="w-28 h-28 p-2 bg-white/95 rounded-full border-4 border-green-400 shadow-2xl">
 						<img
 							 src={assetUrlOrPlaceholder('Turian_1754677394027.jpg')}
