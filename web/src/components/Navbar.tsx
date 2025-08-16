@@ -24,6 +24,7 @@ export const Navbar: React.FC = () => {
         <div className="flex-1" />
         <NavLink to="/" className={linkClass} end>Home</NavLink>
         <NavLink to="/worlds" className={linkClass}>Worlds</NavLink>
+        <NavLink to="/zones" className={linkClass}>Zones</NavLink>
         <NavLink to="/app" className={linkClass}>App</NavLink>
         <NavLink to="/profile" className={linkClass}>Profile</NavLink>
         {email && (
