@@ -1,13 +1,11 @@
-import { Link } from 'react-router-dom';
+import { useAuth } from "@/auth/session";
 
 export default function AppHome() {
+  const { user } = useAuth();
   return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Naturverse App — You’re signed in.</h1>
-      <div style={{ marginTop: '1rem', display: 'flex', gap: '1rem' }}>
-        <Link to="/map">Map</Link>
-        <Link to="/profile">Profile</Link>
-      </div>
-    </main>
+    <div className="page">
+      <h1>Welcome back{user ? `, ${user.email}` : ""}!</h1>
+      <p>This is your app home. From here we’ll link to Profile, Worlds, etc.</p>
+    </div>
   );
 }
