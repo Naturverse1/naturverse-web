@@ -15,11 +15,29 @@ export default function TurianHero() {
           0% { transform: translateY(0) rotate(0deg); }
           100% { transform: translateY(-8px) rotate(1.5deg); }
         }
+        @keyframes nv-shimmer {
+          from { background-position: -200% 0; }
+          to { background-position: 200% 0; }
+        }
+        .nv-shimmer {
+          background: linear-gradient(90deg, rgba(255,255,255,0.95), rgba(255,255,255,0.6), rgba(255,255,255,0.95));
+          background-clip: text;
+          -webkit-background-clip: text;
+          color: transparent;
+        }
       `}</style>
       <div className="mx-auto max-w-6xl flex flex-col items-center gap-12 md:flex-row md:justify-between">
         <div className="max-w-[560px] w-full text-center md:text-left flex flex-col items-center md:items-start bg-black/20 md:bg-transparent rounded-lg p-4 md:p-0">
           <h1 className="text-4xl sm:text-5xl font-bold leading-tight text-white">
-            Meet Turian the Durian 🍈⚡
+            <span
+              className="nv-shimmer"
+              style={{
+                animation: reduced ? "none" : "nv-shimmer 6s linear infinite",
+                backgroundSize: "200% 100%"
+              }}
+            >
+              Meet Turian the Durian 🍈⚡
+            </span>
           </h1>
           <p className="mt-4 text-lg text-white/90">
             Your playful guide to nature quests, stories, and mini-labs.

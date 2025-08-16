@@ -87,6 +87,22 @@ export default function Settings() {
       </div>
 
       <div className="rounded-lg border border-white/10 bg-white/5 p-4 mt-6">
+        <h2 className="text-xl font-semibold text-white">Turian Tips</h2>
+        <label className="text-white/80 mt-1 block">
+          <input
+            type="checkbox"
+            defaultChecked={localStorage.getItem("show-tips") !== "false"}
+            onChange={(e) => {
+              localStorage.setItem("show-tips", e.target.checked ? "true" : "false");
+              window.dispatchEvent(new StorageEvent("storage"));
+            }}
+            style={{ marginRight: 8 }}
+          />
+          Show tips from Turian
+        </label>
+      </div>
+
+      <div className="rounded-lg border border-white/10 bg-white/5 p-4 mt-6">
         <h2 className="text-xl font-semibold text-white">Motion</h2>
         <label className="text-white/80">
           <input
