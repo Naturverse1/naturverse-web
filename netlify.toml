@@ -10,6 +10,7 @@ node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20"
+  NPM_FLAGS = "--no-audit --no-fund --legacy-peer-deps"
 
 [[redirects]]
 from = "/api/*"
