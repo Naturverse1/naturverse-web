@@ -26,7 +26,6 @@ import AutoQuiz from "@/pages/auto-quiz";
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
 import { RequireAuth } from "@/lib/auth";
-import IslandHubFallback from "@/components/IslandHubFallback";
 
 export default function App() {
   return (
@@ -43,7 +42,6 @@ export default function App() {
           <Route path="/auto-quiz" element={<AutoQuiz />} />
           <Route path="/worlds" element={<Worlds />} />
           <Route path="/worlds/:slug" element={<World />} />
-          <Route path="/hub" element={<IslandHubFallback />} />
           <Route
             path="/zones"
             element={
