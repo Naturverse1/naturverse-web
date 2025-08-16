@@ -12,6 +12,11 @@ import OceanWorld from './pages/OceanWorld';
 import DesertWorld from './pages/DesertWorld';
 import Stories from './pages/Stories';
 import Quizzes from './pages/Quizzes';
+import Rainforest from './pages/Rainforest';
+import Plants from './pages/rainforest/Plants';
+import Animals from './pages/rainforest/Animals';
+import Ecosystem from './pages/rainforest/Ecosystem';
+import Quiz from './pages/rainforest/Quiz';
 
 export default function App() {
   const location = useLocation();
@@ -25,6 +30,11 @@ export default function App() {
         <Route path="/app" element={<ProtectedRoute><AppHome /></ProtectedRoute>} />
         <Route path="/profile" element={<ProtectedRoute><Profile /></ProtectedRoute>} />
         <Route path="/map" element={<ProtectedRoute><MapHub /></ProtectedRoute>} />
+        <Route path="/rainforest" element={<Rainforest />} />
+        <Route path="/rainforest/plants" element={<Plants />} />
+        <Route path="/rainforest/animals" element={<Animals />} />
+        <Route path="/rainforest/ecosystem" element={<Ecosystem />} />
+        <Route path="/rainforest/quiz" element={<Quiz />} />
         <Route path="/worlds/rainforest" element={<ProtectedRoute><RainforestWorld /></ProtectedRoute>} />
         <Route path="/worlds/ocean" element={<ProtectedRoute><OceanWorld /></ProtectedRoute>} />
         <Route path="/worlds/desert" element={<ProtectedRoute><DesertWorld /></ProtectedRoute>} />

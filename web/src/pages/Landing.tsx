@@ -10,7 +10,7 @@ export default function Landing() {
         <article>
           <h2>Explore Amazing Worlds</h2>
           <ul>
-            <li><a href="/map#rainforest">Tropical Rainforest</a></li>
+            <li><a href="/rainforest">Tropical Rainforest</a></li>
             <li><a href="/map#ocean">Ocean Adventures</a></li>
             <li><a href="/map#stories">Magical Stories</a></li>
             <li><a href="/map#quizzes">Brain Challenge</a></li>
