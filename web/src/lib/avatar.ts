@@ -1,43 +1,59 @@
-import { createClient } from '@supabase/supabase-js';
+import { supabase } from "@/supabaseClient";
 
-export type UploadResult = { publicUrl: string; path: string };
+const BUCKET = "avatars";
 
-export function getFileExt(name: string) {
-  const i = name.lastIndexOf('.');
-  return i === -1 ? 'png' : name.slice(i + 1).toLowerCase();
+export type ProfileRow = {
+  id: string;
+  email: string | null;
+  avatar_path: string | null;
+};
+
+export async function getMyProfile(): Promise<ProfileRow | null> {
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser();
+  if (userErr || !user) return null;
+
+  const { data, error } = await supabase
+    .from("users")
+    .select("id,email,avatar_path")
+    .eq("id", user.id)
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
-export async function uploadAvatar(
-  supabase: ReturnType<typeof createClient>,
-  userId: string,
-  file: File
-): Promise<UploadResult> {
-  const ext = getFileExt(file.name);
-  const filename = `${crypto.randomUUID()}.${ext}`;
-  const path = `avatars/${userId}/${filename}`;
+export function getPublicAvatarUrl(path: string | null | undefined): string | null {
+  if (!path) return null;
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
+  // cache-bust so the newly uploaded image shows right away
+  return data?.publicUrl ? `${data.publicUrl}?v=${Date.now()}` : null;
+}
 
-  const { error: upErr } = await supabase
-    .storage
-    .from('avatars')
-    .upload(path, file, { upsert: true, contentType: file.type });
+export async function uploadNavatar(file: File): Promise<string> {
+  const {
+    data: { user },
+    error: userErr,
+  } = await supabase.auth.getUser();
+  if (userErr || !user) throw userErr;
 
+  const ext = file.name.split(".").pop();
+  const fileName = `${user.id}/${crypto.randomUUID()}.${ext}`;
+
+  const { error: upErr } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+    contentType: file.type,
+    upsert: true,
+  });
   if (upErr) throw upErr;
 
-  const { data } = supabase.storage.from('avatars').getPublicUrl(path);
-  return { publicUrl: data.publicUrl, path };
-}
+  // Store the path on the user row
+  const { error: updErr } = await supabase
+    .from("users")
+    .update({ avatar_path: fileName })
+    .eq("id", user.id);
+  if (updErr) throw updErr;
 
-export async function removeAvatarIfExists(
-  supabase: ReturnType<typeof createClient>,
-  avatarPath?: string,
-  avatarUrl?: string
-): Promise<void> {
-  let storagePath = avatarPath;
-  if (!storagePath && avatarUrl) {
-    const idx = avatarUrl.indexOf('/object/public/');
-    if (idx !== -1) storagePath = avatarUrl.slice(idx + '/object/public/'.length);
-  }
-  if (!storagePath) return;
-  // Ignore not found errors
-  await supabase.storage.from('avatars').remove([storagePath]).catch(() => {});
+  return fileName;
 }
