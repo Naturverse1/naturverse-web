@@ -7,11 +7,15 @@ export default function AuthCallback() {
   const [error, setError] = useState<string | null>(null);
   useEffect(() => {
     async function handleCallback() {
-      const { error } = await supabase.auth.exchangeCodeForSession();
+      const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
       if (error) {
         setError(error.message);
+        alert("Authentication failed: " + error.message);
+        nav("/login", { replace: true });
       } else {
-        nav("/profile", { replace: true });
+        const lastPath = localStorage.getItem("lastPath") || "/profile";
+        nav(lastPath, { replace: true });
+        localStorage.removeItem("lastPath");
       }
     }
     handleCallback();

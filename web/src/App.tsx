@@ -1,11 +1,10 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
-import AppHome from './pages/AppHome';
 import ProfilePage from './pages/Profile';
 import AuthCallback from './pages/AuthCallback';
 import PrivateRoute from './components/PrivateRoute';
-import RequireAuth from './components/RequireAuth';
+import AppRedirect from './components/AppRedirect';
 
 export default function App() {
   return (
@@ -14,12 +13,8 @@ export default function App() {
       <Route path="/" element={<Landing />} />
       <Route path="/login" element={<Login />} />
 
-      {/* Protected app area */}
-      <Route path="/app" element={
-        <RequireAuth>
-          <AppHome />
-        </RequireAuth>
-      } />
+  {/* /app route: redirect to /profile if signed in, else /login */}
+  <Route path="/app" element={<AppRedirect />} />
       {/* Auth callback route */}
       <Route path="/auth/callback" element={<AuthCallback />} />
       {/* Protected profile route */}
