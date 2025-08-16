@@ -1,11 +1,11 @@
 import React, { useEffect, useState, useRef } from "react";
 import { supabase } from "@/supabaseClient";
-import { uploadAvatar } from "@/lib/avatar";
+import { ensureUserRow } from "@/providers/ProfileProvider";
 import { useProfile } from "@/providers/ProfileProvider";
 import { useNavigate } from "react-router-dom";
 
 const Profile: React.FC = () => {
-  const { avatarUrl, avatarPath, email, loading, refreshProfile, setAvatarUrl, setAvatarPath } = useProfile();
+  const { avatarUrl, avatarPath, email, loading, setAvatarUrl, setAvatarPath } = useProfile();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
@@ -25,34 +25,35 @@ const Profile: React.FC = () => {
     if (!file) return;
     setSaving(true);
     try {
-      // Remove old avatar if present
+      const user = await supabase.auth.getUser();
+      const userId = user.data.user?.id;
+      const userEmail = user.data.user?.email;
+      if (!userId) throw new Error('Not signed in');
+      await ensureUserRow({ id: userId, email: userEmail });
       if (avatarPath) {
         await supabase.storage.from('avatars').remove([avatarPath]).catch(() => {});
       }
-      // Compute new path
       const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-      const filename = `${crypto.randomUUID()}.${ext}`;
-      const user = await supabase.auth.getUser();
-      const userId = user.data.user?.id;
-      if (!userId) throw new Error('Not signed in');
-      const newPath = `avatars/${userId}/${filename}`;
-      // Upload
+      const newPath = `avatars/${userId}/${crypto.randomUUID()}.${ext}`;
       await supabase.storage.from('avatars').upload(newPath, file, { upsert: true, contentType: file.type });
-      // Get public URL
-      const { data } = supabase.storage.from('avatars').getPublicUrl(newPath);
-      const publicUrl = data.publicUrl;
-      // Update DB
-      await supabase.from('users').update({ avatar_url: publicUrl, avatar_path: newPath }).eq('id', userId);
-      setAvatarUrl(publicUrl);
-      setAvatarPath(newPath);
+      const { data: pub } = supabase.storage.from('avatars').getPublicUrl(newPath);
+      const publicUrl = pub.publicUrl;
+      const { data, error } = await supabase
+        .from('users')
+        .update({ avatar_url: publicUrl, avatar_path: newPath, updated_at: new Date().toISOString() })
+        .eq('id', userId)
+        .select('avatar_url, avatar_path')
+        .single();
+      if (error) throw error;
+      setAvatarUrl((data.avatar_url as string) ?? null);
+      setAvatarPath((data.avatar_path as string) ?? null);
       setPreviewUrl(null);
       setFile(null);
+      setSaving(false);
       alert('Avatar updated');
-      refreshProfile();
       navigate('/');
     } catch (err: any) {
       alert(err?.message ?? 'Failed to save avatar');
-    } finally {
       setSaving(false);
     }
   };

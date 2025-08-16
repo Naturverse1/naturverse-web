@@ -55,3 +55,11 @@ export const ProfileProvider: React.FC<{ children: React.ReactNode }> = ({ child
     </ProfileContext.Provider>
   );
 };
+
+export async function ensureUserRow(user: { id: string, email: string }) {
+  if (!user?.id) return;
+  await supabase.from('users').upsert(
+    [{ id: user.id, email: user.email }],
+    { onConflict: 'id' }
+  );
+}
