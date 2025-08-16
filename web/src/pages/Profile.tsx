@@ -1,74 +1,79 @@
 import React, { useEffect, useState, useRef } from "react";
-import { supabase } from "@/supabaseClient";
-import { ensureUserRow } from "@/providers/ProfileProvider";
-import { useProfile } from "@/providers/ProfileProvider";
 import { useNavigate } from "react-router-dom";
+import { supabase } from "@/supabaseClient";
+import { getFileExt, uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
 
 const Profile: React.FC = () => {
-  const { avatarUrl, avatarPath, email, loading, setAvatarUrl, setAvatarPath } = useProfile();
+  const [loading, setLoading] = useState(true);
+  const [uploading, setUploading] = useState(false);
+  const [userEmail, setUserEmail] = useState("");
+  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
   const fileInputRef = useRef<HTMLInputElement | null>(null);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return navigate("/login");
+      const { data, error } = await supabase
+        .from("users")
+        .select("email, avatar_url, avatar_path")
+        .eq("id", user.id)
+        .single();
+      if (!error && data) {
+        setUserEmail((data.email as string) || "");
+        setAvatarUrl((data.avatar_url as string) ?? null);
+        setAvatarPath((data.avatar_path as string) ?? null);
+      }
+      setLoading(false);
+    })();
+  }, [navigate]);
 
   const handleSelectAvatar = (e: React.ChangeEvent<HTMLInputElement>) => {
     const f = e.target.files?.[0];
     if (!f) return;
-    if (!f.type.startsWith('image/')) { alert('Please select an image'); return; }
-    if (f.size > 5 * 1024 * 1024) { alert('Image must be ≤ 5MB'); return; }
+    if (!f.type.startsWith("image/")) { alert("Please select an image"); return; }
+    if (f.size > 5 * 1024 * 1024) { alert("Image must be ≤ 5MB"); return; }
     setFile(f);
     setPreviewUrl(URL.createObjectURL(f));
   };
 
   const handleSave = async () => {
-    if (!file) return;
-    setSaving(true);
+    if (!file || uploading) return;
+    setUploading(true);
     try {
-      const user = await supabase.auth.getUser();
-      const userId = user.data.user?.id;
-      const userEmail = user.data.user?.email;
-      if (!userId) throw new Error('Not signed in');
-      await ensureUserRow({ id: userId, email: userEmail });
-      if (avatarPath) {
-        await supabase.storage.from('avatars').remove([avatarPath]).catch(() => {});
-      }
-      const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-      const newPath = `avatars/${userId}/${crypto.randomUUID()}.${ext}`;
-      await supabase.storage.from('avatars').upload(newPath, file, { upsert: true, contentType: file.type });
-      const { data: pub } = supabase.storage.from('avatars').getPublicUrl(newPath);
-      const publicUrl = pub.publicUrl;
-      const { data, error } = await supabase
-        .from('users')
-        .update({ avatar_url: publicUrl, avatar_path: newPath, updated_at: new Date().toISOString() })
-        .eq('id', userId)
-        .select('avatar_url, avatar_path')
-        .single();
-      if (error) throw error;
-      setAvatarUrl((data.avatar_url as string) ?? null);
-      setAvatarPath((data.avatar_path as string) ?? null);
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Not signed in");
+      if (avatarPath || avatarUrl) await removeAvatarIfExists(supabase, avatarPath || avatarUrl);
+      const { publicUrl, path } = await uploadAvatar(supabase, user.id, file);
+      await supabase.from("users").update({ avatar_url: publicUrl, avatar_path: path }).eq("id", user.id);
+      setAvatarUrl(publicUrl);
+      setAvatarPath(path);
       setPreviewUrl(null);
       setFile(null);
-      setSaving(false);
-      alert('Avatar updated');
-      navigate('/');
+      alert("Avatar updated");
+      setUploading(false);
+      navigate("/");
     } catch (err: any) {
-      alert(err?.message ?? 'Failed to save avatar');
-      setSaving(false);
+      alert(err?.message ?? "Failed to save avatar");
+      setUploading(false);
     }
   };
 
   const handleSignOut = async () => {
     await supabase.auth.signOut();
-    window.location.assign("/");
+    navigate("/");
   };
 
   if (loading) return <div style={{ padding: 24 }}>Loading…</div>;
 
   return (
     <div style={{ maxWidth: 560, margin: "3rem auto", border: "1px solid #ddd", padding: 24, borderRadius: 8 }}>
-      <h2>Welcome{email ? `, ${email.split("@")[0]}` : ""}!</h2>
-      <p>Email: {email ?? "—"}</p>
+      <h2>Welcome{userEmail ? `, ${userEmail.split("@")[0]}` : ""}!</h2>
+      <p>Email: {userEmail || "—"}</p>
       <div style={{ display: "flex", alignItems: "center", gap: 16, marginTop: 12 }}>
         <img
           src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
@@ -90,8 +95,8 @@ const Profile: React.FC = () => {
               {file.name} ({(file.size / 1024).toFixed(1)} KB)
             </div>
           )}
-          <button onClick={handleSave} disabled={!file || saving} style={{ marginTop: 4 }}>
-            {saving ? "Saving…" : "Save"}
+          <button onClick={handleSave} disabled={!file || uploading} style={{ marginTop: 4 }}>
+            {uploading ? "Saving…" : "Save"}
           </button>
         </div>
       </div>

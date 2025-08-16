@@ -1,17 +1,16 @@
 import React from "react";
-import { Routes, Route, Navigate } from 'react-router-dom';
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import Landing from './pages/Landing';
 import Login from './pages/Login';
 import ProfilePage from './pages/Profile';
 import AuthCallback from './pages/auth/Callback';
 import ProtectedRoute from './components/ProtectedRoute';
 import AppRedirect from './components/AppRedirect';
-import { ProfileProvider } from './providers/ProfileProvider';
 import Navbar from './components/Navbar';
 
 export default function App() {
   return (
-    <ProfileProvider>
+    <BrowserRouter>
       <Navbar />
       <Routes>
         {/* Public routes */}
@@ -23,6 +22,6 @@ export default function App() {
         {/* Catch-all: redirect to home */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </ProfileProvider>
+    </BrowserRouter>
   );
 }

@@ -4,6 +4,7 @@ const url = import.meta.env.VITE_SUPABASE_URL!;
 const anon = import.meta.env.VITE_SUPABASE_ANON_KEY!;
 
 // Use globalThis to ensure singleton across HMR and environments
+const storageKey = 'naturverse-auth';
 type SupabaseClientType = ReturnType<typeof createClient>;
 declare global {
   // eslint-disable-next-line no-var
@@ -16,7 +17,7 @@ const getSupabase = () => {
       auth: {
         persistSession: true,
         detectSessionInUrl: true,
-        storageKey: 'naturverse-auth',
+        storageKey,
       },
     });
   }
@@ -25,12 +26,12 @@ const getSupabase = () => {
 
 export const supabase = getSupabase();
 
-// Attach a singleton auth state change listener (no-op by default, ready for global handling)
+// Attach a singleton auth state change listener for sign-in state
 let _authListenerSubscribed = false;
 if (!_authListenerSubscribed) {
-  supabase.auth.onAuthStateChange((_event, _session) => {
-    // You can add global auth logic here if needed
-    // e.g., sync user state, analytics, etc.
+  supabase.auth.onAuthStateChange((_event, session) => {
+    if (session) localStorage.setItem(storageKey, '1');
+    else localStorage.removeItem(storageKey);
   });
   _authListenerSubscribed = true;
 }

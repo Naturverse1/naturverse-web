@@ -23,8 +23,13 @@ export async function uploadAvatar(
 
 export async function removeAvatarIfExists(
   supabase: SupabaseClient,
-  avatarPath?: string | null
+  priorUrlOrPath?: string | null
 ): Promise<void> {
-  if (!avatarPath) return; // migration safeguard: skip if missing
-  await supabase.storage.from('avatars').remove([avatarPath]);
+  if (!priorUrlOrPath) return;
+  let storagePath = priorUrlOrPath;
+  const idx = priorUrlOrPath.indexOf('/object/public/');
+  if (idx !== -1) {
+    storagePath = priorUrlOrPath.substring(idx + '/object/public/'.length);
+  }
+  await supabase.storage.from('avatars').remove([storagePath]).catch(() => {});
 }
