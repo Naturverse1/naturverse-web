@@ -80,56 +80,82 @@ button:hover{transform: translateY(-1px); box-shadow:0 6px 24px -6px var(--ring)
 /* images within cards */
 .card img{max-width:100%; height:auto; border-radius:12px}
 
-/* ---- Magical animated background (no libs) ---- */
+
+/* ---- PERF PATCH: smoother, GPU-friendly background ---- */
+
+/* put this near your other vars if you like */
+:root{
+	--bg-1:#0b1020; --bg-2:#101a38; --bg-3:#1b2a5a;
+	--text:#eaf2ff; --muted:#b8c3e6; --accent:#91f2ff; --accent-2:#ffc6ff;
+	--card:#182342cc; --ring:#91f2ff88;
+}
+
+/* 1) keep the layered static gradients (cheap) */
+html,body{
+	background:
+		radial-gradient(1200px 800px at 10% -10%, var(--bg-3), transparent 60%),
+		radial-gradient(900px 700px at 110% 0%, #2a1b46, transparent 55%),
+		linear-gradient(180deg, var(--bg-1), var(--bg-2));
+}
+
+/* 2) convert animated layers to transform-only & throttle */
 .magical-bg,
 .magical-bg::before,
 .magical-bg::after{
-	position: fixed; left:0; top:0; width:100%; height:100%;
-	pointer-events:none; z-index:-1; content:"";
+	position: fixed; inset: 0; pointer-events:none; z-index:-1; content:"";
+	will-change: transform, opacity; backface-visibility: hidden; /* GPU hint */
 }
 
-/* soft animated aurora */
+/* soft aurora: translate only (no animating gradients) */
 .magical-bg{
 	background:
-		radial-gradient(60% 40% at 70% 10%, #84e9ff1a 0%, transparent 60%),
-		radial-gradient(50% 35% at 20% 20%, #a984ff17 0%, transparent 65%);
-	animation: drift 28s linear infinite alternate;
+		radial-gradient(60% 40% at 70% 10%, #84e9ff14 0%, transparent 60%),
+		radial-gradient(50% 35% at 20% 20%, #a984ff10 0%, transparent 65%);
+	animation: aurora-drift 26s linear infinite alternate;
+}
+@keyframes aurora-drift{
+	from{ transform: translate3d(0, 0, 0) }
+	to  { transform: translate3d(0, -2.5%, 0) }
 }
 
-/* starfield layer */
+/* starfield: scroll background via transform instead of opacity flicker */
 .magical-bg::before{
-	background-image:
+	background:
 	 radial-gradient(2px 2px at 20px 30px, #fff8, transparent 60%),
 	 radial-gradient(1px 1px at 120px 80px, #fff9, transparent 55%),
 	 radial-gradient(1.5px 1.5px at 260px 190px, #fffc, transparent 55%),
 	 radial-gradient(2px 2px at 460px 120px, #ddf9, transparent 55%),
 	 radial-gradient(1px 1px at 680px 260px, #fff8, transparent 55%),
 	 radial-gradient(2px 2px at 860px 160px, #cfffff, transparent 55%);
-	background-repeat: repeat;
-	background-size: 320px 240px;
-	opacity:.7; animation: twinkle 3.6s ease-in-out infinite;
+	background-repeat: repeat; background-size: 320px 240px; opacity:.65;
+	transform: translateZ(0);
+	animation: stars-pan 40s linear infinite;
+}
+@keyframes stars-pan{
+	from{ transform: translate3d(0,0,0) }
+	to  { transform: translate3d(-320px,-240px,0) } /* one tile over */
 }
 
-/* slow glitter mist */
+/* glitter mist: very slow, transform-only */
 .magical-bg::after{
 	background:
 		 conic-gradient(from 0deg at 50% 50%, #fff0 0 85%, #fff2 88% 92%, #fff0 100%),
-		 radial-gradient(1200px 800px at 140% 120%, #62ffd21a, transparent 60%);
-	mix-blend-mode: screen; opacity:.45; animation: slowspin 60s linear infinite;
+		 radial-gradient(1200px 800px at 140% 120%, #62ffd214, transparent 60%);
+	mix-blend-mode: screen; opacity:.35;
+	animation: mist-spin 90s linear infinite;
+}
+@keyframes mist-spin{
+	from{ transform: rotate(0deg) }
+	to{ transform: rotate(360deg) }
 }
 
-@keyframes drift{
-	from{transform: translateY(0)}
-	to{transform: translateY(-2.5%)}
+/* 3) motion guard: users/devices that prefer reduced motion */
+@media (prefers-reduced-motion: reduce){
+	.magical-bg, .magical-bg::before, .magical-bg::after{ animation: none }
 }
-@keyframes twinkle{
-	0%, 100%{opacity:.55}
-	50%{opacity:.85; filter: drop-shadow(0 0 6px #fff4)}
-}
-@keyframes slowspin{
-	from{transform: rotate(0deg)}
-	to{transform: rotate(360deg)}
-}
+
+/* 4) stabilize layout: remove the fixed emoji rail (causes reflow on scroll) */
+.rail{ position: sticky; top: 90px; left: 0; height: 0; margin-left: 4px; }
 
 /* utility (hide empty bars you had) */
 .bar{display:none}
