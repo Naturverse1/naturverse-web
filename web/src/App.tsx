@@ -20,6 +20,8 @@ import Arcade from "@/pages/zones/Arcade";
 import Community from "@/pages/zones/Community";
 import Lesson from "@/pages/naturversity/Lesson";
 import About from "@/pages/About";
+import StoryStudioPage from "@/pages/story-studio";
+import AutoQuiz from "@/pages/auto-quiz";
 
 import Profile from "@/pages/Profile";
 import NotFound from "@/pages/NotFound";
@@ -35,6 +37,8 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
           <Route path="/about" element={<About />} />
+          <Route path="/story-studio" element={<StoryStudioPage />} />
+          <Route path="/auto-quiz" element={<AutoQuiz />} />
           <Route path="/worlds" element={<Worlds />} />
           <Route path="/worlds/:slug" element={<World />} />
           <Route
