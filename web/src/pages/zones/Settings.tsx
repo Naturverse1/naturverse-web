@@ -7,7 +7,6 @@ type Scale = "normal" | "large";
 export default function Settings() {
   const [theme, setTheme] = useState<Theme>(() => (localStorage.getItem("theme") as Theme) || "light");
   const [scale, setScale] = useState<Scale>(() => (localStorage.getItem("textScale") as Scale) || "normal");
-  const [reduce, setReduce] = useState(() => localStorage.getItem("reduceMotion") === "1");
 
   useEffect(() => {
     document.documentElement.setAttribute("data-theme", theme);
@@ -19,13 +18,8 @@ export default function Settings() {
     localStorage.setItem("textScale", scale);
   }, [scale]);
 
-  useEffect(() => {
-    document.body.classList.toggle("reduce-motion", reduce);
-    localStorage.setItem("reduceMotion", reduce ? "1" : "0");
-  }, [reduce]);
-
   return (
-    <main className="mx-auto max-w-5xl px-4 py-10 text-white">
+    <main className="page-container mx-auto max-w-5xl py-10 text-white">
       <Breadcrumbs
         items={[
           { label: "Naturverse" },
@@ -73,13 +67,40 @@ export default function Settings() {
         </div>
       </section>
 
-      <section className="mt-6 rounded-lg border border-white/10 bg-white/5 p-4">
-        <h2 className="text-xl font-semibold">Accessibility</h2>
-        <label className="mt-3 flex items-center gap-2">
-          <input type="checkbox" checked={reduce} onChange={(e) => setReduce(e.target.checked)} />
-          Reduce motion
+      <div className="rounded-lg border border-white/10 bg-white/5 p-4 mt-6">
+        <h2 className="text-xl font-semibold text-white">Immersive Background</h2>
+        <p className="text-white/70 mt-1">Choose backdrop visuals. Starfield disables automatically if “Reduce motion” is on.</p>
+        <div className="mt-3 flex gap-3">
+          <button
+            onClick={() => { localStorage.setItem("immersive-mode", "off"); window.dispatchEvent(new StorageEvent("storage")); }}
+            className="rounded-md bg-white/10 px-3 py-2"
+          >
+            Off
+          </button>
+          <button
+            onClick={() => { localStorage.setItem("immersive-mode", "canvas"); window.dispatchEvent(new StorageEvent("storage")); }}
+            className="rounded-md bg-sky-600 px-3 py-2"
+          >
+            Starfield
+          </button>
+        </div>
+      </div>
+
+      <div className="rounded-lg border border-white/10 bg-white/5 p-4 mt-6">
+        <h2 className="text-xl font-semibold text-white">Motion</h2>
+        <label className="text-white/80">
+          <input
+            type="checkbox"
+            defaultChecked={localStorage.getItem("reduce-motion") === "true"}
+            onChange={(e) => {
+              localStorage.setItem("reduce-motion", e.target.checked ? "true" : "false");
+              window.dispatchEvent(new StorageEvent("storage"));
+            }}
+            style={{ marginRight: 8 }}
+          />
+          Reduce motion (fewer animations)
         </label>
-      </section>
+      </div>
     </main>
   );
 }
