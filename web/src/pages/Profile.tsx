@@ -2,161 +2,112 @@ import React, { useEffect, useState } from 'react';
 import { supabase } from '@/supabaseClient';
 import { uploadAvatar, removeAvatarIfExists } from '@/lib/avatar';
 
-type ProfileRow = {
-  id: string;
-  email: string | null;
-  avatar_url: string | null;
-  avatar_path: string | null; // NEW column recommended
-};
-
 export default function Profile() {
-  const [userId, setUserId] = useState('');
   const [email, setEmail] = useState('');
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
   const [avatarPath, setAvatarPath] = useState<string | null>(null);
-
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [uploading, setUploading] = useState(false);
+  const [saving, setSaving] = useState(false);
 
   useEffect(() => {
     (async () => {
       const {
         data: { user },
-        error,
       } = await supabase.auth.getUser();
-      if (error || !user) return;
-
-      setUserId(user.id);
+      if (!user) return;
       setEmail(user.email ?? '');
 
-      const { data, error: qErr } = await supabase
+      const { data, error } = await supabase
         .from('users')
         .select('avatar_url, avatar_path')
         .eq('id', user.id)
-        .single<Pick<ProfileRow, 'avatar_url' | 'avatar_path'>>();
+        .single();
 
-      if (!qErr && data) {
+      if (!error && data) {
         setAvatarUrl(data.avatar_url ?? null);
         setAvatarPath(data.avatar_path ?? null);
       }
     })();
   }, []);
 
-  function onFileChange(e: React.ChangeEvent<HTMLInputElement>) {
-    const f = e.target.files?.[0] ?? null;
-    if (!f) {
-      setFile(null);
-      setPreviewUrl(null);
-      return;
-    }
+  function handleSelect(e: React.ChangeEvent<HTMLInputElement>) {
+    const f = e.target.files?.[0];
+    if (!f) return;
     if (!f.type.startsWith('image/')) {
       alert('Please choose an image file.');
       return;
     }
     if (f.size > 5 * 1024 * 1024) {
-      alert('Image too large. Please pick a file under 5 MB.');
+      alert('Image is larger than 5 MB.');
       return;
     }
     setFile(f);
-    setPreviewUrl(URL.createObjectURL(f));
+    setPreviewUrl(URL.createObjectURL(f)); // instant preview
   }
 
-  async function onSave() {
-    if (!userId || !file) return;
+  async function handleSave() {
+    if (!file) return;
+    setSaving(true);
     try {
-      setUploading(true);
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error('Not signed in.');
 
-      // 1) Upload new avatar
-      const { publicUrl, path } = await uploadAvatar(supabase, userId, file);
+      // delete previous file (ignore error)
+      await removeAvatarIfExists(supabase, avatarUrl ?? undefined);
 
-      // 2) Delete previous file (use stored path if we have it)
-      if (avatarPath) {
-        await removeAvatarIfExists(supabase, avatarPath);
-      } else if (avatarUrl) {
-        await removeAvatarIfExists(supabase, avatarUrl);
-      }
+      // upload new file
+      const { publicUrl, path } = await uploadAvatar(supabase, user.id, file);
 
-      // 3) Persist both public URL and storage path
-      const { error: upErr } = await supabase
+      // persist in DB
+      const { error } = await supabase
         .from('users')
-        .update({ avatar_url: publicUrl, avatar_path: path })
-        .eq('id', userId);
+        .update({
+          avatar_url: publicUrl,
+          avatar_path: path,
+          updated_at: new Date().toISOString(),
+        })
+        .eq('id', user.id);
+      if (error) throw error;
 
-      if (upErr) throw upErr;
-
-      // 4) Update UI
-      setAvatarUrl(publicUrl);
+      // update local state and bust cache so it shows immediately
+      const busted = `${publicUrl}${publicUrl.includes('?') ? '&' : '?'}v=${Date.now()}`;
+      setAvatarUrl(busted);
       setAvatarPath(path);
       setFile(null);
       setPreviewUrl(null);
-      alert('Avatar updated!');
+      alert('Navatar updated');
     } catch (err: any) {
       console.error(err);
-      alert(err?.message ?? 'Failed to update avatar.');
+      alert(err.message ?? 'Failed to update navatar');
     } finally {
-      setUploading(false);
+      setSaving(false);
     }
   }
 
   return (
-    <div style={{ minHeight: '100vh', display: 'grid', placeItems: 'center' }}>
-      <div
-        style={{
-          width: 420,
-          maxWidth: '90vw',
-          background: 'rgba(0,0,0,0.25)',
-          borderRadius: 16,
-          padding: 24,
-          boxShadow: '0 8px 32px rgba(0,0,0,0.4)',
-          color: 'white',
-          textAlign: 'center',
-        }}
+    <div className="p-4 text-center">
+      <img
+        src={previewUrl ?? avatarUrl ?? '/navatar-placeholder.png'}
+        alt="Navatar"
+        className="mx-auto mb-4 h-28 w-28 rounded-full object-cover ring-2 ring-white/20"
+      />
+      <p>{email}</p>
+      <input
+        type="file"
+        accept="image/*"
+        onChange={handleSelect}
+        className="mt-3"
+      />
+      <button
+        className="mt-3 rounded-md bg-sky-500 px-4 py-2 text-white disabled:opacity-50"
+        onClick={handleSave}
+        disabled={saving || !file}
       >
-        <img
-          src={
-            previewUrl ||
-            avatarUrl ||
-            'https://dummyimage.com/160x160/101a38/ffffff&text=Avatar'
-          }
-          alt="avatar"
-          style={{
-            width: 128,
-            height: 128,
-            borderRadius: '50%',
-            display: 'block',
-            margin: '0 auto 16px',
-            objectFit: 'cover',
-          }}
-        />
-
-        <div style={{ marginBottom: 12, opacity: 0.9 }}>{email}</div>
-
-        <input
-          type="file"
-          accept="image/*"
-          onChange={onFileChange}
-          style={{ display: 'block', margin: '0 auto 12px' }}
-        />
-
-        <button
-          onClick={onSave}
-          disabled={!file || uploading}
-          style={{
-            display: 'inline-block',
-            background: uploading ? '#4b5563' : '#60a5fa',
-            color: 'white',
-            border: 'none',
-            borderRadius: 999,
-            padding: '10px 16px',
-            cursor: !file || uploading ? 'not-allowed' : 'pointer',
-            width: 140,
-          }}
-        >
-          {uploading ? 'Saving...' : 'Save'}
-        </button>
-      </div>
+        {saving ? 'Saving…' : 'Save Navatar'}
+      </button>
     </div>
   );
 }
-

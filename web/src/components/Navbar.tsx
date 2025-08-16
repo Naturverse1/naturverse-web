@@ -6,17 +6,17 @@ import { useEffect, useState } from 'react';
 export default function Navbar() {
   const { user } = useAuth();
   const navigate = useNavigate();
-  const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [profile, setProfile] = useState<{ avatar_url: string | null; updated_at: string | null } | null>(null);
 
   useEffect(() => {
     (async () => {
       if (!user) return;
       const { data } = await supabase
         .from('users')
-        .select('avatar_url')
+        .select('avatar_url, updated_at')
         .eq('id', user.id)
         .single();
-      setAvatarUrl(data?.avatar_url ?? null);
+      setProfile(data ?? null);
     })();
   }, [user]);
 
@@ -24,6 +24,10 @@ export default function Navbar() {
     await supabase.auth.signOut();
     navigate('/', { replace: true });
   }
+
+  const imgSrc = profile?.avatar_url
+    ? `${profile.avatar_url}${profile.avatar_url.includes('?') ? '&' : '?'}v=${profile.updated_at ?? ''}`
+    : '/navatar-placeholder.png';
 
   return (
     <nav className="nav">
@@ -35,11 +39,7 @@ export default function Navbar() {
         <>
           <Link to="/app">App</Link>
           <Link to="/profile">Profile</Link>
-          <img
-            src={avatarUrl || 'https://dummyimage.com/40x40/101a38/ffffff&text=N'}
-            alt="avatar"
-            style={{ width: 32, height: 32, borderRadius: '50%' }}
-          />
+          <img src={imgSrc} alt="Navatar" className="h-8 w-8 rounded-full object-cover" />
           <button onClick={logout}>Sign out</button>
         </>
       ) : (
