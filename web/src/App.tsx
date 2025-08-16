@@ -8,7 +8,7 @@ import AuthCallback from "@/pages/AuthCallback";
 import Worlds from "@/pages/Worlds";
 import World from "@/pages/World";
 import AppHome from "@/pages/AppHome";
-import ZonesHub from "@/pages/Zones";
+import ZonesHub from "@/pages/zones";
 import Naturversity from "@/pages/zones/Naturversity";
 import MusicZone from "@/pages/zones/MusicZone";
 import EcoLab from "@/pages/zones/EcoLab";
