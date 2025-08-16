@@ -71,6 +71,18 @@ export default function ZonesHub() {
           emoji="⚙️"
         />
       </div>
+      <ul className="mt-8 space-y-2 list-disc pl-5">
+        <li>
+          <a href="/story-studio" className="text-blue-300 underline">
+            Story Studio (AI)
+          </a>
+        </li>
+        <li>
+          <a href="/auto-quiz" className="text-blue-300 underline">
+            Auto-Quiz (AI)
+          </a>
+        </li>
+      </ul>
     </main>
   );
 }
