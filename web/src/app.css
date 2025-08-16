@@ -1,3 +1,45 @@
+/* --- HARDENED PERFORMANCE PATCH --- */
+
+/* 0) Make sure the page itself is stable and never changes height due to bg */
+html, body, #root { height: 100%; min-height: 100%; }
+body { overflow-y: auto; }
+
+/* 1) Isolate the animated background into a fully separate compositing context */
+.magical-bg,
+.magical-bg::before,
+.magical-bg::after{
+	position: fixed; inset: 0; z-index: -1; pointer-events: none;
+	contain: layout paint style;      /* isolate */
+	will-change: transform, opacity;  /* GPU */
+	transform: translateZ(0);         /* composite */
+	backface-visibility: hidden;
+}
+
+/* If you still have any <hr> stripes or decorative divs, nuke them globally */
+hr, .debug-hr, .stripe { display: none !important; }
+
+/* 2) Emoji rail: keep it from causing reflow/jank */
+.rail{
+	position: sticky; top: 96px; left: 0;
+	margin-left: 6px;
+	transform: translateZ(0);         /* composite rail */
+	contain: paint;                   /* changes stay local */
+}
+.rail img, .rail span, .rail *{
+	will-change: transform;
+}
+
+/* 3) Prevent layout shifts from animated buttons/shadows (cheap glow only) */
+button, .btn, .cta{
+	transition: transform .2s ease, box-shadow .2s ease;
+	will-change: transform;
+}
+button:hover, .btn:hover, .cta:hover{ transform: translateZ(0) scale(1.02); }
+
+/* 4) Motion guard */
+@media (prefers-reduced-motion: reduce){
+	.magical-bg, .magical-bg::before, .magical-bg::after{ animation: none }
+}
 /* ---- Base reset & theme ---- */
 :root{
 	--bg-1:#0b1020;
