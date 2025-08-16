@@ -1,3 +1,9 @@
+/* Disable all floating-character leftovers */
+.floating-character,
+.floating-layer,
+[class*="animate-character"] {
+	display: none !important;
+}
 /*  A: A single fixed, isolated layer to host all floating bits  */
 .floating-layer{
 	position: fixed; inset: 0; z-index: 0;

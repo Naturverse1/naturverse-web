@@ -125,21 +125,7 @@ const Home: React.FC = () => {
 				}}
 			></div>
 
-			{/* Floating Characters Throughout the Scene */}
-			{floatingCharacters.map((character, index) => (
-				<div
-					key={character.name}
-					className={`floating-character ${character.position} w-20 h-20 md:w-24 md:h-24 animate-character-entrance`}
-					style={{ animationDelay: character.delay }}
-				>
-					 <img
-					 src={assetUrlOrPlaceholder(character.filename)}
-					 alt={character.name}
-					 className="w-full h-full object-cover rounded-full border-4 border-white/70 shadow-2xl animate-float-bounce"
-					 onError={e => { e.currentTarget.onerror = null; e.currentTarget.src = '/avatar-placeholder.png'; }}
-					 />
-				</div>
-			))}
+
 
 			{/* Floating Sparkles & Magic Elements */}
 			<div className="floating-sparkles" style={{ top: '12%', left: '18%' }}>
