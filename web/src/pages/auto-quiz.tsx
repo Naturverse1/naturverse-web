@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { saveQuizAttempt, setProgress } from "@/lib/db";
 
 type Q = { q: string; choices: string[]; answerIndex: number; why: string };
 
@@ -7,6 +8,10 @@ export default function AutoQuiz() {
   const [loading, setLoading] = useState(false);
   const [qs, setQs] = useState<Q[]>([]);
   const [answers, setAnswers] = useState<number[]>([]);
+  const [saving, setSaving] = useState(false);
+
+  const zone = "naturversity"; // simple identifiers for now
+  const unit = "rainforest-basics";
 
   async function generate() {
     setLoading(true);
@@ -31,6 +36,31 @@ export default function AutoQuiz() {
   }
 
   const score = qs.reduce((acc, q, i) => acc + (answers[i] === q.answerIndex ? 1 : 0), 0);
+  const max = qs.length;
+
+  async function onSaveResult() {
+    if (max === 0) {
+      alert("Generate a quiz first");
+      return;
+    }
+    setSaving(true);
+    try {
+      await saveQuizAttempt({
+        zone,
+        unit,
+        questions: qs,
+        answers,
+        score,
+        max_score: max,
+      });
+      await setProgress(zone, unit, "complete");
+      alert(`Saved! Score ${score}/${max} ✨`);
+    } catch (e: any) {
+      alert(`Could not save quiz: ${e.message}`);
+    } finally {
+      setSaving(false);
+    }
+  }
 
   return (
     <div className="container" style={{ maxWidth: 840, margin: "0 auto", padding: "2rem" }}>
@@ -43,9 +73,14 @@ export default function AutoQuiz() {
         rows={6}
         style={{ width: "100%", marginBottom: 12 }}
       />
-      <button onClick={generate} disabled={loading}>
-        {loading ? "Generating…" : "Generate Quiz"}
-      </button>
+      <div style={{ display: "flex", gap: 12 }}>
+        <button onClick={generate} disabled={loading}>
+          {loading ? "Generating…" : "Generate Quiz"}
+        </button>
+        <button onClick={onSaveResult} disabled={saving || max === 0}>
+          Save Result
+        </button>
+      </div>
 
       {qs.length > 0 && (
         <div style={{ marginTop: 24 }}>
@@ -83,9 +118,7 @@ export default function AutoQuiz() {
               )}
             </div>
           ))}
-          <h3>
-            Your score: {score}/{qs.length}
-          </h3>
+          <h3>Your score: {score}/{qs.length}</h3>
         </div>
       )}
     </div>

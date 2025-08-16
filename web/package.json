@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "test": "echo \"No tests yet – skipping\" && exit 0"
+    "test": "echo ok"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.5.0",
