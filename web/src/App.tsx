@@ -1,4 +1,4 @@
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { Navbar } from "@/components/Navbar";
 import ImmersiveBackground from "@/components/ImmersiveBackground";
@@ -28,8 +28,6 @@ import NotFound from "@/pages/NotFound";
 import { RequireAuth } from "@/lib/auth";
 import IslandHubFallback from "@/components/IslandHubFallback";
 
-const IslandHub3D = lazy(() => import("./components/IslandHub3D"));
-
 export default function App() {
   return (
     <BrowserRouter>
@@ -45,14 +43,7 @@ export default function App() {
           <Route path="/auto-quiz" element={<AutoQuiz />} />
           <Route path="/worlds" element={<Worlds />} />
           <Route path="/worlds/:slug" element={<World />} />
-          <Route
-            path="/hub"
-            element={
-              <Suspense fallback={<IslandHubFallback />}>
-                <IslandHub3D />
-              </Suspense>
-            }
-          />
+          <Route path="/hub" element={<IslandHubFallback />} />
           <Route
             path="/zones"
             element={

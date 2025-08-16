@@ -11,14 +11,7 @@ export default defineConfig({
       "@assets": path.resolve(__dirname, "src/assets"),
     },
   },
-  optimizeDeps: {
-    include: ["three", "@react-three/fiber", "@react-three/drei"],
-  },
   build: {
-    rollupOptions: {
-      // In case some lib tries to import babel helpers via path
-      external: ["@babel/runtime/helpers/esm/extends"],
-    },
     // helps some “cannot resolve entry chunk” issues when code-splitting
     sourcemap: false,
   },

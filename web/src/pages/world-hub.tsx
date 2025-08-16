@@ -1,10 +1,6 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect } from "react";
 import { Link } from "react-router-dom";
-import useWebGLSupport from "@/hooks/useWebGLSupport";
-import useReducedMotion from "@/hooks/useReducedMotion";
-import IslandHub3D from "@/components/IslandHub3D";
 import IslandHubFallback from "@/components/IslandHubFallback";
-import { invalidate } from "@react-three/fiber";
 
 interface PortalMeta {
   key: string;
@@ -23,18 +19,9 @@ const portals: PortalMeta[] = [
 ];
 
 export default function WorldHub() {
-  const webgl = useWebGLSupport();
-  const reduced = useReducedMotion();
-  const [active, setActive] = useState<string | null>(null);
-
   useEffect(() => {
-    document.title = "Naturverse Hub (3D Beta)";
+    document.title = "Naturverse Hub";
   }, []);
-
-  const handleActive = (k: string | null) => {
-    setActive(k);
-    if (reduced) invalidate();
-  };
 
   return (
     <main className="mx-auto max-w-5xl px-4 py-12">
@@ -44,27 +31,19 @@ export default function WorldHub() {
       <div className="mt-4 w-full flex flex-col items-center">
         <div className="relative w-full max-w-[1100px]">
           <div className="relative w-full" style={{ paddingTop: "56.25%" }}>
-            {webgl ? (
-              <IslandHub3D reduced={reduced} active={active} onActiveChange={handleActive} />
-            ) : (
-              <IslandHubFallback />
-            )}
-            {webgl && (
-              <div className="absolute inset-0 pointer-events-none">
-                {portals.map((p) => (
-                  <Link
-                    key={p.key}
-                    to={p.route}
-                    className="pointer-events-auto absolute text-xs text-white"
-                    style={{ top: p.top, left: p.left, transform: "translate(-50%, -50%)" }}
-                    onFocus={() => handleActive(p.key)}
-                    onBlur={() => handleActive(null)}
-                  >
-                    {p.label}
-                  </Link>
-                ))}
-              </div>
-            )}
+            <IslandHubFallback />
+            <div className="absolute inset-0 pointer-events-none">
+              {portals.map((p) => (
+                <Link
+                  key={p.key}
+                  to={p.route}
+                  className="pointer-events-auto absolute text-xs text-white"
+                  style={{ top: p.top, left: p.left, transform: "translate(-50%, -50%)" }}
+                >
+                  {p.label}
+                </Link>
+              ))}
+            </div>
           </div>
         </div>
         <div className="mt-4 flex flex-wrap justify-center gap-4 text-xs text-white/80">
