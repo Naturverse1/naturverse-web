@@ -10,10 +10,6 @@ node_bundler = "esbuild"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS = "--legacy-peer-deps"
-  # Make installs less fragile on CI
-  NPM_CONFIG_AUDIT = "false"
-  NPM_CONFIG_FUND = "false"
 
 [[redirects]]
 from = "/api/*"
