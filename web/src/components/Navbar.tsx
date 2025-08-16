@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getMyProfile, getPublicAvatarUrl } from "@/lib/avatar";
+import { supabase } from "@/supabaseClient";
+import { fetchAvatar } from "@/lib/avatar";
 
 export default function Navbar() {
   const [email, setEmail] = useState<string | null>(null);
@@ -8,9 +9,15 @@ export default function Navbar() {
 
   useEffect(() => {
     (async () => {
-      const prof = await getMyProfile();
-      setEmail(prof?.email ?? null);
-      setAvatarUrl(getPublicAvatarUrl(prof?.avatar_path));
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+      setEmail(user.email ?? null);
+      try {
+        const url = await fetchAvatar(user.id);
+        setAvatarUrl(url);
+      } catch {
+        // ignore
+      }
     })();
   }, []);
 
@@ -30,3 +37,4 @@ export default function Navbar() {
     </nav>
   );
 }
+

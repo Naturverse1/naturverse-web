@@ -1,59 +1,51 @@
 import { supabase } from "@/supabaseClient";
 
-const BUCKET = "avatars";
+export async function uploadAvatar(file: File, userId: string) {
+  const ext = file.name.split(".").pop() ?? "png";
+  const path = `avatars/${userId}/${Date.now()}.${ext}`;
 
-export type ProfileRow = {
-  id: string;
-  email: string | null;
-  avatar_path: string | null;
-};
-
-export async function getMyProfile(): Promise<ProfileRow | null> {
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user) return null;
-
-  const { data, error } = await supabase
-    .from("users")
-    .select("id,email,avatar_path")
-    .eq("id", user.id)
-    .single();
-
-  if (error) throw error;
-  return data;
-}
-
-export function getPublicAvatarUrl(path: string | null | undefined): string | null {
-  if (!path) return null;
-  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path);
-  // cache-bust so the newly uploaded image shows right away
-  return data?.publicUrl ? `${data.publicUrl}?v=${Date.now()}` : null;
-}
-
-export async function uploadNavatar(file: File): Promise<string> {
-  const {
-    data: { user },
-    error: userErr,
-  } = await supabase.auth.getUser();
-  if (userErr || !user) throw userErr;
-
-  const ext = file.name.split(".").pop();
-  const fileName = `${user.id}/${crypto.randomUUID()}.${ext}`;
-
-  const { error: upErr } = await supabase.storage.from(BUCKET).upload(fileName, file, {
+  // Upload (upsert to overwrite old file path if same name)
+  const { error: upErr } = await supabase.storage.from("avatars").upload(path, file, {
+    cacheControl: "3600",
+    upsert: false,
     contentType: file.type,
-    upsert: true,
   });
   if (upErr) throw upErr;
 
-  // Store the path on the user row
-  const { error: updErr } = await supabase
-    .from("users")
-    .update({ avatar_path: fileName })
-    .eq("id", user.id);
-  if (updErr) throw updErr;
+  // Get a public URL for display
+  const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+  const publicUrl = pub?.publicUrl ?? null;
 
-  return fileName;
+  // Persist on the user row
+  const { error: dbErr } = await supabase
+    .from("users")
+    .update({ avatar_path: path, avatar_url: publicUrl })
+    .eq("id", userId);
+  if (dbErr) throw dbErr;
+
+  return { path, url: publicUrl };
 }
+
+export async function fetchAvatar(userId: string) {
+  // Prefer avatar_url (stable across policy/CDN), fallback to signed URL if needed
+  const { data, error } = await supabase
+    .from("users")
+    .select("avatar_url, avatar_path")
+    .eq("id", userId)
+    .single();
+  if (error) throw error;
+
+  if (data?.avatar_url) return data.avatar_url;
+
+  if (data?.avatar_path) {
+    // If bucket is not public, sign a URL:
+    const { data: signed } = await supabase
+      .storage
+      .from("avatars")
+      .createSignedUrl(data.avatar_path, 60 * 60); // 1 hour
+    return signed?.signedUrl ?? null;
+  }
+
+  return null;
+}
+
