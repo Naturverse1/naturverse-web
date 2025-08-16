@@ -22,15 +22,33 @@ export const Navbar: React.FC = () => {
       <nav className="mx-auto max-w-5xl flex items-center gap-2 px-4 h-14">
         <Link to="/" className="text-white font-semibold">Naturverse</Link>
         <div className="flex-1" />
-        <NavLink to="/" className={linkClass} end>Home</NavLink>
-        <NavLink to="/worlds" className={linkClass}>Worlds</NavLink>
-        <NavLink to="/zones" className={linkClass}>Zones</NavLink>
-        <NavLink to="/app" className={linkClass}>App</NavLink>
-        <NavLink to="/profile" className={linkClass}>Profile</NavLink>
+        <NavLink to="/" className={linkClass} end>
+          Home
+        </NavLink>
+        <NavLink to="/worlds" className={linkClass}>
+          Worlds
+        </NavLink>
+        <NavLink to="/zones" className={linkClass}>
+          Zones
+        </NavLink>
+        <NavLink to="/about" className={linkClass}>
+          About
+        </NavLink>
         {email && (
-          <button onClick={signOut} className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white/80 hover:text-white">
-            Sign out
-          </button>
+          <>
+            <NavLink to="/app" className={linkClass}>
+              App
+            </NavLink>
+            <NavLink to="/profile" className={linkClass}>
+              Profile
+            </NavLink>
+            <button
+              onClick={signOut}
+              className="ml-2 px-3 py-2 rounded-md text-sm font-medium text-white/80 hover:text-white"
+            >
+              Sign out
+            </button>
+          </>
         )}
       </nav>
     </header>

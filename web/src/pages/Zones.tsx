@@ -1,9 +1,11 @@
 import React from "react";
 import ZoneCard from "@/components/ZoneCard";
+import { Breadcrumbs } from "@/components/Breadcrumbs";
 
 export default function ZonesHub() {
   return (
     <main className="mx-auto max-w-6xl px-4 py-10 text-white">
+      <Breadcrumbs items={[{ label: "Naturverse" }, { label: "Home", to: "/" }, { label: "Zones" }]} />
       <h1 className="text-3xl font-bold">Zones</h1>
       <p className="text-white/80 mt-2">Pick a zone to explore. We’ll keep polishing each one.</p>
 
@@ -17,7 +19,7 @@ export default function ZonesHub() {
         <ZoneCard
           to="/zones/music"
           title="Music Zone"
-          blurb="Mood playlists and ambient soundscapes for focus and fun."
+          blurb="Make loops, layer beats, and learn rhythm."
           emoji="🎵"
         />
         <ZoneCard
@@ -43,6 +45,30 @@ export default function ZonesHub() {
           title="Community"
           blurb="Updates, highlights, and safe-space guidelines."
           emoji="🌈"
+        />
+        <ZoneCard
+          to="/zones/eco-lab"
+          title="Eco Lab"
+          blurb="Hands-on mini experiments and nature observations."
+          emoji="🌱"
+        />
+        <ZoneCard
+          to="/zones/story-studio"
+          title="Story Studio"
+          blurb="Write and illustrate short adventures."
+          emoji="✍️"
+        />
+        <ZoneCard
+          to="/zones/parents"
+          title="Parents & Teachers"
+          blurb="Tips, progress exporting, and classroom ideas."
+          emoji="👪"
+        />
+        <ZoneCard
+          to="/zones/settings"
+          title="Settings"
+          blurb="Theme, accessibility, and account options."
+          emoji="⚙️"
         />
       </div>
     </main>
