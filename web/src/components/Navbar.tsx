@@ -1,19 +1,10 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { useAuth } from "@/providers/AuthProvider";
+import { useProfile } from "@/providers/ProfileProvider";
 
 const Navbar: React.FC = () => {
-  const { user, session } = useAuth();
+  const { avatarUrl } = useProfile();
   const navigate = useNavigate();
-  const avatarUrl = user?.avatar_url ?? "/avatar-placeholder.png";
-
-  if (!session) {
-    return (
-      <nav style={{ padding: 16, borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
-        <Link to="/login">Sign in</Link>
-      </nav>
-    );
-  }
 
   return (
     <nav style={{ padding: 16, borderBottom: "1px solid #eee", display: "flex", justifyContent: "space-between", alignItems: "center" }}>
@@ -24,7 +15,7 @@ const Navbar: React.FC = () => {
       </div>
       <div style={{ cursor: "pointer" }} onClick={() => navigate("/profile") }>
         <img
-          src={avatarUrl}
+          src={avatarUrl || "/avatar-placeholder.png"}
           alt="avatar"
           width={32}
           height={32}
