@@ -1,3 +1,38 @@
+/*  A: A single fixed, isolated layer to host all floating bits  */
+.floating-layer{
+	position: fixed; inset: 0; z-index: 0;
+	pointer-events: none;
+	contain: layout paint style;
+	will-change: transform, opacity;
+	transform: translateZ(0);
+}
+
+/*  B: Each character is absolutely positioned, but only transform animates  */
+.floating-character{
+	position: absolute;
+	width: 5rem; height: 5rem; /* your size */
+	will-change: transform, opacity;
+	transform: translateZ(0);
+	backface-visibility: hidden;
+}
+
+/*  C: GPU-friendly float (NO top/left). Tune the distances/speeds as you like */
+@keyframes floatXY {
+	0%   { transform: translate3d(0, 0, 0) scale(1);    opacity: .95; }
+	50%  { transform: translate3d(14px, -12px, 0) scale(1.03); opacity: 1; }
+	100% { transform: translate3d(0, 0, 0) scale(1);    opacity: .95; }
+}
+.float-slow   { animation: floatXY 14s ease-in-out infinite; }
+.float-med    { animation: floatXY 11s ease-in-out infinite; }
+.float-fast   { animation: floatXY  9s ease-in-out infinite; }
+
+/*  D: Motion guard (kills *all* animations if the OS requests reduced motion) */
+@media (prefers-reduced-motion: reduce){
+	.float-slow, .float-med, .float-fast { animation: none !important; }
+}
+
+/* safety net to disable the old animation if it’s still referenced */
+[class*="animate-character"]{ animation: none !important; }
 /* --- HARDENED PERFORMANCE PATCH --- */
 
 /* 0) Make sure the page itself is stable and never changes height due to bg */
