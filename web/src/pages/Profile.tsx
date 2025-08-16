@@ -1,4 +1,5 @@
-import React, { useEffect, useState, useRef } from "react";
+import React from "react";
+import { useEffect, useState, useRef } from "react"; 
 import { supabase } from "@/supabaseClient";
 import { uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
 
@@ -208,7 +209,8 @@ export default function ProfilePage() {
         <img
           src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
           alt="avatar"
-          import React, { useEffect, useState, useRef } from "react";
+          import React from "react";
+          import { useEffect, useState, useRef } from "react";
           import { supabase } from "@/supabaseClient";
           import { uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
           import { useAuth } from "@/providers/AuthProvider";
