@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "@/supabaseClient";
+import { uploadAvatar, removeAvatarIfExists } from "@/lib/avatar";
 
 type UserProfile = {
   id: string;
@@ -12,6 +13,9 @@ export default function ProfilePage() {
   const [user, setUser] = useState<UserProfile | null>(null);
   const [loading, setLoading] = useState(true);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [avatarPath, setAvatarPath] = useState<string | null>(null);
+  const [file, setFile] = useState<File | null>(null);
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [uploading, setUploading] = useState(false);
   const [authView, setAuthView] = useState<"signIn" | "signUp" | "magic" | "guest">("signIn");
   const [email, setEmail] = useState("");
@@ -34,8 +38,9 @@ export default function ProfilePage() {
       .eq("id", authUser.id)
       .single();
     if (error) setError(error.message);
-    setUser(data);
-    setAvatarUrl(data?.avatar_url ?? null);
+  setUser(data as UserProfile);
+  setAvatarUrl((data?.avatar_url as string) ?? null);
+  setAvatarPath(null); // reset path on fetch
     setLoading(false);
   }
 
@@ -87,26 +92,42 @@ export default function ProfilePage() {
     setAvatarUrl(null);
   }
 
-  // Avatar upload
-  async function handleAvatarUpload(e: React.ChangeEvent<HTMLInputElement>) {
+  // Avatar select handler
+  function handleSelectAvatar(e: React.ChangeEvent<HTMLInputElement>) {
+    setError(null);
+    const f = e.target.files?.[0];
+    if (!f) return;
+    if (!f.type.startsWith("image/")) {
+      setError("Only image files are allowed.");
+      return;
+    }
+    if (f.size > 5 * 1024 * 1024) {
+      setError("File too large (max 5MB).");
+      return;
+    }
+    setFile(f);
+    setPreviewUrl(URL.createObjectURL(f));
+  }
+
+  // Avatar save handler
+  async function handleSaveAvatar() {
+    if (!user || !file) return;
+    setUploading(true);
+    setError(null);
     try {
-      setUploading(true);
-      setError(null);
-      const file = e.target.files?.[0];
-      if (!file || !user) return;
-      const fileExt = file.name.split('.').pop();
-      const filePath = `${user.id}/avatar.${fileExt}`;
-      const { error: uploadError } = await supabase.storage
-        .from("avatars")
-        .upload(filePath, file, { upsert: true });
-      if (uploadError) throw uploadError;
-      const { data } = supabase.storage.from("avatars").getPublicUrl(filePath);
-      setAvatarUrl(data.publicUrl);
-      // Update user profile
-      await supabase.from("users").update({ avatar_url: data.publicUrl }).eq("id", user.id);
+      if (user.avatar_url) {
+        await removeAvatarIfExists(supabase, user.avatar_url);
+      }
+      const { publicUrl, path } = await uploadAvatar(supabase, user.id, file);
+      await supabase.from("users").update({ avatar_url: publicUrl }).eq("id", user.id);
+      setAvatarUrl(publicUrl);
+      setAvatarPath(path);
+      setFile(null);
+      setPreviewUrl(null);
       fetchProfile();
+      alert("Avatar updated");
     } catch (err: any) {
-      setError(err.message);
+      setError(err.message || "Failed to upload avatar");
     } finally {
       setUploading(false);
     }
@@ -159,25 +180,30 @@ export default function ProfilePage() {
       </div>
       <div>
         <strong>Avatar:</strong><br />
-        {avatarUrl ? (
-          <img src={avatarUrl} alt="avatar" style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover" }} />
-        ) : (
-          <span>No avatar</span>
-        )}
+        <img
+          src={previewUrl || avatarUrl || "/avatar-placeholder.png"}
+          alt="avatar"
+          style={{ width: 96, height: 96, borderRadius: "50%", objectFit: "cover", border: "1px solid #ccc" }}
+        />
         <br />
         <input
           type="file"
           accept="image/*"
           ref={fileInputRef}
           style={{ display: "none" }}
-          onChange={handleAvatarUpload}
+          onChange={handleSelectAvatar}
         />
         <button onClick={() => fileInputRef.current?.click()} disabled={uploading}>
-          {uploading ? "Uploading..." : "Upload Avatar"}
+          Choose Avatar
         </button>
+        {file && (
+          <button onClick={handleSaveAvatar} disabled={uploading} style={{ marginLeft: 8 }}>
+            {uploading ? "Saving..." : "Save"}
+          </button>
+        )}
       </div>
       <button onClick={handleSignOut} style={{ marginTop: 24 }}>Sign Out</button>
-      {error && <div style={{ color: "red" }}>{error}</div>}
+  {error && <div style={{ color: "red" }}>{error}</div>}
     </div>
   );
 }
