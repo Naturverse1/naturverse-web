@@ -32,7 +32,6 @@ export default function Navbar() {
       <NavLink to="/worlds" className={linkClass}>Worlds</NavLink>
       <NavLink to="/zones" className={linkClass}>Zones</NavLink>
       <NavLink to="/marketplace" className={linkClass}>Marketplace</NavLink>
-      <NavLink to="/marketplace/orders" className={linkClass}>Orders</NavLink>
       <button
         className="icon-btn"
         style={{ position: 'relative' }}
@@ -68,6 +67,7 @@ export default function Navbar() {
         </select>
         {user ? (
           <>
+            <NavLink to="/account" className={linkClass}>Account</NavLink>
             <NavLink to="/profile" style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }} className={linkClass}>
               {navatar ? (
                 <img
