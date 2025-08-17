@@ -1,7 +1,6 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
-import Navbar from './components/Navbar';
-import ImmersiveBackground from './components/ImmersiveBackground';
+import AppShell from './components/AppShell';
 import Home from './pages/Home';
 import Login from './pages/Login';
 import AuthCallback from './pages/AuthCallback';
@@ -30,7 +29,6 @@ import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth } from './context/AuthContext';
-import TopBar from './components/TopBar';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CartPage from './pages/marketplace/cart';
 import CheckoutPage from './pages/marketplace/checkout';
@@ -43,17 +41,11 @@ import ProfileProvider from './context/ProfileContext';
 
 export default function App() {
   return (
-    <>
-      <ImmersiveBackground />
-      <ProfileProvider>
-        <CartProvider>
-          <div className="min-h-screen">
-            <Navbar />
-            <TopBar />
-            <Routes>
+    <ProfileProvider>
+      <CartProvider>
+        <Routes>
+          <Route element={<AppShell />}> 
             <Route path="/" element={<Home />} />
-            <Route path="/login" element={<Login />} />
-            <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/about" element={<About />} />
             <Route path="/story-studio" element={<StoryStudioPage />} />
             <Route path="/auto-quiz" element={<AutoQuiz />} />
@@ -176,13 +168,15 @@ export default function App() {
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />
-            </Routes>
-            {/* global styles */}
-            <link rel="stylesheet" href="/src/styles/ui.css" />
-            <link rel="stylesheet" href="/src/styles/marketplace.css" />
-          </div>
-        </CartProvider>
-      </ProfileProvider>
-    </>
+          </Route>
+          <Route path="/login" element={<Login />} />
+          <Route path="/auth/callback" element={<AuthCallback />} />
+        </Routes>
+        {/* global styles */}
+        <link rel="stylesheet" href="/src/styles/ui.css" />
+        <link rel="stylesheet" href="/src/styles/marketplace.css" />
+      </CartProvider>
+    </ProfileProvider>
   );
 }
+

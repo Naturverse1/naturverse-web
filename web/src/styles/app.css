@@ -169,3 +169,32 @@ body {
   color: #ddd;
   border: 2px dashed rgba(255, 255, 255, 0.25);
 }
+
+.page {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: clamp(16px, 3vw, 32px);
+  padding-bottom: calc(env(safe-area-inset-bottom) + clamp(16px, 3vw, 32px));
+}
+
+.immersive-gradient {
+  position: absolute;
+  inset: -20vmax;
+  z-index: -2;
+  background: radial-gradient(60vmax 60vmax at 10% 20%, #6ee7ff22, transparent),
+              radial-gradient(70vmax 70vmax at 90% 30%, #a78bfa22, transparent),
+              radial-gradient(80vmax 80vmax at 50% 90%, #34d39922, transparent);
+  filter: blur(30px);
+  animation: hue 30s linear infinite;
+}
+
+@keyframes hue {
+  from { filter: blur(30px) hue-rotate(0deg); }
+  to { filter: blur(30px) hue-rotate(360deg); }
+}
+
+.nav-active {
+  color: #fff;
+  font-weight: 700;
+}
+
