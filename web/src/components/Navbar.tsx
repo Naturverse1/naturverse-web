@@ -1,13 +1,15 @@
-import { NavLink } from "react-router-dom";
+import { NavLink } from 'react-router-dom';
 
-export default function Navbar({ email }: { email?: string|null }) {
+export default function Navbar({ email }: { email?: string | null }) {
   return (
     <div className="nv-wrap">
       <nav className="nv-nav">
-        <NavLink to="/" className="brand" end>The Naturverse</NavLink>
+        <NavLink to="/" className="brand" end>
+          The Naturverse
+        </NavLink>
         <NavLink to="/worlds">Worlds</NavLink>
         <NavLink to="/zones">Zones</NavLink>
-        <a href="/marketplace">Marketplace</a>
+        <NavLink to="/marketplace">Marketplace</NavLink>
         <div className="nv-spacer" />
         {email ? (
           <>
