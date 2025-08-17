@@ -43,6 +43,10 @@ import ProfileProvider from './context/ProfileContext';
 import { WishlistProvider } from './context/WishlistContext';
 import WishlistPage from './pages/marketplace/Wishlist';
 import OrderSuccess from './pages/marketplace/OrderSuccess';
+import AccountHome from './pages/account/AccountHome';
+import OrdersList from './pages/account/OrdersList';
+import AccountOrderDetail from './pages/account/OrderDetail';
+import Addresses from './pages/account/Addresses';
 
 export default function App() {
   return (
@@ -163,6 +167,38 @@ export default function App() {
               element={
                 <RequireAuth>
                   <Profile />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/account"
+              element={
+                <RequireAuth>
+                  <AccountHome />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/account/orders"
+              element={
+                <RequireAuth>
+                  <OrdersList />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/account/orders/:id"
+              element={
+                <RequireAuth>
+                  <AccountOrderDetail />
+                </RequireAuth>
+              }
+            />
+            <Route
+              path="/account/addresses"
+              element={
+                <RequireAuth>
+                  <Addresses />
                 </RequireAuth>
               }
             />
