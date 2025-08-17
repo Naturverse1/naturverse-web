@@ -1,3 +1,15 @@
+export type Shipping = {
+  fullName: string;
+  email: string;
+  phone?: string;
+  address1: string;
+  address2?: string;
+  city: string;
+  state: string;
+  postal: string;
+  country: string;
+};
+
 export type NaturLine = {
   id: string;
   name: string;
@@ -14,6 +26,7 @@ export type NaturOrder = {
   txHash?: string;
   network?: string; // e.g. "Polygon Amoy"
   address?: string; // buyer address
+  shipping: Shipping;
 };
 
 const KEY = 'natur_orders';

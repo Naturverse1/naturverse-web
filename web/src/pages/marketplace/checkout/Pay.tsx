@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useCart } from '../../context/CartContext';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../../../context/CartContext';
 import {
   connectWallet,
   ensureCorrectChain,
@@ -9,26 +9,45 @@ import {
   getNaturMeta,
   getNativeBalance,
   transferNatur,
-} from '../../lib/wallet';
-import FaucetHelp from '../../components/FaucetHelp';
-import { formatToken, naturUsdApprox } from '../../lib/pricing';
-import { addOrder } from '../../lib/orders';
+} from '../../../lib/wallet';
+import FaucetHelp from '../../../components/FaucetHelp';
+import { formatToken, naturUsdApprox } from '../../../lib/pricing';
+import { addOrder } from '../../../lib/orders';
+import type { Shipping } from '../../../lib/orders';
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
 const NATUR_USD_RATE = import.meta.env.VITE_NATUR_USD_RATE as string | undefined;
 
-const CheckoutPage: React.FC = () => {
+function loadShipping(): Shipping {
+  try {
+    const raw = localStorage.getItem('natur_shipping');
+    if (raw) return JSON.parse(raw) as Shipping;
+  } catch {}
+  return {
+    fullName: '',
+    email: '',
+    phone: '',
+    address1: '',
+    address2: '',
+    city: '',
+    state: '',
+    postal: '',
+    country: '',
+  };
+}
+
+const PayPage: React.FC = () => {
   const nav = useNavigate();
   const { items, totalNatur: cartTotal, clear } = useCart();
 
   const [address, setAddress] = useState<string | null>(null);
   const [chainOk, setChainOk] = useState(false);
   const [naturBal, setNaturBal] = useState<bigint | null>(null);
-  const [naturSymbol, setNaturSymbol] = useState("NATUR");
+  const [naturSymbol, setNaturSymbol] = useState('NATUR');
   const [naturDecimals, setNaturDecimals] = useState(18);
   const [gasBal, setGasBal] = useState<number | null>(null);
-  const [busy, setBusy] = useState<"idle" | "connecting" | "paying">("idle");
+  const [busy, setBusy] = useState<'idle' | 'connecting' | 'paying'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [showFaucet, setShowFaucet] = useState(false);
 
@@ -42,13 +61,13 @@ const CheckoutPage: React.FC = () => {
     (async () => {
       try {
         const provider = await getBrowserProvider();
-        const accs = await provider.send("eth_accounts", []);
+        const accs = await provider.send('eth_accounts', []);
         if (accs && accs[0]) {
           setAddress(accs[0]);
           await ensureCorrectChain();
           setChainOk(true);
           const meta = await getNaturMeta(provider);
-          setNaturSymbol(meta.symbol || "NATUR");
+          setNaturSymbol(meta.symbol || 'NATUR');
           setNaturDecimals(meta.decimals || 18);
           const [nbal, gbal] = await Promise.all([
             getNaturBalance(provider, accs[0]),
@@ -63,14 +82,14 @@ const CheckoutPage: React.FC = () => {
 
   const onConnect = async () => {
     setError(null);
-    setBusy("connecting");
+    setBusy('connecting');
     try {
       await ensureCorrectChain();
       const { address, provider } = await connectWallet();
       setAddress(address);
       setChainOk(true);
       const meta = await getNaturMeta(provider);
-      setNaturSymbol(meta.symbol || "NATUR");
+      setNaturSymbol(meta.symbol || 'NATUR');
       setNaturDecimals(meta.decimals || 18);
       const [nbal, gbal] = await Promise.all([
         getNaturBalance(provider, address),
@@ -79,9 +98,9 @@ const CheckoutPage: React.FC = () => {
       setNaturBal(nbal);
       setGasBal(gbal);
     } catch (e: any) {
-      setError(e?.message || "Failed to connect wallet");
+      setError(e?.message || 'Failed to connect wallet');
     } finally {
-      setBusy("idle");
+      setBusy('idle');
     }
   };
 
@@ -95,27 +114,26 @@ const CheckoutPage: React.FC = () => {
 
   const noGas = (gasBal || 0) <= 0;
 
-  const disabledReason =
-    !address
-      ? "Connect wallet"
-      : !chainOk
-      ? "Wrong network"
-      : notEnoughNatur
-      ? `Not enough ${naturSymbol}`
-      : noGas
-      ? "Add a little gas"
-      : null;
+  const disabledReason = !address
+    ? 'Connect wallet'
+    : !chainOk
+    ? 'Wrong network'
+    : notEnoughNatur
+    ? `Not enough ${naturSymbol}`
+    : noGas
+    ? 'Add a little gas'
+    : null;
 
   const onPay = async () => {
     setError(null);
     if (!address) return;
     if (!MERCHANT) {
-      setError("Missing VITE_MERCHANT_ADDRESS");
+      setError('Missing VITE_MERCHANT_ADDRESS');
       return;
     }
 
     try {
-      setBusy("paying");
+      setBusy('paying');
       const provider = await getBrowserProvider();
       const { decimals, symbol } = await getNaturMeta(provider);
       const need = Number(totalNatur);
@@ -123,6 +141,7 @@ const CheckoutPage: React.FC = () => {
       const tx = await transferNatur(signer, MERCHANT, need);
       await tx.wait();
 
+      const shipping = loadShipping();
       addOrder({
         id: tx.hash || String(Date.now()),
         createdAt: Date.now(),
@@ -135,21 +154,23 @@ const CheckoutPage: React.FC = () => {
         })),
         txHash: tx.hash,
         address,
+        shipping,
       });
 
       clear();
       nav('/marketplace/orders');
-      if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
+      if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, '_blank');
     } catch (e: any) {
-      if (e?.code === 4001) setError("Transaction canceled");
-      else setError(e?.message || "Payment failed");
+      if (e?.code === 4001) setError('Transaction canceled');
+      else setError(e?.message || 'Payment failed');
     } finally {
-      setBusy("idle");
+      setBusy('idle');
     }
   };
 
   return (
     <div className="p-8">
+      <a href="/marketplace/checkout/review">← Back to Review</a>
       <h1 className="text-3xl font-bold mb-6">Checkout</h1>
 
       {items.length === 0 ? (
@@ -175,21 +196,21 @@ const CheckoutPage: React.FC = () => {
           {!address ? (
             <button
               onClick={onConnect}
-              disabled={busy !== "idle"}
+              disabled={busy !== 'idle'}
               className="bg-blue-600 text-white px-4 py-2 rounded"
             >
-              {busy === "connecting" ? "Connecting..." : "Connect Wallet"}
+              {busy === 'connecting' ? 'Connecting...' : 'Connect Wallet'}
             </button>
           ) : (
             <div className="mb-4 text-sm opacity-90">
               <div>Connected: {address}</div>
-              <div>Chain: {chainOk ? "OK" : "Wrong network"}</div>
+              <div>Chain: {chainOk ? 'OK' : 'Wrong network'}</div>
               <div>
                 Token balance: {naturBal !== null
                   ? `${formatToken(naturBal, naturDecimals)} ${naturSymbol}`
-                  : "—"}
+                  : '—'}
               </div>
-              <div>Gas balance: {gasBal !== null ? gasBal.toFixed(6) : "—"}</div>
+              <div>Gas balance: {gasBal !== null ? gasBal.toFixed(6) : '—'}</div>
             </div>
           )}
 
@@ -200,13 +221,13 @@ const CheckoutPage: React.FC = () => {
           </div>
 
           <button
-            disabled={!(canPayBase && !notEnoughNatur && !noGas) || busy !== "idle"}
+            disabled={!(canPayBase && !notEnoughNatur && !noGas) || busy !== 'idle'}
             onClick={onPay}
             className="bg-green-600 text-white px-6 py-2 rounded disabled:opacity-50"
-            title={disabledReason || ""}
+            title={disabledReason || ''}
           >
-            {busy === "paying"
-              ? "Paying..."
+            {busy === 'paying'
+              ? 'Paying...'
               : disabledReason
               ? disabledReason
               : `Pay ${totalNatur.toFixed(2)} ${naturSymbol}`}
@@ -221,4 +242,5 @@ const CheckoutPage: React.FC = () => {
   );
 };
 
-export default CheckoutPage;
+export default PayPage;
+

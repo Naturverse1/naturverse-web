@@ -35,10 +35,10 @@ export default function CartPage() {
 
       <p style={{marginTop:'1rem'}}><strong>Total:</strong> {fmtNatur(totalNatur)}</p>
 
-      <div style={{marginTop:'1rem', display:'flex', gap:'.75rem'}}>
-        <button onClick={() => navigate('/marketplace/review')}>Review & details</button>
-        <button onClick={clear}>Clear cart</button>
-      </div>
+        <div style={{marginTop:'1rem', display:'flex', gap:'.75rem'}}>
+          <button onClick={() => navigate('/marketplace/checkout')}>Checkout</button>
+          <button onClick={clear}>Clear cart</button>
+        </div>
     </section>
   );
 }

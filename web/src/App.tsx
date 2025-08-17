@@ -31,11 +31,13 @@ import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth } from './context/AuthContext';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CartPage from './pages/marketplace/cart';
-import CheckoutPage from './pages/marketplace/checkout';
 import OrdersPage from './pages/marketplace/orders';
 import OrderDetailPage from './pages/marketplace/order';
 import ItemPage from './pages/marketplace/item';
-import ReviewPage from './pages/marketplace/review';
+import CheckoutIndex from './pages/marketplace/checkout';
+import Shipping from './pages/marketplace/checkout/Shipping';
+import CheckoutReview from './pages/marketplace/checkout/Review';
+import PayPage from './pages/marketplace/checkout/Pay';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 import { WishlistProvider } from './context/WishlistContext';
@@ -165,9 +167,11 @@ export default function App() {
             />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
-            <Route path="/marketplace/review" element={<ReviewPage />} />
             <Route path="/marketplace/item" element={<ItemPage />} />
-            <Route path="/marketplace/checkout" element={<CheckoutPage />} />
+            <Route path="/marketplace/checkout" element={<CheckoutIndex />} />
+            <Route path="/marketplace/checkout/shipping" element={<Shipping />} />
+            <Route path="/marketplace/checkout/review" element={<CheckoutReview />} />
+            <Route path="/marketplace/checkout/pay" element={<PayPage />} />
             <Route path="/marketplace/wishlist" element={<WishlistPage />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
