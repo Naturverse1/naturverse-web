@@ -7,6 +7,7 @@ import { PRODUCTS } from '../../lib/products';
 import { useCart } from '../../context/CartContext';
 import RecoStrip from '../../components/RecoStrip';
 import { recentItems, Item as RItem } from '../../lib/reco';
+import { getReviewSummaries } from '../../lib/supaReviews';
 
 const allItems: CatItem[] = PRODUCTS.map(p => ({
   id: p.id,
@@ -49,6 +50,7 @@ export default function MarketplacePage() {
   const visibleItems = useMemo(() => applyFilters(allItems, filters), [filters]);
   const { add, openMiniCart } = useCart();
   const [recent, setRecent] = useState<RItem[]>(() => recentItems(recoItems));
+  const [summaries, setSummaries] = useState<Record<string, { avg: number; count: number }>>({});
 
   useEffect(() => {
     const onStorage = (e: StorageEvent) => {
@@ -57,6 +59,10 @@ export default function MarketplacePage() {
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, []);
+
+  useEffect(() => {
+    getReviewSummaries(visibleItems.map(v => v.id)).then(res => setSummaries(res));
+  }, [visibleItems]);
 
   const handleAdd = (item: CatItem) => {
     add({
@@ -78,6 +84,11 @@ export default function MarketplacePage() {
           {visibleItems.map(item => (
             <div key={item.id} style={{ position: 'relative' }}>
               <ProductCard item={item} />
+              {summaries[item.id] && summaries[item.id].count > 0 && (
+                <div className="rating-row">
+                  ★ {summaries[item.id].avg.toFixed(1)} · {summaries[item.id].count}
+                </div>
+              )}
               <div style={{marginTop:'.5rem', display:'flex', gap:'.5rem'}}>
                 <a href={`/marketplace/item?id=${item.id}`}>View</a>
                 <button onClick={() => handleAdd(item)}>Add</button>
