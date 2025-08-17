@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Arcade() {
   const bestEasy = localStorage.getItem("nv:mm:best:easy");
@@ -23,7 +24,13 @@ export default function Arcade() {
   <br/>🪙 Coins: {coins}
   </p>
         </li>
-        <li>🔡 Word Builder — coming soon</li>
+        <li>
+          <Link to="/zones/arcade/word-builder">Word Builder</Link> — make words from daily letters.
+          <div style={{opacity:.9}}>
+            Best score today: {localStorage.getItem("nv:wb:best:" + ["nature","ocean","forest"][Math.floor(Date.now()/86400000)%3]) || "—"}
+            &nbsp;•&nbsp; 🪙 Coins: {localStorage.getItem("nv:wb:coins") || localStorage.getItem("nv:wb:coins") || "0"}
+          </div>
+        </li>
         <li>🌿 Eco Runner — coming soon</li>
       </ul>
 

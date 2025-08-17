@@ -17,7 +17,7 @@ import Parents from './pages/zones/Parents';
 import Settings from './pages/zones/Settings';
 import WellnessZone from './pages/zones/Wellness';
 import CreatorLab from './pages/zones/CreatorLab';
-import Arcade from './pages/zones/Arcade';
+import Arcade from './pages/zones/arcade';
 import Community from './pages/zones/Community';
 import Lesson from './pages/naturversity/Lesson';
 import About from './pages/About';
@@ -26,6 +26,7 @@ import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
 import MemoryMatch from './pages/zones/arcade/memory-match';
+import WordBuilder from './pages/zones/arcade/word-builder';
 import { RequireAuth, useSession } from './lib/auth';
 
 export default function App() {
@@ -125,6 +126,7 @@ export default function App() {
             }
           />
           <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
+          <Route path="/zones/arcade/word-builder" element={<WordBuilder />} />
           <Route
             path="/zones/community"
             element={
