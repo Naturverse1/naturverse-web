@@ -12,7 +12,7 @@ import {
 } from '../../lib/wallet';
 import FaucetHelp from '../../components/FaucetHelp';
 import { formatToken, naturUsdApprox } from '../../lib/pricing';
-import { saveOrder } from '../../lib/orders';
+import { addOrder } from '../../lib/orders';
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
@@ -123,17 +123,18 @@ const CheckoutPage: React.FC = () => {
       const tx = await transferNatur(signer, MERCHANT, need);
       await tx.wait();
 
-      saveOrder({
+      addOrder({
         id: tx.hash || String(Date.now()),
-        ts: Date.now(),
+        createdAt: Date.now(),
         totalNatur,
-        items: items.map((i) => ({
+        lines: items.map((i) => ({
           id: i.id,
           name: i.name,
           qty: i.qty,
           priceNatur: i.priceNatur,
         })),
         txHash: tx.hash,
+        address,
       });
 
       clear();
