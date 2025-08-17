@@ -1,45 +1,51 @@
-import React from 'react';
-import { loadOrders } from '../../lib/orders';
-
-const EXP = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
+import React, { useMemo } from 'react';
+import { Link } from 'react-router-dom';
+import { loadOrders, fmtDate } from '../../lib/orders';
+import { fmtNatur } from '../../lib/money';
 
 export default function OrdersPage() {
-  const orders = loadOrders();
-
-  if (!orders.length) {
-    return (
-      <section>
-        <h1>Your orders</h1>
-        <p>No orders yet.</p>
-        <a href="/marketplace">Shop the marketplace</a>
-      </section>
-    );
-  }
-
+  const orders = useMemo(() => loadOrders(), []);
   return (
     <section>
-      <h1>Your orders</h1>
-      <ul>
-        {orders.map(o => (
-          <li key={o.id} style={{margin:'1rem 0', padding:'1rem', border:'1px solid #2a3355', borderRadius:8}}>
-            <div><strong>Total:</strong> {o.totalNatur.toFixed(2)} NATUR</div>
-            <div><strong>Date:</strong> {new Date(o.ts).toLocaleString()}</div>
-            <details style={{marginTop:'.5rem'}}>
-              <summary>Items</summary>
-              <ul>
-                {o.items.map(i => (
-                  <li key={i.id}>{i.name} × {i.qty} — {(i.priceNatur*i.qty).toFixed(2)} NATUR</li>
-                ))}
-              </ul>
-            </details>
-            {o.txHash && EXP ? (
-              <div style={{marginTop:'.5rem'}}>
-                <a href={`${EXP}/tx/${o.txHash}`} target="_blank" rel="noreferrer">View on explorer</a>
+      <a href="/marketplace">← Back to Marketplace</a>
+      <h1>My Orders</h1>
+
+      {orders.length === 0 ? (
+        <p>
+          No orders yet. After a successful NATUR payment,
+          your orders will appear here.
+        </p>
+      ) : (
+        <div style={{ display: 'grid', gap: '0.75rem', marginTop: '1rem' }}>
+          {orders.map((o) => (
+            <Link
+              key={o.id}
+              to={`/marketplace/orders/${encodeURIComponent(o.id)}`}
+              style={{
+                padding: '0.9rem 1rem',
+                background: 'rgba(255,255,255,.04)',
+                borderRadius: 12,
+                textDecoration: 'none',
+                color: 'inherit',
+                display: 'grid',
+                gridTemplateColumns: '1fr auto',
+                gap: '.5rem',
+              }}
+            >
+              <div>
+                <div style={{ fontWeight: 600 }}>Order {o.id.slice(0, 8)}…</div>
+                <div style={{ opacity: 0.8, fontSize: '.9rem' }}>
+                  {fmtDate(o.createdAt)} · {o.network || '—'}
+                </div>
               </div>
-            ) : null}
-          </li>
-        ))}
-      </ul>
+              <div style={{ alignSelf: 'center', fontWeight: 600 }}>
+                {fmtNatur(o.totalNatur)}
+              </div>
+            </Link>
+          ))}
+        </div>
+      )}
     </section>
   );
 }
+

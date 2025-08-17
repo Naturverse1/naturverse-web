@@ -35,6 +35,7 @@ import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CartPage from './pages/marketplace/cart';
 import CheckoutPage from './pages/marketplace/checkout';
 import OrdersPage from './pages/marketplace/orders';
+import OrderDetailPage from './pages/marketplace/order';
 import ItemPage from './pages/marketplace/item';
 import ReviewPage from './pages/marketplace/review';
 import { CartProvider } from './context/CartContext';
@@ -174,6 +175,7 @@ export default function App() {
             <Route path="/marketplace/item" element={<ItemPage />} />
             <Route path="/marketplace/checkout" element={<CheckoutPage />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
+            <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />
             </Routes>
             {/* global styles */}
