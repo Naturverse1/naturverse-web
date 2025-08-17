@@ -7,7 +7,7 @@ export default function Navbar({ email }: { email?: string|null }) {
         <NavLink to="/" className="brand" end>The Naturverse</NavLink>
         <NavLink to="/worlds">Worlds</NavLink>
         <NavLink to="/zones">Zones</NavLink>
-        <NavLink to="/marketplace">Marketplace</NavLink>
+        <a href="/marketplace">Marketplace</a>
         <div className="nv-spacer" />
         {email ? (
           <>

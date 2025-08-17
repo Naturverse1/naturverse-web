@@ -31,11 +31,8 @@ import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
-import Marketplace from './pages/marketplace/index';
-import ProductPage from './pages/marketplace/product';
-import CartPage from './pages/marketplace/cart';
-import CheckoutPage from './pages/marketplace/checkout';
-import OrderPage from './pages/marketplace/order';
+import Marketplace from './pages/marketplace';
+import Checkout from './pages/marketplace/checkout';
 
 export default function App() {
   const { session } = useSession();
@@ -164,10 +161,7 @@ export default function App() {
             }
           />
           <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/marketplace/:slug" element={<ProductPage />} />
-          <Route path="/marketplace/cart" element={<CartPage />} />
-          <Route path="/marketplace/checkout" element={<CheckoutPage />} />
-          <Route path="/marketplace/order/:id" element={<OrderPage />} />
+          <Route path="/marketplace/checkout" element={<Checkout />} />
           <Route path="*" element={<NotFound />} />
         </Routes>
       {/* global styles */}

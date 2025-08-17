@@ -1,30 +1,31 @@
-import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "../../lib/supabaseClient";
-import { fmtMoney } from "../../lib/marketplace";
 
-type Product = { id:string; slug:string; title:string; description?:string; base_price_cents:number; preview_url?:string; };
+const items = [
+  { sku: "plush-turian", name: "Turian Plush", priceNatur: 50 },
+  { sku: "halloween-costume", name: "Turian Costume", priceNatur: 100 },
+  { sku: "poster", name: "Adventure Poster", priceNatur: 10 },
+];
 
-export default function Marketplace(){
-  const [products, setProducts] = useState<Product[]>([]);
-  useEffect(()=>{
-    supabase.from("products").select("*").then(({data})=> setProducts(data||[]));
-  },[]);
+export default function Marketplace() {
   return (
-    <div className="mx-auto max-w-5xl p-4">
-      <h1 className="text-3xl font-bold mb-2">🛒 Naturverse Marketplace</h1>
-      <p className="opacity-80 mb-4">Create plushies, costumes, prints and more using your Navatar.</p>
-      <div className="grid gap-4 grid-cols-[repeat(auto-fill,minmax(220px,1fr))]">
-        {products.map(p=> (
-          <Link key={p.id} to={`/marketplace/${p.slug}`} className="rounded-xl ring-1 ring-slate-700 bg-slate-900/60 p-3 hover:ring-slate-500">
-            <div className="aspect-video rounded-lg bg-slate-800 mb-2 overflow-hidden">
-              {p.preview_url ? <img src={p.preview_url} alt={p.title} style={{width:"100%",height:"100%",objectFit:"cover"}}/> : null}
-            </div>
-            <div className="font-semibold">{p.title}</div>
-            <div className="text-sm opacity-80">{fmtMoney(p.base_price_cents)}</div>
-          </Link>
+    <main style={{ maxWidth: 960, margin: "0 auto", padding: "2rem" }}>
+      <h1>Marketplace</h1>
+      <p>Create magical goods with your Navatar. Pay with NATUR or cash (cash coming soon).</p>
+      <ul style={{ listStyle: "none", padding: 0, display: "grid", gap: "1rem" }}>
+        {items.map(it => (
+          <li key={it.sku} style={{ background: "rgba(255,255,255,0.06)", borderRadius: 12, padding: "1rem" }}>
+            <h3 style={{ margin: "0 0 .25rem" }}>{it.name}</h3>
+            <div style={{ opacity: .8, marginBottom: ".5rem" }}>Price: {it.priceNatur} NATUR</div>
+            <Link
+              to={`/marketplace/checkout?sku=${encodeURIComponent(it.sku)}&name=${encodeURIComponent(it.name)}&price=${it.priceNatur}`}
+              style={{ textDecoration: "underline" }}
+            >
+              Customize &amp; Buy
+            </Link>
+          </li>
         ))}
-      </div>
-    </div>
+      </ul>
+    </main>
   );
 }
+

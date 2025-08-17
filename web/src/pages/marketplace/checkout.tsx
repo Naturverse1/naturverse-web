@@ -1,134 +1,111 @@
-import React, { useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import { getCart, saveCart, cartTotalCents, fmtMoney } from "../../lib/marketplace";
-import { connectWallet, signMessage, shortAddress } from "../../lib/web3";
-import { BrowserProvider, Contract, parseUnits } from "ethers";
+import { useEffect, useMemo, useState } from "react";
+import { NATUR, connectWallet, currentAccount, erc20BalanceOf, formatUnits, parseUnits, sendErc20Transfer } from "../../lib/web3";
 
-const WEB3_CFG = {
-  chainIdHex: import.meta.env.VITE_NATUR_CHAIN_ID as string,
-  tokenAddress: import.meta.env.VITE_NATUR_TOKEN_ADDRESS as string,
-  tokenDecimals: Number(import.meta.env.VITE_NATUR_TOKEN_DECIMALS || 18),
-  treasury: import.meta.env.VITE_NATUR_TREASURY as string,
-  usdPerNatur: Number(import.meta.env.VITE_NATUR_USD_RATE || 1),
-};
+function useQuery() {
+  return useMemo(() => new URLSearchParams(window.location.search), []);
+}
 
-const ERC20_ABI_MIN = [
-  "function transfer(address to, uint256 amount) returns (bool)",
-  "function decimals() view returns (uint8)",
-  "event Transfer(address indexed from, address indexed to, uint256 value)",
-];
+export default function Checkout() {
+  const q = useQuery();
+  const name = q.get("name") || "Mystery Item";
+  const sku = q.get("sku") || "unknown";
+  const unitPrice = Number(q.get("price") || "10"); // NATUR per unit
 
-export default function CheckoutPage(){
-  const nav = useNavigate();
-  const [email, setEmail] = useState("");
-  const [busy, setBusy] = useState(false);
-  const items = getCart();
-  const totalCents = useMemo(()=>cartTotalCents(items), [items]);
-  const usdTotal = totalCents / 100;
+  const [addr, setAddr] = useState<string | null>(null);
+  const [balance, setBalance] = useState<string | null>(null);
+  const [qty, setQty] = useState(1);
+  const totalNatur = unitPrice * qty;
 
-  async function createOrderNatur(): Promise<string>{
-    const res = await fetch("/.netlify/functions/checkout-mock", {
-      method:"POST",
-      headers:{ "Content-Type":"application/json" },
-      body: JSON.stringify({ email, items, total_cents: totalCents, method: "natur" })
-    });
-    const out = await res.json();
-    if (!res.ok) throw new Error(out.error || "Order create failed");
-    return out.order_id as string;
-  }
+  useEffect(() => {
+    (async () => {
+      const a = await currentAccount();
+      if (a) setAddr(a);
+    })();
+  }, []);
 
-  async function ensureChain(eth: any, targetChainIdHex: string){
-    const current = await eth.request({ method: "eth_chainId" });
-    if (current?.toLowerCase() === targetChainIdHex.toLowerCase()) return;
+  async function doConnect() {
     try {
-      await eth.request({ method: "wallet_switchEthereumChain", params:[{ chainId: targetChainIdHex }] });
-    } catch (err: any) {
-      if (err?.code === 4902) {
-        // If needed, user can add the chain manually; for MVP we just show a friendly hint.
-        throw new Error("Wrong network. Please switch your wallet to the configured NATUR network.");
-      }
-      throw err;
+      const a = await connectWallet();
+      setAddr(a);
+      const bal = await erc20BalanceOf(NATUR.TOKEN_ADDRESS, a);
+      setBalance(formatUnits(bal));
+    } catch (e: any) {
+      alert(e?.message || "Failed to connect wallet");
     }
   }
 
-  async function payWithNatur(){
-    try{
-      setBusy(true);
-      if (!email) throw new Error("Please enter an email");
-      if (items.length === 0) throw new Error("Cart is empty");
-
-      const orderId = await createOrderNatur();
-
-      const addr = await connectWallet();
-      const eth = (window as any).ethereum;
-      if (!eth) throw new Error("No wallet found. Please install MetaMask or a compatible wallet.");
-
-      await ensureChain(eth, WEB3_CFG.chainIdHex);
-
-      const provider = new BrowserProvider(eth);
-      const signer = await provider.getSigner();
-      const token = new Contract(WEB3_CFG.tokenAddress, ERC20_ABI_MIN, signer);
-
-      // NATUR amount = USD total / usdPerNatur. Example: $15, 1 NATUR = $1 => 15 NATUR.
-      const naturAmount = usdTotal / WEB3_CFG.usdPerNatur;
-      const amountWei = parseUnits(naturAmount.toFixed(6), WEB3_CFG.tokenDecimals); // 6 dp for safety
-
-      const tx = await token.transfer(WEB3_CFG.treasury, amountWei);
-      const receipt = await tx.wait();
-
-      await signMessage(`Order ${orderId} paid by ${shortAddress(addr)}`);
-
-      const verify = await fetch("/.netlify/functions/natur-verify", {
-        method: "POST",
-        headers: { "Content-Type":"application/json" },
-        body: JSON.stringify({ order_id: orderId, tx_hash: receipt.hash })
-      });
-      const out = await verify.json();
-      if (!verify.ok) throw new Error(out.error || "Payment verification failed");
-
-      saveCart([]);
-      nav(`/marketplace/order/${orderId}`);
-    } catch (err:any){
-      alert(err.message || "NATUR payment failed");
-    } finally {
-      setBusy(false);
+  async function refreshBal() {
+    if (!addr) return;
+    try {
+      const bal = await erc20BalanceOf(NATUR.TOKEN_ADDRESS, addr);
+      setBalance(formatUnits(bal));
+    } catch {
+      setBalance(null);
     }
-
   }
 
-  async function placeMock(){
-    try{
-      setBusy(true);
-      const res = await fetch("/.netlify/functions/checkout-mock", {
-        method:"POST",
-        headers:{ "Content-Type":"application/json" },
-        body: JSON.stringify({ email, items, total_cents: totalCents, method: "mock" })
-      });
-      const out = await res.json();
-      if (!res.ok) throw new Error(out.error || "Checkout failed");
-      saveCart([]);
-      nav(`/marketplace/order/${out.order_id}`);
-    } catch (e:any){
-      alert(e.message || "Checkout failed");
-    } finally {
-      setBusy(false);
+  async function payNatur() {
+    if (!addr) return alert("Connect your wallet first.");
+    try {
+      const amount = parseUnits(totalNatur, NATUR.DECIMALS);
+      const hash = await sendErc20Transfer(
+        NATUR.TOKEN_ADDRESS,
+        NATUR.MERCHANT_TREASURY,
+        amount,
+        addr
+      );
+      alert(`Transaction sent!\n\nHash:\n${hash}`);
+      await refreshBal();
+      // TODO: call /.netlify/functions/natur-verify to record the order on the backend
+    } catch (e: any) {
+      alert(e?.message || "Payment failed");
     }
   }
 
   return (
-    <div className="mx-auto max-w-md p-4">
-      <Link to="/marketplace/cart" className="text-sm opacity-80 hover:underline">← Back to cart</Link>
-      <h1 className="text-2xl font-bold mt-4">Checkout</h1>
-      <div className="mt-4">
-        <label className="font-semibold">Email for order receipt</label>
-        <input value={email} onChange={(e)=>setEmail(e.target.value)} placeholder="you@domain.com" className="w-full rounded-md bg-slate-900/60 ring-1 ring-slate-700 p-2 mt-1"/>
+    <main style={{ maxWidth: 960, margin: "0 auto", padding: "2rem" }}>
+      <h1>Checkout</h1>
+      <div style={{ marginBottom: "1rem", opacity: .9 }}>
+        <div><strong>Item:</strong> {name}</div>
+        <div><strong>SKU:</strong> {sku}</div>
       </div>
-      <div className="mt-4 flex flex-col gap-2">
-        <button onClick={placeMock} disabled={busy} className="rounded-md bg-indigo-500 px-4 py-2 font-semibold hover:bg-indigo-400 disabled:opacity-50">Pay (mock)</button>
-        <button onClick={payWithNatur} disabled={busy} className="rounded-md bg-emerald-600 px-4 py-2 font-semibold hover:bg-emerald-500 disabled:opacity-50">Pay with NATUR</button>
-      </div>
-      <div className="mt-4">Total: {fmtMoney(totalCents)}</div>
-    </div>
+
+      <section style={{ display: "grid", gap: "1rem", marginBottom: "1.25rem" }}>
+        <label>
+          Quantity:&nbsp;
+          <input
+            type="number"
+            min={1}
+            value={qty}
+            onChange={(e) => setQty(Math.max(1, Number(e.target.value || 1)))}
+            style={{ width: 80 }}
+          />
+        </label>
+        <div><strong>Price:</strong> {unitPrice} NATUR</div>
+        <div style={{ fontSize: 18 }}><strong>Total:</strong> {totalNatur} NATUR</div>
+      </section>
+
+      <section style={{ display: "grid", gap: ".5rem", marginBottom: "1rem" }}>
+        <h3>Pay with NATUR</h3>
+        {addr ? (
+          <>
+            <div>Connected: <code>{addr}</code></div>
+            <div>Balance: {balance ?? '—'} NATUR <button onClick={refreshBal} style={{ marginLeft: 8 }}>↻</button></div>
+            <button onClick={payNatur}>Pay {totalNatur} NATUR</button>
+          </>
+        ) : (
+          <button onClick={doConnect}>Connect MetaMask</button>
+        )}
+        <div style={{ opacity: .7, marginTop: ".5rem" }}>
+          Network: expects chain <code>{NATUR.CHAIN_ID_HEX}</code> (update in <code>web3.ts</code>).
+        </div>
+      </section>
+
+      <section style={{ marginTop: "1.5rem" }}>
+        <h3>Or pay with card (coming soon)</h3>
+        <button disabled>Pay with Card</button>
+      </section>
+    </main>
   );
 }
 
