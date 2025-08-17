@@ -1,11 +1,16 @@
 import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getOrder, fmtDate, explorerUrl } from '../../lib/orders';
-import { fmtNatur } from '../../lib/money';
+import { formatNatur, ShippingMethodId } from '../../lib/pricing';
 
 export default function OrderDetailPage() {
   const { id = '' } = useParams();
   const order = useMemo(() => getOrder(id), [id]);
+
+  const shipLabels: Record<ShippingMethodId, string> = {
+    standard: 'Standard',
+    expedited: 'Expedited',
+  };
 
   if (!order) {
     return (
@@ -45,22 +50,42 @@ export default function OrderDetailPage() {
           >
             <div>
               <div style={{ fontWeight: 600 }}>{l.name}</div>
-              <small style={{ opacity: 0.8 }}>Unit {fmtNatur(l.priceNatur)}</small>
+              <small style={{ opacity: 0.8 }}>Unit {formatNatur(l.priceNatur)}</small>
             </div>
             <div style={{ justifySelf: 'end' }}>Qty {l.qty}</div>
             <div style={{ justifySelf: 'end', fontWeight: 600 }}>
-              {fmtNatur(l.qty * l.priceNatur)}
+              {formatNatur(l.qty * l.priceNatur)}
             </div>
           </div>
         ))}
       </div>
 
-        <h2>Total</h2>
-        <p style={{ fontWeight: 700 }}>{fmtNatur(order.totalNatur)}</p>
+        <h2>Totals</h2>
+        <div className="totals" style={{ marginBottom: '1rem' }}>
+          <div className="row">
+            <span>Items</span>
+            <span>{formatNatur(order.totals?.items ?? order.totalNatur)}</span>
+          </div>
+          <div className="row">
+            <span>Shipping ({shipLabels[order.shippingMethod] || ''})</span>
+            <span>{formatNatur(order.totals?.shipping ?? 0)}</span>
+          </div>
+          {order.totals?.discount ? (
+            <div className="row">
+              <span>Discount</span>
+              <span>-{formatNatur(order.totals.discount)}</span>
+            </div>
+          ) : null}
+          <div className="row grand">
+            <span>Total</span>
+            <span>{formatNatur(order.totals?.grandTotal ?? order.totalNatur)}</span>
+          </div>
+        </div>
 
         {order.shipping && (
           <>
             <h2>Shipping</h2>
+            <p>{shipLabels[order.shippingMethod] || ''}</p>
             <p style={{ whiteSpace: 'pre-line' }}>
               {order.shipping.fullName}
               {'\n'}

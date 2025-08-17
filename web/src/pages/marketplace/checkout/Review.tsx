@@ -1,8 +1,14 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import CartLine from '../../../components/CartLine';
-import { fmtNatur, natur } from '../../../lib/money';
 import { useCart } from '../../../context/CartContext';
+import {
+  SHIPPING_PRICES,
+  ShippingMethodId,
+  calcDiscountNATUR,
+  formatNatur,
+} from '../../../lib/pricing';
+import { getJSON, setJSON } from '../../../lib/storage';
 import type { Shipping } from '../../../lib/orders';
 
 function loadShipping(): Shipping | null {
@@ -13,15 +19,48 @@ function loadShipping(): Shipping | null {
   return null;
 }
 
+const shipLabels: Record<ShippingMethodId, string> = {
+  standard: 'Standard (3–5 days)',
+  expedited: 'Expedited (1–2 days)',
+};
+
 export default function ReviewPage() {
   const nav = useNavigate();
   const { items, inc, dec, remove, totalNatur } = useCart();
+
+  const [method, setMethod] = useState<ShippingMethodId>(
+    getJSON('natur_ship_method', 'standard')
+  );
+  const [code, setCode] = useState(getJSON('natur_promo_code', ''));
+  const [codeInput, setCodeInput] = useState(code);
+  const [codeError, setCodeError] = useState<string>('');
+
+  const itemsSubtotal = totalNatur;
+  const ship = SHIPPING_PRICES[method];
+  const discount = calcDiscountNATUR(code, itemsSubtotal);
+  const grandTotal = Math.max(0, itemsSubtotal + ship - discount);
+
+  useEffect(() => setJSON('natur_ship_method', method), [method]);
+  useEffect(() => setJSON('natur_promo_code', code), [code]);
+  useEffect(() => setJSON('natur_checkout_total', grandTotal), [grandTotal]);
+
   const shipping = loadShipping();
-
-  const fees = natur(totalNatur * 0.0);
-  const grand = natur(totalNatur + fees);
-
   const hasItems = items.length > 0;
+
+  const onApply = () => {
+    if (calcDiscountNATUR(codeInput, itemsSubtotal) > 0) {
+      setCode(codeInput.trim().toUpperCase());
+      setCodeError('');
+    } else {
+      setCodeError('Invalid code');
+    }
+  };
+
+  const onRemoveCode = () => {
+    setCode('');
+    setCodeInput('');
+    setCodeError('');
+  };
 
   return (
     <section>
@@ -44,15 +83,67 @@ export default function ReviewPage() {
             ))}
           </div>
 
-          <div style={{ margin: '1rem 0', display: 'grid', gap: '.25rem', justifyContent: 'start' }}>
-            <div>
-              <strong>Items:</strong> {fmtNatur(totalNatur)}
+          <div style={{ margin: '1rem 0' }}>
+            <h2>Shipping Method</h2>
+            <div style={{ display: 'grid', gap: '4px', marginTop: '4px' }}>
+              {(['standard', 'expedited'] as ShippingMethodId[]).map((m) => (
+                <label key={m} style={{ display: 'flex', gap: '8px', alignItems: 'center' }}>
+                  <input
+                    type="radio"
+                    name="ship"
+                    value={m}
+                    checked={method === m}
+                    onChange={() => setMethod(m)}
+                  />
+                  <span>
+                    {shipLabels[m]} — {formatNatur(SHIPPING_PRICES[m])}
+                  </span>
+                </label>
+              ))}
             </div>
-            <div>
-              <strong>Fees:</strong> {fmtNatur(fees)}
+            <p style={{ opacity: 0.8, fontSize: '0.9rem' }}>Free standard shipping!</p>
+          </div>
+
+          <div style={{ margin: '1rem 0' }}>
+            <h2>Promo Code</h2>
+            {code ? (
+              <div className="promo-chip" style={{ marginTop: '4px' }}>
+                <span>{code}</span>
+                <button onClick={onRemoveCode}>Remove</button>
+              </div>
+            ) : (
+              <>
+                <div style={{ display: 'flex', gap: '8px', marginTop: '4px' }}>
+                  <input
+                    value={codeInput}
+                    onChange={(e) => setCodeInput(e.target.value)}
+                    placeholder="Promo code"
+                  />
+                  <button onClick={onApply}>Apply</button>
+                </div>
+                {codeError && <div className="error">{codeError}</div>}
+              </>
+            )}
+          </div>
+
+          <div className="totals" style={{ margin: '1rem 0' }}>
+            <div className="row">
+              <span>Items Subtotal</span>
+              <span>{formatNatur(itemsSubtotal)}</span>
             </div>
-            <div>
-              <strong>Total:</strong> {fmtNatur(grand)}
+            <div className="row">
+              <span>Shipping</span>
+              <span>{formatNatur(ship)}</span>
+            </div>
+            {discount > 0 && (
+              <div className="row">
+                <span>Discount</span>
+                <span>-{formatNatur(discount)}</span>
+              </div>
+            )}
+            <div className="row grand">
+              <span>Total</span>
+              <span>{formatNatur(grandTotal)}</span>
             </div>
           </div>
 
@@ -87,4 +178,3 @@ export default function ReviewPage() {
     </section>
   );
 }
-

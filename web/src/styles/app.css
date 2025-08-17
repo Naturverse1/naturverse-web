@@ -212,3 +212,9 @@ body {
   .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media (max-width:640px){ .row { grid-template-columns:1fr; } }
 
+.totals { display:grid; gap:6px; }
+.totals .row{ display:flex; justify-content:space-between; }
+.totals .grand{ font-weight:700; font-size:1.1rem; }
+.promo-chip{ display:inline-flex; align-items:center; gap:8px; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); }
+.error{ color:#ef4444; font-size:12px; margin-top:4px; }
+

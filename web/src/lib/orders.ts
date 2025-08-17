@@ -18,6 +18,8 @@ export type NaturLine = {
   meta?: Record<string, any>;
 };
 
+import type { ShippingMethodId } from "./pricing";
+
 export type NaturOrder = {
   id: string; // ulid-ish or tx hash fallback
   createdAt: number; // epoch ms
@@ -27,6 +29,9 @@ export type NaturOrder = {
   network?: string; // e.g. "Polygon Amoy"
   address?: string; // buyer address
   shipping: Shipping;
+  shippingMethod: ShippingMethodId;
+  discount?: { code: string; amount: number };
+  totals: { items: number; shipping: number; discount: number; grandTotal: number };
 };
 
 const KEY = 'natur_orders';
