@@ -28,6 +28,7 @@ import NotFound from './pages/NotFound';
 import EcoRunner from './pages/zones/arcade/eco-runner';
 import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
+import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
 
 export default function App() {
@@ -129,6 +130,7 @@ export default function App() {
           <Route path="/zones/arcade/eco-runner" element={<EcoRunner />} />
           <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
           <Route path="/zones/arcade/word-builder" element={<WordBuilder />} />
+          <Route path="/zones/arcade/shop" element={<ArcadeShop />} />
           <Route
             path="/zones/community"
             element={
