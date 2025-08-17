@@ -42,6 +42,7 @@ import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 import { WishlistProvider } from './context/WishlistContext';
 import WishlistPage from './pages/marketplace/Wishlist';
+import OrderSuccess from './pages/marketplace/OrderSuccess';
 
 export default function App() {
   return (
@@ -173,6 +174,7 @@ export default function App() {
             <Route path="/marketplace/checkout/review" element={<CheckoutReview />} />
             <Route path="/marketplace/checkout/pay" element={<PayPage />} />
             <Route path="/marketplace/wishlist" element={<WishlistPage />} />
+            <Route path="/marketplace/success/:id" element={<OrderSuccess />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />

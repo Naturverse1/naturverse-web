@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext';
 import "./styles/app.css";
 import "./styles/themes.css";
 import { applyTheme, onThemeChange } from "./lib/theme";
+import { ThemeProvider } from './context/ThemeContext';
 
 applyTheme();
 onThemeChange(() => applyTheme());
@@ -13,9 +14,11 @@ onThemeChange(() => applyTheme());
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
     <BrowserRouter>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <ThemeProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </ThemeProvider>
     </BrowserRouter>
   </React.StrictMode>
 );

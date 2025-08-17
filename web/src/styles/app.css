@@ -1,11 +1,28 @@
-/* 1) System fonts; 2) lock background; 3) remove all animations/transitions; 4) stable layout */
+/* Theme tokens */
 :root {
+  --bg: #0b1226;
+  --text: #e8edff;
+  --panel: rgba(255,255,255,.06);
+  --panel-b: rgba(255,255,255,.12);
+  --accent: #5b7cfa;
+  --danger: #ef4444;
+  --muted: rgba(232,237,255,.8);
+
+  /* existing variables */
   --bg-1: #0b1020;
   --bg-2: #101a38;
-  --text: #eaf2ff;
-  --accent: #91f2ff;
   --nv-page-pad: 1rem;
 }
+html[data-theme="light"] {
+  --bg: #f7f9ff;
+  --text: #0e1222;
+  --panel: rgba(0,0,0,.04);
+  --panel-b: rgba(0,0,0,.08);
+  --muted: rgba(14,18,34,.75);
+}
+body { background: var(--bg); color: var(--text); }
+
+/* 1) System fonts; 2) lock background; 3) remove all animations/transitions; 4) stable layout */
 @media (min-width: 640px) {
   :root {
     --nv-page-pad: 1.25rem;
@@ -53,11 +70,7 @@ body {
     'Apple Color Emoji',
     'Segoe UI Emoji';
   color: var(--text);
-  background:
-    radial-gradient(1200px 800px at 10% 10%, rgba(255, 255, 255, 0.03), transparent 60%),
-    radial-gradient(900px 700px at 110% 0%, rgba(255, 255, 255, 0.04), transparent 55%),
-    linear-gradient(108deg, var(--bg-1), var(--bg-2));
-  background-attachment: fixed;
+  background: var(--bg);
   overflow-x: hidden;
 }
 
@@ -287,4 +300,9 @@ body {
 .totals .grand{ font-weight:700; font-size:1.1rem; }
 .promo-chip{ display:inline-flex; align-items:center; gap:8px; padding:4px 8px; border-radius:999px; background:rgba(255,255,255,.08); }
 .error{ color:#ef4444; font-size:12px; margin-top:4px; }
+
+@media print {
+  .panel { background:#fff; border:1px solid #ddd; }
+  a[href]:after { content: " (" attr(href) ")"; font-size: 10px; color:#555; }
+}
 

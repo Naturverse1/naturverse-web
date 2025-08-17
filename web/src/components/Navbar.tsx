@@ -4,6 +4,7 @@ import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
+import { useTheme } from '../context/ThemeContext';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined;
@@ -13,6 +14,7 @@ export default function Navbar() {
   const { ids } = useWishlist();
   const navigate = useNavigate();
   const { items } = useCart();
+  const { theme, setTheme } = useTheme();
 
   const cartQty = items.reduce((sum, i) => sum + i.qty, 0);
 
@@ -55,6 +57,15 @@ export default function Navbar() {
       </button>
 
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '.75rem', alignItems: 'center' }}>
+        <select
+          value={theme}
+          onChange={(e) => setTheme(e.target.value as any)}
+          style={{ background: 'transparent', color: 'inherit', border: '1px solid rgba(255,255,255,.3)', borderRadius: 4 }}
+        >
+          <option value="light">Light</option>
+          <option value="system">System</option>
+          <option value="dark">Dark</option>
+        </select>
         {user ? (
           <>
             <NavLink to="/profile" style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }} className={linkClass}>

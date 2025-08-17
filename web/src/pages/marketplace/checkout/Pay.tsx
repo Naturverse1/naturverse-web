@@ -49,6 +49,13 @@ const PayPage: React.FC = () => {
   const nav = useNavigate();
   const { items, totalNatur: itemsSubtotal, clear } = useCart();
 
+  useEffect(() => {
+    if (items.length === 0) {
+      alert('Your cart is empty.');
+      nav('/marketplace', { replace: true });
+    }
+  }, [items, nav]);
+
   const method = getJSON<ShippingMethodId>('natur_ship_method', 'standard');
   const code = getJSON<string>('natur_promo_code', '');
   const ship = SHIPPING_PRICES[method];
@@ -117,8 +124,7 @@ const PayPage: React.FC = () => {
     }
   };
 
-  const canPayBase =
-    !!address && chainOk && naturBal !== null && gasBal !== null && grandTotal > 0;
+  const totalOk = grandTotal > 0;
   const notEnoughNatur = useMemo(() => {
     if (!naturBal) return false;
     const needed = BigInt(Math.floor(grandTotal * Math.pow(10, naturDecimals)));
@@ -136,6 +142,7 @@ const PayPage: React.FC = () => {
     : noGas
     ? 'Add a little gas'
     : null;
+  const blockedMessage = !totalOk ? 'Total must be greater than 0.' : disabledReason;
 
   const onPay = async () => {
     setError(null);
@@ -155,8 +162,9 @@ const PayPage: React.FC = () => {
       await tx.wait();
 
       const shipping = loadShipping();
+      const orderId = tx.hash || String(Date.now());
       addOrder({
-        id: tx.hash || String(Date.now()),
+        id: orderId,
         createdAt: Date.now(),
         totalNatur: grandTotal,
         lines: items.map((i) => ({
@@ -164,6 +172,9 @@ const PayPage: React.FC = () => {
           name: i.name,
           qty: i.qty,
           priceNatur: i.priceNatur,
+          meta: i.variant
+            ? { variant: [i.variant.size, i.variant.material].filter(Boolean).join(' / ') }
+            : undefined,
         })),
         txHash: tx.hash,
         address,
@@ -174,7 +185,7 @@ const PayPage: React.FC = () => {
       });
 
       clear();
-      nav('/marketplace/orders');
+      nav(`/marketplace/success/${encodeURIComponent(orderId)}`, { replace: true });
       if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, '_blank');
     } catch (e: any) {
       if (e?.code === 4001) setError('Transaction canceled');
@@ -236,17 +247,15 @@ const PayPage: React.FC = () => {
             </button>
           </div>
 
+          {blockedMessage && (
+            <p className="mb-3 text-red-400">{blockedMessage}</p>
+          )}
           <button
-            disabled={!(canPayBase && !notEnoughNatur && !noGas) || busy !== 'idle'}
+            disabled={!!blockedMessage || busy !== 'idle'}
             onClick={onPay}
             className="bg-green-600 text-white px-6 py-2 rounded disabled:opacity-50"
-            title={disabledReason || ''}
           >
-            {busy === 'paying'
-              ? 'Paying...'
-              : disabledReason
-              ? disabledReason
-              : `Pay ${formatNatur(grandTotal)}`}
+            {busy === 'paying' ? 'Paying...' : `Pay ${formatNatur(grandTotal)}`}
           </button>
 
           {error && <p className="mt-3 text-red-400">{error}</p>}
