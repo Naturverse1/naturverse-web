@@ -31,7 +31,9 @@ export default function Arcade() {
             &nbsp;•&nbsp; 🪙 Coins: {localStorage.getItem("nv:wb:coins") || localStorage.getItem("nv:wb:coins") || "0"}
           </div>
         </li>
-        <li>🌿 Eco Runner — coming soon</li>
+        <li>
+          <Link to="/zones/arcade/eco-runner">Eco Runner</Link> — jump to collect 🌿 & 🪙, dodge hazards.
+        </li>
       </ul>
 
       <p style={{ marginTop: "2rem" }}>

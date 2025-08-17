@@ -25,6 +25,7 @@ import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
+import EcoRunner from './pages/zones/arcade/eco-runner';
 import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
 import { RequireAuth, useSession } from './lib/auth';
@@ -125,6 +126,7 @@ export default function App() {
               </RequireAuth>
             }
           />
+          <Route path="/zones/arcade/eco-runner" element={<EcoRunner />} />
           <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
           <Route path="/zones/arcade/word-builder" element={<WordBuilder />} />
           <Route
