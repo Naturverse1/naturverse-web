@@ -1,9 +1,22 @@
+export type Navatar = { id: string; image: string };
+
+export function getNavatar(): Navatar | null {
+  try {
+    const raw = localStorage.getItem('natur_navatar');
+    if (raw) return JSON.parse(raw) as Navatar;
+  } catch {
+    // ignore parse errors
+  }
+  return null;
+}
+
 export const getNavatarUrl = async (): Promise<string | null> => {
-  // 1) localStorage preview (set by Profile page when choosing file)
+  const nav = getNavatar();
+  if (nav?.image) return nav.image;
+
   const local = localStorage.getItem('navatar_preview');
   if (local) return local;
 
-  // 2) Supabase users table (optional—wrapped in try so no build issues)
   try {
     const { createClient } = await import('@supabase/supabase-js');
     const sb = createClient(
