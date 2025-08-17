@@ -1,0 +1,6 @@
+.preview-thumb {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 8px;
+}

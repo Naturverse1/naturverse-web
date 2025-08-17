@@ -178,6 +178,7 @@ export default function App() {
             </Routes>
             {/* global styles */}
             <link rel="stylesheet" href="/src/styles/ui.css" />
+            <link rel="stylesheet" href="/src/styles/marketplace.css" />
           </div>
         </CartProvider>
       </ProfileProvider>
