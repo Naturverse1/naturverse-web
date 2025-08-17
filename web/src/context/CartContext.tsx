@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { getNavatar } from '../lib/navatar';
+import { ensureBucket, uploadOrderPreview } from '../lib/orderStorage';
 
 export type CartItem = {
   id: string;
@@ -85,6 +86,33 @@ export default function CartProvider({ children }: { children: React.ReactNode }
         } catch {
           /* ignore */
         }
+
+        (async () => {
+          try {
+            await ensureBucket();
+            let changed = false;
+            for (const line of order.items) {
+              if (line.previewUrl?.startsWith('data:image')) {
+                const url = await uploadOrderPreview(order.id, line.id, line.previewUrl);
+                if (url) {
+                  line.previewUrl = url;
+                  changed = true;
+                }
+              }
+            }
+            if (changed) {
+              const all = JSON.parse(localStorage.getItem('natur_orders') || '[]');
+              const idx = all.findIndex((o: any) => o.id === order.id);
+              if (idx !== -1) {
+                all[idx] = order;
+                localStorage.setItem('natur_orders', JSON.stringify(all));
+              }
+            }
+          } catch {
+            /* ignore */
+          }
+        })();
+
         setItems([]);
         return order;
       },
