@@ -3,6 +3,8 @@ export type Product = {
   name: string;
   baseNatur: number; // price per unit in NATUR
   img: string; // base product image (used as preview background)
+  category: string;
+  createdAt: number;
   options: {
     sizes: { key: string; label: string; multiplier: number }[];
     materials?: { key: string; label: string; multiplier: number }[];
@@ -15,6 +17,8 @@ export const PRODUCTS: Product[] = [
     name: 'Turian Plush',
     baseNatur: 50,
     img: '/assets/market/plush.png',
+    category: 'Plushies',
+    createdAt: 1,
     options: {
       sizes: [
         { key: 's', label: 'Small (8\")', multiplier: 1 },
@@ -32,6 +36,8 @@ export const PRODUCTS: Product[] = [
     name: 'Kids Tee',
     baseNatur: 25,
     img: '/assets/market/tee.png',
+    category: 'Apparel',
+    createdAt: 2,
     options: {
       sizes: [
         { key: 's', label: 'S', multiplier: 1 },
