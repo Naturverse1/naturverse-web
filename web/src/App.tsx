@@ -31,13 +31,9 @@ import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
-import MarketplaceHome from './pages/marketplace';
-import ProductPage from './pages/marketplace/ProductPage';
-import CartPage from './pages/marketplace/CartPage';
-import OrdersPage from './pages/marketplace/OrdersPage';
-import OrderDetailPage from './pages/marketplace/OrderDetailPage';
-import Checkout from './pages/marketplace/checkout';
-import CartProvider from './context/CartContext';
+import MarketplacePage from './pages/marketplace/MarketplacePage';
+import CheckoutPage from './pages/marketplace/CheckoutPage';
+import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
 export default function App() {
@@ -168,17 +164,12 @@ export default function App() {
                 </RequireAuth>
               }
             />
-            <Route path="/marketplace" element={<MarketplaceHome />} />
-            <Route path="/marketplace/p/:slug" element={<ProductPage />} />
-            <Route path="/marketplace/cart" element={<CartPage />} />
-            <Route path="/marketplace/checkout" element={<Checkout />} />
-            <Route path="/marketplace/orders" element={<OrdersPage />} />
-            <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
+            <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/marketplace/checkout" element={<CheckoutPage />} />
             <Route path="*" element={<NotFound />} />
             </Routes>
             {/* global styles */}
             <link rel="stylesheet" href="/src/styles/ui.css" />
-            <link rel="stylesheet" href="/src/styles/marketplace.css" />
           </div>
         </CartProvider>
       </ProfileProvider>
