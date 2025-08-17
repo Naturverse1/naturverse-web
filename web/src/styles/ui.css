@@ -36,3 +36,5 @@ a{color:inherit}
 .summary { margin-top: 16px; padding: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; }
 .orders { list-style: none; padding: 0; }
 .order { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.product-card{border:1px solid rgba(255,255,255,.1);padding:12px;border-radius:8px}
+.product-card .thumb img{width:100%;border-radius:6px}
