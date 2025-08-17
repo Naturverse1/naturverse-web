@@ -10,13 +10,15 @@ export type CartItem = {
   meta?: Record<string, unknown>;
 };
 
-type CartState = {
-  items: CartItem[];
-  add(item: CartItem): void;
-  remove(id: string): void;
-  clear(): void;
-  totalNatur: number;
-};
+  type CartState = {
+    items: CartItem[];
+    add(item: CartItem): void;
+    remove(id: string): void;
+    clear(): void;
+    inc(id: string): void;
+    dec(id: string): void;
+    totalNatur: number;
+  };
 
 const CartContext = createContext<CartState | undefined>(undefined);
 
@@ -52,15 +54,31 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     persist(next);
   };
 
-  const remove = (id: string) => persist(prev => prev.filter(i => i.id !== id));
-  const clear = () => persist([]);
+    const remove = (id: string) => persist(prev => prev.filter(i => i.id !== id));
+    const clear = () => persist([]);
 
-  const totalNatur = useMemo(
-    () => items.reduce((sum, i) => sum + i.priceNatur * i.qty, 0),
-    [items]
-  );
+    const inc = (id: string) => {
+      const line = items.find(i => i.id === id);
+      if (!line) return;
+      add({ ...line, qty: 1 });
+    };
 
-  const value = useMemo(() => ({ items, add, remove, clear, totalNatur }), [items, totalNatur]);
+    const dec = (id: string) => {
+      const line = items.find(i => i.id === id);
+      if (!line) return;
+      if (line.qty <= 1) remove(id);
+      else add({ ...line, qty: -1 });
+    };
+
+    const totalNatur = useMemo(
+      () => items.reduce((sum, i) => sum + i.priceNatur * i.qty, 0),
+      [items]
+    );
+
+    const value = useMemo(
+      () => ({ items, add, remove, clear, inc, dec, totalNatur }),
+      [items, totalNatur]
+    );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

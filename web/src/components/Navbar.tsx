@@ -11,23 +11,24 @@ export default function Navbar({ email }: { email?: string | null }) {
         <NavLink to="/" className="brand" end>
           The Naturverse
         </NavLink>
-        <NavLink to="/worlds">Worlds</NavLink>
-        <NavLink to="/zones">Zones</NavLink>
-        <NavLink to="/marketplace">Marketplace</NavLink>
-        <NavLink to="/marketplace/cart" className="cart-link">
-          Cart{count > 0 ? <span className="cart-badge">{count}</span> : null}
-        </NavLink>
-        <NavLink to="/marketplace/orders">Orders</NavLink>
-        <div className="nv-spacer" />
-        {email ? (
-          <>
-            <NavLink to="/app">App</NavLink>
-            <NavLink to="/profile">Profile</NavLink>
-            <a href="/.netlify/functions/signout">Sign out</a>
-          </>
-        ) : (
-          <NavLink to="/login">Sign in</NavLink>
-        )}
+          <NavLink to="/worlds">Worlds</NavLink>
+          <NavLink to="/zones">Zones</NavLink>
+          <div className="nv-spacer" />
+          <a href="/marketplace">Marketplace</a>
+          <a href="/marketplace/cart" className="cart-link">
+            Cart{count > 0 ? <span className="cart-badge">{count}</span> : null}
+          </a>
+          <a href="/marketplace/review">Review</a>
+          <a href="/marketplace/orders">Orders</a>
+          {email ? (
+            <>
+              <NavLink to="/app">App</NavLink>
+              <NavLink to="/profile">Profile</NavLink>
+              <a href="/.netlify/functions/signout">Sign out</a>
+            </>
+          ) : (
+            <NavLink to="/login">Sign in</NavLink>
+          )}
       </nav>
     </div>
   );
