@@ -25,7 +25,7 @@ import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
 import NotFound from './pages/NotFound';
-import MemoryMatch from './pages/zones/arcade/MemoryMatch';
+import MemoryMatch from './pages/zones/arcade/memory-match';
 import { RequireAuth, useSession } from './lib/auth';
 
 export default function App() {
