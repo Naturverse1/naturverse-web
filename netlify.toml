@@ -2,11 +2,11 @@
 [build]
   base = "web"
   command = "npm ci && npm run build"
-  publish = "dist"
+  publish = "web/dist"
 
 [functions]
-directory = "functions"
 node_bundler = "esbuild"
+directory = "web/functions"
 
 [build.environment]
   NODE_VERSION = "20"
