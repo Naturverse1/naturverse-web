@@ -1,22 +1,147 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { useCart } from "../../context/CartContext";
+import {
+  connectWallet,
+  ensureCorrectChain,
+  getBrowserProvider,
+  getNaturBalance,
+  getNaturMeta,
+  getNativeBalance,
+  transferNatur,
+} from "../../lib/wallet";
+import { addOrder } from "../../lib/orders";
+import { useNavigate } from "react-router-dom";
+
+const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
+const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
 
 const CheckoutPage: React.FC = () => {
+  const nav = useNavigate();
   const { items, subtotal, clearCart } = useCart();
-  const [walletConnected, setWalletConnected] = useState(false);
   const [address, setAddress] = useState<string | null>(null);
+  const [chainOk, setChainOk] = useState(false);
+  const [naturBal, setNaturBal] = useState<bigint | null>(null);
+  const [naturSymbol, setNaturSymbol] = useState("NATUR");
+  const [gasBal, setGasBal] = useState<number | null>(null);
+  const [busy, setBusy] = useState<"idle" | "connecting" | "paying">("idle");
+  const [error, setError] = useState<string | null>(null);
 
-  const connectWallet = async () => {
-    if ((window as any).ethereum) {
-      const accounts = await (window as any).ethereum.request({ method: "eth_requestAccounts" });
-      setAddress(accounts[0]);
-      setWalletConnected(true);
+  const totalNatur = useMemo(
+    () => Number((Math.round(subtotal * 100) / 100).toFixed(2)),
+    [subtotal]
+  );
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const provider = await getBrowserProvider();
+        const accs = await provider.send("eth_accounts", []);
+        if (accs && accs[0]) {
+          setAddress(accs[0]);
+          await ensureCorrectChain();
+          setChainOk(true);
+          const meta = await getNaturMeta(provider);
+          setNaturSymbol(meta.symbol || "NATUR");
+          const [nbal, gbal] = await Promise.all([
+            getNaturBalance(provider, accs[0]),
+            getNativeBalance(provider, accs[0]),
+          ]);
+          setNaturBal(nbal);
+          setGasBal(gbal);
+        }
+      } catch (_) {}
+    })();
+  }, []);
+
+  const onConnect = async () => {
+    setError(null);
+    setBusy("connecting");
+    try {
+      await ensureCorrectChain();
+      const { address, provider } = await connectWallet();
+      setAddress(address);
+      setChainOk(true);
+      const meta = await getNaturMeta(provider);
+      setNaturSymbol(meta.symbol || "NATUR");
+      const [nbal, gbal] = await Promise.all([
+        getNaturBalance(provider, address),
+        getNativeBalance(provider, address),
+      ]);
+      setNaturBal(nbal);
+      setGasBal(gbal);
+    } catch (e: any) {
+      setError(e?.message || "Failed to connect wallet");
+    } finally {
+      setBusy("idle");
     }
   };
 
-  const handleApproveAndPay = async () => {
-    alert("Stub: Approve + Pay flow will be implemented next PR.");
-    clearCart();
+  const canPay =
+    !!address && chainOk && naturBal !== null && gasBal !== null && totalNatur > 0;
+
+  const onPay = async () => {
+    setError(null);
+    if (!address) return;
+    if (!MERCHANT) {
+      setError("Missing VITE_MERCHANT_ADDRESS");
+      return;
+    }
+
+    try {
+      setBusy("paying");
+      const provider = await getBrowserProvider();
+      const { symbol, decimals } = await getNaturMeta(provider);
+      const bn = naturBal!;
+      const need = BigInt(Math.floor(totalNatur * Math.pow(10, decimals)));
+      if (bn < need) {
+        setError(`Not enough ${symbol}.`);
+        setBusy("idle");
+        return;
+      }
+      if ((gasBal || 0) <= 0) {
+        setError("Add a little native gas for fees.");
+        setBusy("idle");
+        return;
+      }
+
+      const { signer } = await connectWallet();
+      const tx = await transferNatur(signer, MERCHANT, totalNatur);
+      await tx.wait();
+
+      const id = `ord_${Date.now()}`;
+      const order = {
+        id,
+        ts: Date.now(),
+        address,
+        items: items.map((i) => ({
+          id: i.id,
+          name: i.name,
+          qty: i.quantity,
+          price: i.price,
+        })),
+        subtotal: subtotal,
+        fee: 0,
+        total: totalNatur,
+        status: "Paid" as const,
+        txHash: tx.hash,
+      };
+      try {
+        addOrder(order as any);
+      } catch {}
+
+      clearCart();
+      if (EXPLORER) {
+        nav(`/marketplace/orders/${id}`);
+        window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
+      } else {
+        nav(`/marketplace/orders/${id}`);
+      }
+    } catch (e: any) {
+      if (e?.code === 4001) setError("Transaction canceled");
+      else setError(e?.message || "Payment failed");
+    } finally {
+      setBusy("idle");
+    }
   };
 
   return (
@@ -33,33 +158,47 @@ const CheckoutPage: React.FC = () => {
                 <span>
                   {i.name} × {i.quantity}
                 </span>
-                <span>{i.price * i.quantity} NATUR</span>
+                <span>{(i.price * i.quantity).toFixed(2)} {naturSymbol}</span>
               </li>
             ))}
           </ul>
 
-          <p className="font-bold mb-6">Subtotal: {subtotal} NATUR</p>
+          <p className="font-bold mb-6">
+            Total: {totalNatur.toFixed(2)} {naturSymbol}
+          </p>
 
-          {!walletConnected ? (
+          {!address ? (
             <button
-              onClick={connectWallet}
+              onClick={onConnect}
+              disabled={busy !== "idle"}
               className="bg-blue-600 text-white px-4 py-2 rounded"
             >
-              Connect Wallet
+              {busy === "connecting" ? "Connecting..." : "Connect Wallet"}
             </button>
           ) : (
-            <div className="mb-6">
-              <p>Connected: {address}</p>
+            <div className="mb-3">
+              <div>Connected: {address}</div>
+              <div>Chain: {chainOk ? "OK" : "Wrong network"}</div>
+              <div>
+                Token balance: {naturBal !== null ? naturBal.toString() : "—"} (raw)
+              </div>
+              <div>
+                Gas balance: {gasBal !== null ? gasBal.toFixed(6) : "—"}
+              </div>
             </div>
           )}
 
           <button
-            disabled={!walletConnected || subtotal === 0}
-            onClick={handleApproveAndPay}
+            disabled={!canPay || busy !== "idle"}
+            onClick={onPay}
             className="bg-green-600 text-white px-6 py-2 rounded disabled:opacity-50"
           >
-            Pay with NATUR
+            {busy === "paying"
+              ? "Paying..."
+              : `Pay ${totalNatur.toFixed(2)} ${naturSymbol}`}
           </button>
+
+          {error && <p className="mt-3 text-red-400">{error}</p>}
         </>
       )}
     </div>
@@ -67,4 +206,3 @@ const CheckoutPage: React.FC = () => {
 };
 
 export default CheckoutPage;
-
