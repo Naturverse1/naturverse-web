@@ -8,6 +8,7 @@ export type CartItem = {
   qty: number;
   options?: Record<string, string>;
   thumb?: string;
+  previewUrl?: string;
   navatar?: { id: string; image: string } | null;
 };
 type Cart = {
@@ -51,7 +52,16 @@ export default function CartProvider({ children }: { children: React.ReactNode }
             (x) => x.id === item.id && JSON.stringify(x.options || {}) === JSON.stringify(item.options || {})
           );
           return i
-            ? prev.map((x) => (x === i ? { ...x, qty: x.qty + item.qty, navatar: item.navatar } : x))
+            ? prev.map((x) =>
+                x === i
+                  ? {
+                      ...x,
+                      qty: x.qty + item.qty,
+                      navatar: item.navatar,
+                      previewUrl: item.previewUrl,
+                    }
+                  : x
+              )
             : [...prev, item];
         }),
       remove: (id) => setItems((prev) => prev.filter((x) => x.id !== id)),

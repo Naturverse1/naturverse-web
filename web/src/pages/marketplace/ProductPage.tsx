@@ -3,6 +3,7 @@ import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../../lib/products";
 import { useCart } from "../../context/CartContext";
 import { useProfile } from "../../context/ProfileContext";
+import { composePreview } from "../../lib/composite";
 
 export default function ProductPage() {
   const { slug } = useParams();
@@ -20,7 +21,20 @@ export default function ProductPage() {
   const [opts, setOpts] = React.useState<Record<string, string>>(defaults);
   const set = (k: string, v: string) => setOpts((prev) => ({ ...prev, [k]: v }));
 
-  const handleAdd = () => {
+  const handleAdd = async () => {
+    const box = { top: 0.2, left: 0.2, width: 0.6, height: 0.6 };
+    let previewUrl = product.thumb;
+    if (profile?.avatarUrl) {
+      try {
+        previewUrl = await composePreview({
+          baseUrl: product.thumb,
+          avatarUrl: profile.avatarUrl,
+          box,
+        });
+      } catch {
+        /* ignore */
+      }
+    }
     add({
       id: product.id,
       name: product.name,
@@ -28,6 +42,7 @@ export default function ProductPage() {
       qty: 1,
       options: opts,
       thumb: product.thumb,
+      previewUrl,
     });
     alert("Added to cart");
   };

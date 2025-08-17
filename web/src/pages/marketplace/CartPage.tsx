@@ -29,27 +29,12 @@ export default function CartPage() {
               {cart.items.map((i) => (
                 <tr key={i.id}>
                   <td>
-                    <div style={{ position: 'relative', display: 'inline-block', marginRight: 8 }}>
+                    <div style={{ display: 'inline-block', marginRight: 8 }}>
                       <img
-                        src={i.thumb}
+                        src={i.previewUrl || i.thumb}
                         alt=""
-                        style={{ width: 36, height: 36, borderRadius: 6 }}
+                        className="preview-thumb"
                       />
-                      {i.navatar?.image && (
-                        <img
-                          src={i.navatar.image}
-                          alt="navatar"
-                          style={{
-                            position: 'absolute',
-                            bottom: -4,
-                            right: -4,
-                            width: 24,
-                            height: 24,
-                            borderRadius: '50%',
-                            border: '2px solid #fff',
-                          }}
-                        />
-                      )}
                     </div>
                     {i.name}
                     {i.options && (

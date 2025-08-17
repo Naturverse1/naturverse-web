@@ -40,15 +40,22 @@ export default function Checkout() {
       <h1>Checkout</h1>
       <ul>
         {cart.items.map((line, i) => (
-          <li key={i}>
-            {line.qty} × {line.name} — {line.price.toFixed(2)} NATUR
-            {line.options && (
-              <small style={{ marginLeft: 8, opacity: 0.8 }}>
-                {Object.entries(line.options)
-                  .map(([k, v]) => `${k}: ${v}`)
-                  .join(", ")}
-              </small>
-            )}
+          <li key={i} className="cart-line">
+            <img
+              src={line.previewUrl || line.thumb}
+              alt=""
+              className="preview-thumb"
+            />
+            <div>
+              {line.qty} × {line.name} — {line.price.toFixed(2)} NATUR
+              {line.options && (
+                <small style={{ marginLeft: 8, opacity: 0.8 }}>
+                  {Object.entries(line.options)
+                    .map(([k, v]) => `${k}: ${v}`)
+                    .join(", ")}
+                </small>
+              )}
+            </div>
           </li>
         ))}
       </ul>
