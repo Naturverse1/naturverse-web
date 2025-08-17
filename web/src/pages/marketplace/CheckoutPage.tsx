@@ -1,6 +1,6 @@
-import React, { useEffect, useMemo, useState } from "react";
-import { useCart } from "@/context/CartContext";
-import { useNavigate } from "react-router-dom";
+import React, { useEffect, useMemo, useState } from 'react';
+import { useCart } from '../../context/CartContext';
+import { useNavigate } from 'react-router-dom';
 import {
   connectWallet,
   ensureCorrectChain,
@@ -9,9 +9,9 @@ import {
   getNaturMeta,
   getNativeBalance,
   transferNatur,
-} from "@/lib/wallet";
-import FaucetHelp from "@/components/FaucetHelp";
-import { formatToken, naturUsdApprox } from "@/lib/pricing";
+} from '../../lib/wallet';
+import FaucetHelp from '../../components/FaucetHelp';
+import { formatToken, naturUsdApprox } from '../../lib/pricing';
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
@@ -19,7 +19,7 @@ const NATUR_USD_RATE = import.meta.env.VITE_NATUR_USD_RATE as string | undefined
 
 const CheckoutPage: React.FC = () => {
   const nav = useNavigate();
-  const { items, subtotal, clearCart } = useCart();
+  const { items, totalNatur: cartTotal, clear } = useCart();
 
   const [address, setAddress] = useState<string | null>(null);
   const [chainOk, setChainOk] = useState(false);
@@ -32,8 +32,8 @@ const CheckoutPage: React.FC = () => {
   const [showFaucet, setShowFaucet] = useState(false);
 
   const totalNatur = useMemo(
-    () => Number((Math.round(subtotal * 100) / 100).toFixed(2)),
-    [subtotal]
+    () => Number((Math.round(cartTotal * 100) / 100).toFixed(2)),
+    [cartTotal]
   );
   const totalUsd = naturUsdApprox(totalNatur, NATUR_USD_RATE);
 
@@ -130,13 +130,13 @@ const CheckoutPage: React.FC = () => {
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
-          qty: i.quantity,
-          price: i.price,
+          qty: i.qty,
+          priceNatur: i.priceNatur,
         })),
-        subtotal: subtotal,
+        subtotal: cartTotal,
         fee: 0,
         total: need,
-        status: "Paid" as const,
+        status: 'Paid' as const,
         txHash: tx.hash,
       };
       try {
@@ -144,7 +144,7 @@ const CheckoutPage: React.FC = () => {
         localStorage.setItem("natur_orders", JSON.stringify([order, ...existing]));
       } catch {}
 
-      clearCart();
+      clear();
       nav(`/marketplace/orders/${id}`);
       if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
     } catch (e: any) {
@@ -167,9 +167,9 @@ const CheckoutPage: React.FC = () => {
             {items.map((i) => (
               <li key={i.id} className="flex justify-between border-b py-2">
                 <span>
-                  {i.name} × {i.quantity}
+                  {i.name} × {i.qty}
                 </span>
-                <span>{(i.price * i.quantity).toFixed(2)} {naturSymbol}</span>
+                <span>{(i.priceNatur * i.qty).toFixed(2)} {naturSymbol}</span>
               </li>
             ))}
           </ul>

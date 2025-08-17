@@ -2,7 +2,7 @@ export type NaturOrder = {
   id: string;
   ts: number;
   address?: string;
-  items: { id: string; name: string; qty: number; price: number }[];
+  items: { id: string; name: string; qty: number; priceNatur: number }[];
   subtotal: number;
   fee: number;
   total: number;
