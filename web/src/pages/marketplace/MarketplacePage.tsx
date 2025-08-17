@@ -10,7 +10,7 @@ const mockProducts = [
 ];
 
 const MarketplacePage: React.FC = () => {
-  const { addItem } = useCart();
+  const { add } = useCart();
 
   return (
     <div className="p-8">
@@ -22,7 +22,7 @@ const MarketplacePage: React.FC = () => {
             <h2 className="font-semibold">{p.name}</h2>
             <p>{p.price} NATUR</p>
             <button
-              onClick={() => addItem(p)}
+              onClick={() => add({ id: p.id, name: p.name, priceNatur: p.price, qty: 1, imageUrl: p.image })}
               className="mt-2 bg-green-600 text-white px-3 py-1 rounded"
             >
               Add to Cart

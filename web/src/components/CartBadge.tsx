@@ -3,7 +3,7 @@ import { useCart } from '../context/CartContext';
 
 export default function CartBadge() {
   const { items } = useCart();
-  const count = items.reduce((n, i) => n + i.quantity, 0);
+  const count = items.reduce((n, i) => n + i.qty, 0);
   return (
     <Link to="/marketplace/checkout" style={{ position: 'relative' }}>
       🛒
