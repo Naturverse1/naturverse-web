@@ -38,17 +38,19 @@ import OrdersPage from './pages/marketplace/OrdersPage';
 import OrderDetailPage from './pages/marketplace/OrderDetailPage';
 import Checkout from './pages/marketplace/checkout';
 import CartProvider from './context/CartContext';
+import ProfileProvider from './context/ProfileContext';
 
 export default function App() {
   const { session } = useSession();
   return (
     <BrowserRouter>
       <ImmersiveBackground />
-      <CartProvider>
-        <div className="min-h-screen">
-          <Navbar email={session?.user.email} />
-          <TopBar />
-          <Routes>
+      <ProfileProvider>
+        <CartProvider>
+          <div className="min-h-screen">
+            <Navbar email={session?.user.email} />
+            <TopBar />
+            <Routes>
             <Route path="/" element={<Home />} />
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
@@ -173,11 +175,12 @@ export default function App() {
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />
-          </Routes>
-          {/* global styles */}
-          <link rel="stylesheet" href="/src/styles/ui.css" />
-        </div>
-      </CartProvider>
+            </Routes>
+            {/* global styles */}
+            <link rel="stylesheet" href="/src/styles/ui.css" />
+          </div>
+        </CartProvider>
+      </ProfileProvider>
     </BrowserRouter>
   );
 }
