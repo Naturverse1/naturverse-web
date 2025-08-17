@@ -34,7 +34,9 @@ a{color:inherit}
 .cart { width:100%; border-collapse: collapse; }
 .cart th, .cart td { padding:10px; border-bottom: 1px solid rgba(255,255,255,.08); }
 .summary { margin-top: 16px; padding: 12px; border: 1px solid rgba(255,255,255,.1); border-radius: 8px; }
-.orders { list-style: none; padding: 0; }
-.order { display: grid; grid-template-columns: 1fr auto auto; gap: 12px; padding: 12px 0; border-bottom: 1px solid rgba(255,255,255,.08); }
+.orders { list-style:none; padding:0; }
+.order { display:flex; gap:12px; padding:12px; border:1px solid rgba(255,255,255,.08); border-radius:8px; margin-bottom:10px; }
+.cart-line { display:flex; gap:10px; align-items:center; }
+.thumb { width:72px; height:72px; object-fit:cover; border-radius:6px; }
 .product-card{border:1px solid rgba(255,255,255,.1);padding:12px;border-radius:8px}
 .product-card .thumb img{width:100%;border-radius:6px}

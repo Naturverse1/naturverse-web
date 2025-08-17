@@ -36,6 +36,7 @@ import Customize from './pages/marketplace/customize';
 import CartPage from './pages/marketplace/CartPage';
 import OrdersPage from './pages/marketplace/OrdersPage';
 import OrderDetailPage from './pages/marketplace/OrderDetailPage';
+import Checkout from './pages/marketplace/checkout';
 import CartProvider from './context/CartContext';
 
 export default function App() {
@@ -168,6 +169,7 @@ export default function App() {
             <Route path="/marketplace" element={<MarketplaceHome />} />
             <Route path="/marketplace/customize/:sku" element={<Customize />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
+            <Route path="/marketplace/checkout" element={<Checkout />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />

@@ -1,7 +1,26 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
+import { getNavatar } from '../lib/navatar';
 
-export type CartItem = { id: string; name: string; price: number; qty: number; options?: Record<string, string>; thumb?: string };
-type Cart = { items: CartItem[]; add: (i: CartItem) => void; remove: (id: string) => void; setQty: (id: string, qty: number) => void; clear: () => void; subtotal: number; fee: number; total: number };
+export type CartItem = {
+  id: string;
+  name: string;
+  price: number;
+  qty: number;
+  options?: Record<string, string>;
+  thumb?: string;
+  navatar?: { id: string; image: string } | null;
+};
+type Cart = {
+  items: CartItem[];
+  add: (i: CartItem) => void;
+  remove: (id: string) => void;
+  setQty: (id: string, qty: number) => void;
+  clear: () => void;
+  subtotal: number;
+  fee: number;
+  total: number;
+  placeOrder: (totalNatur: number) => any;
+};
 
 const KEY = 'natur_cart';
 const CartCtx = createContext<Cart | null>(null);
@@ -26,10 +45,14 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       items,
       add: (n) =>
         setItems((prev) => {
+          const navatar = getNavatar();
+          const item: CartItem = { ...n, navatar };
           const i = prev.find(
-            (x) => x.id === n.id && JSON.stringify(x.options || {}) === JSON.stringify(n.options || {})
+            (x) => x.id === item.id && JSON.stringify(x.options || {}) === JSON.stringify(item.options || {})
           );
-          return i ? prev.map((x) => (x === i ? { ...x, qty: x.qty + n.qty } : x)) : [...prev, n];
+          return i
+            ? prev.map((x) => (x === i ? { ...x, qty: x.qty + item.qty, navatar: item.navatar } : x))
+            : [...prev, item];
         }),
       remove: (id) => setItems((prev) => prev.filter((x) => x.id !== id)),
       setQty: (id, qty) => setItems((prev) => prev.map((x) => (x.id === id ? { ...x, qty: Math.max(1, qty) } : x))),
@@ -37,6 +60,24 @@ export default function CartProvider({ children }: { children: React.ReactNode }
       subtotal,
       fee,
       total,
+      placeOrder: (totalNatur) => {
+        const order = {
+          id: `ord_${Date.now()}`,
+          createdAt: new Date().toISOString(),
+          items,
+          totalNatur,
+          navatar: getNavatar(),
+        };
+        try {
+          const all = JSON.parse(localStorage.getItem('natur_orders') || '[]');
+          all.unshift(order);
+          localStorage.setItem('natur_orders', JSON.stringify(all));
+        } catch {
+          /* ignore */
+        }
+        setItems([]);
+        return order;
+      },
     }),
     [items, subtotal, fee, total]
   );

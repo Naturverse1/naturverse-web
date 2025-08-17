@@ -1,9 +1,12 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
+import { PRODUCTS } from './index';
 
 export default function CartPage() {
   const nav = useNavigate();
   const cart = useCart();
+
+  const getProductThumb = (id: string) => PRODUCTS.find((p) => p.sku === id)?.thumb || '';
   return (
     <div className="page">
       <h1>Cart</h1>
@@ -29,13 +32,28 @@ export default function CartPage() {
               {cart.items.map((i) => (
                 <tr key={i.id}>
                   <td>
-                    {i.thumb && (
+                    <div style={{ position: 'relative', display: 'inline-block', marginRight: 8 }}>
                       <img
-                        src={i.thumb}
+                        src={getProductThumb(i.id)}
                         alt=""
-                        style={{ width: 36, height: 36, marginRight: 8, borderRadius: 6 }}
+                        style={{ width: 36, height: 36, borderRadius: 6 }}
                       />
-                    )}
+                      {i.navatar?.image && (
+                        <img
+                          src={i.navatar.image}
+                          alt="navatar"
+                          style={{
+                            position: 'absolute',
+                            bottom: -4,
+                            right: -4,
+                            width: 24,
+                            height: 24,
+                            borderRadius: '50%',
+                            border: '2px solid #fff',
+                          }}
+                        />
+                      )}
+                    </div>
                     {i.name}
                   </td>
                   <td>
