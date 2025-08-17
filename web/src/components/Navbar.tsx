@@ -1,4 +1,5 @@
 import { NavLink } from 'react-router-dom';
+import CartBadge from './CartBadge';
 
 export default function Navbar({ email }: { email?: string | null }) {
   return (
@@ -10,6 +11,7 @@ export default function Navbar({ email }: { email?: string | null }) {
         <NavLink to="/worlds">Worlds</NavLink>
         <NavLink to="/zones">Zones</NavLink>
         <NavLink to="/marketplace">Marketplace</NavLink>
+        <CartBadge />
         <div className="nv-spacer" />
         {email ? (
           <>

@@ -33,9 +33,10 @@ import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
 import MarketplaceHome from './pages/marketplace';
 import Customize from './pages/marketplace/customize';
-import Cart from './pages/marketplace/cart';
-import Orders from './pages/marketplace/orders';
-import { CartProvider } from './state/cart';
+import CartPage from './pages/marketplace/CartPage';
+import OrdersPage from './pages/marketplace/OrdersPage';
+import OrderDetailPage from './pages/marketplace/OrderDetailPage';
+import CartProvider from './context/CartContext';
 
 export default function App() {
   const { session } = useSession();
@@ -166,8 +167,9 @@ export default function App() {
             />
             <Route path="/marketplace" element={<MarketplaceHome />} />
             <Route path="/marketplace/customize/:sku" element={<Customize />} />
-            <Route path="/marketplace/cart" element={<Cart />} />
-            <Route path="/marketplace/orders" element={<Orders />} />
+            <Route path="/marketplace/cart" element={<CartPage />} />
+            <Route path="/marketplace/orders" element={<OrdersPage />} />
+            <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Routes>
           {/* global styles */}
