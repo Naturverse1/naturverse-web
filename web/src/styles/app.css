@@ -204,6 +204,11 @@ body {
   border-radius: 999px; font-size: 11px; line-height: 18px;
   background: #ef4444; color: #fff; font-weight: 700;
 }
-.icon-btn { appearance: none; background: transparent; border: 0; cursor: pointer; }
-.icon-btn[aria-pressed="true"] { color: #ef4444; }
+  .icon-btn { appearance: none; background: transparent; border: 0; cursor: pointer; }
+  .icon-btn[aria-pressed="true"] { color: #ef4444; }
+
+  .field-error { color:#ef4444; font-size:12px; margin-top:4px; }
+  .field { display:flex; flex-direction:column; gap:4px; }
+  .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  @media (max-width:640px){ .row { grid-template-columns:1fr; } }
 

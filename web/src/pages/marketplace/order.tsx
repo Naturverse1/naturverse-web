@@ -55,10 +55,29 @@ export default function OrderDetailPage() {
         ))}
       </div>
 
-      <h2>Total</h2>
-      <p style={{ fontWeight: 700 }}>{fmtNatur(order.totalNatur)}</p>
+        <h2>Total</h2>
+        <p style={{ fontWeight: 700 }}>{fmtNatur(order.totalNatur)}</p>
 
-      <h2>Transaction</h2>
+        {order.shipping && (
+          <>
+            <h2>Shipping</h2>
+            <p style={{ whiteSpace: 'pre-line' }}>
+              {order.shipping.fullName}
+              {'\n'}
+              {order.shipping.address1}
+              {order.shipping.address2 ? `\n${order.shipping.address2}` : ''}
+              {'\n'}
+              {order.shipping.city}, {order.shipping.state} {order.shipping.postal}
+              {'\n'}
+              {order.shipping.country}
+              {'\n'}
+              {order.shipping.email}
+              {order.shipping.phone ? `\n${order.shipping.phone}` : ''}
+            </p>
+          </>
+        )}
+
+        <h2>Transaction</h2>
       {order.txHash ? (
         <p>
           Hash: <code>{order.txHash}</code>
