@@ -7,6 +7,18 @@ import {
   encodeCartToQuery,
   decodeCartFromQuery,
 } from '../../lib/cartPersist';
+import RecoStrip from '../../components/RecoStrip';
+import { recommendForCats, Item } from '../../lib/reco';
+import { PRODUCTS } from '../../lib/products';
+
+const allItems: Item[] = PRODUCTS.map(p => ({
+  id: p.id,
+  name: p.name,
+  price: p.baseNatur,
+  category: p.category,
+  image: p.img,
+  createdAt: p.createdAt,
+}));
 
 export default function CartPage() {
   const navigate = useNavigate();
@@ -36,6 +48,18 @@ export default function CartPage() {
       </section>
     );
   }
+
+  const cats = Array.from(
+    new Set(
+      items
+        .map(l => {
+          const pid = l.id.split('::')[0];
+          return PRODUCTS.find(p => p.id === pid)?.category;
+        })
+        .filter(Boolean) as string[],
+    ),
+  );
+  const recos = recommendForCats(cats, allItems, 6);
 
   return (
     <section>
@@ -67,6 +91,7 @@ export default function CartPage() {
             Share cart
           </button>
         </div>
+      <RecoStrip title="You might also like" items={recos} source="cart" />
     </section>
   );
 }
