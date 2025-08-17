@@ -2,11 +2,13 @@ import React from "react";
 import { useParams, Link } from "react-router-dom";
 import { getProductBySlug } from "../../lib/products";
 import { useCart } from "../../context/CartContext";
+import { useProfile } from "../../context/ProfileContext";
 
 export default function ProductPage() {
   const { slug } = useParams();
   const product = getProductBySlug(slug!);
   const { add } = useCart();
+  const { profile } = useProfile();
 
   if (!product) return <p>Not found.</p>;
 
@@ -44,6 +46,50 @@ export default function ProductPage() {
         <div>
           <div style={{ position: "relative" }}>
             <img src={product.thumb} style={{ width: "100%", borderRadius: 8 }} />
+            {(product.family === "merch" || product.family === "printable") && (
+              <div
+                style={{
+                  position: "absolute",
+                  top: "20%",
+                  left: "20%",
+                  width: "60%",
+                  height: "60%",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                  pointerEvents: "none",
+                }}
+              >
+                {profile?.avatarUrl ? (
+                  <img
+                    src={profile.avatarUrl}
+                    alt="Navatar preview"
+                    style={{
+                      maxWidth: "100%",
+                      maxHeight: "100%",
+                      objectFit: "contain",
+                      opacity: 0.9,
+                      borderRadius: 8,
+                    }}
+                  />
+                ) : (
+                  <div
+                    style={{
+                      color: "#fff",
+                      fontSize: 12,
+                      textAlign: "center",
+                      background: "rgba(0,0,0,.5)",
+                      padding: "6px 10px",
+                      borderRadius: 6,
+                    }}
+                  >
+                    Upload your Navatar
+                    <br />
+                    to preview here
+                  </div>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
