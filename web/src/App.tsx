@@ -30,6 +30,7 @@ import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
+import TopBar from './components/TopBar';
 
 export default function App() {
   const { session } = useSession();
@@ -38,6 +39,7 @@ export default function App() {
       <ImmersiveBackground />
       <div className="min-h-screen">
         <Navbar email={session?.user.email} />
+        <TopBar />
         <Routes>
           <Route path="/" element={<Home />} />
           <Route path="/login" element={<Login />} />

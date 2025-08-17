@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { getAvailableCoins, trySpend, isOwned, setOwned } from "../../../lib/coins";
+import { applyTheme } from "../../../lib/theme";
 
 type Item = { id: string; name: string; cost: number; desc: string };
 
@@ -27,6 +28,7 @@ export default function ArcadeShop() {
     if (!trySpend(it.cost)) { setToast("Not enough coins yet! Play more 😄"); return; }
     setOwned(it.id, true);
     refresh();
+    applyTheme();
     setToast(`Purchased ${it.name}!`);
     setTimeout(() => setToast(null), 1800);
   }
@@ -58,10 +60,37 @@ export default function ArcadeShop() {
               <button
                 disabled={owned}
                 onClick={() => buy(it)}
-                style={{marginTop:10, padding:"6px 10px", borderRadius:8, border:"1px solid #27486f", background:"#13233a", color:"#eaf2ff", cursor: owned ? "default":"pointer"}}
+                style={{
+                  marginTop: 10,
+                  padding: "6px 10px",
+                  borderRadius: 8,
+                  border: "1px solid #27486f",
+                  background: "#13233a",
+                  color: "#eaf2ff",
+                  cursor: owned ? "default" : "pointer",
+                }}
               >
                 {owned ? "Owned" : "Buy"}
               </button>
+              {it.id.startsWith("theme-") && (
+                <button
+                  style={{
+                    marginLeft: 8,
+                    padding: "6px 10px",
+                    borderRadius: 8,
+                    border: "1px solid #27486f",
+                    background: "#0f1d33",
+                    color: "#eaf2ff",
+                  }}
+                  onClick={() => {
+                    localStorage.setItem("nv:owned:" + it.id, "1");
+                    applyTheme();
+                    setTimeout(() => {}, 0);
+                  }}
+                >
+                  Preview
+                </button>
+              )}
             </div>
           );
         })}
