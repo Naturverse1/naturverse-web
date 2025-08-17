@@ -28,6 +28,13 @@ export default function ReviewPage() {
   const nav = useNavigate();
   const { items, inc, dec, remove, totalNatur } = useCart();
 
+  useEffect(() => {
+    if (items.length === 0) {
+      alert('Your cart is empty.');
+      nav('/marketplace', { replace: true });
+    }
+  }, [items, nav]);
+
   const [method, setMethod] = useState<ShippingMethodId>(
     getJSON('natur_ship_method', 'standard')
   );
@@ -39,6 +46,7 @@ export default function ReviewPage() {
   const ship = SHIPPING_PRICES[method];
   const discount = calcDiscountNATUR(code, itemsSubtotal);
   const grandTotal = Math.max(0, itemsSubtotal + ship - discount);
+  const blockedMessage = grandTotal <= 0 ? 'Total must be greater than 0.' : null;
 
   useEffect(() => setJSON('natur_ship_method', method), [method]);
   useEffect(() => setJSON('natur_promo_code', code), [code]);
@@ -167,9 +175,17 @@ export default function ReviewPage() {
             </div>
           )}
 
+          {blockedMessage && (
+            <p style={{ color: 'var(--danger)', marginTop: '1rem' }}>
+              {blockedMessage}
+            </p>
+          )}
           <div style={{ marginTop: '1rem', display: 'flex', gap: '.75rem' }}>
             <button onClick={() => nav('/marketplace/cart')}>Edit cart</button>
-            <button onClick={() => nav('/marketplace/checkout/pay')}>
+            <button
+              onClick={() => nav('/marketplace/checkout/pay')}
+              disabled={!!blockedMessage}
+            >
               Continue to NATUR payment
             </button>
           </div>

@@ -1,7 +1,8 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ShippingForm, { ShippingFormProps } from '../../../components/checkout/ShippingForm';
 import type { Shipping } from '../../../lib/orders';
+import { useCart } from '../../../context/CartContext';
 
 function loadShipping(): Shipping {
   try {
@@ -24,6 +25,14 @@ function loadShipping(): Shipping {
 export default function ShippingPage() {
   const nav = useNavigate();
   const [value, setValue] = useState<Shipping>(loadShipping());
+  const { items } = useCart();
+
+  useEffect(() => {
+    if (items.length === 0) {
+      alert('Your cart is empty.');
+      nav('/marketplace', { replace: true });
+    }
+  }, [items, nav]);
 
   const props: ShippingFormProps = {
     value,

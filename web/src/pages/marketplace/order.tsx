@@ -50,6 +50,9 @@ export default function OrderDetailPage() {
           >
             <div>
               <div style={{ fontWeight: 600 }}>{l.name}</div>
+              {l.meta?.variant && (
+                <div style={{ fontSize: '.85rem', opacity: 0.8 }}>{l.meta.variant}</div>
+              )}
               <small style={{ opacity: 0.8 }}>Unit {formatNatur(l.priceNatur)}</small>
             </div>
             <div style={{ justifySelf: 'end' }}>Qty {l.qty}</div>
@@ -66,10 +69,12 @@ export default function OrderDetailPage() {
             <span>Items</span>
             <span>{formatNatur(order.totals?.items ?? order.totalNatur)}</span>
           </div>
-          <div className="row">
-            <span>Shipping ({shipLabels[order.shippingMethod] || ''})</span>
-            <span>{formatNatur(order.totals?.shipping ?? 0)}</span>
-          </div>
+          {order.totals?.shipping !== undefined && (
+            <div className="row">
+              <span>Shipping ({shipLabels[order.shippingMethod] || ''})</span>
+              <span>{formatNatur(order.totals.shipping)}</span>
+            </div>
+          )}
           {order.totals?.discount ? (
             <div className="row">
               <span>Discount</span>
