@@ -1,12 +1,9 @@
 import { Link, useNavigate } from 'react-router-dom';
 import { useCart } from '../../context/CartContext';
-import { PRODUCTS } from './index';
 
 export default function CartPage() {
   const nav = useNavigate();
   const cart = useCart();
-
-  const getProductThumb = (id: string) => PRODUCTS.find((p) => p.sku === id)?.thumb || '';
   return (
     <div className="page">
       <h1>Cart</h1>
@@ -34,7 +31,7 @@ export default function CartPage() {
                   <td>
                     <div style={{ position: 'relative', display: 'inline-block', marginRight: 8 }}>
                       <img
-                        src={getProductThumb(i.id)}
+                        src={i.thumb}
                         alt=""
                         style={{ width: 36, height: 36, borderRadius: 6 }}
                       />
@@ -55,6 +52,15 @@ export default function CartPage() {
                       )}
                     </div>
                     {i.name}
+                    {i.options && (
+                      <div style={{ fontSize: 12, opacity: 0.85 }}>
+                        {Object.entries(i.options).map(([k, v]) => (
+                          <span key={k} style={{ marginRight: 8 }}>
+                            {k}: {String(v)}
+                          </span>
+                        ))}
+                      </div>
+                    )}
                   </td>
                   <td>
                     <button onClick={() => cart.setQty(i.id, i.qty - 1)}>-</button>

@@ -32,7 +32,7 @@ import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
 import MarketplaceHome from './pages/marketplace';
-import Customize from './pages/marketplace/customize';
+import ProductPage from './pages/marketplace/ProductPage';
 import CartPage from './pages/marketplace/CartPage';
 import OrdersPage from './pages/marketplace/OrdersPage';
 import OrderDetailPage from './pages/marketplace/OrderDetailPage';
@@ -167,7 +167,7 @@ export default function App() {
               }
             />
             <Route path="/marketplace" element={<MarketplaceHome />} />
-            <Route path="/marketplace/customize/:sku" element={<Customize />} />
+            <Route path="/marketplace/p/:slug" element={<ProductPage />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
             <Route path="/marketplace/checkout" element={<Checkout />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />

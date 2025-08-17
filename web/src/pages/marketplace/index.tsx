@@ -1,52 +1,57 @@
-import { Link } from 'react-router-dom';
-import type { Product } from '../../types/marketplace';
+import { PRODUCTS, Product } from "../../lib/products";
+import { Link, useSearchParams } from "react-router-dom";
 
-const PRODUCTS: Product[] = [
-  {
-    sku: 'PLUSH_TUR',
-    title: 'Turian Plush',
-    basePriceNatur: 120,
-    thumb: '/assets/market/plush.png',
-  },
-  {
-    sku: 'COSTUME_HAL',
-    title: 'Halloween Costume',
-    basePriceNatur: 200,
-    thumb: '/assets/market/costume.png',
-    options: { size: ['XS', 'S', 'M', 'L'], color: ['Black', 'Orange'] },
-  },
-  {
-    sku: 'STICKER_STD',
-    title: 'Sticker Pack',
-    basePriceNatur: 20,
-    thumb: '/assets/market/sticker.png',
-  },
-  {
-    sku: 'TEE_KIDS',
-    title: 'Kids Tee',
-    basePriceNatur: 90,
-    thumb: '/assets/market/tee.png',
-    options: { size: ['XS', 'S', 'M', 'L'], material: ['Cotton', 'Organic'] },
-  },
+const families = [
+  { key: "all", label: "All" },
+  { key: "printable", label: "Printables" },
+  { key: "merch", label: "Merch" },
 ];
 
 export default function MarketplaceHome() {
+  const [params, setParams] = useSearchParams();
+  const tab = (params.get("f") || "all") as "all" | "printable" | "merch";
+
+  const filtered = PRODUCTS.filter((p) =>
+    tab === "all" ? true : p.family === tab
+  );
+
   return (
-    <div className="container">
+    <div>
       <h1>Marketplace</h1>
-      <p>Turn your Navatar into real-world goodies.</p>
+
+      <div style={{ display: "flex", gap: 8, margin: "10px 0 18px" }}>
+        {families.map((f) => (
+          <button
+            key={f.key}
+            onClick={() => setParams(f.key === "all" ? {} : { f: f.key })}
+            style={{
+              padding: "8px 12px",
+              borderRadius: 8,
+              border: "1px solid rgba(255,255,255,.12)",
+              background:
+                tab === f.key ? "rgba(255,255,255,.08)" : "transparent",
+            }}
+          >
+            {f.label}
+          </button>
+        ))}
+      </div>
+
       <div className="grid">
-        {PRODUCTS.map((p) => (
-          <Link key={p.sku} to={`/marketplace/customize/${p.sku}`} className="card">
-            <img src={p.thumb} alt={p.title} />
-            <div className="title">{p.title}</div>
-            <div className="sub">{p.basePriceNatur} NATUR</div>
+        {filtered.map((p: Product) => (
+          <Link
+            key={p.id}
+            to={`/marketplace/p/${p.slug}`}
+            className="card"
+          >
+            <img src={p.thumb} className="thumb" />
+            <div className="meta">
+              <div className="name">{p.name}</div>
+              <div className="price">{p.priceNatur} NATUR</div>
+            </div>
           </Link>
         ))}
       </div>
-      <Link to="/marketplace/cart">View cart →</Link>
     </div>
   );
 }
-
-export { PRODUCTS };
