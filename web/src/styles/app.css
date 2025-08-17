@@ -198,3 +198,12 @@ body {
   font-weight: 700;
 }
 
+.badge {
+  position: absolute; top: -6px; right: -6px;
+  min-width: 18px; height: 18px; padding: 0 4px;
+  border-radius: 999px; font-size: 11px; line-height: 18px;
+  background: #ef4444; color: #fff; font-weight: 700;
+}
+.icon-btn { appearance: none; background: transparent; border: 0; cursor: pointer; }
+.icon-btn[aria-pressed="true"] { color: #ef4444; }
+
