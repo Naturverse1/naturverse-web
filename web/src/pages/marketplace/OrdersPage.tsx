@@ -1,26 +1,36 @@
-import { Link } from 'react-router-dom';
-import { listOrders } from '../../lib/orders';
-
 export default function OrdersPage() {
-  const orders = listOrders();
+  const orders = JSON.parse(localStorage.getItem('natur_orders') || '[]');
+  if (!orders.length) return <p>No orders yet.</p>;
+
   return (
     <div className="page">
       <h1>Your Orders</h1>
-      {orders.length === 0 && <p>No orders yet.</p>}
       <ul className="orders">
-        {orders.map((o) => (
+        {orders.map((o: any) => (
           <li key={o.id} className="order">
-            <div>
-              <b>{o.status}</b> • {new Date(o.ts).toLocaleString()}
-              <div style={{ opacity: 0.8 }}>
-                {o.items.map((i) => `${i.name}×${i.qty}`).join(', ')}
+            <div className="left">
+              {o.navatar?.image ? (
+                <img
+                  src={o.navatar.image}
+                  alt="navatar"
+                  style={{ width: 48, height: 48, borderRadius: '50%', border: '2px solid #fff' }}
+                />
+              ) : (
+                <div style={{ width: 48, height: 48, borderRadius: '50%', background: '#222' }} />
+              )}
+            </div>
+            <div className="right">
+              <div>
+                <strong>#{o.id}</strong> — {o.totalNatur} NATUR
               </div>
-            </div>
-            <div>
-              <b>{o.total.toFixed(2)} NATUR</b>
-            </div>
-            <div>
-              <Link to={`/marketplace/orders/${o.id}`}>View →</Link>
+              <small>{new Date(o.createdAt).toLocaleString()}</small>
+              <div className="items">
+                {o.items.map((it: any, i: number) => (
+                  <div key={i}>
+                    {it.qty} × {it.name}
+                  </div>
+                ))}
+              </div>
             </div>
           </li>
         ))}
