@@ -340,3 +340,16 @@ body {
 @media (max-width: 640px) {
   .reco-card img { height: 120px; }
 }
+/* Reviews & Q&A */
+.tab-bar { display:flex; gap:1rem; margin-top:1rem; border-bottom:1px solid rgba(255,255,255,.1); }
+.tab-bar button { background:none; border:none; color:inherit; padding:0.5rem 1rem; cursor:pointer; }
+.tab-bar button.active { border-bottom:2px solid var(--accent); }
+.review-item, .qa-item { border-bottom:1px solid rgba(255,255,255,.08); padding:1rem 0; }
+.review-actions, .qa-answer-actions { display:flex; gap:0.5rem; margin-top:0.5rem; }
+.helpful-btn { border:1px solid rgba(255,255,255,.2); background:transparent; color:inherit; cursor:pointer; padding:2px 6px; }
+.star-bar { display:flex; align-items:center; gap:0.5rem; }
+.star-bar .bar { flex:1; height:4px; background:rgba(255,255,255,.1); position:relative; }
+.star-bar .bar-fill { position:absolute; inset:0; background:#facc15; }
+.qa-answer { margin-left:1rem; padding-left:1rem; border-left:2px solid rgba(255,255,255,.1); }
+.rating-row { font-size:12px; margin-top:4px; color:var(--muted); }
+.char-count { font-size:12px; color:var(--muted); }
