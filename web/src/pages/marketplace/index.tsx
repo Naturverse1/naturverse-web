@@ -1,31 +1,52 @@
-import { Link } from "react-router-dom";
+import { Link } from 'react-router-dom';
+import type { Product } from '../../types/marketplace';
 
-const items = [
-  { sku: "plush-turian", name: "Turian Plush", priceNatur: 50 },
-  { sku: "halloween-costume", name: "Turian Costume", priceNatur: 100 },
-  { sku: "poster", name: "Adventure Poster", priceNatur: 10 },
+const PRODUCTS: Product[] = [
+  {
+    sku: 'PLUSH_TUR',
+    title: 'Turian Plush',
+    basePriceNatur: 120,
+    thumb: '/assets/market/plush.png',
+  },
+  {
+    sku: 'COSTUME_HAL',
+    title: 'Halloween Costume',
+    basePriceNatur: 200,
+    thumb: '/assets/market/costume.png',
+    options: { size: ['XS', 'S', 'M', 'L'], color: ['Black', 'Orange'] },
+  },
+  {
+    sku: 'STICKER_STD',
+    title: 'Sticker Pack',
+    basePriceNatur: 20,
+    thumb: '/assets/market/sticker.png',
+  },
+  {
+    sku: 'TEE_KIDS',
+    title: 'Kids Tee',
+    basePriceNatur: 90,
+    thumb: '/assets/market/tee.png',
+    options: { size: ['XS', 'S', 'M', 'L'], material: ['Cotton', 'Organic'] },
+  },
 ];
 
-export default function Marketplace() {
+export default function MarketplaceHome() {
   return (
-    <main style={{ maxWidth: 960, margin: "0 auto", padding: "2rem" }}>
+    <div className="container">
       <h1>Marketplace</h1>
-      <p>Create magical goods with your Navatar. Pay with NATUR or cash (cash coming soon).</p>
-      <ul style={{ listStyle: "none", padding: 0, display: "grid", gap: "1rem" }}>
-        {items.map(it => (
-          <li key={it.sku} style={{ background: "rgba(255,255,255,0.06)", borderRadius: 12, padding: "1rem" }}>
-            <h3 style={{ margin: "0 0 .25rem" }}>{it.name}</h3>
-            <div style={{ opacity: .8, marginBottom: ".5rem" }}>Price: {it.priceNatur} NATUR</div>
-            <Link
-              to={`/marketplace/checkout?sku=${encodeURIComponent(it.sku)}&name=${encodeURIComponent(it.name)}&price=${it.priceNatur}`}
-              style={{ textDecoration: "underline" }}
-            >
-              Customize &amp; Buy
-            </Link>
-          </li>
+      <p>Turn your Navatar into real-world goodies.</p>
+      <div className="grid">
+        {PRODUCTS.map((p) => (
+          <Link key={p.sku} to={`/marketplace/customize/${p.sku}`} className="card">
+            <img src={p.thumb} alt={p.title} />
+            <div className="title">{p.title}</div>
+            <div className="sub">{p.basePriceNatur} NATUR</div>
+          </Link>
         ))}
-      </ul>
-    </main>
+      </div>
+      <Link to="/marketplace/cart">View cart →</Link>
+    </div>
   );
 }
 
+export { PRODUCTS };
