@@ -38,12 +38,15 @@ import ItemPage from './pages/marketplace/item';
 import ReviewPage from './pages/marketplace/review';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
+import { WishlistProvider } from './context/WishlistContext';
+import WishlistPage from './pages/marketplace/Wishlist';
 
 export default function App() {
   return (
     <ProfileProvider>
       <CartProvider>
-        <Routes>
+        <WishlistProvider>
+          <Routes>
           <Route element={<AppShell />}> 
             <Route path="/" element={<Home />} />
             <Route path="/about" element={<About />} />
@@ -165,16 +168,18 @@ export default function App() {
             <Route path="/marketplace/review" element={<ReviewPage />} />
             <Route path="/marketplace/item" element={<ItemPage />} />
             <Route path="/marketplace/checkout" element={<CheckoutPage />} />
+            <Route path="/marketplace/wishlist" element={<WishlistPage />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/login" element={<Login />} />
           <Route path="/auth/callback" element={<AuthCallback />} />
-        </Routes>
-        {/* global styles */}
-        <link rel="stylesheet" href="/src/styles/ui.css" />
-        <link rel="stylesheet" href="/src/styles/marketplace.css" />
+          </Routes>
+          {/* global styles */}
+          <link rel="stylesheet" href="/src/styles/ui.css" />
+          <link rel="stylesheet" href="/src/styles/marketplace.css" />
+        </WishlistProvider>
       </CartProvider>
     </ProfileProvider>
   );

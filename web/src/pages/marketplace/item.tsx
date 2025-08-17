@@ -3,6 +3,7 @@ import { useSearchParams, useNavigate } from 'react-router-dom';
 import { getProduct, Product } from '../../lib/products';
 import { getNavatarSrc } from '../../lib/navatar';
 import { useCart } from '../../context/CartContext';
+import { useWishlist } from '../../context/WishlistContext';
 
 type Sel = { size: string; material?: string; qty: number };
 
@@ -19,6 +20,7 @@ export default function ItemPage() {
   const product = getProduct(id);
 
   const { add } = useCart();
+  const { toggle, has } = useWishlist();
   const [sel, setSel] = useState<Sel>({ size: product?.options.sizes[0]?.key || 's', material: product?.options.materials?.[0]?.key, qty: 1 });
 
   const total = useMemo(() => product ? priceNatur(product, sel) : 0, [product, sel]);
@@ -60,7 +62,17 @@ export default function ItemPage() {
         </div>
 
         <div>
-          <h1>{product.name}</h1>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
+            {product.name}
+            <button
+              className="icon-btn"
+              aria-pressed={has(product.id)}
+              aria-label={has(product.id) ? 'Remove from wishlist' : 'Add to wishlist'}
+              onClick={() => toggle(product.id)}
+            >
+              {has(product.id) ? '♥' : '♡'}
+            </button>
+          </h1>
           <p><strong>Price:</strong> {total.toFixed(2)} NATUR</p>
 
           <div style={{marginTop:'1rem'}}>
