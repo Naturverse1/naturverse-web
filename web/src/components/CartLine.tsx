@@ -29,7 +29,7 @@ export default function CartLine({ line, onInc, onDec, onRemove }: Props) {
           Unit: {fmtNatur(line.priceNatur)} • Subtotal: {fmtNatur(subtotal)}
         </div>
       </div>
-      <div style={{display:'flex', alignItems:'center', gap:'.5rem'}}>
+      <div className="qty" style={{display:'flex', alignItems:'center', gap:'.5rem'}}>
         <button onClick={onDec} aria-label="decrease">–</button>
         <span>{line.qty}</span>
         <button onClick={onInc} aria-label="increase">+</button>

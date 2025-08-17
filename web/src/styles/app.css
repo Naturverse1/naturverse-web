@@ -170,6 +170,46 @@ body {
   border: 2px dashed rgba(255, 255, 255, 0.25);
 }
 
+/* Mini cart drawer */
+.drawer {
+  position: fixed;
+  top: 0;
+  right: 0;
+  height: 100dvh;
+  width: clamp(320px, 90vw, 420px);
+  background: rgba(10,10,25,0.95);
+  display: flex;
+  flex-direction: column;
+  box-shadow: -2px 0 8px rgba(0,0,0,0.4);
+}
+.drawer-header {
+  padding: 1rem;
+  border-bottom: 1px solid rgba(255,255,255,.1);
+}
+.drawer-body {
+  flex: 1;
+  overflow: auto;
+  padding: 1rem;
+  display: grid;
+  gap: .75rem;
+}
+.drawer-footer {
+  padding: 1rem;
+  border-top: 1px solid rgba(255,255,255,.1);
+}
+.qty {
+  display: inline-flex;
+  align-items: center;
+  gap: .25rem;
+}
+.qty button {
+  min-width: 24px;
+}
+.qty button:disabled {
+  pointer-events: none;
+  opacity: .6;
+}
+
 .page {
   max-width: 1200px;
   margin: 0 auto;
