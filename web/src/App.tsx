@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';
 import Navbar from './components/Navbar';
 import ImmersiveBackground from './components/ImmersiveBackground';
 import Home from './pages/Home';
@@ -29,7 +29,7 @@ import EcoRunner from './pages/zones/arcade/eco-runner';
 import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
-import { RequireAuth, useSession } from './lib/auth';
+import { RequireAuth } from './context/AuthContext';
 import TopBar from './components/TopBar';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CartPage from './pages/marketplace/cart';
@@ -42,14 +42,13 @@ import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
 export default function App() {
-  const { session } = useSession();
   return (
-    <BrowserRouter>
+    <>
       <ImmersiveBackground />
       <ProfileProvider>
         <CartProvider>
           <div className="min-h-screen">
-            <Navbar email={session?.user.email} />
+            <Navbar />
             <TopBar />
             <Routes>
             <Route path="/" element={<Home />} />
@@ -184,6 +183,6 @@ export default function App() {
           </div>
         </CartProvider>
       </ProfileProvider>
-    </BrowserRouter>
+    </>
   );
 }
