@@ -28,7 +28,7 @@ export default function OrdersPage() {
                 {o.items.map((it: any, i: number) => (
                   <div key={i} className="cart-line">
                     <img
-                      src={it.previewUrl || it.thumb}
+                      src={it.previewUrl ?? it.thumb}
                       alt=""
                       className="preview-thumb"
                     />
