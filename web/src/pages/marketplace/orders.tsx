@@ -1,10 +1,14 @@
 import React, { useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { loadOrders, fmtDate } from '../../lib/orders';
-import { fmtNatur } from '../../lib/money';
+import { formatNatur, ShippingMethodId } from '../../lib/pricing';
 
 export default function OrdersPage() {
   const orders = useMemo(() => loadOrders(), []);
+  const shipLabels: Record<ShippingMethodId, string> = {
+    standard: 'Standard',
+    expedited: 'Expedited',
+  };
   return (
     <section>
       <a href="/marketplace">← Back to Marketplace</a>
@@ -35,11 +39,12 @@ export default function OrdersPage() {
               <div>
                 <div style={{ fontWeight: 600 }}>Order {o.id.slice(0, 8)}…</div>
                 <div style={{ opacity: 0.8, fontSize: '.9rem' }}>
-                  {fmtDate(o.createdAt)} · {o.network || '—'}
+                  {fmtDate(o.createdAt)} · {o.network || '—'} ·
+                  {shipLabels[o.shippingMethod as ShippingMethodId] || ''}
                 </div>
               </div>
               <div style={{ alignSelf: 'center', fontWeight: 600 }}>
-                {fmtNatur(o.totalNatur)}
+                {formatNatur(o.totals?.grandTotal ?? o.totalNatur)}
               </div>
             </Link>
           ))}

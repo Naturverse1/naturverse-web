@@ -26,3 +26,21 @@ export function naturUsdApprox(naturAmount: number, rateEnv?: string): string | 
 export function clamp(n: number, min: number, max: number) {
   return Math.max(min, Math.min(max, n));
 }
+
+export type ShippingMethodId = "standard" | "expedited";
+
+export const SHIPPING_PRICES: Record<ShippingMethodId, number> = {
+  standard: 0,
+  expedited: 2.5,
+};
+
+export function calcDiscountNATUR(code: string, itemsSubtotal: number) {
+  if (code.trim().toUpperCase() === "WELCOME10") {
+    return Math.min(itemsSubtotal * 0.1, 20);
+  }
+  return 0;
+}
+
+export function formatNatur(n: number) {
+  return `${n.toFixed(2)} NATUR`;
+}

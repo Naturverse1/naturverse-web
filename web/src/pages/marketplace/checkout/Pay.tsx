@@ -11,9 +11,17 @@ import {
   transferNatur,
 } from '../../../lib/wallet';
 import FaucetHelp from '../../../components/FaucetHelp';
-import { formatToken, naturUsdApprox } from '../../../lib/pricing';
+import {
+  formatToken,
+  naturUsdApprox,
+  SHIPPING_PRICES,
+  ShippingMethodId,
+  calcDiscountNATUR,
+  formatNatur,
+} from '../../../lib/pricing';
 import { addOrder } from '../../../lib/orders';
 import type { Shipping } from '../../../lib/orders';
+import { getJSON } from '../../../lib/storage';
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
@@ -39,7 +47,18 @@ function loadShipping(): Shipping {
 
 const PayPage: React.FC = () => {
   const nav = useNavigate();
-  const { items, totalNatur: cartTotal, clear } = useCart();
+  const { items, totalNatur: itemsSubtotal, clear } = useCart();
+
+  const method = getJSON<ShippingMethodId>('natur_ship_method', 'standard');
+  const code = getJSON<string>('natur_promo_code', '');
+  const ship = SHIPPING_PRICES[method];
+  const discount = calcDiscountNATUR(code, itemsSubtotal);
+  const grandTotalRaw = Math.max(0, itemsSubtotal + ship - discount);
+  const grandTotal = useMemo(
+    () => Number((Math.round(grandTotalRaw * 100) / 100).toFixed(2)),
+    [grandTotalRaw]
+  );
+  const totalUsd = naturUsdApprox(grandTotal, NATUR_USD_RATE);
 
   const [address, setAddress] = useState<string | null>(null);
   const [chainOk, setChainOk] = useState(false);
@@ -50,12 +69,6 @@ const PayPage: React.FC = () => {
   const [busy, setBusy] = useState<'idle' | 'connecting' | 'paying'>('idle');
   const [error, setError] = useState<string | null>(null);
   const [showFaucet, setShowFaucet] = useState(false);
-
-  const totalNatur = useMemo(
-    () => Number((Math.round(cartTotal * 100) / 100).toFixed(2)),
-    [cartTotal]
-  );
-  const totalUsd = naturUsdApprox(totalNatur, NATUR_USD_RATE);
 
   useEffect(() => {
     (async () => {
@@ -105,12 +118,12 @@ const PayPage: React.FC = () => {
   };
 
   const canPayBase =
-    !!address && chainOk && naturBal !== null && gasBal !== null && totalNatur > 0;
+    !!address && chainOk && naturBal !== null && gasBal !== null && grandTotal > 0;
   const notEnoughNatur = useMemo(() => {
     if (!naturBal) return false;
-    const needed = BigInt(Math.floor(totalNatur * Math.pow(10, naturDecimals)));
+    const needed = BigInt(Math.floor(grandTotal * Math.pow(10, naturDecimals)));
     return naturBal < needed;
-  }, [naturBal, totalNatur, naturDecimals]);
+  }, [naturBal, grandTotal, naturDecimals]);
 
   const noGas = (gasBal || 0) <= 0;
 
@@ -135,8 +148,8 @@ const PayPage: React.FC = () => {
     try {
       setBusy('paying');
       const provider = await getBrowserProvider();
-      const { decimals, symbol } = await getNaturMeta(provider);
-      const need = Number(totalNatur);
+      await getNaturMeta(provider);
+      const need = Number(grandTotal);
       const { signer } = await connectWallet();
       const tx = await transferNatur(signer, MERCHANT, need);
       await tx.wait();
@@ -145,7 +158,7 @@ const PayPage: React.FC = () => {
       addOrder({
         id: tx.hash || String(Date.now()),
         createdAt: Date.now(),
-        totalNatur,
+        totalNatur: grandTotal,
         lines: items.map((i) => ({
           id: i.id,
           name: i.name,
@@ -155,6 +168,9 @@ const PayPage: React.FC = () => {
         txHash: tx.hash,
         address,
         shipping,
+        shippingMethod: method,
+        discount: discount > 0 ? { code, amount: discount } : undefined,
+        totals: { items: itemsSubtotal, shipping: ship, discount, grandTotal },
       });
 
       clear();
@@ -183,13 +199,13 @@ const PayPage: React.FC = () => {
                 <span>
                   {i.name} × {i.qty}
                 </span>
-                <span>{(i.priceNatur * i.qty).toFixed(2)} {naturSymbol}</span>
+                <span>{formatNatur(i.priceNatur * i.qty)}</span>
               </li>
             ))}
           </ul>
 
           <p className="font-bold mb-4">
-            Total: {totalNatur.toFixed(2)} {naturSymbol}
+            Total: {formatNatur(grandTotal)}
             {totalUsd && <span style={{ opacity: 0.8 }}> (~{totalUsd})</span>}
           </p>
 
@@ -230,7 +246,7 @@ const PayPage: React.FC = () => {
               ? 'Paying...'
               : disabledReason
               ? disabledReason
-              : `Pay ${totalNatur.toFixed(2)} ${naturSymbol}`}
+              : `Pay ${formatNatur(grandTotal)}`}
           </button>
 
           {error && <p className="mt-3 text-red-400">{error}</p>}
@@ -243,4 +259,3 @@ const PayPage: React.FC = () => {
 };
 
 export default PayPage;
-
