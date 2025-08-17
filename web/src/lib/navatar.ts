@@ -35,3 +35,12 @@ export const getNavatarUrl = async (): Promise<string | null> => {
 
   return null;
 };
+
+// Tries localStorage first; can be expanded to fetch from Supabase later.
+export function getNavatarSrc(): string | null {
+  try {
+    const fromLocal = localStorage.getItem('navatar_url');
+    if (fromLocal) return fromLocal;
+  } catch {}
+  return null;
+}
