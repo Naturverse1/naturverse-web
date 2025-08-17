@@ -2,6 +2,18 @@ import React, { useMemo } from 'react';
 import { useParams } from 'react-router-dom';
 import { getOrder, fmtDate, explorerUrl } from '../../lib/orders';
 import { formatNatur, ShippingMethodId } from '../../lib/pricing';
+import RecoStrip from '../../components/RecoStrip';
+import { recommendForCats, Item } from '../../lib/reco';
+import { PRODUCTS } from '../../lib/products';
+
+const allItems: Item[] = PRODUCTS.map(p => ({
+  id: p.id,
+  name: p.name,
+  price: p.baseNatur,
+  category: p.category,
+  image: p.img,
+  createdAt: p.createdAt,
+}));
 
 export default function OrderSuccess() {
   const { id = '' } = useParams();
@@ -26,6 +38,19 @@ export default function OrderSuccess() {
   }
 
   const txUrl = explorerUrl(order.txHash);
+  const cats = useMemo(() => {
+    return Array.from(
+      new Set(
+        order.lines
+          .map(l => {
+            const pid = l.id.split('::')[0];
+            return PRODUCTS.find(p => p.id === pid)?.category;
+          })
+          .filter(Boolean) as string[],
+      ),
+    );
+  }, [order]);
+  const recos = recommendForCats(cats, allItems, 6);
 
   return (
     <section>
@@ -128,6 +153,7 @@ export default function OrderSuccess() {
           </button>
         </div>
       </div>
+      <RecoStrip title="You might also like" items={recos} source="success" />
     </section>
   );
 }

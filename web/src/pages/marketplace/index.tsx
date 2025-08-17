@@ -1,18 +1,29 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import FilterBar, { Filters } from '../../components/marketplace/FilterBar';
 import ProductCard from '../../components/marketplace/ProductCard';
-import { applyFilters, DEFAULT_FILTERS, Item } from '../../lib/catalog';
+import { applyFilters, DEFAULT_FILTERS, Item as CatItem } from '../../lib/catalog';
 import { toQuery, fromQuery } from '../../lib/urlState';
 import { PRODUCTS } from '../../lib/products';
 import { useCart } from '../../context/CartContext';
+import RecoStrip from '../../components/RecoStrip';
+import { recentItems, Item as RItem } from '../../lib/reco';
 
-const allItems: Item[] = PRODUCTS.map(p => ({
+const allItems: CatItem[] = PRODUCTS.map(p => ({
   id: p.id,
   name: p.name,
   price: p.baseNatur,
   category: p.category,
   createdAt: p.createdAt,
   img: p.img,
+}));
+
+const recoItems: RItem[] = PRODUCTS.map(p => ({
+  id: p.id,
+  name: p.name,
+  price: p.baseNatur,
+  category: p.category,
+  image: p.img,
+  createdAt: p.createdAt,
 }));
 
 const categories = Array.from(new Set(allItems.map(i => i.category)));
@@ -37,8 +48,17 @@ export default function MarketplacePage() {
 
   const visibleItems = useMemo(() => applyFilters(allItems, filters), [filters]);
   const { add, openMiniCart } = useCart();
+  const [recent, setRecent] = useState<RItem[]>(() => recentItems(recoItems));
 
-  const handleAdd = (item: Item) => {
+  useEffect(() => {
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'natur_recent_v1') setRecent(recentItems(recoItems));
+    };
+    window.addEventListener('storage', onStorage);
+    return () => window.removeEventListener('storage', onStorage);
+  }, []);
+
+  const handleAdd = (item: CatItem) => {
     add({
       id: `${item.id}::XS::Cotton`,
       name: item.name,
@@ -71,6 +91,7 @@ export default function MarketplacePage() {
           <button onClick={() => setFilters(DEFAULT_FILTERS)}>Clear filters</button>
         </div>
       )}
+      <RecoStrip title="Because you viewed" items={recent.slice(0, 8)} source="catalog" />
     </div>
   );
 }

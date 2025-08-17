@@ -1,8 +1,20 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import Gallery from '../../components/Gallery';
 import { getProduct } from '../../lib/products';
 import { useCart } from '../../context/CartContext';
+import RecoStrip from '../../components/RecoStrip';
+import { recommendFor, pushRecent, Item } from '../../lib/reco';
+import { PRODUCTS } from '../../lib/products';
+
+const allItems: Item[] = PRODUCTS.map(p => ({
+  id: p.id,
+  name: p.name,
+  price: p.baseNatur,
+  category: p.category,
+  image: p.img,
+  createdAt: p.createdAt,
+}));
 
 const DEF_SIZES = ['XS','S','M','L','XL'];
 const DEF_MATERIALS = ['Cotton','Recycled','Premium'];
@@ -20,6 +32,25 @@ export default function ProductDetail() {
   const [size, setSize] = useState<string>(sizes[0]);
   const [material, setMaterial] = useState<string>(materials[0]);
   const [qty, setQty] = useState(1);
+
+  useEffect(() => {
+    if (product) pushRecent(product.id);
+  }, [product?.id]);
+
+  const recos = product
+    ? recommendFor(
+        {
+          id: product.id,
+          name: product.name,
+          price: product.baseNatur,
+          category: product.category,
+          image: images[0],
+          createdAt: product.createdAt,
+        },
+        allItems,
+        8,
+      )
+    : [];
 
   if (!product) {
     return (
@@ -75,6 +106,7 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
+      <RecoStrip title="For you" items={recos} source="detail" />
     </section>
   );
 }
