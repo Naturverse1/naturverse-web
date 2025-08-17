@@ -7,6 +7,7 @@ export type CartItem = {
   qty: number;
   options?: Record<string, string>;
   imageUrl?: string;
+  meta?: Record<string, unknown>;
 };
 
 type CartState = {

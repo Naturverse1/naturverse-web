@@ -1,58 +1,48 @@
 export type Product = {
   id: string;
-  slug: string;
-  family: "printable" | "merch";
   name: string;
-  priceNatur: number; // base
-  thumb: string;
-  variants?: {
-    // key -> allowed values (string arrays)
-    size?: string[];
-    color?: string[];
-    pack?: string[];
+  baseNatur: number; // price per unit in NATUR
+  img: string; // base product image (used as preview background)
+  options: {
+    sizes: { key: string; label: string; multiplier: number }[];
+    materials?: { key: string; label: string; multiplier: number }[];
   };
 };
 
 export const PRODUCTS: Product[] = [
   {
-    id: "poster-rainforest",
-    slug: "poster-rainforest",
-    family: "printable",
-    name: "Rainforest Poster",
-    priceNatur: 120,
-    thumb: "/assets/market/poster-rainforest.jpg",
-    variants: { size: ["A4", "A3"] }
+    id: 'plush-classic',
+    name: 'Turian Plush',
+    baseNatur: 50,
+    img: '/assets/market/plush.png',
+    options: {
+      sizes: [
+        { key: 's', label: 'Small (8\")', multiplier: 1 },
+        { key: 'm', label: 'Medium (12\")', multiplier: 1.5 },
+        { key: 'l', label: 'Large (16\")', multiplier: 2 },
+      ],
+      materials: [
+        { key: 'std', label: 'Standard', multiplier: 1 },
+        { key: 'xl', label: 'Extra-soft', multiplier: 1.2 },
+      ],
+    },
   },
   {
-    id: "sticker-pack",
-    slug: "sticker-pack",
-    family: "printable",
-    name: "Navatar Stickers",
-    priceNatur: 60,
-    thumb: "/assets/market/sticker-pack.jpg",
-    variants: { pack: ["10", "25", "50"] }
+    id: 'tee-kids',
+    name: 'Kids Tee',
+    baseNatur: 25,
+    img: '/assets/market/tee.png',
+    options: {
+      sizes: [
+        { key: 's', label: 'S', multiplier: 1 },
+        { key: 'm', label: 'M', multiplier: 1.05 },
+        { key: 'l', label: 'L', multiplier: 1.1 },
+      ],
+    },
   },
-  {
-    id: "tee-classic",
-    slug: "tee-classic",
-    family: "merch",
-    name: "Classic Tee",
-    priceNatur: 350,
-    thumb: "/assets/market/tee-classic.jpg",
-    variants: { size: ["XS","S","M","L","XL"], color: ["Black","White","Navy"] }
-  },
-  {
-    id: "sweatshirt-cozy",
-    slug: "sweatshirt-cozy",
-    family: "merch",
-    name: "Cozy Sweatshirt",
-    priceNatur: 540,
-    thumb: "/assets/market/sweatshirt-cozy.jpg",
-    variants: { size: ["XS","S","M","L","XL"], color: ["Black","White","Navy"] }
-  }
 ];
 
-export function getProductBySlug(slug: string) {
-  return PRODUCTS.find(p => p.slug === slug) || null;
+export function getProduct(id: string) {
+  return PRODUCTS.find(p => p.id === id);
 }
 

@@ -35,6 +35,7 @@ import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CartPage from './pages/marketplace/cart';
 import CheckoutPage from './pages/marketplace/checkout';
 import OrdersPage from './pages/marketplace/orders';
+import ItemPage from './pages/marketplace/item';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
@@ -168,6 +169,7 @@ export default function App() {
             />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
+            <Route path="/marketplace/item" element={<ItemPage />} />
             <Route path="/marketplace/checkout" element={<CheckoutPage />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="*" element={<NotFound />} />
