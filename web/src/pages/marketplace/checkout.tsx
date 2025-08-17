@@ -38,6 +38,20 @@ export default function Checkout() {
   return (
     <div className="page">
       <h1>Checkout</h1>
+      <ul>
+        {cart.items.map((line, i) => (
+          <li key={i}>
+            {line.qty} × {line.name} — {line.price.toFixed(2)} NATUR
+            {line.options && (
+              <small style={{ marginLeft: 8, opacity: 0.8 }}>
+                {Object.entries(line.options)
+                  .map(([k, v]) => `${k}: ${v}`)
+                  .join(", ")}
+              </small>
+            )}
+          </li>
+        ))}
+      </ul>
       <p>Total: {cart.total.toFixed(2)} NATUR</p>
       <button onClick={handlePay} disabled={cart.items.length === 0}>
         Pay now

@@ -28,6 +28,13 @@ export default function OrdersPage() {
                 {o.items.map((it: any, i: number) => (
                   <div key={i}>
                     {it.qty} × {it.name}
+                    {it.options && (
+                      <small style={{ marginLeft: 8, opacity: 0.8 }}>
+                        {Object.entries(it.options)
+                          .map(([k, v]) => `${k}: ${v}`)
+                          .join(", ")}
+                      </small>
+                    )}
                   </div>
                 ))}
               </div>

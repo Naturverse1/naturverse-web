@@ -38,6 +38,13 @@ export default function OrderDetailPage() {
         {o.items.map((i) => (
           <li key={i.id}>
             {i.name} × {i.qty} — {(i.price * i.qty).toFixed(2)} NATUR
+            {i.options && (
+              <small style={{ marginLeft: 8, opacity: 0.8 }}>
+                {Object.entries(i.options)
+                  .map(([k, v]) => `${k}: ${v}`)
+                  .join(", ")}
+              </small>
+            )}
           </li>
         ))}
       </ul>
