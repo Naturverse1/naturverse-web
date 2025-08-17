@@ -33,6 +33,7 @@ import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
 import CheckoutPage from './pages/marketplace/CheckoutPage';
+import OrdersPage from './pages/marketplace/OrdersPage';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
@@ -166,10 +167,13 @@ export default function App() {
             />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/checkout" element={<CheckoutPage />} />
+            <Route path="/marketplace/orders" element={<OrdersPage />} />
+            <Route path="/marketplace/orders/:id" element={<OrdersPage />} />
             <Route path="*" element={<NotFound />} />
             </Routes>
             {/* global styles */}
             <link rel="stylesheet" href="/src/styles/ui.css" />
+            <link rel="stylesheet" href="/src/styles/marketplace.css" />
           </div>
         </CartProvider>
       </ProfileProvider>

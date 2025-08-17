@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useCart } from "../../context/CartContext";
+import { useCart } from "@/context/CartContext";
+import { useNavigate } from "react-router-dom";
 import {
   connectWallet,
   ensureCorrectChain,
@@ -8,28 +9,33 @@ import {
   getNaturMeta,
   getNativeBalance,
   transferNatur,
-} from "../../lib/wallet";
-import { addOrder } from "../../lib/orders";
-import { useNavigate } from "react-router-dom";
+} from "@/lib/wallet";
+import FaucetHelp from "@/components/FaucetHelp";
+import { formatToken, naturUsdApprox } from "@/lib/pricing";
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
+const NATUR_USD_RATE = import.meta.env.VITE_NATUR_USD_RATE as string | undefined;
 
 const CheckoutPage: React.FC = () => {
   const nav = useNavigate();
   const { items, subtotal, clearCart } = useCart();
+
   const [address, setAddress] = useState<string | null>(null);
   const [chainOk, setChainOk] = useState(false);
   const [naturBal, setNaturBal] = useState<bigint | null>(null);
   const [naturSymbol, setNaturSymbol] = useState("NATUR");
+  const [naturDecimals, setNaturDecimals] = useState(18);
   const [gasBal, setGasBal] = useState<number | null>(null);
   const [busy, setBusy] = useState<"idle" | "connecting" | "paying">("idle");
   const [error, setError] = useState<string | null>(null);
+  const [showFaucet, setShowFaucet] = useState(false);
 
   const totalNatur = useMemo(
     () => Number((Math.round(subtotal * 100) / 100).toFixed(2)),
     [subtotal]
   );
+  const totalUsd = naturUsdApprox(totalNatur, NATUR_USD_RATE);
 
   useEffect(() => {
     (async () => {
@@ -42,6 +48,7 @@ const CheckoutPage: React.FC = () => {
           setChainOk(true);
           const meta = await getNaturMeta(provider);
           setNaturSymbol(meta.symbol || "NATUR");
+          setNaturDecimals(meta.decimals || 18);
           const [nbal, gbal] = await Promise.all([
             getNaturBalance(provider, accs[0]),
             getNativeBalance(provider, accs[0]),
@@ -63,6 +70,7 @@ const CheckoutPage: React.FC = () => {
       setChainOk(true);
       const meta = await getNaturMeta(provider);
       setNaturSymbol(meta.symbol || "NATUR");
+      setNaturDecimals(meta.decimals || 18);
       const [nbal, gbal] = await Promise.all([
         getNaturBalance(provider, address),
         getNativeBalance(provider, address),
@@ -76,8 +84,26 @@ const CheckoutPage: React.FC = () => {
     }
   };
 
-  const canPay =
+  const canPayBase =
     !!address && chainOk && naturBal !== null && gasBal !== null && totalNatur > 0;
+  const notEnoughNatur = useMemo(() => {
+    if (!naturBal) return false;
+    const needed = BigInt(Math.floor(totalNatur * Math.pow(10, naturDecimals)));
+    return naturBal < needed;
+  }, [naturBal, totalNatur, naturDecimals]);
+
+  const noGas = (gasBal || 0) <= 0;
+
+  const disabledReason =
+    !address
+      ? "Connect wallet"
+      : !chainOk
+      ? "Wrong network"
+      : notEnoughNatur
+      ? `Not enough ${naturSymbol}`
+      : noGas
+      ? "Add a little gas"
+      : null;
 
   const onPay = async () => {
     setError(null);
@@ -90,22 +116,10 @@ const CheckoutPage: React.FC = () => {
     try {
       setBusy("paying");
       const provider = await getBrowserProvider();
-      const { symbol, decimals } = await getNaturMeta(provider);
-      const bn = naturBal!;
-      const need = BigInt(Math.floor(totalNatur * Math.pow(10, decimals)));
-      if (bn < need) {
-        setError(`Not enough ${symbol}.`);
-        setBusy("idle");
-        return;
-      }
-      if ((gasBal || 0) <= 0) {
-        setError("Add a little native gas for fees.");
-        setBusy("idle");
-        return;
-      }
-
+      const { decimals, symbol } = await getNaturMeta(provider);
+      const need = Number(totalNatur);
       const { signer } = await connectWallet();
-      const tx = await transferNatur(signer, MERCHANT, totalNatur);
+      const tx = await transferNatur(signer, MERCHANT, need);
       await tx.wait();
 
       const id = `ord_${Date.now()}`;
@@ -121,21 +135,18 @@ const CheckoutPage: React.FC = () => {
         })),
         subtotal: subtotal,
         fee: 0,
-        total: totalNatur,
+        total: need,
         status: "Paid" as const,
         txHash: tx.hash,
       };
       try {
-        addOrder(order as any);
+        const existing = JSON.parse(localStorage.getItem("natur_orders") || "[]");
+        localStorage.setItem("natur_orders", JSON.stringify([order, ...existing]));
       } catch {}
 
       clearCart();
-      if (EXPLORER) {
-        nav(`/marketplace/orders/${id}`);
-        window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
-      } else {
-        nav(`/marketplace/orders/${id}`);
-      }
+      nav(`/marketplace/orders/${id}`);
+      if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
     } catch (e: any) {
       if (e?.code === 4001) setError("Transaction canceled");
       else setError(e?.message || "Payment failed");
@@ -163,8 +174,9 @@ const CheckoutPage: React.FC = () => {
             ))}
           </ul>
 
-          <p className="font-bold mb-6">
+          <p className="font-bold mb-4">
             Total: {totalNatur.toFixed(2)} {naturSymbol}
+            {totalUsd && <span style={{ opacity: 0.8 }}> (~{totalUsd})</span>}
           </p>
 
           {!address ? (
@@ -176,31 +188,42 @@ const CheckoutPage: React.FC = () => {
               {busy === "connecting" ? "Connecting..." : "Connect Wallet"}
             </button>
           ) : (
-            <div className="mb-3">
+            <div className="mb-4 text-sm opacity-90">
               <div>Connected: {address}</div>
               <div>Chain: {chainOk ? "OK" : "Wrong network"}</div>
               <div>
-                Token balance: {naturBal !== null ? naturBal.toString() : "—"} (raw)
+                Token balance: {naturBal !== null
+                  ? `${formatToken(naturBal, naturDecimals)} ${naturSymbol}`
+                  : "—"}
               </div>
-              <div>
-                Gas balance: {gasBal !== null ? gasBal.toFixed(6) : "—"}
-              </div>
+              <div>Gas balance: {gasBal !== null ? gasBal.toFixed(6) : "—"}</div>
             </div>
           )}
 
+          <div className="mb-3">
+            <button onClick={() => setShowFaucet(true)} className="underline text-sm">
+              Need NATUR or gas?
+            </button>
+          </div>
+
           <button
-            disabled={!canPay || busy !== "idle"}
+            disabled={!(canPayBase && !notEnoughNatur && !noGas) || busy !== "idle"}
             onClick={onPay}
             className="bg-green-600 text-white px-6 py-2 rounded disabled:opacity-50"
+            title={disabledReason || ""}
           >
             {busy === "paying"
               ? "Paying..."
+              : disabledReason
+              ? disabledReason
               : `Pay ${totalNatur.toFixed(2)} ${naturSymbol}`}
           </button>
 
           {error && <p className="mt-3 text-red-400">{error}</p>}
         </>
       )}
+
+      <FaucetHelp open={showFaucet} onClose={() => setShowFaucet(false)} />
     </div>
   );
 };
