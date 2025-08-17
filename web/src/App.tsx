@@ -32,8 +32,9 @@ import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth, useSession } from './lib/auth';
 import TopBar from './components/TopBar';
 import MarketplacePage from './pages/marketplace/MarketplacePage';
-import CheckoutPage from './pages/marketplace/CheckoutPage';
-import OrdersPage from './pages/marketplace/OrdersPage';
+import CartPage from './pages/marketplace/cart';
+import CheckoutPage from './pages/marketplace/checkout';
+import OrdersPage from './pages/marketplace/orders';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
@@ -166,9 +167,9 @@ export default function App() {
               }
             />
             <Route path="/marketplace" element={<MarketplacePage />} />
+            <Route path="/marketplace/cart" element={<CartPage />} />
             <Route path="/marketplace/checkout" element={<CheckoutPage />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
-            <Route path="/marketplace/orders/:id" element={<OrdersPage />} />
             <Route path="*" element={<NotFound />} />
             </Routes>
             {/* global styles */}

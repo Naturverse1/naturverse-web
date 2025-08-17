@@ -12,6 +12,7 @@ import {
 } from '../../lib/wallet';
 import FaucetHelp from '../../components/FaucetHelp';
 import { formatToken, naturUsdApprox } from '../../lib/pricing';
+import { saveOrder } from '../../lib/orders';
 
 const EXPLORER = import.meta.env.VITE_BLOCK_EXPLORER as string | undefined;
 const MERCHANT = import.meta.env.VITE_MERCHANT_ADDRESS as string;
@@ -122,30 +123,21 @@ const CheckoutPage: React.FC = () => {
       const tx = await transferNatur(signer, MERCHANT, need);
       await tx.wait();
 
-      const id = `ord_${Date.now()}`;
-      const order = {
-        id,
+      saveOrder({
+        id: tx.hash || String(Date.now()),
         ts: Date.now(),
-        address,
+        totalNatur,
         items: items.map((i) => ({
           id: i.id,
           name: i.name,
           qty: i.qty,
           priceNatur: i.priceNatur,
         })),
-        subtotal: cartTotal,
-        fee: 0,
-        total: need,
-        status: 'Paid' as const,
         txHash: tx.hash,
-      };
-      try {
-        const existing = JSON.parse(localStorage.getItem("natur_orders") || "[]");
-        localStorage.setItem("natur_orders", JSON.stringify([order, ...existing]));
-      } catch {}
+      });
 
       clear();
-      nav(`/marketplace/orders/${id}`);
+      nav('/marketplace/orders');
       if (EXPLORER) window.open(`${EXPLORER}/tx/${tx.hash}`, "_blank");
     } catch (e: any) {
       if (e?.code === 4001) setError("Transaction canceled");

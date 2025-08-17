@@ -31,8 +31,8 @@ const MarketplacePage: React.FC = () => {
         ))}
       </div>
       <div className="mt-8 text-right">
-        <Link to="/marketplace/checkout" className="text-blue-500 underline">
-          Go to Checkout →
+        <Link to="/marketplace/cart" className="text-blue-500 underline">
+          View Cart →
         </Link>
       </div>
     </div>

@@ -37,14 +37,18 @@ export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children
     });
   };
 
-  const add = (item: CartItem) => {
-    persist(prev => {
-      const existing = prev.find(i => i.id === item.id);
+  const add = (delta: CartItem) => {
+    const next = (() => {
+      const existing = items.find(i => i.id === delta.id);
       if (existing) {
-        return prev.map(i => i.id === item.id ? { ...i, qty: i.qty + item.qty } : i);
+        const merged = items
+          .map(i => (i.id === delta.id ? { ...i, qty: i.qty + delta.qty } : i))
+          .filter(i => i.qty > 0);
+        return merged;
       }
-      return [...prev, item];
-    });
+      return delta.qty > 0 ? [...items, delta] : items;
+    })();
+    persist(next);
   };
 
   const remove = (id: string) => persist(prev => prev.filter(i => i.id !== id));
