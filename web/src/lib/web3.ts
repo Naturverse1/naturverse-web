@@ -1,21 +1,46 @@
-export type Web3Config = {
-  chainIdHex: string;
-  tokenAddress: 0x${string};
-  tokenDecimals: number;
-  treasury: 0x${string};
-  usdPerNatur: number;
-};
-export function getWeb3Config(): Web3Config {
-  const chainIdHex = import.meta.env.VITE_NATUR_CHAIN_ID as string;
-  const tokenAddress = import.meta.env.VITE_NATUR_TOKEN_ADDRESS as 0x${string};
-  const tokenDecimals = Number(import.meta.env.VITE_NATUR_TOKEN_DECIMALS || 18);
-  const treasury = import.meta.env.VITE_NATUR_TREASURY as 0x${string};
-  const usdPerNatur = Number(import.meta.env.VITE_NATUR_USD_RATE || 1);
-  if (!chainIdHex || !tokenAddress || !treasury) throw new Error("Missing NATUR web3 env");
-  return { chainIdHex, tokenAddress, tokenDecimals, treasury, usdPerNatur };
+// web/src/lib/web3.ts
+
+// Keep types simple for Netlify's TS:
+// (Template literal types like `${string}` can break older TS)
+export type Address = string;
+
+declare global {
+  interface Window {
+    ethereum?: {
+      isMetaMask?: boolean;
+      request: (args: { method: string; params?: any[] }) => Promise<any>;
+    };
+  }
 }
-export const ERC20_ABI_MIN = [
-  "function transfer(address to, uint256 amount) returns (bool)",
-  "function decimals() view returns (uint8)",
-  "event Transfer(address indexed from, address indexed to, uint256 value)"
-];
+
+export function hasWallet() {
+  return typeof window !== "undefined" && !!window.ethereum;
+}
+
+export async function connectWallet(): Promise<Address> {
+  if (!hasWallet()) throw new Error("No wallet detected");
+  const accounts = await window.ethereum!.request({
+    method: "eth_requestAccounts",
+  });
+  const addr: Address = accounts?.[0];
+  if (!addr) throw new Error("No account returned");
+  return addr;
+}
+
+/** Optional helper to ask the wallet to sign a plain text message */
+export async function signMessage(message: string): Promise<string> {
+  if (!hasWallet()) throw new Error("No wallet detected");
+  const [addr] = await window.ethereum!.request({ method: "eth_accounts" });
+  if (!addr) throw new Error("No connected account");
+  // personal_sign expects params [data, address]
+  const sig = await window.ethereum!.request({
+    method: "personal_sign",
+    params: [message, addr],
+  });
+  return sig as string;
+}
+
+/** Tiny UI helper */
+export function shortAddress(addr: Address) {
+  return addr ? `${addr.slice(0, 6)}…${addr.slice(-4)}` : "";
+}
