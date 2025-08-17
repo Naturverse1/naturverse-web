@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { supabase } from '../supabaseClient';
 import { uploadAvatar, fetchAvatar } from '../lib/avatar';
+import { useAuth } from '../context/AuthContext';
 
 export default function Profile() {
   const [email, setEmail] = useState<string>("");
@@ -9,6 +10,7 @@ export default function Profile() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [saving, setSaving] = useState(false);
   const inputRef = useRef<HTMLInputElement | null>(null);
+  const { setNavatarLocal } = useAuth();
 
   // On mount, get the current user + current avatar
   useEffect(() => {
@@ -20,6 +22,7 @@ export default function Profile() {
       try {
         const url = await fetchAvatar(user.id);
         setAvatarUrl(url);
+        if (url) setNavatarLocal(url);
       } catch {
         // ignore – empty avatar is fine
       }
@@ -39,7 +42,8 @@ export default function Profile() {
     try {
       const file = inputRef.current.files[0];
       const { url } = await uploadAvatar(file, userId);
-      // Reflect immediately
+      // Mirror to localStorage so Navbar & previews can use it immediately
+      setNavatarLocal(url);
       setAvatarUrl(url);
       setPreviewUrl(null);
       alert("Navatar updated");
@@ -58,9 +62,11 @@ export default function Profile() {
         <div className="mb-4 flex justify-center">
           {/* Avatar figure – fixed size, always cropped */}
           <img
-            src={previewUrl ?? avatarUrl ?? "/avatar-placeholder.png"}
-            alt="navatar"
-            className="h-28 w-28 rounded-full object-cover ring-2 ring-white/20 shadow"
+            src={previewUrl || avatarUrl || '/avatar-placeholder.png'}
+            alt="Navatar"
+            width={128}
+            height={128}
+            style={{ width:128, height:128, borderRadius:'50%', objectFit:'cover', background:'#111' }}
           />
         </div>
 
