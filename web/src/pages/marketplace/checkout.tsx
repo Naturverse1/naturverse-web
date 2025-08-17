@@ -1,8 +1,22 @@
 import React, { useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { getCart, saveCart, cartTotalCents, fmtMoney } from "../../lib/marketplace";
-import { getWeb3Config, ERC20_ABI_MIN } from "../../lib/web3";
+import { connectWallet, signMessage, shortAddress } from "../../lib/web3";
 import { BrowserProvider, Contract, parseUnits } from "ethers";
+
+const WEB3_CFG = {
+  chainIdHex: import.meta.env.VITE_NATUR_CHAIN_ID as string,
+  tokenAddress: import.meta.env.VITE_NATUR_TOKEN_ADDRESS as string,
+  tokenDecimals: Number(import.meta.env.VITE_NATUR_TOKEN_DECIMALS || 18),
+  treasury: import.meta.env.VITE_NATUR_TREASURY as string,
+  usdPerNatur: Number(import.meta.env.VITE_NATUR_USD_RATE || 1),
+};
+
+const ERC20_ABI_MIN = [
+  "function transfer(address to, uint256 amount) returns (bool)",
+  "function decimals() view returns (uint8)",
+  "event Transfer(address indexed from, address indexed to, uint256 value)",
+];
 
 export default function CheckoutPage(){
   const nav = useNavigate();
@@ -45,22 +59,24 @@ export default function CheckoutPage(){
 
       const orderId = await createOrderNatur();
 
-      const cfg = getWeb3Config();
+      const addr = await connectWallet();
       const eth = (window as any).ethereum;
       if (!eth) throw new Error("No wallet found. Please install MetaMask or a compatible wallet.");
 
-      await ensureChain(eth, cfg.chainIdHex);
+      await ensureChain(eth, WEB3_CFG.chainIdHex);
 
       const provider = new BrowserProvider(eth);
       const signer = await provider.getSigner();
-      const token = new Contract(cfg.tokenAddress, ERC20_ABI_MIN, signer);
+      const token = new Contract(WEB3_CFG.tokenAddress, ERC20_ABI_MIN, signer);
 
       // NATUR amount = USD total / usdPerNatur. Example: $15, 1 NATUR = $1 => 15 NATUR.
-      const naturAmount = usdTotal / cfg.usdPerNatur;
-      const amountWei = parseUnits(naturAmount.toFixed(6), cfg.tokenDecimals); // 6 dp for safety
+      const naturAmount = usdTotal / WEB3_CFG.usdPerNatur;
+      const amountWei = parseUnits(naturAmount.toFixed(6), WEB3_CFG.tokenDecimals); // 6 dp for safety
 
-      const tx = await token.transfer(cfg.treasury, amountWei);
+      const tx = await token.transfer(WEB3_CFG.treasury, amountWei);
       const receipt = await tx.wait();
+
+      await signMessage(`Order ${orderId} paid by ${shortAddress(addr)}`);
 
       const verify = await fetch("/.netlify/functions/natur-verify", {
         method: "POST",
