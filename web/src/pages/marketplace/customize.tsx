@@ -2,10 +2,8 @@ import { useParams, Link, useNavigate } from 'react-router-dom';
 import { PRODUCTS } from './index';
 import { getNavatarUrl } from '../../lib/navatar';
 import { useEffect, useState } from 'react';
-import { useCart } from '../../state/cart';
-import type { CartItem, Customization, Product } from '../../types/marketplace';
-
-const uid = () => Math.random().toString(36).slice(2);
+import { useCart, CartItem } from '../../context/CartContext';
+import type { Customization, Product } from '../../types/marketplace';
 
 export default function Customize() {
   const { sku } = useParams();
@@ -33,13 +31,18 @@ export default function Customize() {
       alert('Please set your Navatar on your Profile first.');
       return;
     }
+    const options: Record<string, string> = {};
+    if (cust.size) options.size = cust.size;
+    if (cust.color) options.color = cust.color;
+    if (cust.material) options.material = cust.material;
+    if (cust.textLine) options.textLine = cust.textLine;
     const item: CartItem = {
-      id: uid(),
-      sku: product.sku,
-      title: product.title,
-      unitNatur: unit,
-      lineNatur,
-      customization: { ...cust, navatarUrl: cust.navatarUrl },
+      id: product.sku,
+      name: product.title,
+      price: unit,
+      qty: cust.qty,
+      options,
+      thumb: cust.navatarUrl,
     };
     add(item);
     nav('/marketplace/cart');
