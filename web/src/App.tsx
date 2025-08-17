@@ -33,7 +33,7 @@ import MarketplacePage from './pages/marketplace';
 import CartPage from './pages/marketplace/cart';
 import OrdersPage from './pages/marketplace/orders';
 import OrderDetailPage from './pages/marketplace/order';
-import ItemPage from './pages/marketplace/item';
+import ProductDetail from './pages/marketplace/ProductDetail';
 import CheckoutIndex from './pages/marketplace/checkout';
 import Shipping from './pages/marketplace/checkout/Shipping';
 import CheckoutReview from './pages/marketplace/checkout/Review';
@@ -167,7 +167,7 @@ export default function App() {
             />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
-            <Route path="/marketplace/item" element={<ItemPage />} />
+            <Route path="/marketplace/item" element={<ProductDetail />} />
             <Route path="/marketplace/checkout" element={<CheckoutIndex />} />
             <Route path="/marketplace/checkout/shipping" element={<Shipping />} />
             <Route path="/marketplace/checkout/review" element={<CheckoutReview />} />

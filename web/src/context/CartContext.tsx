@@ -1,84 +1,103 @@
-import React, { createContext, useContext, useMemo, useState } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
+import {
+  CartLine,
+  loadCart,
+  saveCart,
+  onStorageSync,
+} from '../lib/cartPersist';
 
-export type CartItem = {
-  id: string;
-  name: string;
-  priceNatur: number; // price in NATUR
-  qty: number;
-  options?: Record<string, string>;
-  imageUrl?: string;
-  meta?: Record<string, unknown>;
+type CartState = {
+  items: CartLine[];
+  add(item: CartLine): void;
+  remove(id: string): void;
+  clear(): void;
+  inc(id: string): void;
+  dec(id: string): void;
+  totalNatur: number;
+  openMiniCart(): void;
 };
-
-  type CartState = {
-    items: CartItem[];
-    add(item: CartItem): void;
-    remove(id: string): void;
-    clear(): void;
-    inc(id: string): void;
-    dec(id: string): void;
-    totalNatur: number;
-  };
 
 const CartContext = createContext<CartState | undefined>(undefined);
 
-export const CartProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try {
-      const raw = localStorage.getItem('natur_cart');
-      return raw ? JSON.parse(raw) : [];
-    } catch {
-      return [];
-    }
-  });
+export const CartProvider: React.FC<{ children: React.ReactNode }> = ({
+  children,
+}) => {
+  const [items, setItems] = useState<CartLine[]>(() => loadCart());
 
-  const persist = (next: CartItem[] | ((prev: CartItem[]) => CartItem[])) => {
-    setItems(prev => {
-      const value = typeof next === 'function' ? (next as (p: CartItem[]) => CartItem[])(prev) : next;
-      try { localStorage.setItem('natur_cart', JSON.stringify(value)); } catch {}
-      return value;
+  useEffect(() => {
+    saveCart(items);
+  }, [items]);
+
+  useEffect(() => onStorageSync(setItems), []);
+
+  const persist = (updater: (prev: CartLine[]) => CartLine[]) => {
+    setItems(prev => updater(prev));
+  };
+
+  const add = (delta: CartLine) => {
+    persist(prev => {
+      const existing = prev.find(i => i.id === delta.id);
+      if (existing) {
+        const next = prev
+          .map(i =>
+            i.id === delta.id ? { ...i, qty: i.qty + delta.qty } : i,
+          )
+          .filter(i => i.qty > 0);
+        console.log('cart_qty_changed');
+        return next;
+      }
+      console.log('cart_line_added');
+      return delta.qty > 0 ? [...prev, delta] : prev;
     });
   };
 
-  const add = (delta: CartItem) => {
-    const next = (() => {
-      const existing = items.find(i => i.id === delta.id);
-      if (existing) {
-        const merged = items
-          .map(i => (i.id === delta.id ? { ...i, qty: i.qty + delta.qty } : i))
-          .filter(i => i.qty > 0);
-        return merged;
-      }
-      return delta.qty > 0 ? [...items, delta] : items;
-    })();
-    persist(next);
+  const remove = (id: string) => {
+    console.log('cart_line_removed');
+    persist(prev => prev.filter(i => i.id !== id));
   };
 
-    const remove = (id: string) => persist(prev => prev.filter(i => i.id !== id));
-    const clear = () => persist([]);
+  const clear = () => persist(() => []);
 
-    const inc = (id: string) => {
-      const line = items.find(i => i.id === id);
-      if (!line) return;
-      add({ ...line, qty: 1 });
-    };
+  const inc = (id: string) => {
+    const line = items.find(i => i.id === id);
+    if (line) add({ ...line, qty: 1 });
+  };
 
-    const dec = (id: string) => {
-      const line = items.find(i => i.id === id);
-      if (!line) return;
-      if (line.qty <= 1) remove(id);
-      else add({ ...line, qty: -1 });
-    };
+  const dec = (id: string) => {
+    const line = items.find(i => i.id === id);
+    if (!line) return;
+    if (line.qty <= 1) remove(id);
+    else add({ ...line, qty: -1 });
+  };
 
-    const totalNatur = useMemo(
-      () => items.reduce((sum, i) => sum + i.priceNatur * i.qty, 0),
-      [items]
-    );
+  const totalNatur = useMemo(
+    () => items.reduce((sum, i) => sum + i.priceNatur * i.qty, 0),
+    [items],
+  );
 
-    const value = useMemo(
-      () => ({ items, add, remove, clear, inc, dec, totalNatur }),
-      [items, totalNatur]
-    );
+  const openMiniCart = () => {
+    window.dispatchEvent(new CustomEvent('minicart:open'));
+  };
+
+  const value = useMemo(
+    () => ({
+      items,
+      add,
+      remove,
+      clear,
+      inc,
+      dec,
+      totalNatur,
+      openMiniCart,
+    }),
+    [items, totalNatur],
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 };

@@ -3,6 +3,7 @@ import { NavLink } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
 import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
+import { useCart } from '../context/CartContext';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined;
@@ -11,6 +12,9 @@ export default function Navbar() {
   const { user, signOut } = useAuth();
   const { ids } = useWishlist();
   const navigate = useNavigate();
+  const { items } = useCart();
+
+  const cartQty = items.reduce((sum, i) => sum + i.qty, 0);
 
   const navatar = (() => {
     try {
@@ -26,8 +30,18 @@ export default function Navbar() {
       <NavLink to="/worlds" className={linkClass}>Worlds</NavLink>
       <NavLink to="/zones" className={linkClass}>Zones</NavLink>
       <NavLink to="/marketplace" className={linkClass}>Marketplace</NavLink>
-      <NavLink to="/marketplace/cart" className={linkClass}>Cart</NavLink>
       <NavLink to="/marketplace/orders" className={linkClass}>Orders</NavLink>
+      <button
+        className="icon-btn"
+        style={{ position: 'relative' }}
+        onClick={() => window.dispatchEvent(new CustomEvent('minicart:open'))}
+        aria-label="Cart"
+      >
+        🛒
+        {cartQty > 0 && (
+          <span className="badge">{cartQty > 9 ? '9+' : cartQty}</span>
+        )}
+      </button>
       <button
         className="icon-btn"
         style={{ position: 'relative' }}

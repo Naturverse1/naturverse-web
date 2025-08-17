@@ -4,6 +4,7 @@ import ProductCard from '../../components/marketplace/ProductCard';
 import { applyFilters, DEFAULT_FILTERS, Item } from '../../lib/catalog';
 import { toQuery, fromQuery } from '../../lib/urlState';
 import { PRODUCTS } from '../../lib/products';
+import { useCart } from '../../context/CartContext';
 
 const allItems: Item[] = PRODUCTS.map(p => ({
   id: p.id,
@@ -35,6 +36,19 @@ export default function MarketplacePage() {
   }, [filters]);
 
   const visibleItems = useMemo(() => applyFilters(allItems, filters), [filters]);
+  const { add, openMiniCart } = useCart();
+
+  const handleAdd = (item: Item) => {
+    add({
+      id: `${item.id}::XS::Cotton`,
+      name: item.name,
+      image: item.img,
+      priceNatur: item.price,
+      qty: 1,
+      variant: { size: 'XS', material: 'Cotton' },
+    });
+    openMiniCart();
+  };
 
   return (
     <div className="page">
@@ -42,7 +56,13 @@ export default function MarketplacePage() {
       {visibleItems.length ? (
         <div className="grid">
           {visibleItems.map(item => (
-            <ProductCard key={item.id} item={item} />
+            <div key={item.id} style={{ position: 'relative' }}>
+              <ProductCard item={item} />
+              <div style={{marginTop:'.5rem', display:'flex', gap:'.5rem'}}>
+                <a href={`/marketplace/item?id=${item.id}`}>View</a>
+                <button onClick={() => handleAdd(item)}>Add</button>
+              </div>
+            </div>
           ))}
         </div>
       ) : (
