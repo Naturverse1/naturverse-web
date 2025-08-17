@@ -29,7 +29,7 @@ import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
 import ArcadeShop from './pages/zones/arcade/shop';
 import { RequireAuth } from './context/AuthContext';
-import MarketplacePage from './pages/marketplace/MarketplacePage';
+import MarketplacePage from './pages/marketplace';
 import CartPage from './pages/marketplace/cart';
 import OrdersPage from './pages/marketplace/orders';
 import OrderDetailPage from './pages/marketplace/order';

@@ -198,6 +198,36 @@ body {
   font-weight: 700;
 }
 
+/* marketplace filters */
+.filters {
+  display: grid;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+.pill {
+  padding: 6px 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  cursor: pointer;
+}
+.pill.active {
+  background: rgba(255, 255, 255, 0.08);
+}
+.grid {
+  display: grid;
+  gap: 12px;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+}
+@media (max-width: 640px) {
+  .filters {
+    position: sticky;
+    top: 56px;
+    z-index: 5;
+    background: var(--app-bg, #0a0f1c);
+    padding-top: 8px;
+  }
+}
+
 .badge {
   position: absolute; top: -6px; right: -6px;
   min-width: 18px; height: 18px; padding: 0 4px;
