@@ -70,6 +70,9 @@ export default function Navbar() {
             <NavLink to="/faq" className="menu-item" onClick={() => setMoreOpen(false)}>
               FAQ
             </NavLink>
+            <NavLink to="/settings" className="menu-item" onClick={() => setMoreOpen(false)}>
+              Settings
+            </NavLink>
             <NavLink to="/privacy" className="menu-item" onClick={() => setMoreOpen(false)}>
               Privacy
             </NavLink>

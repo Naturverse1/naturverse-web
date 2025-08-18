@@ -1,4 +1,4 @@
-import React, { Suspense } from 'react';
+import React, { Suspense, useEffect } from 'react';
 import { Routes, Route } from 'react-router-dom';
 import AppShell from './components/AppShell';
 import Home from './pages/Home';
@@ -13,7 +13,8 @@ import MusicZone from './pages/zones/MusicZone';
 import EcoLab from './pages/zones/EcoLab';
 import StoryStudio from './pages/zones/StoryStudio';
 import Parents from './pages/zones/Parents';
-import Settings from './pages/zones/Settings';
+import ZoneSettings from './pages/zones/Settings';
+import Settings from './pages/settings';
 import WellnessZone from './pages/zones/Wellness';
 import CreatorLab from './pages/zones/CreatorLab';
 import Arcade from './pages/zones/arcade';
@@ -49,8 +50,13 @@ import ToastHost from './components/ui/ToastHost';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import NotFound from './pages/errors/NotFound';
 import ServerError from './pages/errors/ServerError';
+import { applyThemeFromStorage, applyReducedMotionFromStorage } from './lib/prefs';
 
 export default function App() {
+  useEffect(() => {
+    applyThemeFromStorage();
+    applyReducedMotionFromStorage();
+  }, []);
   return (
     <ProfileProvider>
       <CartProvider>
@@ -75,7 +81,8 @@ export default function App() {
               <Route path="/zones/eco-lab" element={<EcoLab />} />
               <Route path="/zones/story-studio" element={<StoryStudio />} />
               <Route path="/zones/parents" element={<Parents />} />
-              <Route path="/zones/settings" element={<Settings />} />
+              <Route path="/zones/settings" element={<ZoneSettings />} />
+              <Route path="/settings" element={<Settings />} />
               <Route path="/zones/wellness" element={<WellnessZone />} />
               <Route path="/zones/creator-lab" element={<CreatorLab />} />
               <Route path="/zones/arcade" element={<Arcade />} />
