@@ -1,18 +1,13 @@
 [build]
-  base = "web"
-  command = "npm install --no-audit --no-fund && npm run build"
-  publish = "web/dist"
-  functions = "web/functions"
+  base    = "web"        # run commands from /web
+  publish = "dist"       # publish /web/dist
+  command = "npm ci --no-audit --no-fund && npm run build"
 
-# SPA fallback
+[functions]
+  directory = "../functions"   # top-level /functions
+
+# SPA fallback so deep links don't 404 or render blank
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
-
-# Stop SW from taking control while we debug
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Service-Worker-Allowed = "/"
-    Cache-Control = "max-age=0, no-cache, no-store, must-revalidate"
