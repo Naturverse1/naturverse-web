@@ -1,13 +1,14 @@
 [build]
-# Treat the Vite app in /web as the project root for builds
-base = "web"
-command = "npm ci --no-audit --no-fund --progress=false && npm run build"
-publish = "dist"
-functions = "functions"
+  # Run npm from the repo root, targeting the /web package
+  command = "npm --prefix web ci || npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
+  publish = "web/dist"
+  functions = "functions"
 
 [build.environment]
-NODE_VERSION = "20"
-NPM_FLAGS = "--no-audit --no-fund --progress=false"
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--no-audit --no-fund"
+  # Ensure Vite doesn’t see an overly strict CI env
+  CI = "false"
 
 [[redirects]]
   from = "/"
