@@ -556,3 +556,9 @@ body {
 .order .thumbs { display:flex; gap:6px; margin-top:6px; }
 .order .thumbs img, .order .thumbs .ph { width:32px; height:32px; border-radius:6px; background:rgba(255,255,255,.06); }
 input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.35); color:#fff; }
+.tabs { display:flex; gap:8px; margin:16px 0; }
+.tabs button { padding:8px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.05); color:#fff; }
+.tabs button.active { background:#00d1ff; color:#08121f; border-color:#00d1ff; }
+.rev { padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.1); }
+.muted { opacity:.8; }
+.small { font-size:12px; }
