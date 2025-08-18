@@ -4,13 +4,13 @@
   "type": "module",
   "engines": {
     "node": ">=20",
-    "npm": ">=9"
+    "npm": ">=10"
   },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview",
-    "lint": "eslint ."
+    "lint": "eslint \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
     "@supabase/supabase-js": "2.45.1",
