@@ -5,6 +5,7 @@ import { useWishlist } from '../context/WishlistContext';
 import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
+import { getNavatar } from '../lib/navatar';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined;
@@ -18,13 +19,7 @@ export default function Navbar() {
 
   const cartQty = items.reduce((sum, i) => sum + i.qty, 0);
 
-  const navatar = (() => {
-    try {
-      return localStorage.getItem('navatar_url');
-    } catch {
-      return null;
-    }
-  })();
+  const img = getNavatar();
 
   return (
     <nav className="navbar sticky top-0 z-50 bg-[rgba(10,10,25,.55)] backdrop-blur-md border-b border-white/10 px-4 flex items-center gap-4">
@@ -68,31 +63,14 @@ export default function Navbar() {
         {user ? (
           <>
             <NavLink to="/account" className={linkClass}>Account</NavLink>
-            <NavLink to="/profile" style={{ display: 'inline-flex', alignItems: 'center', gap: '.5rem' }} className={linkClass}>
-              {navatar ? (
-                <img
-                  src={navatar}
-                  alt="Navatar"
-                  width={28}
-                  height={28}
-                  style={{ borderRadius: '50%', objectFit: 'cover' }}
-                />
-              ) : (
-                <div
-                  style={{
-                    width: 28,
-                    height: 28,
-                    borderRadius: '50%',
-                    background: 'rgba(255,255,255,.12)',
-                    display: 'grid',
-                    placeItems: 'center',
-                    fontSize: 12,
-                  }}
-                >
-                  {user.email?.[0]?.toUpperCase() || 'U'}
-                </div>
-              )}
-              <span>Profile</span>
+            <NavLink to="/profile" className={linkClass}>
+              <div className="avatar-sm">
+                {img ? (
+                  <img src={img} alt="Me" />
+                ) : (
+                  <div className="avatar-empty">{user.email?.[0]?.toUpperCase() || 'U'}</div>
+                )}
+              </div>
             </NavLink>
             <button onClick={signOut}>Sign out</button>
           </>
