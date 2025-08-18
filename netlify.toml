@@ -13,3 +13,16 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Disable cache for HTML during recovery
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+
+# Allow sourcemaps to be fetched
+[[headers]]
+  for = "/assets/*.map"
+  [headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate"
+    Access-Control-Allow-Origin = "*"

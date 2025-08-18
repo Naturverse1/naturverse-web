@@ -8,13 +8,20 @@ import "./styles/app.css";
 import "./styles/themes.css";
 import { applyTheme, onThemeChange } from "./lib/theme";
 import { ThemeProvider } from './context/ThemeContext';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 applyTheme();
 onThemeChange(() => applyTheme());
 
+try {
+  console.info('[Naturverse] boot:start', { ts: new Date().toISOString(), env: import.meta.env.MODE });
+  localStorage.setItem('naturverse_boot', new Date().toISOString());
+} catch {}
+
 ReactDOM.createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <BrowserRouter>
+    <ErrorBoundary>
+      <BrowserRouter>
         <ThemeProvider>
           <AuthProvider>
             <App />
@@ -22,8 +29,9 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>
-    </React.StrictMode>
-  );
+    </ErrorBoundary>
+  </React.StrictMode>
+);
 
 if ('serviceWorker' in navigator) {
   window.addEventListener('load', () => {
