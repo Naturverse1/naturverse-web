@@ -10,6 +10,7 @@ import ReviewList from '../../components/reviews/ReviewList';
 import QAList from '../../components/qa/QAList';
 import RatingStars from '../../components/reviews/RatingStars';
 import { getReviewSummary } from '../../lib/supaReviews';
+import { isFav, toggleFav, subscribe, unsubscribe } from '../../lib/wishlist';
 
 const allItems: Item[] = PRODUCTS.map(p => ({
   id: p.id,
@@ -28,6 +29,7 @@ export default function ProductDetail() {
   const id = sp.get('id') || '';
   const product = getProduct(id);
   const { add, openMiniCart } = useCart();
+  const [fav, setFav] = useState(isFav(id));
 
   const images = product && (product as any).images ? (product as any).images : [product?.img || ''];
   const sizes = (product as any)?.variants?.sizes || DEF_SIZES;
@@ -45,6 +47,12 @@ export default function ProductDetail() {
   useEffect(() => {
     if (product) pushRecent(product.id);
   }, [product?.id]);
+
+  useEffect(() => {
+    const cb = (ids: string[]) => setFav(ids.includes(id));
+    subscribe(cb);
+    return () => unsubscribe(cb);
+  }, [id]);
 
   useEffect(() => {
     if (product) {
@@ -96,8 +104,16 @@ export default function ProductDetail() {
       <div style={{display:'grid', gap:'1rem', marginTop:'1rem'}}>
         <Gallery images={images} />
         <div>
-          <h1>
+          <h1 style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             {product.name}
+            <button
+              className="icon-btn"
+              aria-label={fav ? 'Remove from wishlist' : 'Add to wishlist'}
+              aria-pressed={fav}
+              onClick={() => setFav(toggleFav(product.id))}
+            >
+              {fav ? '♥' : '♡'}
+            </button>
             {summary.count > 0 && (
               <span style={{ marginLeft: '.5rem', fontSize: '0.9rem' }}>
                 <RatingStars value={summary.avg} readOnly size={14} />

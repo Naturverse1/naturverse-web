@@ -1,21 +1,26 @@
-import React from 'react';
-import { NavLink } from 'react-router-dom';
+import React, { useEffect, useState } from 'react';
+import { NavLink, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { useWishlist } from '../context/WishlistContext';
-import { useNavigate } from 'react-router-dom';
 import { useCart } from '../context/CartContext';
 import { useTheme } from '../context/ThemeContext';
 import { getNavatar } from '../lib/navatar';
+import { getWishlist, subscribe, unsubscribe } from '../lib/wishlist';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   isActive ? 'nav-active' : undefined;
 
 export default function Navbar() {
   const { user, signOut } = useAuth();
-  const { ids } = useWishlist();
   const navigate = useNavigate();
   const { items } = useCart();
   const { theme, setTheme } = useTheme();
+  const [wishCount, setWishCount] = useState(getWishlist().length);
+
+  useEffect(() => {
+    const cb = (ids: string[]) => setWishCount(ids.length);
+    subscribe(cb);
+    return () => unsubscribe(cb);
+  }, []);
 
   const cartQty = items.reduce((sum, i) => sum + i.qty, 0);
 
@@ -41,12 +46,12 @@ export default function Navbar() {
       <button
         className="icon-btn"
         style={{ position: 'relative' }}
-        onClick={() => navigate('/marketplace/wishlist')}
+        onClick={() => navigate('/account/wishlist')}
         aria-label="Wishlist"
       >
         ♥
-        {ids.length > 0 && (
-          <span className="badge">{ids.length > 9 ? '9+' : ids.length}</span>
+        {wishCount > 0 && (
+          <span className="wishlist-badge">{wishCount > 9 ? '9+' : wishCount}</span>
         )}
       </button>
 

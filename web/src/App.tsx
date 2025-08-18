@@ -40,19 +40,17 @@ import CheckoutReview from './pages/marketplace/checkout/Review';
 import PayPage from './pages/marketplace/checkout/Pay';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
-import { WishlistProvider } from './context/WishlistContext';
-import WishlistPage from './pages/marketplace/Wishlist';
 import OrderSuccess from './pages/marketplace/OrderSuccess';
 import AccountHome from './pages/account/AccountHome';
 import OrdersList from './pages/account/OrdersList';
 import AccountOrderDetail from './pages/account/OrderDetail';
 import Addresses from './pages/account/Addresses';
+import Wishlist from './pages/account/Wishlist';
 
 export default function App() {
   return (
     <ProfileProvider>
       <CartProvider>
-        <WishlistProvider>
           <Routes>
           <Route element={<AppShell />}> 
             <Route path="/" element={<Home />} />
@@ -202,6 +200,14 @@ export default function App() {
                 </RequireAuth>
               }
             />
+            <Route
+              path="/account/wishlist"
+              element={
+                <RequireAuth>
+                  <Wishlist />
+                </RequireAuth>
+              }
+            />
             <Route path="/marketplace" element={<MarketplacePage />} />
             <Route path="/marketplace/cart" element={<CartPage />} />
             <Route path="/marketplace/item" element={<ProductDetail />} />
@@ -209,7 +215,6 @@ export default function App() {
             <Route path="/marketplace/checkout/shipping" element={<Shipping />} />
             <Route path="/marketplace/checkout/review" element={<CheckoutReview />} />
             <Route path="/marketplace/checkout/pay" element={<PayPage />} />
-            <Route path="/marketplace/wishlist" element={<WishlistPage />} />
             <Route path="/marketplace/success/:id" element={<OrderSuccess />} />
             <Route path="/marketplace/orders" element={<OrdersPage />} />
             <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
@@ -221,7 +226,6 @@ export default function App() {
           {/* global styles */}
           <link rel="stylesheet" href="/src/styles/ui.css" />
           <link rel="stylesheet" href="/src/styles/marketplace.css" />
-        </WishlistProvider>
       </CartProvider>
     </ProfileProvider>
   );
