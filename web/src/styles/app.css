@@ -538,3 +538,21 @@ body {
   align-items: center;
   padding: 0 4px;
 }
+.panel { background: rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); border-radius:12px; padding:16px; }
+.line { display:flex; align-items:center; gap:12px; padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.08); }
+.line:last-child { border-bottom:0; }
+.line img { width:56px; height:56px; object-fit:cover; border-radius:8px; }
+.line .info { flex:1; }
+.line .qty { display:flex; gap:8px; align-items:center; }
+.line .qty input { width:56px; text-align:center; }
+.row { display:flex; justify-content:space-between; margin:6px 0; }
+.row.total { font-weight:700; }
+.primary { background:#00d1ff; color:#09121f; border:0; padding:10px 14px; border-radius:10px; font-weight:700; }
+.button { border:1px solid rgba(255,255,255,.2); padding:10px 14px; border-radius:10px; }
+.link { background:none; border:0; color:#7fe3ff; cursor:pointer; }
+.link.danger { color:#ff7f9e; }
+.nv-nav .badge { margin-left:6px; background:#00d1ff; color:#09121f; border-radius:999px; padding:2px 8px; font-weight:800; }
+.order { padding:12px 0; border-bottom:1px dashed rgba(255,255,255,.1); }
+.order .thumbs { display:flex; gap:6px; margin-top:6px; }
+.order .thumbs img, .order .thumbs .ph { width:32px; height:32px; border-radius:6px; background:rgba(255,255,255,.06); }
+input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; border:1px solid rgba(255,255,255,.18); background:rgba(0,0,0,.35); color:#fff; }

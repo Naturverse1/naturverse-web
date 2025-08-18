@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ProductCard from '../../components/marketplace/ProductCard';
+import { addToCart } from '../../lib/cart';
 import CategoryChips from '../../components/filters/CategoryChips';
 import PriceRange from '../../components/filters/PriceRange';
 import SortSelect from '../../components/filters/SortSelect';
@@ -129,7 +130,12 @@ export default function MarketplacePage() {
           <p className="results-count">Showing {pageItems.length} of {filtered.length}</p>
           <div className="grid">
             {pageItems.map(item => (
-              <ProductCard key={item.id} item={item} />
+              <div key={item.id} className="card">
+                <ProductCard item={item} />
+                <button className="button" style={{marginTop:'8px'}} onClick={()=> addToCart({ id:item.id, name:item.name, price:item.price, image:item.img, qty:1 })}>
+                  Add to cart
+                </button>
+              </div>
             ))}
           </div>
           <Pagination page={state.page} pages={pages} onChange={handlePage} />
