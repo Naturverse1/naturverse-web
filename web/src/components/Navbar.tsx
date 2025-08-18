@@ -3,7 +3,6 @@ import { getCart } from '../lib/cart';
 import { getWishlist, subscribe as subWish, unsubscribe as unsubWish } from '../lib/wishlist';
 import { Link, NavLink } from 'react-router-dom';
 import UserMenu from './UserMenu';
-import SearchBar from './SearchBar';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   (isActive ? 'nav-active' : undefined);
@@ -40,6 +39,7 @@ export default function Navbar() {
       document.removeEventListener('keydown', onKey);
     };
   }, []);
+  const openPalette = () => window.dispatchEvent(new CustomEvent('nv_palette_open'));
   return (
     <nav
       style={{
@@ -97,7 +97,7 @@ export default function Navbar() {
         )}
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '16px', alignItems: 'center' }}>
-        <SearchBar />
+        <button onClick={openPalette} className="nav-search">Search (⌘K)</button>
         <NavLink to="/account/wishlist" className={linkClass}>
           Wishlist {wishCount ? <span className="badge">{wishCount}</span> : null}
         </NavLink>
