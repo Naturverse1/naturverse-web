@@ -341,8 +341,50 @@ body {
   .icon-btn { appearance: none; background: transparent; border: 0; cursor: pointer; }
   .icon-btn[aria-pressed="true"] { color: #ef4444; }
 
-  .field-error { color:#ef4444; font-size:12px; margin-top:4px; }
-  .field { display:flex; flex-direction:column; gap:4px; }
+.field-error { color:#ef4444; font-size:12px; margin-top:4px; }
+.field { display:flex; flex-direction:column; gap:4px; }
+
+/* Floating feedback button */
+.nv-feedback-btn {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: var(--accent);
+  color: var(--bg);
+  border: none;
+  cursor: pointer;
+  z-index: 50;
+}
+
+.nv-feedback-panel {
+  position: fixed;
+  right: 16px;
+  bottom: 72px;
+  width: 260px;
+  background: var(--panel);
+  border: 1px solid var(--panel-b);
+  border-radius: 8px;
+  padding: 12px;
+  opacity: 0;
+  transform: translateY(8px);
+  pointer-events: none;
+  transition: opacity .2s ease, transform .2s ease;
+  z-index: 50;
+}
+
+.nv-feedback-panel.open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+
+html.reduced-motion .nv-feedback-panel {
+  transition: none;
+  transform: none;
+}
   .row { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
   @media (max-width:640px){ .row { grid-template-columns:1fr; } }
 

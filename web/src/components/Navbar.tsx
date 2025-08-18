@@ -82,6 +82,9 @@ export default function Navbar() {
             <NavLink to="/contact" className="menu-item" onClick={() => setMoreOpen(false)}>
               Contact
             </NavLink>
+            <NavLink to="/support" className="menu-item" onClick={() => setMoreOpen(false)}>
+              Support
+            </NavLink>
           </div>
         )}
       </div>
