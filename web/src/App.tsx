@@ -37,6 +37,9 @@ import ProductDetail from './pages/marketplace/ProductDetail';
 import Checkout from './pages/marketplace/Checkout';
 import Success from './pages/marketplace/Success';
 import Orders from './pages/account/Orders';
+import Addresses from './pages/account/Addresses';
+import AccountOrderDetail from './pages/account/OrderDetail';
+import Wishlist from './pages/account/Wishlist';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 
@@ -44,40 +47,40 @@ export default function App() {
   return (
     <ProfileProvider>
       <CartProvider>
-        <Suspense fallback={<div className="container" style={{padding:'24px'}}>Loading...</div>}>
+        <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
           <Routes>
-          <Route element={<AppShell />}>
-            <Route path="/" element={<Home />} />
-            <Route path="/about" element={<About />} />
-            <Route path="/story-studio" element={<StoryStudioPage />} />
-            <Route path="/auto-quiz" element={<AutoQuiz />} />
-            <Route path="/worlds" element={<Worlds />} />
-            <Route path="/worlds/:slug" element={<World />} />
-            <Route path="/zones" element={<ZonesHub />} />
-            <Route path="/zones/naturversity" element={<Naturversity />} />
-            <Route path="/zones/music" element={<MusicZone />} />
-            <Route path="/zones/eco-lab" element={<EcoLab />} />
-            <Route path="/zones/story-studio" element={<StoryStudio />} />
-            <Route path="/zones/parents" element={<Parents />} />
-            <Route path="/zones/settings" element={<Settings />} />
-            <Route path="/zones/wellness" element={<WellnessZone />} />
-            <Route path="/zones/creator-lab" element={<CreatorLab />} />
-            <Route path="/zones/arcade" element={<Arcade />} />
-            <Route path="/zones/arcade/eco-runner" element={<EcoRunner />} />
-            <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
-            <Route path="/zones/arcade/word-builder" element={<WordBuilder />} />
-            <Route path="/zones/arcade/shop" element={<ArcadeShop />} />
-            <Route path="/zones/community" element={<Community />} />
-            <Route path="/naturversity/lesson/:id" element={<Lesson />} />
-            <Route path="/app" element={<AppHome />} />
-            <Route
-              path="/profile"
-              element={
-                <RequireAuth>
-                  <Profile />
-                </RequireAuth>
-              }
-            />
+            <Route element={<AppShell />}>
+              <Route path="/" element={<Home />} />
+              <Route path="/about" element={<About />} />
+              <Route path="/story-studio" element={<StoryStudioPage />} />
+              <Route path="/auto-quiz" element={<AutoQuiz />} />
+              <Route path="/worlds" element={<Worlds />} />
+              <Route path="/worlds/:slug" element={<World />} />
+              <Route path="/zones" element={<ZonesHub />} />
+              <Route path="/zones/naturversity" element={<Naturversity />} />
+              <Route path="/zones/music" element={<MusicZone />} />
+              <Route path="/zones/eco-lab" element={<EcoLab />} />
+              <Route path="/zones/story-studio" element={<StoryStudio />} />
+              <Route path="/zones/parents" element={<Parents />} />
+              <Route path="/zones/settings" element={<Settings />} />
+              <Route path="/zones/wellness" element={<WellnessZone />} />
+              <Route path="/zones/creator-lab" element={<CreatorLab />} />
+              <Route path="/zones/arcade" element={<Arcade />} />
+              <Route path="/zones/arcade/eco-runner" element={<EcoRunner />} />
+              <Route path="/zones/arcade/memory-match" element={<MemoryMatch />} />
+              <Route path="/zones/arcade/word-builder" element={<WordBuilder />} />
+              <Route path="/zones/arcade/shop" element={<ArcadeShop />} />
+              <Route path="/zones/community" element={<Community />} />
+              <Route path="/naturversity/lesson/:id" element={<Lesson />} />
+              <Route path="/app" element={<AppHome />} />
+              <Route
+                path="/profile"
+                element={
+                  <RequireAuth>
+                    <Profile />
+                  </RequireAuth>
+                }
+              />
               <Route path="/marketplace" element={<MarketplacePage />} />
               <Route path="/marketplace/cart" element={<CartPage />} />
               <Route path="/marketplace/item" element={<ProductDetail />} />
@@ -85,11 +88,42 @@ export default function App() {
               <Route path="/marketplace/success" element={<Success />} />
               <Route path="/marketplace/orders" element={<OrdersPage />} />
               <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
-              <Route path="/account/orders" element={<Orders />} />
-            <Route path="*" element={<NotFound />} />
-          </Route>
-          <Route path="/login" element={<Login />} />
-          <Route path="/auth/callback" element={<AuthCallback />} />
+              <Route
+                path="/account/orders"
+                element={
+                  <RequireAuth>
+                    <Orders />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/account/orders/:id"
+                element={
+                  <RequireAuth>
+                    <AccountOrderDetail />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/account/addresses"
+                element={
+                  <RequireAuth>
+                    <Addresses />
+                  </RequireAuth>
+                }
+              />
+              <Route
+                path="/account/wishlist"
+                element={
+                  <RequireAuth>
+                    <Wishlist />
+                  </RequireAuth>
+                }
+              />
+              <Route path="*" element={<NotFound />} />
+            </Route>
+            <Route path="/login" element={<Login />} />
+            <Route path="/auth/callback" element={<AuthCallback />} />
           </Routes>
         </Suspense>
         {/* global styles */}
