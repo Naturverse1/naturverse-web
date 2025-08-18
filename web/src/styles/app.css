@@ -455,3 +455,86 @@ body {
   gap: 12px;
   grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
 }
+/* Marketplace filters and pagination */
+.filters-bar {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  margin-bottom: 1rem;
+}
+@media (min-width: 768px) {
+  .filters-bar {
+    position: sticky;
+    top: 0;
+    background: var(--bg);
+    padding: 0.5rem 0;
+    z-index: 10;
+  }
+}
+.filters-bar input[type="search"] {
+  flex: 1;
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-b);
+  background: var(--panel);
+  color: inherit;
+}
+.sort-select {
+  padding: 6px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-b);
+  background: var(--panel);
+  color: inherit;
+}
+.filters-side {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-bottom: 1rem;
+}
+.chip {
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid var(--panel-b);
+  background: var(--panel);
+  cursor: pointer;
+}
+.chip[aria-pressed="true"] {
+  background: var(--accent);
+  color: var(--bg);
+}
+.price-range {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+.price-range input {
+  width: 80px;
+  padding: 4px 6px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-b);
+  background: var(--panel);
+  color: inherit;
+}
+.pagination {
+  display: flex;
+  justify-content: center;
+  gap: 4px;
+  margin: 1rem 0;
+}
+.pagination button {
+  padding: 4px 8px;
+  border-radius: 6px;
+  border: 1px solid var(--panel-b);
+  background: var(--panel);
+  color: inherit;
+}
+.pagination button[aria-current="page"] {
+  background: var(--accent);
+  color: var(--bg);
+}
+.pagination .ellipsis {
+  display: flex;
+  align-items: center;
+  padding: 0 4px;
+}

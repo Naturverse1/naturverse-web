@@ -1,15 +1,20 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import FilterBar, { Filters } from '../../components/marketplace/FilterBar';
 import ProductCard from '../../components/marketplace/ProductCard';
-import { applyFilters, DEFAULT_FILTERS, Item as CatItem } from '../../lib/catalog';
-import { toQuery, fromQuery } from '../../lib/urlState';
+import CategoryChips from '../../components/filters/CategoryChips';
+import PriceRange from '../../components/filters/PriceRange';
+import SortSelect from '../../components/filters/SortSelect';
+import Pagination from '../../components/Pagination';
 import { PRODUCTS } from '../../lib/products';
-import { useCart } from '../../context/CartContext';
-import RecoStrip from '../../components/RecoStrip';
-import { recentItems, Item as RItem } from '../../lib/reco';
-import { getReviewSummaries } from '../../lib/supaReviews';
+import {
+  applyFilters,
+  slicePage,
+  parseQuery,
+  stringifyQuery,
+  FilterState,
+} from '../../lib/catalogFilter';
+import { useLocation, useNavigate } from 'react-router-dom';
 
-const allItems: CatItem[] = PRODUCTS.map(p => ({
+const allItems = PRODUCTS.map(p => ({
   id: p.id,
   name: p.name,
   price: p.baseNatur,
@@ -18,92 +23,123 @@ const allItems: CatItem[] = PRODUCTS.map(p => ({
   img: p.img,
 }));
 
-const recoItems: RItem[] = PRODUCTS.map(p => ({
-  id: p.id,
-  name: p.name,
-  price: p.baseNatur,
-  category: p.category,
-  image: p.img,
-  createdAt: p.createdAt,
-}));
-
 const categories = Array.from(new Set(allItems.map(i => i.category)));
 
 export default function MarketplacePage() {
-  const saved = (() => {
-    try {
-      return JSON.parse(localStorage.getItem('natur_mp_filters') || '');
-    } catch {
-      return null;
-    }
-  })();
-  const [filters, setFilters] = useState<Filters>(
-    location.search ? fromQuery(location.search) : saved || DEFAULT_FILTERS,
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const [state, setState] = useState<FilterState>(() => parseQuery(location.search));
+  const [searchInput, setSearchInput] = useState(state.q);
+  const [pageSize, setPageSize] = useState(() => (window.innerWidth < 640 ? 12 : 24));
+
+  useEffect(() => {
+    const onResize = () => setPageSize(window.innerWidth < 640 ? 12 : 24);
+    window.addEventListener('resize', onResize);
+    return () => window.removeEventListener('resize', onResize);
+  }, []);
+
+  // sync URL
+  useEffect(() => {
+    const search = stringifyQuery(state);
+    if (search !== location.search) navigate({ search }, { replace: true });
+  }, [state, location.search, navigate]);
+
+  // respond to back/forward
+  useEffect(() => {
+    const parsed = parseQuery(location.search);
+    setState(prev => {
+      const prevQ = stringifyQuery(prev);
+      return prevQ === location.search ? prev : parsed;
+    });
+  }, [location.search]);
+
+  // debounce search input to state
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setState(prev => ({ ...prev, q: searchInput, page: 1 }));
+    }, 250);
+    return () => clearTimeout(t);
+  }, [searchInput]);
+
+  // telemetry for filter changes
+  useEffect(() => {
+    const t = setTimeout(() => {
+      const { q, cats, min, max, sort } = state;
+      console.log('mp_filter_change', { q, cats, min, max, sort });
+    }, 250);
+    return () => clearTimeout(t);
+  }, [state.q, state.cats, state.min, state.max, state.sort]);
+
+  const filtered = useMemo(() => applyFilters(allItems, state), [state]);
+
+  useEffect(() => {
+    console.log('mp_result_count', { count: filtered.length });
+  }, [filtered.length]);
+
+  const { pageItems, pages } = useMemo(
+    () => slicePage(filtered, state.page, pageSize),
+    [filtered, state.page, pageSize],
   );
 
   useEffect(() => {
-    localStorage.setItem('natur_mp_filters', JSON.stringify(filters));
-    const q = toQuery(filters);
-    window.history.replaceState(null, '', q);
-  }, [filters]);
+    if (state.page > pages) setState(prev => ({ ...prev, page: pages }));
+  }, [pages, state.page]);
 
-  const visibleItems = useMemo(() => applyFilters(allItems, filters), [filters]);
-  const { add, openMiniCart } = useCart();
-  const [recent, setRecent] = useState<RItem[]>(() => recentItems(recoItems));
-  const [summaries, setSummaries] = useState<Record<string, { avg: number; count: number }>>({});
+  const handleUpdate = (next: Partial<FilterState>) => {
+    setState(prev => ({ ...prev, ...next, page: 1 }));
+  };
 
-  useEffect(() => {
-    const onStorage = (e: StorageEvent) => {
-      if (e.key === 'natur_recent_v1') setRecent(recentItems(recoItems));
-    };
-    window.addEventListener('storage', onStorage);
-    return () => window.removeEventListener('storage', onStorage);
-  }, []);
+  const handlePage = (p: number) => {
+    setState(prev => ({ ...prev, page: p }));
+    console.log('mp_page_change', { page: p });
+  };
 
-  useEffect(() => {
-    getReviewSummaries(visibleItems.map(v => v.id)).then(res => setSummaries(res));
-  }, [visibleItems]);
-
-  const handleAdd = (item: CatItem) => {
-    add({
-      id: `${item.id}::XS::Cotton`,
-      name: item.name,
-      image: item.img,
-      priceNatur: item.price,
-      qty: 1,
-      variant: { size: 'XS', material: 'Cotton' },
-    });
-    openMiniCart();
+  const reset = () => {
+    const base = { q: '', cats: [], min: 0, max: Infinity, sort: 'relevance', page: 1 };
+    setState(base);
+    setSearchInput('');
   };
 
   return (
-    <div className="page">
-      <FilterBar filters={filters} categories={categories} onChange={setFilters} />
-      {visibleItems.length ? (
-        <div className="grid">
-          {visibleItems.map(item => (
-            <div key={item.id} style={{ position: 'relative' }}>
-              <ProductCard item={item} />
-              {summaries[item.id] && summaries[item.id].count > 0 && (
-                <div className="rating-row">
-                  ★ {summaries[item.id].avg.toFixed(1)} · {summaries[item.id].count}
-                </div>
-              )}
-              <div style={{marginTop:'.5rem', display:'flex', gap:'.5rem'}}>
-                <a href={`/marketplace/item?id=${item.id}`}>View</a>
-                <button onClick={() => handleAdd(item)}>Add</button>
-              </div>
-            </div>
-          ))}
-        </div>
+    <div className="page-container">
+      <div className="filters-bar">
+        <input
+          type="search"
+          placeholder="Search Naturverse…"
+          value={searchInput}
+          onChange={e => setSearchInput(e.target.value)}
+        />
+        <SortSelect value={state.sort} onChange={v => handleUpdate({ sort: v })} />
+      </div>
+      <div className="filters-side">
+        <CategoryChips
+          categories={categories}
+          selected={state.cats}
+          onChange={cats => handleUpdate({ cats })}
+        />
+        <PriceRange
+          min={state.min}
+          max={state.max}
+          onChange={(min, max) => handleUpdate({ min, max })}
+        />
+      </div>
+      {pageItems.length ? (
+        <>
+          <p className="results-count">Showing {pageItems.length} of {filtered.length}</p>
+          <div className="grid">
+            {pageItems.map(item => (
+              <ProductCard key={item.id} item={item} />
+            ))}
+          </div>
+          <Pagination page={state.page} pages={pages} onChange={handlePage} />
+        </>
       ) : (
-        <div>
-          <p>No results. Try clearing filters.</p>
-          <button onClick={() => setFilters(DEFAULT_FILTERS)}>Clear filters</button>
+        <div className="empty">
+          <p>No matches. Try clearing filters.</p>
+          <button onClick={reset}>Reset</button>
         </div>
       )}
-      <RecoStrip title="Because you viewed" items={recent.slice(0, 8)} source="catalog" />
     </div>
   );
 }
-
