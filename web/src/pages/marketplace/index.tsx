@@ -8,6 +8,7 @@ import PriceRange from '../../components/filters/PriceRange';
 import SortSelect from '../../components/filters/SortSelect';
 import Pagination from '../../components/Pagination';
 import { PRODUCTS } from '../../lib/products';
+import Seo from '../../components/Seo';
 import {
   applyFilters,
   slicePage,
@@ -120,7 +121,9 @@ export default function MarketplacePage() {
   };
 
   return (
-    <div className="page-container">
+    <>
+      <Seo title="Marketplace" description="Browse products on The Naturverse" />
+      <div className="page-container">
       <div className="filters-bar">
         <input
           type="search"
@@ -175,6 +178,7 @@ export default function MarketplacePage() {
           <button onClick={reset}>Reset</button>
         </div>
       )}
-    </div>
+      </div>
+    </>
   );
 }

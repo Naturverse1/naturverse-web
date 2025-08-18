@@ -580,3 +580,5 @@ input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; bor
 .overlay { position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.45); backdrop-filter: blur(2px); z-index: 9998; }
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (max-width:640px){ .toast-host{left:50%; right:auto; transform:translateX(-50%);} }
+.share-row { display:flex; gap:8px; margin-top:1rem; }
+.share-row button { padding:6px 12px; border:1px solid var(--panel-b); background:var(--panel); border-radius:6px; }
