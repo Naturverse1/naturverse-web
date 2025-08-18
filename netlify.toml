@@ -1,8 +1,8 @@
 [build]
 # Build the site from the /web folder
 base = "web"
-# Use npm install so CI can generate a lockfile if needed
-command = "npm install --no-audit --no-fund && npm run build"
+# Use npm ci for reproducible installs
+command = "npm ci --no-audit --no-fund && npm run build"
 # Dist is inside /web when base is set to "web"
 publish = "dist"
 # Functions directory is relative to base; do NOT prefix with another "web"

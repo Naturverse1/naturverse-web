@@ -1,13 +1,14 @@
 import React from 'react';
+import ErrorOverlay, { getErrorLog } from './ErrorOverlay';
 
 type Props = { children: React.ReactNode };
-type State = { hasError: boolean; message?: string };
+type State = { hasError: boolean; error?: Error };
 
 export class ErrorBoundary extends React.Component<Props, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError(err: unknown) {
-    return { hasError: true, message: err instanceof Error ? err.message : String(err) };
+  static getDerivedStateFromError(err: unknown): State {
+    return { hasError: true, error: err instanceof Error ? err : new Error(String(err)) };
   }
 
   componentDidCatch(error: unknown, info: unknown) {
@@ -16,6 +17,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
         ts: new Date().toISOString(),
         error: error instanceof Error ? { message: error.message, stack: error.stack } : String(error),
         info,
+        log: getErrorLog(),
       };
       console.error('[Naturverse] App crashed', payload);
       const key = 'naturverse_last_error';
@@ -24,30 +26,14 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   render() {
-    if (this.state.hasError) {
+    if (this.state.hasError && this.state.error) {
+      if (import.meta.env.PROD) {
+        return <ErrorOverlay error={this.state.error} />;
+      }
       return (
-        <div
-          style={{
-            minHeight: '100vh',
-            display: 'grid',
-            placeItems: 'center',
-            padding: '24px',
-            color: '#fff',
-            background: '#0b1020',
-          }}
-        >
-          <div style={{ maxWidth: 680, textAlign: 'center' }}>
-            <h1 style={{ margin: '0 0 12px' }}>Something went wrong</h1>
-            <p style={{ opacity: 0.8 }}>
-              Try a hard refresh. If that doesn’t work, clear site data/cache.
-              {/* If we previously had a SW, let users bust cache */}
-              <br />
-              <a href="/?cache-bust=1">Reload</a>
-            </p>
-            {this.state.message && (
-              <code style={{ display: 'block', marginTop: 12, opacity: 0.7 }}>{this.state.message}</code>
-            )}
-          </div>
+        <div style={{ padding: '24px', color: '#fff', background: '#0b1020' }}>
+          <h1>Something went wrong</h1>
+          <pre>{this.state.error.message}</pre>
         </div>
       );
     }
