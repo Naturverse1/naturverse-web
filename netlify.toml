@@ -1,16 +1,16 @@
 [build]
-  base = "web"
-  command = "npm install --no-audit --no-fund && npm run build"
-  publish = "web/dist"
-  functions = "web/functions"
+base = "web"
+command = "npm install --no-audit --no-fund && npm run build"
+publish = "web/dist"
 
 [functions]
-  node_bundler = "esbuild"
+directory = "web/functions"
+node_bundler = "esbuild"
 
 [[plugins]]
-  package = "@netlify/plugin-functions-install-core"
+package = "@netlify/plugin-functions-install-core"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
