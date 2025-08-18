@@ -1,24 +1,19 @@
+# netlify.toml  (root)
+
 [build]
-command = "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
-publish = "web/dist"
+  base    = "web"
+  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "web/dist"
+
+[functions]
+  directory = "web/functions"
+
+# Force SPA fallback for Vite/React routes
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
 
 [build.environment]
-NODE_VERSION = "20"
-NPM_CONFIG_FUND = "false"
-NPM_CONFIG_AUDIT = "false"
-
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
-[[headers]]
-  for = "/sw.js"
-  [headers.values]
-    Cache-Control = "no-cache"
-    Service-Worker-Allowed = "/"
-
-[[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--no-audit --no-fund"
