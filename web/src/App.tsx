@@ -19,7 +19,11 @@ import CreatorLab from './pages/zones/CreatorLab';
 import Arcade from './pages/zones/arcade';
 import Community from './pages/zones/Community';
 import Lesson from './pages/naturversity/Lesson';
-import About from './pages/About';
+import About from './pages/about';
+import FAQ from './pages/faq';
+import Privacy from './pages/privacy';
+import Terms from './pages/terms';
+import Contact from './pages/contact';
 import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
@@ -57,6 +61,10 @@ export default function App() {
             <Route element={<AppShell />}>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
+              <Route path="/faq" element={<FAQ />} />
+              <Route path="/privacy" element={<Privacy />} />
+              <Route path="/terms" element={<Terms />} />
+              <Route path="/contact" element={<Contact />} />
               <Route path="/story-studio" element={<StoryStudioPage />} />
               <Route path="/auto-quiz" element={<AutoQuiz />} />
               <Route path="/worlds" element={<Worlds />} />

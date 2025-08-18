@@ -274,6 +274,7 @@ body {
 }
 
 .page {
+  flex: 1;
   max-width: 1200px;
   margin: 0 auto;
   padding: clamp(16px, 3vw, 32px);
@@ -582,3 +583,6 @@ input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; bor
 @media (max-width:640px){ .toast-host{left:50%; right:auto; transform:translateX(-50%);} }
 .share-row { display:flex; gap:8px; margin-top:1rem; }
 .share-row button { padding:6px 12px; border:1px solid var(--panel-b); background:var(--panel); border-radius:6px; }
+.site-footer { padding:32px 16px; background:rgba(10,16,32,.8); border-top:1px solid rgba(255,255,255,.1); }
+.site-footer .footer-links, .site-footer .footer-social { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
+.site-footer .footer-links { margin-bottom:12px; }
