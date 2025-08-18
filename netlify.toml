@@ -1,10 +1,10 @@
 [build]
   base = "web"
-  command = "npm install --no-audit --no-fund && npm run build"
+  command = "npm ci --no-audit --no-fund && npm run build"
   publish = "dist"
 
 [functions]
-  directory = "functions"
+  directory = "web/functions"
 
 [[redirects]]
   from = "/*"
