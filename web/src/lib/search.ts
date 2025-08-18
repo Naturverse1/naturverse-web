@@ -1,3 +1,25 @@
+import { PRODUCTS } from './products';
+
+export type SearchableItem = {
+  id: string;
+  title: string;
+  description?: string;
+  priceNatur?: number;
+  tags?: string[];
+  image?: string;
+};
+
+export function seedProducts(): SearchableItem[] {
+  return PRODUCTS.map(p => ({
+    id: p.id,
+    title: p.name ?? `Item ${p.id}`,
+    description: '',
+    priceNatur: p.baseNatur ?? 0,
+    tags: p.category ? [p.category] : [],
+    image: p.img,
+  }));
+}
+
 export type SearchItem = {
   id: string;
   kind: 'page' | 'product' | 'account';
@@ -6,8 +28,6 @@ export type SearchItem = {
   path: string;
   keywords?: string[];
 };
-
-import { PRODUCTS } from './products';
 
 const BASE_ITEMS: SearchItem[] = [
   { id: 'home', kind: 'page', title: 'Home', path: '/' },
@@ -31,8 +51,6 @@ function getProductItems(): SearchItem[] {
   }));
   return productCache;
 }
-
-export const seedProducts = () => PRODUCTS;
 
 export function getBaseItems(): SearchItem[] {
   return BASE_ITEMS;
