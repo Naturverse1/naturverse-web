@@ -25,6 +25,7 @@ import FAQ from './pages/faq';
 import Privacy from './pages/privacy';
 import Terms from './pages/terms';
 import Contact from './pages/contact';
+import Support from './pages/support';
 import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
@@ -47,6 +48,7 @@ import Wishlist from './pages/account/Wishlist';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 import ToastHost from './components/ui/ToastHost';
+import FloatingFeedback from './components/FloatingFeedback';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import NotFound from './pages/errors/NotFound';
 import ServerError from './pages/errors/ServerError';
@@ -62,6 +64,7 @@ export default function App() {
       <CartProvider>
         <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
           <ToastHost />
+          <FloatingFeedback />
           <ErrorBoundary>
             <Routes>
             <Route element={<AppShell />}>
@@ -71,6 +74,7 @@ export default function App() {
               <Route path="/privacy" element={<Privacy />} />
               <Route path="/terms" element={<Terms />} />
               <Route path="/contact" element={<Contact />} />
+              <Route path="/support" element={<Support />} />
               <Route path="/story-studio" element={<StoryStudioPage />} />
               <Route path="/auto-quiz" element={<AutoQuiz />} />
               <Route path="/worlds" element={<Worlds />} />
