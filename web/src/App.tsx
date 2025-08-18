@@ -1,5 +1,5 @@
 import React, { Suspense, useEffect } from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
 import AppShell from './components/AppShell';
 import Home from './pages/Home';
 import Login from './pages/Login';
@@ -45,15 +45,34 @@ import Orders from './pages/account/Orders';
 import Addresses from './pages/account/Addresses';
 import AccountOrderDetail from './pages/account/OrderDetail';
 import ShareWishlist from './pages/account/ShareWishlist';
+import Wishlist from './pages/account/Wishlist';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 import ToastHost from './components/ui/ToastHost';
 import FloatingFeedback from './components/FloatingFeedback';
-import { ErrorBoundary } from './components/ErrorBoundary';
 import NotFound from './pages/errors/NotFound';
 import ServerError from './pages/errors/ServerError';
 import { applyThemeFromStorage, applyReducedMotionFromStorage } from './lib/prefs';
 import CommandPalette from './components/CommandPalette';
+
+function AppErrorBoundary({ children }: { children: React.ReactNode }) {
+  const [err, setErr] = React.useState<Error | null>(null);
+  React.useEffect(() => {
+    const handler = (e: ErrorEvent) => setErr(e.error ?? new Error(String(e.message)));
+    window.addEventListener('error', handler);
+    return () => window.removeEventListener('error', handler);
+  }, []);
+  if (err) {
+    return (
+      <div style={{ padding: '2rem', color: '#fff' }}>
+        <h2>Something went wrong.</h2>
+        <p>{err.message}</p>
+        <a href="/" style={{ color: '#9cf' }}>Go Home</a>
+      </div>
+    );
+  }
+  return <>{children}</>;
+}
 
 export default function App() {
   useEffect(() => {
@@ -61,15 +80,15 @@ export default function App() {
     applyReducedMotionFromStorage();
   }, []);
   return (
-    <ProfileProvider>
-      <CartProvider>
-        <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
-          <ToastHost />
-          <FloatingFeedback />
-          <CommandPalette />
-          <ErrorBoundary>
-            <Routes>
-            <Route element={<AppShell />}>
+    <BrowserRouter>
+      <AppErrorBoundary>
+        <ProfileProvider>
+          <CartProvider>
+            <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
+              <ToastHost />
+              <FloatingFeedback />
+              <Routes>
+              <Route element={<AppShell />}>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/faq" element={<FAQ />} />
@@ -144,15 +163,18 @@ export default function App() {
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
             <Route path="/error" element={<ServerError />} />
+            <Route path="/health" element={<div style={{ padding: '2rem', color: '#fff' }}>OK</div>} />
             <Route path="*" element={<NotFound />} />
           </Routes>
-          </ErrorBoundary>
+          <CommandPalette />
         </Suspense>
         {/* global styles */}
         <link rel="stylesheet" href="/src/styles/ui.css" />
         <link rel="stylesheet" href="/src/styles/marketplace.css" />
-      </CartProvider>
-    </ProfileProvider>
+        </CartProvider>
+      </ProfileProvider>
+      </AppErrorBoundary>
+    </BrowserRouter>
   );
 }
 
