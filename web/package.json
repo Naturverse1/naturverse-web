@@ -1,32 +1,27 @@
 {
   "name": "naturverse-web",
-  "version": "1.0.0",
   "private": true,
+  "version": "0.0.0",
   "type": "module",
+  "engines": { "node": ">=20" },
   "scripts": {
     "dev": "vite",
     "build": "vite build",
     "preview": "vite preview --port 8080",
-    "lint": "eslint src --ext .ts,.tsx"
-  },
-  "engines": {
-    "node": ">=20"
+    "lint": "eslint ."
   },
   "dependencies": {
-    "@supabase/supabase-js": "2.45.4",
-    "ethers": "^6.13.2",
+    "@supabase/supabase-js": "2.45.0",
+    "clsx": "2.1.1",
+    "ethers": "6.13.2",
     "react": "18.3.1",
     "react-dom": "18.3.1",
-    "react-router-dom": "6.26.2",
-    "@noble/hashes": "^1.4.0",
-    "@noble/curves": "^1.4.0",
-    "@adraffy/ens-normalize": "^1.10.1",
-    "aes-js": "^4.0.0-beta.5"
+    "zustand": "4.5.4"
   },
   "devDependencies": {
-    "@types/react": "18.3.5",
+    "@types/react": "18.3.3",
     "@types/react-dom": "18.3.0",
-    "@vitejs/plugin-react": "4.3.3",
+    "@vitejs/plugin-react": "4.3.1",
     "eslint": "9.9.0",
     "typescript": "5.5.4",
     "vite": "5.4.10"
