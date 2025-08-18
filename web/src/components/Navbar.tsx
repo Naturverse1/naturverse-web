@@ -3,6 +3,7 @@ import { getCart } from '../lib/cart';
 import { getWishlist, subscribe as subWish, unsubscribe as unsubWish } from '../lib/wishlist';
 import { Link, NavLink } from 'react-router-dom';
 import UserMenu from './UserMenu';
+import SearchBar from './SearchBar';
 
 const linkClass = ({ isActive }: { isActive: boolean }) =>
   (isActive ? 'nav-active' : undefined);
@@ -96,6 +97,7 @@ export default function Navbar() {
         )}
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '16px', alignItems: 'center' }}>
+        <SearchBar />
         <NavLink to="/account/wishlist" className={linkClass}>
           Wishlist {wishCount ? <span className="badge">{wishCount}</span> : null}
         </NavLink>
