@@ -17,7 +17,7 @@ import {
   FilterState,
 } from '../../lib/catalogFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { seedProducts } from '../../lib/search';
+import { seedProducts } from '@/lib/search';
 
 const allItems = PRODUCTS.map(p => ({
   id: p.id,

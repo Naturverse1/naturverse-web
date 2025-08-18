@@ -1,19 +1,15 @@
-# netlify.toml
-
 [build]
-  base    = "web"
+  base = "web"
   command = "npm install --no-audit --no-fund && npm run build"
-  publish = "dist"         # was "web/dist" — wrong with base set
-
-[functions]
-  directory = "functions"  # was "web/functions" — wrong with base set
-
-# SPA fallback for client routes
-[[redirects]]
-  from = "/*"
-  to   = "/index.html"
-  status = 200
+  publish = "web/dist"
+  functions = "web/functions"
 
 [build.environment]
   NODE_VERSION = "20"
-  NPM_FLAGS    = "--no-audit --no-fund"
+  NPM_FLAGS = "--no-audit --no-fund"
+
+# SPA fallback for client-side routes
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
