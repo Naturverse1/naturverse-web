@@ -10,7 +10,6 @@
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
-# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
