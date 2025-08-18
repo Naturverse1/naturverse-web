@@ -367,3 +367,8 @@ body {
   background: #65d36e; color: #06101a; border: none;
   padding: 6px 10px; border-radius: 8px; cursor: pointer; font-weight: 600;
 }
+.avatar-sm, .avatar-lg { border-radius: 999px; overflow: hidden; background: rgba(255,255,255,.06); border: 1px solid rgba(255,255,255,.12); }
+.avatar-sm { width: 36px; height: 36px; }
+.avatar-lg { width: 128px; height: 128px; display:grid; place-items:center; }
+.avatar-sm img, .avatar-lg img { width: 100%; height: 100%; object-fit: cover; }
+.avatar-empty { font-size: 12px; opacity: .7; padding: 6px; text-align:center; }

@@ -9,7 +9,7 @@ export default function ProductCard({ item }: { item: Item }) {
         <img src={item.img} alt={item.name} />
         {navatar && (
           <img
-            src={navatar.image}
+            src={navatar}
             alt="navatar"
             style={{
               position: 'absolute',
