@@ -1,9 +1,8 @@
 import { PRODUCTS } from './products'
 
-export type SearchItem = { id: string; title: string; description?: string }
-export const seedProducts: SearchItem[] = [
-  { id: 'sample-1', title: 'Natur Tee' },
-  { id: 'sample-2', title: 'Natur Hoodie' }
+export const seedProducts = [
+  { id: 'demo-1', name: 'Natur Tee', price: 2500, tags: ['apparel'] },
+  { id: 'demo-2', name: 'Natur Bottle', price: 1900, tags: ['gear'] }
 ]
 
 export type SearchResultItem = {
