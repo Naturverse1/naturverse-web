@@ -1,11 +1,25 @@
+import { Link } from 'react-router-dom';
+
 export default function Footer() {
   return (
-    <footer style={{padding:'24px 0',textAlign:'center',fontSize:'14px',opacity:.8}}>
-      <nav style={{display:'flex',justifyContent:'center',gap:'16px'}}>
-        <a href="/">Home</a>
-        <a href="/marketplace">Marketplace</a>
-        <a href="/account">Account</a>
-      </nav>
+    <footer className="site-footer">
+      <div className="container">
+        <nav className="footer-links">
+          <Link to="/worlds">Worlds</Link>
+          <Link to="/zones">Zones</Link>
+          <Link to="/marketplace">Marketplace</Link>
+          <Link to="/about">About</Link>
+          <Link to="/faq">FAQ</Link>
+          <Link to="/privacy">Privacy</Link>
+          <Link to="/terms">Terms</Link>
+          <Link to="/contact">Contact</Link>
+        </nav>
+        <div className="footer-social">
+          <a href="#">Twitter</a>
+          <a href="#">Discord</a>
+          <a href="#">YouTube</a>
+        </div>
+      </div>
     </footer>
   );
 }
