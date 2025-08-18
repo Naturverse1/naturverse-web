@@ -1,17 +1,11 @@
 [build]
-  base    = "web"
+  base = "web"          # run builds inside /web
+  publish = "dist"      # publish the dist *inside* /web
+  functions = "functions"
   command = "npm ci && npm run build"
-  publish = "web/dist"
 
-[functions]
-  directory = "web/functions"
-
-[build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS    = "--no-audit --no-fund"
-
-# Single-page app fallback
+# keep the SPA redirect
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
