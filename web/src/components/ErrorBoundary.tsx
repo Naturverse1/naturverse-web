@@ -1,38 +1,50 @@
 import React from 'react';
 
-interface State {
-  error: Error | null;
-}
+type Props = { children: React.ReactNode };
+type State = { hasError: boolean; message?: string };
 
-export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, State> {
-  state: State = { error: null };
+export class ErrorBoundary extends React.Component<Props, State> {
+  state: State = { hasError: false };
 
-  static getDerivedStateFromError(error: Error) {
-    return { error };
+  static getDerivedStateFromError(err: unknown) {
+    return { hasError: true, message: err instanceof Error ? err.message : String(err) };
   }
 
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    if (process.env.NODE_ENV !== 'production') {
-      console.error(error, info);
-    }
+  componentDidCatch(error: unknown, info: unknown) {
+    try {
+      const payload = {
+        ts: new Date().toISOString(),
+        error: error instanceof Error ? { message: error.message, stack: error.stack } : String(error),
+        info,
+      };
+      console.error('[Naturverse] App crashed', payload);
+      const key = 'naturverse_last_error';
+      localStorage.setItem(key, JSON.stringify(payload));
+    } catch {}
   }
-
-  private copy = () => {
-    const err = this.state.error;
-    if (!err) return;
-    const text = `${err.message}\n${err.stack}`;
-    navigator.clipboard.writeText(text).catch(() => {});
-  };
 
   render() {
-    if (this.state.error) {
+    if (this.state.hasError) {
       return (
-        <div className="page-container" style={{ textAlign: 'center', padding: '80px 16px' }}>
-          <h1>Something went wrong</h1>
-          <p>Try reload.</p>
-          <div style={{ marginTop: 16, display: 'flex', justifyContent: 'center', gap: 8 }}>
-            <a className="button" href="/">Go Home</a>
-            <button className="button" onClick={this.copy}>Copy error</button>
+        <div
+          style={{
+            minHeight: '100vh',
+            display: 'grid',
+            placeItems: 'center',
+            padding: '24px',
+            color: '#fff',
+            background: '#0b1020',
+          }}
+        >
+          <div style={{ maxWidth: 680, textAlign: 'center' }}>
+            <h1 style={{ margin: '0 0 12px' }}>Something went wrong</h1>
+            <p style={{ opacity: 0.8 }}>
+              The page hit a snag. Try a hard refresh. If it persists, send a screenshot of the console and we’ll fix
+              it.
+            </p>
+            {this.state.message && (
+              <code style={{ display: 'block', marginTop: 12, opacity: 0.7 }}>{this.state.message}</code>
+            )}
           </div>
         </div>
       );
@@ -40,3 +52,4 @@ export class ErrorBoundary extends React.Component<{ children: React.ReactNode }
     return this.props.children;
   }
 }
+
