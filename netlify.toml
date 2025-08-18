@@ -1,28 +1,18 @@
 [build]
   base = "web"
-  publish = "dist"
-  functions = "functions"
   command = "npm install --no-audit --no-fund && npm run build"
+  publish = "web/dist"
+  functions = "web/functions"
 
-[build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS = "--no-audit --no-fund"
-
-# Single-page app fallback
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Disable cache for HTML during recovery
+# Stop SW from taking control while we debug
 [[headers]]
   for = "/*"
   [headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate"
-
-# Allow sourcemaps to be fetched
-[[headers]]
-  for = "/assets/*.map"
-  [headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate"
-    Access-Control-Allow-Origin = "*"
+    Service-Worker-Allowed = "/"
+    Cache-Control = "max-age=0, no-cache, no-store, must-revalidate"

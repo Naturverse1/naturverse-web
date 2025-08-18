@@ -39,8 +39,10 @@ export class ErrorBoundary extends React.Component<Props, State> {
           <div style={{ maxWidth: 680, textAlign: 'center' }}>
             <h1 style={{ margin: '0 0 12px' }}>Something went wrong</h1>
             <p style={{ opacity: 0.8 }}>
-              The page hit a snag. Try a hard refresh. If it persists, send a screenshot of the console and we’ll fix
-              it.
+              Try a hard refresh. If that doesn’t work, clear site data/cache.
+              {/* If we previously had a SW, let users bust cache */}
+              <br />
+              <a href="/?cache-bust=1">Reload</a>
             </p>
             {this.state.message && (
               <code style={{ display: 'block', marginTop: 12, opacity: 0.7 }}>{this.state.message}</code>
@@ -52,4 +54,3 @@ export class ErrorBoundary extends React.Component<Props, State> {
     return this.props.children;
   }
 }
-
