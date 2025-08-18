@@ -6,10 +6,12 @@ import { addToCart } from '../../lib/cart';
 import RecoStrip from '../../components/RecoStrip';
 import { recommendFor, pushRecent, Item } from '../../lib/reco';
 import { PRODUCTS } from '../../lib/products';
-import ReviewList from '../../components/reviews/ReviewList';
-import QAList from '../../components/qa/QAList';
-import RatingStars from '../../components/reviews/RatingStars';
-import { getReviewSummary } from '../../lib/supaReviews';
+import Stars from '../../components/Stars';
+import ReviewForm from '../../components/ReviewForm';
+import ReviewsList from '../../components/ReviewsList';
+import QAForm from '../../components/QAForm';
+import QAList from '../../components/QAList';
+import { ratingStats } from '../../lib/reviews';
 import { isFav, toggleFav, subscribe, unsubscribe } from '../../lib/wishlist';
 
 const allItems: Item[] = PRODUCTS.map(p => ({
@@ -38,10 +40,7 @@ export default function ProductDetail() {
   const [material, setMaterial] = useState<string>(materials[0]);
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState<'details' | 'reviews' | 'qa'>('details');
-  const [summary, setSummary] = useState<{ avg: number; count: number }>({
-    avg: 0,
-    count: 0,
-  });
+  const stats = ratingStats(product?.id || '');
 
   useEffect(() => {
     if (product) pushRecent(product.id);
@@ -53,13 +52,6 @@ export default function ProductDetail() {
     return () => unsubscribe(cb);
   }, [id]);
 
-  useEffect(() => {
-    if (product) {
-      getReviewSummary(product.id).then(s =>
-        setSummary({ avg: s.avg, count: s.count }),
-      );
-    }
-  }, [product]);
 
   const recos = product
     ? recommendFor(
@@ -107,13 +99,11 @@ export default function ProductDetail() {
             >
               {fav ? '♥' : '♡'}
             </button>
-            {summary.count > 0 && (
-              <span style={{ marginLeft: '.5rem', fontSize: '0.9rem' }}>
-                <RatingStars value={summary.avg} readOnly size={14} />
-                {summary.avg.toFixed(1)} ({summary.count})
-              </span>
-            )}
           </h1>
+          <div style={{display:'flex', alignItems:'center', gap:8, marginTop:6}}>
+            <Stars value={Math.round(stats.avg)} />
+            <span className="muted small">{stats.total} review(s)</span>
+          </div>
           <div style={{marginTop:'.5rem'}}>
             <label>Size: </label>
             <select value={size} onChange={e => setSize(e.target.value)}>
@@ -141,29 +131,27 @@ export default function ProductDetail() {
           </div>
         </div>
       </div>
-      <div className="tab-bar">
-        <button
-          className={tab === 'details' ? 'active' : ''}
-          onClick={() => setTab('details')}
-        >
-          Details
-        </button>
-        <button
-          className={tab === 'reviews' ? 'active' : ''}
-          onClick={() => setTab('reviews')}
-        >
-          Reviews
-        </button>
-        <button
-          className={tab === 'qa' ? 'active' : ''}
-          onClick={() => setTab('qa')}
-        >
-          Q&A
-        </button>
+      <div className="tabs">
+        <button className={tab==='details'?'active':''} onClick={()=>setTab('details')}>Details</button>
+        <button className={tab==='reviews'?'active':''} onClick={()=>setTab('reviews')}>Reviews</button>
+        <button className={tab==='qa'?'active':''} onClick={()=>setTab('qa')}>Q&A</button>
       </div>
-      {tab === 'details' && <div> </div>}
-      {tab === 'reviews' && <ReviewList productId={product.id} />}
-      {tab === 'qa' && <QAList productId={product.id} />}
+
+      {tab==='details' && (
+        <section>{/* keep your existing details content */}</section>
+      )}
+      {tab==='reviews' && (
+        <section>
+          <ReviewsList productId={product.id}/>
+          <ReviewForm productId={product.id} onAdded={()=> setTab('reviews')}/>
+        </section>
+      )}
+      {tab==='qa' && (
+        <section>
+          <QAList productId={product.id}/>
+          <QAForm productId={product.id} onAdded={()=> setTab('qa')}/>
+        </section>
+      )}
       <RecoStrip title="For you" items={recos} source="detail" />
     </section>
   );
