@@ -570,3 +570,13 @@ input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; bor
 .badge-default { background:#00d1ff; color:#08121f; border-radius:999px; padding:2px 8px; font-weight:800; font-size:12px; }
 .addr-card { padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:12px; background:rgba(255,255,255,.04); }
 .addr-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); }
+.toast-host { position: fixed; right:16px; bottom:16px; display:grid; gap:8px; z-index: 9999; }
+.toast { padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.14); background:rgba(14,18,30,.96); }
+.toast.success { border-color:#00d1ff; }
+.toast.error { border-color:#ff7fa0; }
+.skeleton { background: linear-gradient(90deg, rgba(255,255,255,.06), rgba(255,255,255,.12), rgba(255,255,255,.06)); background-size: 200% 100%; animation: sk 1.2s infinite; border-radius:8px; }
+@media (prefers-reduced-motion: reduce) { .skeleton { animation:none; } }
+@keyframes sk { 0%{ background-position: 200% 0 } 100%{ background-position: -200% 0 } }
+.overlay { position:fixed; inset:0; display:grid; place-items:center; background:rgba(0,0,0,.45); backdrop-filter: blur(2px); z-index: 9998; }
+@keyframes spin { to { transform: rotate(360deg); } }
+@media (max-width:640px){ .toast-host{left:50%; right:auto; transform:translateX(-50%);} }

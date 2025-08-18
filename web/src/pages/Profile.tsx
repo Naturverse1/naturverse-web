@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { useToast } from '../components/ui/useToast';
 import { fileToImage, drawToCanvas, canvasToDataURL } from '../lib/image';
 import { getNavatar, saveNavatar, clearNavatar } from '../lib/navatar';
 
@@ -6,6 +7,7 @@ export default function ProfilePage() {
   const [preview, setPreview] = useState<string | null>(getNavatar());
   const [busy, setBusy] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const toast = useToast();
 
   async function onChoose(e: React.ChangeEvent<HTMLInputElement>) {
     const f = e.target.files?.[0];
@@ -13,6 +15,7 @@ export default function ProfilePage() {
     setErr(null);
     if (!/^image\//.test(f.type)) {
       setErr('Please choose an image file.');
+      toast.error('Please choose an image file.');
       return;
     }
     try {
@@ -28,6 +31,7 @@ export default function ProfilePage() {
       setPreview(data);
     } catch (e) {
       setErr('Unable to load that image.');
+    toast.error('Unable to load that image.');
     } finally {
       setBusy(false);
       e.target.value = '';
@@ -37,7 +41,7 @@ export default function ProfilePage() {
   function onSave() {
     if (!preview) return;
     saveNavatar(preview);
-    alert('Navatar saved!');
+    toast.success('Navatar updated');
   }
 
   function onClear() {

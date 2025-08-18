@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useToast } from '../../components/ui/useToast';
 import {
   Address,
   getAddresses,
@@ -15,9 +16,10 @@ const emptyAddress: Address = {
   country: '',
 };
 
-export default function Addresses() {
+ export default function Addresses() {
   const [list, setList] = useState<Address[]>(getAddresses());
   const [editing, setEditing] = useState<Address | null>(null);
+  const toast = useToast();
 
   const refresh = () => setList(getAddresses());
 
@@ -27,7 +29,7 @@ export default function Addresses() {
   const save = (addr: Address) => {
     const saved = saveAddress(addr);
     if (saved.isDefault) setDefault(saved.id);
-    alert('Saved');
+    toast.success('Address saved');
     refresh();
     setEditing(null);
   };
@@ -36,12 +38,14 @@ export default function Addresses() {
     if (confirm('Delete this address?')) {
       removeAddress(id);
       refresh();
+      toast.success('Address deleted');
     }
   };
 
   const makeDefault = (id: string) => {
     setDefault(id);
     refresh();
+    toast.info('Default address updated');
   };
 
   return (

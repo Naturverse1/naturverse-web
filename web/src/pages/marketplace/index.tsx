@@ -1,5 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import ProductCard from '../../components/marketplace/ProductCard';
+import { Skeleton } from '../../components/ui/Skeleton';
+import { useToast } from '../../components/ui/useToast';
 import { addToCart } from '../../lib/cart';
 import CategoryChips from '../../components/filters/CategoryChips';
 import PriceRange from '../../components/filters/PriceRange';
@@ -33,6 +35,8 @@ export default function MarketplacePage() {
   const [state, setState] = useState<FilterState>(() => parseQuery(location.search));
   const [searchInput, setSearchInput] = useState(state.q);
   const [pageSize, setPageSize] = useState(() => (window.innerWidth < 640 ? 12 : 24));
+  const toast = useToast();
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const onResize = () => setPageSize(window.innerWidth < 640 ? 12 : 24);
@@ -72,7 +76,20 @@ export default function MarketplacePage() {
     return () => clearTimeout(t);
   }, [state.q, state.cats, state.min, state.max, state.sort]);
 
-  const filtered = useMemo(() => applyFilters(allItems, state), [state]);
+  useEffect(() => {
+    setLoading(true);
+    const t = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(t);
+  }, [state]);
+
+  const filtered = useMemo(() => {
+    try {
+      return applyFilters(allItems, state);
+    } catch (e) {
+      toast.error("We couldn't load products.");
+      return [];
+    }
+  }, [state, toast]);
 
   useEffect(() => {
     console.log('mp_result_count', { count: filtered.length });
@@ -125,14 +142,26 @@ export default function MarketplacePage() {
           onChange={(min, max) => handleUpdate({ min, max })}
         />
       </div>
-      {pageItems.length ? (
+      {loading ? (
+        <div className="grid">
+          {Array.from({ length: 12 }).map((_, i) => (
+            <Skeleton key={i} className="h-48" />
+          ))}
+        </div>
+      ) : pageItems.length ? (
         <>
           <p className="results-count">Showing {pageItems.length} of {filtered.length}</p>
           <div className="grid">
             {pageItems.map(item => (
               <div key={item.id} className="card">
                 <ProductCard item={item} />
-                <button className="button" style={{marginTop:'8px'}} onClick={()=> addToCart({ id:item.id, name:item.name, price:item.price, image:item.img, qty:1 })}>
+                <button
+                  className="button"
+                  style={{ marginTop: '8px' }}
+                  onClick={() =>
+                    addToCart({ id: item.id, name: item.name, price: item.price, image: item.img, qty: 1 })
+                  }
+                >
                   Add to cart
                 </button>
               </div>

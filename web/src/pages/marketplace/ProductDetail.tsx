@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useSearchParams, Link } from 'react-router-dom';
 import Gallery from '../../components/Gallery';
+import { Skeleton } from '../../components/ui/Skeleton';
+import { useToast } from '../../components/ui/useToast';
 import { getProduct } from '../../lib/products';
 import { addToCart } from '../../lib/cart';
 import RecoStrip from '../../components/RecoStrip';
@@ -31,13 +33,20 @@ export default function ProductDetail() {
   const id = sp.get('id') || '';
   const product = getProduct(id);
   const [fav, setFav] = useState(isFav(id));
+  const toast = useToast();
+  const [imgLoaded, setImgLoaded] = useState(false);
 
   const images = product && (product as any).images ? (product as any).images : [product?.img || ''];
   const sizes = (product as any)?.variants?.sizes || DEF_SIZES;
   const materials = (product as any)?.variants?.materials || DEF_MATERIALS;
+  useEffect(() => {
+    const img = new Image();
+    if (images[0]) img.src = images[0];
+    img.onload = () => setImgLoaded(true);
+  }, [images]);
 
-  const [size, setSize] = useState<string>(sizes[0]);
-  const [material, setMaterial] = useState<string>(materials[0]);
+  const [size, setSize] = useState<string>('');
+  const [material, setMaterial] = useState<string>('');
   const [qty, setQty] = useState(1);
   const [tab, setTab] = useState<'details' | 'reviews' | 'qa'>('details');
   const stats = ratingStats(product?.id || '');
@@ -78,16 +87,23 @@ export default function ProductDetail() {
   }
 
   function add() {
+    if (!size || !material) {
+      toast.error('Pick a size/material first');
+      return;
+    }
     addToCart({ id: product.id, name: product.name, price: product.baseNatur, image: images[0], options: { size, material }, qty });
     console.log('cart_add', { id: product.id, qty });
-    alert('Added to cart');
+    toast.success('Added to cart');
   }
 
   return (
     <section>
       <a href="/marketplace">← Back to Marketplace</a>
       <div style={{display:'grid', gap:'1rem', marginTop:'1rem'}}>
-        <Gallery images={images} />
+        <div>
+          {!imgLoaded && <Skeleton className="h-64" />}
+          {imgLoaded && <Gallery images={images} />}
+        </div>
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             {product.name}
@@ -107,6 +123,7 @@ export default function ProductDetail() {
           <div style={{marginTop:'.5rem'}}>
             <label>Size: </label>
             <select value={size} onChange={e => setSize(e.target.value)}>
+              <option value="" disabled>Select size</option>
               {sizes.map(s => (
                 <option key={s} value={s}>{s}</option>
               ))}
@@ -115,6 +132,7 @@ export default function ProductDetail() {
           <div style={{marginTop:'.5rem'}}>
             <label>Material: </label>
             <select value={material} onChange={e => setMaterial(e.target.value)}>
+              <option value="" disabled>Select material</option>
               {materials.map(m => (
                 <option key={m} value={m}>{m}</option>
               ))}
@@ -143,13 +161,13 @@ export default function ProductDetail() {
       {tab==='reviews' && (
         <section>
           <ReviewsList productId={product.id}/>
-          <ReviewForm productId={product.id} onAdded={()=> setTab('reviews')}/>
+          <ReviewForm productId={product.id} onAdded={() => { setTab('reviews'); toast.success('Thanks for your review!'); }}/>
         </section>
       )}
       {tab==='qa' && (
         <section>
           <QAList productId={product.id}/>
-          <QAForm productId={product.id} onAdded={()=> setTab('qa')}/>
+          <QAForm productId={product.id} onAdded={() => { setTab('qa'); toast.success('Question posted'); }}/>
         </section>
       )}
       <RecoStrip title="For you" items={recos} source="detail" />
