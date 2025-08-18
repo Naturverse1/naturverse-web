@@ -33,12 +33,7 @@ export default function Arcade() {
         {bestHard ? `• Hard ${fmt(bestHard)} ` : ""}
   </p>
         </li>
-        <li>
-          <Link to="/zones/arcade/word-builder">Word Builder</Link> — make words from daily letters.
-          <div style={{opacity:.9}}>
-            Best score today: {localStorage.getItem("nv:wb:best:" + ["nature","ocean","forest"][Math.floor(Date.now()/86400000)%3]) || "—"}
-          </div>
-        </li>
+        <li><Link to="/zones/arcade/word-builder">Word Builder – build words before time runs out!</Link></li>
         <li><Link to="/zones/arcade/eco-runner">Eco Runner</Link> — jump, collect, dodge.</li>
       </ul>
 
