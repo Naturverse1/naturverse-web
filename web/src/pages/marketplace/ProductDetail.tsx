@@ -15,6 +15,8 @@ import QAForm from '../../components/QAForm';
 import QAList from '../../components/QAList';
 import { ratingStats } from '../../lib/reviews';
 import { isFav, toggleFav, subscribe, unsubscribe } from '../../lib/wishlist';
+import Seo from '../../components/Seo';
+import ShareRow from '../../components/ShareRow';
 
 const allItems: Item[] = PRODUCTS.map(p => ({
   id: p.id,
@@ -86,6 +88,20 @@ export default function ProductDetail() {
     );
   }
 
+  const jsonLd = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    image: images,
+    offers: {
+      '@type': 'Offer',
+      price: product.baseNatur,
+      priceCurrency: 'USD',
+      availability: 'https://schema.org/InStock',
+      url: typeof window !== 'undefined' ? window.location.href : ''
+    }
+  };
+
   function add() {
     if (!size || !material) {
       toast.error('Pick a size/material first');
@@ -98,6 +114,12 @@ export default function ProductDetail() {
 
   return (
     <section>
+      <Seo
+        title={product.name}
+        description={`Buy ${product.name} on The Naturverse`}
+        image={images[0]}
+        jsonLd={jsonLd}
+      />
       <a href="/marketplace">← Back to Marketplace</a>
       <div style={{display:'grid', gap:'1rem', marginTop:'1rem'}}>
         <div>
@@ -147,6 +169,7 @@ export default function ProductDetail() {
             <button className="primary" onClick={add}>Add to cart</button>
             <Link className="button" to="/marketplace/checkout">Checkout</Link>
           </div>
+          <ShareRow />
         </div>
       </div>
       <div className="tabs">
