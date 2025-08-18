@@ -1,24 +1,28 @@
-import React from "react";
-import ReactDOM from "react-dom/client";
+import React from 'react';
+import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
-import App from "./App";
-import { AuthProvider } from './context/AuthContext';
+
+import App from './App';
 import UpdateToast from './components/UpdateToast';
-import "./styles/app.css";
-import "./styles/themes.css";
-import { applyTheme, onThemeChange } from "./lib/theme";
-import { ThemeProvider } from './context/ThemeContext';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { AuthProvider } from './context/AuthContext';
+import { ThemeProvider } from './context/ThemeContext';
+import { applyTheme, onThemeChange } from './lib/theme';
+import { bootDiagnostics } from './utils/diagnostics';
+import { withSafeStorage } from './utils/safeStorage';
+import './styles/app.css';
+import './styles/themes.css';
 
 applyTheme();
 onThemeChange(() => applyTheme());
 
-try {
-  console.info('[Naturverse] boot:start', { ts: new Date().toISOString(), env: import.meta.env.MODE });
-  localStorage.setItem('naturverse_boot', new Date().toISOString());
-} catch {}
+// 🚀 one-time boot diagnostics
+bootDiagnostics();
 
-ReactDOM.createRoot(document.getElementById("root")!).render(
+// ✅ harden localStorage access globally
+withSafeStorage();
+
+ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
       <BrowserRouter>
@@ -30,11 +34,8 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
         </ThemeProvider>
       </BrowserRouter>
     </ErrorBoundary>
-  </React.StrictMode>
+  </React.StrictMode>,
 );
 
-if ('serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  });
-}
+// ❌ Disable SW to avoid stale cache serving old JS
+// Service worker registration removed.
