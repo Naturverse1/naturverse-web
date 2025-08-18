@@ -7,6 +7,8 @@ export type SearchItem = {
   keywords?: string[];
 };
 
+import { PRODUCTS } from './products';
+
 const BASE_ITEMS: SearchItem[] = [
   { id: 'home', kind: 'page', title: 'Home', path: '/' },
   { id: 'worlds', kind: 'page', title: 'Worlds', path: '/worlds' },
@@ -19,25 +21,18 @@ let productCache: SearchItem[] | null = null;
 
 function getProductItems(): SearchItem[] {
   if (productCache) return productCache;
-  try {
-    const { PRODUCTS } = require('./products');
-    productCache = (PRODUCTS ?? []).map((p: any) => ({
-      id: `prod-${p.id}`,
-      kind: 'product' as const,
-      title: p.name,
-      subtitle: p.category,
-      path: `/marketplace/item?id=${p.id}`,
-      keywords: [p.category.toLowerCase()],
-    }));
-    return productCache;
-  } catch {
-    return [];
-  }
+  productCache = PRODUCTS.map(p => ({
+    id: `prod-${p.id}`,
+    kind: 'product' as const,
+    title: p.name,
+    subtitle: p.category,
+    path: `/marketplace/item?id=${p.id}`,
+    keywords: [p.category.toLowerCase()],
+  }));
+  return productCache;
 }
 
-export function seedProducts() {
-  productCache = getProductItems();
-}
+export const seedProducts = () => PRODUCTS;
 
 export function getBaseItems(): SearchItem[] {
   return BASE_ITEMS;
