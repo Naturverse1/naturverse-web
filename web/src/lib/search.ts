@@ -84,5 +84,3 @@ export function getRecent(): SearchResultItem[] {
   }
 }
 
-export { seedProducts };
-

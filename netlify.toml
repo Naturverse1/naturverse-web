@@ -1,14 +1,17 @@
 [build]
-base = "web"
-command = "npm ci --no-audit --no-fund && npm run build"
-publish = "dist"
-functions = "functions"
+  base    = "web"
+  command = "npm ci && npm run build"
+  publish = "web/dist"
+
+[functions]
+  directory = "web/functions"
 
 [build.environment]
-NODE_VERSION = "20"
-NPM_FLAGS = "--no-audit --no-fund"
+  NODE_VERSION = "20"
+  NPM_FLAGS    = "--no-audit --no-fund"
 
+# Single-page app fallback
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to   = "/index.html"
+  status = 200
