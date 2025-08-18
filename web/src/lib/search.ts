@@ -15,10 +15,13 @@ const BASE_ITEMS: SearchItem[] = [
   { id: 'orders', kind: 'account', title: 'Orders', path: '/account/orders' },
 ];
 
+let productCache: SearchItem[] | null = null;
+
 function getProductItems(): SearchItem[] {
+  if (productCache) return productCache;
   try {
     const { PRODUCTS } = require('./products');
-    return (PRODUCTS ?? []).map((p: any) => ({
+    productCache = (PRODUCTS ?? []).map((p: any) => ({
       id: `prod-${p.id}`,
       kind: 'product' as const,
       title: p.name,
@@ -26,9 +29,14 @@ function getProductItems(): SearchItem[] {
       path: `/marketplace/item?id=${p.id}`,
       keywords: [p.category.toLowerCase()],
     }));
+    return productCache;
   } catch {
     return [];
   }
+}
+
+export function seedProducts() {
+  productCache = getProductItems();
 }
 
 export function getBaseItems(): SearchItem[] {
