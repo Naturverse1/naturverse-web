@@ -8,6 +8,11 @@ functions = "functions"
 [build.environment]
 NODE_VERSION = "20"
 NPM_FLAGS = "--no-audit --no-fund --progress=false"
+
+[[redirects]]
+  from = "/"
+  to = "/index.html"
+  status = 200
 [[headers]]
   for = "/sw.js"
   [headers.values]

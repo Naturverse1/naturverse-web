@@ -1,3 +1,53 @@
+/* Baseline layout */
+html, body { height: 100%; }
+body {
+  margin: 0;
+  background: #0b1020;
+  color: #e6f0ff;
+  font: 16px/1.5 system-ui, Segoe UI, Roboto, Helvetica, Arial;
+}
+#root {
+  min-height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+img, video {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+}
+.container {
+  width: 100%;
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 16px;
+}
+.grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+.panel,
+.card {
+  background: rgba(255,255,255,.04);
+  border: 1px solid rgba(255,255,255,.1);
+  border-radius: 8px;
+  padding: 16px;
+}
+.button {
+  display: inline-block;
+  padding: 8px 16px;
+  border-radius: 8px;
+  background: #5b7cfa;
+  color: #0b1020;
+  border: none;
+  cursor: pointer;
+}
+
 /* Theme tokens */
 :root {
   --bg: #0b1226;
