@@ -1,37 +1,30 @@
-import { PRODUCTS } from './products';
+import { PRODUCTS } from './products'
 
-export type SeedItem = {
-  id: string;
-  title: string;
-  keywords?: string[];
-  priceNat?: number;
-};
+export type SearchItem = { id: string; title: string; description?: string }
+export const seedProducts: SearchItem[] = [
+  { id: 'sample-1', title: 'Natur Tee' },
+  { id: 'sample-2', title: 'Natur Hoodie' }
+]
 
-export const seedProducts = (): SeedItem[] => {
-  // Return empty list if the real product catalog isn’t wired yet.
-  return [];
-};
-
-export type SearchItem = {
-  id: string;
-  kind: 'page' | 'product' | 'account';
-  title: string;
-  subtitle?: string;
-  path: string;
-  keywords?: string[];
-};
-
-const BASE_ITEMS: SearchItem[] = [
+export type SearchResultItem = {
+  id: string
+  kind: 'page' | 'product' | 'account'
+  title: string
+  subtitle?: string
+  path: string
+  keywords?: string[]
+}
+const BASE_ITEMS: SearchResultItem[] = [
   { id: 'home', kind: 'page', title: 'Home', path: '/' },
   { id: 'worlds', kind: 'page', title: 'Worlds', path: '/worlds' },
   { id: 'arcade', kind: 'page', title: 'Arcade', path: '/zones/arcade' },
   { id: 'market', kind: 'page', title: 'Marketplace', path: '/marketplace' },
-  { id: 'orders', kind: 'account', title: 'Orders', path: '/account/orders' },
-];
+  { id: 'orders', kind: 'account', title: 'Orders', path: '/account/orders' }
+]
 
-let productCache: SearchItem[] | null = null;
+let productCache: SearchResultItem[] | null = null
 
-function getProductItems(): SearchItem[] {
+function getProductItems(): SearchResultItem[] {
   if (productCache) return productCache;
   productCache = PRODUCTS.map(p => ({
     id: `prod-${p.id}`,
@@ -44,11 +37,11 @@ function getProductItems(): SearchItem[] {
   return productCache;
 }
 
-export function getBaseItems(): SearchItem[] {
-  return BASE_ITEMS;
+export function getBaseItems(): SearchResultItem[] {
+  return BASE_ITEMS
 }
 
-export function score(q: string, it: SearchItem): number {
+export function score(q: string, it: SearchResultItem): number {
   q = q.toLowerCase().trim();
   if (!q) return 0;
   const hay = [it.title, it.subtitle, it.path, ...(it.keywords ?? [])]
@@ -60,7 +53,7 @@ export function score(q: string, it: SearchItem): number {
   return 0;
 }
 
-export function search(q: string): SearchItem[] {
+export function search(q: string): SearchResultItem[] {
   const items = [...getBaseItems(), ...getProductItems()];
   return items
     .map(it => ({ it, s: score(q, it) }))
@@ -81,12 +74,12 @@ export function remember(path: string) {
   } catch {}
 }
 
-export function getRecent(): SearchItem[] {
+export function getRecent(): SearchResultItem[] {
   try {
     const raw = localStorage.getItem(RECENT_KEY);
     const arr: string[] = raw ? JSON.parse(raw) : [];
-    const map = new Map([...getBaseItems(), ...getProductItems()].map(i => [i.path, i]));
-    return arr.map(p => map.get(p)).filter(Boolean) as SearchItem[];
+    const map = new Map([...getBaseItems(), ...getProductItems()].map(i => [i.path, i]))
+    return arr.map(p => map.get(p)).filter(Boolean) as SearchResultItem[]
   } catch {
     return [];
   }

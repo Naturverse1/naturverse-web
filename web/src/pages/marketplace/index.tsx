@@ -41,7 +41,7 @@ export default function MarketplacePage() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    seedProducts();
+    seedProducts;
   }, []);
 
   useEffect(() => {

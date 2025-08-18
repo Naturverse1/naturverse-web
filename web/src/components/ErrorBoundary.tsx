@@ -1,42 +1,22 @@
-import React from 'react';
-import ErrorOverlay, { getErrorLog } from './ErrorOverlay';
+import React from 'react'
 
-type Props = { children: React.ReactNode };
-type State = { hasError: boolean; error?: Error };
-
-export class ErrorBoundary extends React.Component<Props, State> {
-  state: State = { hasError: false };
-
-  static getDerivedStateFromError(err: unknown): State {
-    return { hasError: true, error: err instanceof Error ? err : new Error(String(err)) };
-  }
-
-  componentDidCatch(error: unknown, info: unknown) {
-    try {
-      const payload = {
-        ts: new Date().toISOString(),
-        error: error instanceof Error ? { message: error.message, stack: error.stack } : String(error),
-        info,
-        log: getErrorLog(),
-      };
-      console.error('[Naturverse] App crashed', payload);
-      const key = 'naturverse_last_error';
-      localStorage.setItem(key, JSON.stringify(payload));
-    } catch {}
-  }
-
+export class ErrorBoundary extends React.Component<{children: React.ReactNode},{err?: any}> {
+  state = { err: undefined as any }
+  static getDerivedStateFromError(err: any) { return { err } }
   render() {
-    if (this.state.hasError && this.state.error) {
-      if (import.meta.env.PROD) {
-        return <ErrorOverlay error={this.state.error} />;
-      }
+    if (this.state.err) {
       return (
-        <div style={{ padding: '24px', color: '#fff', background: '#0b1020' }}>
-          <h1>Something went wrong</h1>
-          <pre>{this.state.error.message}</pre>
+        <div style={{display:'grid',placeItems:'center',minHeight:'100dvh',color:'#fff'}}>
+          <div style={{textAlign:'center'}}>
+            <h1>Something went wrong</h1>
+            <p>Try a hard refresh. If that doesn’t work, clear site data/cache.</p>
+            <button onClick={() => { localStorage.clear(); caches?.keys().then(k=>k.forEach(c=>caches.delete(c))).finally(()=>location.reload()) }}>
+              Reload
+            </button>
+          </div>
         </div>
-      );
+      )
     }
-    return this.props.children;
+    return this.props.children as any
   }
 }
