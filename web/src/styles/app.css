@@ -562,3 +562,11 @@ input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; bor
 .rev { padding:10px 0; border-bottom:1px dashed rgba(255,255,255,.1); }
 .muted { opacity:.8; }
 .small { font-size:12px; }
+.menu { position:relative }
+.menu-btn { display:flex; align-items:center; gap:8px; border:1px solid rgba(255,255,255,.18); background:rgba(255,255,255,.06); border-radius:999px; padding:6px 10px; }
+.menu-pop { position:absolute; right:0; top:calc(100% + 8px); min-width:200px; background:rgba(12,16,30,.98); border:1px solid rgba(255,255,255,.14); border-radius:12px; padding:8px; box-shadow:0 8px 28px rgba(0,0,0,.4); }
+.menu-item { display:flex; align-items:center; gap:8px; padding:8px 10px; border-radius:8px; }
+.menu-item:hover { background:rgba(255,255,255,.06); }
+.badge-default { background:#00d1ff; color:#08121f; border-radius:999px; padding:2px 8px; font-weight:800; font-size:12px; }
+.addr-card { padding:12px; border:1px solid rgba(255,255,255,.12); border-radius:12px; background:rgba(255,255,255,.04); }
+.addr-grid { display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); }
