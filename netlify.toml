@@ -1,16 +1,19 @@
 [build]
-  base = "web"
-  publish = "web/dist"
-  command = "npm install --no-audit --no-fund && npm run build"
+base = "web"
+publish = "dist"
+command = "npm ci && npm run build"
+functions = "functions"
 
 [functions]
-  directory = "web/functions"
-  node_bundler = "esbuild"
+node_bundler = "esbuild"
 
+# Install deps declared in web/functions/package.json
 [[plugins]]
-  package = "@netlify/plugin-functions-install-core"
+package = "@netlify/plugin-functions-install-core"
 
+# SPA fallback
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
+
