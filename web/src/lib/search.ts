@@ -1,24 +1,16 @@
 import { PRODUCTS } from './products';
 
-export type SearchableItem = {
+export type SeedItem = {
   id: string;
   title: string;
-  description?: string;
-  priceNatur?: number;
-  tags?: string[];
-  image?: string;
+  keywords?: string[];
+  priceNat?: number;
 };
 
-export function seedProducts(): SearchableItem[] {
-  return PRODUCTS.map(p => ({
-    id: p.id,
-    title: p.name ?? `Item ${p.id}`,
-    description: '',
-    priceNatur: p.baseNatur ?? 0,
-    tags: p.category ? [p.category] : [],
-    image: p.img,
-  }));
-}
+export const seedProducts = (): SeedItem[] => {
+  // Return empty list if the real product catalog isn’t wired yet.
+  return [];
+};
 
 export type SearchItem = {
   id: string;
