@@ -1,14 +1,14 @@
-# netlify.toml  (root)
+# netlify.toml
 
 [build]
   base    = "web"
   command = "npm install --no-audit --no-fund && npm run build"
-  publish = "web/dist"
+  publish = "dist"         # was "web/dist" — wrong with base set
 
 [functions]
-  directory = "web/functions"
+  directory = "functions"  # was "web/functions" — wrong with base set
 
-# Force SPA fallback for Vite/React routes
+# SPA fallback for client routes
 [[redirects]]
   from = "/*"
   to   = "/index.html"
