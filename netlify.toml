@@ -8,3 +8,7 @@ functions = "functions"
 [build.environment]
 NODE_VERSION = "20"
 NPM_FLAGS = "--no-audit --no-fund --progress=false"
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
