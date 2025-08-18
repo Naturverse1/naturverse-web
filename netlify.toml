@@ -1,19 +1,17 @@
 [build]
-  # Run npm from the repo root, targeting the /web package
-  command = "npm --prefix web ci || npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
-  publish = "web/dist"
-  functions = "functions"
+command = "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
+publish = "web/dist"
 
 [build.environment]
-  NODE_VERSION = "20"
-  NPM_FLAGS    = "--no-audit --no-fund"
-  # Ensure Vite doesn’t see an overly strict CI env
-  CI = "false"
+NODE_VERSION = "20"
+NPM_CONFIG_FUND = "false"
+NPM_CONFIG_AUDIT = "false"
 
 [[redirects]]
-  from = "/"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
+
 [[headers]]
   for = "/sw.js"
   [headers.values]
