@@ -93,8 +93,8 @@ body { background: var(--bg); color: var(--text); }
   box-sizing: border-box;
 }
 
-/* Hard-disable animations & transitions everywhere */
-* {
+/* Reduced motion toggle */
+html.reduced-motion * {
   animation: none !important;
   transition: none !important;
 }
@@ -586,3 +586,7 @@ input, textarea, select { width:100%; padding:10px 12px; border-radius:10px; bor
 .site-footer { padding:32px 16px; background:rgba(10,16,32,.8); border-top:1px solid rgba(255,255,255,.1); }
 .site-footer .footer-links, .site-footer .footer-social { display:flex; flex-wrap:wrap; gap:12px; justify-content:center; }
 .site-footer .footer-links { margin-bottom:12px; }
+.settings-page { display:grid; gap:24px; padding:24px 0; }
+.setting-block { background:var(--panel); border:1px solid var(--panel-b); border-radius:8px; padding:16px; display:flex; flex-direction:column; gap:8px; }
+.setting-block label { display:flex; align-items:center; gap:8px; }
+.quick-links { display:flex; flex-wrap:wrap; gap:12px; }

@@ -79,6 +79,9 @@ export default function UserMenu() {
           <Link className="menu-item" to="/profile" onClick={() => setOpen(false)}>
             Profile
           </Link>
+          <Link className="menu-item" to="/settings" onClick={() => setOpen(false)}>
+            Settings
+          </Link>
           <Link
             className="menu-item"
             to="/account/orders"
