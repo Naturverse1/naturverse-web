@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, Link } from 'react-router-dom';
 import Gallery from '../../components/Gallery';
 import { getProduct } from '../../lib/products';
-import { useCart } from '../../context/CartContext';
+import { addToCart } from '../../lib/cart';
 import RecoStrip from '../../components/RecoStrip';
 import { recommendFor, pushRecent, Item } from '../../lib/reco';
 import { PRODUCTS } from '../../lib/products';
@@ -28,7 +28,6 @@ export default function ProductDetail() {
   const [sp] = useSearchParams();
   const id = sp.get('id') || '';
   const product = getProduct(id);
-  const { add, openMiniCart } = useCart();
   const [fav, setFav] = useState(isFav(id));
 
   const images = product && (product as any).images ? (product as any).images : [product?.img || ''];
@@ -86,17 +85,11 @@ export default function ProductDetail() {
     );
   }
 
-  const addToCart = () => {
-    add({
-      id: `${product.id}::${size}::${material}`,
-      name: product.name,
-      image: images[0],
-      priceNatur: product.baseNatur,
-      qty,
-      variant: { size, material },
-    });
-    openMiniCart();
-  };
+  function add() {
+    addToCart({ id: product.id, name: product.name, price: product.baseNatur, image: images[0], options: { size, material }, qty });
+    console.log('cart_add', { id: product.id, qty });
+    alert('Added to cart');
+  }
 
   return (
     <section>
@@ -137,13 +130,14 @@ export default function ProductDetail() {
               ))}
             </select>
           </div>
-          <div className="qty" style={{marginTop:'.5rem'}}>
-            <button disabled={qty<=1} onClick={()=>setQty(q=>Math.max(1,q-1))}>-</button>
-            <span>{qty}</span>
-            <button disabled={qty>=99} onClick={()=>setQty(q=>Math.min(99,q+1))}>+</button>
-          </div>
-          <div style={{marginTop:'1rem'}}>
-            <button onClick={addToCart}>Add to cart</button>
+          <div className="buy-row" style={{marginTop:'1rem'}}>
+            <div className="qty">
+              <button onClick={()=> setQty(q=> Math.max(1,q-1))}>-</button>
+              <input value={qty} onChange={e=> setQty(Math.max(1, +e.target.value||1))}/>
+              <button onClick={()=> setQty(q=> q+1)}>+</button>
+            </div>
+            <button className="primary" onClick={add}>Add to cart</button>
+            <Link className="button" to="/marketplace/checkout">Checkout</Link>
           </div>
         </div>
       </div>

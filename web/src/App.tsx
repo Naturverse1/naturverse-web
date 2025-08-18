@@ -34,18 +34,11 @@ import CartPage from './pages/marketplace/cart';
 import OrdersPage from './pages/marketplace/orders';
 import OrderDetailPage from './pages/marketplace/order';
 import ProductDetail from './pages/marketplace/ProductDetail';
-import CheckoutIndex from './pages/marketplace/checkout';
-import Shipping from './pages/marketplace/checkout/Shipping';
-import CheckoutReview from './pages/marketplace/checkout/Review';
-import PayPage from './pages/marketplace/checkout/Pay';
+import Checkout from './pages/marketplace/Checkout';
+import Success from './pages/marketplace/Success';
+import Orders from './pages/account/Orders';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
-import OrderSuccess from './pages/marketplace/OrderSuccess';
-import AccountHome from './pages/account/AccountHome';
-import OrdersList from './pages/account/OrdersList';
-import AccountOrderDetail from './pages/account/OrderDetail';
-import Addresses from './pages/account/Addresses';
-import Wishlist from './pages/account/Wishlist';
 
 export default function App() {
   return (
@@ -85,56 +78,14 @@ export default function App() {
                 </RequireAuth>
               }
             />
-            <Route
-              path="/account"
-              element={
-                <RequireAuth>
-                  <AccountHome />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/account/orders"
-              element={
-                <RequireAuth>
-                  <OrdersList />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/account/orders/:id"
-              element={
-                <RequireAuth>
-                  <AccountOrderDetail />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/account/addresses"
-              element={
-                <RequireAuth>
-                  <Addresses />
-                </RequireAuth>
-              }
-            />
-            <Route
-              path="/account/wishlist"
-              element={
-                <RequireAuth>
-                  <Wishlist />
-                </RequireAuth>
-              }
-            />
-            <Route path="/marketplace" element={<MarketplacePage />} />
-            <Route path="/marketplace/cart" element={<CartPage />} />
-            <Route path="/marketplace/item" element={<ProductDetail />} />
-            <Route path="/marketplace/checkout" element={<CheckoutIndex />} />
-            <Route path="/marketplace/checkout/shipping" element={<Shipping />} />
-            <Route path="/marketplace/checkout/review" element={<CheckoutReview />} />
-            <Route path="/marketplace/checkout/pay" element={<PayPage />} />
-            <Route path="/marketplace/success/:id" element={<OrderSuccess />} />
-            <Route path="/marketplace/orders" element={<OrdersPage />} />
-            <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
+              <Route path="/marketplace" element={<MarketplacePage />} />
+              <Route path="/marketplace/cart" element={<CartPage />} />
+              <Route path="/marketplace/item" element={<ProductDetail />} />
+              <Route path="/marketplace/checkout" element={<Checkout />} />
+              <Route path="/marketplace/success" element={<Success />} />
+              <Route path="/marketplace/orders" element={<OrdersPage />} />
+              <Route path="/marketplace/orders/:id" element={<OrderDetailPage />} />
+              <Route path="/account/orders" element={<Orders />} />
             <Route path="*" element={<NotFound />} />
           </Route>
           <Route path="/login" element={<Login />} />

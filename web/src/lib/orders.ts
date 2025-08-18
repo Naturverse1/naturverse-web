@@ -1,80 +1,19 @@
-export type Shipping = {
-  fullName: string;
+export type Order = {
+  id: string;              // uuid
+  createdAt: string;       // ISO
   email: string;
-  phone?: string;
-  address1: string;
-  address2?: string;
-  city: string;
-  state: string;
-  postal: string;
-  country: string;
+  shippingName: string;
+  shippingAddress: string;
+  lines: { id:string; name:string; price:number; qty:number; image?:string }[];
+  amounts: { subtotal:number; shipping:number; tax:number; total:number };
 };
+const KEY = 'nv_orders_v1';
 
-export type NaturLine = {
-  id: string;
-  name: string;
-  qty: number;
-  priceNatur: number; // unit price
-  meta?: Record<string, any>;
-};
-
-import type { ShippingMethodId } from "./pricing";
-
-export type NaturOrder = {
-  id: string; // ulid-ish or tx hash fallback
-  createdAt: number; // epoch ms
-  totalNatur: number;
-  lines: NaturLine[];
-  txHash?: string;
-  network?: string; // e.g. "Polygon Amoy"
-  address?: string; // buyer address
-  shipping: Shipping;
-  shippingMethod: ShippingMethodId;
-  discount?: { code: string; amount: number };
-  totals: { items: number; shipping: number; discount: number; grandTotal: number };
-};
-
-const KEY = 'natur_orders';
-
-export function loadOrders(): NaturOrder[] {
-  try {
-    const raw = localStorage.getItem(KEY);
-    if (!raw) return [];
-    const arr = JSON.parse(raw);
-    return Array.isArray(arr) ? arr : [];
-  } catch {
-    return [];
-  }
+export function getOrders(): Order[] {
+  try { return JSON.parse(localStorage.getItem(KEY) || '[]'); } catch { return []; }
 }
-
-export function saveOrders(list: NaturOrder[]) {
-  try {
-    localStorage.setItem(KEY, JSON.stringify(list));
-  } catch {}
-}
-
-export function getOrder(id: string): NaturOrder | undefined {
-  return loadOrders().find((o) => o.id === id);
-}
-
-export function addOrder(o: NaturOrder) {
-  const list = loadOrders();
+export function saveOrder(o: Order) {
+  const list = getOrders();
   list.unshift(o);
-  saveOrders(list);
+  localStorage.setItem(KEY, JSON.stringify(list));
 }
-
-export function fmtDate(ts: number) {
-  try {
-    return new Date(ts).toLocaleString();
-  } catch {
-    return '';
-  }
-}
-
-export function explorerUrl(txHash?: string) {
-  if (!txHash) return '';
-  const base = import.meta.env.VITE_BLOCK_EXPLORER || '';
-  // Accept either ".../" or empty; fall back to hash only
-  return base ? `${base.replace(/\/+$/, '')}/tx/${txHash}` : '';
-}
-
