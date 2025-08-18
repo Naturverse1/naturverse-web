@@ -2,6 +2,8 @@ import { useMemo, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { getCart, setQty, removeLine, totals, clearCart } from '../../lib/cart';
 import { saveOrder } from '../../lib/orders';
+import LoadingOverlay from '../../components/ui/LoadingOverlay';
+import { useToast } from '../../components/ui/useToast';
 
 export default function Checkout() {
   const [cart, setCart] = useState(getCart());
@@ -10,6 +12,8 @@ export default function Checkout() {
   const [addr, setAddr] = useState('');
   const amounts = useMemo(()=> totals(cart), [cart]);
   const nav = useNavigate();
+const toast = useToast();
+  const [processing, setProcessing] = useState(false);
 
   function qtyChange(id:string, options:any, q:number) {
     setCart(setQty(id, options, q));
@@ -21,7 +25,8 @@ export default function Checkout() {
   function placeOrder(e:React.FormEvent) {
     e.preventDefault();
     if (!cart.length) return;
-    if (!email || !name || !addr) { alert('Please complete contact and shipping.'); return; }
+    if (!email || !name || !addr) { toast.error('Please complete contact and shipping'); return; }
+    setProcessing(true);
     const id = crypto.randomUUID();
     saveOrder({
       id, createdAt: new Date().toISOString(),
@@ -30,11 +35,16 @@ export default function Checkout() {
       amounts
     });
     clearCart();
-    nav(`/marketplace/success?id=${id}`);
+    setTimeout(() => {
+      setProcessing(false);
+      toast.success('Order placed');
+      nav(`/marketplace/success?id=${id}`);
+    }, 300);
   }
 
   return (
     <div className="container" style={{padding:'24px'}}>
+      <LoadingOverlay visible={processing} text="Placing order..." />
       <Link to="/marketplace" style={{color:'#7fe3ff'}}>&larr; Back to Marketplace</Link>
       <h1 style={{margin:'12px 0'}}>Checkout</h1>
 

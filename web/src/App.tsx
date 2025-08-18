@@ -23,7 +23,6 @@ import About from './pages/About';
 import StoryStudioPage from './pages/story-studio';
 import AutoQuiz from './pages/auto-quiz';
 import Profile from './pages/Profile';
-import NotFound from './pages/NotFound';
 import EcoRunner from './pages/zones/arcade/eco-runner';
 import MemoryMatch from './pages/zones/arcade/memory-match';
 import WordBuilder from './pages/zones/arcade/word-builder';
@@ -42,13 +41,19 @@ import AccountOrderDetail from './pages/account/OrderDetail';
 import Wishlist from './pages/account/Wishlist';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
+import ToastHost from './components/ui/ToastHost';
+import { ErrorBoundary } from './components/ErrorBoundary';
+import NotFound from './pages/errors/NotFound';
+import ServerError from './pages/errors/ServerError';
 
 export default function App() {
   return (
     <ProfileProvider>
       <CartProvider>
         <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
-          <Routes>
+          <ToastHost />
+          <ErrorBoundary>
+            <Routes>
             <Route element={<AppShell />}>
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
@@ -120,11 +125,13 @@ export default function App() {
                   </RequireAuth>
                 }
               />
-              <Route path="*" element={<NotFound />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
+            <Route path="/error" element={<ServerError />} />
+            <Route path="*" element={<NotFound />} />
           </Routes>
+          </ErrorBoundary>
         </Suspense>
         {/* global styles */}
         <link rel="stylesheet" href="/src/styles/ui.css" />

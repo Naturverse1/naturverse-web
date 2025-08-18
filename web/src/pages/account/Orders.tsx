@@ -1,12 +1,27 @@
+import { useEffect, useState } from 'react';
 import { getOrders } from '../../lib/orders';
 import { Link } from 'react-router-dom';
+import { Skeleton } from '../../components/ui/Skeleton';
 
 export default function Orders() {
-  const list = getOrders();
+  const [list, setList] = useState(getOrders());
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const t = setTimeout(() => setLoading(false), 300);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="container" style={{ padding: '24px' }}>
       <h1>Your Orders</h1>
-      {!list.length ? (
+      {loading ? (
+        <div className="panel">
+          {Array.from({ length: 3 }).map((_, i) => (
+            <Skeleton key={i} className="h-12" />
+          ))}
+        </div>
+      ) : !list.length ? (
         <p>
           No orders yet.{' '}
           <Link to="/marketplace" style={{ color: '#7fe3ff' }}>
@@ -44,4 +59,3 @@ export default function Orders() {
     </div>
   );
 }
-

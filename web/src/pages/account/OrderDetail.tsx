@@ -1,19 +1,36 @@
-import React from 'react';
-import { useParams, Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams, Link, useNavigate } from 'react-router-dom';
 import { getOrders } from '../../lib/orders';
+import { Skeleton } from '../../components/ui/Skeleton';
+import { useToast } from '../../components/ui/useToast';
 
 export default function OrderDetail() {
   const { id = '' } = useParams();
-  const order = getOrders().find((o) => o.id === id);
+  const nav = useNavigate();
+  const toast = useToast();
+  const [order] = useState(() => getOrders().find((o) => o.id === id));
+  const [loading, setLoading] = useState(true);
 
-  if (!order) {
+  useEffect(() => {
+    const t = setTimeout(() => {
+      setLoading(false);
+      if (!order) {
+        toast.error('Order not found');
+        nav('/account/orders');
+      }
+    }, 300);
+    return () => clearTimeout(t);
+  }, [order, nav, toast]);
+
+  if (loading) {
     return (
       <section className="page-container">
-        <Link to="/account/orders">← Back to Orders</Link>
-        <h1>Order not found</h1>
+        <Skeleton className="h-32" />
       </section>
     );
   }
+
+  if (!order) return null;
 
   return (
     <section className="page-container">
@@ -64,4 +81,3 @@ export default function OrderDetail() {
     </section>
   );
 }
-
