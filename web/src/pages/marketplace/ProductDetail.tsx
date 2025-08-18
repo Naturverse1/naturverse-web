@@ -3,20 +3,21 @@ import { useSearchParams, Link } from 'react-router-dom';
 import Gallery from '../../components/Gallery';
 import { Skeleton } from '../../components/ui/Skeleton';
 import { useToast } from '../../components/ui/useToast';
-import { getProduct } from '../../lib/products';
+import { getProduct, PRODUCTS } from '../../lib/products';
 import { addToCart } from '../../lib/cart';
 import RecoStrip from '../../components/RecoStrip';
-import { recommendFor, pushRecent, Item } from '../../lib/reco';
-import { PRODUCTS } from '../../lib/products';
+import { recommendFor, Item } from '../../lib/reco';
 import Stars from '../../components/Stars';
 import ReviewForm from '../../components/ReviewForm';
 import ReviewsList from '../../components/ReviewsList';
 import QAForm from '../../components/QAForm';
 import QAList from '../../components/QAList';
 import { ratingStats } from '../../lib/reviews';
-import { isFav, toggleFav, subscribe, unsubscribe } from '../../lib/wishlist';
 import Seo from '../../components/Seo';
 import ShareRow from '../../components/ShareRow';
+import WishlistButton from '../../components/WishlistButton';
+import { pushRecent } from '../../lib/recent';
+import RecentCarousel from '../../components/RecentCarousel';
 
 const allItems: Item[] = PRODUCTS.map(p => ({
   id: p.id,
@@ -34,7 +35,6 @@ export default function ProductDetail() {
   const [sp] = useSearchParams();
   const id = sp.get('id') || '';
   const product = getProduct(id);
-  const [fav, setFav] = useState(isFav(id));
   const toast = useToast();
   const [imgLoaded, setImgLoaded] = useState(false);
 
@@ -56,13 +56,6 @@ export default function ProductDetail() {
   useEffect(() => {
     if (product) pushRecent(product.id);
   }, [product?.id]);
-
-  useEffect(() => {
-    const cb = (ids: string[]) => setFav(ids.includes(id));
-    subscribe(cb);
-    return () => unsubscribe(cb);
-  }, [id]);
-
 
   const recos = product
     ? recommendFor(
@@ -129,14 +122,7 @@ export default function ProductDetail() {
         <div>
           <h1 style={{ display: 'flex', alignItems: 'center', gap: '.5rem' }}>
             {product.name}
-            <button
-              className="icon-btn"
-              aria-label={fav ? 'Remove from wishlist' : 'Add to wishlist'}
-              aria-pressed={fav}
-              onClick={() => setFav(toggleFav(product.id))}
-            >
-              {fav ? '♥' : '♡'}
-            </button>
+            <WishlistButton id={product.id} />
           </h1>
           <div style={{display:'flex', alignItems:'center', gap:8, marginTop:6}}>
             <Stars value={Math.round(stats.avg)} />
@@ -194,6 +180,7 @@ export default function ProductDetail() {
         </section>
       )}
       <RecoStrip title="For you" items={recos} source="detail" />
+      <RecentCarousel />
     </section>
   );
 }

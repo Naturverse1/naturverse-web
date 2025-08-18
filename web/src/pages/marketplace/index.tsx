@@ -6,7 +6,7 @@ import { addToCart } from '../../lib/cart';
 import CategoryChips from '../../components/filters/CategoryChips';
 import PriceRange from '../../components/filters/PriceRange';
 import SortSelect from '../../components/filters/SortSelect';
-import Pagination from '../../components/Pagination';
+import RecentCarousel from '../../components/RecentCarousel';
 import { PRODUCTS } from '../../lib/products';
 import Seo from '../../components/Seo';
 import {
@@ -145,6 +145,7 @@ export default function MarketplacePage() {
           onChange={(min, max) => handleUpdate({ min, max })}
         />
       </div>
+      <RecentCarousel />
       {loading ? (
         <div className="grid">
           {Array.from({ length: 12 }).map((_, i) => (

@@ -1,36 +1,15 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import { getNavatar } from '../lib/navatar';
-import { isFav, toggleFav, subscribe, unsubscribe } from '../lib/wishlist';
+import WishlistButton from './WishlistButton';
 
 export default function ProductCard({ product }: { product: any }) {
   const navatar = getNavatar();
-  const [fav, setFav] = useState(isFav(product.id));
-
-  useEffect(() => {
-    const cb = (ids: string[]) => setFav(ids.includes(product.id));
-    subscribe(cb);
-    return () => unsubscribe(cb);
-  }, [product.id]);
-
-  const onToggle = (e: React.MouseEvent) => {
-    e.preventDefault();
-    e.stopPropagation();
-    const next = toggleFav(product.id);
-    setFav(next);
-  };
 
   return (
     <div className="product-card">
       <div className="thumb" style={{ position: 'relative' }}>
         <img src={product.image} alt={product.name} />
-        <button
-          className="heart-btn icon-btn"
-          aria-label={fav ? 'Remove from wishlist' : 'Add to wishlist'}
-          aria-pressed={fav}
-          onClick={onToggle}
-        >
-          {fav ? '♥' : '♡'}
-        </button>
+        <WishlistButton id={product.id} />
         {navatar && (
           <img
             src={navatar}
@@ -51,4 +30,3 @@ export default function ProductCard({ product }: { product: any }) {
     </div>
   );
 }
-

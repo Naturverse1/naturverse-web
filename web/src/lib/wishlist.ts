@@ -1,13 +1,9 @@
-const KEY = 'natur_wishlist_v1';
-
-type Listener = (ids: string[]) => void;
-
-const listeners = new Set<Listener>();
+const KEY = 'nv_wishlist_v1';
+const listeners = new Set<(ids: string[]) => void>();
 
 function read(): string[] {
   try {
-    const raw = localStorage.getItem(KEY);
-    return raw ? JSON.parse(raw) : [];
+    return JSON.parse(localStorage.getItem(KEY) || '[]');
   } catch {
     return [];
   }
@@ -18,39 +14,61 @@ function write(ids: string[]) {
     localStorage.setItem(KEY, JSON.stringify(ids));
   } catch {}
   listeners.forEach(cb => cb(ids));
-  window.dispatchEvent(new CustomEvent('wishlist:update', { detail: ids }));
+  // notify others
+  try {
+    window.dispatchEvent(new CustomEvent('wishlist:update', { detail: ids }));
+  } catch {}
 }
 
 export function getWishlist(): string[] {
   return read();
 }
 
-export function isFav(id: string): boolean {
+export function isWished(id: string): boolean {
   return read().includes(id);
 }
 
-export function toggleFav(id: string): boolean {
-  const ids = read();
-  let next: string[];
-  let fav: boolean;
-  if (ids.includes(id)) {
-    next = ids.filter(x => x !== id);
-    fav = false;
-    console.log('wishlist_remove', { id });
+export function toggleWishlist(id: string): boolean {
+  const cur = read().filter(x => x !== id);
+  let wished: boolean;
+  if (cur.length === read().length) {
+    // not previously wished
+    cur.unshift(id);
+    wished = true;
   } else {
-    next = [...ids, id];
-    fav = true;
-    console.log('wishlist_add', { id });
+    wished = false;
   }
-  write(next);
-  return fav;
+  write(cur);
+  console.log('wishlist_toggle', { id, wished });
+  return wished;
 }
 
-export function subscribe(cb: Listener) {
+export function removeWish(id: string) {
+  write(read().filter(x => x !== id));
+}
+
+export function clearWishlist() {
+  write([]);
+}
+
+export function exportWishlist(): string {
+  return btoa(JSON.stringify(read()));
+}
+
+export function importWishlist(data: string): string[] {
+  try {
+    const ids = JSON.parse(atob(data));
+    return Array.isArray(ids) ? ids.map(String) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function subscribe(cb: (ids: string[]) => void) {
   listeners.add(cb);
 }
 
-export function unsubscribe(cb: Listener) {
+export function unsubscribe(cb: (ids: string[]) => void) {
   listeners.delete(cb);
 }
 
@@ -61,8 +79,7 @@ window.addEventListener('storage', e => {
   }
 });
 
-// manual event to allow other scripts to trigger updates
+// manual trigger
 window.addEventListener('wishlist:update', () => {
   listeners.forEach(cb => cb(read()));
 });
-

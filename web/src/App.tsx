@@ -44,7 +44,7 @@ import Success from './pages/marketplace/Success';
 import Orders from './pages/account/Orders';
 import Addresses from './pages/account/Addresses';
 import AccountOrderDetail from './pages/account/OrderDetail';
-import Wishlist from './pages/account/Wishlist';
+import ShareWishlist from './pages/account/ShareWishlist';
 import { CartProvider } from './context/CartContext';
 import ProfileProvider from './context/ProfileContext';
 import ToastHost from './components/ui/ToastHost';
@@ -136,14 +136,8 @@ export default function App() {
                   </RequireAuth>
                 }
               />
-              <Route
-                path="/account/wishlist"
-                element={
-                  <RequireAuth>
-                    <Wishlist />
-                  </RequireAuth>
-                }
-              />
+              <Route path="/account/wishlist" element={<Wishlist />} />
+              <Route path="/share/wishlist" element={<ShareWishlist />} />
             </Route>
             <Route path="/login" element={<Login />} />
             <Route path="/auth/callback" element={<AuthCallback />} />
