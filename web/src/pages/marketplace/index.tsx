@@ -17,6 +17,7 @@ import {
   FilterState,
 } from '../../lib/catalogFilter';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { seedProducts } from '../../lib/search';
 
 const allItems = PRODUCTS.map(p => ({
   id: p.id,
@@ -38,6 +39,10 @@ export default function MarketplacePage() {
   const [pageSize, setPageSize] = useState(() => (window.innerWidth < 640 ? 12 : 24));
   const toast = useToast();
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    seedProducts();
+  }, []);
 
   useEffect(() => {
     const onResize = () => setPageSize(window.innerWidth < 640 ? 12 : 24);

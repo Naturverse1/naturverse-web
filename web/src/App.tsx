@@ -53,6 +53,7 @@ import { ErrorBoundary } from './components/ErrorBoundary';
 import NotFound from './pages/errors/NotFound';
 import ServerError from './pages/errors/ServerError';
 import { applyThemeFromStorage, applyReducedMotionFromStorage } from './lib/prefs';
+import CommandPalette from './components/CommandPalette';
 
 export default function App() {
   useEffect(() => {
@@ -65,6 +66,7 @@ export default function App() {
         <Suspense fallback={<div className="container" style={{ padding: '24px' }}>Loading...</div>}>
           <ToastHost />
           <FloatingFeedback />
+          <CommandPalette />
           <ErrorBoundary>
             <Routes>
             <Route element={<AppShell />}>
