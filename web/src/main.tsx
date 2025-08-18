@@ -3,7 +3,6 @@ import ReactDOM from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 
 import App from './App';
-import UpdateToast from './components/UpdateToast';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { AuthProvider } from './context/AuthContext';
 import { ThemeProvider } from './context/ThemeContext';
@@ -22,6 +21,10 @@ bootDiagnostics();
 // ✅ harden localStorage access globally
 withSafeStorage();
 
+// 🔍 capture unhandled runtime errors
+window.addEventListener('error', e => console.error('[global-error]', (e as ErrorEvent).error || (e as ErrorEvent).message));
+window.addEventListener('unhandledrejection', e => console.error('[unhandled-rejection]', (e as PromiseRejectionEvent).reason));
+
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ErrorBoundary>
@@ -29,7 +32,6 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
         <ThemeProvider>
           <AuthProvider>
             <App />
-            <UpdateToast />
           </AuthProvider>
         </ThemeProvider>
       </BrowserRouter>
