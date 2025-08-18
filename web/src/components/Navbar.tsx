@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { getCart } from '../lib/cart';
+import { getWishlist, subscribe as subWish, unsubscribe as unsubWish } from '../lib/wishlist';
 import { Link, NavLink } from 'react-router-dom';
 import UserMenu from './UserMenu';
 
@@ -8,6 +9,7 @@ const linkClass = ({ isActive }: { isActive: boolean }) =>
 
 export default function Navbar() {
   const [count, setCount] = useState(0);
+  const [wishCount, setWishCount] = useState(getWishlist().length);
   const [moreOpen, setMoreOpen] = useState(false);
   const moreRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
@@ -15,6 +17,11 @@ export default function Navbar() {
     update();
     const i = setInterval(update, 1000);
     return () => clearInterval(i);
+  }, []);
+  useEffect(() => {
+    const cb = (ids: string[]) => setWishCount(ids.length);
+    subWish(cb);
+    return () => unsubWish(cb);
   }, []);
   useEffect(() => {
     const onDoc = (e: MouseEvent) => {
@@ -90,7 +97,7 @@ export default function Navbar() {
       </div>
       <div style={{ marginLeft: 'auto', display: 'flex', gap: '16px', alignItems: 'center' }}>
         <NavLink to="/account/wishlist" className={linkClass}>
-          Wishlist
+          Wishlist {wishCount ? <span className="badge">{wishCount}</span> : null}
         </NavLink>
         <Link to="/marketplace/checkout" className="cart-link">
           Cart {count ? <span className="badge">{count}</span> : null}
