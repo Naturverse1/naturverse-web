@@ -1,8 +1,10 @@
 [build]
-  base = "web"          # run builds inside /web
-  publish = "dist"      # publish the dist *inside* /web
-  functions = "functions"
-  command = "npm ci && npm run build"
+  command   = "npm ci && npm run build"
+  publish   = "web/dist"
+  functions = "web/functions"
+
+[functions]
+  node_bundler = "esbuild"
 
 # keep the SPA redirect
 [[redirects]]
