@@ -1,14 +1,12 @@
 [build]
 base = "web"
-publish = "web/dist"
-functions = "web/functions"
 command = "npm install --no-audit --no-fund && npm run build"
+publish = "dist"
+functions = "functions"
 
 [functions]
-# Use esbuild so ESM and TS get bundled cleanly
 node_bundler = "esbuild"
 
-# SPA fallback
 [[redirects]]
 from = "/*"
 to = "/index.html"
