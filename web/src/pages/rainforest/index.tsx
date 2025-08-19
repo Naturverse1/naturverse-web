@@ -2,8 +2,8 @@ import React from "react";
 export default function Rainforest() {
   return (
     <section>
-      <h2 className="text-2xl font-semibold mb-2">🌧️ Rainforest</h2>
-      <p>Welcome to the rainforest zone.</p>
+      <h1>🌧️ Rainforest</h1>
+      <p>Welcome to the rainforest zone. Trails, species cards, and quests will live here.</p>
     </section>
   );
 }
