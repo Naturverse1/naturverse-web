@@ -1,30 +1,32 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import ProductCard from "../../components/ProductCard";
-import Filters from "../../components/filters/Filters";
+
+import * as productsLib from "../../lib/products";
 
 export default function Marketplace() {
-  // Replace with real data later
-  const mock = Array.from({ length: 6 }).map((_, i) => ({
-    id: `demo-${i + 1}`,
-    title: `Naturverse Item ${i + 1}`,
-    price: (i + 1) * 5,
-    image: "/assets/og-default.jpg"
-  }));
-
+  const items = (productsLib as any).products ?? [];
   return (
-    <main style={{ maxWidth: 1100, margin: "2rem auto", padding: "0 1rem" }}>
+    <section>
       <h2>🛒 Marketplace</h2>
       <p>Discover and trade Naturverse items.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "1.5rem" }}>
-        <aside><Filters /></aside>
-        <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: "1rem" }}>
-          {mock.map(p => (
-            <ProductCard key={p.id} product={p as any} />
+      {items.length === 0 ? (
+        <>
+          <p>No products seeded yet.</p>
+          <p>Add items in <code>lib/products.ts</code> to populate this grid.</p>
+        </>
+      ) : (
+        <div style={{display:"grid", gap:16, gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))"}}>
+          {items.map((p:any) => (
+            <ProductCard key={p.id} product={p} />
           ))}
-        </section>
-      </div>
-    </main>
+        </div>
+      )}
+
+      <p style={{marginTop:16}}>
+        View your orders in <Link to="/profile">Account</Link>.
+      </p>
+    </section>
   );
 }
 

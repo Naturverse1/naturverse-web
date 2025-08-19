@@ -1,15 +1,14 @@
-import React from "react";
 export default function Partners() {
   return (
-    <main style={{ maxWidth: 720, margin: "2rem auto", padding: "0 1rem" }}>
+    <section>
       <h2>🤝 Partners</h2>
-      <p>Collaborations, brand kits, and co-creation programs.</p>
+      <p>Collaborations that expand the Naturverse.</p>
       <ul>
-        <li>Media & creators</li>
-        <li>Nonprofits & schools</li>
-        <li>Science orgs & sponsors</li>
+        <li>Local museums & libraries</li>
+        <li>Eco-NGOs and field programs</li>
+        <li>Indie creators & studios</li>
       </ul>
-    </main>
+    </section>
   );
 }
 
