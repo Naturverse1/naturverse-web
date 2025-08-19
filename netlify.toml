@@ -1,15 +1,9 @@
 [build]
-  base = "web"
-  publish = "web/dist"
-  command = "npm --prefix web install --include=dev --no-audit --no-fund && npm --prefix web run build"
+# run everything from the repo root, but target the web/ folder explicitly
+command = "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
+publish = "web/dist"
+functions = "web/functions"
 
-[functions]
-  directory = "web/functions"
-  node_bundler = "esbuild"
-  included_files = ["web/functions/**"]
-
-[[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
-
+[build.environment]
+# lock Node to a recent LTS that Vite supports
+NODE_VERSION = "20"
