@@ -1,11 +1,18 @@
-import { createBrowserRouter } from 'react-router-dom';
-
-const Home = () => <div style={{padding:24}}><h1>Naturverse</h1><p>Home is up ✅</p></div>;
-const NotFound = () => <div style={{padding:24}}><h1>Not found</h1></div>;
+import React from 'react'
+import { createBrowserRouter } from 'react-router-dom'
+import App from './App'
+import Home from './pages/Home'
+import NotFound from './pages/NotFound'
 
 const router = createBrowserRouter([
-  { path: '/', element: <Home /> },
-  { path: '*', element: <NotFound /> },
-]);
+  {
+    element: <App />,
+    children: [
+      { index: true, element: <Home /> },
+      { path: 'health', element: <div>ok</div> },
+      { path: '*', element: <NotFound /> },
+    ],
+  },
+])
 
-export default router;
+export default router
