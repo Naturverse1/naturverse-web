@@ -1,14 +1,12 @@
 [build]
-  base = "web"
-  publish = "dist"                   # IMPORTANT: publish is relative to base
+  base    = "web"
+  publish = "web/dist"
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
-# Recommended build environment for reproducibility
 [build.environment]
-  NODE_VERSION = "18.20.3"
-  NPM_FLAGS = "--legacy-peer-deps --no-audit --no-fund"
+  NODE_VERSION = "18"
 
-# Single Page App redirect (also keep file in /web/_redirects)
+# SPA fallback so /arcade, /music, /tips load index.html in production
 [[redirects]]
   from = "/*"
   to = "/index.html"
