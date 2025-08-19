@@ -1,11 +1,12 @@
+import { Link } from "react-router-dom";
+import { Section } from "./_shared";
+
 export default function Arcade() {
   return (
-    <div style={{ padding: 16 }}>
-      <h2>Arcade</h2>
-      <ul>
-        <li>Game 1 (placeholder)</li>
-        <li>Game 2 (placeholder)</li>
-      </ul>
-    </div>
+    <Section title="Arcade">
+      <div><Link to="/arcade/game-1">Game 1</Link></div>
+      <div><Link to="/arcade/game-2">Game 2</Link></div>
+      <div><Link to="/arcade/game-3">Game 3</Link></div>
+    </Section>
   );
 }

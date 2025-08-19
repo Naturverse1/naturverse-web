@@ -1,3 +1,5 @@
+import { Section } from "./_shared";
+
 export default function Worlds() {
-  return <div style={{ padding: 16 }}><h2>Worlds</h2><p>Discover worlds.</p></div>;
+  return <Section title="Worlds">Experiences and realms.</Section>;
 }

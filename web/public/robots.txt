@@ -1,4 +1,0 @@
-User-agent: *
-Allow: /
-
-Sitemap: https://naturverse.vercel.app/sitemap.xml

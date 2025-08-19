@@ -3,6 +3,9 @@
   publish = "dist"      # Vite outputs to /web/dist
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
+[build.environment]
+  NODE_VERSION = "18"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
