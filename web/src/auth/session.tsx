@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 import type { Session, User } from "@supabase/supabase-js";
 
 type AuthState = { session: Session | null; user: User | null; loading: boolean; };
@@ -9,7 +9,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ session: null, user: null, loading: true });
 
   useEffect(() => {
-    const supabase = getSupabase();
+    const supabase = getSupabase() ?? (SafeSupabase as any);
     if (!supabase) {
       setState({ session: null, user: null, loading: false });
       return;

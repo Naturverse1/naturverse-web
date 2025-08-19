@@ -1,9 +1,9 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 
 export function useSession() {
-  const supabase = getSupabase();
+  const supabase = getSupabase() ?? (SafeSupabase as any);
   const [session, setSession] = React.useState<Awaited<ReturnType<NonNullable<typeof supabase>['auth']['getSession']>>["data"]["session"] | null>(null);
   const [loading, setLoading] = React.useState(true);
 
