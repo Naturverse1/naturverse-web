@@ -1,16 +1,15 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function AccountHome() {
+  const [userEmail, setUserEmail] = useState<string | null>(null);
+  useEffect(() => {
+    supabase.auth.getUser().then(({ data }) => setUserEmail(data.user?.email ?? null));
+  }, []);
   return (
     <section>
-      <h2>Account</h2>
-      <ul>
-        <li><Link to="/profile">Profile</Link></li>
-        <li><Link to="/account/orders">Orders</Link></li>
-        <li><Link to="/account/wishlist">Wishlist</Link></li>
-        <li><Link to="/settings">Settings</Link></li>
-      </ul>
+      <h2>👤 Account</h2>
+      {userEmail ? <p>Signed in as {userEmail}</p> : <p>Not signed in.</p>}
     </section>
   );
 }
-
