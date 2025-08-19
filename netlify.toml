@@ -1,15 +1,11 @@
-## Netlify build driven from repo root (no base dir)
 [build]
-command   = "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
-publish   = "web/dist"
-functions = "web/functions"
+  base = "web"
+  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "dist"
 
-[build.environment]
-NODE_VERSION = "18.19.0"
-NPM_FLAGS    = "--prefer-offline --no-audit --no-fund"
+[functions]
+  directory = "web/functions"
+  node_bundler = "esbuild"
 
-[[redirects]]
-from = "/*"
-to   = "/index.html"
-status = 200
-
+[[plugins]]
+  package = "@netlify/plugin-functions-install-core"
