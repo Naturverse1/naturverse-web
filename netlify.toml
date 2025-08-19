@@ -1,13 +1,18 @@
 ## Netlify config
 [build]
-  base    = ""
-  command = "npm install --prefix web && npm run build --prefix web"
+  base = "web"
+  command = "npm install && npm run build"
   publish = "web/dist"
+  functions = "web/functions"
+
+[build.environment]
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
 
 [functions]
-  directory    = "functions"
+  directory = "web/functions"
   node_bundler = "esbuild"
-  included_files = ["functions/**"]
+  included_files = ["web/functions/**"]
 
 [[redirects]]
   from = "/*"
