@@ -1,13 +1,15 @@
 [build]
-base = "web"
-publish = "web/dist"
-command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
+  base = "web"
+  publish = "dist"                   # IMPORTANT: publish is relative to base
+  command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
+# Recommended build environment for reproducibility
 [build.environment]
-NODE_VERSION = "18.20.8"
-NPM_FLAGS = "--legacy-peer-deps"
+  NODE_VERSION = "18.20.3"
+  NPM_FLAGS = "--legacy-peer-deps --no-audit --no-fund"
 
+# Single Page App redirect (also keep file in /web/_redirects)
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
