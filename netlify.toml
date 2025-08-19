@@ -1,14 +1,14 @@
 [build]
+# Run builds from the /web workspace
 base = "web"
+# Vite outputs to /web/dist by default
 publish = "web/dist"
+
+# Use npm install (not npm ci) to avoid lockfile requirement in CI,
+# then run our build script.
 command = "npm install --no-audit --no-fund && npm run build"
 
-[build.environment]
-NODE_VERSION = "18.20.3"
-NPM_FLAGS = "--legacy-peer-deps"
-
-# SPA routing for React Router
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
