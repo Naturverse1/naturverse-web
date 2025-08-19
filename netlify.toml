@@ -1,16 +1,19 @@
 [build]
-base = "web"
-publish = "web/dist"
-# include dev deps so PostCSS/Tailwind are installed in Netlify's build image
-command = "npm install --include=dev --no-audit --no-fund && npm --prefix web run build"
+  base = "web"
+  publish = "web/dist"
+  # Install dev deps (tailwind/postcss) inside /web then build
+  command = "npm --prefix web install --include=dev --no-audit --no-fund && npm --prefix web run build"
 
-[functions]
-directory = "web/functions"
-node_bundler = "esbuild"
-
-[plugins]
+# Correct plugin array syntax
+[[plugins]]
   package = "@netlify/plugin-functions-install-core"
 
+[functions]
+  node_bundler = "esbuild"
+  included_files = ["web/functions/**"]
+  directory = "web/functions"
+
+# SPA fallback so client routes work
 [[redirects]]
   from = "/*"
   to = "/index.html"
