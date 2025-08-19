@@ -1,6 +1,6 @@
 [build]
-  base = "web"          # repo root has /web; build from there
-  publish = "dist"      # Vite outputs to /web/dist
+  base = "web"
+  publish = "dist"
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
 [build.environment]
