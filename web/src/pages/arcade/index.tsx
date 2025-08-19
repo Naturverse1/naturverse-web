@@ -1,14 +1,14 @@
-import React from "react";
 import { Link } from "react-router-dom";
 
 export default function Arcade() {
   return (
     <section>
-      <h1>🎮 Arcade</h1>
+      <h2>🎮 Arcade</h2>
       <p>Interactive Naturverse games.</p>
-      <ul style={{ marginTop: 16, lineHeight: 1.8 }}>
-        <li><Link to="/arcade/brain-challenge">🧠 Brain Challenge</Link> – match pairs</li>
-        <li><Link to="/arcade/nature-clicker">🌿 Nature Clicker</Link> – tap sprouts to grow a forest</li>
+      <ul>
+        <li><Link to="/arcade/eco-runner">Eco Runner</Link></li>
+        <li><Link to="/arcade/memory-match">Memory Match</Link></li>
+        <li><Link to="/arcade/word-builder">Word Builder</Link></li>
       </ul>
     </section>
   );
