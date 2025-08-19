@@ -1,12 +1,11 @@
+# netlify.toml
 [build]
-  base = "web"
-  publish = "web/dist"
+  # The app lives in /web; Netlify should run commands from there.
+  base    = "web"
   command = "npm ci && npm run build"
+  publish = "web/dist"
 
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--no-fund --no-audit"
-
+# Single Page App redirect so deep links hit index.html
 [[redirects]]
   from = "/*"
   to = "/index.html"
