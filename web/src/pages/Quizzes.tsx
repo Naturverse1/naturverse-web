@@ -1,8 +1,3 @@
 export default function Quizzes() {
-  return (
-    <main style={{ padding: '2rem' }}>
-      <h1>Brain Challenge</h1>
-      <p>Coming soon.</p>
-    </main>
-  );
+  return <div style={{ padding: 16 }}><h2>Quizzes</h2><p>Test your knowledge.</p></div>;
 }
