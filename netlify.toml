@@ -5,8 +5,12 @@ base = "web"
 publish = "web/dist"
 
 # Use npm install (not npm ci) to avoid lockfile requirement in CI,
-# then run our build script.
-command = "npm install --no-audit --no-fund && npm run build"
+# then run our build script. Include --legacy-peer-deps to bypass peer
+# dependency issues during installs.
+command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
+
+[build.environment]
+  NODE_VERSION = "18"
 
 [[redirects]]
   from = "/*"
