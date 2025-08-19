@@ -1,12 +1,12 @@
-# Netlify build for the Vite app in /web
-
 [build]
-# IMPORTANT: run from repo root so --prefix web points to /web (not /web/web)
-base = "."
-command = "npm --prefix web install --include=dev --no-audit --no-fund && npm --prefix web run build"
-publish = "web/dist"
-functions = "web/functions"
+  base = ""
+  command = "npm --prefix web install --include=dev --no-audit --no-fund && npm --prefix web run build"
+  publish = "web/dist"
 
 [build.environment]
-NODE_VERSION = "20"
+  NODE_VERSION = "18"
+  NPM_FLAGS = "--legacy-peer-deps"
 
+[functions]
+  directory = "web/functions"
+  node_bundler = "esbuild"
