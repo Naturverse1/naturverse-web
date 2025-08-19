@@ -1,15 +1,15 @@
-## Netlify config for Vite app in /web with functions in /web/functions
+## Netlify build driven from repo root (no base dir)
 [build]
-  # Base is set in the UI to "web". Keep publish RELATIVE to base.
-  # (If the UI base is blank, this still works because it's valid from repo root.)
-  command = "npm ci && npm run build"
-  publish = "dist"
+command   = "npm --prefix web install --no-audit --no-fund && npm --prefix web run build"
+publish   = "web/dist"
+functions = "web/functions"
 
-[functions]
-  directory = "functions"
-  node_bundler = "esbuild"
+[build.environment]
+NODE_VERSION = "18.19.0"
+NPM_FLAGS    = "--prefer-offline --no-audit --no-fund"
 
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to   = "/index.html"
+status = 200
+
