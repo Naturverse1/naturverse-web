@@ -1,9 +1,9 @@
 import { PRODUCTS } from './products'
 
-export const seedProducts = [
-  { id: 'demo-1', name: 'Natur Tee', price: 2500, tags: ['apparel'] },
-  { id: 'demo-2', name: 'Natur Bottle', price: 1900, tags: ['gear'] }
-]
+export const seedProducts = Array.isArray((globalThis as any)?.seedProducts)
+  ? (globalThis as any).seedProducts
+  : [];
+export default seedProducts;
 
 export type SearchResultItem = {
   id: string

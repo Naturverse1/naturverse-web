@@ -1,22 +1,21 @@
-import React from 'react'
+import { Component, ReactNode } from "react";
 
-export class ErrorBoundary extends React.Component<{children: React.ReactNode},{err?: any}> {
-  state = { err: undefined as any }
-  static getDerivedStateFromError(err: any) { return { err } }
+type Props = { children: ReactNode; fallback?: ReactNode };
+type State = { hasError: boolean };
+
+export default class ErrorBoundary extends Component<Props, State> {
+  state: State = { hasError: false };
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: unknown) { console.error("[Naturverse] App crashed", err); }
   render() {
-    if (this.state.err) {
-      return (
-        <div style={{display:'grid',placeItems:'center',minHeight:'100dvh',color:'#fff'}}>
-          <div style={{textAlign:'center'}}>
-            <h1>Something went wrong</h1>
-            <p>Try a hard refresh. If that doesn’t work, clear site data/cache.</p>
-            <button onClick={() => { localStorage.clear(); caches?.keys().then(k=>k.forEach(c=>caches.delete(c))).finally(()=>location.reload()) }}>
-              Reload
-            </button>
-          </div>
+    if (this.state.hasError) {
+      return this.props.fallback ?? (
+        <div style={{padding:24, color:"#fff", background:"#0b1220"}}>
+          <h1>Something went wrong</h1>
+          <button onClick={() => location.reload()}>Reload</button>
         </div>
-      )
+      );
     }
-    return this.props.children as any
+    return this.props.children;
   }
 }

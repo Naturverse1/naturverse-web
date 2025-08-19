@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 import type { Session, User } from "@supabase/supabase-js";
 
 type AuthState = { session: Session | null; user: User | null; loading: boolean; };
@@ -9,6 +9,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ session: null, user: null, loading: true });
 
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) {
+      setState({ session: null, user: null, loading: false });
+      return;
+    }
     let mounted = true;
 
     async function load() {

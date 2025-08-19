@@ -1,18 +1,20 @@
 import React from "react";
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [sending, setSending] = React.useState(false);
 
-  async function sendLink(e: React.FormEvent) {
-    e.preventDefault();
-    setSending(true);
-    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` }});
-    setSending(false);
-    if (error) alert(error.message);
-    else alert("Magic link sent!");
-  }
+    async function sendLink(e: React.FormEvent) {
+      e.preventDefault();
+      const supabase = getSupabase();
+      if (!supabase) return;
+      setSending(true);
+      const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` }});
+      setSending(false);
+      if (error) alert(error.message);
+      else alert("Magic link sent!");
+    }
 
   return (
     <main className="mx-auto max-w-md px-4 py-10 text-white">

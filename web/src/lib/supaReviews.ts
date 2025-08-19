@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export type Review = {
   id: string;
@@ -19,6 +19,8 @@ export async function getReviews(
   const size = opts.size || 10;
   const from = (page - 1) * size;
   const to = from + size - 1;
+  const supabase = getSupabase();
+  if (!supabase) return { data: [], count: 0, error: new Error('Supabase unavailable') };
   const { data, count, error } = await supabase
     .from('products_reviews')
     .select('*', { count: 'exact' })
@@ -30,6 +32,8 @@ export async function getReviews(
 }
 
 export async function getReviewSummary(productId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { count: 0, avg: 0, dist: [0,0,0,0,0], error: new Error('Supabase unavailable') };
   const { data, error } = await supabase
     .from('products_reviews')
     .select('rating')
@@ -48,6 +52,8 @@ export async function getReviewSummary(productId: string) {
 
 export async function getReviewSummaries(productIds: string[]) {
   if (!productIds.length) return {} as Record<string, { avg: number; count: number }>;
+  const supabase = getSupabase();
+  if (!supabase) return {} as Record<string, { avg: number; count: number }>;
   const { data } = await supabase
     .from('products_reviews')
     .select('product_id,rating')
@@ -68,6 +74,8 @@ export async function getReviewSummaries(productIds: string[]) {
 }
 
 export async function getMyReview(productId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return null;
@@ -84,6 +92,8 @@ export async function upsertReview(
   productId: string,
   review: { rating: number; title: string; body: string },
 ) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return { error: new Error('Not authenticated') };
@@ -98,11 +108,15 @@ export async function upsertReview(
 }
 
 export async function deleteReview(id: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { error } = await supabase.from('products_reviews').delete().eq('id', id);
   return { error };
 }
 
 export async function toggleHelpful(reviewId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return { error: new Error('Not authenticated') };
@@ -132,6 +146,8 @@ export async function toggleHelpful(reviewId: string) {
 }
 
 export async function flagReview(id: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { error } = await supabase
     .from('products_reviews')
     .update({ flagged: true })
@@ -166,6 +182,8 @@ export async function getQuestions(
   const size = opts.size || 10;
   const from = (page - 1) * size;
   const to = from + size - 1;
+  const supabase = getSupabase();
+  if (!supabase) return { data: [], count: 0, error: new Error('Supabase unavailable') };
   const { data, count, error } = await supabase
     .from('products_questions')
     .select('*, products_answers(*)', { count: 'exact' })
@@ -184,6 +202,8 @@ export async function addQuestion(
   title: string,
   body: string,
 ) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return { error: new Error('Not authenticated') };
@@ -197,6 +217,8 @@ export async function addQuestion(
 }
 
 export async function addAnswer(questionId: string, body: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return { error: new Error('Not authenticated') };
@@ -209,6 +231,8 @@ export async function addAnswer(questionId: string, body: string) {
 }
 
 export async function toggleHelpfulAnswer(answerId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { data: userData } = await supabase.auth.getUser();
   const user = userData.user;
   if (!user) return { error: new Error('Not authenticated') };
@@ -238,6 +262,8 @@ export async function toggleHelpfulAnswer(answerId: string) {
 }
 
 export async function flagAnswer(id: string) {
+  const supabase = getSupabase();
+  if (!supabase) return { error: new Error('Supabase unavailable') };
   const { error } = await supabase
     .from('products_answers')
     .update({ flagged: true })

@@ -6,7 +6,7 @@ import {
   toggleHelpfulAnswer,
   flagAnswer,
 } from '../../lib/supaReviews';
-import { supabase } from '../../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 type Props = {
   productId: string;
@@ -56,6 +56,8 @@ export default function QAList({ productId }: Props) {
   const pageSize = 10;
 
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id || null));
   }, []);
 

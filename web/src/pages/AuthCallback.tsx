@@ -1,12 +1,14 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
     let done = false;
+    const supabase = getSupabase();
+    if (!supabase) { navigate("/login"); return; }
     (async () => {
       // Exchange URL code+state -> session
       const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);

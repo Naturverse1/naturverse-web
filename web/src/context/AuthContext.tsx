@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 type AuthState = {
   loading: boolean;
@@ -28,38 +28,34 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initial load + URL cleanup (handles magic-link fragments)
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) { setLoading(false); return; }
     (async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session ?? null);
       setUser(data.session?.user ?? null);
       setLoading(false);
 
-      // If magic link appended params, clean them and route to /app by default
       const hash = window.location.hash || '';
       const looksLikeToken = /access_token=|type=recovery|type=signup|type=invite/.test(hash);
       if (looksLikeToken) {
-        // Clean hash to avoid multiple sign-ins on refresh
         history.replaceState({}, document.title, window.location.pathname + window.location.search);
-        // Redirect target: if already on /profile /app keep it; else go to /app
         if (!loc.pathname.startsWith('/app') && !loc.pathname.startsWith('/profile')) {
           nav('/app', { replace: true });
         }
       }
     })();
 
-    // Subscribe to auth changes
     const { data: sub } = supabase.auth.onAuthStateChange(async (event, sess) => {
       setSession(sess ?? null);
       setUser(sess?.user ?? null);
       if (event === 'SIGNED_OUT') {
         setNavatarLocal(null);
-        // If leaving a protected page, go home
         if (window.location.pathname.startsWith('/app') || window.location.pathname.startsWith('/profile')) {
           nav('/', { replace: true });
         }
       }
       if (event === 'SIGNED_IN' || event === 'TOKEN_REFRESHED' || event === 'USER_UPDATED') {
-        // Optional: fetch profile row to mirror avatar_url
         try {
           const uid = sess?.user?.id;
           if (uid) {
@@ -74,6 +70,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [nav, loc.pathname]);
 
   const signOut = async () => {
+    const supabase = getSupabase();
+    if (!supabase) return;
     await supabase.auth.signOut();
   };
 

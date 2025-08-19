@@ -1,10 +1,16 @@
-import { createClient } from '@supabase/supabase-js';
-import type { SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from "@supabase/supabase-js";
 
-const url = import.meta.env.VITE_SUPABASE_URL as string | undefined
-const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined
+let client: SupabaseClient | null = null;
 
-export let supabase: SupabaseClient | null = null
-if (url && anon) {
-  supabase = createClient(url, anon)
+const url = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+
+export function getSupabase(): SupabaseClient | null {
+  try {
+    if (!client && url && key) client = createClient(url, key);
+  } catch (e) {
+    console.error("[Naturverse] Supabase init failed", e);
+    client = null;
+  }
+  return client;
 }
