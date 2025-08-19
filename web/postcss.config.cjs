@@ -1,9 +1,7 @@
-// CommonJS config so it loads correctly in Node 18 on Netlify
-// (the previous ESM export default in a .cjs file caused the build failure)
-/** @type {import('postcss-load-config').Config} */
+// CJS so Vite never treats this as ESM during build
 module.exports = {
   plugins: {
     tailwindcss: {},
-    autoprefixer: {},
-  },
+    autoprefixer: {}
+  }
 };
