@@ -1,34 +1,29 @@
-import React from "react";
+import React from 'react';
 
-type State = { error: Error | null };
+type Props = { children: React.ReactNode };
+type State = { hasError: boolean; message?: string };
 
-export class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
-  state: State = { error: null };
-
-  static getDerivedStateFromError(error: Error): State {
-    return { error };
+export class ErrorBoundary extends React.Component<Props, State> {
+  state: State = { hasError: false };
+  static getDerivedStateFromError(err: unknown) {
+    return { hasError: true, message: err instanceof Error ? err.message : String(err) };
   }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Log in production bundles so we can see the real cause
-    console.error("App crashed:", error, info);
+  componentDidCatch(err: unknown, info: unknown) {
+    // eslint-disable-next-line no-console
+    console.error('App error:', err, info);
   }
-
   render() {
-    if (this.state.error) {
+    if (this.state.hasError) {
       return (
-        <div style={{ padding: 16, fontFamily: "system-ui" }}>
+        <div style={{ padding: 16 }}>
           <h1>Something went wrong.</h1>
-          <p>{this.state.error.message}</p>
-          <pre style={{ whiteSpace: "pre-wrap" }}>
-            {this.state.error.stack}
-          </pre>
-          <button onClick={() => location.reload()} style={{ padding: 8 }}>
-            Reload
-          </button>
+          <pre style={{ whiteSpace: 'pre-wrap' }}>{this.state.message}</pre>
         </div>
       );
     }
     return this.props.children;
   }
 }
+
+export default ErrorBoundary;
+
