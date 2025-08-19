@@ -1,12 +1,12 @@
+## Netlify build for Vite app (run from /web)
 [build]
-  base    = "web"
-  publish = "web/dist"
-  command = "npm --prefix web ci && npm --prefix web run build"
-
-[functions]
-  directory = "web/functions"
-  node_bundler = "esbuild"
-  included_files = ["web/functions/**"]
+  # Work inside the web/ folder so npm uses web/package.json directly
+  base = "web"
+  # Use install (no lockfile required) then build
+  command = "npm install --no-audit --no-fund && npm run build"
+  # Paths are now relative to /web
+  publish = "dist"
+  functions = "functions"
 
 [[plugins]]
   package = "@netlify/plugin-functions-install-core"
