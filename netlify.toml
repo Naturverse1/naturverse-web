@@ -1,20 +1,12 @@
-# Root Netlify config
-
 [build]
-# Tell Netlify to run everything from the web/ folder
 base = "web"
-
-# IMPORTANT: publish is RELATIVE to base. Use "dist", not "web/dist".
 publish = "dist"
-
-# Your build – runs inside the base dir (web/)
 command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
 [build.environment]
-NODE_VERSION = "18"
+NODE_VERSION = "18.20.3"
 NPM_FLAGS = "--legacy-peer-deps"
 
-# SPA routing
 [[redirects]]
 from = "/*"
 to = "/index.html"
