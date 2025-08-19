@@ -1,9 +1,10 @@
 {
-  "name": "naturverse-functions",
-  "private": true,
-  "version": "1.0.0",
+  "type": "module",
   "dependencies": {
-    "ethers": "^6.13.2"
+    "ethers": "^6.13.2",
+    "@noble/hashes": "^1.4.0",
+    "@noble/curves": "^1.4.0",
+    "@adraffy/ens-normalize": "^1.11.0",
+    "aes-js": "^4.0.0-beta.5"
   }
 }
-
