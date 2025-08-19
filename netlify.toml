@@ -1,8 +1,7 @@
 [build]
-  base = "web"
-  command = "npm ci && npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+base = "web"
+command = "npm install --no-audit --no-fund && npm run build"
+publish = "web/dist"
 
 [[redirects]]
   from = "/*"
