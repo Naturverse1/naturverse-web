@@ -1,15 +1,15 @@
 import React from "react";
-import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import AppHome from "./AppHome";
 
-// Sections with folder indexes
+// Sections with folder indexes (stubs added where needed)
 import Zones from "./pages/zones";
 import Marketplace from "./pages/marketplace";
 import Arcade from "./pages/arcade";
 import Naturversity from "./pages/naturversity";
 import Rainforest from "./pages/rainforest";
 
-// Single-file pages
+// Single-file pages that already exist
 import Worlds from "./pages/Worlds";
 import WorldHub from "./pages/world-hub";
 import OceanWorld from "./pages/OceanWorld";
@@ -31,85 +31,84 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
-// New sections
-import Wellness from "./pages/wellness";
-import Music from "./pages/music";
+// NEW pages
+import TurianTips from "./pages/TurianTips";
 import Feedback from "./pages/feedback";
+import Account from "./pages/account";
+import AccountOrders from "./pages/account/Orders";
+import AccountAddresses from "./pages/account/Addresses";
+import AccountWishlist from "./pages/account/Wishlist";
 
-// Arcade games
-import BrainChallenge from "./pages/arcade/BrainChallenge";
-import NatureClicker from "./pages/arcade/NatureClicker";
-
-// very light layout
-function Layout({ children }: { children: React.ReactNode }) {
-  return (
-    <div>
-      <header style={{ padding: "16px 20px", borderBottom: "1px solid #eee" }}>
-        <nav style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
-          <strong style={{ marginRight: 10 }}>The Naturverse</strong>
-          <Link to="/">Home</Link>
-          <Link to="/zones">Zones</Link>
-          <Link to="/worlds">Worlds</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/arcade">Arcade</Link>
-          <Link to="/wellness">Wellness</Link>
-          <Link to="/music">Music</Link>
-          <Link to="/feedback">Feedback</Link>
-          <span style={{ flex: 1 }} />
-          <Link to="/profile">Profile</Link>
-          <Link to="/settings">Settings</Link>
-        </nav>
-      </header>
-      <main style={{ padding: "24px 20px", maxWidth: 1100, margin: "0 auto" }}>
-        {children}
-      </main>
-      <footer style={{ padding: "24px 20px", borderTop: "1px solid #eee", marginTop: 40 }}>
-        © {new Date().getFullYear()} Naturverse
-      </footer>
-    </div>
-  );
-}
+// Zones sub-pages (NEW)
+import ZoneCommunity from "./pages/zones/Community";
+import ZoneCreatorLab from "./pages/zones/CreatorLab";
+import ZoneEcoLab from "./pages/zones/EcoLab";
+import ZoneMusic from "./pages/zones/MusicZone";
+import ZoneNaturversity from "./pages/zones/Naturversity";
+import ZoneParents from "./pages/zones/Parents";
+import ZoneTeachers from "./pages/zones/Teachers";
+import ZonePartners from "./pages/zones/Partners";
+import ZoneSettings from "./pages/zones/Settings";
+import ZoneStoryStudio from "./pages/zones/StoryStudio";
+import ZoneWellness from "./pages/zones/Wellness";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<Layout><AppHome /></Layout>} />
-        <Route path="/home" element={<Layout><Home /></Layout>} />
-        <Route path="/about" element={<Layout><About /></Layout>} />
-        <Route path="/contact" element={<Layout><Contact /></Layout>} />
-        <Route path="/faq" element={<Layout><FAQ /></Layout>} />
-        <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
-        <Route path="/terms" element={<Layout><Terms /></Layout>} />
-        <Route path="/settings" element={<Layout><Settings /></Layout>} />
-        <Route path="/stories" element={<Layout><Stories /></Layout>} />
-        <Route path="/story-studio" element={<Layout><StoryStudio /></Layout>} />
-        <Route path="/quizzes" element={<Layout><Quizzes /></Layout>} />
-        <Route path="/observations" element={<Layout><Observations /></Layout>} />
-        <Route path="/observations-demo" element={<Layout><ObservationsDemo /></Layout>} />
-        <Route path="/map" element={<Layout><MapHub /></Layout>} />
-        <Route path="/profile" element={<Layout><Profile /></Layout>} />
-        <Route path="/login" element={<Layout><Login /></Layout>} />
-        <Route path="/worlds" element={<Layout><Worlds /></Layout>} />
-        <Route path="/world-hub" element={<Layout><WorldHub /></Layout>} />
-        <Route path="/oceanworld" element={<Layout><OceanWorld /></Layout>} />
-        <Route path="/desertworld" element={<Layout><DesertWorld /></Layout>} />
-        <Route path="/naturversity" element={<Layout><Naturversity /></Layout>} />
-        <Route path="/rainforest" element={<Layout><Rainforest /></Layout>} />
+        <Route path="/" element={<AppHome />} />
 
-        {/* New sections */}
-        <Route path="/wellness" element={<Layout><Wellness /></Layout>} />
-        <Route path="/music" element={<Layout><Music /></Layout>} />
-        <Route path="/feedback" element={<Layout><Feedback /></Layout>} />
+        {/* Core */}
+        <Route path="/home" element={<Home />} />
+        <Route path="/about" element={<About />} />
+        <Route path="/contact" element={<Contact />} />
+        <Route path="/faq" element={<FAQ />} />
+        <Route path="/privacy" element={<Privacy />} />
+        <Route path="/terms" element={<Terms />} />
+        <Route path="/settings" element={<Settings />} />
+        <Route path="/stories" element={<Stories />} />
+        <Route path="/story-studio" element={<StoryStudio />} />
+        <Route path="/quizzes" element={<Quizzes />} />
+        <Route path="/observations" element={<Observations />} />
+        <Route path="/observations-demo" element={<ObservationsDemo />} />
+        <Route path="/map" element={<MapHub />} />
+        <Route path="/profile" element={<Profile />} />
+        <Route path="/login" element={<Login />} />
 
-        {/* Zones / shop / arcade */}
-        <Route path="/zones" element={<Layout><Zones /></Layout>} />
-        <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
-        <Route path="/arcade" element={<Layout><Arcade /></Layout>} />
-        <Route path="/arcade/brain-challenge" element={<Layout><BrainChallenge /></Layout>} />
-        <Route path="/arcade/nature-clicker" element={<Layout><NatureClicker /></Layout>} />
+        {/* Worlds */}
+        <Route path="/worlds" element={<Worlds />} />
+        <Route path="/world-hub" element={<WorldHub />} />
+        <Route path="/oceanworld" element={<OceanWorld />} />
+        <Route path="/desertworld" element={<DesertWorld />} />
 
-        <Route path="*" element={<Layout><NotFound /></Layout>} />
+        {/* NEW: Tips & Feedback */}
+        <Route path="/tips" element={<TurianTips />} />
+        <Route path="/feedback" element={<Feedback />} />
+
+        {/* Marketplace */}
+        <Route path="/marketplace" element={<Marketplace />} />
+
+        {/* Account */}
+        <Route path="/account" element={<Account />} />
+        <Route path="/account/orders" element={<AccountOrders />} />
+        <Route path="/account/addresses" element={<AccountAddresses />} />
+        <Route path="/account/wishlist" element={<AccountWishlist />} />
+
+        {/* Zones index + deep links */}
+        <Route path="/zones" element={<Zones />} />
+        <Route path="/zones/community" element={<ZoneCommunity />} />
+        <Route path="/zones/creator-lab" element={<ZoneCreatorLab />} />
+        <Route path="/zones/ecolab" element={<ZoneEcoLab />} />
+        <Route path="/zones/music" element={<ZoneMusic />} />
+        <Route path="/zones/naturversity" element={<ZoneNaturversity />} />
+        <Route path="/zones/parents" element={<ZoneParents />} />
+        <Route path="/zones/teachers" element={<ZoneTeachers />} />
+        <Route path="/zones/partners" element={<ZonePartners />} />
+        <Route path="/zones/settings" element={<ZoneSettings />} />
+        <Route path="/zones/story-studio" element={<ZoneStoryStudio />} />
+        <Route path="/zones/wellness" element={<ZoneWellness />} />
+
+        <Route path="*" element={<NotFound />} />
       </Routes>
     </BrowserRouter>
   );

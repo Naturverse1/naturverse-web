@@ -1,30 +1,30 @@
 import React from "react";
-
-type Item = { id: string; name: string; price: string; note?: string };
-
-const ITEMS: Item[] = [
-  { id: "seed-pack", name: "Rainforest Seed Pack", price: "$9.99" },
-  { id: "eco-bottle", name: "Eco Water Bottle", price: "$14.00" },
-  { id: "field-guide", name: "Pocket Field Guide", price: "$7.50" },
-  { id: "poster", name: "Ocean Creatures Poster", price: "$12.00" },
-];
+import ProductCard from "../../components/ProductCard";
+import Filters from "../../components/filters/Filters";
 
 export default function Marketplace() {
+  // Replace with real data later
+  const mock = Array.from({ length: 6 }).map((_, i) => ({
+    id: `demo-${i + 1}`,
+    title: `Naturverse Item ${i + 1}`,
+    price: (i + 1) * 5,
+    image: "/assets/og-default.jpg"
+  }));
+
   return (
-    <section>
-      <h1>🛒 Marketplace</h1>
+    <main style={{ maxWidth: 1100, margin: "2rem auto", padding: "0 1rem" }}>
+      <h2>🛒 Marketplace</h2>
       <p>Discover and trade Naturverse items.</p>
 
-      <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit,minmax(220px,1fr))", gap: 16, marginTop: 16 }}>
-        {ITEMS.map(i => (
-          <div key={i.id} style={{ border: "1px solid #eee", borderRadius: 8, padding: 16 }}>
-            <div style={{ fontWeight: 600, marginBottom: 6 }}>{i.name}</div>
-            <div>{i.price}</div>
-            <button style={{ marginTop: 10 }}>Add to cart</button>
-          </div>
-        ))}
+      <div style={{ display: "grid", gridTemplateColumns: "260px 1fr", gap: "1.5rem" }}>
+        <aside><Filters /></aside>
+        <section style={{ display: "grid", gridTemplateColumns: "repeat(auto-fill,minmax(220px,1fr))", gap: "1rem" }}>
+          {mock.map(p => (
+            <ProductCard key={p.id} product={p as any} />
+          ))}
+        </section>
       </div>
-    </section>
+    </main>
   );
 }
 
