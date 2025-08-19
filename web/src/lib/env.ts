@@ -1,25 +1,15 @@
-type Env = {
-  SUPABASE_URL?: string;
-  SUPABASE_ANON_KEY?: string;
-  CHAIN_ID?: string;
-  RPC_URL?: string;
-  NATUR_TOKEN?: string;
-  MERCHANT_ADDRESS?: string;
+// Safe, client-side env access (never throws at import time)
+export const env = {
+  supabaseUrl: (import.meta as any).env?.VITE_SUPABASE_URL as string | undefined,
+  supabaseAnonKey: (import.meta as any).env?.VITE_SUPABASE_ANON_KEY as string | undefined,
 };
 
-export function getEnv(): Env {
-  const e = import.meta.env;
-  const env: Env = {
-    SUPABASE_URL: e.VITE_SUPABASE_URL,
-    SUPABASE_ANON_KEY: e.VITE_SUPABASE_ANON_KEY,
-    CHAIN_ID: e.VITE_CHAIN_ID,
-    RPC_URL: e.VITE_RPC_URL,
-    NATUR_TOKEN: e.VITE_NATUR_TOKEN,
-    MERCHANT_ADDRESS: e.VITE_MERCHANT_ADDRESS,
-  };
-  // eslint-disable-next-line no-console
-  if (!env.SUPABASE_URL || !env.SUPABASE_ANON_KEY) {
-    console.warn('[Naturverse] Supabase env missing');
+export function warnIfMissingEnv() {
+  const missing = Object.entries(env)
+    .filter(([, v]) => !v)
+    .map(([k]) => k);
+  if (missing.length) {
+    // Don't crash; show a clear console warning so we see it in production
+    console.warn(`[ENV] Missing client env: ${missing.join(", ")}. Check Netlify site env.`);
   }
-  return env;
 }
