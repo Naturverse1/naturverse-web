@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 
 type AuthState = {
   loading: boolean;
@@ -28,7 +28,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initial load + URL cleanup (handles magic-link fragments)
   useEffect(() => {
-    const supabase = getSupabase();
+    const supabase = getSupabase() ?? (SafeSupabase as any);
     if (!supabase) { setLoading(false); return; }
     (async () => {
       const { data } = await supabase.auth.getSession();
@@ -70,7 +70,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [nav, loc.pathname]);
 
   const signOut = async () => {
-    const supabase = getSupabase();
+    const supabase = getSupabase() ?? (SafeSupabase as any);
     if (!supabase) return;
     await supabase.auth.signOut();
   };

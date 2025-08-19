@@ -1,7 +1,7 @@
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 
 export async function ensureBucket(): Promise<void> {
-  const supabase = getSupabase();
+  const supabase = getSupabase() ?? (SafeSupabase as any);
   if (!supabase) return;
   const { error } = await supabase.storage.createBucket('order-previews', {
     public: true,
@@ -17,7 +17,7 @@ export async function uploadOrderPreview(
   dataUrl: string
 ): Promise<string | null> {
   try {
-    const supabase = getSupabase();
+    const supabase = getSupabase() ?? (SafeSupabase as any);
     if (!supabase) return null;
     const res = await fetch(dataUrl);
     const blob = await res.blob();

@@ -9,7 +9,7 @@ import {
   deleteReview,
   flagReview,
 } from '../../lib/supaReviews';
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 
 type Props = {
   productId: string;
@@ -32,7 +32,7 @@ export default function ReviewList({ productId }: Props) {
   const pageSize = 10;
 
   useEffect(() => {
-    const supabase = getSupabase();
+    const supabase = getSupabase() ?? (SafeSupabase as any);
     if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id || null));
   }, []);

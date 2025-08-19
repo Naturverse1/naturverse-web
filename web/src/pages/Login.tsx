@@ -1,5 +1,5 @@
 import React from "react";
-import { getSupabase } from "@/lib/supabaseClient";
+import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
@@ -7,7 +7,7 @@ export default function Login() {
 
     async function sendLink(e: React.FormEvent) {
       e.preventDefault();
-      const supabase = getSupabase();
+      const supabase = getSupabase() ?? (SafeSupabase as any);
       if (!supabase) return;
       setSending(true);
       const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` }});
