@@ -1,6 +1,28 @@
 import { ethers } from "ethers";
 import { ERC20_ABI } from "./erc20";
 
+declare global { interface Window { ethereum?: any; } }
+
+export function hasProvider() {
+  return typeof window !== "undefined" && !!(window as any).ethereum;
+}
+
+export async function connect() {
+  if (!hasProvider()) throw new Error("No wallet provider found");
+  await (window as any).ethereum.request({ method: "eth_requestAccounts" });
+}
+
+export function isConnected() {
+  const eth = (window as any).ethereum;
+  return !!(eth && (eth.selectedAddress || (eth.accounts && eth.accounts[0])));
+}
+
+export function getAddress(): string {
+  if (!hasProvider()) return "";
+  const eth = (window as any).ethereum;
+  return eth.selectedAddress || (eth.accounts?.[0] ?? "");
+}
+
 const CHAIN_ID_HEX = (() => {
   const n = Number(import.meta.env.VITE_CHAIN_ID);
   return "0x" + n.toString(16);
