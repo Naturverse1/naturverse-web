@@ -2,7 +2,7 @@
 module.exports = {
   content: [
     "./index.html",
-    "./src/**/*.{ts,tsx,js,jsx,html}"
+    "./src/**/*.{js,ts,jsx,tsx,md,mdx}"
   ],
   darkMode: "class",
   theme: {
@@ -49,5 +49,7 @@ module.exports = {
       }
     }
   },
-  plugins: []
+  plugins: [
+    require('@tailwindcss/typography')
+  ]
 };
