@@ -31,7 +31,16 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
-// very light layout so every page isn’t a blank stub
+// New sections
+import Wellness from "./pages/wellness";
+import Music from "./pages/music";
+import Feedback from "./pages/feedback";
+
+// Arcade games
+import BrainChallenge from "./pages/arcade/BrainChallenge";
+import NatureClicker from "./pages/arcade/NatureClicker";
+
+// very light layout
 function Layout({ children }: { children: React.ReactNode }) {
   return (
     <div>
@@ -40,9 +49,13 @@ function Layout({ children }: { children: React.ReactNode }) {
           <strong style={{ marginRight: 10 }}>The Naturverse</strong>
           <Link to="/">Home</Link>
           <Link to="/zones">Zones</Link>
+          <Link to="/worlds">Worlds</Link>
           <Link to="/marketplace">Marketplace</Link>
           <Link to="/arcade">Arcade</Link>
-          <Link to="/worlds">Worlds</Link>
+          <Link to="/wellness">Wellness</Link>
+          <Link to="/music">Music</Link>
+          <Link to="/feedback">Feedback</Link>
+          <span style={{ flex: 1 }} />
           <Link to="/profile">Profile</Link>
           <Link to="/settings">Settings</Link>
         </nav>
@@ -83,9 +96,19 @@ export default function App() {
         <Route path="/desertworld" element={<Layout><DesertWorld /></Layout>} />
         <Route path="/naturversity" element={<Layout><Naturversity /></Layout>} />
         <Route path="/rainforest" element={<Layout><Rainforest /></Layout>} />
+
+        {/* New sections */}
+        <Route path="/wellness" element={<Layout><Wellness /></Layout>} />
+        <Route path="/music" element={<Layout><Music /></Layout>} />
+        <Route path="/feedback" element={<Layout><Feedback /></Layout>} />
+
+        {/* Zones / shop / arcade */}
         <Route path="/zones" element={<Layout><Zones /></Layout>} />
         <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
         <Route path="/arcade" element={<Layout><Arcade /></Layout>} />
+        <Route path="/arcade/brain-challenge" element={<Layout><BrainChallenge /></Layout>} />
+        <Route path="/arcade/nature-clicker" element={<Layout><NatureClicker /></Layout>} />
+
         <Route path="*" element={<Layout><NotFound /></Layout>} />
       </Routes>
     </BrowserRouter>

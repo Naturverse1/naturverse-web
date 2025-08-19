@@ -1,74 +1,24 @@
-import React, { useEffect, useState } from "react";
-import useReducedMotion from '../hooks/useReducedMotion';
+import React, { useMemo } from "react";
 
-const localTips = [
-  "Try a 60-second nature breath.",
-  "Spot three leaf shapes today.",
-  "Ask a 'why' about any animal!",
-  "Draw your tiny world."
+const TIPS = [
+  "Take a 3-minute sky break: look up, breathe in for 4, out for 6.",
+  "Swap one plastic bottle this week for a reusable one.",
+  "Add a leafy plant to your desk; water it every other day.",
+  "Walk 10 minutes near trees; notice 3 sounds you hadn’t before.",
+  "Pick one fruit or veg you haven’t tried this month—taste adventure!",
+  "Turn shower heat down a notch—good for skin and the planet.",
+  "Leave a window open for 5 minutes in the morning: fresh air reset.",
 ];
 
 export default function TurianTips() {
-  const reduced = useReducedMotion();
-  const [show, setShow] = useState(() => localStorage.getItem("show-tips") !== "false");
-  const [tips, setTips] = useState<string[]>(localTips);
-  const [idx, setIdx] = useState(0);
-  const [fade, setFade] = useState(false);
-
-  useEffect(() => {
-    const handler = () => setShow(localStorage.getItem("show-tips") !== "false");
-    window.addEventListener("storage", handler);
-    return () => window.removeEventListener("storage", handler);
-  }, []);
-
-  useEffect(() => {
-    if (!show) return;
-    const schedule = (cb: () => void) =>
-      ("requestIdleCallback" in window
-        ? (window as any).requestIdleCallback(cb)
-        : setTimeout(cb, 200));
-    schedule(async () => {
-      try {
-        const resp = await fetch("/.netlify/functions/generate-tips", { method: "POST" });
-        const data = await resp.json();
-        if (Array.isArray(data.tips) && data.tips.length) {
-          setTips(data.tips);
-        } else {
-          setTips(localTips);
-        }
-      } catch {
-        setTips(localTips);
-      }
-    });
-  }, [show]);
-
-  useEffect(() => {
-    if (reduced || tips.length <= 1) return;
-    const id = setInterval(() => {
-      setFade(true);
-      setTimeout(() => {
-        setIdx((i) => (i + 1) % tips.length);
-        setFade(false);
-      }, 250);
-    }, 8000);
-    return () => clearInterval(id);
-  }, [reduced, tips]);
-
-  if (!show) return null;
-
+  const tip = useMemo(() => TIPS[Math.floor(Math.random()*TIPS.length)], []);
   return (
-    <div className="mx-auto mt-4 w-full max-w-[720px] rounded-lg border border-white/10 bg-black/40 p-4 text-white">
-      <div className="mb-1 flex items-center gap-2 text-sm font-semibold text-white/90">
-        <span role="img" aria-label="Turian">🍈</span>
-        <span>Turian says</span>
-      </div>
-      <p
-        aria-live="polite"
-        className={`${fade && !reduced ? "opacity-0" : "opacity-100"}`}
-        style={{ transition: reduced ? "none" : "opacity 250ms" }}
-      >
-        {tips[idx]}
-      </p>
+    <div style={{ padding:16, border:"1px solid #eee", borderRadius:8 }}>
+      <h2 style={{ marginTop:0 }}>🌱 Turian Tips</h2>
+      <p style={{ marginBottom:8 }}>{tip}</p>
+      <small style={{ opacity:.7 }}>
+        New tips rotate on refresh. We’ll plug in the full tips service later.
+      </small>
     </div>
   );
 }
