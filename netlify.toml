@@ -1,13 +1,11 @@
 [build]
   base = "web"
-  publish = "dist"
+  publish = "web/dist"
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
-  # Force Node 18 in Netlify
-  [build.environment]
-    NODE_VERSION = "18"
+[build.environment]
+  NODE_VERSION = "18"
 
-# SPA fallback so deep links don't 404
 [[redirects]]
   from = "/*"
   to = "/index.html"
