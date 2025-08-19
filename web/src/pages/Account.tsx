@@ -1,3 +1,5 @@
+import { Section } from "./_shared";
+
 export default function Account() {
-  return <div style={{ padding: 16 }}><h2>Account</h2><p>Profile & settings.</p></div>;
+  return <Section title="Account">Profile, auth, and settings.</Section>;
 }
