@@ -1,9 +1,8 @@
 import React from "react";
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Link } from "react-router-dom";
 import AppHome from "./AppHome";
-import Layout from "./components/ui/Layout";
 
-// Folder-index pages
+// Sections with folder indexes
 import Zones from "./pages/zones";
 import Marketplace from "./pages/marketplace";
 import Arcade from "./pages/arcade";
@@ -32,39 +31,63 @@ import Profile from "./pages/Profile";
 import Login from "./pages/Login";
 import NotFound from "./pages/NotFound";
 
+// very light layout so every page isn’t a blank stub
+function Layout({ children }: { children: React.ReactNode }) {
+  return (
+    <div>
+      <header style={{ padding: "16px 20px", borderBottom: "1px solid #eee" }}>
+        <nav style={{ display: "flex", gap: 14, flexWrap: "wrap" }}>
+          <strong style={{ marginRight: 10 }}>The Naturverse</strong>
+          <Link to="/">Home</Link>
+          <Link to="/zones">Zones</Link>
+          <Link to="/marketplace">Marketplace</Link>
+          <Link to="/arcade">Arcade</Link>
+          <Link to="/worlds">Worlds</Link>
+          <Link to="/profile">Profile</Link>
+          <Link to="/settings">Settings</Link>
+        </nav>
+      </header>
+      <main style={{ padding: "24px 20px", maxWidth: 1100, margin: "0 auto" }}>
+        {children}
+      </main>
+      <footer style={{ padding: "24px 20px", borderTop: "1px solid #eee", marginTop: 40 }}>
+        © {new Date().getFullYear()} Naturverse
+      </footer>
+    </div>
+  );
+}
+
 export default function App() {
   return (
     <BrowserRouter>
-      <Layout>
-        <Routes>
-          <Route path="/" element={<AppHome />} />
-          <Route path="/home" element={<Home />} />
-          <Route path="/about" element={<About />} />
-          <Route path="/contact" element={<Contact />} />
-          <Route path="/faq" element={<FAQ />} />
-          <Route path="/privacy" element={<Privacy />} />
-          <Route path="/terms" element={<Terms />} />
-          <Route path="/settings" element={<Settings />} />
-          <Route path="/stories" element={<Stories />} />
-          <Route path="/story-studio" element={<StoryStudio />} />
-          <Route path="/quizzes" element={<Quizzes />} />
-          <Route path="/observations" element={<Observations />} />
-          <Route path="/observations-demo" element={<ObservationsDemo />} />
-          <Route path="/map" element={<MapHub />} />
-          <Route path="/profile" element={<Profile />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/worlds" element={<Worlds />} />
-          <Route path="/world-hub" element={<WorldHub />} />
-          <Route path="/oceanworld" element={<OceanWorld />} />
-          <Route path="/desertworld" element={<DesertWorld />} />
-          <Route path="/naturversity" element={<Naturversity />} />
-          <Route path="/rainforest" element={<Rainforest />} />
-          <Route path="/zones" element={<Zones />} />
-          <Route path="/marketplace" element={<Marketplace />} />
-          <Route path="/arcade" element={<Arcade />} />
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </Layout>
+      <Routes>
+        <Route path="/" element={<Layout><AppHome /></Layout>} />
+        <Route path="/home" element={<Layout><Home /></Layout>} />
+        <Route path="/about" element={<Layout><About /></Layout>} />
+        <Route path="/contact" element={<Layout><Contact /></Layout>} />
+        <Route path="/faq" element={<Layout><FAQ /></Layout>} />
+        <Route path="/privacy" element={<Layout><Privacy /></Layout>} />
+        <Route path="/terms" element={<Layout><Terms /></Layout>} />
+        <Route path="/settings" element={<Layout><Settings /></Layout>} />
+        <Route path="/stories" element={<Layout><Stories /></Layout>} />
+        <Route path="/story-studio" element={<Layout><StoryStudio /></Layout>} />
+        <Route path="/quizzes" element={<Layout><Quizzes /></Layout>} />
+        <Route path="/observations" element={<Layout><Observations /></Layout>} />
+        <Route path="/observations-demo" element={<Layout><ObservationsDemo /></Layout>} />
+        <Route path="/map" element={<Layout><MapHub /></Layout>} />
+        <Route path="/profile" element={<Layout><Profile /></Layout>} />
+        <Route path="/login" element={<Layout><Login /></Layout>} />
+        <Route path="/worlds" element={<Layout><Worlds /></Layout>} />
+        <Route path="/world-hub" element={<Layout><WorldHub /></Layout>} />
+        <Route path="/oceanworld" element={<Layout><OceanWorld /></Layout>} />
+        <Route path="/desertworld" element={<Layout><DesertWorld /></Layout>} />
+        <Route path="/naturversity" element={<Layout><Naturversity /></Layout>} />
+        <Route path="/rainforest" element={<Layout><Rainforest /></Layout>} />
+        <Route path="/zones" element={<Layout><Zones /></Layout>} />
+        <Route path="/marketplace" element={<Layout><Marketplace /></Layout>} />
+        <Route path="/arcade" element={<Layout><Arcade /></Layout>} />
+        <Route path="*" element={<Layout><NotFound /></Layout>} />
+      </Routes>
     </BrowserRouter>
   );
 }
