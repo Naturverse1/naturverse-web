@@ -1,18 +1,18 @@
+# Root-level Netlify config for the monorepo
 [build]
-# Run builds from the /web workspace
-base = "web"
-# Vite outputs to /web/dist by default
-publish = "web/dist"
-
-# Use npm install (not npm ci) to avoid lockfile requirement in CI,
-# then run our build script. Include --legacy-peer-deps to bypass peer
-# dependency issues during installs.
-command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
+  base    = "web"
+  publish = "web/dist"
+  command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
 [build.environment]
-  NODE_VERSION = "18"
+  NODE_VERSION = "18.20.3"
 
+# Single Page App routing
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
+
+# (optional) keep functions path if you later add serverless
+# [functions]
+#   directory = "netlify/functions"
