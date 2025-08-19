@@ -1,4 +1,4 @@
-// CJS so Vite never treats this as ESM during build
+/* PostCSS config (CommonJS) */
 module.exports = {
   plugins: {
     tailwindcss: {},

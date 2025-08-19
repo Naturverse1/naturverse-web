@@ -1,22 +1,13 @@
-import { BrowserRouter, Routes, Route, Link } from 'react-router-dom'
+import { Routes, Route, Navigate } from "react-router-dom";
+import Home from "./pages/Home"; // keep your existing pages
+import NotFound from "./pages/NotFound"; // add if missing
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <div style={{ padding: 16 }}>
-        <h1>The Naturverse</h1>
-        <nav style={{ marginBottom: 12 }}>
-          <Link to="/">Home</Link>{' | '}
-          <Link to="/zones">Zones</Link>{' | '}
-          <Link to="/arcade">Arcade</Link>
-        </nav>
-        <Routes>
-          <Route path="/" element={<div>Welcome 🌿 Naturverse is live.</div>} />
-          <Route path="/zones/*" element={<div>Zones</div>} />
-          <Route path="/arcade/*" element={<div>Arcade</div>} />
-          <Route path="*" element={<div>404 — Not Found</div>} />
-        </Routes>
-      </div>
-    </BrowserRouter>
-  )
+    <Routes>
+      <Route path="/" element={<Home />} />
+      {/* keep your other routes here */}
+      <Route path="*" element={<NotFound />} />
+    </Routes>
+  );
 }
