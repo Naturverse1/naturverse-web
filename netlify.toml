@@ -1,10 +1,7 @@
 [build]
-  base    = "web"
-  publish = "dist"                    # <-- was web/dist causing web/web/dist
+  base = "web"          # repo root has /web; build from there
+  publish = "dist"      # Vite outputs to /web/dist
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
-
-[build.environment]
-  NODE_VERSION = "18"
 
 [[redirects]]
   from = "/*"
