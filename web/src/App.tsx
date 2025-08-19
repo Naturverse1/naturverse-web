@@ -1,23 +1,14 @@
-import { Link, Route, Routes } from 'react-router-dom';
+import { Route, Routes, Link } from 'react-router-dom';
 import ErrorBoundary from './components/ErrorBoundary';
+import Layout from './components/Layout';
+import Home from './pages/Home';
+import Zones from './pages/Zones';
+import Worlds from './pages/Worlds';
+import Marketplace from './pages/Marketplace';
+import Tips from './pages/Tips';
+import Arcade from './pages/Arcade';
+import Music from './pages/Music';
 
-function Home() {
-  return (
-    <div style={{ padding: 16 }}>
-      <h1>Welcome 🌿</h1>
-      <p>Naturverse is live — explore the zones, worlds, marketplace, and tips.</p>
-      <nav style={{ marginTop: 12 }}>
-        <div><Link to="/arcade">Arcade</Link></div>
-        <div><Link to="/music">Music Zone</Link></div>
-        <div><Link to="/tips">Turian Tips</Link></div>
-      </nav>
-    </div>
-  );
-}
-
-const Arcade = () => <div style={{ padding: 16 }}><h2>Arcade</h2></div>;
-const Music  = () => <div style={{ padding: 16 }}><h2>Music Zone</h2></div>;
-const Tips   = () => <div style={{ padding: 16 }}><h2>Turian Tips</h2></div>;
 const NotFound = () => (
   <div style={{ padding: 16 }}>
     <h2>404 — Not Found</h2>
@@ -29,11 +20,16 @@ export default function App() {
   return (
     <ErrorBoundary>
       <Routes>
-        <Route path="/" element={<Home />} />
-        <Route path="/arcade" element={<Arcade />} />
-        <Route path="/music" element={<Music />} />
-        <Route path="/tips" element={<Tips />} />
-        <Route path="*" element={<NotFound />} />
+        <Route element={<Layout />}>
+          <Route path="/" element={<Home />} />
+          <Route path="/zones" element={<Zones />} />
+          <Route path="/worlds" element={<Worlds />} />
+          <Route path="/marketplace" element={<Marketplace />} />
+          <Route path="/tips" element={<Tips />} />
+          <Route path="/arcade" element={<Arcade />} />
+          <Route path="/music" element={<Music />} />
+          <Route path="*" element={<NotFound />} />
+        </Route>
       </Routes>
     </ErrorBoundary>
   );
