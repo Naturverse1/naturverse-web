@@ -1,20 +1,20 @@
 import React from "react";
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 export default function Login() {
   const [email, setEmail] = React.useState("");
   const [sending, setSending] = React.useState(false);
 
-    async function sendLink(e: React.FormEvent) {
-      e.preventDefault();
-      const supabase = getSupabase() ?? (SafeSupabase as any);
-      if (!supabase) return;
-      setSending(true);
-      const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` }});
-      setSending(false);
-      if (error) alert(error.message);
-      else alert("Magic link sent!");
-    }
+  async function sendLink(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    const { error } = await supabase.auth.signInWithOtp({ email, options: { emailRedirectTo: `${location.origin}/auth/callback` } });
+    setSending(false);
+    if (error) alert(error.message);
+    else alert("Magic link sent!");
+  }
 
   return (
     <main className="mx-auto max-w-md px-4 py-10 text-white">

@@ -1,14 +1,14 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 export function useSession() {
-  const supabase = getSupabase() ?? (SafeSupabase as any);
   const [session, setSession] = React.useState<Awaited<ReturnType<NonNullable<typeof supabase>['auth']['getSession']>>["data"]["session"] | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
-    if (!supabase) { setLoading(false); return; }
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) {
@@ -21,7 +21,7 @@ export function useSession() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, [supabase]);
+  }, []);
   return { session, loading };
 }
 

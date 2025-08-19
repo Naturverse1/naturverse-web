@@ -1,6 +1,8 @@
 import { createContext, useContext, useEffect, useState, ReactNode } from "react";
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import type { Session, User } from "@supabase/supabase-js";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 type AuthState = { session: Session | null; user: User | null; loading: boolean; };
 const AuthContext = createContext<AuthState>({ session: null, user: null, loading: true });
@@ -9,11 +11,6 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [state, setState] = useState<AuthState>({ session: null, user: null, loading: true });
 
   useEffect(() => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) {
-      setState({ session: null, user: null, loading: false });
-      return;
-    }
     let mounted = true;
 
     async function load() {

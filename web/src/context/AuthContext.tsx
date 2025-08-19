@@ -1,6 +1,8 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 type AuthState = {
   loading: boolean;
@@ -28,8 +30,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // Initial load + URL cleanup (handles magic-link fragments)
   useEffect(() => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) { setLoading(false); return; }
     (async () => {
       const { data } = await supabase.auth.getSession();
       setSession(data.session ?? null);
@@ -70,8 +70,6 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   }, [nav, loc.pathname]);
 
   const signOut = async () => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) return;
     await supabase.auth.signOut();
   };
 
