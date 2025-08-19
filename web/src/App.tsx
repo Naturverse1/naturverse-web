@@ -4,6 +4,7 @@ import AppHome from "./AppHome";
 // zones
 import Zones from "./pages/zones";
 import MusicZone from "./pages/zones/MusicZone";
+import ArcadeIndex from "./pages/zones/arcade";
 // content
 import TurianTips from "./pages/TurianTips";
 // marketplace & account
@@ -19,6 +20,7 @@ export default function App() {
         <Route path="/" element={<AppHome />} />
         <Route path="/zones" element={<Zones />} />
         <Route path="/zones/music" element={<MusicZone />} />
+        <Route path="/zones/arcade" element={<ArcadeIndex />} />
         <Route path="/marketplace" element={<Marketplace />} />
         <Route path="/account" element={<AccountHome />} />
         <Route path="/turian-tips" element={<TurianTips />} />

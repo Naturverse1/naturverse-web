@@ -1,17 +1,10 @@
 [build]
-# Run the build inside the /web folder
-base    = "web"
-# IMPORTANT: publish is RELATIVE to base
-publish = "dist"
-# First try npm ci (uses lockfile). If missing, fall back to npm i so first deploy still works.
-command = "npm ci || npm i --no-audit --no-fund && npm run build"
+  base = "web"
+  command = "npm ci && npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
 
-[build.environment]
-NODE_VERSION = "18.18.0"
-NPM_FLAGS    = "--no-audit --no-fund"
-
-# SPA routing so deep links don't 404
 [[redirects]]
-from = "/*"
-to   = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
