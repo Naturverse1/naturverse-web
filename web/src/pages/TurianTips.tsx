@@ -1,37 +1,66 @@
+import React from "react";
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
-import { generateTip } from "../lib/openai";
+import { supabase } from "../lib/supabaseClient"; // adjust path to your client
 
-type Tip = { id: string; text: string; created_at: string };
+type Tip = { id: number; content: string; topic?: string | null; created_at?: string };
 
 export default function TurianTips() {
   const [tips, setTips] = useState<Tip[]>([]);
-  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [topic, setTopic] = useState("eco-friendly living");
+  const [error, setError] = useState<string | null>(null);
 
-  async function load() {
-    const { data, error } = await supabase.from("tips").select("id,text,created_at").order("created_at",{ascending:false});
-    if (!error && data) setTips(data as any);
+  async function loadTips() {
+    const { data, error } = await supabase
+      .from("tips")
+      .select("*")
+      .order("created_at", { ascending: false })
+      .limit(50);
+    if (error) setError(error.message);
+    else setTips(data ?? []);
   }
 
-  useEffect(() => { load(); }, []);
-
-  async function onGenerate() {
-    setBusy(true);
+  async function generate() {
+    setLoading(true);
+    setError(null);
     try {
-      const text = await generateTip("Give a single, practical eco or wellness micro-tip (max 1–2 sentences).");
-      const { data, error } = await supabase.from("tips").insert({ text }).select().single();
-      if (!error && data) setTips(prev => [data as any, ...prev]);
-    } finally { setBusy(false); }
+      const res = await fetch("/.netlify/functions/generate-tip", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ topic }),
+      });
+      if (!res.ok) throw new Error(await res.text());
+      await loadTips();
+    } catch (e: any) {
+      setError(e?.message || "Failed to generate tip");
+    } finally {
+      setLoading(false);
+    }
   }
+
+  useEffect(() => { loadTips(); }, []);
 
   return (
-    <section>
+    <section style={{ padding: 16 }}>
       <h2>🌱 Turian Tips</h2>
-      {!tips.length && <p>No tips yet.</p>}
-      <button onClick={onGenerate} disabled={busy}>{busy ? "Generating…" : "＋ Generate Tip with AI"}</button>
-      <ul>
-        {tips.map(t => (<li key={t.id} style={{margin:"0.75rem 0"}}>{t.text}</li>))}
-      </ul>
+      <div style={{ margin: "12px 0" }}>
+        <input
+          value={topic}
+          onChange={(e) => setTopic(e.target.value)}
+          placeholder="topic (optional)"
+        />
+        <button onClick={generate} disabled={loading} style={{ marginLeft: 8 }}>
+          {loading ? "Generating…" : "➕ Generate Tip with AI"}
+        </button>
+      </div>
+      {error && <p style={{ color: "red" }}>{error}</p>}
+      {tips.length === 0 ? <p>No tips yet.</p> : (
+        <ul>
+          {tips.map(t => (
+            <li key={t.id} style={{ marginBottom: 8 }}>{t.content}</li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
