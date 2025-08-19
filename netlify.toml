@@ -1,15 +1,17 @@
-## Netlify build for Vite app (run from /web)
+## Netlify config
 [build]
-  # Work inside the web/ folder so npm uses web/package.json directly
+  # Build from the /web workspace
   base = "web"
-  # Use install (no lockfile required) then build
-  command = "npm install --no-audit --no-fund && npm run build"
-  # Paths are now relative to /web
-  publish = "dist"
-  functions = "functions"
+  publish = "web/dist"
+  functions = "web/functions"
+  # Ensure devDependencies (tailwindcss, postcss, autoprefixer) are installed
+  # and use a stable Node version supported by the toolchain.
+  command = "npm install --include=dev --no-audit --no-fund && npm run build"
 
-[[plugins]]
-  package = "@netlify/plugin-functions-install-core"
+[build.environment]
+  NODE_VERSION = "20.11.1"
+  # Also tell Netlify not to omit dev deps even if a UI var was set
+  NPM_FLAGS = "--include=dev"
 
 [[redirects]]
   from = "/*"
