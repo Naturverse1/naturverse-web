@@ -7,6 +7,7 @@
 :root {
   --bg: 255 255 255;   /* white */
   --fg: 17 24 39;      /* slate-900 */
+  --nv-max: 72rem;
 }
 .dark {
   --bg: 17 24 39;      /* slate-900 */
@@ -19,3 +20,5 @@ body { @apply antialiased; background-color: rgb(var(--bg)); color: rgb(var(--fg
 /* Handy primitives */
 .card { @apply rounded-xl border border-slate-200 bg-white p-6 shadow-sm dark:border-slate-800 dark:bg-slate-900; }
 .btn { @apply inline-flex items-center justify-center rounded-md px-4 py-2 text-sm font-medium bg-brand text-white hover:opacity-90 transition; }
+
+.container { max-width: var(--nv-max); }

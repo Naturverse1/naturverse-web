@@ -1,30 +1,56 @@
 import React from "react";
 import { Link } from "react-router-dom";
 
-const linkStyle: React.CSSProperties = { display: "block", padding: "6px 0" };
+const Item = ({ to, label }: { to: string; label: string }) => (
+  <li className="my-1">
+    <Link className="text-blue-600 hover:underline" to={to}>
+      {label}
+    </Link>
+  </li>
+);
 
 export default function AppHome() {
   return (
-    <div style={{ padding: "2rem", maxWidth: 720 }}>
-      <h1>The Naturverse</h1>
-      <p>Welcome 🌿 Naturverse is live and the client router is working.</p>
-      <h3>Explore</h3>
-      <nav>
-        <Link to="/zones" style={linkStyle}>Zones</Link>
-        <Link to="/marketplace" style={linkStyle}>Marketplace</Link>
-        <Link to="/arcade" style={linkStyle}>Arcade</Link>
-        <Link to="/naturversity" style={linkStyle}>Naturversity</Link>
-        <Link to="/rainforest" style={linkStyle}>Rainforest</Link>
-        <Link to="/oceanworld" style={linkStyle}>Ocean World</Link>
-        <Link to="/desertworld" style={linkStyle}>Desert World</Link>
-        <Link to="/world-hub" style={linkStyle}>World Hub</Link>
-        <Link to="/stories" style={linkStyle}>Stories</Link>
-        <Link to="/quizzes" style={linkStyle}>Quizzes</Link>
-        <Link to="/observations" style={linkStyle}>Observations</Link>
-        <Link to="/map" style={linkStyle}>Map Hub</Link>
-        <Link to="/profile" style={linkStyle}>Profile</Link>
-        <Link to="/settings" style={linkStyle}>Settings</Link>
-      </nav>
-    </div>
+    <section>
+      <h1 className="text-3xl font-bold mb-2">The Naturverse</h1>
+      <p className="mb-6">Welcome 🌿 Naturverse is live and the client router is working.</p>
+
+      <h2 className="text-xl font-semibold mt-6 mb-2">Explore</h2>
+      <ul>
+        <Item to="/zones" label="Zones" />
+        <Item to="/marketplace" label="Marketplace" />
+        <Item to="/arcade" label="Arcade" />
+        <Item to="/naturversity" label="Naturversity" />
+        <Item to="/rainforest" label="Rainforest" />
+        <Item to="/worlds" label="Worlds" />
+        <Item to="/world-hub" label="World Hub" />
+        <Item to="/oceanworld" label="Ocean World" />
+        <Item to="/desertworld" label="Desert World" />
+      </ul>
+
+      <h2 className="text-xl font-semibold mt-6 mb-2">Content</h2>
+      <ul>
+        <Item to="/stories" label="Stories" />
+        <Item to="/quizzes" label="Quizzes" />
+        <Item to="/observations" label="Observations" />
+        <Item to="/observations-demo" label="Observations Demo" />
+      </ul>
+
+      <h2 className="text-xl font-semibold mt-6 mb-2">Account</h2>
+      <ul>
+        <Item to="/profile" label="Profile" />
+        <Item to="/settings" label="Settings" />
+      </ul>
+
+      <h2 className="text-xl font-semibold mt-6 mb-2">Help</h2>
+      <ul>
+        <Item to="/map" label="Map Hub" />
+        <Item to="/faq" label="FAQ" />
+        <Item to="/contact" label="Contact" />
+        <Item to="/privacy" label="Privacy" />
+        <Item to="/terms" label="Terms" />
+      </ul>
+    </section>
   );
 }
+
