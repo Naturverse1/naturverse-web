@@ -1,52 +1,28 @@
-import React, { Suspense, lazy } from "react";
+import React from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Layout from "./components/Layout";
-
-// helper to lazy-load a page (keeps build green even if some pages are temporarily missing)
-function lazyPage<T extends React.ComponentType<any>>(path: string) {
-  return lazy(() => import(/* @vite-ignore */ `./pages/${path}`));
-}
-
-// Core pages (present in your repo/zip)
-const Home = lazyPage("Home");
-const Worlds = lazyPage("Worlds");
-const Zones = lazyPage("Zones");
-const Arcade = lazyPage("Arcade");
-const MarketplaceIndex = lazyPage("Marketplace/index");
-const Music = lazyPage("Music");
-const Wellness = lazyPage("Wellness");
-
-// Extra sections we created
-const CreatorsLab = lazyPage("CreatorsLab");
-const Teachers = lazyPage("Teachers");
-const Partners = lazyPage("Partners");
-const TurianTips = lazyPage("TurianTips");
-const Profile = lazyPage("Profile");
-
-// Fallback
+import PageLoader from "./components/PageLoader";
 import NotFound from "./pages/NotFound";
 
 export default function App() {
   return (
     <BrowserRouter>
       <Layout>
-        <Suspense fallback={<div>Loading…</div>}>
-          <Routes>
-            <Route path="/" element={<Home />} />
-            <Route path="/worlds" element={<Worlds />} />
-            <Route path="/zones" element={<Zones />} />
-            <Route path="/arcade" element={<Arcade />} />
-            <Route path="/marketplace/*" element={<MarketplaceIndex />} />
-            <Route path="/music" element={<Music />} />
-            <Route path="/wellness" element={<Wellness />} />
-            <Route path="/creators-lab" element={<CreatorsLab />} />
-            <Route path="/teachers" element={<Teachers />} />
-            <Route path="/partners" element={<Partners />} />
-            <Route path="/turian-tips" element={<TurianTips />} />
-            <Route path="/profile" element={<Profile />} />
-            <Route path="*" element={<NotFound />} />
-          </Routes>
-        </Suspense>
+        <Routes>
+          <Route path="/" element={<PageLoader file="Home.tsx" />} />
+          <Route path="/worlds" element={<PageLoader file="Worlds.tsx" />} />
+          <Route path="/zones" element={<PageLoader file="Zones.tsx" />} />
+          <Route path="/arcade" element={<PageLoader file="Arcade.tsx" />} />
+          <Route path="/marketplace" element={<PageLoader file="Marketplace.tsx" />} />
+          <Route path="/music" element={<PageLoader file="Music.tsx" />} />
+          <Route path="/wellness" element={<PageLoader file="Wellness.tsx" />} />
+          <Route path="/creators-lab" element={<PageLoader file="CreatorsLab.tsx" />} />
+          <Route path="/teachers" element={<PageLoader file="Teachers.tsx" />} />
+          <Route path="/partners" element={<PageLoader file="Partners.tsx" />} />
+          <Route path="/turian-tips" element={<PageLoader file="TurianTips.tsx" />} />
+          <Route path="/profile" element={<PageLoader file="Profile.tsx" />} />
+          <Route path="*" element={<NotFound />} />
+        </Routes>
       </Layout>
     </BrowserRouter>
   );
