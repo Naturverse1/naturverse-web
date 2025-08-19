@@ -1,20 +1,15 @@
-## Netlify config
+## Netlify config for Vite app in /web with functions in /web/functions
 [build]
-  base = "web"
-  command = "npm install && npm run build"
-  publish = "web/dist"
-  functions = "web/functions"
-
-[build.environment]
-  NODE_VERSION = "18"
-  NPM_FLAGS = "--legacy-peer-deps"
+  # Base is set in the UI to "web". Keep publish RELATIVE to base.
+  # (If the UI base is blank, this still works because it's valid from repo root.)
+  command = "npm ci && npm run build"
+  publish = "dist"
 
 [functions]
-  directory = "web/functions"
+  directory = "functions"
   node_bundler = "esbuild"
-  included_files = ["web/functions/**"]
 
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
