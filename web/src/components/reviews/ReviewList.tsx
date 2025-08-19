@@ -9,7 +9,9 @@ import {
   deleteReview,
   flagReview,
 } from '../../lib/supaReviews';
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 type Props = {
   productId: string;
@@ -32,8 +34,6 @@ export default function ReviewList({ productId }: Props) {
   const pageSize = 10;
 
   useEffect(() => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id || null));
   }, []);
 

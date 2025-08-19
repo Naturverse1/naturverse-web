@@ -1,12 +1,13 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) { navigate("/login"); return; }
+    
     (async () => {
       const url = window.location.href;
       if (url.includes("?code=")) {

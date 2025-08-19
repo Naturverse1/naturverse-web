@@ -1,8 +1,8 @@
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 export async function ensureBucket(): Promise<void> {
-  const supabase = getSupabase() ?? (SafeSupabase as any);
-  if (!supabase) return;
   const { error } = await supabase.storage.createBucket('order-previews', {
     public: true,
   });
@@ -17,8 +17,6 @@ export async function uploadOrderPreview(
   dataUrl: string
 ): Promise<string | null> {
   try {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) return null;
     const res = await fetch(dataUrl);
     const blob = await res.blob();
     const path = `orders/${orderId}/${lineId}.png`;

@@ -1,24 +1,15 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const url  = import.meta.env.VITE_SUPABASE_URL as string | undefined;
-const anon = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
+const url = import.meta.env.VITE_SUPABASE_URL;
+const anon = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-/** Returns a real client if env is present, otherwise undefined (never throws). */
-export function getSupabase(): SupabaseClient | undefined {
-  if (!url || !anon) return undefined;
-  return createClient(url, anon);
+let supabase: SupabaseClient | null = null;
+
+if (!url || !anon) {
+  // Don’t throw at runtime—log and let the UI show a friendly error.
+  console.error('Missing VITE_SUPABASE_URL or VITE_SUPABASE_ANON_KEY');
+} else {
+  supabase = createClient(url, anon);
 }
 
-/** Optional: tiny no-op helpers so callers don’t crash when env is missing. */
-export const SafeSupabase = {
-  from: () => ({
-    select: async () => ({ data: [], error: null }),
-    insert: async () => ({ data: null, error: null }),
-    upsert: async () => ({ data: null, error: null }),
-  }),
-  auth: {
-    getSession: async () => ({ data: { session: null }, error: null }),
-    signInWithOAuth: async () => ({ data: null, error: null }),
-    signOut: async () => ({ error: null }),
-  },
-} as const;
+export default supabase;

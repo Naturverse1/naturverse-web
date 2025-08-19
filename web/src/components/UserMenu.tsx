@@ -1,7 +1,9 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import { getNavatar } from '../lib/navatar';
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 export default function UserMenu() {
   const [open, setOpen] = useState(false);
@@ -11,9 +13,7 @@ export default function UserMenu() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
     setAvatar(getNavatar());
-    if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => {
       const name = (data.user?.user_metadata?.full_name || data.user?.email || '')
         .trim();
@@ -44,8 +44,6 @@ export default function UserMenu() {
   }, []);
 
   const signOut = async () => {
-    const supabase = getSupabase() ?? (SafeSupabase as any);
-    if (!supabase) return;
     await supabase.auth.signOut();
     nav('/');
   };

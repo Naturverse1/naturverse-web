@@ -1,8 +1,8 @@
-import { getSupabase, SafeSupabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
+
+if (!supabase) throw new Error('Supabase is not configured. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY in Netlify.');
 
 export async function uploadAvatar(file: File, userId: string) {
-  const supabase = getSupabase() ?? (SafeSupabase as any);
-  if (!supabase) throw new Error('Supabase unavailable');
   const ext = file.name.split(".").pop() ?? "png";
   const path = `avatars/${userId}/${Date.now()}.${ext}`;
 
@@ -29,8 +29,6 @@ export async function uploadAvatar(file: File, userId: string) {
 }
 
 export async function fetchAvatar(userId: string) {
-  const supabase = getSupabase() ?? (SafeSupabase as any);
-  if (!supabase) throw new Error('Supabase unavailable');
   // Prefer avatar_url (stable across policy/CDN), fallback to signed URL if needed
   const { data, error } = await supabase
     .from("users")
