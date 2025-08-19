@@ -1,18 +1,14 @@
-# Root-level Netlify config for the monorepo
 [build]
-  base    = "web"
-  publish = "web/dist"
+  base = "web"
+  publish = "dist"
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
-[build.environment]
-  NODE_VERSION = "18.20.3"
+  # Force Node 18 in Netlify
+  [build.environment]
+    NODE_VERSION = "18"
 
-# Single Page App routing
+# SPA fallback so deep links don't 404
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
-
-# (optional) keep functions path if you later add serverless
-# [functions]
-#   directory = "netlify/functions"
