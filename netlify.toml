@@ -1,17 +1,10 @@
-## Netlify config
 [build]
-  # Build from the /web workspace
-  base = "web"
-  publish = "web/dist"
-  functions = "web/functions"
-  # Ensure devDependencies (tailwindcss, postcss, autoprefixer) are installed
-  # and use a stable Node version supported by the toolchain.
-  command = "npm install --include=dev --no-audit --no-fund && npm run build"
+base = "web"
+publish = "dist"
+command = "npm install --include=dev --no-audit --no-fund && npm run build"
 
-[build.environment]
-  NODE_VERSION = "20.11.1"
-  # Also tell Netlify not to omit dev deps even if a UI var was set
-  NPM_FLAGS = "--include=dev"
+[functions]
+directory = "web/functions"
 
 [[redirects]]
   from = "/*"
