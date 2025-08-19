@@ -1,0 +1,9 @@
+[build]
+  base = "web"
+  publish = "dist"
+  command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
