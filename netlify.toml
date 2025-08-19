@@ -6,6 +6,11 @@
 [build.environment]
   NODE_VERSION = "18"
   NPM_FLAGS = "--legacy-peer-deps"
+  VITE_SUPABASE_URL = "${VITE_SUPABASE_URL}"
+  VITE_SUPABASE_ANON_KEY = "${VITE_SUPABASE_ANON_KEY}"
+  SUPABASE_URL = "${SUPABASE_URL}"
+  SUPABASE_SERVICE_ROLE_KEY = "${SUPABASE_SERVICE_ROLE_KEY}"
+  OPENAI_API_KEY = "${OPENAI_API_KEY}"
 
 [[redirects]]
   from = "/*"
