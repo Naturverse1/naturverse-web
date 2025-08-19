@@ -1,6 +1,6 @@
 [build]
   base    = "web"
-  publish = "web/dist"
+  publish = "dist"                    # <-- was web/dist causing web/web/dist
   command = "npm install --legacy-peer-deps --no-audit --no-fund && npm run build"
 
 [build.environment]
