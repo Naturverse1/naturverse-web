@@ -1,18 +1,32 @@
-import React from "react";
-import FloatingFeedback from "../../components/FloatingFeedback";
-import QAForm from "../../components/QAForm";
-import QAList from "../../components/QAList";
+import { useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
 
 export default function Feedback() {
+  const [text, setText] = useState("");
+  const [sending, setSending] = useState(false);
+
+  async function submit(e: React.FormEvent) {
+    e.preventDefault();
+    setSending(true);
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      await supabase.from("feedback").insert({ user_id: user?.id ?? null, message: text });
+      setText("");
+      alert("Thanks for the feedback!");
+    } finally {
+      setSending(false);
+    }
+  }
+
   return (
-    <main style={{ maxWidth: 820, margin: "2rem auto", padding: "0 1rem" }}>
+    <section>
       <h2>💬 Feedback</h2>
-      <p>Tell us what to build next. Your ideas shape the Naturverse.</p>
-      <QAForm />
-      <hr style={{ margin: "2rem 0" }} />
-      <QAList />
-      <FloatingFeedback />
-    </main>
+      <form onSubmit={submit}>
+        <textarea value={text} onChange={e => setText(e.target.value)} required rows={4} style={{ width: "100%", maxWidth: 520 }} />
+        <div style={{ marginTop: 8 }}>
+          <button disabled={sending}>{sending ? "Sending..." : "Send"}</button>
+        </div>
+      </form>
+    </section>
   );
 }
-

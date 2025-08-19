@@ -1,26 +1,31 @@
-import { Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { supabase } from "../../lib/supabaseClient";
+
+type Playlist = { id:number; name:string; description:string | null; cover_url?:string | null; stream_url?:string | null };
 
 export default function MusicZone() {
+  const [items, setItems] = useState<Playlist[]>([]);
+  useEffect(() => {
+    supabase.from("playlists").select("*").order("id", { ascending: true }).then(({ data }) => setItems(data ?? []));
+  }, []);
+
   return (
     <section>
       <h2>🎵 Music Zone</h2>
-      <p>Discover eco-inspired beats, ambient nature, and learning playlists.</p>
-
-      <h3>Playlists</h3>
-      <ul>
-        <li>Focus Forest (lo-fi, rain)</li>
-        <li>Ocean Calm (waves, whales)</li>
-        <li>Desert Night (wind, synth)</li>
-      </ul>
-
-      <h3>Activities</h3>
-      <ul>
-        <li>Make a beat in <Link to="/zones/creator-lab">Creator Lab</Link></li>
-        <li>Share a track in <Link to="/zones/community">Community</Link></li>
-      </ul>
-
-      <p>Want a soundtrack while you explore? Keep this tab open and roam the Naturverse.</p>
+      {items.length === 0 ? <p>Add rows to <code>playlists</code> in Supabase to see them here.</p> : (
+        <ul>
+          {items.map(p => (
+            <li key={p.id}>
+              <strong>{p.name}</strong> — {p.description}
+              {p.stream_url && (
+                <div style={{ marginTop: 6 }}>
+                  <audio controls src={p.stream_url} style={{ width: 320 }} />
+                </div>
+              )}
+            </li>
+          ))}
+        </ul>
+      )}
     </section>
   );
 }
-

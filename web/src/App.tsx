@@ -17,6 +17,7 @@ import DesertWorld from "./pages/DesertWorld";
 import Home from "./pages/Home";
 import About from "./pages/about";
 import Contact from "./pages/contact";
+import Feedback from "./pages/feedback";
 import FAQ from "./pages/faq";
 import Privacy from "./pages/privacy";
 import Terms from "./pages/terms";
@@ -60,6 +61,7 @@ export default function App() {
         <Route path="/home" element={<Home />} />
         <Route path="/about" element={<About />} />
         <Route path="/contact" element={<Contact />} />
+        <Route path="/feedback" element={<Feedback />} />
         <Route path="/faq" element={<FAQ />} />
         <Route path="/privacy" element={<Privacy />} />
         <Route path="/terms" element={<Terms />} />
