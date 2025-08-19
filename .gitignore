@@ -11,3 +11,5 @@ web/dist/_routes.json
 
 # Ignore build output
 web/dist/
+# keep lockfile for reliable Netlify builds
+# (do NOT ignore package-lock.json)
