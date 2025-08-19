@@ -1,6 +1,8 @@
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export async function uploadAvatar(file: File, userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase unavailable');
   const ext = file.name.split(".").pop() ?? "png";
   const path = `avatars/${userId}/${Date.now()}.${ext}`;
 
@@ -27,6 +29,8 @@ export async function uploadAvatar(file: File, userId: string) {
 }
 
 export async function fetchAvatar(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase unavailable');
   // Prefer avatar_url (stable across policy/CDN), fallback to signed URL if needed
   const { data, error } = await supabase
     .from("users")

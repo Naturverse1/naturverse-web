@@ -1,6 +1,8 @@
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export async function uploadAvatar(file: File, userId: string): Promise<string> {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('Supabase unavailable');
   const path = `${userId}.png`;
   const { error } = await supabase.storage
     .from('avatars')

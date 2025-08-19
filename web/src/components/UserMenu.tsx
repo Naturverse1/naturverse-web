@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 import { getNavatar } from '../lib/navatar';
 
 export default function UserMenu() {
@@ -11,7 +11,9 @@ export default function UserMenu() {
   const ref = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
+    const supabase = getSupabase();
     setAvatar(getNavatar());
+    if (!supabase) return;
     supabase.auth.getUser().then(({ data }) => {
       const name = (data.user?.user_metadata?.full_name || data.user?.email || '')
         .trim();
@@ -42,6 +44,8 @@ export default function UserMenu() {
   }, []);
 
   const signOut = async () => {
+    const supabase = getSupabase();
+    if (!supabase) return;
     await supabase.auth.signOut();
     nav('/');
   };

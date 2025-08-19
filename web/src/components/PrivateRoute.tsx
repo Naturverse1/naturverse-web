@@ -1,12 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { supabase } from '../supabaseClient';
 import { Navigate } from "react-router-dom";
+import { getSupabase } from "@/lib/supabaseClient";
 
 export default function PrivateRoute({ children }: { children: JSX.Element }) {
   const [loading, setLoading] = useState(true);
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) { setAuthed(false); setLoading(false); return; }
     let mounted = true;
     supabase.auth.getUser().then(({ data: { user } }) => {
       if (!mounted) return;

@@ -1,10 +1,12 @@
 import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from '../../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 const AuthCallback: React.FC = () => {
   const navigate = useNavigate();
   useEffect(() => {
+    const supabase = getSupabase();
+    if (!supabase) { navigate("/login"); return; }
     (async () => {
       const url = window.location.href;
       if (url.includes("?code=")) {

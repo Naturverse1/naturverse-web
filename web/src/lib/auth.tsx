@@ -1,12 +1,14 @@
 import React from "react";
 import { Navigate, useLocation } from "react-router-dom";
-import { supabase } from '../supabaseClient';
+import { getSupabase } from "@/lib/supabaseClient";
 
 export function useSession() {
-  const [session, setSession] = React.useState<Awaited<ReturnType<typeof supabase.auth.getSession>>["data"]["session"] | null>(null);
+  const supabase = getSupabase();
+  const [session, setSession] = React.useState<Awaited<ReturnType<NonNullable<typeof supabase>['auth']['getSession']>>["data"]["session"] | null>(null);
   const [loading, setLoading] = React.useState(true);
 
   React.useEffect(() => {
+    if (!supabase) { setLoading(false); return; }
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (mounted) {
@@ -19,7 +21,7 @@ export function useSession() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
   return { session, loading };
 }
 
