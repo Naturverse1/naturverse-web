@@ -1,4 +1,7 @@
+import { useLocation } from "react-router-dom";
+
 export default function OrderSuccess() {
+  const location = useLocation();
   const id = new URLSearchParams(location.search).get("order");
   return (
     <section>
@@ -7,4 +10,3 @@ export default function OrderSuccess() {
     </section>
   );
 }
-
