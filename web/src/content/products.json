@@ -1,0 +1,6 @@
+[
+  { "id": "seed-1", "title": "Natur Tee", "priceTokens": 120, "image": "/attached_assets/Frankie Frogs_1754677400700.png", "desc": "Soft organic cotton tee." },
+  { "id": "seed-2", "title": "Butterfly Sticker", "priceTokens": 15, "image": "/attached_assets/Blu Butterfly_1754677394021.png", "desc": "Glossy sticker pack." },
+  { "id": "seed-3", "title": "Rainforest Poster", "priceTokens": 80, "image": "/attached_assets/Rainforest_hero.png", "desc": "A2 matte print." }
+]
+

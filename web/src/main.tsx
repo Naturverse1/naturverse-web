@@ -9,6 +9,12 @@ import Quizzes from './pages/Quizzes';
 import Observations from './pages/Observations';
 import Tips from './pages/tips';
 import Marketplace from './pages/Marketplace';
+import ProductDetail from './pages/Marketplace/ProductDetail';
+import CartPage from './pages/Marketplace/cart';
+import Shipping from './pages/Marketplace/checkout';
+import Review from './pages/Marketplace/checkout/Review';
+import Pay from './pages/Marketplace/checkout/Pay';
+import OrderSuccess from './pages/Marketplace/OrderSuccess';
 import Worlds from './pages/Worlds';
 import Zones from './pages/Zones';
 import Arcade from './pages/Arcade';
@@ -34,6 +40,12 @@ const router = createBrowserRouter([
       { path: 'observations', element: <Observations/> },
       { path: 'tips', element: <Tips/> },
       { path: 'marketplace', element: <Marketplace/> },
+      { path: 'marketplace/productdetail', element: <ProductDetail/> },
+      { path: 'marketplace/cart', element: <CartPage/> },
+      { path: 'marketplace/checkout', element: <Shipping/> },
+      { path: 'marketplace/checkout/Review', element: <Review/> },
+      { path: 'marketplace/checkout/Pay', element: <Pay/> },
+      { path: 'marketplace/OrderSuccess', element: <OrderSuccess/> },
 
       { path: 'zones', element: <Zones/> },
       { path: 'worlds', element: <Worlds/> },
