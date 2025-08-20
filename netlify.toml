@@ -2,31 +2,18 @@
   command = "npm run build"
   publish = "dist"
 
+[[headers]]
+  for = "/*"
+  [headers.values]
+  X-Frame-Options = "DENY"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+  Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+  Content-Security-Policy = "default-src 'self' https: data: blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval' https: blob:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https: blob:; font-src 'self' https: data:; connect-src 'self' https://*.supabase.co https://api.openai.com https://*.netlify.app https://*.netlify.com https://*.netlify.dev https://*.openai.com https://*.cloudflare.com https://*.googleapis.com wss:; object-src 'none'; base-uri 'self'; frame-ancestors 'none'"
+
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Global security + caching headers
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "same-origin"
-    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-    # CSP that allows Vite/TSC/Bundled app, styles, and your APIs
-    Content-Security-Policy = '''
-      default-src 'self';
-      script-src 'self' 'unsafe-eval' 'unsafe-inline';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: https:;
-      font-src 'self' data:;
-      connect-src 'self' https://*.netlify.app https://api.openai.com https://*.openai.com https://*.supabase.co https://*.supabase.in;
-      frame-ancestors 'none';
-      base-uri 'self';
-      form-action 'self';
-    '''
-

@@ -1,0 +1,24 @@
+:root{
+  --bg: #ffffff;
+  --fg: #0f172a;
+  --muted:#64748b;
+  --brand:#0ea5e9;
+  --border:#e2e8f0;
+  --max: 980px;
+  color-scheme: light;
+}
+*{box-sizing:border-box}
+html,body,#root{height:100%}
+body{margin:0;background:var(--bg);color:var(--fg);font:-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif}
+.shell{min-height:100%;display:grid;grid-template-rows:auto 1fr auto}
+.site-header{border-bottom:1px solid var(--border);background:#fff;position:sticky;top:0;z-index:1}
+.brand{max-width:var(--max);margin:0 auto;padding:20px 16px;font-size:32px;line-height:1.1}
+.nav{max-width:var(--max);margin:0 auto;padding:0 16px 16px;display:flex;flex-wrap:wrap;gap:14px}
+.nav a{color:var(--brand);text-decoration:none;font-weight:600}
+.nav a.active{text-decoration:underline}
+.content{max-width:var(--max);margin:0 auto;padding:24px 16px}
+.h1{font-size:28px;margin:0 0 12px}
+.lead{color:var(--muted);margin:0 0 24px}
+.card{border:1px solid var(--border);border-radius:12px;padding:16px;margin:12px 0}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:16px}
+.site-footer{border-top:1px solid var(--border);padding:20px 16px;text-align:center;color:var(--muted)}
