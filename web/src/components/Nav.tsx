@@ -11,6 +11,7 @@ export default function Nav() {
       <Link to="/stories">Stories</Link>{' '}
       <Link to="/quizzes">Quizzes</Link>{' '}
       <Link to="/observations">Observations</Link>{' '}
+      <Link to="/naturversity">Naturversity</Link>{' '}
       <Link to="/tips">Turian Tips</Link>{' '}
       <Link to="/profile">Profile</Link>
     </nav>
