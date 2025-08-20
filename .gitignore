@@ -5,6 +5,9 @@ node_modules/
 .dev.vars
 .env.local
 
+# env
+.env
+
 # Ignore build output and stray routes
 dist/
 dist/_routes.json

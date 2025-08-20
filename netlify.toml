@@ -1,14 +1,32 @@
 [build]
   command = "npm install --no-audit --no-fund && npm run build"
   publish = "dist"
-  functions = "netlify/functions"
 
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["openai"]
+
+# SPA fallback
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
 
+# Basic security + allow required APIs; keep CSP minimal to avoid blocking app
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; connect-src 'self' https://api.openai.com https://*.supabase.co; font-src 'self' data:; media-src 'self' blob:;"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' 'unsafe-inline' 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https:;
+      connect-src 'self' https://*.supabase.co https://api.openai.com;
+      font-src 'self' data:;
+      frame-ancestors 'none';
+    """
