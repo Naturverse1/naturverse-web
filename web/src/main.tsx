@@ -19,6 +19,8 @@ import Pay from './pages/Marketplace/checkout/Pay';
 import OrderSuccess from './pages/Marketplace/OrderSuccess';
 import Worlds from './pages/Worlds';
 import Zones from './pages/Zones';
+import ZoneList from './pages/ZoneList';
+import ZoneDoc from './pages/ZoneDoc';
 import Arcade from './pages/Arcade';
 import Music from './pages/Music';
 import Wellness from './pages/Wellness';
@@ -53,6 +55,8 @@ const router = createBrowserRouter([
       { path: 'marketplace/OrderSuccess', element: <OrderSuccess/> },
 
       { path: 'zones', element: <Zones/> },
+      { path: 'zones/:zone', element: <ZoneList/> },
+      { path: 'zones/:zone/:slug', element: <ZoneDoc/> },
       { path: 'worlds', element: <Worlds/> },
       { path: 'arcade', element: <Arcade/> },
       { path: 'music', element: <Music/> },

@@ -1,61 +1,44 @@
-// Minimal, dependency-free content loader using Vite glob
-export type Doc = {
-  id: string;
-  title: string;
-  description?: string;
-  image?: string;
-  slug?: string;
-  body?: string;
-  // section-specific fields allowed (kept open)
-  [key: string]: any;
-};
+import matter from "gray-matter";
+import { marked } from "marked";
+import type { Doc, DocMeta, ZoneId } from "../types/content";
 
-export type Section =
-  | 'stories' | 'quizzes' | 'observations' | 'tips'
-  | 'zones' | 'worlds' | 'market'
-  | 'games';
+const ctxMd = import.meta.glob("../content/**/*.md", { as: "raw" });
+const ctxJson = import.meta.glob("../content/**/*.json", { as: "raw" });
 
-type ContentIndex = Record<Section, Doc[]>;
-
-const files = import.meta.glob('../../content/**/*.json', { eager: true, import: 'default' }) as Record<string, Doc[] | Doc>;
-
-function normalize(): ContentIndex {
-  const index: Partial<ContentIndex> = {};
-  const put = (k: Section, docs: Doc[]) => {
-    index[k] = (docs as Doc[]).map(d => ({
-      ...d,
-      slug: d.slug ?? d.id ?? (d.title || '').toLowerCase().replace(/\s+/g,'-').replace(/[^a-z0-9\-]/g,'')
-    }));
+function toHtml(md: string){ return marked.parse(md); }
+function base(meta: any, slug: string): DocMeta {
+  return {
+    title: meta.title ?? slug,
+    summary: meta.summary ?? "",
+    zone: meta.zone,
+    slug,
+    tags: meta.tags ?? [],
+    cover: meta.cover ?? "",
+    order: Number(meta.order ?? 0)
   };
-
-  Object.entries(files).forEach(([path, data]) => {
-    const name = path.split('/content/')[1]?.split('.json')[0] as Section | undefined;
-    if (!name) return;
-    const section = name as Section;
-    const value = Array.isArray(data) ? data : [data];
-    put(section, value as Doc[]);
-  });
-
-  // Ensure empty arrays for any missing section
-  (['stories','quizzes','observations','tips','zones','worlds','market','games'] as Section[])
-    .forEach(s => { index[s] ||= []; });
-
-  // sort by optional "order" desc then title
-  (Object.keys(index) as Section[]).forEach(s => {
-    index[s] = (index[s] as Doc[]).slice().sort((a,b) =>
-      (b.order ?? 0) - (a.order ?? 0) || (a.title || '').localeCompare(b.title || '')
-    );
-  });
-
-  return index as ContentIndex;
 }
 
-export const content = normalize();
+export async function getZoneDocs(zone: ZoneId): Promise<Doc[]> {
+  const mdEntries = Object.entries(ctxMd).filter(([p]) => p.includes(`/content/${zone}/`));
+  const jsonEntries = Object.entries(ctxJson).filter(([p]) => p.includes(`/content/${zone}/`));
+  const docs: Doc[] = [];
 
-export function bySection(section: Section): Doc[] {
-  return content[section];
+  for (const [path, load] of mdEntries){
+    const raw = await (load as any)();
+    const { data, content } = matter(raw as string);
+    const slug = path.split("/").pop()!.replace(/\.md$/, "");
+    docs.push({ ...base(data, slug), body: toHtml(content) });
+  }
+  for (const [path, load] of jsonEntries){
+    const raw = await (load as any)();
+    const meta = JSON.parse(raw as string);
+    const slug = path.split("/").pop()!.replace(/\.json$/, "");
+    docs.push({ ...base(meta, slug), data: meta.data ?? undefined });
+  }
+  return docs.sort((a,b)=>(a.order??0)-(b.order??0));
 }
 
-export function find(section: Section, slug: string): Doc | undefined {
-  return content[section].find(d => d.slug === slug || d.id === slug);
+export async function getDoc(zone: ZoneId, slug: string): Promise<Doc|undefined>{
+  const list = await getZoneDocs(zone);
+  return list.find(d => d.slug === slug);
 }
