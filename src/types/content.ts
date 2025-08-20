@@ -13,6 +13,6 @@ export interface DocMeta {
 }
 
 export interface Doc<T = unknown> extends DocMeta {
-  body?: string;        // markdown html
+  text?: string;        // markdown text
   data?: T;             // optional JSON payload (quizzes, links, etc.)
 }

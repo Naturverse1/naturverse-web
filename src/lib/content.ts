@@ -1,11 +1,8 @@
-import matter from "gray-matter";
-import { marked } from "marked";
+import { parseFrontmatter } from "./markdown";
 import type { Doc, DocMeta, ZoneId } from "../types/content";
 
 const ctxMd = import.meta.glob("../content/**/*.md", { as: "raw" });
 const ctxJson = import.meta.glob("../content/**/*.json", { as: "raw" });
-
-function toHtml(md: string){ return marked.parse(md); }
 function base(meta: any, slug: string): DocMeta {
   return {
     title: meta.title ?? slug,
@@ -25,9 +22,9 @@ export async function getZoneDocs(zone: ZoneId): Promise<Doc[]> {
 
   for (const [path, load] of mdEntries){
     const raw = await (load as any)();
-    const { data, content } = matter(raw as string);
+    const { meta, text } = await parseFrontmatter(raw as string);
     const slug = path.split("/").pop()!.replace(/\.md$/, "");
-    docs.push({ ...base(data, slug), body: toHtml(content) });
+    docs.push({ ...base(meta, slug), text });
   }
   for (const [path, load] of jsonEntries){
     const raw = await (load as any)();
