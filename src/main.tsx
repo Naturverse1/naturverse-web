@@ -1,19 +1,19 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import { createBrowserRouter, RouterProvider } from "react-router-dom";
-import App from "./App";
-import Home from "./routes/Home";
-import Worlds from "./routes/Worlds";
-import Zones from "./routes/Zones";
-import Arcade from "./routes/Arcade";
-import Marketplace from "./routes/Marketplace";
-import Stories from "./routes/Stories";
-import Quizzes from "./routes/Quizzes";
-import Observations from "./routes/Observations";
-import Naturversity from "./routes/Naturversity";
-import Tips from "./routes/Tips";
-import Profile from "./routes/Profile";
-import "./index.css";
+import App from "./ui/App";
+import Home from "./pages/Home";
+import Worlds from "./pages/Worlds";
+import Zones from "./pages/Zones";
+import Arcade from "./pages/Arcade";
+import Marketplace from "./pages/Marketplace";
+import Stories from "./pages/Stories";
+import Quizzes from "./pages/Quizzes";
+import Observations from "./pages/Observations";
+import Naturversity from "./pages/Naturversity";
+import Tips from "./pages/Tips";
+import Profile from "./pages/Profile";
+import "./ui/styles.css";
 
 const router = createBrowserRouter([
   {
@@ -40,4 +40,3 @@ createRoot(document.getElementById("root")!).render(
     <RouterProvider router={router} />
   </React.StrictMode>
 );
-
