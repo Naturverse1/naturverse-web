@@ -28,7 +28,12 @@ import CreatorLab from './pages/CreatorLab';
 import Community from './pages/Community';
 import Teachers from './pages/Teachers';
 import Partners from './pages/Partners';
-import Naturversity from './pages/Naturversity';
+import NaturversityHub from './pages/Naturversity';
+import Web3Page from './pages/Naturversity/Web3';
+import WalletsPage from './pages/Naturversity/Wallets';
+import TeachersPageNv from './pages/Naturversity/Teachers';
+import ParentsPageNv from './pages/Naturversity/Parents';
+import DaoPage from './pages/Naturversity/DAO';
 import Parents from './pages/Parents';
 import Profile from './pages/Profile';
 import { ContentProvider } from './context/ContentContext';
@@ -65,7 +70,12 @@ const router = createBrowserRouter([
       { path: 'community', element: <Community/> },
       { path: 'teachers', element: <Teachers/> },
       { path: 'partners', element: <Partners/> },
-      { path: 'naturversity', element: <Naturversity/> },
+      { path: 'naturversity', element: <NaturversityHub/> },
+      { path: 'naturversity/web3', element: <Web3Page/> },
+      { path: 'naturversity/wallets', element: <WalletsPage/> },
+      { path: 'naturversity/teachers', element: <TeachersPageNv/> },
+      { path: 'naturversity/parents', element: <ParentsPageNv/> },
+      { path: 'naturversity/dao', element: <DaoPage/> },
       { path: 'parents', element: <Parents/> },
 
       { path: 'profile', element: <Profile/> },
