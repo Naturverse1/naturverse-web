@@ -30,3 +30,19 @@ p { color: var(--muted); margin: 0 0 18px; }
 .card-sub { color: var(--muted); }
 .site-footer { border-top: 1px solid var(--border); padding: 32px 16px; text-align: center; color: var(--muted); }
 
+.pillbar { display:flex; gap:10px; flex-wrap:wrap; margin: 10px 0 18px; }
+.pill { border:1px solid var(--border); background:var(--card); padding:8px 12px; border-radius:999px; text-decoration:none; color:var(--fg); }
+.pill:hover { outline:3px solid var(--ring); }
+
+.list { list-style:none; padding:0; margin:0; display:grid; gap:10px; }
+.row { display:flex; align-items:center; gap:10px; border:1px solid var(--border); background:var(--card); padding:10px 12px; border-radius:10px; }
+.row .grow { flex:1; }
+.grid { display:grid; grid-template-columns: repeat(4, minmax(64px,1fr)); gap:10px; max-width:420px; }
+.tile { height:64px; border:1px solid var(--border); border-radius:10px; background:var(--card); font-size:24px; }
+.tile.show { background:#eef6ff; }
+.grid2 { display:grid; grid-template-columns: repeat(2, minmax(160px,1fr)); gap:12px; max-width:640px; }
+input, select, button { padding:10px 12px; border-radius:8px; border:1px solid var(--border); }
+button { background: var(--brand); color: #fff; border-color: transparent; cursor: pointer; }
+button:hover { filter: brightness(0.95); }
+.muted { color: var(--muted); }
+.game { margin-top: 10px; }
