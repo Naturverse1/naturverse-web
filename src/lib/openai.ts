@@ -1,7 +1,9 @@
-export async function askMagic(kind: 'story'|'quiz'|'tip', prompt: string) {
-  const r = await fetch('/.netlify/functions/magic', {
-    method:'POST', headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({ kind, prompt })
+export async function aiComplete(opts: { prompt: string; system?: string }) {
+  const res = await fetch("/.netlify/functions/openai-proxy", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(opts),
   });
-  return r.json();
+  if (!res.ok) throw new Error("AI error");
+  return res.json() as Promise<{ text: string }>;
 }

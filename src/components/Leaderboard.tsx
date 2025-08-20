@@ -1,34 +1,34 @@
-import { useEffect, useState } from "react";
-import type { Score } from "../types";
-import { api } from "../lib/api";
+import React, { useEffect, useState } from "react";
+import { supabase } from "../supabaseClient";
 
-export default function Leaderboard({ game = "game1" }: { game?: string }) {
-  const [scores, setScores] = useState<Score[]>([]);
-  const [name, setName] = useState("");
-  const [points, setPoints] = useState<number>(0);
+type Score = { id?: string; name: string; game: string; points: number; created_at?: string };
 
-  async function load() {
-    const data = await api(`scores?game=${encodeURIComponent(game)}`);
-    setScores(data as Score[]);
-  }
-  useEffect(()=>{ load(); }, [game]);
-
-  async function submit() {
-    await api(`scores?game=${encodeURIComponent(game)}`, { name: name || "Player", points });
-    setPoints(0);
-    load();
-  }
-
+export default function Leaderboard({ game }: { game: string }) {
+  const [rows, setRows] = useState<Score[]>([]);
+  useEffect(() => {
+    (async () => {
+      try {
+        const { data, error } = await supabase.from("leaderboard").select("*").eq("game", game).order("points", { ascending: false }).limit(20);
+        if (error) throw error;
+        setRows(data || []);
+      } catch {
+        const local = JSON.parse(localStorage.getItem("leaderboard_"+game) || "[]");
+        setRows(local);
+      }
+    })();
+  }, [game]);
   return (
     <div>
-      <h3>Leaderboard</h3>
-      <ol>{scores.map(s => <li key={s.id}>{s.name} — {s.points}</li>)}</ol>
-      <div style={{ display: "flex", gap: 8 }}>
-        <input placeholder="Name" value={name} onChange={(e)=>setName(e.target.value)} />
-        <input type="number" placeholder="Points" value={points} onChange={(e)=>setPoints(parseInt(e.target.value||"0"))} />
-        <button onClick={submit}>Submit</button>
-      </div>
+      <h3 className="font-semibold mb-2">Leaderboard</h3>
+      <ol className="space-y-1">
+        {rows.map((r,i)=>(
+          <li key={r.id || i} className="flex justify-between border rounded px-3 py-1">
+            <span>{i+1}. {r.name}</span>
+            <span>{r.points}</span>
+          </li>
+        ))}
+        {!rows.length && <li className="text-sm text-neutral-500">No scores yet.</li>}
+      </ol>
     </div>
   );
 }
-
