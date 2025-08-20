@@ -14,8 +14,8 @@ export default function ChatBox() {
     const req: ChatReq = {
       messages: [{ role: "system", content: "You are a friendly Naturverse guide." }, ...next] as any,
     };
-    const res = await api<ChatRes>("/.netlify/functions/chat", { method: "POST", body: JSON.stringify(req) });
-    setLog((l) => [...l, { role: "assistant", content: res.reply }]);
+    const res = await api("chat", req);
+    setLog((l) => [...l, { role: "assistant", content: (res as ChatRes).reply }]);
   }
 
   return (

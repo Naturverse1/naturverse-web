@@ -1,9 +1,20 @@
 import { useStore } from "../../store/Store";
+import { supabase } from "../../lib/supabase";
 
 export default function MarketCheckout(){
   const { state, dispatch } = useStore();
   const total = state.cart.reduce((n,i)=>n+i.qty*i.price,0);
-  const pay = () => { alert("Order placed!"); dispatch({type:"clear"}); };
+  const pay = async () => {
+    if (supabase && state.cart.length){
+      await supabase.from("nv_orders").insert({
+        email: "demo@example.com",
+        total,
+        items: state.cart
+      });
+    }
+    alert("Order placed!");
+    dispatch({type:"clear"});
+  };
   return (
     <>
       <h3>Checkout</h3>

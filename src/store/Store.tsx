@@ -25,8 +25,15 @@ function reducer(state: State, action: Action): State {
 }
 
 export function StoreProvider({children}:{children: React.ReactNode}){
-  const [state, dispatch] = useReducer(reducer, { cart: [] });
+  const [state, dispatch] = useReducer(reducer, undefined, () => {
+    try { return JSON.parse(localStorage.getItem("nv-store") || "") as State; }
+    catch { return { cart: [] }; }
+  });
   const value = useMemo(()=>({state, dispatch}),[state]);
+  // persist
+  if (typeof window !== "undefined") {
+    window.requestIdleCallback?.(()=>localStorage.setItem("nv-store", JSON.stringify(state)));
+  }
   return <Store.Provider value={value}>{children}</Store.Provider>;
 }
 export function useStore(){

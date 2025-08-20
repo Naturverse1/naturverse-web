@@ -8,16 +8,13 @@ export default function Leaderboard({ game = "game1" }: { game?: string }) {
   const [points, setPoints] = useState<number>(0);
 
   async function load() {
-    const data = await api<Score[]>(`/.netlify/functions/scores?game=${encodeURIComponent(game)}`);
-    setScores(data);
+    const data = await api(`scores?game=${encodeURIComponent(game)}`);
+    setScores(data as Score[]);
   }
   useEffect(()=>{ load(); }, [game]);
 
   async function submit() {
-    await api(`/.netlify/functions/scores?game=${encodeURIComponent(game)}`, {
-      method: "POST",
-      body: JSON.stringify({ name: name || "Player", points }),
-    });
+    await api(`scores?game=${encodeURIComponent(game)}`, { name: name || "Player", points });
     setPoints(0);
     load();
   }

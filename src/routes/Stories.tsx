@@ -1,9 +1,11 @@
-export default function Stories() {
+export default function Stories(){
   return (
     <>
       <h2>Stories</h2>
-      <p>Story list coming soon.</p>
+      <ul className="list">
+        <li className="row"><div className="grow">Panda and the Bamboo Flute</div><button>Read</button></li>
+        <li className="row"><div className="grow">Mangoes for the Tiger</div><button>Read</button></li>
+      </ul>
     </>
   );
 }
-
