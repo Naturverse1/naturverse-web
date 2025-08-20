@@ -1,9 +1,14 @@
 import { useLocation, useNavigate } from "react-router-dom";
 import { readCart, clearCart, cartTotal } from "../../../lib/cart";
 import { getDeviceId } from "../../../lib/device";
+import type { Address } from "../../../types/commerce";
+
+interface LocationState {
+  addr?: Address;
+}
 
 export default function Pay() {
-  const { state } = useLocation() as any;
+  const { state } = useLocation() as { state: LocationState };
   const addr = state?.addr;
   const nav = useNavigate();
   const cart = readCart();
@@ -19,7 +24,7 @@ export default function Pay() {
     if (!res.ok) { alert(await res.text()); return; }
     const { order_id } = await res.json();
     clearCart();
-    nav("/marketplace/OrderSuccess?order="+encodeURIComponent(order_id));
+    nav("/marketplace/OrderSuccess?order=" + encodeURIComponent(order_id));
   }
 
   return (
@@ -30,4 +35,3 @@ export default function Pay() {
     </section>
   );
 }
-
