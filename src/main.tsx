@@ -17,6 +17,7 @@ import ZonePartners from "./routes/zones/Partners";
 import ZoneNaturversity from "./routes/zones/Naturversity";
 import ZoneParents from "./routes/zones/Parents";
 import ZoneNaturBank from "./routes/zones/NaturBank";
+import NavatarCreator from "./routes/zones/Navatar";
 
 // Arcade
 import Arcade from "./routes/arcade/Arcade";
@@ -58,6 +59,7 @@ const router = createBrowserRouter([
       { index: true, element: <Home /> },
 
       { path: "naturbank", element: <ZoneNaturBank /> },
+      { path: "navatar", element: <NavatarCreator /> },
 
       // Worlds
       { path: "worlds", element: <Worlds /> },

@@ -9,6 +9,7 @@ const links = [
   ["partners","Partners"],
   ["naturversity","Naturversity"],
   ["parents","Parents"],
+  ["navatar","Navatar Creator"],
 ];
 
 export default function Zones() {
