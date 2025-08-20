@@ -1,13 +1,13 @@
 [build]
-command = "npm install --no-audit --no-fund && npm run build"
-publish = "dist"
-base = "web"
+  base = "web"
+  command = "npm ci --legacy-peer-deps --no-audit --no-fund && npm run build"
+  publish = "dist"
 
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
+  from = "/*"
+  to = "/index.html"
+  status = 200
 
 [functions]
-node_bundler = "esbuild"
-included_files = ["db/*.sql","web/src/content/*.json"]
+  node_bundler = "esbuild"
+  included_files = ["db/*.sql","web/src/content/*.json"]

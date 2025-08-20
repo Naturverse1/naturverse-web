@@ -1,14 +1,22 @@
 {
   "name": "naturverse-web",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "preview": "vite preview",
+    "preview": "vite preview --port 4173",
     "db:push": "echo 'Run seed via Netlify function or Supabase SQL editor'"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.45.4",
     "gray-matter": "^4.0.3",
     "marked": "^12.0.2"
+  },
+  "devDependencies": {
+    "vite": "^5.4.0",
+    "@vitejs/plugin-react": "^4.3.1",
+    "typescript": "^5.4.0"
   }
 }
