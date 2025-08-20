@@ -15,14 +15,14 @@ export default function Home() {
 
       <h2>Zones (shortcuts)</h2>
       <p>
-        <LinkDot to="/zones/music">Music</LinkDot>
-        <LinkDot to="/zones/wellness">Wellness</LinkDot>
-        <LinkDot to="/zones/creator-lab">Creator Lab</LinkDot>
-        <LinkDot to="/zones/community">Community</LinkDot>
-        <LinkDot to="/zones/teachers">Teachers</LinkDot>
-        <LinkDot to="/zones/partners">Partners</LinkDot>
-        <LinkDot to="/zones/naturversity">Naturversity</LinkDot>
-        <Link to="/zones/parents">Parents</Link>
+        <LinkDot to="/music">Music</LinkDot>
+        <LinkDot to="/wellness">Wellness</LinkDot>
+        <LinkDot to="/creator-lab">Creator Lab</LinkDot>
+        <LinkDot to="/community">Community</LinkDot>
+        <LinkDot to="/teachers">Teachers</LinkDot>
+        <LinkDot to="/partners">Partners</LinkDot>
+        <LinkDot to="/naturversity">Naturversity</LinkDot>
+        <Link to="/parents">Parents</Link>
       </p>
 
       <h2>Content</h2>
