@@ -8,10 +8,12 @@ export default function ChatBox() {
 
   async function send() {
     if (!input.trim()) return;
-    const next = [...log, { role: "user", content: input }];
+    const next: typeof log = [...log, { role: "user" as const, content: input }];
     setLog(next);
     setInput("");
-    const req: ChatReq = { messages: [{ role: "system", content: "You are a friendly Naturverse guide." }, ...next] as any };
+    const req: ChatReq = {
+      messages: [{ role: "system", content: "You are a friendly Naturverse guide." }, ...next] as any,
+    };
     const res = await api<ChatRes>("/.netlify/functions/chat", { method: "POST", body: JSON.stringify(req) });
     setLog((l) => [...l, { role: "assistant", content: res.reply }]);
   }
