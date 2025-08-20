@@ -1,35 +1,23 @@
-import { products } from '../../data/marketplace'
-import { useEffect, useState } from 'react'
-type Cart = Record<string, number>
+import { useEffect, useState } from "react";
+import { Link } from "react-router-dom";
+import type { Product } from "../../types/commerce";
+import TokenBalance from "../../components/TokenBalance";
+import ProductCard from "../../components/ProductCard";
 
-export default function Marketplace(){
-  const [cart,setCart] = useState<Cart>({})
-  useEffect(()=>{ setCart(JSON.parse(localStorage.getItem('nv_cart')||'{}'))},[])
-  useEffect(()=>{ localStorage.setItem('nv_cart', JSON.stringify(cart))},[cart])
-
-  const add = (id:string)=> setCart(c=>({...c,[id]:(c[id]||0)+1}))
-  const total = products.reduce((sum,p)=> sum + (cart[p.id]||0)*p.price, 0)
-
+export default function Marketplace() {
+  const [products, setProducts] = useState<Product[]>([]);
+  useEffect(() => { fetch("/content/products.json").then(r=>r.json()).then(setProducts); }, []);
   return (
     <section>
       <h1>Marketplace</h1>
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill,minmax(200px,1fr))', gap:16}}>
-        {products.map(p=>(
-          <div key={p.id} style={{border:'1px solid #ddd', padding:12, borderRadius:8}}>
-            <h3>{p.name}</h3>
-            <p>{p.blurb}</p>
-            <p><strong>${p.price.toFixed(2)}</strong></p>
-            <button onClick={()=>add(p.id)}>Add to cart</button>
-          </div>
+      <p><TokenBalance /> · <Link to="/marketplace/cart">Cart</Link></p>
+      <div style={{ display:"grid", gridTemplateColumns:"repeat(auto-fill,minmax(220px,1fr))", gap:12 }}>
+        {products.map(p => (
+          <Link key={p.id} to={`/marketplace/productdetail?id=${encodeURIComponent(p.id)}`} style={{ textDecoration:"none", color:"inherit" }}>
+            <ProductCard p={p} />
+          </Link>
         ))}
       </div>
-      <h2 style={{marginTop:20}}>Cart</h2>
-      <ul>
-        {Object.entries(cart).map(([id,qty])=>{
-          const p = products.find(x=>x.id===id)!; return <li key={id}>{p.name} × {qty}</li>
-        })}
-      </ul>
-      <p><strong>Total: ${total.toFixed(2)}</strong></p>
     </section>
-  )
+  );
 }
