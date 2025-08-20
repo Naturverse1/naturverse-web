@@ -5,7 +5,7 @@ import type { Doc } from "../types/content";
 
 export default function ZoneDoc(){
   const { zone = "", slug = "" } = useParams();
-  const [doc,setDoc] = useState<Doc>();
+  const [doc, setDoc] = useState<Doc<any>>();
   useEffect(()=>{ getDoc(zone as any, slug).then(setDoc); },[zone,slug]);
 
   if(!doc) return <main className="container"><p>Loading…</p></main>;
@@ -15,7 +15,7 @@ export default function ZoneDoc(){
       <h1>{doc.title}</h1>
       {doc.cover && <img src={doc.cover} alt="" style={{maxWidth:"320px"}} />}
       {doc.body && <div dangerouslySetInnerHTML={{__html: doc.body}} />}
-      {doc.data && (
+      {doc.data !== undefined && (
         <pre style={{background:"#f6f6f6", padding:"1rem", borderRadius:8}}>
           {JSON.stringify(doc.data, null, 2)}
         </pre>

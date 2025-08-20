@@ -19,7 +19,10 @@ export default function QuizDetail(){
   async function submit(e:any){
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    const correct = (q.quizzes.questions as any[]).reduce((acc,qq,i)=> acc + ((+fd.get('q'+i)===qq.answer)?1:0),0);
+    const correct = (q.quizzes?.questions as any[] ?? []).reduce(
+      (acc, qq, i) => acc + ((+fd.get('q' + i)! === qq.answer) ? 1 : 0),
+      0
+    );
     setScore(correct);
     const device = getDeviceId();
     await supabase.from('progress').insert({ device_id: device, content_id: q.id, score: correct, completed_at: new Date().toISOString() });
