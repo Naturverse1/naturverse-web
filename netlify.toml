@@ -1,18 +1,27 @@
 [build]
-command = "npm install --no-audit --no-fund && npm run build"
-publish = "dist"
+  command = "npm run build"
+  publish = "dist"
 
-[[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
-[build.environment]
-NODE_VERSION = "20"
-NPM_FLAGS    = "--no-audit --no-fund"
+[dev]
+  framework = "vite"
+  targetPort = 5173
+  port = 8888
 
 [[headers]]
-for = "/*"
-[headers.values]
-Content-Security-Policy = "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https:; font-src 'self' data:; frame-ancestors 'self'; base-uri 'self';"
-
+  for = "/*"
+  [headers.values]
+    # Loosened CSP so the JS bundle can execute in production
+    Content-Security-Policy = """
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'wasm-unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: blob:;
+      font-src 'self' data:;
+      connect-src 'self' https://*.supabase.co wss://*.supabase.co https://api.openai.com https://*.netlify.app https://*.netlify.com;
+      worker-src 'self' blob:;
+      base-uri 'self';
+      frame-ancestors 'self';
+    """
+    Referrer-Policy = "no-referrer"
+    X-Content-Type-Options = "nosniff"
+    Cache-Control = "public, max-age=0, must-revalidate"
