@@ -1,5 +1,6 @@
 import { Link, Outlet, useLocation } from "react-router-dom";
 import { useStore } from "../../store/Store";
+import NaturToken from "../../components/NaturToken";
 
 export default function Marketplace(){
   const { state } = useStore();
@@ -14,6 +15,7 @@ export default function Marketplace(){
         <Link className="pill" to="/marketplace/cart">Cart ({count})</Link>
         <Link className="pill" to="/marketplace/checkout">Checkout</Link>
       </div>
+      <NaturToken />
       {index ? <Outlet /> : <Outlet />}
     </>
   );

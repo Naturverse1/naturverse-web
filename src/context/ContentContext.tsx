@@ -10,6 +10,7 @@ const C = createContext<Ctx | null>(null);
 export const useContentCtx = () => useContext(C)!;
 
 async function fromSupabase(type: string): Promise<Item[]> {
+  if (!supabase) throw new Error('no supabase');
   const { data, error } = await supabase.from('content').select('*').eq('type', type).order('created_at',{ascending:false});
   if (error) throw error;
   return (data || []).map((d:any)=>({ slug:d.slug, title:d.title, body:d.body, type:d.type, meta:d.meta }));

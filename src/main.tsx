@@ -35,6 +35,8 @@ import Stories from "./routes/Stories";
 import Quizzes from "./routes/Quizzes";
 import Observations from "./routes/Observations";
 import Naturversity from "./routes/Naturversity";
+import NaturTutor from "./routes/naturversity/Tutor";
+import NaturCourses from "./routes/naturversity/Courses";
 import Tips from "./routes/Tips";
 
 // Profile
@@ -102,6 +104,8 @@ const router = createBrowserRouter([
       { path: "quizzes", element: <Quizzes /> },
       { path: "observations", element: <Observations /> },
       { path: "naturversity", element: <Naturversity /> },
+      { path: "naturversity/courses", element: <NaturCourses /> },
+      { path: "naturversity/tutor", element: <NaturTutor /> },
       { path: "tips", element: <Tips /> },
 
       // Profile

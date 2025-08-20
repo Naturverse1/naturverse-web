@@ -1,9 +1,11 @@
-export default function Quizzes() {
+export default function Quizzes(){
   return (
     <>
       <h2>Quizzes</h2>
-      <p>Quiz hub coming soon.</p>
+      <ul className="list">
+        <li className="row"><div className="grow">Rainforest Basics</div><button>Start</button></li>
+        <li className="row"><div className="grow">Ocean Zones</div><button>Start</button></li>
+      </ul>
     </>
   );
 }
-
