@@ -1,12 +1,14 @@
+import CommonCard from '../../components/CommonCard';
+import { useWorlds } from '../../hooks/useContent';
+
 export default function Worlds(){
+  const worlds = useWorlds();
   return (
-    <section>
+    <div>
       <h1>Worlds</h1>
-      <ul>
-        <li>Rainforest — Canopy calls & camo</li>
-        <li>Desert — Moon blooms & night walks</li>
-        <li>Coast — Tide pools & kelp forests</li>
-      </ul>
-    </section>
-  )
+      {worlds.map(w => (
+        <CommonCard key={w.slug} title={w.title}/>
+      ))}
+    </div>
+  );
 }

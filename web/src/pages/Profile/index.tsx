@@ -1,17 +1,10 @@
-import { useEffect, useState } from "react";
-import { getDeviceId } from "../../lib/device";
-
-export default function Profile() {
-  const dev = getDeviceId();
-  const [orders,setOrders]=useState<any[]>([]);
-  useEffect(()=>{ fetch(`/.netlify/functions/orders?device=${dev}`).then(r=>r.json()).then(setOrders); },[]);
+import TokenBalance from '../../components/TokenBalance';
+export default function Profile(){
   return (
-    <section>
+    <div>
       <h1>Profile & Settings</h1>
-      <h3>Orders</h3>
-      {orders.length===0 ? <p>No orders yet.</p> :
-        <ul>{orders.map(o=> <li key={o.id}>{o.created_at} — {o.total_tokens} NATUR</li>)}</ul>}
-    </section>
+      <TokenBalance/>
+      <p>Progress, favorites, and settings coming next.</p>
+    </div>
   );
 }
-

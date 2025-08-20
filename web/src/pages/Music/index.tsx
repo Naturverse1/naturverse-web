@@ -1,8 +1,14 @@
+import CommonCard from '../../components/CommonCard';
+import { useMusic } from '../../hooks/useContent';
+
 export default function Music(){
+  const songs = useMusic();
   return (
-    <section>
+    <div>
       <h1>Music</h1>
-      <p>Loops, soundscapes, and rhythm games coming online. Start by clapping 4–4–2 patterns with the trees 🌳.</p>
-    </section>
-  )
+      {songs.map(s => (
+        <CommonCard key={s.slug} title={s.title}/>
+      ))}
+    </div>
+  );
 }

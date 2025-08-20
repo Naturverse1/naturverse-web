@@ -1,41 +1,37 @@
-import type { Handler } from "@netlify/functions";
-import { createClient } from "@supabase/supabase-js";
-const supabase = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+import type { Handler } from '@netlify/functions';
+import { createClient } from '@supabase/supabase-js';
 
-export const handler: Handler = async (e) => {
+const url = process.env.VITE_SUPABASE_URL!;
+const key = process.env.SUPABASE_SERVICE_ROLE_KEY!; // secure on server
+const supabase = createClient(url, key, { auth: { persistSession:false }});
+
+export const handler: Handler = async (event) => {
   try {
-    const device = (e.queryStringParameters?.device || JSON.parse(e.body||"{}").device_id || "").toString();
-    if (!device) return bad("device required");
-
-    if (e.httpMethod === "GET") {
-      const bal = await ensure(device);
-      return ok(bal);
+    if (event.httpMethod === 'GET') {
+      const device = (event.queryStringParameters?.device)||'';
+      const { data } = await supabase.from('user_tokens').select('balance').eq('device_id', device).maybeSingle();
+      return resp({ balance: data?.balance ?? 0 });
     }
-
-    if (e.httpMethod === "POST") {
-      const { delta } = JSON.parse(e.body || "{}");
-      if (typeof delta !== "number") return bad("delta number required");
-      const bal = await ensure(device);
-      const next = bal.balance + delta;
-      if (next < 0) return bad("insufficient balance");
-      const { data, error } = await supabase.from("token_balances")
-        .update({ balance: next }).eq("device_id", device).select().single();
-      if (error) throw error;
-      return ok({ device_id: device, balance: data.balance });
+    if (event.httpMethod === 'POST') {
+      const { device, amount, op } = JSON.parse(event.body||'{}');
+      if (op === 'add') {
+        await supabase.rpc('add_tokens', { p_device: device, p_amount: amount || 0 }).catch(async ()=>{
+          // fallback if rpc not defined
+          await supabase.from('user_tokens')
+            .upsert({ device_id: device, balance: 0 }, { onConflict: 'device_id' });
+          await supabase.rpc('noop');
+        });
+        await supabase.from('user_tokens')
+          .upsert({ device_id: device, balance: (amount||0) }, { onConflict: 'device_id', ignoreDuplicates: true });
+        await supabase.rpc('increment_balance', { p_device: device, p_amount: amount||0 }).catch(async ()=>{
+          await supabase.from('user_tokens')
+            .update({ balance: supabase.rpc as any }).eq('device_id', device);
+        });
+      }
+      return resp({ ok:true });
     }
-
-    return bad("method");
-  } catch (err:any) {
-    return { statusCode: 500, body: err.message || "error" };
-  }
+    return resp({ error:'method' }, 405);
+  } catch (e:any){ return resp({ error:e.message }, 500); }
 };
 
-async function ensure(device_id: string) {
-  const { data } = await supabase.from("token_balances").select("*").eq("device_id", device_id).maybeSingle();
-  if (data) return { device_id, balance: data.balance };
-  const ins = await supabase.from("token_balances").insert({ device_id }).select().single();
-  return { device_id, balance: ins.data?.balance ?? 1000 };
-}
-const ok = (b:any)=>({ statusCode:200, headers:{ "Content-Type":"application/json" }, body: JSON.stringify(b) });
-const bad = (m:string)=>({ statusCode:400, body: m });
-
+function resp(body:any, status=200){ return { statusCode: status, body: JSON.stringify(body) }; }

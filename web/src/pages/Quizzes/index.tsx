@@ -1,32 +1,17 @@
-import { quizzes } from '../../data/quizzes'
-import { useState } from 'react'
+import CommonCard from '../../components/CommonCard';
+import { useQuizzes } from '../../hooks/useContent';
+import { Link } from 'react-router-dom';
 
-export default function Quizzes() {
-  const q = quizzes[0]
-  const [i,setI] = useState(0)
-  const [score,setScore] = useState(0)
-  const cur = q.questions[i]
-
-  function choose(idx:number){
-    if (idx===cur.answer) setScore(s=>s+1)
-    setI(x=>Math.min(x+1, q.questions.length))
-  }
-
+export default function Quizzes(){
+  const quizzes = useQuizzes();
   return (
-    <section>
-      <h1>{q.title}</h1>
-      {i<q.questions.length ? (
-        <div>
-          <p><strong>Q{i+1}.</strong> {cur.q}</p>
-          <ul>
-            {cur.choices.map((c,idx)=>(
-              <li key={idx}><button onClick={()=>choose(idx)}>{c}</button></li>
-            ))}
-          </ul>
-        </div>
-      ) : (
-        <p>Done! Score: {score}/{q.questions.length}</p>
-      )}
-    </section>
-  )
+    <div>
+      <h1>Quizzes</h1>
+      {quizzes.map(q=> (
+        <CommonCard key={q.slug} title={q.title}>
+          <Link to={`/quizzes/${q.slug}`}>Take Quiz</Link>
+        </CommonCard>
+      ))}
+    </div>
+  );
 }

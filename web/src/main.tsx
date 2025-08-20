@@ -5,9 +5,11 @@ import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import Root from './layouts/Root';
 import Home from './pages/Home';
 import Stories from './pages/Stories';
+import StoryDetail from './pages/Stories/[id]';
 import Quizzes from './pages/Quizzes';
+import QuizDetail from './pages/Quizzes/[id]';
 import Observations from './pages/Observations';
-import Tips from './pages/tips';
+import TurianTips from './pages/TurianTips';
 import Marketplace from './pages/Marketplace';
 import ProductDetail from './pages/Marketplace/ProductDetail';
 import CartPage from './pages/Marketplace/cart';
@@ -27,6 +29,7 @@ import Partners from './pages/Partners';
 import Naturversity from './pages/Naturversity';
 import Parents from './pages/Parents';
 import Profile from './pages/Profile';
+import { ContentProvider } from './context/ContentContext';
 
 import './styles.css';
 
@@ -36,9 +39,11 @@ const router = createBrowserRouter([
       { index: true, element: <Home/> },
 
       { path: 'stories', element: <Stories/> },
+      { path: 'stories/:id', element: <StoryDetail/> },
       { path: 'quizzes', element: <Quizzes/> },
+      { path: 'quizzes/:id', element: <QuizDetail/> },
       { path: 'observations', element: <Observations/> },
-      { path: 'tips', element: <Tips/> },
+      { path: 'TurianTips', element: <TurianTips/> },
       { path: 'marketplace', element: <Marketplace/> },
       { path: 'marketplace/productdetail', element: <ProductDetail/> },
       { path: 'marketplace/cart', element: <CartPage/> },
@@ -65,5 +70,9 @@ const router = createBrowserRouter([
 ]);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode><RouterProvider router={router}/></React.StrictMode>,
+  <React.StrictMode>
+    <ContentProvider>
+      <RouterProvider router={router}/>
+    </ContentProvider>
+  </React.StrictMode>,
 );

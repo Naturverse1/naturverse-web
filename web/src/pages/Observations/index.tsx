@@ -1,15 +1,16 @@
-import { observations } from '../../data/observations'
+import CommonCard from '../../components/CommonCard';
+import { useObservations } from '../../hooks/useContent';
+
 export default function Observations(){
+  const obs = useObservations();
   return (
-    <section>
+    <div>
       <h1>Observations</h1>
-      <ul>
-        {observations.map(o=>(
-          <li key={o.id}>
-            <strong>{o.title}</strong> — {o.note} <em>({new Date(o.when).toLocaleString()})</em>
-          </li>
-        ))}
-      </ul>
-    </section>
-  )
+      {obs.map(o => (
+        <CommonCard key={o.slug} title={o.title}>
+          {o.body}
+        </CommonCard>
+      ))}
+    </div>
+  );
 }
