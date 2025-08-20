@@ -1,9 +1,11 @@
 [build]
-command = "npm install --no-audit --no-fund && npm run build"
-publish = "dist"
-base = "web"
+  base = "."
+  command = "npm install --no-audit --no-fund && npm run build"
+  publish = "dist"
 
-# SPA redirect (keep)
+[build.environment]
+  NODE_VERSION = "20"
+
 [[redirects]]
   from = "/*"
   to = "/index.html"
