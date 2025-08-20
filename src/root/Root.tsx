@@ -9,6 +9,7 @@ export default function Root() {
           <NavLink to="/" end>Home</NavLink>
           <NavLink to="/worlds">Worlds</NavLink>
           <NavLink to="/zones">Zones</NavLink>
+          <NavLink to="/naturbank">NaturBank</NavLink>
           <NavLink to="/arcade">Arcade</NavLink>
           <NavLink to="/marketplace">Marketplace</NavLink>
           <NavLink to="/stories">Stories</NavLink>
