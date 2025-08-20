@@ -14,7 +14,7 @@ export default function ZoneDoc(){
       <p><Link to={`/zones/${zone}`}>← Back to {zone}</Link></p>
       <h1>{doc.title}</h1>
       {doc.cover && <img src={doc.cover} alt="" style={{maxWidth:"320px"}} />}
-      {doc.body && <div dangerouslySetInnerHTML={{__html: doc.body}} />}
+      {doc.text && <div style={{whiteSpace:"pre-wrap"}}>{doc.text}</div>}
       {doc.data !== undefined && (
         <pre style={{background:"#f6f6f6", padding:"1rem", borderRadius:8}}>
           {JSON.stringify(doc.data, null, 2)}

@@ -1,7 +1,7 @@
 [build]
-  base = ""
+  base = "web"
   publish = "dist"
-  command = "npm install --no-audit --no-fund && npm run build"
+  command = "npm install --no-fund --no-audit && npm run build"
 
 [[redirects]]
   from = "/*"

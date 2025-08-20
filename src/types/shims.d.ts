@@ -15,16 +15,3 @@ declare module "*.jpeg";
 declare module "*.webp";
 declare module "*.gif";
 declare module "*.mp3";
-
-declare module "gray-matter" {
-  export default function matter(source: string): {
-    content: string;
-    data: Record<string, unknown>;
-  };
-}
-
-declare module "marked" {
-  export const marked: {
-    parse: (src: string) => string;
-  };
-}
