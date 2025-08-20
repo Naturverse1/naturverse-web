@@ -1,5 +1,4 @@
 [build]
-  base = "web"
   publish = "dist"
   command = "npm install --no-fund --no-audit && npm run build"
 
