@@ -16,6 +16,7 @@ import ZoneTeachers from "./routes/zones/Teachers";
 import ZonePartners from "./routes/zones/Partners";
 import ZoneNaturversity from "./routes/zones/Naturversity";
 import ZoneParents from "./routes/zones/Parents";
+import ZoneNaturBank from "./routes/zones/NaturBank";
 
 // Arcade
 import Arcade from "./routes/arcade/Arcade";
@@ -55,6 +56,8 @@ const router = createBrowserRouter([
     errorElement: <NotFound />,
     children: [
       { index: true, element: <Home /> },
+
+      { path: "naturbank", element: <ZoneNaturBank /> },
 
       // Worlds
       { path: "worlds", element: <Worlds /> },
