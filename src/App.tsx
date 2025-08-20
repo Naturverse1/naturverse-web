@@ -1,5 +1,3 @@
-import AppHome from "./AppHome";
-
 export default function App() {
-  return <AppHome />;
+  return <h1>Naturverse is live 🚀</h1>;
 }
