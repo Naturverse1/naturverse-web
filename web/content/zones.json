@@ -1,0 +1,10 @@
+[
+  { "id": "music", "title": "Music", "description": "Beats, loops, and learning." },
+  { "id": "wellness", "title": "Wellness", "description": "Mind & body." },
+  { "id": "creator-lab", "title": "Creator Lab", "description": "Make and share." },
+  { "id": "community", "title": "Community", "description": "Connect together." },
+  { "id": "teachers", "title": "Teachers", "description": "Classroom helpers." },
+  { "id": "partners", "title": "Partners", "description": "Collaborations." },
+  { "id": "naturversity", "title": "Naturversity", "description": "Learn & grow." },
+  { "id": "parents", "title": "Parents", "description": "Guides & tools." }
+]

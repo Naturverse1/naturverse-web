@@ -1,0 +1,5 @@
+[
+  { "id": "tapper", "title": "Tapper", "description": "Tap as fast as you can!" },
+  { "id": "memory", "title": "Memory", "description": "Match the pairs." },
+  { "id": "snake", "title": "Snake", "description": "Classic arcade snake." }
+]

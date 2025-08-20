@@ -1,5 +1,8 @@
-import { Section } from "./_shared";
-
-export default function Worlds() {
-  return <Section title="Worlds">Experiences and realms.</Section>;
+import { bySection } from '../lib/content';
+export default function Worlds(){
+  const worlds = bySection('worlds');
+  return (<>
+    <h2>Worlds</h2>
+    <ul>{worlds.map(w=><li key={w.slug}>{w.title}</li>)}</ul>
+  </>);
 }
