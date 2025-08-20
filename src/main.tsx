@@ -18,8 +18,18 @@ const router = createBrowserRouter([
   { path: '/profile', lazy: () => import('./pages/Profile') }
 ])
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    <RouterProvider router={router} />
-  </React.StrictMode>
-)
+const mountId = 'app' // keep this in sync with index.html
+const el = document.getElementById(mountId)
+if (!el) {
+  // Visible fallback to avoid white screen if the id drifts again
+  const msg = document.createElement('pre')
+  msg.textContent = `Boot error: missing #${mountId} container`
+  document.body.prepend(msg)
+} else {
+  ReactDOM.createRoot(el).render(
+    <React.StrictMode>
+      <RouterProvider router={router} />
+    </React.StrictMode>
+  )
+}
+
