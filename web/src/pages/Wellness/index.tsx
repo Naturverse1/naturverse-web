@@ -1,8 +1,16 @@
+import CommonCard from '../../components/CommonCard';
+import { useWellness } from '../../hooks/useContent';
+
 export default function Wellness(){
+  const tips = useWellness();
   return (
-    <section>
+    <div>
       <h1>Wellness</h1>
-      <p>Mind & body outdoors: 60-second breathing with leaf counts, sun salutes, trail stretches.</p>
-    </section>
-  )
+      {tips.map(t => (
+        <CommonCard key={t.slug} title={t.title}>
+          {t.body}
+        </CommonCard>
+      ))}
+    </div>
+  );
 }

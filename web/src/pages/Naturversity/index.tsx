@@ -1,8 +1,8 @@
 export default function Naturversity(){
   return (
-    <section>
+    <div>
       <h1>Naturversity</h1>
-      <p>Micro-badges and skill paths—navigation, plant ID, maker skills.</p>
-    </section>
-  )
+      <p>Coming soon.</p>
+    </div>
+  );
 }

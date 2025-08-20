@@ -1,8 +1,8 @@
 export default function Partners(){
   return (
-    <section>
+    <div>
       <h1>Partners</h1>
-      <p>Collaborations with parks, libraries, makers, and conservation groups.</p>
-    </section>
-  )
+      <p>Coming soon.</p>
+    </div>
+  );
 }
