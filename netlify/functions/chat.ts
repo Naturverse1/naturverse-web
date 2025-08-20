@@ -1,29 +1,56 @@
-// @ts-ignore - Netlify provides types at build
 import type { Handler } from "@netlify/functions";
 import OpenAI from "openai";
 
-const client = new OpenAI({ apiKey: process.env.OPENAI_API_KEY! });
-
-export const handler: Handler = async (event) => {
-  try {
-    if (!process.env.OPENAI_API_KEY) return resp(500, "OPENAI_API_KEY missing");
-    const body = event.body ? JSON.parse(event.body) : {};
-    const msgs = body?.messages ?? [{ role: "user", content: "Hello" }];
-
-    const completion = await client.chat.completions.create({
-      model: "gpt-4o-mini",
-      messages: msgs,
-      temperature: 0.7,
-    });
-
-    const reply = completion.choices?.[0]?.message?.content ?? "";
-    return resp(200, { reply });
-  } catch (e: any) {
-    return resp(500, e.message ?? "error");
+// Simple CORS helper
+const cors = {
+  headers: {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Headers": "Content-Type, Authorization",
+    "Access-Control-Allow-Methods": "POST, OPTIONS"
   }
 };
 
-function resp(statusCode: number, body: any) {
-  return { statusCode, headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) };
-}
+export const handler: Handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") {
+    return { statusCode: 200, headers: cors.headers, body: "" };
+  }
 
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, headers: cors.headers, body: "Method Not Allowed" };
+  }
+
+  try {
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return { statusCode: 500, headers: cors.headers, body: "Missing OPENAI_API_KEY" };
+    }
+
+    const { messages } = JSON.parse(event.body || "{}") as {
+      messages: { role: "system" | "user" | "assistant"; content: string }[];
+    };
+
+    if (!messages || !Array.isArray(messages)) {
+      return { statusCode: 400, headers: cors.headers, body: "Invalid payload" };
+    }
+
+    const client = new OpenAI({ apiKey });
+
+    // Non-streaming completion to keep it simple/robust for Netlify Functions
+    const completion = await client.chat.completions.create({
+      model: "gpt-4o-mini",
+      messages
+    });
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json", ...cors.headers },
+      body: JSON.stringify({ reply: completion.choices?.[0]?.message?.content ?? "" })
+    };
+  } catch (err: any) {
+    return {
+      statusCode: 500,
+      headers: cors.headers,
+      body: `Function error: ${err?.message || "unknown"}`
+    };
+  }
+};
