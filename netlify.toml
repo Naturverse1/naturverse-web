@@ -1,6 +1,6 @@
 [build]
 command = "npm install --no-audit --no-fund && npm run build"
-publish = "web/dist"
+publish = "dist"
 base = "web"
 
 # SPA redirect (keep)

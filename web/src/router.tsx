@@ -18,7 +18,7 @@ const withSuspense = (el: JSX.Element) => (
   <React.Suspense fallback={<div />}>{el}</React.Suspense>
 );
 
-const router = createBrowserRouter([
+export const router = createBrowserRouter([
   { path: "/", element: <AppHome />, errorElement: <ErrorBoundary /> },
   { path: "/worlds", element: withSuspense(<Worlds />) },
   { path: "/zones", element: withSuspense(<Zones />) },
@@ -31,5 +31,3 @@ const router = createBrowserRouter([
   { path: "/profile", element: withSuspense(<Profile />) },
   { path: "*", element: withSuspense(<NotFound />) },
 ]);
-
-export default router;
