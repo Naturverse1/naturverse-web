@@ -6,6 +6,7 @@ import Root from './layouts/Root';
 import Home from './pages/Home';
 import SectionList from './pages/SectionList';
 import SectionDetail from './pages/SectionDetail';
+import TurianTips from './pages/tips';
 /** Marketplace pages */
 import MarketplaceHome from './pages/Marketplace';
 import ProductDetail from './pages/Marketplace/ProductDetail';
@@ -41,7 +42,7 @@ const router = createBrowserRouter([
       { path: 'observations', element: <SectionList/> },
       { path: 'observations/:slug', element: <SectionDetail/> },
 
-      { path: 'tips', element: <SectionList/> },
+      { path: 'tips', element: <TurianTips/> },
       { path: 'tips/:slug', element: <SectionDetail/> },
 
       {
