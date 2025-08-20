@@ -1,12 +1,12 @@
 import { NavLink, Outlet } from "react-router-dom";
 
-export default function App() {
+export default function Root() {
   return (
-    <div className="shell">
+    <div className="wrap">
       <header className="site-header">
-        <h1 className="brand">Welcome <span className="sprout">🌿</span></h1>
+        <h1 className="title">Welcome <span className="leaf">🌿</span></h1>
         <nav className="nav">
-          <NavLink to="/">Home</NavLink>
+          <NavLink to="/" end>Home</NavLink>
           <NavLink to="/worlds">Worlds</NavLink>
           <NavLink to="/zones">Zones</NavLink>
           <NavLink to="/arcade">Arcade</NavLink>
@@ -24,9 +24,7 @@ export default function App() {
         <Outlet />
       </main>
 
-      <footer className="site-footer">
-        © 2025 Naturverse
-      </footer>
+      <footer className="site-footer">© 2025 Naturverse</footer>
     </div>
   );
 }
