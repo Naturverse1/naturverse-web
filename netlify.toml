@@ -8,24 +8,30 @@
   to = "/index.html"
   status = 200
 
-# Security headers (CSP tuned for Vite/React in production)
+# Security headers
 [[headers]]
-  for = "/*"
+for = "/*"
   [headers.values]
-  X-Content-Type-Options = "nosniff"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  Permissions-Policy = "camera=(), geolocation=(), microphone=()"
-
-  # IMPORTANT: allow the built bundle to execute.
-  # No inline scripts required; keep eval off unless we discover a lib needs it.
+  # Single-page app routes still handled elsewhere; this is just security headers.
   Content-Security-Policy = """
     default-src 'self';
-    script-src 'self' 'wasm-unsafe-eval';
-    style-src 'self' 'unsafe-inline';
-    img-src 'self' data: blob: https:;
-    font-src 'self' data:;
-    connect-src 'self' https://*.supabase.co https://*.supabase.in ws: wss: https://api.openai.com;
     base-uri 'self';
-    frame-ancestors 'none';
+    object-src 'none';
+    script-src 'self';
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: https:;
+    font-src 'self' data:;
+    connect-src 'self' https://*.supabase.co https://*.supabase.in;
+    frame-ancestors 'self';
     form-action 'self';
   """
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  X-Content-Type-Options = "nosniff"
+  X-Frame-Options = "SAMEORIGIN"
+  Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+[[headers]]
+for = "/*"
+  [headers.values]
+  Cache-Control = "no-store"
+  Clear-Site-Data = "\"cache\", \"storage\""
