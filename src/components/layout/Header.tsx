@@ -7,7 +7,7 @@ const activeStyle: React.CSSProperties = { background: "#eef2ff", color: "#3730a
 export default function Header() {
   return (
     <header style={{ borderBottom: "1px solid #e5e7eb", background: "#fff" }}>
-      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", gap: 16 }}>
+      <div style={{ maxWidth: 1200, margin: "0 auto", padding: "12px 16px", display: "flex", alignItems: "center", gap: 16, flexWrap: "wrap" }}>
         <Link to="/" style={{ ...linkStyle, fontWeight: 700 }}>Naturverse</Link>
         <nav style={{ display: "flex", gap: 8, flexWrap: "wrap" }}>
           <NavLink to="/worlds" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Worlds</NavLink>
@@ -16,6 +16,8 @@ export default function Header() {
           <NavLink to="/naturversity" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Naturversity</NavLink>
           <NavLink to="/naturbank" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Naturbank</NavLink>
           <NavLink to="/navatar" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Navatar</NavLink>
+          <NavLink to="/passport" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Passport</NavLink>
+          <NavLink to="/turian" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Turian</NavLink>
           <NavLink to="/profile" style={({ isActive }) => ({ ...linkStyle, ...(isActive ? activeStyle : {}) })}>Profile</NavLink>
         </nav>
       </div>

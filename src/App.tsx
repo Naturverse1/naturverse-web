@@ -9,6 +9,7 @@ import NaturbankHub from "./routes/naturbank";
 import Wallets from "./routes/naturbank/wallets";
 import NaturToken from "./routes/naturbank/natur-token";
 import LearnCrypto from "./routes/naturbank/learn";
+import NFTsPage from "./routes/naturbank/nfts";
 import NaturversityHub from "./routes/naturversity";
 import Teachers from "./routes/naturversity/teachers";
 import Partners from "./routes/naturversity/partners";
@@ -26,6 +27,8 @@ import Catalog from "./routes/marketplace/catalog";
 import Wishlist from "./routes/marketplace/wishlist";
 import Checkout from "./routes/marketplace/checkout";
 import NavatarPage from "./routes/navatar";
+import PassportPage from "./routes/passport";
+import TurianGuide from "./routes/turian";
 // If you already have a profile page, keep your existing import:
 import Profile from "./routes/profile/Profile"; // or "./routes/profile" if that’s your file
 
@@ -43,6 +46,7 @@ export default function App() {
         <Route path="/naturbank/wallets" element={<Wallets />} />
         <Route path="/naturbank/natur-token" element={<NaturToken />} />
         <Route path="/naturbank/learn" element={<LearnCrypto />} />
+        <Route path="/naturbank/nfts" element={<NFTsPage />} />
 
         <Route path="/naturversity" element={<NaturversityHub />} />
         <Route path="/naturversity/teachers" element={<Teachers />} />
@@ -64,6 +68,8 @@ export default function App() {
         <Route path="/marketplace/checkout" element={<Checkout />} />
 
         <Route path="/navatar" element={<NavatarPage />} />
+        <Route path="/passport" element={<PassportPage />} />
+        <Route path="/turian" element={<TurianGuide />} />
         <Route path="/profile" element={<Profile />} />
       </Routes>
     </BrowserRouter>
