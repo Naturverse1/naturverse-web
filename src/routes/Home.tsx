@@ -12,6 +12,15 @@ export default function Home() {
             </div>
           </a>
         </li>
+        <li className="card">
+          <a className="card-link" href="/navatar">
+            <div className="card-emoji">🧩</div>
+            <div>
+              <div className="card-title">Navatar Creator</div>
+              <div className="card-sub">Build your character for the Naturverse</div>
+            </div>
+          </a>
+        </li>
       </ul>
     </>
   );

@@ -1,4 +1,5 @@
 import { NavLink, Outlet } from "react-router-dom";
+import NavatarChip from "@/components/NavatarChip";
 
 export default function Root() {
   return (
@@ -12,6 +13,7 @@ export default function Root() {
           <NavLink to="/naturbank">NaturBank</NavLink>
           <NavLink to="/arcade">Arcade</NavLink>
           <NavLink to="/marketplace">Marketplace</NavLink>
+          <NavLink to="/navatar">Navatar</NavLink>
           <NavLink to="/stories">Stories</NavLink>
           <NavLink to="/quizzes">Quizzes</NavLink>
           <NavLink to="/observations">Observations</NavLink>
@@ -19,6 +21,7 @@ export default function Root() {
           <NavLink to="/tips">Turian Tips</NavLink>
           <NavLink to="/profile">Profile</NavLink>
         </nav>
+        <NavatarChip />
       </header>
 
       <main className="content">
