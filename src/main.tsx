@@ -8,11 +8,14 @@ import './index.css'
 const router = createBrowserRouter([
   { path: '/', element: <AppHome />, errorElement: <ErrorBoundary /> },
   { path: '/worlds', lazy: () => import('./pages/Worlds') },
+  { path: '/worlds/:slug', lazy: () => import('./pages/world-detail') },
   { path: '/zones', lazy: () => import('./pages/zones') },
   { path: '/arcade', lazy: () => import('./pages/arcade') },
   { path: '/marketplace', lazy: () => import('./pages/marketplace') },
   { path: '/stories', lazy: () => import('./pages/Stories') },
   { path: '/quizzes', lazy: () => import('./pages/Quizzes') },
+  { path: '/music', lazy: () => import('./pages/Music') },
+  { path: '/wellness', lazy: () => import('./pages/Wellness') },
   { path: '/observations', lazy: () => import('./pages/Observations') },
   { path: '/tips', lazy: () => import('./pages/TurianTips') },
   { path: '/profile', lazy: () => import('./pages/Profile') }

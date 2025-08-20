@@ -1,19 +1,18 @@
-import CommonCard from '../../components/CommonCard';
-import FavButton from '../../components/FavButton';
-import { useStories } from '../../hooks/useContent';
-import { Link } from 'react-router-dom';
-
-export default function Stories(){
-  const stories = useStories();
+import data from '../../content/stories/index.json';
+export default function Stories() {
   return (
-    <div>
+    <div className="container mx-auto p-4">
       <h1>Stories</h1>
-      {stories.map(s=> (
-        <CommonCard key={s.slug} title={s.title}>
-          <Link to={`/stories/${s.slug}`}>Read</Link>
-          <FavButton type="content" id={s.slug}/>
-        </CommonCard>
-      ))}
+      <ul className="mt-4 grid gap-3 sm:grid-cols-2">
+        {data.map(s => (
+          <li key={s.id} className="border rounded p-3">
+            <div className="font-medium">{s.title}</div>
+            <div className="opacity-70 text-sm">{s.summary}</div>
+            <div className="text-xs mt-1">World: {s.world}</div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }
+
