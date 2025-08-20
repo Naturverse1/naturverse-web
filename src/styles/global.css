@@ -1,0 +1,6 @@
+* { box-sizing: border-box; }
+body { margin: 0; font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; background: #f8fafc; color: #111827; }
+input, button, textarea { border: 1px solid #e5e7eb; border-radius: 8px; padding: 8px 10px; }
+button { cursor: pointer; background: #fff; }
+button:hover { background: #f3f4f6; }
+label { font-size: 12px; opacity: .8; }

@@ -3,6 +3,7 @@ import { useParams } from "react-router-dom";
 import Breadcrumbs from "../../../components/common/Breadcrumbs";
 import SectionHero from "../../../components/common/SectionHero";
 import { WORLDS } from "../../../data/worlds";
+import { addStamp, addBadge, addCoins } from "../../../lib/passport";
 
 export default function WorldDetail() {
   const { slug } = useParams();
@@ -27,6 +28,11 @@ export default function WorldDetail() {
       />
       <div style={{ maxWidth: 1200, margin: "0 auto", padding: "0 16px 48px" }}>
         <p>{world.blurb}</p>
+        <div style={{ display: "flex", gap: 8, marginTop: 12 }}>
+          <button onClick={() => addStamp(world.slug)}>Get Stamp</button>
+          <button onClick={() => addBadge(`badge_${world.slug}`, `${world.name} Explorer`)}>Earn Badge</button>
+          <button onClick={() => addCoins(5)}>+5 NATUR Coins</button>
+        </div>
       </div>
     </>
   );
