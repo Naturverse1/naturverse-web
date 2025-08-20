@@ -2,17 +2,31 @@
   command = "npm run build"
   publish = "dist"
 
-# Single-page-app routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Global security + caching headers
 [[headers]]
   for = "/*"
   [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https:; connect-src 'self' https://*.netlify.app https://*.supabase.co https://api.openai.com wss:; style-src 'self' 'unsafe-inline' https:; img-src 'self' data: https:; font-src 'self' https: data:; object-src 'none'; base-uri 'self'; frame-ancestors 'self';"
-    X-Frame-Options = "SAMEORIGIN"
+    X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Strict-Transport-Security = "max-age=63072000; includeSubDomains; preload"
+    Referrer-Policy = "same-origin"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    Cache-Control = "public, max-age=0, must-revalidate"
+
+    # CSP that allows Vite/TSC/Bundled app, styles, and your APIs
+    Content-Security-Policy = '''
+      default-src 'self';
+      script-src 'self' 'unsafe-eval' 'unsafe-inline';
+      style-src 'self' 'unsafe-inline';
+      img-src 'self' data: https:;
+      font-src 'self' data:;
+      connect-src 'self' https://*.netlify.app https://api.openai.com https://*.openai.com https://*.supabase.co https://*.supabase.in;
+      frame-ancestors 'none';
+      base-uri 'self';
+      form-action 'self';
+    '''
+
