@@ -1,0 +1,70 @@
+.nv-sitebar {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  background: var(--nv-card-bg);
+  border-bottom: 1px solid var(--nv-border);
+}
+.nv-bar {
+  max-width: var(--nv-max);
+  margin: 0 auto;
+  padding: 10px var(--nv-pad);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.nv-nav {
+  margin-left: auto;
+  display: flex;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+.nv-nav a {
+  padding: 6px 8px;
+  border-radius: 8px;
+  color: #1b1b1b;
+  text-decoration: none;
+  font-weight: 600;
+}
+.nv-nav a.active {
+  background: #eef7ee;
+  color: #205b26;
+}
+.nv-burger {
+  display: none;
+  margin-left: auto;
+  cursor: pointer;
+}
+.nv-burger span {
+  display: block;
+  width: 24px;
+  height: 2px;
+  background: #333;
+  margin: 5px 0;
+  border-radius: 2px;
+}
+.nv-menu-toggle {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .nv-burger { display: block; }
+  .nv-nav {
+    position: absolute;
+    top: 56px;
+    left: 0;
+    right: 0;
+    background: var(--nv-card-bg);
+    border-bottom: 1px solid var(--nv-border);
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    padding: 10px 12px;
+    transform-origin: top;
+    transform: scaleY(0);
+    transition: transform .18s ease;
+  }
+  .nv-menu-toggle:checked ~ .nv-nav {
+    transform: scaleY(1);
+  }
+}

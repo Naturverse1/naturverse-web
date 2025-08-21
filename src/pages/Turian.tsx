@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Layout from "../components/Layout";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -30,6 +31,8 @@ const SUGGESTIONS: { section: string; items: string[] }[] = [
   ]},
 ];
 
+const mascotSrc = "/assets/turian.png";
+
 function cannedReply(q: string): string {
   // Lightweight, offline “assistant” so we don’t add deps or call APIs.
   const lower = q.toLowerCase();
@@ -45,7 +48,7 @@ function cannedReply(q: string): string {
   if (lower.includes("merch") || lower.includes("wishlist")) {
     return "Wishlist copy tip: “Kiwilandia Tee — kiwis & sheep icons, soft cotton, supports rewilding projects.” Keep it short, fun, and impact-oriented.";
   }
-  return "Hoot! I’m the demo Turian. Ask about worlds, zones, quests, or copywriting. Live AI replies arrive later—this message is generated locally.";
+  return "Hi! I’m Turian the Durian. Ask about worlds, zones, quests, or copywriting. Live AI replies arrive later—this message is generated locally.";
 }
 
 export default function TurianPage() {
@@ -75,9 +78,22 @@ export default function TurianPage() {
   const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
 
   return (
-    <div>
-      <h1>Turian <span role="img" aria-label="owl">🦉</span></h1>
-      <p className="muted">Ask for tips, quests, and facts. This is an offline demo—no external calls or new deps.</p>
+    <Layout title="Turian the Durian" breadcrumbs={<>Turian</>}>
+      <p className="nv-muted" style={{ marginTop: -6 }}>
+        Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.
+      </p>
+
+      <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
+        {mascotSrc ? (
+          <img src={mascotSrc} alt="Turian the Durian mascot" width={44} height={44} style={{ borderRadius: 8 }} />
+        ) : (
+          <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
+        )}
+        <div>
+          <strong>Chat with Turian</strong>
+          <div className="nv-muted">Coming soon: live help across Worlds, Zones, and Marketplace.</div>
+        </div>
+      </div>
 
       {!hasHistory && (
         <div className="turian-suggestions">
@@ -135,7 +151,7 @@ export default function TurianPage() {
       </div>
 
       <p className="meta">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
-    </div>
+    </Layout>
   );
 }
 
