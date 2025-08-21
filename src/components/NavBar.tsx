@@ -1,31 +1,50 @@
-import { Link, NavLink } from "react-router-dom";
-import "./NavBar.css";
+import { useState } from 'react';
+import { Link, NavLink } from 'react-router-dom';
+import './NavBar.css';
 
 export default function NavBar() {
+  const [open, setOpen] = useState(false);
+
   return (
-    <div className="nv-bar">
-      <Link to="/" className="nv-brand" style={{ display:"flex", alignItems:"center", gap:8 }}>
-        <img src="/assets/turian-mark.png" alt="Naturverse logo" width={22} height={22} onError={(e)=>{(e.target as HTMLImageElement).style.display='none'}}/>
-        <span>Naturverse</span>
-      </Link>
+    <header className="nv-header">
+      <div className="nv-container nv-nav-row">
+        {/* BRAND — always links Home */}
+        <Link to="/" className="nv-brand">
+          {/* optional brand mark (hidden if missing) */}
+          <img
+            src="/assets/turian-media-logo.png"
+            alt="Turian Media Company"
+            className="nv-brand-mark"
+            onError={(e) => {
+              (e.target as HTMLImageElement).style.display = 'none';
+            }}
+          />
+          <span className="nv-brand-title">Naturverse</span>
+        </Link>
 
-      <input id="nv-menu-toggle" className="nv-menu-toggle" type="checkbox" aria-label="Toggle navigation" />
-      <label htmlFor="nv-menu-toggle" className="nv-burger" aria-hidden="true">
-        <span/><span/><span/>
-      </label>
+        {/* MOBILE TOGGLE */}
+        <button
+          type="button"
+          aria-label="Toggle navigation"
+          className="nv-nav-toggle"
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span className="nv-burger" />
+        </button>
 
-      <nav className="nv-nav">
-        <NavLink to="/worlds">Worlds</NavLink>
-        <NavLink to="/zones">Zones</NavLink>
-        <NavLink to="/marketplace">Marketplace</NavLink>
-        <NavLink to="/naturversity">Naturversity</NavLink>
-        <NavLink to="/naturbank">Naturbank</NavLink>
-        <NavLink to="/navatar">Navatar</NavLink>
-        <NavLink to="/passport">Passport</NavLink>
-        <NavLink to="/turian">Turian</NavLink>
-        <NavLink to="/profile">Profile</NavLink>
-        <NavLink to="/zones/culture">Culture</NavLink>
-      </nav>
-    </div>
+        {/* LINKS */}
+        <nav className={`nv-nav ${open ? 'is-open' : ''}`}>
+          <NavLink to="/worlds">Worlds</NavLink>
+          <NavLink to="/zones">Zones</NavLink>
+          <NavLink to="/marketplace">Marketplace</NavLink>
+          <NavLink to="/naturversity">Naturversity</NavLink>
+          <NavLink to="/naturbank">Naturbank</NavLink>
+          <NavLink to="/navatar">Navatar</NavLink>
+          <NavLink to="/passport">Passport</NavLink>
+          <NavLink to="/turian">Turian</NavLink>
+          <NavLink to="/profile">Profile</NavLink>
+        </nav>
+      </div>
+    </header>
   );
 }

@@ -1,24 +1,17 @@
-import { ReactNode } from "react";
-import NavBar from "./NavBar";
+import { ReactNode } from 'react';
+import NavBar from './NavBar';
 
 type Props = { children: ReactNode; title?: ReactNode; breadcrumbs?: ReactNode };
 
-export default function Layout({ children, title, breadcrumbs }: Props){
+export default function Layout({ title, breadcrumbs, children }: Props) {
   return (
     <>
-      <header className="nv-sitebar">
-        <NavBar />
-      </header>
-
-      <main className="nv-container" style={{ paddingTop: 18, paddingBottom: 40 }}>
+      <NavBar /> {/* keep at top */}
+      <main className="nv-container nv-page">
+        {title ? <h1 className="nv-title">{title}</h1> : null}
         {breadcrumbs ? <div className="nv-breadcrumbs">{breadcrumbs}</div> : null}
-        {title ? <h1 style={{ marginTop: 0 }}>{title}</h1> : null}
         {children}
       </main>
-
-      <footer className="nv-container" style={{ paddingTop: 28, paddingBottom: 36, color: "var(--nv-muted)" }}>
-        © 2025 Naturverse
-      </footer>
     </>
   );
 }
