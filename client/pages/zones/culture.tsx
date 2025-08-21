@@ -51,28 +51,19 @@ const cards = [
   }
 ];
 
-export default function Culture() {
+export default function Culture(){
   return (
     <Layout>
       <h1>🪔 Culture</h1>
       <p>Beliefs, holidays, and ceremonies across the 14 kingdoms.</p>
       <div className="culture-grid grid-3">
-        {cards.map((c) => (
+        {cards.map((c)=>(
           <article key={c.title} className="nv-card">
             <h3>{c.title}</h3>
             <p className="muted">{c.subtitle}</p>
-            <h4>Beliefs</h4>
-            <ul className="culture-list">
-              {c.beliefs.map((b) => <li key={b}>{b}</li>)}
-            </ul>
-            <h4>Holidays</h4>
-            <ul className="culture-list">
-              {c.holidays.map((h) => <li key={h}>{h}</li>)}
-            </ul>
-            <h4>Ceremonies</h4>
-            <ul className="culture-list">
-              {c.ceremonies.map((ce) => <li key={ce}>{ce}</li>)}
-            </ul>
+            <h4>Beliefs</h4><ul className="culture-list">{c.beliefs.map(b=><li key={b}>{b}</li>)}</ul>
+            <h4>Holidays</h4><ul className="culture-list">{c.holidays.map(h=><li key={h}>{h}</li>)}</ul>
+            <h4>Ceremonies</h4><ul className="culture-list">{c.ceremonies.map(x=><li key={x}>{x}</li>)}</ul>
           </article>
         ))}
       </div>

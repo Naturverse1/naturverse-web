@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { useState } from "react";
 
-export default function Header() {
+export default function Header(){
   const [open, setOpen] = useState(false);
   return (
     <header className="nv-header">
@@ -21,8 +21,14 @@ export default function Header() {
           <Link href="/turian">Turian</Link>
           <Link href="/profile">Profile</Link>
         </nav>
-        {/* batch-286 mobile: small apps button, not hamburger */}
-        <button type="button" className="nv-nav__apps" aria-label="Menu" onClick={() => setOpen(v=>!v)}>▢</button>
+        {/* batch 286: small apps square, opens simple mobile list */}
+        <button
+          type="button"
+          className="nv-nav__apps"
+          aria-label="Open menu"
+          aria-expanded={open}
+          onClick={() => setOpen(v=>!v)}
+        >▢</button>
       </div>
       {open && (
         <nav className="nv-nav nv-nav--mobile" aria-label="Mobile">
