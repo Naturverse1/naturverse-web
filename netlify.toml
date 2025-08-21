@@ -1,27 +1,9 @@
 [build]
-command = "npm install && npm run build"
-publish = "dist"
-functions = "netlify/functions"
-
-[build.environment]
-NODE_VERSION = "20.19.0"
-
-# Bundle TS functions with esbuild
-[functions]
-node_bundler = "esbuild"
+  command = "npm run build"
+  publish = "dist"
 
 # Single Page App routing
 [[redirects]]
-from = "/*"
-to = "/index.html"
-status = 200
-
-# Tight but working CSP; adjust later as you add origins
-[[headers]]
-for = "/*"
-[headers.values]
-Content-Security-Policy = "default-src 'self'; connect-src 'self' https://api.openai.com https://*.supabase.co; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; base-uri 'self';"
-Referrer-Policy = "strict-origin-when-cross-origin"
-X-Content-Type-Options = "nosniff"
-X-Frame-Options = "DENY"
-Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+  from = "/*"
+  to = "/index.html"
+  status = 200
