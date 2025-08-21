@@ -1,19 +1,27 @@
-import { Link } from 'react-router-dom';
+import { NavLink } from "react-router-dom";
+
+const link = ({ isActive }: { isActive: boolean }) =>
+  ({
+    display: "inline-block",
+    marginRight: "1rem",
+    textDecoration: isActive ? "underline" : "none",
+  }) as React.CSSProperties;
 
 export default function Nav() {
   return (
-    <nav style={{padding:'0.5rem 0', fontWeight:600}}>
-      <Link to="/">Home</Link>{' '}
-      <Link to="/worlds">Worlds</Link>{' '}
-      <Link to="/zones">Zones</Link>{' '}
-      <Link to="/arcade">Arcade</Link>{' '}
-      <Link to="/marketplace">Marketplace</Link>{' '}
-      <Link to="/stories">Stories</Link>{' '}
-      <Link to="/quizzes">Quizzes</Link>{' '}
-      <Link to="/observations">Observations</Link>{' '}
-      <Link to="/naturversity">Naturversity</Link>{' '}
-      <Link to="/tips">Turian Tips</Link>{' '}
-      <Link to="/profile">Profile</Link>
+    <nav style={{ marginTop: "0.75rem" }}>
+      <NavLink to="/" style={link}>Home</NavLink>
+      <NavLink to="/worlds" style={link}>Worlds</NavLink>
+      <NavLink to="/zones" style={link}>Zones</NavLink>
+      <NavLink to="/arcade" style={link}>Arcade</NavLink>
+      <NavLink to="/marketplace" style={link}>Marketplace</NavLink>
+      <NavLink to="/stories" style={link}>Stories</NavLink>
+      <NavLink to="/quizzes" style={link}>Quizzes</NavLink>
+      <NavLink to="/observations" style={link}>Observations</NavLink>
+      <NavLink to="/naturversity" style={link}>Naturversity</NavLink>
+      <NavLink to="/turian" style={link}>Turian Tips</NavLink>
+      <NavLink to="/profile" style={link}>Profile</NavLink>
     </nav>
   );
 }
+
