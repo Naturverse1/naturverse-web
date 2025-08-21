@@ -1,56 +1,49 @@
-import type { Handler } from "@netlify/functions";
-import OpenAI from "openai";
+// Serverless chat function powered by OpenAI Responses API (no npm dep)
+type NetlifyEvent = { httpMethod: string; body?: string | null };
 
-// Simple CORS helper
 const cors = {
-  headers: {
-    "Access-Control-Allow-Origin": "*",
-    "Access-Control-Allow-Headers": "Content-Type, Authorization",
-    "Access-Control-Allow-Methods": "POST, OPTIONS"
-  }
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "Content-Type, Authorization",
+  "Access-Control-Allow-Methods": "POST,OPTIONS",
 };
 
-export const handler: Handler = async (event) => {
+export async function handler(event: NetlifyEvent) {
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 200, headers: cors.headers, body: "" };
+    return { statusCode: 204, headers: cors };
   }
 
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, headers: cors.headers, body: "Method Not Allowed" };
+  if (!process.env.OPENAI_API_KEY) {
+    return { statusCode: 500, headers: cors, body: "Missing OPENAI_API_KEY" };
   }
 
-  try {
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      return { statusCode: 500, headers: cors.headers, body: "Missing OPENAI_API_KEY" };
-    }
+  const { prompt, system } = event.body ? JSON.parse(event.body) : {};
 
-    const { messages } = JSON.parse(event.body || "{}") as {
-      messages: { role: "system" | "user" | "assistant"; content: string }[];
-    };
-
-    if (!messages || !Array.isArray(messages)) {
-      return { statusCode: 400, headers: cors.headers, body: "Invalid payload" };
-    }
-
-    const client = new OpenAI({ apiKey });
-
-    // Non-streaming completion to keep it simple/robust for Netlify Functions
-    const completion = await client.chat.completions.create({
+  const res = await fetch("https://api.openai.com/v1/responses", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
       model: "gpt-4o-mini",
-      messages
-    });
+      input: [
+        { role: "system", content: system ?? "You are Turian, a friendly guide for kids. Keep replies short, helpful, and fun." },
+        { role: "user", content: prompt ?? "Say hi." },
+      ],
+    }),
+  });
 
-    return {
-      statusCode: 200,
-      headers: { "Content-Type": "application/json", ...cors.headers },
-      body: JSON.stringify({ reply: completion.choices?.[0]?.message?.content ?? "" })
-    };
-  } catch (err: any) {
-    return {
-      statusCode: 500,
-      headers: cors.headers,
-      body: `Function error: ${err?.message || "unknown"}`
-    };
+  if (!res.ok) {
+    const err = await res.text().catch(() => "");
+    return { statusCode: 502, headers: cors, body: `OpenAI error: ${err}` };
   }
-};
+
+  const data = await res.json();
+  const text = (data && (data.output_text ?? "")) as string;
+
+  return {
+    statusCode: 200,
+    headers: { ...cors, "Content-Type": "application/json" },
+    body: JSON.stringify({ text }),
+  };
+}
