@@ -2,25 +2,11 @@
 .caption { color: var(--muted); margin: 2px 0 0; }
 .card { border:1px solid #ececec; border-radius: var(--radius); background:#fff; }
 
-/* --- Defensive: hide any oversized Turian hero outside the header --- */
-/* Keep the small header logo only */
-header img[src="/turian.svg"] {
-  display: inline-block;
-}
-
-/* Hide the mascot if it shows up elsewhere */
-main img[src="/turian.svg"],
-main svg[aria-label="hero-face"],
-main .turian-hero,
-main .hero-face,
-main .mascot-hero {
-  display: none !important;
-}
-
-/* Disable any full-screen fixed/absolute mascots */
-main img[style*="position: fixed"],
-main svg[style*="position: fixed"],
-main .fixed.turian-hero,
-main .absolute.turian-hero {
+/* --- Defensive: nuke all turian.svg or mascot heroes --- */
+img[src="/turian.svg"],
+svg[aria-label="hero-face"],
+.turian-hero,
+.hero-face,
+.mascot-hero {
   display: none !important;
 }
