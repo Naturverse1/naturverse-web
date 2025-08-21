@@ -1,0 +1,35 @@
+/* Containers — batch 286 */
+.nv-container { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+.nv-page { padding: 16px 0; }
+
+/* Header */
+.nv-header { position: sticky; top:0; z-index:40; background:var(--bg); border-bottom:1px solid var(--border); }
+.nv-header__row { display:flex; align-items:center; gap:16px; justify-content:space-between; padding:12px 16px; }
+.nv-brand { display:inline-flex; align-items:center; gap:8px; font-weight:700; text-decoration:none; color:inherit; }
+.nv-brand__mark { font-size:18px; }
+.nv-nav a { padding:8px 10px; border-radius:10px; text-decoration:none; color:inherit; }
+.nv-nav--mobile { display:none; flex-direction:column; gap:8px; padding:12px 16px; border-top:1px solid var(--border); }
+.nv-nav__apps { display:none; }
+@media (max-width: 920px) {
+  .nv-nav--desktop { display:none; }
+  .nv-nav__apps { display:inline-flex; }
+  .nv-nav--mobile { display:flex; }
+}
+
+/* No giant emoji backgrounds in batch 286 */
+.nv-hero__emoji{display:none!important;}
+
+/* Standard hero */
+.nv-hero h1 { margin: 8px 0 4px; font-size: clamp(28px, 5vw, 40px); }
+.nv-hero p { margin: 0 0 16px; opacity:.85; }
+
+/* Lists (286 spacing) */
+ul { margin:0 0 8px 0; padding-left: 1.1rem; list-style: disc outside; }
+li { margin:0 0 6px 0; }
+
+/* Cards */
+.nv-card { background: var(--card); border:1px solid var(--border); border-radius:14px; padding:14px; box-shadow: var(--shadow-soft); }
+
+/* Culture page alignment */
+.culture-grid .nv-card ul.culture-list { padding-left: 1.1rem; }
+.culture-grid .nv-card h4 { margin-top: 8px; }
