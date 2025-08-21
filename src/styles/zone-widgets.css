@@ -83,3 +83,42 @@
   min-width:64px; text-align:center; padding:6px 10px; border-radius:9999px;
   border:1px solid #d1d5db; background:#f9fafb;
 }
+
+/* Creator Lab */
+.nv-card {
+  border-radius: 14px;
+  background:#fff;
+  overflow:hidden;
+  max-width: 560px;
+}
+.nv-card__header{
+  display:flex; gap:12px; align-items:center; padding:14px;
+  color:#111827;
+}
+.nv-card__emoji{ font-size:28px; }
+.nv-card__name{ font-weight:700; font-size:20px; line-height:1.1; }
+.nv-card__sub{ color:#4b5563; font-size:14px; }
+.nv-card__body{ display:grid; grid-template-columns:140px 1fr; gap:16px; padding:16px; }
+.nv-card__avatar{ width:140px; height:140px; border-radius:12px; overflow:hidden; border:1px solid #e5e7eb; background:#f9fafb; display:flex; align-items:center; justify-content:center; }
+.nv-card__avatar img{ width:100%; height:100%; object-fit:cover; }
+.nv-card__avatar--placeholder{ color:#9ca3af; font-size:12px; }
+.nv-card__facts dt{ font-size:12px; text-transform:uppercase; color:#6b7280; letter-spacing:.04em; }
+.nv-card__facts dd{ margin:2px 0 10px; font-size:15px; }
+.nv-card__footer{ padding:10px 14px; border-top:1px dashed #e5e7eb; color:#6b7280; font-size:12px; }
+
+.clab-grid{ display:grid; gap:20px; }
+@media(min-width: 960px){ .clab-grid{ grid-template-columns: 1fr 1fr; } }
+
+.form-row{ display:flex; gap:10px; flex-wrap:wrap; }
+.input, .select, .textarea{
+  width:100%; padding:10px 12px; border:1px solid #e5e7eb; border-radius:10px; background:#fff;
+}
+.small{ max-width:200px; }
+.actions{ display:flex; gap:10px; flex-wrap:wrap; margin-top:8px; }
+.btn{ padding:8px 12px; border:1px solid #111827; border-radius:9999px; background:#111827; color:#fff; cursor:pointer; }
+.btn.outline{ background:#fff; color:#111827; }
+.badge{ padding:4px 10px; border-radius:9999px; background:#f3f4f6; font-size:12px; }
+.list-grid{ display:grid; gap:16px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+.card-mini{ border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; }
+.meta{ color:#6b7280; font-size:12px; }
+
