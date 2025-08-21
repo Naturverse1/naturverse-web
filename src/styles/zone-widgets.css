@@ -1,0 +1,28 @@
+.zone-wrap { display: grid; gap: 20px; }
+.zone-card {
+  background:#fff; border:1px solid #e5e7eb; border-radius:14px; padding:16px 18px;
+  box-shadow:0 1px 2px rgba(0,0,0,.04);
+}
+.zone-title { font-weight:800; font-size:18px; margin-bottom:8px; }
+.zone-sub { color:#6b7280; margin-bottom:12px; }
+
+.widget {
+  border:1px dashed #e5e7eb; border-radius:12px; padding:14px; background:#fafafa;
+}
+.widget button {
+  border:1px solid #d1d5db; border-radius:10px; padding:10px 14px; background:#fff; cursor:pointer;
+}
+.widget button:hover { background:#f9fafb; }
+
+.rt-stage { height:160px; display:grid; place-items:center; border-radius:10px; color:#111827; }
+.rt-wait { background:#fde68a; }
+.rt-go { background:#bbf7d0; }
+.rt-too { background:#fecaca; }
+
+.popper-stage { position:relative; height:220px; background:#f3f4f6; border-radius:10px; overflow:hidden; }
+.bubble {
+  position:absolute; width:34px; height:34px; border-radius:50%;
+  background:#60a5fa; display:grid; place-items:center; color:#fff; font-weight:700;
+  box-shadow:0 2px 6px rgba(59,130,246,.35);
+}
+.stats { display:flex; gap:12px; color:#374151; font-size:14px; margin-top:8px; }
