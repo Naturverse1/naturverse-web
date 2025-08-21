@@ -27,7 +27,7 @@ import Wallet from "./routes/naturbank/wallet";
 import Token from "./routes/naturbank/token";
 import NFTs from "./routes/naturbank/nfts";
 import Learn from "./routes/naturbank/learn";
-import Navatar from "./routes/navatar";
+import Navatar from "./pages/Navatar";
 import Passport from "./routes/passport";
 import Turian from "./routes/turian";
 import Profile from "./routes/profile";
