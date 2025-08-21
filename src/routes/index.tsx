@@ -5,6 +5,7 @@ import "./Home.css";
 export default function Home() {
   return (
     <main className="container">
+      {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
         <h1>✨ Welcome to the Naturverse™</h1>
         <img src="/assets/turian-owl.svg" className="hero-owl" alt="Turian the owl" />

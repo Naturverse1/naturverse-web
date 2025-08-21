@@ -25,15 +25,20 @@ export default function NavBar() {
         {/* MOBILE TOGGLE */}
         <button
           type="button"
-          aria-label="Toggle navigation"
           className="nv-nav-toggle"
+          aria-label="Open menu"
+          aria-expanded={open}
+          aria-controls="nv-mobile-menu"
           onClick={() => setOpen((v) => !v)}
         >
           <span className="nv-burger" />
         </button>
 
         {/* LINKS */}
-        <nav className={`nv-nav ${open ? 'is-open' : ''}`}>
+        <nav
+          id="nv-mobile-menu"
+          className={`nv-nav ${open ? 'is-open' : ''}`}
+        >
           <NavLink to="/worlds">Worlds</NavLink>
           <NavLink to="/zones">Zones</NavLink>
           <NavLink to="/marketplace">Marketplace</NavLink>

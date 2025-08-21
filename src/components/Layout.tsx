@@ -7,10 +7,12 @@ export default function Layout({ title, breadcrumbs, children }: Props) {
   return (
     <>
       <NavBar /> {/* keep at top */}
-      <main className="nv-container nv-page">
-        {title ? <h1 className="nv-title">{title}</h1> : null}
-        {breadcrumbs ? <div className="nv-breadcrumbs">{breadcrumbs}</div> : null}
-        {children}
+      <main className="nv-page">
+        <div className="nv-container">
+          {title ? <h1 className="nv-title">{title}</h1> : null}
+          {breadcrumbs ? <div className="nv-breadcrumbs">{breadcrumbs}</div> : null}
+          {children}
+        </div>
       </main>
     </>
   );
