@@ -1,11 +1,20 @@
 [build]
-  command = "npm install"
+  command = "npm install && npm run build"
   publish = "dist"
 
 [functions]
   directory = "netlify/functions"
 
+# SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# Security (CSP kept simple to avoid blocking)
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"

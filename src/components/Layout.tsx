@@ -1,5 +1,4 @@
 import { Link, NavLink } from "react-router-dom";
-import leaf from "../emoji/leaf";
 import React from "react";
 
 const nav = [
@@ -12,7 +11,7 @@ const nav = [
   ["Navatar", "/navatar"],
   ["Passport", "/passport"],
   ["Turian", "/turian"],
-  ["Profile", "/profile"],
+  ["Profile", "/profile"]
 ];
 
 export default function Layout({ children }: { children: React.ReactNode }) {
@@ -20,7 +19,7 @@ export default function Layout({ children }: { children: React.ReactNode }) {
     <div className="container">
       <header className="site-header">
         <Link to="/" className="brand">
-          <span>Welcome</span> <span className="leaf" aria-hidden>{leaf}</span>
+          <span>Welcome</span> <span className="leaf" aria-hidden>🌿</span>
         </Link>
         <nav className="top-nav">
           {nav.map(([label, to]) => (
