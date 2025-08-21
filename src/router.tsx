@@ -32,12 +32,12 @@ import NavatarPage from "./pages/Navatar";
 import Passport from "./pages/Passport";
 import Turian from "./routes/turian";
 import Profile from "./pages/Profile";
-import AppShell from "./shell/AppShell";
+import RootLayout from "./layouts/Root";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <AppShell />,
+    element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
       { path: "worlds", element: <Worlds /> },
