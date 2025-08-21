@@ -1,21 +1,21 @@
-import { Link } from "react-router-dom";
+import { ReactNode } from "react";
 
 type HubCardProps = {
-  to: string;
   title: string;
   desc: string;
   emoji?: string;
-  className?: string;
+  footer?: ReactNode;
 };
 
-export function HubCard({ to, title, desc, emoji, className = "" }: HubCardProps) {
+export function HubCard({ title, desc, emoji, footer }: HubCardProps) {
   return (
-    <Link to={to} className={"block rounded-xl border p-4 hover:bg-gray-50 " + className}>
+    <div className="rounded-xl border p-4 bg-white/70">
       <div className="text-lg font-semibold">
         {emoji ? <span className="mr-2">{emoji}</span> : null}
         {title}
       </div>
       <div className="text-sm text-gray-600 mt-1">{desc}</div>
-    </Link>
+      {footer ? <div className="mt-2">{footer}</div> : null}
+    </div>
   );
 }
