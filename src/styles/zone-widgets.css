@@ -122,3 +122,14 @@
 .card-mini{ border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; }
 .meta{ color:#6b7280; font-size:12px; }
 
+
+/* Stories */
+.story-player{ border:1px solid #e5e7eb; border-radius:14px; padding:16px; background:#fff; }
+.story-head{ display:flex; gap:10px; align-items:center; margin-bottom:8px; }
+.story-head .emoji{ font-size:26px; }
+.story-head .title{ margin:0; }
+.story-head .meta{ color:#6b7280; font-size:12px; }
+.scene h4{ margin:8px 0 4px; }
+.choices{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
+.creator-grid{ display:grid; gap:18px; }
+@media(min-width: 960px){ .creator-grid{ grid-template-columns: 1fr 1fr; } }
