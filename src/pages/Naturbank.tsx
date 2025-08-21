@@ -1,25 +1,24 @@
-import Page from "../components/Page";
-import { Link } from "react-router-dom";
+import React from "react";
+import { HubGrid } from "../components/HubGrid";
 
-export default function Naturbank() {
+export default function NaturbankPage() {
   return (
-    <Page title="Naturbank" subtitle="Wallet, token, and collectibles.">
-      <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
-        <Card to="/naturbank/wallet" title="Wallet" desc="Create custodial wallet & view address." icon="🪪" />
-        <Card to="/naturbank/token" title="NATUR Token" desc="Earnings, redemptions, and ledger." icon="🪙" />
-        <Card to="/naturbank/nfts" title="NFTs" desc="Mint navatar cards & collectibles." icon="🖼️" />
-        <Card to="/naturbank/learn" title="Learn" desc="Crypto basics & safety guides." icon="📘" />
-      </div>
-    </Page>
+    <div>
+      <h1>Naturbank</h1>
+      <p className="muted">Wallets, token, and collectibles.</p>
+
+      <HubGrid
+        items={[
+          { to: "/naturbank/wallet", title: "Wallet", desc: "Create custodial wallet & view address.", icon: "👛" },
+          { to: "/naturbank/natur", title: "NATUR Token", desc: "Earnings, redemptions, and ledger.", icon: "🟠" },
+          { to: "/naturbank/nfts", title: "NFTs", desc: "Mint navatar cards & collectibles.", icon: "🖼️" },
+          { to: "/naturbank/learn", title: "Learn", desc: "Crypto basics & safety guides.", icon: "📘" },
+        ]}
+      />
+
+      <p className="muted" style={{ marginTop: 12 }}>
+        Coming soon: live wallets, on-chain mints, and payouts.
+      </p>
+    </div>
   );
 }
-
-function Card({ to, title, desc, icon }:{to:string; title:string; desc:string; icon:string}) {
-  return (
-    <Link to={to} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
-      <div className="text-lg font-semibold flex items-center gap-2"><span>{icon}</span>{title}</div>
-      <p className="mt-1 text-slate-600">{desc}</p>
-    </Link>
-  );
-}
-

@@ -14,7 +14,7 @@ import Quizzes from "./pages/zones/Quizzes";
 import Observations from "./pages/zones/Observations";
 import Community from "./pages/zones/Community";
 import Culture from "./pages/zones/Culture";
-import Marketplace from "./routes/marketplace";
+import Marketplace from "./pages/Marketplace";
 import Catalog from "./pages/marketplace/Catalog";
 import Wishlist from "./pages/marketplace/Wishlist";
 import Checkout from "./pages/marketplace/Checkout";
@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
       { path: "naturversity/course/:slug", element: <CourseDetail /> },
       { path: "naturbank", element: <Naturbank /> },
       { path: "naturbank/wallet", element: <BankWallet /> },
-      { path: "naturbank/token", element: <BankToken /> },
+      { path: "naturbank/natur", element: <BankToken /> },
       { path: "naturbank/nfts", element: <BankNFTs /> },
       { path: "naturbank/learn", element: <BankLearn /> },
       { path: "navatar", element: <NavatarPage /> },
