@@ -1,22 +1,42 @@
-import { Outlet, Link } from "react-router-dom";
-import Nav from "./Nav";
+import { Link, NavLink } from "react-router-dom";
+import leaf from "../emoji/leaf";
+import React from "react";
 
-export default function Layout() {
+const nav = [
+  ["Home", "/"],
+  ["Worlds", "/worlds"],
+  ["Zones", "/zones"],
+  ["Marketplace", "/marketplace"],
+  ["Naturversity", "/naturversity"],
+  ["Naturbank", "/naturbank"],
+  ["Navatar", "/navatar"],
+  ["Passport", "/passport"],
+  ["Turian", "/turian"],
+  ["Profile", "/profile"],
+];
+
+export default function Layout({ children }: { children: React.ReactNode }) {
   return (
-    <div style={{ maxWidth: 980, margin: "2rem auto", padding: "0 1rem" }}>
-      <header style={{ marginBottom: "1.25rem" }}>
-        <Link to="/" style={{ color: "inherit", textDecoration: "none" }}>
-          <h1 style={{ fontSize: "2.25rem", margin: 0 }}>
-            Welcome <span role="img" aria-label="leaf">🌿</span>
-          </h1>
+    <div className="container">
+      <header className="site-header">
+        <Link to="/" className="brand">
+          <span>Welcome</span> <span className="leaf" aria-hidden>{leaf}</span>
         </Link>
-        <Nav />
+        <nav className="top-nav">
+          {nav.map(([label, to]) => (
+            <NavLink
+              key={to}
+              to={to}
+              className={({ isActive }) => (isActive ? "nav-link active" : "nav-link")}
+              end={to === "/"}
+            >
+              {label}
+            </NavLink>
+          ))}
+        </nav>
       </header>
-      <Outlet />
-      <footer style={{ opacity: 0.6, marginTop: "3rem", fontSize: ".9rem" }}>
-        © {new Date().getFullYear()} Naturverse
-      </footer>
+      <main className="content">{children}</main>
+      <footer className="site-footer">© 2025 Naturverse</footer>
     </div>
   );
 }
-
