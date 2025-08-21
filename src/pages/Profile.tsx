@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import Page from "../components/Page";
 
 /** Local storage keys used around the app (demo only) */
 const K = {
@@ -91,10 +92,7 @@ export default function ProfilePage() {
   };
 
   return (
-    <div>
-      <h1>Profile & Settings</h1>
-      <p className="muted">Local-only demo. No accounts or servers yet.</p>
-
+    <Page title="Profile & Settings" subtitle="Local-only demo. No accounts or servers yet.">
       <section className="panel">
         <h2>Account</h2>
         <div className="grid2">
@@ -197,7 +195,7 @@ export default function ProfilePage() {
         </div>
         <p className="muted">Includes profile, navatar preview, NATUR demo balance, and Turian chat history.</p>
       </section>
-    </div>
+    </Page>
   );
 }
 

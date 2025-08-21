@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Layout from "../components/Layout";
+import Page from "../components/Page";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -31,7 +31,7 @@ const SUGGESTIONS: { section: string; items: string[] }[] = [
   ]},
 ];
 
-const mascotSrc = "/assets/turian.png";
+const mascotSrc = "/turian.svg";
 
 function cannedReply(q: string): string {
   // Lightweight, offline “assistant” so we don’t add deps or call APIs.
@@ -78,10 +78,7 @@ export default function TurianPage() {
   const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
 
   return (
-    <Layout title="Turian the Durian" breadcrumbs={<>Turian</>}>
-      <p className="nv-muted" style={{ marginTop: -6 }}>
-        Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.
-      </p>
+    <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.">
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
         {mascotSrc ? (
@@ -151,7 +148,7 @@ export default function TurianPage() {
       </div>
 
       <p className="meta">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
-    </Layout>
+    </Page>
   );
 }
 

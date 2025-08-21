@@ -1,56 +1,46 @@
-import Page from "../_layout/Page";
-import BackBar from "../../components/BackBar";
-import "./culture.css";
+import Page from "../../components/Page";
+import { CULTURE_SECTIONS } from "../../data/culture-sections";
+
+const kingdoms = CULTURE_SECTIONS.map(k => ({
+  emoji: k.emoji,
+  name: k.kingdom,
+  tagline: k.caption,
+  beliefs: k.beliefs,
+  holidays: k.holidays.map(h => `${h.name} — ${h.when}. ${h.note}`),
+  ceremonies: k.ceremonies || [],
+}));
 
 export default function Culture() {
   return (
-    <>
-      <BackBar title="Culture" />
-      <Page>
-        <h1>🧧 Culture</h1>
-        <p className="nv-muted">Beliefs, holidays, and ceremonies across the 14 kingdoms.</p>
+    <Page
+      title="Culture"
+      subtitle="Beliefs, holidays, and ceremonies across the 14 kingdoms."
+    >
+      <div className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+        {kingdoms.map((k) => (
+          <section key={k.name} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+            <h3 className="text-lg font-semibold flex items-center gap-2">
+              <span>{k.emoji}</span>
+              {k.name}
+            </h3>
+            <p className="mt-1 text-sm text-slate-500">{k.tagline}</p>
 
-        <div className="culture-grid">
-          {/* keep your existing kingdom cards; only class names changed below */}
-          {/* Example card wrapper */}
-          <section className="culture-card">
-            <header className="culture-card__head">
-              <h3>🌸 🛕 Thailandia</h3>
-              <p className="culture-card__sub">Coconuts & Elephants</p>
-            </header>
-            <div className="culture-card__cols">
-              <div>
-                <h4>Beliefs</h4>
-                <ul className="kv-list">
-                  <li>Kindness, merit, and harmony with nature.</li>
-                  <li>Respect for water, forests, and elephants as guardian spirits.</li>
-                </ul>
-              </div>
-              <div>
-                <h4>Holidays</h4>
-                <ul className="kv-list">
-                  <li>
-                    <strong>Songkran (Water Festival)</strong> — Mid-April. New year blessing with water, gratitude, renewal.
-                  </li>
-                  <li>
-                    <strong>Loy Krathong</strong> — Full-moon of the 12th lunar month. Lanterns & floating baskets thanking rivers and letting go of worries.
-                  </li>
-                </ul>
-              </div>
-              <div>
-                <h4>Ceremonies</h4>
-                <ul className="kv-list">
-                  <li>Dawn offerings to temples.</li>
-                  <li>Water blessings before journeys or new quests.</li>
-                </ul>
-              </div>
+            <div className="mt-4 grid grid-cols-3 gap-4">
+              {["Beliefs", "Holidays", "Ceremonies"].map((label) => (
+                <div key={label}>
+                  <h4 className="text-sm font-semibold">{label}</h4>
+                  <ul className="mt-2 list-disc pl-4 [li]:ml-0 [li]:text-sm [li]:leading-6">
+                    {k[label.toLowerCase() as "beliefs" | "holidays" | "ceremonies"].map((item, idx) => (
+                      <li key={idx}>{item}</li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
             </div>
           </section>
-
-          {/* …repeat your other kingdom cards unchanged, just ensure lists use className="kv-list" */}
-        </div>
-      </Page>
-    </>
+        ))}
+      </div>
+    </Page>
   );
 }
 
