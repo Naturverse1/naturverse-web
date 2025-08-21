@@ -28,7 +28,7 @@ import BankWallet from "./pages/naturbank/Wallet";
 import BankToken from "./pages/naturbank/Token";
 import BankNFTs from "./pages/naturbank/NFTs";
 import BankLearn from "./pages/naturbank/Learn";
-import Navatar from "./routes/navatar";
+import NavatarPage from "./pages/Navatar";
 import Passport from "./pages/Passport";
 import Turian from "./routes/turian";
 import Profile from "./pages/Profile";
@@ -66,7 +66,7 @@ export const router = createBrowserRouter([
       { path: "naturbank/token", element: <BankToken /> },
       { path: "naturbank/nfts", element: <BankNFTs /> },
       { path: "naturbank/learn", element: <BankLearn /> },
-      { path: "navatar", element: <Navatar /> },
+      { path: "navatar", element: <NavatarPage /> },
       { path: "passport", element: <Passport /> },
       { path: "turian", element: <Turian /> },
       { path: "profile", element: <Profile /> },
