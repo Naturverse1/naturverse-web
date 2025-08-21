@@ -7,7 +7,7 @@ export default function Header() {
       <div className="nv-header__inner">
         {/* Clickable brand → Home restored */}
         <Link to="/" aria-label="Naturverse Home"><span style={{fontSize:20}}>🌿</span> <strong>Naturverse</strong></Link>
-        <nav style={{marginLeft:"auto", display:"flex", gap:14, flexWrap:"wrap"}}>
+        <nav className="top-inline-nav" style={{marginLeft:"auto", gap:14, flexWrap:"wrap"}}>
           {[
             ["/worlds","Worlds"],
             ["/zones","Zones"],

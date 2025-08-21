@@ -24,7 +24,7 @@ export default function Header() {
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-4">
+        <nav className="hidden md:flex items-center gap-4 top-inline-nav">
           {links.map((l) => (
             <Link key={l.to} to={l.to} className="text-sm hover:underline">
               {l.label}

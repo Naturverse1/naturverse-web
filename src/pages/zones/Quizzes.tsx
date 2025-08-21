@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 import { Quiz } from "../../lib/quiz/types";
 import { SAMPLE_QUIZZES } from "../../lib/quiz/sampleQuizzes";
 import { ClassicPlayer, JeopardyBoard, QuizSummary } from "../../components/QuizPlayer";
@@ -51,6 +52,11 @@ export default function Quizzes() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: 'Home', to: '/' },
+        { label: 'Zones', to: '/zones' },
+        { label: 'Quizzes' }
+      ]} />
       <h1>🎯 Quizzes</h1>
       <p>Solo & party quiz play with scoring (client-only; no backend).</p>
 
