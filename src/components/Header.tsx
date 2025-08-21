@@ -21,7 +21,7 @@ export default function Header() {
       <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
         {/* Brand is now a home link */}
         <Link to="/" className="flex items-center gap-2 shrink-0" aria-label="Naturverse home">
-          <img src="/turian.svg" alt="" className="h-6 w-6" />
+          <img src="/turian.svg" alt="Naturverse" className="h-6 w-6" />
           <span className="font-semibold tracking-tight">Naturverse</span>
         </Link>
 

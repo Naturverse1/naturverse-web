@@ -31,7 +31,8 @@ const SUGGESTIONS: { section: string; items: string[] }[] = [
   ]},
 ];
 
-const mascotSrc = "/turian.svg";
+// No dedicated mascot image; fall back to an emoji so the header logo remains unique
+const mascotSrc = "";
 
 function cannedReply(q: string): string {
   // Lightweight, offline “assistant” so we don’t add deps or call APIs.
