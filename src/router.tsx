@@ -13,7 +13,7 @@ import Stories from "./pages/zones/Stories";
 import Quizzes from "./pages/zones/Quizzes";
 import Observations from "./pages/zones/Observations";
 import Community from "./pages/zones/Community";
-import Culture from "./pages/zones/Culture";
+import Culture from "./pages/Culture";
 import Marketplace from "./routes/marketplace";
 import Catalog from "./pages/marketplace/Catalog";
 import Wishlist from "./pages/marketplace/Wishlist";
