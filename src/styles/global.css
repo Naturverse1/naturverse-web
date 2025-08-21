@@ -11,6 +11,6 @@ svg[aria-label="hero-face"],
   display: none !important;
 }
 
-/* Ensure no duplicate top text-link row appears on small screens */
-.top-inline-nav { display: none; }
-@media (min-width:768px) { .top-inline-nav { display: flex; } }
+/* hide any legacy inline top nav on phones */
+.top-inline-nav{ display:none; }
+@media (min-width:768px){ .top-inline-nav{ display:flex; } }

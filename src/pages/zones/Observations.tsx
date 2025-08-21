@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
+import { Breadcrumbs } from '../../components/Breadcrumbs';
 import PhotoUploader from '../../components/PhotoUploader';
 import { Observation } from '../../lib/observations/types';
 import {
@@ -144,6 +145,11 @@ export default function Observations() {
 
   return (
     <div>
+      <Breadcrumbs items={[
+        { label: 'Home', to: '/' },
+        { label: 'Zones', to: '/zones' },
+        { label: 'Observations' }
+      ]} />
       <h1>📷🌿 Observations</h1>
       <p>Upload nature pics; tag, learn, earn. (Local & offline; data stays in your browser.)</p>
 
