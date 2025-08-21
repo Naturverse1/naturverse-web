@@ -1,11 +1,15 @@
 import HubCard from '../components/HubCard';
 import HubGrid from '../components/HubGrid';
+import "./Home.css";
 
 export default function Home() {
   return (
     <main className="container">
-      <h1 className="h1">✨ Welcome to the Naturverse™</h1>
-      <p className="lead">Pick a hub to begin your adventure.</p>
+      <header className="home-hero">
+        <h1>✨ Welcome to the Naturverse™</h1>
+        <img src="/assets/turian-owl.svg" className="hero-owl" alt="Turian the owl" />
+        <p>Pick a hub to begin your adventure.</p>
+      </header>
 
       <HubGrid>
         <HubCard to="/worlds" emoji="📚" title="Worlds" sub="Travel the 14 magical kingdoms." />

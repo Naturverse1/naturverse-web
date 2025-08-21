@@ -1,0 +1,3 @@
+:root { --radius:14px; --muted:#6c7676; }
+.caption { color: var(--muted); margin: 2px 0 0; }
+.card { border:1px solid #ececec; border-radius: var(--radius); background:#fff; }

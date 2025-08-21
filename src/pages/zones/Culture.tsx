@@ -1,64 +1,44 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import { cultureData } from "../../data/culture";
+import { useMemo } from "react";
+import { CULTURE_SECTIONS } from "../../data/culture-sections";
+import "./Culture.css";
 
 export default function Culture() {
+  const items = useMemo(() => CULTURE_SECTIONS, []);
   return (
-    <div>
-      <h1>🏮 Culture</h1>
-      <p>Beliefs, holidays, and ceremonies across the 14 kingdoms.</p>
+    <main className="container">
+      <h1>🪔 Culture</h1>
+      <p className="muted">Beliefs, holidays, and ceremonies across the 14 kingdoms.</p>
 
-      <div className="grid">
-        {cultureData.map((k) => (
-          <div key={k.id} className="card">
-            <h3>
-              <span aria-hidden>{k.emoji}</span> {k.title}
-            </h3>
-            <p className="small">{k.blurb}</p>
+      <section className="culture-grid">
+        {items.map((k) => (
+          <article key={k.id} className="culture-card">
+            <header className="culture-head">
+              <div className="culture-title">
+                <span className="emoji">{k.emoji}</span>
+                <h3>{k.kingdom}</h3>
+              </div>
+              <p className="caption">{k.caption}</p>
+            </header>
 
-            <div className="split">
+            <div className="culture-columns">
               <div>
                 <h4>Beliefs</h4>
-                <ul>
-                  {k.beliefs.map((b, i) => (
-                    <li key={i}>{b}</li>
-                  ))}
-                </ul>
+                <ul>{k.beliefs.map((b, i) => <li key={i}>{b}</li>)}</ul>
               </div>
               <div>
                 <h4>Holidays</h4>
-                <ul>
-                  {k.holidays.map((h, i) => (
-                    <li key={i}>
-                      <strong>{h.name}</strong> — <em>{h.when}</em>. {h.about}
-                    </li>
-                  ))}
-                </ul>
+                <ul>{k.holidays.map((h, i) => <li key={i}><strong>{h.name}</strong> — <em>{h.when}</em>. {h.note}</li>)}</ul>
               </div>
+              {k.ceremonies?.length ? (
+                <div>
+                  <h4>Ceremonies</h4>
+                  <ul>{k.ceremonies.map((c, i) => <li key={i}>{c}</li>)}</ul>
+                </div>
+              ) : null}
             </div>
-
-            <div>
-              <h4>Ceremonies</h4>
-              <ul>
-                {k.ceremonies.map((c, i) => (
-                  <li key={i}>{c}</li>
-                ))}
-              </ul>
-            </div>
-
-            <p className="small coming">
-              Coming Soon: seasonal quests, festival badges, and limited-time items.
-            </p>
-          </div>
+          </article>
         ))}
-      </div>
-
-      <p style={{ marginTop: 16 }}>
-        <Link to="/zones" className="btn">
-          ← Back to Zones
-        </Link>
-      </p>
-    </div>
+      </section>
+    </main>
   );
 }
-
