@@ -39,6 +39,12 @@ const ZONES = [
     title: 'Observations',
     sub: 'Upload nature pics; tag, learn, earn.',
   },
+  {
+    to: '/zones/community',
+    emoji: '🗳️',
+    title: 'Community',
+    sub: 'Voting, events, & volunteering.',
+  },
 ];
 
 export default function Zones() {
