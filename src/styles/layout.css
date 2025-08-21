@@ -1,128 +1,45 @@
-:root{
-  --nv-max: 1120px;
-  --nv-pad: 24px;
-  --nv-pad-sm: 16px;
-  --nv-card-bg: var(--nv-surface, #fff);
-  --nv-card-br: 12px;
-  --nv-muted: #6b7280;
-  --nv-border: rgba(0,0,0,.08);
-}
-
-/* Containers */
-.nv-page,
-main{ padding:16px; }
-.nv-container{
-  max-width: var(--nv-max);
+/* Center every page and normalize spacing */
+main {
+  max-width: 1040px;
   margin: 0 auto;
-  padding-left: var(--nv-pad);
-  padding-right: var(--nv-pad);
+  padding: 0 16px 40px;
 }
 
-/* Center all primary pages like Worlds/Zones */
-.page{
-  max-width:1024px;
-  margin:0 auto;
-  padding:24px 16px 56px;
+/* Headings */
+h1 {
+  font-weight: 800;
+  font-size: 28px;
+  line-height: 1.15;
+  margin: 10px 0 8px;
+}
+h2 {
+  font-weight: 700;
+  font-size: 18px;
+  margin: 8px 0 6px;
 }
 
-/* Cards grid baseline */
-.card-grid{
-  display:grid;
-  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
-  gap:16px;
-}
-
-/* Tidy list bullets (Culture page) */
-.list-reset{
-  padding-left:1.25rem;
-  list-style:disc outside;
-}
-
-/* Hide any accidental “welcome blob” leftover */
-.welcome-blob{display:none !important;}
-
-@media (max-width: 640px){
-  .nv-container{ padding-left: var(--nv-pad-sm); padding-right: var(--nv-pad-sm); }
-}
-
-/* Mobile nav */
-.nv-nav--mobile{ display:none; flex-direction:column; gap:8px; padding:12px 16px; border-top:1px solid var(--nv-border); }
-.nv-nav--mobile.is-open{ display:flex; }
-
-/* Remove any oversized emoji remnants */
-.nv-hero__emoji{ display:none !important; }
-
-/* Lists */
-ul{ margin:0 0 8px 0; padding-left:1.25rem; list-style:disc outside; }
-li{ margin:0 0 6px 0; }
-
-/* Shared card */
-.nv-card{
-  background: var(--nv-card-bg);
-  border: 1px solid var(--nv-border);
-  border-radius: var(--nv-card-br);
-  padding: 16px 18px;
-  box-shadow: 0 1px 0 rgba(0,0,0,.02);
-}
-
-/* Breadcrumbs: keep on md+, hide on xs to avoid “double nav” */
-.nv-breadcrumbs{
-  margin: 8px 0 12px;
-  color: var(--nv-muted);
-  font-size: .92rem;
-}
-@media (max-width: 640px){
-  .nv-breadcrumbs{ display: none; }
-}
-
-/* Culture grid */
-.culture-grid{
+/* Card / panel grids used on Worlds, Zones, etc. */
+.cards,
+.grid-panels {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 16px;
-}
-@media (max-width: 1024px){
-  .culture-grid{ grid-template-columns: repeat(2, 1fr); }
-}
-@media (max-width: 640px){
-  .culture-grid{ grid-template-columns: 1fr; }
+  gap: 12px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
 }
 
-.culture-card{
-  display: grid;
-  grid-template-rows: auto 1fr;
-  gap: 10px;
-  min-height: 260px;
-}
-.culture-card h3{
-  margin: 0;
-  font-size: 1.05rem;
-}
-.culture-sub{
-  margin-top: 2px;
-  color: var(--nv-muted);
-  font-size: .92rem;
+/* Reusable panel (matches Profile style) */
+.panel{
+  border:1px solid #e5e7eb;
+  background:#fff;
+  border-radius:14px;
+  padding:14px;
 }
 
-/* Inside each culture card, fix tall wrapping by using 3 cols */
-.culture-columns{
-  display: grid;
-  grid-template-columns: 1fr 1fr 1fr;
-  gap: 14px;
-  align-items: start;
-}
-@media (max-width: 820px){
-  .culture-columns{ grid-template-columns: 1fr; }
-}
-.culture-columns section h4{
-  margin: 0 0 6px;
-  font-size: .92rem;
-}
-.culture-columns ul{
-  margin: 0;
-  padding-left: 18px;
-}
+/* Section spacing helper */
+.page-block { margin: 12px 0; }
 
-/* Culture page alignment */
-.culture-grid .nv-card ul { padding-left: 1.25rem; }
-.culture-grid .nv-card h4 { margin-top: 8px; }
+/* Breadcrumb row spacing (if present) */
+nav[aria-label="Breadcrumb"] { margin: 6px 0 4px; }
+
+/* Keep top-inline nav hidden on phones (single menu button only) */
+.top-inline-nav{ display:none; }
+@media (min-width:768px){ .top-inline-nav{ display:flex; } }
