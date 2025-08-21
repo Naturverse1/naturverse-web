@@ -30,7 +30,7 @@ import BankLearn from "./pages/naturbank/Learn";
 import Navatar from "./routes/navatar";
 import Passport from "./pages/Passport";
 import Turian from "./routes/turian";
-import Profile from "./routes/profile";
+import Profile from "./pages/Profile";
 import AppShell from "./shell/AppShell";
 
 export const router = createBrowserRouter([
