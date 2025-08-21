@@ -8,7 +8,6 @@ export default function Home() {
       {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
         <h1>✨ Welcome to the Naturverse™</h1>
-        <img src="/assets/turian-owl.svg" className="hero-owl" alt="Turian the owl" />
         <p>Pick a hub to begin your adventure.</p>
       </header>
 
@@ -45,7 +44,7 @@ export default function Home() {
           title="Passport"
           sub="Track stamps, badges, XP & coins."
         />
-        <HubCard to="/turian" emoji="🦉" title="Turian" sub="AI guide for tips & quests." />
+        <HubCard to="/turian" emoji="🟢" title="Turian" sub="AI guide for tips & quests." />
         <HubCard to="/profile" emoji="👤" title="Profile" sub="Your account & saved navatar." />
       </HubGrid>
     </main>

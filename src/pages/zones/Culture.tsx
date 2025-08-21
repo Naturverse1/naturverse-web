@@ -29,7 +29,7 @@ export default function Culture() {
               {["Beliefs", "Holidays", "Ceremonies"].map((label) => (
                 <div key={label}>
                   <h4 className="text-sm font-semibold">{label}</h4>
-                  <ul className="mt-2 list-disc pl-4 [li]:ml-0 [li]:text-sm [li]:leading-6">
+                  <ul className="mt-2 list-reset [li]:ml-0 [li]:text-sm [li]:leading-6">
                     {k[label.toLowerCase() as "beliefs" | "holidays" | "ceremonies"].map((item, idx) => (
                       <li key={idx}>{item}</li>
                     ))}
