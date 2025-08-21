@@ -17,7 +17,11 @@ import Marketplace from "./routes/marketplace";
 import Catalog from "./pages/marketplace/Catalog";
 import Wishlist from "./pages/marketplace/Wishlist";
 import Checkout from "./pages/marketplace/Checkout";
-import Naturversity from "./routes/naturversity";
+import Naturversity from "./pages/Naturversity";
+import Teachers from "./pages/naturversity/Teachers";
+import Partners from "./pages/naturversity/Partners";
+import Courses from "./pages/naturversity/Courses";
+import CourseDetail from "./pages/naturversity/CourseDetail";
 import Naturbank from "./routes/naturbank";
 import Wallet from "./routes/naturbank/wallet";
 import Token from "./routes/naturbank/token";
@@ -51,6 +55,10 @@ export const router = createBrowserRouter([
       { path: "marketplace/wishlist", element: <Wishlist /> },
       { path: "marketplace/checkout", element: <Checkout /> },
       { path: "naturversity", element: <Naturversity /> },
+      { path: "naturversity/teachers", element: <Teachers /> },
+      { path: "naturversity/partners", element: <Partners /> },
+      { path: "naturversity/courses", element: <Courses /> },
+      { path: "naturversity/course/:slug", element: <CourseDetail /> },
       { path: "naturbank", element: <Naturbank /> },
       { path: "naturbank/wallet", element: <Wallet /> },
       { path: "naturbank/token", element: <Token /> },
