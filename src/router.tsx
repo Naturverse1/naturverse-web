@@ -22,11 +22,11 @@ import Teachers from "./pages/naturversity/Teachers";
 import Partners from "./pages/naturversity/Partners";
 import Courses from "./pages/naturversity/Courses";
 import CourseDetail from "./pages/naturversity/CourseDetail";
-import Naturbank from "./routes/naturbank";
-import Wallet from "./routes/naturbank/wallet";
-import Token from "./routes/naturbank/token";
-import NFTs from "./routes/naturbank/nfts";
-import Learn from "./routes/naturbank/learn";
+import Naturbank from "./pages/Naturbank";
+import BankWallet from "./pages/naturbank/Wallet";
+import BankToken from "./pages/naturbank/Token";
+import BankNFTs from "./pages/naturbank/NFTs";
+import BankLearn from "./pages/naturbank/Learn";
 import Navatar from "./routes/navatar";
 import Passport from "./routes/passport";
 import Turian from "./routes/turian";
@@ -60,10 +60,10 @@ export const router = createBrowserRouter([
       { path: "naturversity/courses", element: <Courses /> },
       { path: "naturversity/course/:slug", element: <CourseDetail /> },
       { path: "naturbank", element: <Naturbank /> },
-      { path: "naturbank/wallet", element: <Wallet /> },
-      { path: "naturbank/token", element: <Token /> },
-      { path: "naturbank/nfts", element: <NFTs /> },
-      { path: "naturbank/learn", element: <Learn /> },
+      { path: "naturbank/wallet", element: <BankWallet /> },
+      { path: "naturbank/token", element: <BankToken /> },
+      { path: "naturbank/nfts", element: <BankNFTs /> },
+      { path: "naturbank/learn", element: <BankLearn /> },
       { path: "navatar", element: <Navatar /> },
       { path: "passport", element: <Passport /> },
       { path: "turian", element: <Turian /> },
