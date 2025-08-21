@@ -1,49 +1,48 @@
-// Serverless chat function powered by OpenAI Responses API (no npm dep)
-type NetlifyEvent = { httpMethod: string; body?: string | null };
+// Netlify Function (TypeScript, ESM). No @netlify/functions types needed.
+export const handler = async (event: any) => {
+  try {
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
+    }
 
-const cors = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST,OPTIONS",
+    const apiKey = process.env.OPENAI_API_KEY;
+    if (!apiKey) {
+      return { statusCode: 500, body: "OPENAI_API_KEY not set" };
+    }
+
+    const { prompt } = JSON.parse(event.body || "{}");
+    const input = prompt || "Say hello to Naturverse kiddos in one friendly sentence.";
+
+    const resp = await fetch("https://api.openai.com/v1/responses", {
+      method: "POST",
+      headers: {
+        "Authorization": `Bearer ${apiKey}`,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
+        input,
+        max_output_tokens: 200
+      })
+    });
+
+    if (!resp.ok) {
+      const errTxt = await resp.text();
+      return { statusCode: resp.status, body: errTxt };
+    }
+
+    const data = await resp.json();
+    const text =
+      data.output?.[0]?.content?.[0]?.text ||
+      data.output_text ||
+      "Hi from Naturverse!";
+
+    return {
+      statusCode: 200,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ text })
+    };
+  } catch (e: any) {
+    return { statusCode: 500, body: e?.message || "Server error" };
+  }
 };
-
-export async function handler(event: NetlifyEvent) {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: cors };
-  }
-
-  if (!process.env.OPENAI_API_KEY) {
-    return { statusCode: 500, headers: cors, body: "Missing OPENAI_API_KEY" };
-  }
-
-  const { prompt, system } = event.body ? JSON.parse(event.body) : {};
-
-  const res = await fetch("https://api.openai.com/v1/responses", {
-    method: "POST",
-    headers: {
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "gpt-4o-mini",
-      input: [
-        { role: "system", content: system ?? "You are Turian, a friendly guide for kids. Keep replies short, helpful, and fun." },
-        { role: "user", content: prompt ?? "Say hi." },
-      ],
-    }),
-  });
-
-  if (!res.ok) {
-    const err = await res.text().catch(() => "");
-    return { statusCode: 502, headers: cors, body: `OpenAI error: ${err}` };
-  }
-
-  const data = await res.json();
-  const text = (data && (data.output_text ?? "")) as string;
-
-  return {
-    statusCode: 200,
-    headers: { ...cors, "Content-Type": "application/json" },
-    body: JSON.stringify({ text }),
-  };
-}

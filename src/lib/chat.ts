@@ -1,10 +1,10 @@
-export async function askTurian(prompt: string, system?: string) {
-  const r = await fetch("/.netlify/functions/chat", {
+export async function askTurian(prompt: string): Promise<string> {
+  const res = await fetch("/.netlify/functions/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ prompt, system }),
+    body: JSON.stringify({ prompt })
   });
-  if (!r.ok) throw new Error(await r.text());
-  const data = (await r.json()) as { text: string };
-  return data.text;
+  if (!res.ok) throw new Error(`Chat failed: ${res.status}`);
+  const { text } = await res.json();
+  return text;
 }

@@ -1,31 +1,27 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
-  functions = "netlify/functions"
+command = "npm ci && npm run build"
+publish = "dist"
+functions = "netlify/functions"
 
+[build.environment]
+NODE_VERSION = "20"
+
+# Bundle TS functions with esbuild
 [functions]
-  node_bundler = "esbuild"
+node_bundler = "esbuild"
 
-# SPA routing
+# Single Page App routing
 [[redirects]]
-  from = "/*"
-  to = "/index.html"
-  status = 200
+from = "/*"
+to = "/index.html"
+status = 200
 
-# Basic security + allow required APIs; keep CSP minimal to avoid blocking app
+# Tight but working CSP; adjust later as you add origins
 [[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-      img-src 'self' data: https:;
-      connect-src 'self' https://*.supabase.co https://api.openai.com;
-      font-src 'self' data:;
-      frame-ancestors 'none';
-    """
+for = "/*"
+[headers.values]
+Content-Security-Policy = "default-src 'self'; connect-src 'self' https://api.openai.com https://*.supabase.co; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self'; frame-ancestors 'none'; base-uri 'self';"
+Referrer-Policy = "strict-origin-when-cross-origin"
+X-Content-Type-Options = "nosniff"
+X-Frame-Options = "DENY"
+Permissions-Policy = "geolocation=(), microphone=(), camera=()"
