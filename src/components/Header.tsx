@@ -1,7 +1,8 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+import { Link, useLocation } from "react-router-dom";
 
-const links = [
+/** Central list of site links */
+const LINKS = [
   { to: "/worlds", label: "Worlds" },
   { to: "/zones", label: "Zones" },
   { to: "/marketplace", label: "Marketplace" },
@@ -15,49 +16,60 @@ const links = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { pathname } = useLocation();
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // close menu on route change
+  useEffect(() => setOpen(false), [pathname]);
+
+  // close when clicking outside
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!menuRef.current) return;
+      if (!menuRef.current.contains(e.target as Node)) setOpen(false);
+    };
+    if (open) document.addEventListener("mousedown", onDoc);
+    return () => document.removeEventListener("mousedown", onDoc);
+  }, [open]);
 
   return (
-    <header className="sticky top-0 z-40 bg-white/90 backdrop-blur">
-      <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-        <Link className="flex items-center gap-2 shrink-0" aria-label="Naturverse home" to="/">
-          <span className="font-semibold tracking-tight">Naturverse</span>
+    <header className="nv-header" aria-label="Primary">
+      <div className="nv-header__inner">
+        {/* Brand — always goes home */}
+        <Link to="/" className="nv-brand" aria-label="Naturverse home">
+          <span className="nv-brand__leaf" aria-hidden>🌿</span>
+          <span className="nv-brand__text">Naturverse</span>
         </Link>
 
         {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-4 top-inline-nav">
-          {links.map((l) => (
-            <Link key={l.to} to={l.to} className="text-sm hover:underline">
+        <nav className="nv-nav">
+          {LINKS.map((l) => (
+            <Link key={l.to} to={l.to} className="nv-link">
               {l.label}
             </Link>
           ))}
         </nav>
 
         {/* Mobile menu button */}
-        <div className="md:hidden relative">
+        <div className="nv-menu" ref={menuRef}>
           <button
             type="button"
+            className="nv-menu__btn"
             aria-label="Open menu"
             aria-expanded={open}
             onClick={() => setOpen((v) => !v)}
-            className="inline-flex items-center justify-center rounded-full border px-3 py-2"
           >
-            <span className="sr-only">Menu</span>
-            {/* simple hamburger */}
-            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-              <path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" strokeWidth="2" strokeLinecap="round" />
-            </svg>
+            <span className="nv-menu__bars" />
           </button>
 
-          {/* Dropdown */}
           {open && (
-            <div role="menu" className="absolute right-0 mt-2 w-48 rounded-lg border bg-white shadow-lg p-1">
-              {links.map((l) => (
+            <div className="nv-menu__sheet" role="menu">
+              {LINKS.map((l) => (
                 <Link
                   key={l.to}
                   to={l.to}
                   role="menuitem"
-                  onClick={() => setOpen(false)}
-                  className="block rounded-md px-3 py-2 text-sm hover:bg-gray-100"
+                  className="nv-menu__item"
                 >
                   {l.label}
                 </Link>
@@ -69,4 +81,3 @@ export default function Header() {
     </header>
   );
 }
-
