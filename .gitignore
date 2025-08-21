@@ -1,5 +1,5 @@
 # Node
-node_modules/
+node_modules
 
 # Local env
 .dev.vars
@@ -7,9 +7,10 @@ node_modules/
 
 # env
 .env
+.env.*
 
 # Ignore build output and stray routes
-dist/
+dist
 dist/_routes.json
 
 # keep lockfile for reliable Netlify builds
