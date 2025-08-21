@@ -6,7 +6,7 @@ type Props = { children: ReactNode; title?: ReactNode; breadcrumbs?: ReactNode }
 export default function Layout({ title, breadcrumbs, children }: Props) {
   return (
     <>
-      <NavBar /> {/* keep at top */}
+      <NavBar />
       <main className="nv-page">
         <div className="nv-container">
           {title ? <h1 className="nv-title">{title}</h1> : null}

@@ -7,19 +7,11 @@ export default function NavBar() {
 
   return (
     <header className="nv-header">
-      <div className="nv-container nv-nav-row">
-        {/* BRAND — always links Home */}
-        <Link to="/" className="nv-brand">
-          {/* optional brand mark (hidden if missing) */}
-          <img
-            src="/assets/turian-media-logo.png"
-            alt="Turian Media Company"
-            className="nv-brand-mark"
-            onError={(e) => {
-              (e.target as HTMLImageElement).style.display = 'none';
-            }}
-          />
-          <span className="nv-brand-title">Naturverse</span>
+      <div className="nv-header__inner">
+        {/* Home link restored (clickable brand) */}
+        <Link to="/" className="nv-brand" aria-label="Naturverse Home">
+          <span style={{fontSize:20}}>🌿</span>{' '}
+          <strong>Naturverse</strong>
         </Link>
 
         {/* MOBILE TOGGLE */}

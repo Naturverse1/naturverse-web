@@ -7,7 +7,7 @@ export default function Marketplace() {
       <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
         <Card to="/marketplace/catalog" title="Catalog" desc="Browse items." icon="📦" />
         <Card to="/marketplace/wishlist" title="Wishlist" desc="Your favorites." icon="❤️" />
-        <Card to="/marketplace/checkout" title="Checkout" desc="Pay & ship." icon="💳" />
+        <Card to="/marketplace/checkout" title="Checkout" desc="Pay & ship." icon="🧾" />
       </div>
     </Page>
   );

@@ -18,6 +18,29 @@ main{ padding:16px; }
   padding-right: var(--nv-pad);
 }
 
+/* Center all primary pages like Worlds/Zones */
+.page{
+  max-width:1024px;
+  margin:0 auto;
+  padding:24px 16px 56px;
+}
+
+/* Cards grid baseline */
+.card-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(280px,1fr));
+  gap:16px;
+}
+
+/* Tidy list bullets (Culture page) */
+.list-reset{
+  padding-left:1.25rem;
+  list-style:disc outside;
+}
+
+/* Hide any accidental “welcome blob” leftover */
+.welcome-blob{display:none !important;}
+
 @media (max-width: 640px){
   .nv-container{ padding-left: var(--nv-pad-sm); padding-right: var(--nv-pad-sm); }
 }

@@ -4,35 +4,28 @@
   z-index: 30;
   background: var(--nv-bg);
 }
-.nv-nav-row {
+.nv-header__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 12px 0;
+  gap: 16px;
 }
 .nv-brand {
   display: flex;
   align-items: center;
   gap: 10px;
   text-decoration: none;
-}
-.nv-brand-title {
-  font-weight: 700;
-  font-size: 18px;
-  color: var(--nv-ink);
-}
-.nv-brand-mark {
-  width: 22px;
-  height: 22px;
-  border-radius: 6px;
-  object-fit: contain;
+  color: inherit;
 }
 
 .nv-nav {
   display: flex;
   align-items: center;
-  gap: 16px;
+  flex-wrap: wrap;
+  gap: 14px;
+  margin-left: auto;
 }
 .nv-nav a {
   color: var(--nv-ink);
