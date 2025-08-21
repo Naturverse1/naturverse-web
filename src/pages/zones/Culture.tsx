@@ -16,9 +16,9 @@ export default function Culture() {
       title="Culture"
       subtitle="Beliefs, holidays, and ceremonies across the 14 kingdoms."
     >
-      <div className="grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
+      <div className="culture-grid grid gap-4 md:gap-6 sm:grid-cols-2 lg:grid-cols-3">
         {kingdoms.map((k) => (
-          <section key={k.name} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
+          <section key={k.name} className="nv-card rounded-xl border border-slate-200 bg-white p-5 shadow-sm">
             <h3 className="text-lg font-semibold flex items-center gap-2">
               <span>{k.emoji}</span>
               {k.name}
