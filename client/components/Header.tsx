@@ -1,48 +1,29 @@
-import Link from "next/link";
-import { useState } from "react";
+import React from "react";
+import { Link, NavLink } from "react-router-dom";
 
-export default function Header(){
-  const [open, setOpen] = useState(false);
+export default function Header() {
   return (
     <header className="nv-header">
-      <div className="nv-header__row">
-        <Link href="/" className="nv-brand" aria-label="Naturverse home">
-          <span className="nv-brand__mark" aria-hidden>🌿</span>
-          <span className="nv-brand__name">Naturverse</span>
-        </Link>
-        <nav className="nv-nav nv-nav--desktop" aria-label="Primary">
-          <Link href="/worlds">Worlds</Link>
-          <Link href="/zones">Zones</Link>
-          <Link href="/marketplace">Marketplace</Link>
-          <Link href="/naturversity">Naturversity</Link>
-          <Link href="/naturbank">Naturbank</Link>
-          <Link href="/navatar">Navatar</Link>
-          <Link href="/passport">Passport</Link>
-          <Link href="/turian">Turian</Link>
-          <Link href="/profile">Profile</Link>
+      <div className="nv-header__inner">
+        {/* Clickable brand → Home restored */}
+        <Link to="/" aria-label="Naturverse Home"><span style={{fontSize:20}}>🌿</span> <strong>Naturverse</strong></Link>
+        <nav style={{marginLeft:"auto", display:"flex", gap:14, flexWrap:"wrap"}}>
+          {[
+            ["/worlds","Worlds"],
+            ["/zones","Zones"],
+            ["/marketplace","Marketplace"],
+            ["/naturversity","Naturversity"],
+            ["/naturbank","Naturbank"],
+            ["/navatar","Navatar"],
+            ["/passport","Passport"],
+            ["/turian","Turian"],
+            ["/profile","Profile"],
+          ].map(([to,label])=> (
+            <NavLink key={to} to={to} className={({isActive})=>isActive?"active":undefined}>{label}</NavLink>
+          ))}
         </nav>
-        {/* batch 286: small apps square, opens simple mobile list */}
-        <button
-          type="button"
-          className="nv-nav__apps"
-          aria-label="Open menu"
-          aria-expanded={open}
-          onClick={() => setOpen(v=>!v)}
-        >▢</button>
       </div>
-      {open && (
-        <nav className="nv-nav nv-nav--mobile" aria-label="Mobile">
-          <Link href="/worlds" onClick={()=>setOpen(false)}>Worlds</Link>
-          <Link href="/zones" onClick={()=>setOpen(false)}>Zones</Link>
-          <Link href="/marketplace" onClick={()=>setOpen(false)}>Marketplace</Link>
-          <Link href="/naturversity" onClick={()=>setOpen(false)}>Naturversity</Link>
-          <Link href="/naturbank" onClick={()=>setOpen(false)}>Naturbank</Link>
-          <Link href="/navatar" onClick={()=>setOpen(false)}>Navatar</Link>
-          <Link href="/passport" onClick={()=>setOpen(false)}>Passport</Link>
-          <Link href="/turian" onClick={()=>setOpen(false)}>Turian</Link>
-          <Link href="/profile" onClick={()=>setOpen(false)}>Profile</Link>
-        </nav>
-      )}
     </header>
   );
 }
+
