@@ -12,6 +12,7 @@ import CreatorLabZone from "./routes/zones/creator-lab";
 import Stories from "./pages/zones/Stories";
 import Quizzes from "./pages/zones/Quizzes";
 import Observations from "./pages/zones/Observations";
+import Community from "./pages/zones/Community";
 import Marketplace from "./routes/marketplace";
 import Catalog from "./routes/marketplace/catalog";
 import Wishlist from "./routes/marketplace/wishlist";
@@ -44,6 +45,7 @@ export const router = createBrowserRouter([
       { path: "zones/stories", element: <Stories /> },
       { path: "zones/quizzes", element: <Quizzes /> },
       { path: "zones/observations", element: <Observations /> },
+      { path: "zones/community", element: <Community /> },
       { path: "marketplace", element: <Marketplace /> },
       { path: "marketplace/catalog", element: <Catalog /> },
       { path: "marketplace/wishlist", element: <Wishlist /> },
