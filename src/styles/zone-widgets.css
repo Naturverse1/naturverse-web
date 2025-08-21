@@ -133,3 +133,18 @@
 .choices{ display:flex; gap:10px; flex-wrap:wrap; margin-top:10px; }
 .creator-grid{ display:grid; gap:18px; }
 @media(min-width: 960px){ .creator-grid{ grid-template-columns: 1fr 1fr; } }
+
+/* Quizzes */
+.quiz-card{ border:1px solid #e5e7eb; border-radius:14px; padding:16px; background:#fff; }
+.jeop-grid{ display:grid; grid-template-columns: repeat(3, 1fr); gap:8px; margin-top:8px; }
+.jeop-col{ display:grid; gap:8px; }
+.jeop-head{ text-align:center; font-weight:700; padding:8px; background:#f3f4f6; border-radius:10px; }
+.jeop-cell{ padding:18px 6px; border-radius:10px; background:#111827; color:#fff; font-weight:800; }
+.jeop-cell.taken{ background:#9ca3af; }
+.modal{ position:fixed; inset:0; background:rgba(0,0,0,.25); display:flex; align-items:center; justify-content:center; }
+.modal-card{ background:#fff; border-radius:14px; padding:16px; width:min(560px,90vw); }
+
+/* shared minis already present; ensure these exist or append: */
+.list-grid{ display:grid; gap:12px; grid-template-columns:repeat(auto-fill, minmax(180px,1fr)); }
+.card-mini{ border:1px solid #e5e7eb; border-radius:12px; padding:12px; background:#fff; }
+.radio-row{ display:flex; align-items:center; gap:8px; }

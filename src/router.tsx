@@ -10,7 +10,7 @@ import MusicZone from "./routes/zones/music";
 import WellnessZone from "./routes/zones/wellness";
 import CreatorLabZone from "./routes/zones/creator-lab";
 import Stories from "./pages/zones/Stories";
-import QuizzesZone from "./routes/zones/quizzes";
+import Quizzes from "./pages/zones/Quizzes";
 import ObservationsZone from "./routes/zones/observations";
 import Marketplace from "./routes/marketplace";
 import Catalog from "./routes/marketplace/catalog";
@@ -42,7 +42,7 @@ export const router = createBrowserRouter([
       { path: "zones/wellness", element: <WellnessZone /> },
       { path: "zones/creator-lab", element: <CreatorLabZone /> },
       { path: "zones/stories", element: <Stories /> },
-      { path: "zones/quizzes", element: <QuizzesZone /> },
+      { path: "zones/quizzes", element: <Quizzes /> },
       { path: "zones/observations", element: <ObservationsZone /> },
       { path: "marketplace", element: <Marketplace /> },
       { path: "marketplace/catalog", element: <Catalog /> },
