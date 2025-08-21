@@ -23,3 +23,5 @@
 .btn{display:inline-block;padding:8px 12px;border:1px solid var(--ring);border-radius:10px;text-decoration:none}
 .input{width:100%;padding:10px;border:1px solid var(--ring);border-radius:10px}
 .row{display:flex;gap:8px;align-items:center}
+.card .split{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
+.card .coming{margin-top:8px}

@@ -40,6 +40,12 @@ const ZONES = [
     sub: 'Upload nature pics; tag, learn, earn.',
   },
   {
+    to: '/zones/culture',
+    emoji: '🏮',
+    title: 'Culture',
+    sub: 'Beliefs, holidays, & ceremonies.',
+  },
+  {
     to: '/zones/community',
     emoji: '🗳️',
     title: 'Community',
