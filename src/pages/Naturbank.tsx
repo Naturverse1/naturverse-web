@@ -1,27 +1,25 @@
-import React from "react";
+import Page from "../components/Page";
 import { Link } from "react-router-dom";
-
-const tiles = [
-  { href: "/naturbank/wallet", emoji: "🪪", title: "Wallet", desc: "Create custodial wallet & view address." },
-  { href: "/naturbank/token",  emoji: "🪙", title: "NATUR Token", desc: "Earnings, redemptions, and ledger." },
-  { href: "/naturbank/nfts",   emoji: "🖼️", title: "NFTs", desc: "Mint navatar cards & collectibles." },
-  { href: "/naturbank/learn",  emoji: "📘", title: "Learn", desc: "Crypto basics & safety guides." },
-];
 
 export default function Naturbank() {
   return (
-    <div>
-      <h1>Naturbank</h1>
-      <div className="hub-grid">
-        {tiles.map(t => (
-          <Link key={t.href} className="hub-card" to={t.href}>
-            <div className="emoji">{t.emoji}</div>
-            <div className="title">{t.title}</div>
-            <div className="desc">{t.desc}</div>
-          </Link>
-        ))}
+    <Page title="Naturbank" subtitle="Wallet, token, and collectibles.">
+      <div className="grid gap-4 md:gap-6 sm:grid-cols-2">
+        <Card to="/naturbank/wallet" title="Wallet" desc="Create custodial wallet & view address." icon="🪪" />
+        <Card to="/naturbank/token" title="NATUR Token" desc="Earnings, redemptions, and ledger." icon="🪙" />
+        <Card to="/naturbank/nfts" title="NFTs" desc="Mint navatar cards & collectibles." icon="🖼️" />
+        <Card to="/naturbank/learn" title="Learn" desc="Crypto basics & safety guides." icon="📘" />
       </div>
-      <p className="meta">Coming soon: live wallets, on-chain mints, and payouts.</p>
-    </div>
+    </Page>
   );
 }
+
+function Card({ to, title, desc, icon }:{to:string; title:string; desc:string; icon:string}) {
+  return (
+    <Link to={to} className="rounded-xl border border-slate-200 bg-white p-5 shadow-sm hover:shadow-md transition">
+      <div className="text-lg font-semibold flex items-center gap-2"><span>{icon}</span>{title}</div>
+      <p className="mt-1 text-slate-600">{desc}</p>
+    </Link>
+  );
+}
+

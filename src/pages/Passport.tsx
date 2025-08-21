@@ -2,6 +2,7 @@ import React, { useMemo, useState } from "react";
 import { getCurrent } from "../lib/navatar/store";
 import type { Badge } from "../lib/passport/store";
 import { getStamps, toggleStamp, getBadges, addBadge, getXP, addXP, getNatur, addNatur } from "../lib/passport/store";
+import Page from "../components/Page";
 
 const KINGDOMS = [
   "Thailandia","Brazilandia","Indilandia","Amerilandia",
@@ -29,10 +30,7 @@ export default function PassportPage() {
   const earnNatur = (n: number) => { addNatur(n); setNatur(getNatur()); };
 
   return (
-    <div>
-      <h1>Passport</h1>
-      <p>Badges, stamps, XP, and NATUR coin.</p>
-
+    <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin.">
       {/* Identity / Navatar */}
       <div className="passport-id">
         <div className="avatar">
@@ -87,6 +85,6 @@ export default function PassportPage() {
       )}
 
       <p className="meta">Coming soon: travel logs, per-kingdom progress, leaderboard, wallet-linked NATUR ledger, and verifiable stamp NFTs.</p>
-    </div>
+    </Page>
   );
 }
