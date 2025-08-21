@@ -28,7 +28,7 @@ import BankToken from "./pages/naturbank/Token";
 import BankNFTs from "./pages/naturbank/NFTs";
 import BankLearn from "./pages/naturbank/Learn";
 import Navatar from "./routes/navatar";
-import Passport from "./routes/passport";
+import Passport from "./pages/Passport";
 import Turian from "./routes/turian";
 import Profile from "./routes/profile";
 import AppShell from "./shell/AppShell";
