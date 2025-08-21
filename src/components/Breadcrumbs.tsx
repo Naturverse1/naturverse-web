@@ -1,22 +1,26 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link } from "wouter";
 
-export type Crumb = { label: string; to?: string };
-
-export function Breadcrumbs({ items }: { items: Crumb[] }) {
+/** Slash-separated breadcrumb trail (no numbers). */
+export default function Breadcrumbs({
+  items,
+  className = "",
+}: {
+  items: { href?: string; label: string }[];
+  className?: string;
+}) {
+  if (!items?.length) return null;
   return (
-    <nav aria-label="Breadcrumb" className="mb-3 text-sm">
-      <ol className="flex flex-wrap gap-2 text-gray-600">
-        {items.map((c, i) => (
-          <li key={i} className="flex items-center">
-            {c.to ? (
-              <Link to={c.to} className="hover:underline">{c.label}</Link>
-            ) : (
-              <span className="text-gray-800">{c.label}</span>
-            )}
-            {i < items.length - 1 && <span className="mx-2 text-gray-400">/</span>}
+    <nav aria-label="Breadcrumb" className={`crumbs ${className}`}>
+      <ol>
+        {items.map((it, i) => (
+          <li key={i} className="crumb">
+            {it.href ? <Link href={it.href}>{it.label}</Link> : <span>{it.label}</span>}
+            {i < items.length - 1 && <span className="sep"> / </span>}
           </li>
         ))}
       </ol>
     </nav>
   );
 }
+

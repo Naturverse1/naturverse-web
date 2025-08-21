@@ -16,8 +16,8 @@ export default function Culture() {
       title="Culture"
       subtitle="Beliefs, holidays, and ceremonies across the 14 kingdoms."
       breadcrumbs={[
-        { label: "Home", to: "/" },
-        { label: "Zones", to: "/zones" },
+        { href: "/", label: "Home" },
+        { href: "/zones", label: "Zones" },
         { label: "Culture" },
       ]}
     >

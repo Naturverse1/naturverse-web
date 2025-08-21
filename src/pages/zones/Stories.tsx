@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Breadcrumbs } from "../../components/Breadcrumbs";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { Story } from "../../lib/story/types";
 import { SAMPLE_STORIES } from "../../lib/story/sampleStories";
 import { StoryPlayer, Progress } from "../../components/StoryPlayer";
@@ -68,8 +68,8 @@ export default function Stories() {
   return (
     <div>
       <Breadcrumbs items={[
-        { label: 'Home', to: '/' },
-        { label: 'Zones', to: '/zones' },
+        { href: '/', label: 'Home' },
+        { href: '/zones', label: 'Zones' },
         { label: 'Stories' }
       ]} />
       <h1>📚✨ Stories</h1>

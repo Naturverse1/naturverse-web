@@ -1,5 +1,7 @@
 import { ReactNode } from "react";
-import { Breadcrumbs, Crumb } from "./Breadcrumbs";
+import Breadcrumbs from "./Breadcrumbs";
+
+export type Crumb = { href?: string; label: string };
 
 export default function Page({
   title,
