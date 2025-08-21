@@ -61,9 +61,12 @@ export default function Culture(){
           <article key={c.title} className="nv-card">
             <h3>{c.title}</h3>
             <p className="muted">{c.subtitle}</p>
-            <h4>Beliefs</h4><ul className="culture-list">{c.beliefs.map(b=><li key={b}>{b}</li>)}</ul>
-            <h4>Holidays</h4><ul className="culture-list">{c.holidays.map(h=><li key={h}>{h}</li>)}</ul>
-            <h4>Ceremonies</h4><ul className="culture-list">{c.ceremonies.map(x=><li key={x}>{x}</li>)}</ul>
+            <h4>Beliefs</h4>
+            <ul className="list-reset">{c.beliefs.map(b=><li key={b}>{b}</li>)}</ul>
+            <h4>Holidays</h4>
+            <ul className="list-reset">{c.holidays.map(h=><li key={h}>{h}</li>)}</ul>
+            <h4>Ceremonies</h4>
+            <ul className="list-reset">{c.ceremonies.map(x=><li key={x}>{x}</li>)}</ul>
           </article>
         ))}
       </div>

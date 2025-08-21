@@ -1,36 +1,30 @@
-/* restore batch 286 — no hero blobs/faces */
-
-/* Layout containers */
-.nv-container{max-width:1100px;margin:0 auto;padding:0 16px;}
-.nv-page{padding:16px 0;}
-
-/* Header */
-.nv-header{position:sticky;top:0;z-index:40;background:var(--bg);border-bottom:1px solid var(--border);}
-.nv-header__row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:12px 16px;}
-.nv-brand{display:inline-flex;align-items:center;gap:8px;font-weight:700;text-decoration:none;color:inherit;}
-.nv-brand__mark{font-size:18px;}
-.nv-nav a{padding:8px 10px;border-radius:10px;text-decoration:none;color:inherit;}
-.nv-nav__apps{display:none;}
-.nv-nav--mobile{display:none;flex-direction:column;gap:8px;padding:12px 16px;border-top:1px solid var(--border);}
-@media (max-width:920px){
-  .nv-nav--desktop{display:none;}
-  .nv-nav__apps{display:inline-flex;}
-  .nv-nav--mobile{display:flex;}
+html, body, #root {
+  height: 100%;
+  background: var(--bg);
+  color: var(--fg);
 }
 
-.nv-hero::before,
-.home-blob,
-.hero-blob{display:none !important;content:none !important;}
+/* Center pages like Worlds/Zones baseline from #286 */
+.page {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 24px 16px 56px;
+}
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
 
-/* Hero */
-.nv-hero h1{margin:8px 0 4px;font-size:clamp(28px,5vw,40px);}
-.nv-hero p{margin:0 0 16px;opacity:.85;}
+/* Header */
+.nv-header { position: sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter: blur(6px); border-bottom:1px solid #e5e7eb;}
+.nv-header__inner { max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:16px;}
+.nv-header a { text-decoration:none; color:inherit;}
+.nv-header .active { font-weight:600; }
 
-/* Grid hubs/cards remain centered like Zones/Worlds */
-.nv-grid-hubs{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px;margin-top:8px;}
-.nv-card{background:var(--card);border:1px solid var(--border);border-radius:14px;padding:14px;box-shadow:var(--shadow-soft);}
+/* Culture bullets align under column titles */
+.list-reset { padding-left:1.25rem; }
 
-/* Lists + culture alignment (match 286) */
-ul{margin:0 0 8px 0;padding-left:1.1rem;list-style:disc outside;}
-li{margin:0 0 6px 0;}
-.culture-grid .nv-card ul{padding-left:1.1rem;}
+/* Kill any leftover hero/blob from older HTML/CSS */
+.welcome-blob, #hero, .hero-blob, .smiley, .blob, .face { display:none !important; height:0 !important; width:0 !important; }
+
