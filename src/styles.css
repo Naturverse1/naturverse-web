@@ -1,3 +1,4 @@
+@import "./styles/navatar.css";
 :root { --ink:#0b2545; --muted:#6b7280; --card:#f6f7fb; --ring:#dbe2ef; }
 *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto}
 .wrap{max-width:1120px;margin:0 auto;padding:16px}
