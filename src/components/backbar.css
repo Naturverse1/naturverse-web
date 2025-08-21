@@ -1,0 +1,9 @@
+.nv-backbar{
+  max-width: 1120px; margin: 0 auto; padding: .5rem 1rem 0;
+  display:flex; align-items:center; gap:.5rem; color:#20323a;
+}
+.nv-backbar__btn,.nv-backbar__home{
+  width:34px; height:34px; display:grid; place-items:center;
+  border-radius:.55rem; text-decoration:none; background:#ffffff; border:1px solid rgba(0,0,0,.08);
+}
+.nv-backbar__title{ font-weight:800; margin-left:.25rem; }
