@@ -1,17 +1,14 @@
 # Node
 node_modules
+package-lock.json
 
-# Local env
+# Environment files
+.env
+.env.*
 .dev.vars
 .env.local
 
-# env
-.env
-.env.*
-
-# Ignore build output and stray routes
-dist
+# Build output
+/dist
+/.netlify
 dist/_routes.json
-
-# keep lockfile for reliable Netlify builds
-# (do NOT ignore package-lock.json)
