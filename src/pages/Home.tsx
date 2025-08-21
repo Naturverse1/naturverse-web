@@ -3,13 +3,13 @@ import { Link } from "react-router-dom";
 const cards = [
   { to: "/worlds", title: "Worlds", desc: "Travel the 14 magical kingdoms.", emoji: "🗺️" },
   { to: "/zones", title: "Zones", desc: "Arcade, Music, Wellness, Creator Lab, Stories, Quizzes.", emoji: "🕹️🎵🧘" },
-  { to: "/marketplace", title: "Marketplace", desc: "Wishlist, catalog, checkout.", emoji: "🧺" },
+  { to: "/marketplace", title: "Marketplace", desc: "Wishlist, catalog, checkout, NATUR coin.", emoji: "🧺" },
   { to: "/naturversity", title: "Naturversity", desc: "Teachers, partners, courses.", emoji: "🎓" },
-  { to: "/naturbank", title: "Naturbank", desc: "Wallets, $NATUR token, crypto basics, NFTs.", emoji: "🪙" },
-  { to: "/navatar", title: "Navatar", desc: "Create your character.", emoji: "🧩" },
+  { to: "/naturbank", title: "Naturbank", desc: "Wallets, $NATUR token, NFTs, crypto basics.", emoji: "🪙" },
+  { to: "/navatar", title: "Navatar", desc: "Create your character & card.", emoji: "🧩" },
   { to: "/passport", title: "Passport", desc: "Stamps, badges, XP & coins.", emoji: "🛂" },
   { to: "/turian", title: "Turian", desc: "AI guide for tips & quests.", emoji: "🦉" },
-  { to: "/profile", title: "Profile", desc: "Your account and saved navatar.", emoji: "👤" },
+  { to: "/profile", title: "Profile", desc: "Your account & saved navatar.", emoji: "👤" }
 ];
 
 export default function Home() {

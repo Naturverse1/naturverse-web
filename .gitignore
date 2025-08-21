@@ -1,14 +1,6 @@
-# Node
 node_modules
-package-lock.json
-
-# Environment files
+dist
+.vite
+.DS_Store
 .env
 .env.*
-.dev.vars
-.env.local
-
-# Build output
-/dist
-/.netlify
-dist/_routes.json
