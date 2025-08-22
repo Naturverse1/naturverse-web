@@ -9,8 +9,8 @@ type HubCardProps = {
 
 export default function HubCard({ to, emoji, title, sub }: HubCardProps) {
   return (
-    <Link to={to} className="hub-card" aria-label={`${title}${sub ? ` – ${sub}` : ''}`}>
-      <div className="hub-title">
+    <Link to={to} className="hub-card card" aria-label={`${title}${sub ? ` – ${sub}` : ''}`}>
+      <div className="hub-title card-header">
         <span className="hub-emoji" aria-hidden>
           {emoji}
         </span>

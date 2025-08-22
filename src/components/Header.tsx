@@ -45,6 +45,7 @@ export default function Header() {
                 alt="Turian Media"
                 className="site-logo"
               />
+              <span className="site-title">Naturverse</span>
             </a>
 
           <div className="nv-right">
