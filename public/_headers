@@ -1,6 +1,6 @@
-/index.html
-  Cache-Control: no-store
-
 /*
   Cache-Control: public, max-age=600
-
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: no-referrer-when-downgrade
+  Permissions-Policy: camera=(), microphone=(), geolocation=()

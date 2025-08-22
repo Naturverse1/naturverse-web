@@ -2,34 +2,38 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <link rel="icon" href="/turian-favicon-32.png" />
+    <link rel="apple-touch-icon" href="/turian-favicon-192.png" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
-      <!-- Turian head favicons -->
-      <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-      <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
-      <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
-      <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
-      <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
-      <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png" />
-      <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png" />
-      <link rel="apple-touch-icon" sizes="180x180" href="/favicon-256x256.png" />
-      <meta name="theme-color" content="#0ea5e9" />
+
+    <meta name="description" content="Naturverse — playful worlds, zones, and learning quests." />
+    <meta property="og:title" content="Naturverse" />
+    <meta property="og:description" content="Explore worlds, play in zones, and learn as you go." />
+    <meta property="og:type" content="website" />
+    <meta property="og:image" content="/turian-favicon-192.png" />
+    <meta name="twitter:card" content="summary" />
+
+    <script>
+      // mark active top-nav links at runtime (no router dependency)
+      document.addEventListener('DOMContentLoaded', () => {
+        try {
+          const here = location.pathname.replace(/\/+$/, '') || '/';
+          document.querySelectorAll('a[data-topnav]').forEach(a => {
+            const href = (a.getAttribute('href') || '').replace(/\/+$/, '') || '/';
+            if (href === here || (href !== '/' && here.startsWith(href))) {
+              a.classList.add('active');
+              a.setAttribute('aria-current','page');
+            }
+          });
+          // lazy attribute for all images without one
+          document.querySelectorAll('img:not([loading])').forEach(img => img.setAttribute('loading', 'lazy'));
+        } catch {}
+      });
+    </script>
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    <!-- safety: purge stray blobs injected by old builds -->
-    <script>
-      (function () {
-        const killers = ['welcome-blob', 'hero-blob', 'hero', 'blob', 'face', 'smiley'];
-        killers.forEach((id) => {
-          const el = document.getElementById(id);
-          if (el) el.remove();
-        });
-        document
-          .querySelectorAll(killers.map((k) => '.' + k).join(','))
-          .forEach((el) => el.remove());
-      })();
-    </script>
   </body>
 </html>

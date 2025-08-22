@@ -16,3 +16,11 @@
 }
 
 @import "./styles/home.css";
+@import "./styles/skeleton.css";
+@import "./styles/cards-unify.css";
+
+/* top-nav active state (add data-topnav on anchors) */
+a.active{color:#0ea5e9; font-weight:800}
+
+/* centered page wrapper helper */
+.page-wrap{max-width:1100px;margin:0 auto;padding:0 16px}
