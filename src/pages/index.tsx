@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from "react-router-dom";
 
 export default function Home() {
   return (
@@ -20,8 +21,9 @@ export default function Home() {
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
         </p>
         <div className="hero-cta">
-          <a className="btn btn-primary" href="/signup">Create account</a>
-          <a className="btn" href="/worlds">Explore Worlds</a>
+          <Link className="btn primary" to="/signup">Create account</Link>
+          <Link className="btn primary" to="/worlds">Explore Worlds</Link>
+          {/* buttons keep .primary class for blue styling */}
         </div>
       </section>
 
@@ -95,8 +97,8 @@ export default function Home() {
       <section className="home-cta">
         <h2>Ready to join the journey?</h2>
         <div className="hero-cta">
-          <a className="btn btn-primary" href="/signup">Sign up free</a>
-          <a className="btn" href="/signin">Sign in</a>
+          <Link className="btn primary" to="/signup">Sign up free</Link>
+          <Link className="btn" to="/signin">Sign in</Link>
         </div>
       </section>
     </main>

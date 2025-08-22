@@ -1,3 +1,54 @@
+/* Brand tokens */
+:root{
+  /* Brand */
+  --brand: #0f766e;
+  --brand-blue-600: #0284c7;     /* primary CTA */
+  --brand-blue-700: #0369a1;
+  --brand-blue-800: #075985;
+
+  /* Text */
+  --ink: #111827;
+  --ink-2: #374151;
+  --bg: #f8fafc;
+  --card: #ffffff;
+  --ring: rgba(2,132,199,.18);
+  --radius: 14px;
+  --gap: 16px;
+}
+
+/* Buttons (shared) */
+.btn, button.btn, a.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  border-radius:12px;padding:.75rem 1rem;font-weight:700;
+  text-decoration:none;gap:.5rem;border:0;cursor:pointer;
+  transition:transform .05s ease, filter .15s ease, background-color .15s ease;
+}
+.btn:active{ transform:translateY(1px); }
+
+/* Primary (blue) */
+.btn.primary, button.btn.primary, a.btn.primary{
+  background:var(--brand-blue-600);color:#fff;
+}
+.btn.primary:hover{ background:var(--brand-blue-700); }
+.btn.primary:active{ background:var(--brand-blue-800); }
+
+/* Secondary (outline) */
+.btn.ghost{ background:#eef2f7;color:var(--ink); }
+.btn.ghost:hover{ filter:brightness(1.03); }
+
+/* Hero CTA fallback (if a page didn't use .btn classes) */
+.hero .actions a,
+.hero .actions button{
+  background:var(--brand-blue-600) !important;
+  color:#fff !important;
+  border:0 !important;
+  border-radius:12px !important;
+  padding:.75rem 1rem !important;
+  font-weight:700 !important;
+}
+.hero .actions a:hover,
+.hero .actions button:hover{ background:var(--brand-blue-700) !important; }
+
 /* Containers & cards */
 .container{max-width:1200px;margin:0 auto;padding:24px 16px}
 .card{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:16px}
