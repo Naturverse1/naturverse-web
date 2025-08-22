@@ -51,7 +51,7 @@ export default function Quizzes() {
   };
 
   return (
-    <div>
+    <main id="main">
       <Breadcrumbs />
       <h1>🎯 Quizzes</h1>
       <p>Solo & party quiz play with scoring (client-only; no backend).</p>
@@ -160,6 +160,6 @@ export default function Quizzes() {
           </ul>
         </section>
       )}
-    </div>
+    </main>
   );
 }

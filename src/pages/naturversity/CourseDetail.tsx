@@ -9,12 +9,12 @@ export default function CourseDetail() {
   const [enrolled, setEnrolled] = useState<string[]>(loadEnrollments());
   const [done, setDone] = useState<string[]>(loadProgress(slug));
 
-  if (!course) return <div><h1>Course</h1><p>Not found.</p></div>;
+  if (!course) return <main id="main"><h1>Course</h1><p>Not found.</p></main>;
 
   const on = enrolled.includes(course.slug);
 
   return (
-    <div>
+    <main id="main">
       <h1>{course.emoji ?? "📘"} {course.title}</h1>
       <p className="lead">{course.summary}</p>
       <div className="row">
@@ -50,7 +50,7 @@ export default function CourseDetail() {
       </div>
 
       <p className="meta">Lessons, video, and AI tutoring connect here later.</p>
-    </div>
+    </main>
   );
 }
 

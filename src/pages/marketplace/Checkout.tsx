@@ -8,7 +8,7 @@ export default function CheckoutPage() {
   const [code, setCode] = useState(cart.state.coupon ?? "");
 
   return (
-    <div className="checkout">
+    <main id="main" className="checkout">
       <h1>Checkout</h1>
 
       {!cart.state.items.length && (
@@ -66,6 +66,6 @@ export default function CheckoutPage() {
           </div>
         </>
       )}
-    </div>
+    </main>
   );
 }

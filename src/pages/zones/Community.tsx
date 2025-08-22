@@ -130,7 +130,7 @@ export default function Community() {
   };
 
   return (
-    <div>
+    <main id="main">
       <Breadcrumbs />
       <h1>🗳️🌍 Community</h1>
       <p>Vote for new lands & characters, and join local volunteer events.</p>
@@ -289,6 +289,6 @@ export default function Community() {
           </ul>
         </section>
       )}
-    </div>
+    </main>
   );
 }

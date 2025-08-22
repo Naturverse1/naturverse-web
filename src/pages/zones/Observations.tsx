@@ -144,7 +144,7 @@ export default function Observations() {
   }, [list]);
 
   return (
-    <div>
+    <main id="main">
       <Breadcrumbs />
       <h1>📷🌿 Observations</h1>
       <p>Upload nature pics; tag, learn, earn. (Local & offline; data stays in your browser.)</p>
@@ -340,6 +340,6 @@ export default function Observations() {
           </ul>
         </section>
       )}
-    </div>
+    </main>
   );
 }

@@ -8,7 +8,7 @@ const items = [
 
 export default function NFTs() {
   return (
-    <div>
+    <main id="main">
       <h1>🖼️ NFTs</h1>
       <p>Preview collectibles. Minting connects later.</p>
       <div className="hub-grid">
@@ -21,6 +21,6 @@ export default function NFTs() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

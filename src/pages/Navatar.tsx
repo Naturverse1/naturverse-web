@@ -62,7 +62,7 @@ export default function NavatarPage() {
   }
 
   return (
-    <div className="wrap">
+    <main id="main" className="wrap">
       <h1>Navatar Creator</h1>
       <p>Choose a base type, customize details, and save your character card.</p>
 
@@ -157,6 +157,6 @@ export default function NavatarPage() {
         .linklike{background:none;border:none;padding:0;color:#0b62d6;cursor:pointer}
         .note{opacity:.75;margin-top:24px}
       `}</style>
-    </div>
+    </main>
   );
 }

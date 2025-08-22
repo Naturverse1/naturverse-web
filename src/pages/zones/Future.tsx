@@ -3,7 +3,7 @@ import { Breadcrumbs } from "../../components/Breadcrumbs";
 
 export default function FutureZone() {
   return (
-    <div className="page">
+    <main id="main" className="page">
       <Breadcrumbs />
 
       <h1>🔮 Future Zone</h1>
@@ -48,7 +48,7 @@ export default function FutureZone() {
           <p>NATUR wallet, trading, redemptions, and seasonal global events.</p>
         </a>
       </div>
-    </div>
+    </main>
   );
 }
 
