@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useState } from "react";
 
 const LINKS = [
   { href: "/worlds", label: "Worlds" },
@@ -14,95 +14,66 @@ const LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const btnRef = useRef<HTMLButtonElement>(null);
-  const menuRef = useRef<HTMLDivElement>(null);
-
-  // close on outside click / escape
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (!open) return;
-      const t = e.target as Node;
-      if (!menuRef.current?.contains(t) && !btnRef.current?.contains(t)) {
-        setOpen(false);
-      }
-    };
-    const onEsc = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setOpen(false);
-    };
-    document.addEventListener("mousedown", onDoc);
-    document.addEventListener("keydown", onEsc);
-    return () => {
-      document.removeEventListener("mousedown", onDoc);
-      document.removeEventListener("keydown", onEsc);
-    };
-  }, [open]);
 
   return (
-    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
-      <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
-        {/* Brand (left) — always links home */}
-        <a href="/" aria-label="Naturverse home" className="flex items-center gap-2 shrink-0">
-          {/* inline durian glyph (keeps build image-free) */}
-          <span aria-hidden className="inline-block h-6 w-6 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
-          <span className="font-semibold tracking-tight">Naturverse</span>
+    <header className="site-header">
+      <div className="site-header__inner">
+        {/* Brand (left) — links home */}
+        <a href="/" className="brand" aria-label="Naturverse home">
+          <span className="brand__logo" aria-hidden="true">
+            {/* inline durian dot — tiny, not the big face */}
+            <svg width="22" height="22" viewBox="0 0 24 24" role="img">
+              <defs>
+                <linearGradient id="dv" x1="0" y1="0" x2="1" y2="1">
+                  <stop offset="0" stopColor="#34d399" />
+                  <stop offset="1" stopColor="#16a34a" />
+                </linearGradient>
+              </defs>
+              <circle cx="12" cy="12" r="10" fill="url(#dv)" />
+              <path d="M6 12l3-3m9 0l-3 3m-6 6l3-3m3 3l-3-3" stroke="#065f46" strokeWidth="1.5" strokeLinecap="round"/>
+            </svg>
+          </span>
+          <span className="brand__name">Naturverse</span>
         </a>
 
-        {/* Desktop nav */}
-        <nav className="hidden md:flex items-center gap-4">
+        {/* Desktop nav (right) */}
+        <nav className="main-nav md:flex hidden">
           {LINKS.map((l) => (
-            <a
-              key={l.href}
-              href={l.href}
-              className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700"
-            >
+            <a key={l.href} href={l.href} className="main-nav__link">
               {l.label}
             </a>
           ))}
         </nav>
 
-        {/* Mobile menu button + dropdown */}
-        <div className="relative md:hidden">
-          <button
-            ref={btnRef}
-            type="button"
-            aria-label="Open menu"
-            aria-haspopup="menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-            className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-slate-300 hover:bg-slate-50"
-          >
-            <span className="sr-only">Menu</span>
-            {/* hamburger */}
-            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
-              <path d="M4 7h16M4 12h16M4 17h16" stroke="#0f172a" strokeWidth="2" strokeLinecap="round"/>
-            </svg>
-          </button>
+        {/* Mobile toggle (right) */}
+        <button
+          type="button"
+          className="hamburger md:hidden"
+          aria-label="Open menu"
+          aria-expanded={open}
+          onClick={() => setOpen((v) => !v)}
+        >
+          <span />
+          <span />
+          <span />
+        </button>
+      </div>
 
-          {/* Compact dropdown under the button (no drawer) */}
-          <div
-            ref={menuRef}
-            role="menu"
-            aria-label="Main"
-            className={`absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white shadow-lg ${
-              open ? "block" : "hidden"
-            }`}
+      {/* Mobile drawer */}
+      <div className={`mobile-menu md:hidden ${open ? "open" : ""}`} role="menu">
+        {LINKS.map((l) => (
+          <a
+            key={l.href}
+            href={l.href}
+            className="mobile-menu__link"
+            role="menuitem"
+            onClick={() => setOpen(false)}
           >
-            <ul className="py-1">
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <a
-                    href={l.href}
-                    className="block px-3 py-2 text-slate-800 hover:bg-slate-100"
-                    onClick={() => setOpen(false)}
-                  >
-                    {l.label}
-                  </a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        </div>
+            {l.label}
+          </a>
+        ))}
       </div>
     </header>
   );
 }
+
