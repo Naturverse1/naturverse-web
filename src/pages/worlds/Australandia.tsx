@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Australandia() {
   return (
-    <WorldLayout
-      title="🌏 Australandia"
-      blurb="Welcome to Australandia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Australandia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Australandia"
+      intro="Welcome to Australandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Australandia/Australandiemap.png"
     />
   );
 }
+

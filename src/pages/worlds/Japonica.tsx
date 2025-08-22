@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Japonica() {
   return (
-    <WorldLayout
-      title="🌏 Japonica"
-      blurb="Welcome to Japonica — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Japonica/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Japonica"
+      intro="Welcome to Japonica — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Japonica/Japonicamap.png"
     />
   );
 }
+

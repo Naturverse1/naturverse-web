@@ -3,8 +3,8 @@ import { Course, Partner, Teacher } from "./types";
 export const TEACHERS: Teacher[] = [
   { id: "thai-lin", name: "Lin", kingdom: "Thailandia", specialty: "Mangrove ecology" },
   { id: "brazil-luz", name: "Luz", kingdom: "Brazilandia", specialty: "Macaw conservation" },
-  { id: "indira", name: "Indira", kingdom: "Indilandia", specialty: "Urban gardens" },
-  { id: "ama-kofi", name: "Kofi", kingdom: "Africania", specialty: "Savanna trackers" },
+  { id: "indira", name: "Indira", kingdom: "Indillandia", specialty: "Urban gardens" },
+  { id: "ama-kofi", name: "Kofi", kingdom: "Africana", specialty: "Savanna trackers" },
   { id: "kiwi-ari", name: "Ari", kingdom: "Kiwilandia", specialty: "Alpine fungi" },
 ];
 

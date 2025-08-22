@@ -1,18 +1,18 @@
 export const worlds = [
   { slug: "thailandia",   title: "Thailandia",   emoji: "🐘🪷", blurb: "Coconuts & Elephants" },
   { slug: "brazilandia",  title: "Brazilandia",  emoji: "🍌🦜", blurb: "Bananas & Parrots" },
-  { slug: "indilandia",   title: "Indilandia",   emoji: "🥭🐯", blurb: "Mangoes & Tigers" },
+  { slug: "indillandia",  title: "Indillandia",  emoji: "🥭🐯", blurb: "Mangoes & Tigers" },
   { slug: "amerilandia",  title: "Amerilandia",  emoji: "🍎🦅", blurb: "Apples & Eagles" },
   { slug: "australandia", title: "Australandia", emoji: "🍑🦘", blurb: "Peaches & Kangaroos" },
   { slug: "chilandia",    title: "Chilandia",    emoji: "🎍🐼", blurb: "Bamboo (shoots) & Pandas" },
   { slug: "japonica",     title: "Japonica",     emoji: "🌸🦊", blurb: "Cherry Blossoms & Foxes" },
-  { slug: "africania",    title: "Africania",    emoji: "🍋🦁", blurb: "Lemons & Lions" },
+  { slug: "africana",     title: "Africana",     emoji: "🍋🦁", blurb: "Lemons & Lions" },
   { slug: "europalia",    title: "Europalia",    emoji: "🌻🦔", blurb: "Sunflowers & Hedgehogs" },
   { slug: "britannula",   title: "Britannula",   emoji: "🌹🦔", blurb: "Roses & Hedgehogs" },
-  { slug: "kiwlandia",    title: "Kiwlandia",    emoji: "🥝🐑", blurb: "Kiwis & Sheep" },
+  { slug: "kiwilandia",   title: "Kiwilandia",   emoji: "🥝🐑", blurb: "Kiwis & Sheep" },
   { slug: "madagascaria", title: "Madagascaria", emoji: "🍋🦥", blurb: "Lemons & Lemurs" },
   { slug: "greenlandia",  title: "Greenlandia",  emoji: "🧊🐧", blurb: "Ice & Polar Bears" },
-  { slug: "antarcticland",title: "Antarcticland",emoji: "❄️🐧", blurb: "Ice Crystals & Penguins" },
+  { slug: "antarctiland", title: "Antarctiland", emoji: "❄️🐧", blurb: "Ice Crystals & Penguins" },
 ];
 
 export const zones = [

@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Europalia() {
   return (
-    <WorldLayout
-      title="🌏 Europalia"
-      blurb="Welcome to Europalia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Europalia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Europalia"
+      intro="Welcome to Europalia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Europalia/Europaliamap.png"
     />
   );
 }
+

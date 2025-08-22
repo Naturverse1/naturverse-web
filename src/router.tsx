@@ -5,18 +5,18 @@ import Home from "./routes";
 import WorldsIndex from "./pages/worlds";
 import Thailandia from "./pages/worlds/Thailandia";
 import Brazilandia from "./pages/worlds/Brazilandia";
-import Indilandia from "./pages/worlds/Indilandia";
+import Indillandia from "./pages/worlds/Indillandia";
 import Amerilandia from "./pages/worlds/Amerilandia";
 import Australandia from "./pages/worlds/Australandia";
 import Chilandia from "./pages/worlds/Chilandia";
 import Japonica from "./pages/worlds/Japonica";
-import Africania from "./pages/worlds/Africania";
+import Africana from "./pages/worlds/Africana";
 import Europalia from "./pages/worlds/Europalia";
 import Britannula from "./pages/worlds/Britannula";
 import Kiwilandia from "./pages/worlds/Kiwilandia";
 import Madagascaria from "./pages/worlds/Madagascaria";
 import Greenlandia from "./pages/worlds/Greenlandia";
-import Antarcticland from "./pages/worlds/Antarcticland";
+import Antarctiland from "./pages/worlds/Antarctiland";
 import World from "./routes/worlds/World";
 import Zones from "./routes/zones";
 import ArcadeZone from "./routes/zones/arcade";
@@ -57,18 +57,18 @@ export const router = createBrowserRouter([
       { path: "worlds", element: <WorldsIndex /> },
       { path: "worlds/thailandia", element: <Thailandia /> },
       { path: "worlds/brazilandia", element: <Brazilandia /> },
-      { path: "worlds/indilandia", element: <Indilandia /> },
+      { path: "worlds/indillandia", element: <Indillandia /> },
       { path: "worlds/amerilandia", element: <Amerilandia /> },
       { path: "worlds/australandia", element: <Australandia /> },
       { path: "worlds/chilandia", element: <Chilandia /> },
       { path: "worlds/japonica", element: <Japonica /> },
-      { path: "worlds/africania", element: <Africania /> },
+      { path: "worlds/africana", element: <Africana /> },
       { path: "worlds/europalia", element: <Europalia /> },
       { path: "worlds/britannula", element: <Britannula /> },
       { path: "worlds/kiwilandia", element: <Kiwilandia /> },
       { path: "worlds/madagascaria", element: <Madagascaria /> },
       { path: "worlds/greenlandia", element: <Greenlandia /> },
-      { path: "worlds/antarcticland", element: <Antarcticland /> },
+      { path: "worlds/antarctiland", element: <Antarctiland /> },
       { path: "worlds/:slug", element: <World /> },
       { path: "zones", element: <Zones /> },
       { path: "zones/arcade", element: <ArcadeZone /> },

@@ -13,7 +13,7 @@ const write = (v: Msg[]) => { try { localStorage.setItem(K, JSON.stringify(v.sli
 const SUGGESTIONS: { section: string; items: string[] }[] = [
   { section: "Worlds", items: [
     "Give me a 3-stop itinerary for Thailandia.",
-    "Fun facts about penguins in Antarcticland.",
+    "Fun facts about penguins in Antarctiland.",
     "Create a scavenger list for Europalia."
   ]},
   { section: "Zones", items: [

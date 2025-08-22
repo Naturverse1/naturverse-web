@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Brazilandia() {
   return (
-    <WorldLayout
-      title="🌏 Brazilandia"
-      blurb="Welcome to Brazilandia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Brazilandia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Brazilandia"
+      intro="Welcome to Brazilandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Brazilandia/Brazilandiamap.png"
     />
   );
 }
+

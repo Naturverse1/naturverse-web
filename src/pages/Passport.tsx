@@ -5,10 +5,10 @@ import { getStamps, toggleStamp, getBadges, addBadge, getXP, addXP, getNatur, ad
 import Page from "../components/Page";
 
 const KINGDOMS = [
-  "Thailandia","Brazilandia","Indilandia","Amerilandia",
-  "Australandia","Chilandia","Japonica","Africania",
+  "Thailandia","Brazilandia","Indillandia","Amerilandia",
+  "Australandia","Chilandia","Japonica","Africana",
   "Europalia","Britannula","Kiwilandia","Madagascaria",
-  "Greenlandia","Antarcticland"
+  "Greenlandia","Antarctiland"
 ];
 
 export default function PassportPage() {

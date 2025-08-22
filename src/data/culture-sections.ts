@@ -100,9 +100,9 @@ export const CULTURE_SECTIONS: CultureSection[] = [
     ]
   },
   {
-    id: "africania",
+    id: "africana",
     emoji: "🦁🥁",
-    kingdom: "Africania",
+    kingdom: "Africana",
     caption: "Mangoes & Lions",
     beliefs: [
       "Elders’ wisdom, drums, and star navigation.",

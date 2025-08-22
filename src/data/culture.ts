@@ -100,9 +100,9 @@ export const cultureData: CultureItem[] = [
     ]
   },
   {
-    id: "africania",
+    id: "africana",
     emoji: "🦁🥁",
-    title: "Africania",
+    title: "Africana",
     blurb: "Mangoes & Lions",
     beliefs: [
       "Elders’ wisdom, drums, and star navigation.",
