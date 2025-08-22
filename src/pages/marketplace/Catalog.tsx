@@ -1,7 +1,8 @@
 import React, { useMemo, useState } from "react";
 import { CATALOG } from "../../lib/shop/data";
-import { addToCart, loadWishlist, toggleWish } from "../../lib/shop/store";
+import { loadWishlist, toggleWish } from "../../lib/shop/store";
 import { Item } from "../../lib/shop/types";
+import AddToCartButton from "../../components/cart/AddToCartButton";
 
 export default function Catalog() {
   const [wish, setWish] = useState<string[]>(loadWishlist());
@@ -55,10 +56,12 @@ export default function Catalog() {
                     onClick={()=>setWish(toggleWish(it.id))}
                     aria-pressed={wished}
                   >♥</button>
-                  <button
-                    className="btn tiny"
-                    onClick={()=>addToCart(it.id, 1)}
-                  >Add</button>
+                  <AddToCartButton
+                    id={it.id}
+                    name={it.name}
+                    price={it.price.amount * 100}
+                    image={it.image}
+                  />
                 </div>
               </div>
             </div>

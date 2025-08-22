@@ -1,49 +1,71 @@
-import React, { useMemo, useState } from "react";
-import { CATALOG } from "../../lib/shop/data";
-import { clearCart, loadCart, removeLine, setQty } from "../../lib/shop/store";
+import React, { useState } from "react";
+import { useCart } from "../../cart/CartProvider";
 
-export default function Checkout() {
-  const [cart, setCart] = useState(loadCart());
+const money = (cents: number) => `$${(cents/100).toFixed(2)}`;
 
-  const lines = useMemo(() => cart.map(l => ({ ...l, item: CATALOG.find(i => i.id === l.id)! })), [cart]);
-  const total = useMemo(() => lines.reduce((s,x)=> s + (x.item.price.amount * x.qty), 0), [lines]);
-
-  const pay = () => {
-    // Simulated checkout: clear & thank you.
-    clearCart(); setCart([]);
-    alert("Thanks! This is a demo checkout.");
-  };
+export default function CheckoutPage() {
+  const cart = useCart();
+  const [code, setCode] = useState(cart.state.coupon ?? "");
 
   return (
-    <div>
-      <h1>💳 Checkout</h1>
-      {lines.length === 0 ? (
-        <p>Your cart is empty.</p>
-      ) : (
+    <div className="checkout">
+      <h1>Checkout</h1>
+
+      {!cart.state.items.length && (
+        <p className="muted">Your cart is empty.</p>
+      )}
+
+      {!!cart.state.items.length && (
         <>
-          <div className="shop-list">
-            {lines.map(l => (
-              <div key={l.id} className="shop-row-card">
-                <div className="shop-image sm">{l.item.image ?? "📦"}</div>
-                <div className="grow">
-                  <div className="shop-title">{l.item.name}</div>
-                  <div className="shop-desc">${l.item.price.amount} · {l.item.tag}</div>
+          <ul className="cart-list">
+            {cart.state.items.map(it => (
+              <li key={`${it.id}:${it.variant || ""}`} className="cart-row">
+                <img src={it.image || "/placeholders/box.png"} alt={it.name}/>
+                <div className="meta">
+                  <strong>{it.name}</strong>
+                  {it.variant && <div className="muted">{it.variant}</div>}
+                  <div className="muted">{money(it.price)}</div>
                 </div>
                 <div className="qty">
-                  <button className="btn tiny outline" onClick={()=>{ setCart(setQty(l.id, Math.max(0, l.qty-1))); }}>−</button>
-                  <span aria-live="polite" className="q">{l.qty}</span>
-                  <button className="btn tiny outline" onClick={()=>{ setCart(setQty(l.id, l.qty+1)); }}>＋</button>
+                  <button onClick={() => cart.dec(it.id, it.variant)} aria-label="Decrease">−</button>
+                  <input value={it.qty} onChange={(e)=>cart.setQty(it.id, Math.max(1, Number(e.target.value)||1), it.variant)} />
+                  <button onClick={() => cart.inc(it.id, it.variant)} aria-label="Increase">+</button>
                 </div>
-                <button className="btn tiny danger" onClick={()=>{ setCart(removeLine(l.id)); }}>Remove</button>
-              </div>
+                <div className="line">{money(it.price * it.qty)}</div>
+                <button className="remove" onClick={() => cart.remove(it.id, it.variant)} aria-label="Remove">✕</button>
+              </li>
             ))}
+          </ul>
+
+          <div className="notes">
+            <label>
+              Order note
+              <textarea placeholder="Gift message, delivery notes…" value={cart.state.note || ""} onChange={(e)=>cart.setNote(e.target.value)} />
+            </label>
           </div>
-          <div className="checkout-total">Total: <strong>${total.toFixed(2)}</strong></div>
-          <button className="btn" onClick={pay}>Pay (demo)</button>
-          <p className="meta">Coming soon: shipping, NATUR coin, and AI shopping assistant.</p>
+
+          <div className="coupon">
+            <label>
+              Promo code
+              <input value={code} onChange={(e)=>setCode(e.target.value)} placeholder="Optional"/>
+            </label>
+            <button onClick={()=>cart.setCoupon(code.trim() || null)}>Apply</button>
+          </div>
+
+          <div className="totals">
+            <div><span>Subtotal</span><span>{money(cart.totals.subtotal)}</span></div>
+            {!!cart.totals.discount && <div><span>Discount</span><span>−{money(cart.totals.discount)}</span></div>}
+            <div><span>Tax</span><span>{money(cart.totals.tax)}</span></div>
+            <div><span>Shipping</span><span>{cart.totals.shipping ? money(cart.totals.shipping) : "Free"}</span></div>
+            <div className="grand"><span>Total</span><span>{money(cart.totals.total)}</span></div>
+          </div>
+
+          <div className="actions">
+            <button className="btn-secondary" onClick={cart.clear}>Clear cart</button>
+            <button className="btn-primary">Pay later (stub)</button>
+          </div>
         </>
       )}
     </div>
   );
 }
-
