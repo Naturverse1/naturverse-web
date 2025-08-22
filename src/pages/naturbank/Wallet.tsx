@@ -8,7 +8,7 @@ export default function Wallet() {
   const create = () => { const nw = createDemoWallet(); setW(nw); setBal(getBalance()); };
 
   return (
-    <div>
+    <main id="main">
       <h1>🪪 Wallet</h1>
       {!w ? (
         <div className="panel">
@@ -31,6 +31,6 @@ export default function Wallet() {
         </div>
       )}
       <p className="meta">Real wallet connect arrives later.</p>
-    </div>
+    </main>
   );
 }

@@ -9,7 +9,7 @@ export default function Wishlist() {
   const items = CATALOG.filter(i => ids.includes(i.id));
 
   return (
-    <div>
+    <main id="main">
       <h1>❤️ Wishlist</h1>
       {items.length === 0 && <p>No favorites yet. Add some from the Catalog.</p>}
       <div className="shop-list">
@@ -27,7 +27,7 @@ export default function Wishlist() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 

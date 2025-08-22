@@ -3,7 +3,7 @@ import { HubGrid } from "../components/HubGrid";
 
 export default function MarketplacePage() {
   return (
-    <div>
+    <main id="main">
       <h1>Marketplace</h1>
       <p className="muted">Shop creations and merch.</p>
 
@@ -18,6 +18,6 @@ export default function MarketplacePage() {
       <p className="muted" style={{ marginTop: 12 }}>
         Coming soon: AI assistance for sizing, bundles, and gift ideas.
       </p>
-    </div>
+    </main>
   );
 }

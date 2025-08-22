@@ -9,7 +9,7 @@ export default function WorldLayout({ id }: Props) {
   const folder = k.title; // TitleCase matches your public folder name
 
   return (
-    <div className="world-wrap">
+    <main id="main" className="world-wrap">
       <h1 className="world-title">{k.title}</h1>
 
       {/* Map hero */}
@@ -60,6 +60,6 @@ export default function WorldLayout({ id }: Props) {
           </ul>
         )}
       </section>
-    </div>
+    </main>
   );
 }

@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Home() {
   return (
-    <main className="home">
+    <main id="main" className="home">
       {/* Hero */}
       <section className="home-hero">
         <div className="home-hero-badge">

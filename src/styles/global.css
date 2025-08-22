@@ -21,3 +21,54 @@ svg[aria-label="hero-face"],
   object-fit: contain;
   display: block;
 }
+
+:root{
+  --cta-bg:#1e90ff;
+  --cta-bg-hover:#1677d8;
+  --cta-fg:#ffffff;
+}
+
+/* CTA buttons (home hero, generic .btn-primary) */
+.btn-primary,
+.cta {
+  background: var(--cta-bg);
+  color: var(--cta-fg);
+  border: none;
+}
+.btn-primary:hover,
+.cta:hover { background: var(--cta-bg-hover); }
+
+/* Mobile top nav: scrollable row, no wrap */
+.topnav {
+  display:flex;
+  gap:16px;
+  overflow-x:auto;
+  white-space:nowrap;
+  -webkit-overflow-scrolling:touch;
+  scrollbar-width:none;
+}
+.topnav::-webkit-scrollbar { display:none; }
+
+/* Highlight active route */
+.topnav a.active {
+  font-weight:700;
+  text-decoration:underline;
+  text-underline-offset: 4px;
+}
+
+/* Skip to content */
+.skip-link {
+  position:absolute;
+  left:-9999px;
+  top:auto;
+  width:1px; height:1px;
+  overflow:hidden;
+}
+.skip-link:focus {
+  left:16px; top:12px;
+  width:auto; height:auto;
+  padding:8px 12px;
+  background:#000; color:#fff;
+  border-radius:8px;
+  z-index:1000;
+}

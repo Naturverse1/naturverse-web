@@ -25,7 +25,7 @@ export default function Catalog() {
   );
 
   return (
-    <div>
+    <main id="main">
       <h1>🛍️ Catalog</h1>
       <p>Browse items. Add to wishlist or cart.</p>
 
@@ -70,7 +70,7 @@ export default function Catalog() {
       </div>
 
       <p className="meta">Note: Demo only; checkout is simulated. AI shopping help connects later.</p>
-    </div>
+    </main>
   );
 }
 

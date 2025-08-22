@@ -3,7 +3,7 @@ import { HubGrid } from "../components/HubGrid";
 
 export default function NaturversityPage() {
   return (
-    <div>
+    <main id="main">
       <h1>Naturversity</h1>
       <p className="muted">Teachers, partners, and courses.</p>
 
@@ -23,6 +23,6 @@ export default function NaturversityPage() {
       <p className="muted" style={{ marginTop: 12 }}>
         Coming soon: AI tutors and step-by-step lessons.
       </p>
-    </div>
+    </main>
   );
 }

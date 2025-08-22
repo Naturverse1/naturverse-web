@@ -11,7 +11,7 @@ export default function WorldLayout({
   children?: React.ReactNode;
 }) {
   return (
-    <div className="page-wrap">
+    <main id="main" className="page-wrap">
       <h1>{title}</h1>
       <div className="cards">
         <div className="card">
@@ -29,6 +29,6 @@ export default function WorldLayout({
         </div>
       </div>
       {children}
-    </div>
+    </main>
   );
 }

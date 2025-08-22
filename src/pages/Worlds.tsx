@@ -4,7 +4,7 @@ import { KINGDOMS } from "../content/kingdoms";
 
 export default function Worlds() {
   return (
-    <main className="container">
+    <main id="main" className="container">
       <div className="breadcrumb">Home / Worlds</div>
       <h2 className="section-title">Worlds</h2>
       <p className="section-lead">Explore the 14 kingdoms.</p>

@@ -18,7 +18,7 @@ export default function Token() {
   };
 
   return (
-    <div>
+    <main id="main">
       <h1>🪙 NATUR Token</h1>
 
       <div className="panel">
@@ -52,6 +52,6 @@ export default function Token() {
       </div>
 
       <p className="meta">Redemptions & real transactions connect here later.</p>
-    </div>
+    </main>
   );
 }

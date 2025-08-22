@@ -17,7 +17,7 @@ export default function Courses() {
   }, [q]);
 
   return (
-    <div>
+    <main id="main">
       <h1>📚 Courses</h1>
       <div className="edu-toolbar">
         <input className="input" placeholder="Search courses…" value={q} onChange={e=>setQ(e.target.value)} />
@@ -45,7 +45,7 @@ export default function Courses() {
         })}
       </div>
       <p className="meta">Coming soon: pacing plans, reminders, and AI tutors.</p>
-    </div>
+    </main>
   );
 }
 

@@ -66,7 +66,7 @@ export default function Stories() {
   };
 
   return (
-    <div>
+    <main id="main">
       <Breadcrumbs />
       <h1>📚✨ Stories</h1>
       <p>AI story paths set in all 14 kingdoms (local, no-backend version).</p>
@@ -186,6 +186,6 @@ export default function Stories() {
           </ul>
         </section>
       )}
-    </div>
+    </main>
   );
 }

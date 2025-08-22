@@ -7,7 +7,7 @@ export default function Layout({ title, breadcrumbs, children }: Props) {
   return (
     <>
       <NavBar />
-      <main className="nv-page">
+      <main id="main" className="nv-page">
         <div className="nv-container">
           {title ? <h1 className="nv-title">{title}</h1> : null}
           {breadcrumbs ? <div className="nv-breadcrumbs">{breadcrumbs}</div> : null}

@@ -3,7 +3,7 @@ import { HubGrid } from "../components/HubGrid";
 
 export default function NaturbankPage() {
   return (
-    <div>
+    <main id="main">
       <h1>Naturbank</h1>
       <p className="muted">Wallets, token, and collectibles.</p>
 
@@ -19,6 +19,6 @@ export default function NaturbankPage() {
       <p className="muted" style={{ marginTop: 12 }}>
         Coming soon: live wallets, on-chain mints, and payouts.
       </p>
-    </div>
+    </main>
   );
 }

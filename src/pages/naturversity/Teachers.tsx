@@ -14,7 +14,7 @@ export default function Teachers() {
   }, [q]);
 
   return (
-    <div>
+    <main id="main">
       <h1>👩‍🏫 Teachers</h1>
       <div className="edu-toolbar">
         <input className="input" placeholder="Search mentors…" value={q} onChange={e=>setQ(e.target.value)} />
@@ -31,7 +31,7 @@ export default function Teachers() {
           </div>
         ))}
       </div>
-    </div>
+    </main>
   );
 }
 
