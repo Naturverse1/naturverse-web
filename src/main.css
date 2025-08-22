@@ -1,3 +1,5 @@
+@import "./styles/worlds.css";
+
 .world-page{max-width:1100px;margin:0 auto;padding:16px}
 
 /* worlds grid + card shells (no images required) */
@@ -6,4 +8,3 @@
 .card-thumb{width:64px;height:64px;border-radius:12px;background:#f8fafc;display:flex;align-items:center;justify-content:center;border:1px solid #e5e7eb}
 .card-thumb .emoji{font-size:28px}
 .card-body h2{margin:0 0 4px}
-
