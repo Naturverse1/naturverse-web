@@ -1,121 +1,88 @@
 import React from "react";
+import { Link } from "react-router-dom";
+import "./home.css";
 
 export default function Home() {
   return (
     <main className="home">
-      {/* HERO */}
-      <section className="hero">
-        <div className="hero-body">
-          <h1>✨ Welcome to the Naturverse™</h1>
-          <p className="muted">
-            A playful world of kingdoms, characters, and quests that teach
-            wellness, creativity, and kindness.
-          </p>
-          <div className="cta-row">
-            <a className="btn" href="/signup">Create account</a>
-            <a className="btn ghost" href="/worlds">Explore Worlds</a>
-          </div>
+      {/* Hero */}
+      <header className="home-hero">
+        <img
+          src="/favicon-32x32.png"
+          width={28}
+          height={28}
+          className="home-hero-icon"
+          alt=""            /* decorative */
+          aria-hidden="true"
+        />
+        <h1 className="home-title">Welcome to the Naturverse™</h1>
+        <p className="home-subtitle">
+          A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
+        </p>
+        <div className="home-cta">
+          <Link className="btn btn-primary" to="/signup">Create account</Link>
+          <Link className="btn" to="/worlds">Explore Worlds</Link>
         </div>
-      </section>
+      </header>
 
-      {/* ABOUT */}
-      <section className="section">
+      {/* About */}
+      <section className="home-section">
         <h2>About us</h2>
         <p>
-          Naturverse is an all-ages media universe built by Turian Media.
-          We combine games, stories, music, and learning experiences so
-          families can play and grow together — online and off.
+          Naturverse is an all-ages media universe built by Turian Media. We combine games, stories, music, and learning
+          experiences so families can play and grow together — online and off.
         </p>
       </section>
 
-      {/* MISSION */}
-      <section className="section grid-2">
-        <div>
-          <h2>Our mission</h2>
-          <p>
-            Inspire healthy habits, spark creativity, and build resilient
-            communities through joyful characters and positive play.
-          </p>
-          <ul className="bullets">
-            <li>🧠 Grow wisdom & mindset</li>
-            <li>💪 Move your body & breathe</li>
-            <li>🎨 Create, share, and collaborate</li>
-            <li>🌍 Celebrate cultures & kindness</li>
-          </ul>
-        </div>
-        <div className="card soft">
-          <h3>Our values</h3>
-          <ul className="bullets tight">
-            <li>Safety first</li>
-            <li>Family friendly</li>
-            <li>Privacy by design</li>
-            <li>Accessible & inclusive</li>
-          </ul>
-        </div>
+      {/* Mission */}
+      <section className="home-section">
+        <h2>Our mission</h2>
+        <p>
+          Inspire healthy habits, spark creativity, and build resilient communities through joyful characters and positive play.
+        </p>
+        <ul className="home-bullets">
+          <li>🧠 Grow wisdom &amp; mindset</li>
+          <li>🏃 Move your body &amp; breathe</li>
+          <li>🎨 Create, share, and collaborate</li>
+          <li>🌍 Celebrate cultures &amp; kindness</li>
+        </ul>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="section">
+      {/* Values */}
+      <section className="home-card">
+        <h3>Our values</h3>
+        <ul>
+          <li>Safety first</li>
+          <li>Family friendly</li>
+          <li>Privacy by design</li>
+          <li>Accessible &amp; inclusive</li>
+        </ul>
+      </section>
+
+      {/* How it works */}
+      <section className="home-section">
         <h2>How it works</h2>
-        <div className="steps">
-          <div className="step">
-            <div className="num">1</div>
-            <h4>Pick a hub</h4>
-            <p>Start in Worlds, Zones, or the Marketplace.</p>
-          </div>
-          <div className="step">
-            <div className="num">2</div>
-            <h4>Choose a kingdom</h4>
-            <p>Meet local heroes and explore the map.</p>
-          </div>
-          <div className="step">
-            <div className="num">3</div>
-            <h4>Play & learn</h4>
-            <p>Quests, music, stories, and mini-games.</p>
-          </div>
-        </div>
+        <ol className="home-steps">
+          <li>Create a free account.</li>
+          <li>Pick a hub (Worlds, Zones, or Marketplace).</li>
+          <li>Play &amp; learn — explore the map, meet characters, earn badges.</li>
+        </ol>
       </section>
 
-      {/* HUBS SHORTCUTS */}
-      <section className="section">
-        <h2>Jump into a hub</h2>
-        <div className="cards four">
-          <a className="card" href="/worlds">
-            <h3>🌍 Worlds</h3>
-            <p>Travel the 14 magical kingdoms.</p>
-          </a>
-          <a className="card" href="/zones">
-            <h3>🎮 Zones</h3>
-            <p>Arcade, music, wellness, creator lab.</p>
-          </a>
-          <a className="card" href="/marketplace">
-            <h3>🛍️ Marketplace</h3>
-            <p>Wishlists, catalog, checkout.</p>
-          </a>
-          <a className="card" href="/passport">
-            <h3>📘 Passport</h3>
-            <p>Track stamps, badges, XP & coins.</p>
-          </a>
+      {/* Join + newsletter */}
+      <section className="home-join">
+        <h3>Ready to join the journey?</h3>
+        <div className="home-cta">
+          <Link className="btn btn-primary" to="/signup">Sign up free</Link>
+          <Link className="btn" to="/login">Sign in</Link>
         </div>
-      </section>
 
-      {/* CTA */}
-      <section className="section cta-block">
-        <h2>Ready to join the journey?</h2>
-        <div className="cta-row">
-          <a className="btn" href="/signup">Sign up free</a>
-          <a className="btn ghost" href="/login">Sign in</a>
-        </div>
-      </section>
-
-      {/* NEWSLETTER */}
-      <section className="section">
-        <h2>Newsletter</h2>
-        <form className="newsletter" action="#" onSubmit={(e) => e.preventDefault()}>
-          <input aria-label="Email" type="email" placeholder="you@example.com" required />
+        <form className="home-newsletter" onSubmit={(e) => e.preventDefault()}>
+          <label htmlFor="newsletter" className="sr-only">Email address</label>
+          <input id="newsletter" type="email" placeholder="you@example.com" />
           <button className="btn" type="submit">Subscribe</button>
         </form>
-        <p className="tiny muted">We send occasional updates. Unsubscribe anytime.</p>
+        <small>We send occasional updates. Unsubscribe anytime.</small>
       </section>
     </main>
   );
