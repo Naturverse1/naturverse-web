@@ -7,7 +7,18 @@ export default function Home() {
     <main className="container">
       {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
-        <h1>✨ Welcome to the Naturverse™</h1>
+        <h1>
+          <img
+            className="brandmark"
+            src="/favicon-32x32.png"
+            srcSet="/favicon-32x32.png 1x, /favicon-64x64.png 2x"
+            width={32}
+            height={32}
+            alt=""
+            aria-hidden="true"
+          />
+          Welcome to the Naturverse™
+        </h1>
         <p>Pick a hub to begin your adventure.</p>
       </header>
 
