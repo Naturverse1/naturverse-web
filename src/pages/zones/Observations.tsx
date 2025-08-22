@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Breadcrumbs } from '../../components/Breadcrumbs';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import PhotoUploader from '../../components/PhotoUploader';
 import { Observation } from '../../lib/observations/types';
 import {
@@ -146,8 +146,8 @@ export default function Observations() {
   return (
     <div>
       <Breadcrumbs items={[
-        { label: 'Home', to: '/' },
-        { label: 'Zones', to: '/zones' },
+        { href: '/', label: 'Home' },
+        { href: '/zones', label: 'Zones' },
         { label: 'Observations' }
       ]} />
       <h1>📷🌿 Observations</h1>

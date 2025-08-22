@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Breadcrumbs } from '../../components/Breadcrumbs';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import '../../styles/zone-widgets.css';
 import { BoardPost, Poll } from '../../lib/community/types';
 import {
@@ -132,8 +132,8 @@ export default function Community() {
   return (
     <div>
       <Breadcrumbs items={[
-        { label: 'Home', to: '/' },
-        { label: 'Zones', to: '/zones' },
+        { href: '/', label: 'Home' },
+        { href: '/zones', label: 'Zones' },
         { label: 'Community' }
       ]} />
       <h1>🗳️🌍 Community</h1>
