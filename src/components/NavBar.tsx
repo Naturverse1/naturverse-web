@@ -28,15 +28,15 @@ export default function NavBar() {
 
         {/* LINKS */}
         <nav id="nv-mobile-menu" className={`nv-nav ${open ? 'is-open' : ''}`}>
-          <NavLink to="/worlds">Worlds</NavLink>
-          <NavLink to="/zones">Zones</NavLink>
-          <NavLink to="/marketplace">Marketplace</NavLink>
-          <NavLink to="/naturversity">Naturversity</NavLink>
-          <NavLink to="/naturbank">Naturbank</NavLink>
-          <NavLink to="/navatar">Navatar</NavLink>
-          <NavLink to="/passport">Passport</NavLink>
-          <NavLink to="/turian">Turian</NavLink>
-          <NavLink to="/profile">Profile</NavLink>
+          <NavLink to="/worlds" data-topnav>Worlds</NavLink>
+          <NavLink to="/zones" data-topnav>Zones</NavLink>
+          <NavLink to="/marketplace" data-topnav>Marketplace</NavLink>
+          <NavLink to="/naturversity" data-topnav>Naturversity</NavLink>
+          <NavLink to="/naturbank" data-topnav>Naturbank</NavLink>
+          <NavLink to="/navatar" data-topnav>Navatar</NavLink>
+          <NavLink to="/passport" data-topnav>Passport</NavLink>
+          <NavLink to="/turian" data-topnav>Turian</NavLink>
+          <NavLink to="/profile" data-topnav>Profile</NavLink>
         </nav>
       </div>
     </header>
