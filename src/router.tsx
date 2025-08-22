@@ -46,6 +46,11 @@ import NavatarPage from "./pages/Navatar";
 import Passport from "./pages/Passport";
 import Turian from "./routes/turian";
 import Profile from "./pages/Profile";
+import Terms from "./pages/Terms";
+import Privacy from "./pages/Privacy";
+import Contact from "./pages/Contact";
+import Accessibility from "./pages/Accessibility";
+import About from "./pages/About";
 import RootLayout from "./layouts/Root";
 
 export const router = createBrowserRouter([
@@ -94,6 +99,11 @@ export const router = createBrowserRouter([
       { path: "naturbank/natur", element: <BankToken /> },
       { path: "naturbank/nfts", element: <BankNFTs /> },
       { path: "naturbank/learn", element: <BankLearn /> },
+      { path: "terms", element: <Terms /> },
+      { path: "privacy", element: <Privacy /> },
+      { path: "contact", element: <Contact /> },
+      { path: "accessibility", element: <Accessibility /> },
+      { path: "about", element: <About /> },
       { path: "navatar", element: <NavatarPage /> },
       { path: "passport", element: <Passport /> },
       { path: "turian", element: <Turian /> },

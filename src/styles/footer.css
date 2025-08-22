@@ -1,36 +1,42 @@
 .site-footer {
-  margin-top: 32px;
-  padding: 16px 0;
+  margin-top: 40px;
   border-top: 1px solid #e5e7eb;
-  background: #fff;
+  background: #f8fafc;
+  color: #475569;
+  font-size: 14px;
 }
 .footer-inner {
-  max-width: 1024px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 20px 16px;
+  display: grid;
+  gap: 10px;
+  grid-template-columns: 1fr;
+}
+.footer-links,
+.footer-socials {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
+  gap: 16px;
   flex-wrap: wrap;
-}
-.tmc-badge {
-  display: inline-flex;
   align-items: center;
-  gap: 8px;
-  font-weight: 700;
-  color: #111827;
+}
+.footer-links a,
+.footer-socials a {
+  color: #2563eb;
   text-decoration: none;
+  display: inline-flex;
+  gap: 8px;
+  align-items: center;
 }
-.tmc-badge:hover {
-  text-decoration: underline;
-}
-.tmc-logo {
-  display: inline-block;
-  width: 20px;
-  height: 20px;
-  object-fit: contain;
-}
-.muted {
-  color: #6b7280;
+.footer-links a:hover,
+.footer-socials a:hover { text-decoration: underline; }
+
+@media (min-width: 800px) {
+  .footer-inner {
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+  }
+  .brand { order: 1; }
+  .footer-links { order: 2; }
+  .footer-socials { order: 3; }
 }
