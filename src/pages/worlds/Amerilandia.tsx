@@ -1,14 +1,12 @@
 import React from "react";
-import WorldGallery from "../../components/worlds/WorldGallery";
-import { WORLDS } from "../../content/worlds";
-
-export default function AmerilandiaWorld() {
-  const w = WORLDS.Amerilandia;
+import WorldPage from "./_WorldPage";
+export default function Amerilandia() {
   return (
-    <div className="world-page">
-      <h1>🌏 Amerilandia</h1>
-      <p className="muted">Welcome to Amerilandia — explore traditions, landmarks, and celebrations.</p>
-      <WorldGallery mapSrc={w.mapSrc} alt={w.alt} characters={w.characters} />
-    </div>
+    <WorldPage
+      worldKey="amerilandia"
+      title="Amerilandia"
+      intro="Welcome to Amerilandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Amerilandia/Amerilandiamap.png"
+    />
   );
 }
