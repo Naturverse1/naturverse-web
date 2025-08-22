@@ -65,3 +65,12 @@ export const ChilandiaChars: CharacterItem[] = [
   { name: "Rat Twins", file: "Rattwins.png" },
   { name: "Unamamed", file: "unamamed.png" },
 ];
+
+export const IndillandiaChars: CharacterItem[] = [
+  { name: "Genie Baba", file: "GenieBaba.png" },
+  { name: "Guru Cow", file: "Gurucow.png" },
+  { name: "Kai Cobra", file: "Kaicobra.png" },
+  { name: "Peacock Dancer", file: "Peacockdancer.png" },
+  { name: "Raja Elephant", file: "RajaElephant.png" },
+  { name: "Tiger Sport", file: "Tigersport.png" },
+];
