@@ -1,128 +1,66 @@
-/* ===== Naturverse Blue Theme (CSS-only; safe) ===== */
+/* Global brand variables & base styles */
 :root{
-  /* base */
+  /* Brand blues */
+  --brand-25: #f2f8ff;
+  --brand-50: #e6f1ff;
+  --brand-100:#d6e9ff;
+  --brand-200:#bcdcff;
+  --brand-300:#8ec3ff;
+  --brand-400:#5ea9ff;
+  --brand-500:#348ef7;   /* primary */
+  --brand-600:#2b7bd6;
+  --brand-700:#1f5aa3;   /* headings / brand text */
+  --brand-800:#1a467f;
+
+  /* UI tokens */
+  --ink:#0f172a;
+  --ink-muted:#475569;
+  --muted: var(--ink-muted);
   --bg:#ffffff;
-  --text:#0f172a;                 /* slate-900 */
-  --muted:#334155;                /* slate-700 */
-  --card:#ffffff;
-  --radius:14px;
-  --gap:16px;
 
-  /* blue scale */
-  --blue-50:#eff6ff;
-  --blue-100:#dbeafe;
-  --blue-200:#bfdbfe;
-  --blue-300:#93c5fd;
-  --blue-400:#60a5fa;
-  --blue-500:#3b82f6;
-  --blue-600:#2563eb;
-  --blue-700:#1d4ed8;
-  --blue-800:#1e40af;
-
-  /* brand hooks */
-  --brand-50:var(--blue-50);
-  --brand-100:var(--blue-100);
-  --brand-200:var(--blue-200);
-  --brand-300:var(--blue-300);
-  --brand-400:var(--blue-400);
-  --brand-500:var(--blue-500);
-  --brand-600:var(--blue-600);
-  --brand-700:var(--blue-700);
-  --brand-800:var(--blue-800);
-
-  /* accents */
-  --link:var(--brand-700);
-  --link-hover:var(--brand-800);
-  --cta-bg:var(--brand-600);
-  --cta-bg-hover:var(--brand-700);
-  --cta-text:#ffffff;
-  --card-ring:color-mix(in srgb, var(--brand-600) 18%, transparent);
-  --chip-bg:var(--brand-50);
-  --chip-border:var(--brand-200);
+  --card: var(--bg);
+  --card-border: var(--brand-200);
+  --card-ring: rgba(52, 142, 247, .18);
+  --radius: 14px;
+  --gap: 16px;
 }
 
-body{
-  background:var(--bg);
-  color:var(--text);
-}
+/* Text & links */
+body{ color: var(--ink); background: var(--bg); }
+a{ color: var(--brand-700); }
+a:hover{ color: var(--brand-600); text-decoration: underline; }
 
-/* headings */
-h1,h2,h3{
-  color:var(--brand-800);
-}
-.page-title,.site-title{
-  color:var(--brand-800);
-}
+/* Site title (Naturverse) */
+.site-title{ color: var(--brand-700); }
 
-/* links */
-a{
-  color:var(--link);
-  text-decoration:underline;
-  text-underline-offset:2px;
-}
-a:hover{color:var(--link-hover);}
-a:focus-visible{outline:3px solid var(--brand-300);outline-offset:2px;}
-
-/* buttons */
+/* Buttons */
 .btn{
-  --_bg:var(--cta-bg);
-  --_bg-hover:var(--cta-bg-hover);
-  --_fg:var(--cta-text);
-  background:var(--_bg);
-  color:var(--_fg);
-  border-radius:12px;
-  padding:.9rem 1.25rem;
-  border:0;
-  box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 2px transparent;
-  transition:background .15s ease, box-shadow .15s ease, transform .02s ease-in;
+  display:inline-flex; align-items:center; justify-content:center;
+  border-radius:12px; padding:.75rem 1.25rem; font-weight:700;
+  border:1px solid transparent; transition:all .15s ease;
 }
-.btn:hover{background:var(--_bg-hover);}
-.btn:active{transform:translateY(1px);}
-.btn--secondary{
-  --_bg:var(--brand-50);
-  --_bg-hover:var(--brand-100);
-  --_fg:var(--brand-700);
-  color:var(--_fg);
-  border:1px solid var(--brand-200);
+.btn-primary{
+  background: var(--brand-500); color:#fff; border-color: var(--brand-500);
 }
-.btn:focus-visible{box-shadow:0 0 0 3px var(--brand-200);}
+.btn-primary:hover{ background: var(--brand-600); border-color: var(--brand-600); }
+.btn-outline{
+  background:#fff; color: var(--brand-700); border-color: var(--brand-300);
+}
+.btn-outline:hover{ background: var(--brand-50); border-color: var(--brand-500); color: var(--brand-700); }
 
-/* cards */
+/* Cards (zones, marketplace, naturversity, etc.) */
 .card{
-  background:var(--card);
-  border-radius:var(--radius);
-  border:1px solid var(--brand-200);
-  padding:var(--gap);
-  box-shadow:0 0 0 1px var(--card-ring);
+  background:#fff;
+  border:1px solid var(--card-border);
+  border-radius: var(--radius);
+  box-shadow: 0 0 0 0 var(--card-ring);
 }
-.card:hover{
-  box-shadow:0 0 0 2px color-mix(in srgb, var(--brand-600) 25%, transparent);
-}
+.card:hover{ box-shadow: 0 0 0 4px var(--card-ring); }
+.card-header{ color: var(--brand-700); }
+.card-subtle{ background: var(--brand-25); }
 
-/* chips / tabs */
-.chip,.tab{
-  border:1px solid var(--chip-border);
-  background:var(--chip-bg);
-  border-radius:999px;
-  padding:.4rem .7rem;
-}
-.tab--active{
-  background:var(--brand-100);
-  border-color:var(--brand-300);
-  color:var(--brand-800);
-}
+/* Section headings pop slightly blue */
+h1,h2,h3{ color: var(--brand-700); }
 
-/* breadcrumbs & small UI */
-.breadcrumb a{color:var(--brand-700);}
-.breadcrumb a:hover{color:var(--brand-800);}
-
-/* header brand & mobile menu */
-.brand,.logo-text{color:var(--brand-800);}
-.hamburger{color:var(--brand-700);}
-.hamburger:active{color:var(--brand-800);}
-
-/* focus helpers */
-.focus-ring:focus-visible{
-  outline:3px solid var(--brand-300);
-  outline-offset:2px;
-}
+/* “pill” chips/tabs light blue */
+.pill{ background: var(--brand-50); border:1px solid var(--brand-200); color: var(--brand-700); }

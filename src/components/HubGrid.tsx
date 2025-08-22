@@ -14,16 +14,16 @@ export function HubGrid({ items, children }: { items?: Item[]; children?: React.
       <div className="hub-grid">
         {items.map((it, i) =>
           it.to ? (
-            <Link key={i} to={it.to} className="hub-card">
-              <span className="hub-card-title">
+            <Link key={i} to={it.to} className="hub-card card">
+              <span className="hub-card-title card-header">
                 {it.icon && <span className="hub-ico">{it.icon}</span>}
                 {it.title}
               </span>
               {it.desc && <span className="hub-card-desc">{it.desc}</span>}
             </Link>
           ) : (
-            <div key={i} className="hub-card">
-              <span className="hub-card-title">
+            <div key={i} className="hub-card card">
+              <span className="hub-card-title card-header">
                 {it.icon && <span className="hub-ico">{it.icon}</span>}
                 {it.title}
               </span>

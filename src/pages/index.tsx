@@ -21,9 +21,8 @@ export default function Home() {
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
         </p>
         <div className="hero-cta">
-          <Link className="btn primary" to="/signup">Create account</Link>
-          <Link className="btn primary" to="/worlds">Explore Worlds</Link>
-          {/* buttons keep .primary class for blue styling */}
+          <a className="btn btn-primary" href="/signup">Create account</a>
+          <a className="btn btn-outline" href="/worlds">Explore Worlds</a>
         </div>
       </section>
 
@@ -68,27 +67,27 @@ export default function Home() {
 
       {/* Hubs */}
       <section className="home-grid">
-        <a className="hub-card" href="/worlds">
+        <a className="hub-card card" href="/worlds">
           <div className="hub-emoji">🌍</div>
-          <h3>Worlds</h3>
+          <h3 className="card-header">Worlds</h3>
           <p>Travel the 14 magical kingdoms.</p>
         </a>
 
-        <a className="hub-card" href="/zones">
+        <a className="hub-card card" href="/zones">
           <div className="hub-emoji">🎮</div>
-          <h3>Zones</h3>
+          <h3 className="card-header">Zones</h3>
           <p>Arcade, music, wellness, creator lab.</p>
         </a>
 
-        <a className="hub-card" href="/marketplace">
+        <a className="hub-card card" href="/marketplace">
           <div className="hub-emoji">🛍️</div>
-          <h3>Marketplace</h3>
+          <h3 className="card-header">Marketplace</h3>
           <p>Wishlists, catalog, checkout.</p>
         </a>
 
-        <a className="hub-card" href="/passport">
+        <a className="hub-card card" href="/passport">
           <div className="hub-emoji">📘</div>
-          <h3>Passport</h3>
+          <h3 className="card-header">Passport</h3>
           <p>Track stamps, badges, XP &amp; coins.</p>
         </a>
       </section>
@@ -97,7 +96,7 @@ export default function Home() {
       <section className="home-cta">
         <h2>Ready to join the journey?</h2>
         <div className="hero-cta">
-          <Link className="btn primary" to="/signup">Sign up free</Link>
+          <Link className="btn btn-primary" to="/signup">Sign up free</Link>
           <Link className="btn" to="/signin">Sign in</Link>
         </div>
       </section>
