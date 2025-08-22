@@ -1,5 +1,5 @@
 import { ReactNode } from "react";
-import { Breadcrumbs, Crumb } from "./Breadcrumbs";
+import Breadcrumbs, { Crumb } from "./Breadcrumbs";
 
 export default function Page({
   title,
