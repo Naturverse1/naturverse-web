@@ -1,0 +1,12 @@
+/* Tiny image “emoji” used beside hero titles */
+.brandmark {
+  display: inline-block;
+  width: 28px;
+  height: 28px;
+  margin-right: 10px;
+  vertical-align: -5px; /* visually centers with H1 */
+  border-radius: 6px;
+}
+@media (min-width: 640px){
+  .brandmark { width: 32px; height: 32px; vertical-align: -6px; }
+}
