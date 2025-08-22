@@ -1,7 +1,7 @@
 import React from "react";
 
 export default function Thailandia() {
-  const mapSrc = "/kingdoms/Thailandia/Thailandiamap.png"; // exact filename in /public/kingdoms/Thailandia/
+  const mapSrc = "/kingdoms/Thailandia/Thailandiamap.jpg"; // note .jpg extension
   return (
     <div className="world-page">
       <figure className="world-hero">
