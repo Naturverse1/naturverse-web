@@ -10,7 +10,7 @@ export default function NavBar() {
       <div className="nv-header__inner">
         {/* Home link restored (clickable brand) */}
         <Link to="/" className="nv-brand" aria-label="Naturverse Home">
-          <span style={{fontSize:20}}>🌿</span>{' '}
+          <img src="/favicon-32x32.png" alt="Turian" className="nv-logo" width="24" height="24" />
           <strong>Naturverse</strong>
         </Link>
 
@@ -27,10 +27,7 @@ export default function NavBar() {
         </button>
 
         {/* LINKS */}
-        <nav
-          id="nv-mobile-menu"
-          className={`nv-nav ${open ? 'is-open' : ''}`}
-        >
+        <nav id="nv-mobile-menu" className={`nv-nav ${open ? 'is-open' : ''}`}>
           <NavLink to="/worlds">Worlds</NavLink>
           <NavLink to="/zones">Zones</NavLink>
           <NavLink to="/marketplace">Marketplace</NavLink>

@@ -4,6 +4,13 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
+    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png" />
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="48x48" href="/favicon-48x48.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png" />
     <!-- stop stale cached HTML while we repair -->
     <meta http-equiv="Cache-Control" content="no-store, max-age=0" />
   </head>
@@ -13,9 +20,14 @@
     <!-- safety: purge stray blobs injected by old builds -->
     <script>
       (function () {
-        const killers = ['welcome-blob','hero-blob','hero','blob','face','smiley'];
-        killers.forEach(id => { const el = document.getElementById(id); if (el) el.remove(); });
-        document.querySelectorAll(killers.map(k=>'.'+k).join(',')).forEach(el=>el.remove());
+        const killers = ['welcome-blob', 'hero-blob', 'hero', 'blob', 'face', 'smiley'];
+        killers.forEach((id) => {
+          const el = document.getElementById(id);
+          if (el) el.remove();
+        });
+        document
+          .querySelectorAll(killers.map((k) => '.' + k).join(','))
+          .forEach((el) => el.remove());
       })();
     </script>
   </body>

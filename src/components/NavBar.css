@@ -20,6 +20,10 @@
   color: inherit;
 }
 
+.nv-logo {
+  display: inline-block;
+}
+
 .nv-nav {
   display: flex;
   align-items: center;
