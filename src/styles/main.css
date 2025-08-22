@@ -1,72 +1,128 @@
-/* Brand tokens */
+/* ===== Naturverse Blue Theme (CSS-only; safe) ===== */
 :root{
-  /* Brand */
-  --brand: #0f766e;
-  --brand-blue-600: #0284c7;     /* primary CTA */
-  --brand-blue-700: #0369a1;
-  --brand-blue-800: #075985;
+  /* base */
+  --bg:#ffffff;
+  --text:#0f172a;                 /* slate-900 */
+  --muted:#334155;                /* slate-700 */
+  --card:#ffffff;
+  --radius:14px;
+  --gap:16px;
 
-  /* Text */
-  --ink: #111827;
-  --ink-2: #374151;
-  --bg: #f8fafc;
-  --card: #ffffff;
-  --ring: rgba(2,132,199,.18);
-  --radius: 14px;
-  --gap: 16px;
+  /* blue scale */
+  --blue-50:#eff6ff;
+  --blue-100:#dbeafe;
+  --blue-200:#bfdbfe;
+  --blue-300:#93c5fd;
+  --blue-400:#60a5fa;
+  --blue-500:#3b82f6;
+  --blue-600:#2563eb;
+  --blue-700:#1d4ed8;
+  --blue-800:#1e40af;
+
+  /* brand hooks */
+  --brand-50:var(--blue-50);
+  --brand-100:var(--blue-100);
+  --brand-200:var(--blue-200);
+  --brand-300:var(--blue-300);
+  --brand-400:var(--blue-400);
+  --brand-500:var(--blue-500);
+  --brand-600:var(--blue-600);
+  --brand-700:var(--blue-700);
+  --brand-800:var(--blue-800);
+
+  /* accents */
+  --link:var(--brand-700);
+  --link-hover:var(--brand-800);
+  --cta-bg:var(--brand-600);
+  --cta-bg-hover:var(--brand-700);
+  --cta-text:#ffffff;
+  --card-ring:color-mix(in srgb, var(--brand-600) 18%, transparent);
+  --chip-bg:var(--brand-50);
+  --chip-border:var(--brand-200);
 }
 
-/* Buttons (shared) */
-.btn, button.btn, a.btn{
-  display:inline-flex;align-items:center;justify-content:center;
-  border-radius:12px;padding:.75rem 1rem;font-weight:700;
-  text-decoration:none;gap:.5rem;border:0;cursor:pointer;
-  transition:transform .05s ease, filter .15s ease, background-color .15s ease;
+body{
+  background:var(--bg);
+  color:var(--text);
 }
-.btn:active{ transform:translateY(1px); }
 
-/* Primary (blue) */
-.btn.primary, button.btn.primary, a.btn.primary{
-  background:var(--brand-blue-600);color:#fff;
+/* headings */
+h1,h2,h3{
+  color:var(--brand-800);
 }
-.btn.primary:hover{ background:var(--brand-blue-700); }
-.btn.primary:active{ background:var(--brand-blue-800); }
-
-/* Secondary (outline) */
-.btn.ghost{ background:#eef2f7;color:var(--ink); }
-.btn.ghost:hover{ filter:brightness(1.03); }
-
-/* Hero CTA fallback (if a page didn't use .btn classes) */
-.hero .actions a,
-.hero .actions button{
-  background:var(--brand-blue-600) !important;
-  color:#fff !important;
-  border:0 !important;
-  border-radius:12px !important;
-  padding:.75rem 1rem !important;
-  font-weight:700 !important;
+.page-title,.site-title{
+  color:var(--brand-800);
 }
-.hero .actions a:hover,
-.hero .actions button:hover{ background:var(--brand-blue-700) !important; }
 
-/* Containers & cards */
-.container{max-width:1200px;margin:0 auto;padding:24px 16px}
-.card{background:var(--surface,#fff);border:1px solid rgba(0,0,0,.08);border-radius:16px;padding:16px}
-.grid{display:grid;gap:16px}
-.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}
-.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}
-@media (max-width:900px){.grid-2,.grid-3{grid-template-columns:1fr}}
-/* Active nav */
-a.nav{opacity:.8}
-a.nav.active{opacity:1;font-weight:700;text-decoration:underline}
-/* Breadcrumbs */
-.breadcrumbs{margin:8px 0 16px;font-size:.9rem;opacity:.8}
-.breadcrumbs a{color:inherit}
-/* Skeletons */
-.skeleton{background:linear-gradient(90deg,#eee,#f6f6f6,#eee);background-size:200% 100%;animation:sk 1.2s infinite; border:1px solid #e8e8e8}
-@keyframes sk{0%{background-position:200% 0}100%{background-position:-200% 0}}
-/* A11y: skip link */
-.skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-.skip-link:focus{left:12px;top:12px;width:auto;height:auto;padding:10px 12px;background:#1e90ff;color:#fff;border-radius:10px;z-index:9999}
-/* Image aspect utility */
-.aspect-16x9{aspect-ratio:16/9;object-fit:cover;border-radius:12px}
+/* links */
+a{
+  color:var(--link);
+  text-decoration:underline;
+  text-underline-offset:2px;
+}
+a:hover{color:var(--link-hover);}
+a:focus-visible{outline:3px solid var(--brand-300);outline-offset:2px;}
+
+/* buttons */
+.btn{
+  --_bg:var(--cta-bg);
+  --_bg-hover:var(--cta-bg-hover);
+  --_fg:var(--cta-text);
+  background:var(--_bg);
+  color:var(--_fg);
+  border-radius:12px;
+  padding:.9rem 1.25rem;
+  border:0;
+  box-shadow:0 1px 0 rgba(0,0,0,.06), 0 0 0 2px transparent;
+  transition:background .15s ease, box-shadow .15s ease, transform .02s ease-in;
+}
+.btn:hover{background:var(--_bg-hover);}
+.btn:active{transform:translateY(1px);}
+.btn--secondary{
+  --_bg:var(--brand-50);
+  --_bg-hover:var(--brand-100);
+  --_fg:var(--brand-700);
+  color:var(--_fg);
+  border:1px solid var(--brand-200);
+}
+.btn:focus-visible{box-shadow:0 0 0 3px var(--brand-200);}
+
+/* cards */
+.card{
+  background:var(--card);
+  border-radius:var(--radius);
+  border:1px solid var(--brand-200);
+  padding:var(--gap);
+  box-shadow:0 0 0 1px var(--card-ring);
+}
+.card:hover{
+  box-shadow:0 0 0 2px color-mix(in srgb, var(--brand-600) 25%, transparent);
+}
+
+/* chips / tabs */
+.chip,.tab{
+  border:1px solid var(--chip-border);
+  background:var(--chip-bg);
+  border-radius:999px;
+  padding:.4rem .7rem;
+}
+.tab--active{
+  background:var(--brand-100);
+  border-color:var(--brand-300);
+  color:var(--brand-800);
+}
+
+/* breadcrumbs & small UI */
+.breadcrumb a{color:var(--brand-700);}
+.breadcrumb a:hover{color:var(--brand-800);}
+
+/* header brand & mobile menu */
+.brand,.logo-text{color:var(--brand-800);}
+.hamburger{color:var(--brand-700);}
+.hamburger:active{color:var(--brand-800);}
+
+/* focus helpers */
+.focus-ring:focus-visible{
+  outline:3px solid var(--brand-300);
+  outline-offset:2px;
+}
