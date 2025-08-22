@@ -1,4 +1,5 @@
 import React from "react";
+import { Img } from "../../components/Img";
 
 export default function WorldLayout({
   title,
@@ -14,7 +15,7 @@ export default function WorldLayout({
       <h1>{title}</h1>
       <div className="cards">
         <div className="card">
-          <img src={mapSrc} alt={`${title} map`} loading="lazy" />
+          <Img srcPng={mapSrc} alt={`${title} map`} className="aspect-16x9" />
           <h2>World Map</h2>
           <p>Zoom into landmarks, routes, and regions.</p>
         </div>
