@@ -38,10 +38,17 @@ export default function Header() {
   return (
     <header className="nv-header">
       <div className="nv-shell">
-        <a href="/" className="nv-brand" aria-label="Naturverse home">
-          <span className="nv-logo" aria-hidden="true">🌿</span>
-          <span className="nv-name">Naturverse</span>
-        </a>
+          {/* Brand: Turian head + Naturverse (links home) */}
+          <a href="/" className="brand" aria-label="Naturverse home">
+            <img
+              src="/favicon-32x32.png"
+              alt=""
+              width={24}
+              height={24}
+              className="brand__logo"
+            />
+            <span className="brand__name">Naturverse</span>
+          </a>
 
         {/* desktop nav */}
         <nav className="nv-nav">
