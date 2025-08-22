@@ -51,6 +51,12 @@ const ZONES = [
     title: 'Community',
     sub: 'Voting, events, & volunteering.',
   },
+  {
+    to: '/zones/future',
+    emoji: '🔮',
+    title: 'Future Zone',
+    sub: 'AR/VR, Console, Multiplayer, 3D, AI companions, wallet upgrades.',
+  },
 ];
 
 export default function Zones() {

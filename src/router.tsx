@@ -28,6 +28,7 @@ import Quizzes from "./pages/zones/Quizzes";
 import Observations from "./pages/zones/Observations";
 import Community from "./pages/zones/Community";
 import Culture from "./pages/zones/Culture";
+import FutureZone from "./pages/zones/Future";
 import Marketplace from "./pages/Marketplace";
 import Catalog from "./pages/marketplace/Catalog";
 import Wishlist from "./pages/marketplace/Wishlist";
@@ -85,6 +86,7 @@ export const router = createBrowserRouter([
       { path: "zones/observations", element: <Observations /> },
       { path: "zones/culture", element: <Culture /> },
       { path: "zones/community", element: <Community /> },
+      { path: "zones/future", element: <FutureZone /> },
       { path: "marketplace", element: <Marketplace /> },
       { path: "marketplace/catalog", element: <Catalog /> },
       { path: "marketplace/wishlist", element: <Wishlist /> },
