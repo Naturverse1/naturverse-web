@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useCart } from "../../cart/CartProvider";
+import { useCart } from "../../hooks/useCart";
 
 const money = (cents: number) => `$${(cents/100).toFixed(2)}`;
 

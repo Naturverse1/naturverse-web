@@ -1,6 +1,7 @@
 /* container */
 .nv-header{ position:sticky; top:0; z-index:40; backdrop-filter:saturate(180%) blur(10px); background:rgba(255,255,255,.75); border-bottom:1px solid #eef2f7; }
 .nv-shell{ max-width: 1200px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; justify-content:space-between; }
+.nv-right{ display:flex; align-items:center; gap:16px; }
 
 /* brand */
 .nv-brand{ display:flex; align-items:center; gap:8px; text-decoration:none; }
