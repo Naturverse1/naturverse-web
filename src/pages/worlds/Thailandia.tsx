@@ -1,34 +1,14 @@
 import React from "react";
-import CharacterGrid from "../../components/CharacterGrid";
-import { ThailandiaChars } from "../../content/characters";
+import WorldGallery from "../../components/worlds/WorldGallery";
+import { WORLDS } from "../../content/worlds";
 
-export default function Thailandia() {
+export default function ThailandiaWorld() {
+  const w = WORLDS.Thailandia;
   return (
     <div className="world-page">
-      <figure className="world-hero">
-        <img
-          src="/kingdoms/Thailandia/Thailandiamap.jpg"
-          alt="Thailandia map"
-          onError={(e) => ((e.currentTarget.src = "/placeholders/world-map.svg"))}
-          loading="eager"
-        />
-        <figcaption className="sr-only">Thailandia map</figcaption>
-      </figure>
-
-      <h1>🌍 Thailandia</h1>
-      <p className="muted">
-        Welcome to Thailandia — explore traditions, landmarks, and celebrations.
-      </p>
-
-      <section className="world-section">
-        <h2>Gallery</h2>
-        <div className="coming-soon">Coming soon</div>
-      </section>
-
-      <section className="world-section">
-        <h2>Characters</h2>
-        <CharacterGrid items={ThailandiaChars} basePath="/kingdoms/Thailandia" />
-      </section>
+      <h1>🌏 Thailandia</h1>
+      <p className="muted">Welcome to Thailandia — explore traditions, landmarks, and celebrations.</p>
+      <WorldGallery mapSrc={w.mapSrc} alt={w.alt} characters={w.characters} />
     </div>
   );
 }
