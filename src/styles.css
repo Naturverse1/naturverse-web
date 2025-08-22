@@ -5,9 +5,9 @@
 @import "./styles/profile.css";
 @import "./styles/global.css";
 @import "./styles/layout.css";
-@import "./styles/topnav.css";
 @import "./styles/hub.css";
 @import "./styles/crumbs.css";
+@import "./styles/header.css";
 :root { --ink:#0b2545; --muted:#6c7676; --card:#f6f7fb; --ring:#dbe2ef; --radius:14px; }
 *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto}
 .wrap{max-width:1120px;margin:0 auto;padding:16px}
@@ -31,5 +31,3 @@
 .row{display:flex;gap:8px;align-items:center}
 .card .split{display:grid;grid-template-columns:1fr 1fr;gap:12px 16px}
 .card .coming{margin-top:8px}
-
-@import "./styles/header.css";
