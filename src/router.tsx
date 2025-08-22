@@ -1,7 +1,7 @@
 import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
-import Home from "./routes";
+import Home from "./pages/Home";
 import WorldsIndex from "./pages/worlds";
 import Thailandia from "./pages/worlds/Thailandia";
 import Brazilandia from "./pages/worlds/Brazilandia";
