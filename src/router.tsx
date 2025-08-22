@@ -2,7 +2,8 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import Home from "./routes";
-import Worlds from "./pages/Worlds";
+import WorldsIndex from "./pages/worlds";
+import ThailandiaWorld from "./pages/worlds/Thailandia";
 import World from "./routes/worlds/World";
 import Zones from "./routes/zones";
 import ArcadeZone from "./routes/zones/arcade";
@@ -40,7 +41,8 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
-      { path: "worlds", element: <Worlds /> },
+      { path: "worlds", element: <WorldsIndex /> },
+      { path: "worlds/thailandia", element: <ThailandiaWorld /> },
       { path: "worlds/:slug", element: <World /> },
       { path: "zones", element: <Zones /> },
       { path: "zones/arcade", element: <ArcadeZone /> },
