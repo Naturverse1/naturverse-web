@@ -8,7 +8,7 @@ import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
-import ErrorBoundary from './components/ErrorBoundary';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>

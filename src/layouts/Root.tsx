@@ -1,12 +1,12 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
-import Header from '../components/Header';
+import Nav from '../components/Nav';
 import Footer from '../components/Footer';
 
 export default function RootLayout() {
   return (
     <div className="nv-root">
-      <Header />
+      <Nav />
       <main className="container">
         <Outlet />
       </main>

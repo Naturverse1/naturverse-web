@@ -1,10 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import "./home.css";
+import Meta from "../components/Meta";
+import Page from "../layouts/Page";
 
 export default function Home() {
   return (
-    <main className="home">
+    <Page>
+      <Meta title="Naturverse — Playful worlds for families"
+            description="A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
+            url="https://thenaturverse.com/" />
+      <div className="home">
       {/* Hero */}
       <header className="home-hero">
         <img
@@ -84,7 +90,8 @@ export default function Home() {
         </form>
         <small>We send occasional updates. Unsubscribe anytime.</small>
       </section>
-    </main>
+      </div>
+    </Page>
   );
 }
 

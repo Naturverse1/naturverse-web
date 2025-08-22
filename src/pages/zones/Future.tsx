@@ -1,16 +1,10 @@
 import React from "react";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 
 export default function FutureZone() {
   return (
     <div className="page">
-      <Breadcrumbs
-        items={[
-          { href: "/", label: "Home" },
-          { href: "/zones", label: "Zones" },
-          { label: "Future Zone" },
-        ]}
-      />
+      <Breadcrumbs />
 
       <h1>🔮 Future Zone</h1>
       <p className="muted">

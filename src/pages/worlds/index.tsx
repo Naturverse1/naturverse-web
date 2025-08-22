@@ -1,10 +1,14 @@
 import React from "react";
 import { WORLDS } from "../../data/worlds";
+import Meta from "../../components/Meta";
+import Page from "../../layouts/Page";
+import { Breadcrumbs } from "../../components/Breadcrumbs";
 
 export default function WorldsIndex() {
   return (
-    <div className="page-wrap">
-      <h1>Worlds</h1>
+    <Page title="Worlds">
+      <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." url="https://thenaturverse.com/worlds" />
+      <Breadcrumbs />
       <p className="muted">Choose a kingdom to explore.</p>
       <div className="cards">
         {WORLDS.map(w => (
@@ -15,6 +19,6 @@ export default function WorldsIndex() {
           </a>
         ))}
       </div>
-    </div>
+    </Page>
   );
 }
