@@ -1,0 +1,36 @@
+.site-footer {
+  margin-top: 32px;
+  padding: 16px 0;
+  border-top: 1px solid #e5e7eb;
+  background: #fff;
+}
+.footer-inner {
+  max-width: 1024px;
+  margin: 0 auto;
+  padding: 0 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+.tmc-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+  color: #111827;
+  text-decoration: none;
+}
+.tmc-badge:hover {
+  text-decoration: underline;
+}
+.tmc-logo {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+}
+.muted {
+  color: #6b7280;
+}
