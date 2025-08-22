@@ -1,5 +1,5 @@
 import React from "react";
-import { useCart } from "../../cart/CartProvider";
+import { useCart } from "../../hooks/useCart";
 
 export default function AddToCartButton({ id, name, price, image, variant, qty = 1 }:{
   id: string; name: string; price: number; image?: string; variant?: string; qty?: number;

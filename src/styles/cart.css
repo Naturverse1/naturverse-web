@@ -23,3 +23,28 @@
   .cart-row { grid-template-columns: 60px 1fr auto auto; }
   .cart-row .line { display:none; }
 }
+
+/* button in header */
+.cart-btn{ position:relative; border:0; background:transparent; font-size:20px; cursor:pointer; }
+.cart-btn .badge{ position:absolute; top:-6px; right:-10px; background:#22c55e; color:#fff; border-radius:999px; padding:1px 6px; font-size:11px; font-weight:700; }
+
+/* drawer */
+.cart-drawer{ position:fixed; inset:0; pointer-events:none; }
+.cart-drawer .scrim{ position:absolute; inset:0; background:rgba(0,0,0,.35); opacity:0; transition:.2s; }
+.cart-drawer .panel{ position:absolute; right:-420px; top:0; height:100%; width:360px; max-width:90vw; background:#fff; box-shadow:-8px 0 24px rgba(0,0,0,.15); display:flex; flex-direction:column; transition:.25s; }
+.cart-drawer.open{ pointer-events:auto; }
+.cart-drawer.open .scrim{ opacity:1; }
+.cart-drawer.open .panel{ right:0; }
+.cart-drawer .hdr{ display:flex; justify-content:space-between; align-items:center; padding:16px 16px 8px; border-bottom:1px solid #eee; }
+.cart-drawer .lines{ list-style:none; margin:0; padding:12px 16px; flex:1; overflow:auto; }
+.cart-drawer .line{ display:grid; grid-template-columns:1fr auto auto auto; gap:8px; align-items:center; padding:8px 0; border-bottom:1px dashed #eee; }
+.cart-drawer .info{ overflow:hidden; white-space:nowrap; text-overflow:ellipsis; }
+.cart-drawer .qty{ display:inline-flex; align-items:center; gap:6px; }
+.cart-drawer .qty input{ width:40px; text-align:center; }
+.cart-drawer .amt{ font-variant-numeric: tabular-nums; }
+.cart-drawer .rm{ background:none; border:0; color:#ef4444; cursor:pointer; }
+.cart-drawer .foot{ border-top:1px solid #eee; padding:12px 16px; }
+.cart-drawer .total{ display:flex; justify-content:space-between; margin-bottom:10px; }
+.cart-drawer .actions{ display:flex; justify-content:space-between; align-items:center; }
+.cart-drawer .btn{ display:inline-block; padding:10px 14px; background:#111827; color:#fff; border-radius:8px; text-decoration:none; }
+.cart-drawer .link{ background:none; border:0; color:#0ea5e9; cursor:pointer; }

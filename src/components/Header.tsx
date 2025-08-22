@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import CartButton from "./cart/CartButton";
 
 const LINKS = [
   { href: "/worlds", label: "Worlds" },
@@ -36,56 +37,60 @@ export default function Header() {
   }, []);
 
   return (
-    <header className="nv-header">
-      <div className="nv-shell">
-          {/* Brand: Turian head + Naturverse (links home) */}
-          <a href="/" className="brand" aria-label="Naturverse home">
-            <img
-              src="/favicon-32x32.png"
-              alt=""
-              width={24}
-              height={24}
-              className="brand__logo"
-            />
-            <span className="brand__name">Naturverse</span>
-          </a>
+      <header className="nv-header">
+        <div className="nv-shell">
+            {/* Brand: Turian head + Naturverse (links home) */}
+            <a href="/" className="brand" aria-label="Naturverse home">
+              <img
+                src="/favicon-32x32.png"
+                alt=""
+                width={24}
+                height={24}
+                className="brand__logo"
+              />
+              <span className="brand__name">Naturverse</span>
+            </a>
 
-        {/* desktop nav */}
-        <nav className="nv-nav">
-          <ul>
-            {LINKS.map((l) => (
-              <li key={l.href}>
-                <a href={l.href}>{l.label}</a>
-              </li>
-            ))}
-          </ul>
-        </nav>
+          <div className="nv-right">
+            {/* desktop nav */}
+            <nav className="nv-nav">
+              <ul>
+                {LINKS.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
 
-        {/* mobile button */}
-        <button
-          className="nv-burger"
-          aria-label="Open menu"
-          aria-expanded={open}
-          onClick={() => setOpen((v) => !v)}
-        >
-          <span/>
-          <span/>
-          <span/>
-        </button>
+            <CartButton />
 
-        {/* mobile drawer */}
-        {open && (
-          <div className="nv-drawer" role="dialog" aria-modal="true">
-            <ul>
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href}>{l.label}</a>
-                </li>
-              ))}
-            </ul>
+            {/* mobile button */}
+            <button
+              className="nv-burger"
+              aria-label="Open menu"
+              aria-expanded={open}
+              onClick={() => setOpen((v) => !v)}
+            >
+              <span/>
+              <span/>
+              <span/>
+            </button>
           </div>
-        )}
-      </div>
-    </header>
+
+          {/* mobile drawer */}
+          {open && (
+            <div className="nv-drawer" role="dialog" aria-modal="true">
+              <ul>
+                {LINKS.map((l) => (
+                  <li key={l.href}>
+                    <a href={l.href}>{l.label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          )}
+        </div>
+      </header>
   );
 }
