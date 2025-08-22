@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Chilandia() {
   return (
-    <WorldLayout
-      title="🌏 Chilandia"
-      blurb="Welcome to Chilandia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Chilandia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Chilandia"
+      intro="Welcome to Chilandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Chilandia/Chilandiamap.jpg"
     />
   );
 }
+

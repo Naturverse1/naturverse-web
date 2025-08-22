@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Amerilandia() {
   return (
-    <WorldLayout
-      title="🌏 Amerilandia"
-      blurb="Welcome to Amerilandia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Amerilandia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Amerilandia"
+      intro="Welcome to Amerilandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Amerilandia/Amerilaniamap.png"
     />
   );
 }
+

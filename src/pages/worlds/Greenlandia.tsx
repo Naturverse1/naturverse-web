@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Greenlandia() {
   return (
-    <WorldLayout
-      title="🌏 Greenlandia"
-      blurb="Welcome to Greenlandia — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Greenlandia/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Greenlandia"
+      intro="Welcome to Greenlandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Greenlandia/Greenlandiamap.png"
     />
   );
 }
+

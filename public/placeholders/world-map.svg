@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1600" height="1000" viewBox="0 0 1600 1000">
+  <rect width="100%" height="100%" fill="#eef2f7"/>
+  <rect x="40" y="40" width="1520" height="920" rx="24" fill="#e2e8f0" />
+  <text x="50%" y="50%" dominant-baseline="middle" text-anchor="middle"
+        font-family="system-ui, -apple-system, Segoe UI, Roboto" font-size="48" fill="#64748b">
+    World map coming soon
+  </text>
+</svg>

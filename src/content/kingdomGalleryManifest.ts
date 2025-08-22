@@ -1,8 +1,8 @@
 export type Kingdom =
   | "Thailandia" | "Brazilandia" | "Indillandia" | "Amerilandia"
-  | "Australandia" | "Chilandia" | "Japonica" | "Africania"
+  | "Australandia" | "Chilandia" | "Japonica" | "Africana"
   | "Europalia" | "Britannula" | "Kiwilandia" | "Madagascaria"
-  | "Greenlandia" | "Antarcticland";
+  | "Greenlandia" | "Antarctiland";
 
 export const GALLERY: Record<Kingdom, string[]> = {
   Thailandia: [],       // to be filled after assets are in /public/kingdoms/Thailandia
@@ -12,11 +12,11 @@ export const GALLERY: Record<Kingdom, string[]> = {
   Australandia: [],
   Chilandia: [],
   Japonica: [],
-  Africania: [],
+  Africana: [],
   Europalia: [],
   Britannula: [],
   Kiwilandia: [],
   Madagascaria: [],
   Greenlandia: [],
-  Antarcticland: [],
+  Antarctiland: [],
 };

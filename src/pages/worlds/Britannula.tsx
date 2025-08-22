@@ -1,14 +1,13 @@
 import React from "react";
-import WorldLayout from "../../components/WorldLayout";
+import WorldPage from "../../components/WorldPage";
 
 export default function Britannula() {
   return (
-    <WorldLayout
-      title="🌏 Britannula"
-      blurb="Welcome to Britannula — explore traditions, landmarks, and celebrations."
-      heroSrc="/kingdoms/Britannula/map.jpg"
-      gallery={[]}
-      characters={[]}
+    <WorldPage
+      title="Britannula"
+      intro="Welcome to Britannula — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Britannula/Britannulamap.png"
     />
   );
 }
+
