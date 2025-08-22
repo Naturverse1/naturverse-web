@@ -1,0 +1,28 @@
+/* Header bar */
+.site-header { position: sticky; top: 0; z-index: 40; background: #ffffffd9; backdrop-filter: blur(6px); border-bottom: 1px solid #eef2f7; }
+.site-header__inner { max-width: 72rem; margin: 0 auto; padding: 10px 16px; display: flex; align-items: center; justify-content: space-between; gap: 12px; }
+
+/* Brand */
+.brand { display: inline-flex; align-items: center; gap: 8px; text-decoration: none; }
+.brand__logo { display: inline-flex; }
+.brand__name { font-weight: 800; font-size: 20px; color: #0f172a; }
+
+/* Desktop nav */
+.main-nav { display: flex; gap: 18px; align-items: center; }
+.main-nav__link { text-decoration: none; color: #374151; font-weight: 600; }
+.main-nav__link:hover { color: #111827; }
+
+/* Hamburger */
+.hamburger { display: inline-flex; flex-direction: column; gap: 4px; padding: 8px; border-radius: 10px; border: 1px solid #e5e7eb; background: #fff; }
+.hamburger span { width: 20px; height: 2px; background: #111827; border-radius: 2px; display: block; }
+
+/* Mobile drawer */
+.mobile-menu { position: absolute; inset-inline-end: 12px; top: 56px; width: min(88vw, 320px); border: 1px solid #e5e7eb; border-radius: 12px; background: #fff; box-shadow: 0 10px 30px rgba(0,0,0,.08); padding: 8px; display: none; }
+.mobile-menu.open { display: block; }
+.mobile-menu__link { display: block; padding: 10px 12px; border-radius: 8px; text-decoration: none; color: #111827; font-weight: 600; }
+.mobile-menu__link:hover { background: #f3f4f6; }
+
+/* Reset list-style/blue bullets inside header (in case UA styles leak) */
+.site-header ul, .site-header li { list-style: none; margin: 0; padding: 0; }
+.site-header a { color: inherit; }
+
