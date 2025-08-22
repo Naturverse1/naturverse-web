@@ -1,80 +1,108 @@
-import React, { useState } from "react";
-import { Link } from "react-router-dom";
+import React, { useEffect, useRef, useState } from "react";
+
+const LINKS = [
+  { href: "/worlds", label: "Worlds" },
+  { href: "/zones", label: "Zones" },
+  { href: "/marketplace", label: "Marketplace" },
+  { href: "/naturversity", label: "Naturversity" },
+  { href: "/naturbank", label: "Naturbank" },
+  { href: "/navatar", label: "Navatar" },
+  { href: "/passport", label: "Passport" },
+  { href: "/turian", label: "Turian" },
+  { href: "/profile", label: "Profile" },
+];
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const btnRef = useRef<HTMLButtonElement>(null);
+  const menuRef = useRef<HTMLDivElement>(null);
+
+  // close on outside click / escape
+  useEffect(() => {
+    const onDoc = (e: MouseEvent) => {
+      if (!open) return;
+      const t = e.target as Node;
+      if (!menuRef.current?.contains(t) && !btnRef.current?.contains(t)) {
+        setOpen(false);
+      }
+    };
+    const onEsc = (e: KeyboardEvent) => {
+      if (e.key === "Escape") setOpen(false);
+    };
+    document.addEventListener("mousedown", onDoc);
+    document.addEventListener("keydown", onEsc);
+    return () => {
+      document.removeEventListener("mousedown", onDoc);
+      document.removeEventListener("keydown", onEsc);
+    };
+  }, [open]);
 
   return (
-    <header className="nv-header">
-      <div className="nv-header__inner">
-        <Link to="/" className="brand" aria-label="Naturverse home">
-          {/* tiny inline durian logo (no external asset) */}
-          <svg
-            className="brand__logo"
-            viewBox="0 0 24 24"
-            width="24"
-            height="24"
-            aria-hidden="true"
-          >
-            <defs>
-              <linearGradient id="g" x1="0" y1="0" x2="1" y2="1">
-                <stop offset="0" stopColor="#84cc16" />
-                <stop offset="1" stopColor="#16a34a" />
-              </linearGradient>
-            </defs>
-            <circle cx="12" cy="12" r="9" fill="url(#g)" />
-            {Array.from({ length: 12 }).map((_, i) => {
-              const a = (i * Math.PI) / 6;
-              const x = 12 + Math.cos(a) * 9.6;
-              const y = 12 + Math.sin(a) * 9.6;
-              return <circle key={i} cx={x} cy={y} r="1" fill="#166534" />;
-            })}
-            <circle cx="9" cy="11" r="1.2" fill="#14532d" />
-            <circle cx="15" cy="11" r="1.2" fill="#14532d" />
-            <path d="M8 15c1.5 1 6.5 1 8 0" stroke="#14532d" strokeWidth="1.4" fill="none" />
-          </svg>
-          <span className="brand__name">Naturverse</span>
-        </Link>
+    <header className="sticky top-0 z-30 bg-white/80 backdrop-blur border-b border-slate-200">
+      <div className="mx-auto max-w-6xl px-4 py-3 flex items-center justify-between">
+        {/* Brand (left) — always links home */}
+        <a href="/" aria-label="Naturverse home" className="flex items-center gap-2 shrink-0">
+          {/* inline durian glyph (keeps build image-free) */}
+          <span aria-hidden className="inline-block h-6 w-6 rounded-full bg-gradient-to-b from-emerald-400 to-emerald-600" />
+          <span className="font-semibold tracking-tight">Naturverse</span>
+        </a>
 
-        <nav className="nv-nav">
-          <Link to="/worlds">Worlds</Link>
-          <Link to="/zones">Zones</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/naturversity">Naturversity</Link>
-          <Link to="/naturbank">Naturbank</Link>
-          <Link to="/navatar">Navatar</Link>
-          <Link to="/passport">Passport</Link>
-          <Link to="/turian">Turian</Link>
-          <Link to="/profile">Profile</Link>
+        {/* Desktop nav */}
+        <nav className="hidden md:flex items-center gap-4">
+          {LINKS.map((l) => (
+            <a
+              key={l.href}
+              href={l.href}
+              className="px-3 py-1.5 rounded-md hover:bg-slate-100 text-slate-700"
+            >
+              {l.label}
+            </a>
+          ))}
         </nav>
 
-        <button
-          type="button"
-          className="nv-menu"
-          aria-label="Open menu"
-          aria-expanded={open}
-          onClick={() => setOpen(!open)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
-      </div>
+        {/* Mobile menu button + dropdown */}
+        <div className="relative md:hidden">
+          <button
+            ref={btnRef}
+            type="button"
+            aria-label="Open menu"
+            aria-haspopup="menu"
+            aria-expanded={open}
+            onClick={() => setOpen((v) => !v)}
+            className="inline-flex items-center justify-center h-10 w-10 rounded-lg border border-slate-300 hover:bg-slate-50"
+          >
+            <span className="sr-only">Menu</span>
+            {/* hamburger */}
+            <svg width="22" height="22" viewBox="0 0 24 24" fill="none">
+              <path d="M4 7h16M4 12h16M4 17h16" stroke="#0f172a" strokeWidth="2" strokeLinecap="round"/>
+            </svg>
+          </button>
 
-      {open && (
-        <div className="nv-drawer" role="menu" onClick={() => setOpen(false)}>
-          <Link to="/worlds">Worlds</Link>
-          <Link to="/zones">Zones</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/naturversity">Naturversity</Link>
-          <Link to="/naturbank">Naturbank</Link>
-          <Link to="/navatar">Navatar</Link>
-          <Link to="/passport">Passport</Link>
-          <Link to="/turian">Turian</Link>
-          <Link to="/profile">Profile</Link>
+          {/* Compact dropdown under the button (no drawer) */}
+          <div
+            ref={menuRef}
+            role="menu"
+            aria-label="Main"
+            className={`absolute right-0 mt-2 w-56 rounded-xl border border-slate-200 bg-white shadow-lg ${
+              open ? "block" : "hidden"
+            }`}
+          >
+            <ul className="py-1">
+              {LINKS.map((l) => (
+                <li key={l.href}>
+                  <a
+                    href={l.href}
+                    className="block px-3 py-2 text-slate-800 hover:bg-slate-100"
+                    onClick={() => setOpen(false)}
+                  >
+                    {l.label}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </div>
         </div>
-      )}
+      </div>
     </header>
   );
 }
-
