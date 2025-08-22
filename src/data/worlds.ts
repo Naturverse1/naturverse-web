@@ -7,10 +7,40 @@ export type World = {
 };
 
 export const WORLDS: World[] = [
-  { slug: "thailandia",   name: "Thailandia",   map: "/assets/thailandia/map.png",   blurb: "Coconuts, elephants, festivals." },
-  { slug: "amerilandia",  name: "Amerilandia",  map: "/assets/amerilandia/map.png",  blurb: "Apples & eagles." },
-  { slug: "indilandia",   name: "Indilandia",   map: "/assets/indilandia/map.png",   blurb: "Mangoes & tigers." },
-  { slug: "brazilandia",  name: "Brazilandia",  map: "/assets/brazilandia/map.png",  blurb: "Bananas & parrots." },
-  { slug: "australandia", name: "Australandia", map: "/assets/australandia/map.png", blurb: "Peaches & kangaroos." },
-  { slug: "chilandia",    name: "Chilandia",    map: "/assets/chilandia/map.png",    blurb: "Bamboo & pandas." }
+  {
+    slug: "thailandia",
+    name: "Thailandia",
+    map: "/kingdoms/Thailandia/Thailandiamap.jpg",
+    blurb: "Coconuts, elephants, festivals."
+  },
+  {
+    slug: "amerilandia",
+    name: "Amerilandia",
+    map: "/kingdoms/Amerilandia/Amerilandiamap.png",
+    blurb: "Apples & eagles."
+  },
+  {
+    slug: "indillandia",
+    name: "Indillandia",
+    map: "/kingdoms/Indillandia/Inlandiamap.png",
+    blurb: "Mangoes & tigers."
+  },
+  {
+    slug: "brazilandia",
+    name: "Brazilandia",
+    map: "/kingdoms/Brazilandia/Brazilandiamap.png",
+    blurb: "Bananas & parrots."
+  },
+  {
+    slug: "australandia",
+    name: "Australandia",
+    map: "/kingdoms/Australandia/Australaniamap.png",
+    blurb: "Peaches & kangaroos."
+  },
+  {
+    slug: "chilandia",
+    name: "Chilandia",
+    map: "/kingdoms/Chilandia/Chilandiamap.jpg",
+    blurb: "Bamboo & pandas."
+  }
 ];

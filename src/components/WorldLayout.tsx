@@ -1,70 +1,65 @@
 import React from "react";
+import { KINGDOMS, KingdomId, imgUrl } from "../data/kingdoms";
+import "../styles/worlds.css";
 
-type ImgItem = { src?: string; alt: string; label?: string; href?: string };
+type Props = { id: KingdomId };
 
-export default function WorldLayout({
-  title,
-  blurb,
-  heroSrc,
-  gallery = [],
-  characters = [],
-}: {
-  title: string;
-  blurb: string;
-  heroSrc?: string;
-  gallery?: ImgItem[];
-  characters?: ImgItem[];
-}) {
-  const hero = heroSrc || "/placeholders/world-hero.jpg";
+export default function WorldLayout({ id }: Props) {
+  const k = KINGDOMS[id];
+  const folder = k.title; // TitleCase matches your public folder name
 
   return (
     <div className="world-wrap">
-      <div className="world-hero">
-        <img src={hero} alt={`${title} map`} onError={(e) => ((e.currentTarget.src = "/placeholders/world-hero.jpg"))} />
-      </div>
+      <h1 className="world-title">{k.title}</h1>
 
-      <h1 className="world-title">{title}</h1>
-      <p className="muted">{blurb}</p>
-
-      <section className="world-section">
-        <h2>Gallery</h2>
-        <div className="world-grid">
-          {gallery.length ? (
-            gallery.map((g, i) => (
-              g.href ? (
-                <a key={i} className="world-card" href={g.href}>
-                  <img src={g.src || "/placeholders/photo.jpg"} alt={g.alt} />
-                  {g.label && <h3>{g.label}</h3>}
-                </a>
-              ) : (
-                <div key={i} className="world-card">
-                  <img src={g.src || "/placeholders/photo.jpg"} alt={g.alt} />
-                  {g.label && <h3>{g.label}</h3>}
-                </div>
-              )
-            ))
-          ) : (
-            <div className="world-empty">Coming soon</div>
-          )}
+      {/* Map hero */}
+      <section className="world-hero card">
+        <figure className="hero-figure">
+          <img
+            src={imgUrl(folder, k.mapFile)}
+            alt={`${k.title} map`}
+            loading="eager"
+            width={1280}
+            height={720}
+          />
+        </figure>
+        <div className="hero-meta">
+          <h2>World Map</h2>
+          <p>Zoom into landmarks, routes, and regions.</p>
         </div>
       </section>
 
+      {/* Characters grid */}
       <section className="world-section">
         <h2>Characters</h2>
-        <div className="world-grid">
-          {characters.length ? (
-            characters.map((c, i) => (
-              <div key={i} className="world-card">
-                <img src={c.src || "/placeholders/avatar.jpg"} alt={c.alt} />
-                {c.label && <h3>{c.label}</h3>}
-              </div>
-            ))
-          ) : (
-            <div className="world-empty">Coming soon</div>
-          )}
-        </div>
+        {k.characters.length === 0 ? (
+          <div className="coming-soon">Gallery coming soon.</div>
+        ) : (
+          <ul className="char-grid">
+            {k.characters.map((file) => (
+              <li key={file} className="char-card">
+                <div className="char-thumb">
+                  <img
+                    src={imgUrl(folder, file)}
+                    alt={file.replace(/\.[^.]+$/, "")}
+                    loading="lazy"
+                    width={320}
+                    height={420}
+                    onError={(e) => {
+                      // friendly fallback if a filename is missing
+                      (e.currentTarget as HTMLImageElement).style.display = "none";
+                      e.currentTarget.parentElement!.classList.add("thumb-missing");
+                    }}
+                  />
+                </div>
+                <div className="char-name">
+                  {file.replace(/\.[^.]+$/, "")}
+                </div>
+              </li>
+            ))}
+          </ul>
+        )}
       </section>
     </div>
   );
 }
-
