@@ -12,7 +12,7 @@ export const WORLDS: Kingdom[] = [
   { id: "indillandia", name: "Indillandia", tagline: "Mangoes & Tigers", emoji: "🥭🐯" },
   { id: "amerilandia", name: "Amerilandia", tagline: "Apples & Eagles", emoji: "🍎🦅" },
   { id: "australandia", name: "Australandia", tagline: "Peaches & Kangaroos", emoji: "🍑🦘" },
-  { id: "chilandia", name: "Chilandia", tagline: "Bamboo (shoots) & Pandas", emoji: "🎋🐼" },
+  { id: "chilandia", name: "Chilandia", tagline: "Pandas & Dragons", emoji: "🐼🐉" },
   { id: "japonica", name: "Japonica", tagline: "Cherry Blossoms & Foxes", emoji: "🌸🦊" },
   { id: "africana", name: "Africana", tagline: "Mangoes & Lions", emoji: "🦁🌞" },
   { id: "europalia", name: "Europalia", tagline: "Sunflowers & Hedgehogs", emoji: "🌻🦔" },

@@ -4,7 +4,7 @@ export const worlds = [
   { slug: "indillandia",  title: "Indillandia",  emoji: "🥭🐯", blurb: "Mangoes & Tigers" },
   { slug: "amerilandia",  title: "Amerilandia",  emoji: "🍎🦅", blurb: "Apples & Eagles" },
   { slug: "australandia", title: "Australandia", emoji: "🍑🦘", blurb: "Peaches & Kangaroos" },
-  { slug: "chilandia",    title: "Chilandia",    emoji: "🎍🐼", blurb: "Bamboo (shoots) & Pandas" },
+  { slug: "chilandia",    title: "Chilandia",    emoji: "🐼🐉", blurb: "Pandas & Dragons" },
   { slug: "japonica",     title: "Japonica",     emoji: "🌸🦊", blurb: "Cherry Blossoms & Foxes" },
   { slug: "africana",     title: "Africana",     emoji: "🍋🦁", blurb: "Lemons & Lions" },
   { slug: "europalia",    title: "Europalia",    emoji: "🌻🦔", blurb: "Sunflowers & Hedgehogs" },

@@ -47,9 +47,9 @@ export const cultureData: CultureItem[] = [
   },
   {
     id: "chilandia",
-    emoji: "🧧🐉",
+    emoji: "🐼🐉",
     title: "Chilandia",
-    blurb: "Bamboo & Pandas",
+    blurb: "Pandas & Dragons",
     beliefs: [
       "Balance, family, and scholarly curiosity.",
       "Bamboo as a symbol of resilience."
