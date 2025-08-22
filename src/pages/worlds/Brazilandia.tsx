@@ -1,14 +1,12 @@
 import React from "react";
-import WorldGallery from "../../components/worlds/WorldGallery";
-import { WORLDS } from "../../content/worlds";
-
-export default function BrazilandiaWorld() {
-  const w = WORLDS.Brazilandia;
+import WorldPage from "./_WorldPage";
+export default function Brazilandia() {
   return (
-    <div className="world-page">
-      <h1>🌏 Brazilandia</h1>
-      <p className="muted">Welcome to Brazilandia — explore traditions, landmarks, and celebrations.</p>
-      <WorldGallery mapSrc={w.mapSrc} alt={w.alt} characters={w.characters} />
-    </div>
+    <WorldPage
+      worldKey="brazilandia"
+      title="Brazilandia"
+      intro="Welcome to Brazilandia — explore traditions, landmarks, and celebrations."
+      mapSrc="/kingdoms/Brazilandia/Brazilandiamap.png"
+    />
   );
 }

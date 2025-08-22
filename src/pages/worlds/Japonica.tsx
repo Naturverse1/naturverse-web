@@ -1,9 +1,10 @@
 import React from "react";
-import WorldPage from "../../components/WorldPage";
+import WorldPage from "./_WorldPage";
 
 export default function Japonica() {
   return (
     <WorldPage
+      worldKey="japonica"
       title="Japonica"
       intro="Welcome to Japonica — explore traditions, landmarks, and celebrations."
       mapSrc="/kingdoms/Japonica/Japonicamap.png"

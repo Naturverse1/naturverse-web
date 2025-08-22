@@ -1,0 +1,46 @@
+[
+  {
+    "name": "Bird",
+    "src": "/kingdoms/Australandia/Bird.png"
+  },
+  {
+    "name": "Groupof Four",
+    "src": "/kingdoms/Australandia/Groupof four.png"
+  },
+  {
+    "name": "Kangarooguide",
+    "src": "/kingdoms/Australandia/Kangarooguide.png"
+  },
+  {
+    "name": "Kangarootoon",
+    "src": "/kingdoms/Australandia/Kangarootoon.png"
+  },
+  {
+    "name": "Koala",
+    "src": "/kingdoms/Australandia/Koala.png"
+  },
+  {
+    "name": "Koalalt",
+    "src": "/kingdoms/Australandia/Koalalt.png"
+  },
+  {
+    "name": "Koalazen",
+    "src": "/kingdoms/Australandia/koalazen.png"
+  },
+  {
+    "name": "Platapus",
+    "src": "/kingdoms/Australandia/Platapus.png"
+  },
+  {
+    "name": "Turtletwin1",
+    "src": "/kingdoms/Australandia/turtletwin1.png"
+  },
+  {
+    "name": "Turtletwin2",
+    "src": "/kingdoms/Australandia/Turtletwin2.png"
+  },
+  {
+    "name": "Wallywombat",
+    "src": "/kingdoms/Australandia/Wallywombat.png"
+  }
+]
