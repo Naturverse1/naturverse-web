@@ -47,9 +47,9 @@ export const CULTURE_SECTIONS: CultureSection[] = [
   },
   {
     id: "chilandia",
-    emoji: "🎋🐼",
+    emoji: "🐼🐉",
     kingdom: "Chilandia",
-    caption: "Bamboo & Pandas",
+    caption: "Pandas & Dragons",
     beliefs: [
       "Balance, family, and scholarly curiosity.",
       "Bamboo as a symbol of resilience."

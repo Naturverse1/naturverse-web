@@ -35,7 +35,7 @@ const cards = [
   },
   {
     title: "Chilandia",
-    subtitle: "Bamboo & Pandas",
+    subtitle: "Pandas & Dragons",
     beliefs: [
       "Balance, family, and scholarly curiosity.",
       "Bamboo as a symbol of resilience."

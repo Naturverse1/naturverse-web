@@ -10,7 +10,7 @@ export const KINGDOMS: Kingdom[] = [
   { key: "Indillandia",   title: "Indillandia",   subtitle: "Mangoes & Tigers" },
   { key: "Amerilandia",   title: "Amerilandia",   subtitle: "Apples & Eagles" },
   { key: "Australandia",  title: "Australandia",  subtitle: "Peaches & Kangaroos" },
-  { key: "Chilandia",     title: "Chilandia",     subtitle: "Bamboo & Pandas" },
+  { key: "Chilandia",     title: "Chilandia",     subtitle: "Pandas & Dragons" },
   { key: "Japonica",      title: "Japonica",      subtitle: "Cherry Blossoms & Foxes" },
   { key: "Africana",      title: "Africana",      subtitle: "Mangoes & Lions" },
   { key: "Europalia",     title: "Europalia",     subtitle: "Sunflowers & Hedgehogs" },

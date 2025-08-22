@@ -6,7 +6,7 @@ export default function Australandia() {
     <WorldPage
       title="Australandia"
       intro="Welcome to Australandia — explore traditions, landmarks, and celebrations."
-      mapSrc="/kingdoms/Australandia/Australandiemap.png"
+      mapSrc="/kingdoms/Australandia/Australaniamap.png"
     />
   );
 }
