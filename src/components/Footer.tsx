@@ -28,7 +28,12 @@ export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-inner">
-        <p className="brand">© {new Date().getFullYear()} Naturverse · A Turian Media Company</p>
+        <img
+          src="/Turianmedia-logo-footer.png"
+          alt="Turian Media"
+          className="site-logo"
+        />
+        <p>© {new Date().getFullYear()} Naturverse</p>
         <nav className="footer-links">
           <a href="/terms">Terms</a>
           <a href="/privacy">Privacy</a>
