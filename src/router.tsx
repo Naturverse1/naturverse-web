@@ -5,7 +5,7 @@ import Home from "./pages/Home";
 import WorldsIndex from "./pages/worlds";
 import Thailandia from "./pages/worlds/thailandia";
 import Brazilandia from "./pages/worlds/brazilandia";
-import Indilandia from "./pages/worlds/indilandia";
+import Indillandia from "./pages/worlds/indillandia";
 import Amerilandia from "./pages/worlds/amerilandia";
 import Australandia from "./pages/worlds/australandia";
 import Chilandia from "./pages/worlds/chilandia";
@@ -63,7 +63,7 @@ export const router = createBrowserRouter([
       { path: "worlds", element: <WorldsIndex /> },
       { path: "worlds/thailandia", element: <Thailandia /> },
       { path: "worlds/brazilandia", element: <Brazilandia /> },
-      { path: "worlds/indilandia", element: <Indilandia /> },
+      { path: "worlds/indillandia", element: <Indillandia /> },
       { path: "worlds/amerilandia", element: <Amerilandia /> },
       { path: "worlds/australandia", element: <Australandia /> },
       { path: "worlds/chilandia", element: <Chilandia /> },
