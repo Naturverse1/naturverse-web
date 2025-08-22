@@ -2,40 +2,63 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" href="/turian-favicon-32.png" />
-    <link rel="preload" as="style" href="/src/styles/main.css">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-256x256.png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
 
-    <meta name="description" content="Naturverse — playful worlds, zones, and learning quests." />
-    <meta property="og:title" content="Naturverse" />
-    <meta property="og:description" content="Explore worlds, play in zones, and learn as you go." />
-    <meta property="og:type" content="website" />
-    <meta property="og:image" content="/turian-favicon-192.png" />
-    <meta property="og:site_name" content="Naturverse" />
-    <meta name="twitter:card" content="summary_large_image" />
+    <!-- Favicon / icons (files already exist) -->
+    <link rel="icon" href="/favicon-256x256.png" />
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-256x256.png" />
 
-    <script>
-      // mark active top-nav links at runtime (no router dependency)
-      document.addEventListener('DOMContentLoaded', () => {
-        try {
-          const here = location.pathname.replace(/\/+$/, '') || '/';
-          document.querySelectorAll('a[data-topnav]').forEach(a => {
-            const href = (a.getAttribute('href') || '').replace(/\/+$/, '') || '/';
-            if (href === here || (href !== '/' && here.startsWith(href))) {
-              a.classList.add('active');
-              a.setAttribute('aria-current','page');
-            }
-          });
-          // lazy attribute for all images without one
-          document.querySelectorAll('img:not([loading])').forEach(img => img.setAttribute('loading', 'lazy'));
-        } catch {}
-      });
-    </script>
+    <!-- Preload main CSS -->
+    <link rel="preload" as="style" href="/src/styles/main.css" />
+    <link rel="stylesheet" href="/src/styles/main.css" />
+
+    <!-- Canonical + description -->
+    <link rel="canonical" href="https://thenaturverse.com/" />
+    <meta
+      name="description"
+      content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
+    />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Naturverse" />
+    <meta property="og:title" content="Naturverse — Play, learn, and grow" />
+    <meta
+      property="og:description"
+      content="Explore worlds, play in zones, and learn as you go."
+    />
+    <!-- Refer to an existing image in /public/assets; do not add binaries in this PR -->
+    <meta property="og:image" content="/assets/og-card.png" />
+    <meta property="og:url" content="https://thenaturverse.com/" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:site" content="@turianthedurian" />
+    <meta name="twitter:title" content="Naturverse — Play, learn, and grow" />
+    <meta
+      name="twitter:description"
+      content="A playful world of kingdoms, characters, and quests."
+    />
+    <meta name="twitter:image" content="/assets/og-card.png" />
+
+    <!-- Theme color -->
+    <meta name="theme-color" content="#0ea5e9" />
   </head>
   <body>
     <div id="root"></div>
+
+    <!-- Global, safe lazy-loading for any <img> without attrs -->
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        document
+          .querySelectorAll("img:not([loading])")
+          .forEach(function (img) {
+            img.setAttribute("loading", "lazy");
+            img.setAttribute("decoding", "async");
+          });
+      });
+    </script>
     <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
