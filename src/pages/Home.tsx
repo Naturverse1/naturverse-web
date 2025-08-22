@@ -27,7 +27,7 @@ export default function Home() {
         </p>
         <div className="home-cta">
           <Link className="btn btn-primary" to="/signup">Create account</Link>
-          <Link className="btn" to="/worlds">Explore Worlds</Link>
+          <Link className="btn btn-outline" to="/worlds">Explore Worlds</Link>
         </div>
       </header>
 
