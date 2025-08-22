@@ -1,25 +1,70 @@
-.world-page { max-width: 1100px; margin: 0 auto; }
-.world-hero { margin: 16px 0 24px; border-radius: 14px; overflow: hidden; background:#eef2f7; }
-.world-hero img { display:block; width:100%; height:auto; aspect-ratio: 16 / 10; object-fit: cover; }
+/* Container */
+.world-page{
+  max-width:1080px;
+  margin:0 auto;
+  padding:16px 20px 32px;
+}
 
-.world-section { margin: 28px 0; }
-.world-section h2 { margin: 0 0 12px; }
+/* Titles & spacing */
+.world-title{ margin:18px 0 8px; }
+.world-subtle{ color:#667085; margin:0 0 18px; }
 
-.char-grid {
+/* Hero (map) */
+.world-hero{
+  background:#f6f7fb;
+  border:1px solid #e5e7eb;
+  border-radius:16px;
+  overflow:hidden;
+  aspect-ratio:16/9;
+  max-height:520px;
+}
+.world-hero__img{
+  width:100%;
+  height:100%;
+  object-fit:contain;   /* keep the whole map visible */
+  display:block;
+}
+
+/* Characters grid */
+.characters{
+  margin-top:24px;
+}
+.characters-grid{
   display:grid;
-  grid-template-columns: repeat(auto-fill, minmax(140px,1fr));
-  gap:14px;
+  grid-template-columns:repeat(auto-fill,minmax(140px,1fr));
+  gap:16px;
 }
-.char-card { padding:12px; border:1px solid #e5e7eb; border-radius:12px; background:#fff; }
-.char-card img { width:100%; height:140px; object-fit:contain; display:block; }
-.char-card h3 { margin:8px 0 0; font-size:15px; }
-.muted { color:#6b7280; font-size:13px; margin:4px 0 0; }
-
-.soon { padding:18px; border:2px dashed #e5e7eb; border-radius:12px; text-align:center; color:#6b7280; }
-
-/* legacy support */
-.coming-soon {
-  padding: 28px; border: 2px dashed #cbd5e1; border-radius: 14px;
-  background:#f8fafc; color:#475569; text-align:center; font-weight:600;
+.character-card{
+  border:1px solid #e5e7eb;
+  border-radius:12px;
+  padding:10px;
+  background:#fff;
 }
-.sr-only { position:absolute; left:-10000px; top:auto; width:1px; height:1px; overflow:hidden; }
+.character-card img{
+  width:100%;
+  height:160px;         /* fixed, tidy thumbnails */
+  object-fit:cover;
+  border-radius:8px;
+  display:block;
+}
+.character-card .name{
+  margin-top:8px;
+  font-weight:600;
+  font-size:14px;
+}
+
+/* Gallery placeholder */
+.gallery-placeholder{
+  border:1px dashed #d1d5db;
+  border-radius:12px;
+  padding:20px;
+  color:#94a3b8;
+  text-align:center;
+}
+
+/* Mobile tweaks */
+@media (max-width: 768px){
+  .world-page{ padding:12px 14px 24px; }
+  .world-hero{ max-height:320px; aspect-ratio:auto; }
+  .character-card img{ height:140px; }
+}
