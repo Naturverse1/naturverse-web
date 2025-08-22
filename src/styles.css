@@ -43,3 +43,10 @@
 .footer-brand__img { height:18px; width:auto; display:block; }
 .footer-brand__text { font-weight:700; color:#475569; }
 @media (max-width:640px){ .site-footer__inner { flex-direction:column; gap:8px; } }
+
+/* card image block */
+.card-img { display:flex; align-items:center; justify-content:center; margin-right:12px; }
+.card-img img { width:44px; height:44px; border-radius:8px; object-fit:cover; }
+@media (min-width: 1024px){
+  .card-img img { width:52px; height:52px; }
+}

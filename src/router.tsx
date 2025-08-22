@@ -2,7 +2,7 @@ import React from "react";
 import { createBrowserRouter } from "react-router-dom";
 
 import Home from "./routes";
-import Worlds from "./routes/worlds";
+import Worlds from "./pages/Worlds";
 import World from "./routes/worlds/World";
 import Zones from "./routes/zones";
 import ArcadeZone from "./routes/zones/arcade";
