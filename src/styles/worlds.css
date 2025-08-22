@@ -68,3 +68,27 @@
   .world-hero{ max-height:320px; aspect-ratio:auto; }
   .character-card img{ height:140px; }
 }
+.worlds-hero {
+  max-width: 900px;
+  margin: 0 auto 24px;
+}
+
+.worlds-map {
+  max-width: 100%;
+  height: auto;
+  border-radius: 12px;
+}
+
+.worlds-characters {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.worlds-characters img {
+  width: 100%;
+  height: auto;
+  border-radius: 8px;
+  object-fit: cover;
+}

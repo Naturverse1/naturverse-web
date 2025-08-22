@@ -1,5 +1,5 @@
 import React from "react";
-import "../styles/worlds.css";
+import "../../styles/worlds.css";
 
 type Props = {
   title: string;
