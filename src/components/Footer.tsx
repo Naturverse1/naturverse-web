@@ -1,29 +1,22 @@
-import React from 'react';
+import React from "react";
 
 export default function Footer() {
   return (
     <footer className="site-footer">
-      <div className="footer-inner">
-        <p className="muted">© {new Date().getFullYear()} Naturverse</p>
+      <div className="site-footer__inner">
+        <div className="site-footer__left">© 2025 Naturverse</div>
 
-        <a
-          className="tmc-badge"
-          href="https://turian.media" /* or your canonical company URL */
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="A Turian Media Company"
-        >
+        <div className="site-footer__right footer-brand" role="contentinfo" aria-label="Publisher">
           <img
             src="/attached_assets/turian_media_logo_transparent.png"
-            alt="Turian Media logo"
-            className="tmc-logo"
-            width={20}
-            height={20}
+            alt="Turian Media"
+            className="footer-brand__img"
             loading="lazy"
             decoding="async"
+            onError={(e) => { (e.currentTarget as HTMLImageElement).style.display = 'none'; }}
           />
-          <span>A Turian Media Company</span>
-        </a>
+          <span className="footer-brand__text">A Turian Media Company</span>
+        </div>
       </div>
     </footer>
   );
