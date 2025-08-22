@@ -14,3 +14,10 @@ svg[aria-label="hero-face"],
 /* hide any legacy inline top nav on phones */
 .top-inline-nav{ display:none; }
 @media (min-width:768px){ .top-inline-nav{ display:flex; } }
+
+.site-logo {
+  max-height: 48px;
+  width: auto;
+  object-fit: contain;
+  display: block;
+}

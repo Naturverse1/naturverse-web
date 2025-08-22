@@ -39,16 +39,12 @@ export default function Header() {
   return (
       <header className="nv-header">
         <div className="nv-shell">
-            {/* Brand: Turian head + Naturverse (links home) */}
-            <a href="/" className="brand" aria-label="Naturverse home">
+            <a href="/" className="header-logo-link" aria-label="Naturverse home">
               <img
-                src="/favicon-32x32.png"
-                alt=""
-                width={24}
-                height={24}
-                className="brand__logo"
+                src="/Turianmedia-logo-footer.png"
+                alt="Turian Media"
+                className="site-logo"
               />
-              <span className="brand__name">Naturverse</span>
             </a>
 
           <div className="nv-right">
