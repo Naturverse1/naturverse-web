@@ -1,142 +1,151 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
+import { getCurrentUserAndProfile, NaturProfile } from '../lib/getProfile';
 
-type UserInfo = {
-  id: string;
-  email: string | null;
-  avatar_url?: string | null;
-  display_name?: string | null;
-};
+type ViewState =
+  | { kind: 'loading' }
+  | { kind: 'signedOut' }
+  | { kind: 'ready'; user: { id: string; email?: string | null }; profile: NaturProfile | null }
+  | { kind: 'error'; message: string };
 
 export default function ProfilePage() {
-  const [loading, setLoading] = useState(true);
-  const [user, setUser] = useState<UserInfo | null>(null);
-  const [error, setError] = useState<string | null>(null);
+  const [state, setState] = useState<ViewState>({ kind: 'loading' });
 
-  // Load current user (if any)
   useEffect(() => {
-    let mounted = true;
+    let active = true;
 
-    async function init() {
-      try {
-        setLoading(true);
-        const { data, error: getUserErr } = await supabase.auth.getUser();
-        if (getUserErr) throw getUserErr;
+    (async () => {
+      const { user, profile, error } = await getCurrentUserAndProfile();
+      if (!active) return;
 
-        const sUser = data.user;
-        if (!sUser) {
-          if (mounted) setUser(null);
-          return;
-        }
-
-        // Pull any profile fields you keep in your public "profiles" table.
-        // This is optional—if you don’t have it yet, we’ll just display email.
-        const { data: prof } = await supabase
-          .from("profiles")
-          .select("display_name, avatar_url")
-          .eq("id", sUser.id)
-          .maybeSingle();
-
-        if (mounted) {
-          setUser({
-            id: sUser.id,
-            email: sUser.email ?? null,
-            avatar_url: prof?.avatar_url ?? null,
-            display_name: prof?.display_name ?? null,
-          });
-        }
-      } catch (e: any) {
-        if (mounted) setError(e.message ?? "Failed to load user.");
-      } finally {
-        if (mounted) setLoading(false);
+      if (error) {
+        setState({ kind: 'error', message: error.message ?? 'Failed to load profile' });
+        return;
       }
-    }
+      if (!user) {
+        setState({ kind: 'signedOut' });
+        return;
+      }
+      setState({
+        kind: 'ready',
+        user: { id: user.id, email: user.email },
+        profile,
+      });
+    })();
 
-    init();
-    // keep session in sync (optional but nice)
-    const { data: sub } = supabase.auth.onAuthStateChange(() => init());
+    // keep state fresh when auth changes (sign-in/out)
+    const { data: sub } = supabase.auth.onAuthStateChange(async () => {
+      setState({ kind: 'loading' });
+      const { user, profile, error } = await getCurrentUserAndProfile();
+      if (!active) return;
+      if (error) setState({ kind: 'error', message: error.message ?? 'Failed to load profile' });
+      else if (!user) setState({ kind: 'signedOut' });
+      else setState({ kind: 'ready', user: { id: user.id, email: user.email }, profile });
+    });
 
     return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
+      active = false;
+      sub?.subscription?.unsubscribe();
     };
   }, []);
 
-  async function signInWithGoogle() {
-    setError(null);
-    try {
-      setLoading(true);
-      const { error: authErr } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-        // after OAuth completes, come back to profile
-        options: { redirectTo: window.location.origin + "/profile" },
-      });
-      if (authErr) throw authErr;
-    } catch (e: any) {
-      setError(e.message ?? "Sign-in failed.");
-    } finally {
-      setLoading(false);
-    }
-  }
-
-  async function signOut() {
-    setError(null);
-    try {
-      await supabase.auth.signOut();
-      setUser(null);
-    } catch (e: any) {
-      setError(e.message ?? "Sign-out failed.");
-    }
-  }
-
-  return (
-    <main id="main" className="page-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
-      <h1>Profile</h1>
-
-      {loading && <p>Loading…</p>}
-      {error && (
-        <p role="alert" style={{ color: "#b00020", fontWeight: 600 }}>
-          {error}
-        </p>
-      )}
-
-      {!loading && !user && (
-        <section style={{ marginTop: 16 }}>
-          <p>You’re not signed in.</p>
-          <button onClick={signInWithGoogle}>Continue with Google</button>
-        </section>
-      )}
-
-      {!loading && user && (
-        <section style={{ marginTop: 16 }}>
-          <div style={{ display: "flex", alignItems: "center", gap: 12 }}>
-            {user.avatar_url ? (
-              <img
-                src={user.avatar_url}
-                alt="Avatar"
-                width={56}
-                height={56}
-                style={{ borderRadius: 8, objectFit: "cover" }}
-                loading="lazy"
-                decoding="async"
-              />
-            ) : null}
-            <div>
-              <div style={{ fontSize: 18, fontWeight: 700 }}>
-                {user.display_name || "Explorer"}
-              </div>
-              <div style={{ opacity: 0.8 }}>{user.email}</div>
+  if (state.kind === 'loading') {
+    return (
+      <section>
+        <h1>Profile</h1>
+        <div style={s.card}>
+          <div style={s.row}>
+            <div style={s.skelAvatar} />
+            <div style={{ flex: 1, marginLeft: 12 }}>
+              <div style={s.skelLine} />
+              <div style={{ ...s.skelLine, width: '60%', marginTop: 8 }} />
             </div>
           </div>
+        </div>
+      </section>
+    );
+  }
 
-          {/* Your existing profile UI can remain below.
-              This block is additive and safe. */}
-          <div style={{ marginTop: 20 }}>
-            <button onClick={signOut}>Sign out</button>
+  if (state.kind === 'signedOut') {
+    return (
+      <section>
+        <h1>Profile</h1>
+        <p>You’re not signed in.</p>
+        <a className="btn" href="/login">Sign in with Google</a>
+      </section>
+    );
+  }
+
+  if (state.kind === 'error') {
+    return (
+      <section>
+        <h1>Profile</h1>
+        <p role="alert">Oops — {state.message}</p>
+      </section>
+    );
+  }
+
+  // ready
+  const { user, profile } = state;
+  return (
+    <section>
+      <h1>Profile</h1>
+      <div style={s.card}>
+        <div style={s.row}>
+          <img
+            src={profile?.avatar_url || '/favicon.svg'}
+            alt="Avatar"
+            width={64}
+            height={64}
+            style={{ borderRadius: 12, background: '#eef3ff' }}
+            loading="lazy"
+            decoding="async"
+          />
+          <div style={{ marginLeft: 12 }}>
+            <div style={{ fontWeight: 700, fontSize: 18 }}>
+              {profile?.display_name || 'Explorer'}
+            </div>
+            <div style={{ opacity: 0.8 }}>{user.email || 'No email on file'}</div>
+            {profile?.updated_at && (
+              <div style={{ opacity: 0.6, fontSize: 12, marginTop: 4 }}>
+                Updated: {new Date(profile.updated_at).toLocaleString()}
+              </div>
+            )}
           </div>
-        </section>
-      )}
-    </main>
+        </div>
+
+        <div style={{ marginTop: 16 }}>
+          <a className="btn" href="/navatar">Create / Update Navatar</a>{' '}
+          <a className="btn" href="/passport">View Passport</a>
+        </div>
+      </div>
+    </section>
   );
 }
 
+const s: Record<string, React.CSSProperties> = {
+  card: {
+    border: '1px solid var(--border, #dbe2f0)',
+    borderRadius: 12,
+    padding: 16,
+    background: 'var(--card, #fff)',
+    maxWidth: 680,
+  },
+  row: { display: 'flex', alignItems: 'center' },
+  skelAvatar: {
+    width: 64,
+    height: 64,
+    borderRadius: 12,
+    background: 'linear-gradient(90deg,#e9edf5,#f4f7fb,#e9edf5)',
+    backgroundSize: '200% 100%',
+    animation: 'shimmer 1.2s linear infinite',
+  },
+  skelLine: {
+    height: 12,
+    width: '80%',
+    background: 'linear-gradient(90deg,#e9edf5,#f4f7fb,#e9edf5)',
+    backgroundSize: '200% 100%',
+    borderRadius: 6,
+    animation: 'shimmer 1.2s linear infinite',
+  },
+};
