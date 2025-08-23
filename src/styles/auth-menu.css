@@ -36,10 +36,10 @@
 }
 
 .auth-icon {
-  display: none; /* shown on mobile only */
+  display: none;
 }
 
-/* Overflow (kebab) for mobile; hidden on desktop */
+/* Overflow (kebab) for mobile */
 .auth-kebab {
   display: none;
   appearance: none;
@@ -79,20 +79,10 @@
   background: #f3f6ff;
 }
 
-/* =========== Mobile =========== */
+/* ===== Mobile ===== */
 @media (max-width: 560px) {
-  /* hide text labels; keep avatar + icon + kebab */
-  .auth-label {
-    display: none;
-  }
-  .auth-icon {
-    display: inline;
-    font-size: 18px;
-  }
-  .auth-kebab {
-    display: inline-block;
-  }
-  .auth-menu {
-    gap: 8px;
-  }
+  .auth-label { display: none; }
+  .auth-icon { display: inline; font-size: 18px; }
+  .auth-kebab { display: inline-block; }
+  .auth-menu { gap: 8px; }
 }

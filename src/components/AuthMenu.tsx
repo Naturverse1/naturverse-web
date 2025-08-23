@@ -1,6 +1,6 @@
-import { useEffect, useState, useRef } from 'react';
-import { supabase } from '../lib/supabaseClient';
-import '../styles/auth-menu.css';
+import { useEffect, useState, useRef } from "react";
+import { supabase } from "../lib/supabase";
+import "../styles/auth-menu.css";
 
 type MiniUser = { id: string; email: string | null; avatar_url?: string | null };
 
@@ -56,12 +56,9 @@ export default function AuthMenu() {
   }
 
   if (!user) {
-    // Collapses label on mobile via CSS
     return (
       <a className="auth-menu" href="/profile" aria-label="Sign in">
-        <span className="auth-icon" aria-hidden>
-          👤
-        </span>
+        <span className="auth-icon" aria-hidden>👤</span>
         <span className="auth-label">Sign in</span>
       </a>
     );
@@ -88,7 +85,6 @@ export default function AuthMenu() {
         </div>
       )}
 
-      {/* desktop labels (hidden on small screens) */}
       <a href="/profile" className="auth-label" style={{ fontWeight: 600 }}>
         Profile
       </a>
@@ -97,7 +93,6 @@ export default function AuthMenu() {
         Sign out
       </button>
 
-      {/* compact overflow for mobile */}
       <button
         className="auth-kebab"
         aria-label="Open account menu"
