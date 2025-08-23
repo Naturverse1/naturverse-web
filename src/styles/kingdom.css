@@ -11,8 +11,8 @@
   aspect-ratio: 16 / 9;
   border-radius: 14px;
   overflow: hidden;
-  background: #f1f5f9;
-  border: 1px solid #e5e7eb;
+  background: var(--nv-blue-50);
+  border: 1px solid var(--nv-border);
 }
 .kingdom-hero .hero-img img {
   width: 100%;
@@ -20,11 +20,18 @@
   object-fit: cover;
 }
 
-.kingdom-hero .hero-text h1 { margin: 0; }
-.kingdom-hero .hero-text .muted { color:#64748b; margin: 4px 0 0; }
+.kingdom-hero .hero-text h1 {
+  margin: 0;
+}
+.kingdom-hero .hero-text .muted {
+  color: var(--nv-text-muted);
+  margin: 4px 0 0;
+}
 
-@media (min-width: 900px){
-  .kingdom-hero { grid-template-columns: 2fr 1fr; }
+@media (min-width: 900px) {
+  .kingdom-hero {
+    grid-template-columns: 2fr 1fr;
+  }
 }
 
 .kingdom-gallery {
@@ -34,11 +41,17 @@
   margin-top: 8px;
 }
 .kg-item {
-  border: 1px solid #e5e7eb;
+  border: 1px solid var(--nv-border);
   border-radius: 10px;
   overflow: hidden;
   background: #fff;
   aspect-ratio: 1 / 1;
-  display: flex; align-items:center; justify-content:center;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.kg-item img { width: 100%; height: 100%; object-fit: cover; }
+.kg-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}

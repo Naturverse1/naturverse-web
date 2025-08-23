@@ -1,21 +1,103 @@
-.turian-suggestions{ display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:12px; margin:10px 0 16px; }
-.turian-card{ border:1px solid #e5e7eb; background:#fff; border-radius:14px; padding:10px; }
-.turian-card-h .label{ font-weight:800; font-size:14px; }
-.chips{ display:flex; flex-direction:column; gap:8px; margin-top:8px; }
-.chip{ text-align:left; border:1px dashed #cbd5e1; background:#f8fafc; padding:8px 10px; border-radius:10px; font-size:14px; }
-.chip:hover{ background:#eef2ff; border-style:solid; }
+.turian-suggestions {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+  margin: 10px 0 16px;
+}
+.turian-card {
+  border: 1px solid var(--nv-border);
+  background: #fff;
+  border-radius: 14px;
+  padding: 10px;
+}
+.turian-card-h .label {
+  font-weight: 800;
+  font-size: 14px;
+}
+.chips {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 8px;
+}
+.chip {
+  text-align: left;
+  border: 1px dashed var(--nv-border);
+  background: var(--nv-surface);
+  padding: 8px 10px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+.chip:hover {
+  background: var(--nv-blue-50);
+  border-style: solid;
+}
 
-.turian-panel{ border:1px solid #e5e7eb; border-radius:14px; background:#fff; overflow:hidden; }
-.turian-msgs{ max-height:48vh; overflow:auto; padding:12px; background:#f8fafc; }
-.msg{ display:flex; margin:6px 0; }
-.msg.user{ justify-content:flex-end; }
-.bubble{ max-width:680px; border:1px solid #e5e7eb; background:#fff; padding:8px 10px; border-radius:12px; }
-.msg.user .bubble{ background:#ecfeff; border-color:#bae6fd; }
-.msg.turian .bubble{ background:#fefce8; border-color:#fde68a; }
+.turian-panel {
+  border: 1px solid var(--nv-border);
+  border-radius: 14px;
+  background: #fff;
+  overflow: hidden;
+}
+.turian-msgs {
+  max-height: 48vh;
+  overflow: auto;
+  padding: 12px;
+  background: var(--nv-surface);
+}
+.msg {
+  display: flex;
+  margin: 6px 0;
+}
+.msg.user {
+  justify-content: flex-end;
+}
+.bubble {
+  max-width: 680px;
+  border: 1px solid var(--nv-border);
+  background: #fff;
+  padding: 8px 10px;
+  border-radius: 12px;
+}
+.msg.user .bubble {
+  background: var(--nv-blue-50);
+  border-color: var(--nv-blue-200);
+}
+.msg.turian .bubble {
+  background: #fefce8;
+  border-color: #fde68a;
+}
 
-.turian-input{ display:flex; gap:8px; padding:10px; border-top:1px solid #e5e7eb; background:#fff; }
-.turian-input input{ flex:1; border:1px solid #cbd5e1; border-radius:10px; padding:10px; }
-.btn{ padding:10px 12px; border-radius:10px; border:1px solid #0ea5e9; background:#0ea5e9; color:#fff; font-weight:700; }
-.btn.outline{ background:#fff; color:#0ea5e9; }
-.muted{ color:#6b7280; }
-.meta{ color:#6b7280; font-size:13px; margin-top:10px; }
+.turian-input {
+  display: flex;
+  gap: 8px;
+  padding: 10px;
+  border-top: 1px solid var(--nv-border);
+  background: #fff;
+}
+.turian-input input {
+  flex: 1;
+  border: 1px solid var(--nv-border);
+  border-radius: 10px;
+  padding: 10px;
+}
+.btn {
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid var(--nv-blue-600);
+  background: var(--nv-blue-600);
+  color: #fff;
+  font-weight: 700;
+}
+.btn.outline {
+  background: #fff;
+  color: var(--nv-blue-600);
+}
+.muted {
+  color: var(--nv-text-muted);
+}
+.meta {
+  color: var(--nv-text-muted);
+  font-size: 13px;
+  margin-top: 10px;
+}

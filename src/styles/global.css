@@ -1,74 +1,144 @@
-:root { --radius:14px; --muted:#6c7676; }
-.caption { color: var(--muted); margin: 2px 0 0; }
-.card { border:1px solid #ececec; border-radius: var(--radius); background:#fff; }
+@import './tokens.css';
 
-/* --- Defensive: nuke all turian.svg or mascot heroes --- */
-img[src="/turian.svg"],
-svg[aria-label="hero-face"],
-.turian-hero,
-.hero-face,
-.mascot-hero {
-  display: none !important;
+/* Base */
+html,
+body {
+  background: var(--nv-bg);
+  color: var(--nv-text);
+}
+a {
+  color: var(--nv-blue-600);
+}
+a:hover {
+  color: var(--nv-blue-700);
+}
+hr {
+  border-color: var(--nv-border);
 }
 
-/* hide any legacy inline top nav on phones */
-.top-inline-nav{ display:none; }
-@media (min-width:768px){ .top-inline-nav{ display:flex; } }
-
-.site-logo {
-  max-height: 48px;
-  width: auto;
-  object-fit: contain;
-  display: block;
+/* Headings (no layout change) */
+h1,
+h2,
+h3 {
+  color: var(--nv-blue-700);
+}
+.section-title,
+.page-title {
+  color: var(--nv-blue-700);
 }
 
-:root{
-  --cta-bg:#1e90ff;
-  --cta-bg-hover:#1677d8;
-  --cta-fg:#ffffff;
+/* Cards / panels / list tiles */
+.card,
+.panel,
+.tile,
+.zone-card,
+.market-card,
+.nv-card {
+  background: var(--nv-card);
+  border: 1px solid var(--nv-border);
+  border-radius: 16px;
+  box-shadow: var(--nv-shadow);
 }
 
-/* CTA buttons (home hero, generic .btn-primary) */
-.btn-primary,
-.cta {
-  background: var(--cta-bg);
-  color: var(--cta-fg);
-  border: none;
+/* Pills / chips used in Zones & Turian prompts */
+.pill,
+.chip,
+.nv-chip,
+.prompt-pill {
+  border: 1px solid var(--nv-border);
+  background: var(--nv-card);
+  color: var(--nv-blue-700);
 }
-.btn-primary:hover,
-.cta:hover { background: var(--cta-bg-hover); }
-
-/* Mobile top nav: scrollable row, no wrap */
-.topnav {
-  display:flex;
-  gap:16px;
-  overflow-x:auto;
-  white-space:nowrap;
-  -webkit-overflow-scrolling:touch;
-  scrollbar-width:none;
-}
-.topnav::-webkit-scrollbar { display:none; }
-
-/* Highlight active route */
-.topnav a.active {
-  font-weight:700;
-  text-decoration:underline;
-  text-underline-offset: 4px;
+.pill--accent,
+.chip--accent,
+.prompt-pill--accent {
+  background: linear-gradient(180deg, var(--nv-grad-start), var(--nv-grad-end));
+  color: var(--nv-accent-contrast);
+  border-color: transparent;
 }
 
-/* Skip to content */
-.skip-link {
-  position:absolute;
-  left:-9999px;
-  top:auto;
-  width:1px; height:1px;
-  overflow:hidden;
+/* Primary & secondary buttons – reused across pages */
+.btn,
+.button,
+button.nv-btn {
+  border-radius: 14px;
+  padding: 0.7rem 1rem;
+  font-weight: 700;
+  line-height: 1.1;
+  border: 1px solid var(--nv-border);
+  background: var(--nv-card);
+  color: var(--nv-blue-700);
+  box-shadow: var(--nv-shadow);
 }
-.skip-link:focus {
-  left:16px; top:12px;
-  width:auto; height:auto;
-  padding:8px 12px;
-  background:#000; color:#fff;
-  border-radius:8px;
-  z-index:1000;
+.btn--primary,
+.button--primary,
+.nv-btn--primary {
+  background: linear-gradient(180deg, var(--nv-grad-start), var(--nv-grad-end));
+  color: var(--nv-accent-contrast);
+  border-color: transparent;
+}
+.btn--primary:hover {
+  filter: brightness(1.03);
+}
+.btn--primary:active {
+  filter: brightness(0.97);
+}
+
+/* Hover/active for neutral buttons */
+.btn:hover {
+  background: var(--nv-blue-50);
+}
+.btn:active {
+  background: var(--nv-blue-100);
+}
+
+/* Inputs & dashed demo areas */
+input,
+select,
+textarea {
+  border: 1px solid var(--nv-border);
+  background: #fff;
+  color: var(--nv-text);
+}
+.dashed,
+.hint,
+.demo-box {
+  background: var(--nv-surface);
+  border: 2px dashed var(--nv-border);
+}
+
+/* Navbar text & underline */
+.navbar,
+.topbar {
+  border-bottom: 1px solid var(--nv-border);
+}
+.navbar a {
+  color: var(--nv-blue-700);
+}
+.navbar a:hover {
+  color: var(--nv-blue-800);
+}
+
+/* Keyboard-only focus ring */
+:focus {
+  outline: none;
+}
+:focus-visible {
+  box-shadow: var(--nv-focus);
+  outline: 2px solid transparent;
+  border-radius: 12px;
+}
+
+/* Utility helpers (no layout change) */
+.text-muted {
+  color: var(--nv-text-muted);
+}
+.text-accent {
+  color: var(--nv-blue-700);
+}
+.border-accent {
+  border-color: var(--nv-border) !important;
+}
+.bg-surface {
+  background: var(--nv-surface);
 }

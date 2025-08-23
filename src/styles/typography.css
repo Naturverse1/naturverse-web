@@ -1,12 +1,14 @@
 /* Global heading color & rhythm */
-h1,h2,h3{
-  line-height:1.2;
-  color: var(--heading-color);
+h1,
+h2,
+h3 {
+  line-height: 1.2;
+  color: var(--nv-blue-700);
 }
 
 /* Common title helpers some pages use */
 .section-title,
 .page-title,
-.card-title{
-  color: var(--heading-color);
+.card-title {
+  color: var(--nv-blue-700);
 }
