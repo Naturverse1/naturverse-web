@@ -1,60 +1,35 @@
-import React from "react";
+import { Link } from "react-router-dom";
+import { LANGUAGES } from "../../../data/languages";
 
-export default function LanguagesIndex() {
-  const items = [
-    {
-      slug: 'thailandia',
-      name: 'Thailandia (Thai)',
-      native: 'ไทย',
-      img: '/Languages/Mangolanguagemainthai.png',
-    },
-    {
-      slug: 'chinadia',
-      name: 'Chinadia (Mandarin)',
-      native: '中文',
-      img: '/Languages/Cranelanguagemainchina.png',
-    },
-    {
-      slug: 'indillandia',
-      name: 'Indillandia (Hindi)',
-      native: 'हिंदी',
-      img: '/Languages/Genielanguagemainindi.png',
-    },
-    {
-      slug: 'brazilandia',
-      name: 'Brazilandia (Portuguese)',
-      native: 'Português',
-      img: '/Languages/Birdlanguagemainbrazil.png',
-    },
-    {
-      slug: 'australandia',
-      name: 'Australandia (English)',
-      native: 'English',
-      img: '/Languages/Koalalanguagemain.png',
-    },
-    {
-      slug: 'amerilandia',
-      name: 'Amerilandia (English)',
-      native: 'English',
-      img: '/Languages/Owllanguagemain.png',
-    },
-  ];
+export default function LanguagesList() {
+  const langs = LANGUAGES.map((l) => ({
+    slug: l.slug,
+    name: l.name,
+    nativeName: l.nativeName,
+    img: l.heroImg,
+  }));
 
   return (
-    <main>
+    <main className="wrap">
       <h1>Languages</h1>
-      <p>Phrasebooks for each kingdom.</p>
+      <p className="kicker">Phrasebooks for each kingdom.</p>
 
-      {items.map((it) => (
-        <div className="lang-list" key={it.slug}>
-          <img className="lang-thumb" src={it.img} alt="" loading="lazy" />
+      {langs.map((l) => (
+        <div key={l.slug} className="grid-stack">
+          <img
+            src={`/Languages/${l.img}`}
+            alt={`${l.name} cover`}
+            width={96}
+            height={96}
+            loading="lazy"
+            className="img-thumb"
+          />
           <div>
-            <a href={`/naturversity/languages/${it.slug}`}><strong>{it.name}</strong></a>
-            <div>Native: <em>{it.native}</em></div>
+            <Link to={`/naturversity/languages/${l.slug}`}><strong>{l.name}</strong></Link>
+            <div className="kicker">Native: {l.nativeName}</div>
           </div>
         </div>
       ))}
     </main>
   );
 }
-

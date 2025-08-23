@@ -68,7 +68,7 @@ export default function Header() {
             <CartButton />
             <button
               onClick={handleSignOut}
-              className="btn btn--sm btn--primary"
+              className="btn btn--primary btn--sm"
               aria-label="Sign out"
             >
               Sign out
