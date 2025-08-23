@@ -1,13 +1,5 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
-import { ld, breadcrumbsLd, itemListLd } from "../lib/jsonld";
-
-const labels = { '/naturversity': 'Naturversity' };
-const items = [
-  { name: 'Teachers', path: '/naturversity/teachers' },
-  { name: 'Partners', path: '/naturversity/partners' },
-  { name: 'Courses', path: '/naturversity/courses' },
-];
 
 export default function NaturversityPage() {
   return (
@@ -33,15 +25,6 @@ export default function NaturversityPage() {
           Coming soon: AI tutors and step-by-step lessons.
         </p>
       </main>
-
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={ld(breadcrumbsLd('/naturversity', labels))}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={ld(itemListLd('Naturversity', items))}
-      />
     </>
   );
 }

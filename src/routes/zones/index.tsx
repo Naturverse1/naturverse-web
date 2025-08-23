@@ -1,17 +1,6 @@
 import HubCard from '../../components/HubCard';
 import HubGrid from '../../components/HubGrid';
-import { ld, breadcrumbsLd, itemListLd } from '../../lib/jsonld';
-
-const labels = {
-  '/worlds': 'Worlds',
-  '/zones': 'Zones',
-  '/marketplace': 'Marketplace',
-  '/naturversity': 'Naturversity',
-  '/naturbank': 'Naturbank',
-  '/navatar': 'Navatar',
-  '/passport': 'Passport',
-  '/turian': 'Turian the Durian',
-};
+import { breadcrumbs } from '../../lib/jsonld';
 
 const ZONES = [
   {
@@ -71,18 +60,6 @@ const ZONES = [
   },
 ];
 
-const zoneItems = [
-  { name: 'Arcade', path: '/zones/arcade' },
-  { name: 'Music', path: '/zones/music' },
-  { name: 'Wellness', path: '/zones/wellness' },
-  { name: 'Creator Lab', path: '/zones/creator-lab' },
-  { name: 'Stories', path: '/zones/stories' },
-  { name: 'Quizzes', path: '/zones/quizzes' },
-  { name: 'Observations', path: '/zones/observations' },
-  { name: 'Culture', path: '/zones/culture' },
-  { name: 'Community', path: '/zones/community' },
-  { name: 'Future Zone', path: '/zones/future' },
-];
 
 export default function Zones() {
   return (
@@ -101,11 +78,11 @@ export default function Zones() {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={ld(breadcrumbsLd('/zones', labels))}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={ld(itemListLd('Zones', zoneItems))}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbs('/zones', { '/zones': 'Zones' })
+          ),
+        }}
       />
     </>
   );
