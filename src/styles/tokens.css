@@ -1,0 +1,23 @@
+:root{
+  /* Core spacing */
+  --gap: 16px;
+
+  /* Brand blues (Naturverse) */
+  --brand-50:  #eff6ff;
+  --brand-100: #dbeafe;
+  --brand-200: #bfdbfe;
+  --brand-300: #93c5fd;
+  --brand-400: #60a5fa;
+  --brand-500: #3b82f6; /* primary */
+  --brand-600: #2563eb;
+  --brand-700: #1d4ed8;
+  --brand-800: #1e40af;
+  --brand-900: #1e3a8a;
+
+  /* Theme usage tokens */
+  --heading-color: var(--brand-800);
+  --cta-bg:        var(--brand-600);
+  --cta-bg-hover:  var(--brand-700);
+  --cta-text:      #ffffff;
+  --card-ring:     rgba(37, 99, 235, .18); /* brand-600 @ 18% */
+}
