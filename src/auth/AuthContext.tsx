@@ -1,6 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '../lib/supabaseClient';
+import { upsertProfile } from '../lib/upsertProfile';
 
 type AuthCtx = {
   user: User | null;
@@ -27,12 +28,20 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setSession(data.session ?? null);
       setUser(data.session?.user ?? null);
       setLoading(false);
+
+      if (data.session?.user) {
+        await upsertProfile(data.session.user.id, data.session.user.email);
+      }
     })();
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
       setSession(s ?? null);
       setUser(s?.user ?? null);
       setLoading(false);
+
+      if (s?.user) {
+        upsertProfile(s.user.id, s.user.email);
+      }
     });
 
     return () => {
