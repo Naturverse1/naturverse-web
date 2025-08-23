@@ -1,23 +1,24 @@
 import React, { useState } from "react";
 import type { LangData } from "../../../data/languages/types";
-import { Breadcrumbs } from "../../../components/Breadcrumbs";
+import Breadcrumbs from "../../../components/Breadcrumbs";
+import SafeImg from "../../../components/SafeImg";
 
 export default function LanguagePage({ data }: { data: LangData }) {
   const [showRoman, setShowRoman] = useState(true);
 
   return (
-    <div>
-      <Breadcrumbs />
-      <div className="lang-hero">
-        <img className="flag" src={data.flagPath} alt={`${data.name} flag`} loading="lazy" />
-        <h1>{data.name}{data.nativeName ? ` — ${data.nativeName}` : ""}</h1>
-      </div>
-
-      {data.heroPath && (
-        <div className="lang-heroimg">
-          <img src={data.heroPath} alt={`${data.name} map`} loading="lazy" />
+      <div className="page-wrap">
+        <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/naturversity", label:"Naturversity" }, { href:"/naturversity/languages", label:"Languages" }, { label: data.name }]} />
+        <div className="lang-hero">
+          <SafeImg className="flag" src={data.flagPath} alt={`${data.name} flag`} width={800} height={450} />
+          <h1>{data.name}{data.nativeName ? ` — ${data.nativeName}` : ""}</h1>
         </div>
-      )}
+
+        {data.heroPath && (
+          <div className="lang-heroimg">
+            <SafeImg src={data.heroPath} alt={`${data.name} map`} width={800} height={450} />
+          </div>
+        )}
 
       <div className="lang-toggles">
         <label className="switch">

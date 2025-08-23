@@ -95,6 +95,9 @@
   border-radius: 10px;
 }
 
+.home-cta .btn { background:#2563eb; border-color:#2563eb; color:#fff; }
+.home-cta .btn.outline { background:#e0ecff; color:#1e3a8a; border-color:#bfdbfe; }
+
 .home .cta-block {
   text-align: center;
   background: var(--nv-surface);

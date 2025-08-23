@@ -1,12 +1,13 @@
 import React from "react";
-import { Breadcrumbs } from "../../components/Breadcrumbs";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function FutureZone() {
   return (
-    <main id="main" className="page">
-      <Breadcrumbs />
+      <div className="page-wrap">
+        <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Future" }]} />
+        <main id="main" className="page">
 
-      <h1>🔮 Future Zone</h1>
+        <h1>🔮 Future Zone</h1>
       <p className="muted">
         A sneak peek at what's coming to the Naturverse. These features are in active design.
       </p>
@@ -48,7 +49,8 @@ export default function FutureZone() {
           <p>NATUR wallet, trading, redemptions, and seasonal global events.</p>
         </a>
       </div>
-    </main>
-  );
+        </main>
+      </div>
+    );
 }
 

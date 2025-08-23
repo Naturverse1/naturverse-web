@@ -1,11 +1,14 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function NaturbankPage() {
   return (
-    <main id="main">
-      <h1>Naturbank</h1>
-      <p className="muted">Wallets, token, and collectibles.</p>
+      <div className="page-wrap">
+        <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturbank" }]} />
+        <main id="main">
+        <h1>Naturbank</h1>
+        <p className="muted">Wallets, token, and collectibles.</p>
 
       <HubGrid
         items={[
@@ -19,6 +22,7 @@ export default function NaturbankPage() {
       <p className="muted" style={{ marginTop: 12 }}>
         Coming soon: live wallets, on-chain mints, and payouts.
       </p>
-    </main>
-  );
+        </main>
+      </div>
+    );
 }

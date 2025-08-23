@@ -3,6 +3,7 @@ import type { Navatar, NavatarBase } from "../types/navatar";
 import { SPECIES, POWERS_BANK, randomFrom } from "../lib/navatarCatalog";
 import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/localStorage";
 import NavatarCard from "../components/NavatarCard";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
 
@@ -62,9 +63,11 @@ export default function NavatarPage() {
   }
 
   return (
-    <main id="main" className="wrap">
-      <h1>Navatar Creator</h1>
-      <p>Choose a base type, customize details, and save your character card.</p>
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
+      <main id="main" className="wrap">
+        <h1>Navatar Creator</h1>
+        <p>Choose a base type, customize details, and save your character card.</p>
 
       <div className="grid">
         <section className="panel">
@@ -157,6 +160,7 @@ export default function NavatarPage() {
         .linklike{background:none;border:none;padding:0;color:#0b62d6;cursor:pointer}
         .note{opacity:.75;margin-top:24px}
       `}</style>
-    </main>
-  );
+      </main>
+    </div>
+    );
 }

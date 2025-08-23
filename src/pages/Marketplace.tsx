@@ -2,19 +2,22 @@ import React from "react";
 import { HubGrid } from "../components/HubGrid";
 import Seo from "../components/Seo";
 import { breadcrumbs } from "../lib/jsonld";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const labels = { '/marketplace': 'Marketplace' };
 
 export default function MarketplacePage() {
-  return (
-    <>
-      <Seo
-        title="Marketplace"
-        description="Shop Naturverse creations, merch, and bundles."
-      />
-      <main id="main">
-        <h1>Marketplace</h1>
-        <p className="muted">Shop creations and merch.</p>
+    return (
+      <>
+        <Seo
+          title="Marketplace"
+          description="Shop Naturverse creations, merch, and bundles."
+        />
+        <div className="page-wrap">
+          <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Marketplace" }]} />
+          <main id="main">
+          <h1>Marketplace</h1>
+          <p className="muted">Shop creations and merch.</p>
 
         <HubGrid
           items={[
@@ -27,7 +30,8 @@ export default function MarketplacePage() {
         <p className="muted" style={{ marginTop: 12 }}>
           Coming soon: AI assistance for sizing, bundles, and gift ideas.
         </p>
-      </main>
+          </main>
+        </div>
 
       <script
         type="application/ld+json"
@@ -37,6 +41,6 @@ export default function MarketplacePage() {
           ),
         }}
       />
-    </>
-  );
+      </>
+    );
 }
