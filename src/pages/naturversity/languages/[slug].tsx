@@ -1,102 +1,43 @@
-import { Link, useParams } from "react-router-dom";
-import "../../../styles/cards-unify.css";
-import { LANGUAGES } from "./index";
-
-type Lesson = {
-  hello: string;
-  thanks: string;
-  alphabet: string[];
-  numbers: string[];
-};
-
-const LESSONS: Record<string, Lesson> = {
-  thailandia: {
-    hello: "สวัสดี — sà-wàt-dee",
-    thanks: "ขอบคุณ — khàwp-khun",
-    alphabet: ["ก (gor)", "ข (khor)", "ค (khor)", "ง (ngor)", "จ (jor)"],
-    numbers: ["๑ nûeng", "๒ sŏng", "๓ săam", "๔ sìi", "๕ hâa", "๖ hòk", "๗ jèt", "๘ bpàet", "๙ găo", "๑๐ sìp"]
-  },
-  chinadia: {
-    hello: "你好 — nǐ hǎo",
-    thanks: "谢谢 — xièxie",
-    alphabet: ["(Pinyin) a", "o", "e", "i", "u", "ü"],
-    numbers: ["一 yī", "二 èr", "三 sān", "四 sì", "五 wǔ", "六 liù", "七 qī", "八 bā", "九 jiǔ", "十 shí"]
-  },
-  indillandia: {
-    hello: "नमस्ते — namaste",
-    thanks: "धन्यवाद — dhanyavād",
-    alphabet: ["अ a", "आ ā", "इ i", "ई ī", "उ u"],
-    numbers: ["१ ek", "२ do", "३ tīn", "४ chār", "५ pāñch", "६ chhah", "७ sāt", "८ āṭh", "९ nau", "१० das"]
-  },
-  brazilandia: {
-    hello: "Olá",
-    thanks: "Obrigado / Obrigada",
-    alphabet: ["a", "e", "i", "o", "u"],
-    numbers: ["um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez"]
-  },
-  australandia: {
-    hello: "Hello",
-    thanks: "Thank you",
-    alphabet: ["a", "e", "i", "o", "u"],
-    numbers: ["one", "two", "three", "four", "five", "six", "seven", "eight", "nine", "ten"]
-  },
-};
+import { useParams } from "react-router-dom";
+import { LANGUAGES, LangSlug } from "../../../data/languages";
 
 export default function LanguageDetail() {
-  const { slug } = useParams();
-  const lang = LANGUAGES.find((l) => l.slug === slug);
-  const lesson = LESSONS[slug ?? ""];
-
-  if (!lang) {
-    return (
-      <main className="page">
-        <h1>Language not found</h1>
-        <p>Try another language from the list.</p>
-      </main>
-    );
-  }
+  const { slug } = useParams<{ slug: LangSlug }>();
+  const data = LANGUAGES[(slug ?? "thailandia") as LangSlug];
 
   return (
-    <main className="page">
-      <nav className="crumbs">
-        <Link to="/naturversity">Naturversity</Link> / <Link to="/naturversity/languages">Languages</Link> / {lang.name}
-      </nav>
+    <main className="container py-6">
+      <nav className="breadcrumb"><a href="/naturversity">Naturversity</a> / <a href="/naturversity/languages">Languages</a> / {titleFor(slug as LangSlug)}</nav>
+      <h1>{titleFor(slug as LangSlug)} — <span className="muted">{data.nativeName}</span></h1>
+      <img className="lang-hero" src={data.poster} alt="" loading="eager" />
 
-      <h1>{lang.name} — <span className="native">{lang.native}</span></h1>
-      <p>Learn greetings, alphabet basics, and common phrases for {lang.name.split(" ")[0]}.</p>
+      <section className="stack-md">
+        <h3>Starter phrases</h3>
+        <ul>
+          <li><strong>Hello:</strong> {data.hello.native} — {data.hello.roman}</li>
+          <li><strong>Thank you:</strong> {data.thankyou.native} — {data.thankyou.roman}</li>
+        </ul>
 
-      <figure className="hero">
-        <img src={lang.hero} alt="" className="hero__img" loading="eager" />
-      </figure>
+        <h3>Alphabet basics</h3>
+        <p className="muted">{data.alphabetBasics.join(" · ")}</p>
 
-      {lesson && (
-        <>
-          <section className="lesson">
-            <h2>Starter phrases</h2>
-            <ul>
-              <li><strong>Hello:</strong> {lesson.hello}</li>
-              <li><strong>Thank you:</strong> {lesson.thanks}</li>
-            </ul>
-          </section>
-
-          <section className="lesson">
-            <h2>Alphabet basics</h2>
-            <p>{lesson.alphabet.join(" · ")}</p>
-          </section>
-
-          <section className="lesson">
-            <h2>Count to ten</h2>
-            <ol>
-              {lesson.numbers.map((n, i) => <li key={i}>{n}</li>)}
-            </ol>
-          </section>
-        </>
-      )}
-
-      <figure className="secondary">
-        <img src={lang.secondary} alt="" className="secondary__img" loading="lazy" />
-      </figure>
+        <h3>Count to ten</h3>
+        <ol className="nums">
+          {data.numbers.map((n, i) => (
+            <li key={i}><strong>{i+1}.</strong> {n.native} — {n.roman}</li>
+          ))}
+        </ol>
+      </section>
     </main>
   );
 }
 
+function titleFor(slug: LangSlug) {
+  return {
+    thailandia: "Thailandia (Thai)",
+    chinadia: "Chinadia (Mandarin)",
+    indillandia: "Indillandia (Hindi)",
+    brazilandia: "Brazilandia (Portuguese)",
+    australandia: "Australandia (English)",
+  }[slug];
+}

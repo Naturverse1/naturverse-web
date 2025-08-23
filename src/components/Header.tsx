@@ -1,107 +1,35 @@
-import React, { useEffect, useState } from 'react';
-import CartButton from './cart/CartButton';
-import Img from './Img';
-import UserMenu from './UserMenu';
-import { signOut } from '../lib/auth';
-
-const LINKS = [
-  { href: '/worlds', label: 'Worlds' },
-  { href: '/zones', label: 'Zones' },
-  { href: '/marketplace', label: 'Marketplace' },
-  { href: '/naturversity', label: 'Naturversity' },
-  { href: '/naturbank', label: 'Naturbank' },
-  { href: '/navatar', label: 'Navatar' },
-  { href: '/passport', label: 'Passport' },
-  { href: '/turian', label: 'Turian' },
-  { href: '/profile', label: 'Profile' },
-];
+import { useAuth } from "../auth/AuthContext";
 
 export default function Header() {
-  const [open, setOpen] = useState(false);
-
-  async function handleSignOut() {
-    await signOut();
-    window.location.assign('/');
-  }
-
-  // close drawer on route change (hash/path)
-  useEffect(() => {
-    const onChange = () => setOpen(false);
-    window.addEventListener('hashchange', onChange);
-    window.addEventListener('popstate', onChange);
-    return () => {
-      window.removeEventListener('hashchange', onChange);
-      window.removeEventListener('popstate', onChange);
-    };
-  }, []);
-
-  // close on resize to desktop
-  useEffect(() => {
-    const onResize = () => {
-      if (window.innerWidth >= 1024) setOpen(false);
-    };
-    window.addEventListener('resize', onResize);
-    return () => window.removeEventListener('resize', onResize);
-  }, []);
-
+  const { user } = useAuth();
   return (
-    <header className="nv-header">
-      <div className="nv-shell">
-        <a href="/" className="header-logo-link" aria-label="Naturverse home">
-          <Img src="/Turianmedia-logo-footer.png" alt="Turian Media" className="site-logo" n />
-          <span className="site-title">Naturverse</span>
-        </a>
+    <header className="site-header">
+      {/* left: logo + brand */}
+      {/* center: nav links */}
+      <nav className="nav-links">…</nav>
 
-        <div className="nv-right">
-          {/* desktop nav */}
-          <nav className="nv-nav">
-            <ul>
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href}>{l.label}</a>
-                </li>
-              ))}
-            </ul>
-          </nav>
-
-          <nav className="site-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
-            <CartButton />
-            <button
-              onClick={handleSignOut}
-              className="btn btn--primary btn--sm"
-              aria-label="Sign out"
-            >
+      {/* right: account */}
+      {user ? (
+        <div className="account">
+          <a className="account-name" href="/profile">
+            {user.user_metadata?.name || user.email}
+          </a>
+          {/* Desktop sign out only */}
+          <form
+            className="ml-2 hidden md:inline-block"
+            action="/logout"
+            method="post"
+          >
+            <button className="btn btn-small" type="submit">
               Sign out
             </button>
-            <UserMenu />
-          </nav>
-
-          {/* mobile button */}
-          <button
-            className="nv-burger"
-            aria-label="Open menu"
-            aria-expanded={open}
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span />
-            <span />
-            <span />
-          </button>
+          </form>
         </div>
-
-        {/* mobile drawer */}
-        {open && (
-          <div className="nv-drawer" role="dialog" aria-modal="true">
-            <ul>
-              {LINKS.map((l) => (
-                <li key={l.href}>
-                  <a href={l.href}>{l.label}</a>
-                </li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
+      ) : (
+        <a className="btn btn-small" href="/login">
+          Sign in
+        </a>
+      )}
     </header>
   );
 }

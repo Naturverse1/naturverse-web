@@ -1,106 +1,85 @@
-export type Starter = { en: string; native: string; romanized: string };
-export type CountItem = { num: number; native: string; romanized: string };
-export type Language = {
-  slug: string;
-  name: string;
-  nativeName: string;
-  region: string;
-  heroImg: string;
-  secondaryImg: string;
-  starter: Starter[];
-  alphabet: { note: string };
-  count: CountItem[];
+export type LangSlug = "thailandia" | "chinadia" | "indillandia" | "brazilandia" | "australandia";
+
+type Phrasebook = {
+  nativeName: string;        // localized script
+  hello: { native: string; roman: string };
+  thankyou: { native: string; roman: string };
+  alphabetBasics: string[];
+  numbers: { native: string; roman: string }[];
+  thumb: string;             // /public/Languages/*.png
+  poster: string;            // /public/Languages/*.png (secondary)
 };
 
-const STARTER: Starter[] = [
-  { en: "Hello", native: "สวัสดี", romanized: "sà-wàt-dee" },
-  { en: "Thank you", native: "ขอบคุณ", romanized: "khàwp-khun" },
-];
-
-const ALPHABET_NOTE = "ก (gor) • ข (khor) • ค (khor) • ง (ngor) • จ (jor)";
-
-const COUNT: CountItem[] = [
-  { num: 1, native: "๑", romanized: "nùeng" },
-  { num: 2, native: "๒", romanized: "sŏng" },
-  { num: 3, native: "๓", romanized: "sǎam" },
-  { num: 4, native: "๔", romanized: "sìi" },
-  { num: 5, native: "๕", romanized: "hâa" },
-  { num: 6, native: "๖", romanized: "hòk" },
-  { num: 7, native: "๗", romanized: "jèt" },
-  { num: 8, native: "๘", romanized: "bpàet" },
-  { num: 9, native: "๙", romanized: "gâo" },
-  { num: 10, native: "๑๐", romanized: "sǐp" },
-];
-
-export const LANGUAGES: Language[] = [
-  {
-    slug: "thailandia",
-    name: "Thailandia (Thai)",
+export const LANGUAGES: Record<LangSlug, Phrasebook> = {
+  thailandia: {
     nativeName: "ไทย",
-    region: "Thailandia",
-    heroImg: "Mangolanguagemainthai.png",
-    secondaryImg: "Turianlanguage.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
+    hello: { native: "สวัสดี", roman: "sà-wàt-dee" },
+    thankyou: { native: "ขอบคุณ", roman: "khàwp-khun" },
+    alphabetBasics: ["ก (gor)", "ข (khor)", "ค (khor)", "ง (ngor)", "จ (jor)"],
+    numbers: [
+      { native: "๑", roman: "nùeng" }, { native: "๒", roman: "sŏng" },
+      { native: "๓", roman: "săam" },  { native: "๔", roman: "sìi" },
+      { native: "๕", roman: "hâa"  },  { native: "๖", roman: "hòk" },
+      { native: "๗", roman: "jèt"  },  { native: "๘", roman: "bpàet" },
+      { native: "๙", roman: "gâo"  },  { native: "๑๐", roman: "sìp" }
+    ],
+    thumb: "/Languages/Mangolanguagemainthai.png",
+    poster: "/Languages/Turianlanguage.png"
   },
-  {
-    slug: "chinadia",
-    name: "Chinadia (Mandarin)",
+  chinadia: {
     nativeName: "中文",
-    region: "Chinadia",
-    heroImg: "Cranelanguagemainchina.png",
-    secondaryImg: "Turianlanguagechina.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
+    hello: { native: "你好", roman: "nǐ hǎo" },
+    thankyou: { native: "谢谢", roman: "xièxie" },
+    alphabetBasics: ["拼音 a", "拼音 o", "拼音 e", "拼音 i", "拼音 u"],
+    numbers: [
+      { native: "一", roman: "yī" }, { native: "二", roman: "èr" }, { native: "三", roman: "sān" },
+      { native: "四", roman: "sì" }, { native: "五", roman: "wǔ" }, { native: "六", roman: "liù" },
+      { native: "七", roman: "qī" }, { native: "八", roman: "bā" }, { native: "九", roman: "jiǔ" },
+      { native: "十", roman: "shí" }
+    ],
+    thumb: "/Languages/Cranelanguagemainchina.png",
+    poster: "/Languages/Turianlanguagechina.png"
   },
-  {
-    slug: "indillandia",
-    name: "Indillandia (Hindi)",
+  indillandia: {
     nativeName: "हिंदी",
-    region: "Indillandia",
-    heroImg: "Genielanguagemainindi.png",
-    secondaryImg: "Turianlanguagehindi.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
+    hello: { native: "नमस्ते", roman: "namaste" },
+    thankyou: { native: "धन्यवाद", roman: "dhanyavād" },
+    alphabetBasics: ["अ a", "आ ā", "इ i", "ई ī", "उ u"],
+    numbers: [
+      { native: "१", roman: "ek" }, { native: "२", roman: "do" }, { native: "३", roman: "tīn" },
+      { native: "४", roman: "chār" }, { native: "५", roman: "pānch" }, { native: "६", roman: "chhah" },
+      { native: "७", roman: "sāt" }, { native: "८", roman: "āṭh" }, { native: "९", roman: "nau" },
+      { native: "१०", roman: "das" }
+    ],
+    thumb: "/Languages/Genielanguagemainindi.png",
+    poster: "/Languages/Turianlanguagehindi.png"
   },
-  {
-    slug: "brazilandia",
-    name: "Brazilandia (Portuguese)",
+  brazilandia: {
     nativeName: "Português",
-    region: "Brazilandia",
-    heroImg: "Birdlanguagemainbrazil.png",
-    secondaryImg: "Turianlanguagebrazil.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
+    hello: { native: "Olá", roman: "olá" },
+    thankyou: { native: "Obrigado/Obrigada", roman: "obrigado/obrigada" },
+    alphabetBasics: ["a", "e", "i", "o", "u"],
+    numbers: [
+      { native: "1", roman: "um" }, { native: "2", roman: "dois" }, { native: "3", roman: "três" },
+      { native: "4", roman: "quatro" }, { native: "5", roman: "cinco" }, { native: "6", roman: "seis" },
+      { native: "7", roman: "sete" }, { native: "8", roman: "oito" }, { native: "9", roman: "nove" },
+      { native: "10", roman: "dez" }
+    ],
+    thumb: "/Languages/Birdlanguagemainbrazil.png",
+    poster: "/Languages/Turianlanguagebrazil.png"
   },
-  {
-    slug: "australandia",
-    name: "Australandia (English)",
+  australandia: {
     nativeName: "English",
-    region: "Australandia",
-    heroImg: "Koalalanguagemain.png",
-    secondaryImg: "Birdlanguageaustralandia.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
-  },
-  {
-    slug: "amerilandia",
-    name: "Amerilandia (English)",
-    nativeName: "English",
-    region: "Amerilandia",
-    heroImg: "Owllanguagemain.png",
-    secondaryImg: "Turianlanguageenglish.png",
-    starter: STARTER,
-    alphabet: { note: ALPHABET_NOTE },
-    count: COUNT,
-  },
-];
-
-export function getLanguage(slug: string | undefined) {
-  return LANGUAGES.find((l) => l.slug === slug);
-}
+    hello: { native: "Hello", roman: "hello" },
+    thankyou: { native: "Thank you", roman: "thank you" },
+    alphabetBasics: ["A", "B", "C", "D", "E"],
+    numbers: [
+      { native: "1", roman: "one" }, { native: "2", roman: "two" }, { native: "3", roman: "three" },
+      { native: "4", roman: "four" }, { native: "5", roman: "five" }, { native: "6", roman: "six" },
+      { native: "7", roman: "seven" }, { native: "8", roman: "eight" }, { native: "9", roman: "nine" },
+      { native: "10", roman: "ten" }
+    ],
+    thumb: "/Languages/Koalalanguagemain.png",
+    poster: "/Languages/Birdlanguageaustralandia.png"
+  }
+};

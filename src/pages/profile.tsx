@@ -113,6 +113,9 @@ export default function ProfilePage() {
   return (
     <main className="profile-page">
       <h1>Profile</h1>
+      <form action="/logout" method="post" className="mt-2">
+        <button type="submit" className="btn btn-small">Sign out</button>
+      </form>
 
       <div className="card" style={{ maxWidth: 520 }}>
         <form onSubmit={onSave}>
