@@ -38,9 +38,10 @@ export default function NaturversityPage() {
               desc: "Phrasebooks for each kingdom.",
               icon: (
                 <img
-                  src="/favicon.png"
-                  alt="Languages Icon"
-                  className="w-6 h-6"
+                  src="/favicon.svg"
+                  alt=""
+                  className="lang-icon"
+                  loading="lazy"
                 />
               ),
             },

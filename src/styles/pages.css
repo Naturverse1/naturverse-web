@@ -20,3 +20,29 @@
 .tile:hover {
   box-shadow: 0 0 0 2px var(--nv-blue-200);
 }
+
+/* Languages: responsive image frames */
+.lang-hero,
+.lang-spot {
+  width: 100%;
+  max-width: 960px;            /* keep it reasonable on desktop */
+  display: block;
+  border-radius: 12px;
+  background: #f4f6f8;         /* pleasant placeholder behind images */
+  object-fit: cover;           /* crop to frame instead of stretching */
+  overflow: hidden;
+}
+
+/* Tallish hero at top of detail page */
+.lang-hero { aspect-ratio: 16 / 9; }
+
+/* Second image a bit wider and shorter */
+.lang-spot { aspect-ratio: 21 / 9; }
+
+/* Languages card icon (Naturversity landing) */
+.card .lang-icon {
+  width: 28px;
+  height: 28px;
+  margin-right: .5rem;
+  vertical-align: -6px;
+}
