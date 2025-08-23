@@ -1,0 +1,54 @@
+/* === Naturverse Blue Theme PR === */
+
+/* Main brand color */
+:root {
+  --naturverse-blue: #1e73be; /* Adjust if you want a lighter/darker blue */
+}
+
+/* Navbar text + underline */
+.navbar,
+.navbar a,
+.navbar-brand {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Page section headers (Zones, Marketplace, etc.) */
+h1, h2, h3, h4, h5, h6 {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Card titles (like Arcade, Wellness, Catalog, Teachers, Wallet) */
+.card-title,
+.card-header,
+.card h3,
+.card h4,
+.card h5 {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Card borders */
+.card,
+.card-box,
+.box {
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Links & hover */
+a, a:visited {
+  color: var(--naturverse-blue) !important;
+}
+a:hover {
+  color: #125a96 !important; /* darker blue on hover */
+}
+
+/* Buttons already use blue — keep consistent */
+button, .btn, .btn-primary {
+  background-color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Any subtle accent lines */
+hr, .divider, .line {
+  border-color: var(--naturverse-blue) !important;
+}
