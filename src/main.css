@@ -53,3 +53,16 @@ body {
 .visually-hidden-focusable:focus {
   left:8px; top:8px; width:auto; height:auto; padding:8px 10px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;
 }
+
+/* Skip link + focus */
+.skip-link {
+  position:absolute; left:-999px; top:-999px; background:#0ea5e9; color:#fff;
+  padding:8px 12px; border-radius:10px; z-index:9999;
+}
+.skip-link:focus { left:12px; top:12px; outline:none; }
+
+/* Active nav styling hook */
+.topnav a.active { color:#0ea5e9; font-weight:800; }
+
+/* Ensure all images that lack size don't shift layout */
+img[loading="lazy"] { contain: paint; }

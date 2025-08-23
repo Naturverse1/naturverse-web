@@ -74,7 +74,7 @@ export default function Zones() {
   return (
     <div className="container-narrow">
       <Meta title="Zones — Naturverse" description="Pick a zone to start games, music, wellness, and more." />
-      <main className="container">
+      <main id="main" className="container">
         <div className="breadcrumb">Home / Zones</div>
         <h1 className="page-title text-brand">Zones</h1>
         <p className="section-lead">Pick a zone to start an activity.</p>

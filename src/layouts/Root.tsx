@@ -7,7 +7,7 @@ export default function RootLayout() {
   return (
     <div className="nv-root">
       <SiteHeader />
-      <main id="main">
+      <main>
         <Outlet />
       </main>
       <Footer />
