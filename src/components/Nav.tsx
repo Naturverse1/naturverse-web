@@ -16,7 +16,7 @@ export default function Nav() {
             <a href="/zones" className={`toplink ${isActive("/zones") ? "active" : ""}`}>Zones</a>
             <a href="/marketplace" className={`toplink ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</a>
             <a href="/naturversity" className={`toplink ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</a>
-            <a href="/naturbank" className={`toplink ${isActive("/naturbank") ? "active" : ""}`}>Naturbank</a>
+            <a href="/naturbank" className={`toplink ${isActive("/naturbank") ? "active" : ""}`}>NaturBank</a>
             <a href="/navatar" className={`toplink ${isActive("/navatar") ? "active" : ""}`}>Navatar</a>
             <a href="/passport" className={`toplink ${isActive("/passport") ? "active" : ""}`}>Passport</a>
             <a href="/turian" className={`toplink ${isActive("/turian") ? "active" : ""}`}>Turian</a>
