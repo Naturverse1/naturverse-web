@@ -6,6 +6,11 @@
 @import './styles/skeleton.css';
 @import './styles/cards-unify.css';
 
+body {
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
+    "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+}
+
 /* simple "Coming Soon" pill used on cards */
 .tag.soon {
   display: inline-block;
