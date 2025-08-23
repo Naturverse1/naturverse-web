@@ -1,4 +1,6 @@
-html, body, #root {
+html,
+body,
+#root {
   height: 100%;
   background: var(--bg);
   color: var(--fg);
@@ -17,14 +19,43 @@ html, body, #root {
 }
 
 /* Header */
-.nv-header { position: sticky; top:0; z-index:50; background:rgba(255,255,255,.9); backdrop-filter: blur(6px); border-bottom:1px solid #e5e7eb;}
-.nv-header__inner { max-width:1100px; margin:0 auto; padding:10px 16px; display:flex; align-items:center; gap:16px;}
-.nv-header a { text-decoration:none; color:inherit;}
-.nv-header .active { font-weight:600; }
+.nv-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: rgba(255, 255, 255, 0.9);
+  backdrop-filter: blur(6px);
+  border-bottom: 1px solid var(--nv-border);
+}
+.nv-header__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 10px 16px;
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+.nv-header a {
+  text-decoration: none;
+  color: inherit;
+}
+.nv-header .active {
+  font-weight: 600;
+}
 
 /* Culture bullets align under column titles */
-.list-reset { padding-left:1.25rem; }
+.list-reset {
+  padding-left: 1.25rem;
+}
 
 /* Kill any leftover hero/blob from older HTML/CSS */
-.welcome-blob, #hero, .hero-blob, .smiley, .blob, .face { display:none !important; height:0 !important; width:0 !important; }
-
+.welcome-blob,
+#hero,
+.hero-blob,
+.smiley,
+.blob,
+.face {
+  display: none !important;
+  height: 0 !important;
+  width: 0 !important;
+}

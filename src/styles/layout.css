@@ -27,19 +27,29 @@ h2 {
 }
 
 /* Reusable panel (matches Profile style) */
-.panel{
-  border:1px solid #e5e7eb;
-  background:#fff;
-  border-radius:14px;
-  padding:14px;
+.panel {
+  border: 1px solid var(--nv-border);
+  background: #fff;
+  border-radius: 14px;
+  padding: 14px;
 }
 
 /* Section spacing helper */
-.page-block { margin: 12px 0; }
+.page-block {
+  margin: 12px 0;
+}
 
 /* Breadcrumb row spacing (if present) */
-nav[aria-label="Breadcrumb"] { margin: 6px 0 4px; }
+nav[aria-label='Breadcrumb'] {
+  margin: 6px 0 4px;
+}
 
 /* Keep top-inline nav hidden on phones (single menu button only) */
-.top-inline-nav{ display:none; }
-@media (min-width:768px){ .top-inline-nav{ display:flex; } }
+.top-inline-nav {
+  display: none;
+}
+@media (min-width: 768px) {
+  .top-inline-nav {
+    display: flex;
+  }
+}

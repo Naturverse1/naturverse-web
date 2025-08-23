@@ -1,27 +1,28 @@
 @import './tokens.css';
 @import './typography.css';
-@import './components.css';
-
-:root {
-  --brand-500: #2a79e0;
-  --brand-600: #0d60c7;
-  --brand-700: #1e40af; /* deep blue */
-  --on-brand: #ffffff;
-}
 
 /* Primary buttons (applies to <a> and <button>) */
-.btn, .button, .btn-primary, a.button-primary {
-  color: var(--on-brand) !important;
-  background: linear-gradient(180deg, var(--brand-500), var(--brand-600));
+.btn,
+.button,
+.btn-primary,
+a.button-primary {
+  color: var(--nv-accent-contrast) !important;
+  background: linear-gradient(180deg, var(--nv-blue-500), var(--nv-blue-600));
   border: 0;
   font-weight: 700;
-  box-shadow: 0 6px 0 rgba(0,0,0,.15);
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.15);
 }
-.btn:hover, .button:hover, .btn-primary:hover, a.button-primary:hover {
+.btn:hover,
+.button:hover,
+.btn-primary:hover,
+a.button-primary:hover {
   filter: brightness(0.98);
 }
-.btn:focus, .button:focus, .btn-primary:focus, a.button-primary:focus {
-  outline: 3px solid rgba(42,121,224,.35);
+.btn:focus,
+.button:focus,
+.btn-primary:focus,
+a.button-primary:focus {
+  outline: 3px solid rgba(74, 135, 255, 0.35);
   outline-offset: 2px;
 }
 
@@ -30,53 +31,72 @@
 .hero .cta button,
 .home-hero a,
 .home-hero button {
-  color: var(--on-brand) !important;
+  color: var(--nv-accent-contrast) !important;
 }
 
 /* Ensure child elements inherit button label color */
-.btn *, .button *, .btn-primary *, a.button-primary * {
+.btn *,
+.button *,
+.btn-primary *,
+a.button-primary * {
   color: inherit;
 }
 
 /* --- Card title: consistent bold, brand-blue across app --- */
-.card-title{
+.card-title {
   font-weight: 700;
-  color: var(--brand-700);
+  color: var(--nv-blue-700);
   line-height: 1.2;
 }
-.card-title .emoji{ margin-right: 8px; }
+.card-title .emoji {
+  margin-right: 8px;
+}
 /* Titles inside linked cards keep brand color */
 .card a .card-title,
-.card a:visited .card-title{
-  color: var(--brand-700);
+.card a:visited .card-title {
+  color: var(--nv-blue-700);
 }
 /* Zones grid titles align nicely next to emoji */
-.zones .card .card-title{
+.zones .card .card-title {
   display: inline-flex;
   align-items: center;
   gap: 8px;
 }
 
 /* Base text & links */
-body{ color:#0f172a; background:#ffffff; }
-a{ color: var(--brand-700); }
-a:hover{ color: var(--brand-800); text-decoration: underline; }
+body {
+  color: var(--nv-blue-700);
+  background: #ffffff;
+}
+a {
+  color: var(--nv-blue-700);
+}
+a:hover {
+  color: var(--nv-blue-800);
+  text-decoration: underline;
+}
 
 /* Site title */
-.site-title{ color: var(--heading-color); }
+.site-title {
+  color: var(--nv-blue-700);
+}
 
 /* “pill” chips/tabs light blue */
-.pill{ background: var(--brand-50); border:1px solid var(--brand-200); color: var(--brand-700); }
+.pill {
+  background: var(--nv-blue-50);
+  border: 1px solid var(--nv-blue-200);
+  color: var(--nv-blue-700);
+}
 
 /* --- Cards / pills that use the blue brand background ------------------- */
-[data-surface="brand"] {
-  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
-  border-color: var(--brand-600);
-  color: var(--on-brand);
+[data-surface='brand'] {
+  background: linear-gradient(180deg, var(--nv-blue-400), var(--nv-blue-600));
+  border-color: var(--nv-blue-600);
+  color: var(--nv-accent-contrast);
 }
-[data-surface="brand"] a,
-[data-surface="brand"] .link {
-  color: var(--on-brand);
+[data-surface='brand'] a,
+[data-surface='brand'] .link {
+  color: var(--nv-accent-contrast);
   text-decoration: underline;
   text-underline-offset: 2px;
 }
@@ -88,16 +108,17 @@ a:hover{ color: var(--brand-800); text-decoration: underline; }
 .stamp.is-brand,
 .suggestion.is-brand,
 .card.is-brand {
-  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
-  border-color: var(--brand-600);
-  color: var(--on-brand);
+  background: linear-gradient(180deg, var(--nv-blue-400), var(--nv-blue-600));
+  border-color: var(--nv-blue-600);
+  color: var(--nv-accent-contrast);
 }
 
 /* --- Section titles (make the H1s consistently Naturverse blue) --------- */
 .page-title {
-  color: var(--brand-700);
+  color: var(--nv-blue-700);
 }
 
 /* Utility so we can blue a heading without changing layout/components */
-.text-brand { color: var(--brand-700); }
-
+.text-brand {
+  color: var(--nv-blue-700);
+}

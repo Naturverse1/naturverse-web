@@ -2,7 +2,7 @@
 
 /* Main brand color */
 :root {
-  --naturverse-blue: #1e73be; /* Adjust if you want a lighter/darker blue */
+  --naturverse-blue: var(--nv-blue-700); /* Adjust if you want a lighter/darker blue */
 }
 
 /* Navbar text + underline */
@@ -14,7 +14,12 @@
 }
 
 /* Page section headers (Zones, Marketplace, etc.) */
-h1, h2, h3, h4, h5, h6 {
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
   color: var(--naturverse-blue) !important;
 }
 
@@ -35,15 +40,18 @@ h1, h2, h3, h4, h5, h6 {
 }
 
 /* Links & hover */
-a, a:visited {
+a,
+a:visited {
   color: var(--naturverse-blue) !important;
 }
 a:hover {
-  color: #125a96 !important; /* darker blue on hover */
+  color: var(--nv-blue-800) !important; /* darker blue on hover */
 }
 
 /* Buttons already use blue — keep consistent */
-button, .btn, .btn-primary {
+button,
+.btn,
+.btn-primary {
   background-color: var(--naturverse-blue) !important;
   border-color: var(--naturverse-blue) !important;
 }
@@ -58,7 +66,7 @@ button a {
 
 /* Specific for Navatar creator base buttons */
 .navatar-buttons button {
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(180deg, var(--nv-blue-500) 0%, var(--nv-blue-600) 100%) !important;
   color: #fff !important;
   border: none;
   font-weight: 600;
@@ -66,26 +74,28 @@ button a {
 
 /* Passport stamps */
 .passport-stamps button {
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(180deg, var(--nv-blue-500) 0%, var(--nv-blue-600) 100%) !important;
   color: #fff !important;
   font-weight: 600;
 }
 
 /* Turian quest suggestion buttons */
 .turian-quests button {
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(180deg, var(--nv-blue-500) 0%, var(--nv-blue-600) 100%) !important;
   color: #fff !important;
   font-weight: 600;
 }
 
 /* Home page hero buttons */
 .hero-buttons button {
-  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  background: linear-gradient(180deg, var(--nv-blue-500) 0%, var(--nv-blue-600) 100%) !important;
   color: #fff !important;
   font-weight: 600;
 }
 
 /* Any subtle accent lines */
-hr, .divider, .line {
+hr,
+.divider,
+.line {
   border-color: var(--naturverse-blue) !important;
 }

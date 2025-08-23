@@ -1,1 +1,3 @@
-.nv-muted{ color: var(--nv-muted); }
+.nv-muted {
+  color: var(--nv-text-muted);
+}
