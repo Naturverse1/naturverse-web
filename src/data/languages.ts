@@ -1,56 +1,106 @@
+export type Starter = { en: string; native: string; romanized: string };
+export type CountItem = { num: number; native: string; romanized: string };
 export type Language = {
-  id: string;
+  slug: string;
   name: string;
-  native: string;
-  cover?: string;   // main card image
-  detail?: string;  // inner/secondary image
+  nativeName: string;
+  region: string;
+  heroImg: string;
+  secondaryImg: string;
+  starter: Starter[];
+  alphabet: { note: string };
+  count: CountItem[];
 };
+
+const STARTER: Starter[] = [
+  { en: "Hello", native: "สวัสดี", romanized: "sà-wàt-dee" },
+  { en: "Thank you", native: "ขอบคุณ", romanized: "khàwp-khun" },
+];
+
+const ALPHABET_NOTE = "ก (gor) • ข (khor) • ค (khor) • ง (ngor) • จ (jor)";
+
+const COUNT: CountItem[] = [
+  { num: 1, native: "๑", romanized: "nùeng" },
+  { num: 2, native: "๒", romanized: "sŏng" },
+  { num: 3, native: "๓", romanized: "sǎam" },
+  { num: 4, native: "๔", romanized: "sìi" },
+  { num: 5, native: "๕", romanized: "hâa" },
+  { num: 6, native: "๖", romanized: "hòk" },
+  { num: 7, native: "๗", romanized: "jèt" },
+  { num: 8, native: "๘", romanized: "bpàet" },
+  { num: 9, native: "๙", romanized: "gâo" },
+  { num: 10, native: "๑๐", romanized: "sǐp" },
+];
 
 export const LANGUAGES: Language[] = [
   {
-    id: "thailandia",
+    slug: "thailandia",
     name: "Thailandia (Thai)",
-    native: "ไทย",
-    cover: "/Languages/Mangolanguagemainthai.png",
-    detail: "/Languages/Turianlanguage.png", // Thai secondary
+    nativeName: "ไทย",
+    region: "Thailandia",
+    heroImg: "Mangolanguagemainthai.png",
+    secondaryImg: "Turianlanguage.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
   {
-    id: "chinadia",
+    slug: "chinadia",
     name: "Chinadia (Mandarin)",
-    native: "中文",
-    cover: "/Languages/Cranelanguagemainchina.png",
-    detail: "/Languages/Turianlanguagechina.png",
+    nativeName: "中文",
+    region: "Chinadia",
+    heroImg: "Cranelanguagemainchina.png",
+    secondaryImg: "Turianlanguagechina.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
   {
-    id: "indillandia",
+    slug: "indillandia",
     name: "Indillandia (Hindi)",
-    native: "हिंदी",
-    cover: "/Languages/Genielanguagemainindi.png",
-    detail: "/Languages/Turianlanguagehindi.png",
+    nativeName: "हिंदी",
+    region: "Indillandia",
+    heroImg: "Genielanguagemainindi.png",
+    secondaryImg: "Turianlanguagehindi.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
   {
-    id: "brazilandia",
+    slug: "brazilandia",
     name: "Brazilandia (Portuguese)",
-    native: "Português",
-    cover: "/Languages/Birdlanguagemainbrazil.png",
-    detail: "/Languages/Turianlanguagebrazil.png",
+    nativeName: "Português",
+    region: "Brazilandia",
+    heroImg: "Birdlanguagemainbrazil.png",
+    secondaryImg: "Turianlanguagebrazil.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
   {
-    id: "australandia",
+    slug: "australandia",
     name: "Australandia (English)",
-    native: "English",
-    cover: "/Languages/Koalalanguagemain.png",
-    detail: "/Languages/Birdlanguageaustralandia.png",
+    nativeName: "English",
+    region: "Australandia",
+    heroImg: "Koalalanguagemain.png",
+    secondaryImg: "Birdlanguageaustralandia.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
   {
-    id: "amerilandia",
+    slug: "amerilandia",
     name: "Amerilandia (English)",
-    native: "English",
-    cover: "/Languages/Owllanguagemain.png",
-    detail: "/Languages/Turianlanguageenglish.png",
+    nativeName: "English",
+    region: "Amerilandia",
+    heroImg: "Owllanguagemain.png",
+    secondaryImg: "Turianlanguageenglish.png",
+    starter: STARTER,
+    alphabet: { note: ALPHABET_NOTE },
+    count: COUNT,
   },
 ];
 
-export function getLanguageById(id: string) {
-  return LANGUAGES.find((l) => l.id === id);
+export function getLanguage(slug: string | undefined) {
+  return LANGUAGES.find((l) => l.slug === slug);
 }

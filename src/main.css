@@ -5,7 +5,6 @@
 @import './styles/home.css';
 @import './styles/auth-menu.css';
 @import './styles/buttons.css';
-@import './styles/languages.css';
 @import './styles/layout.css';
 @import './styles/nav.css';
 @import './styles/img.css';
@@ -19,6 +18,7 @@
 @import "./styles/bank.css";
 @import "./styles/polish.css";
 @import "./styles/cards.css";
+@import './styles/components.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
