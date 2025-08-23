@@ -60,16 +60,16 @@ export default function Header() {
             </ul>
           </nav>
 
-          <CartButton />
-          {loading ? (
-            <span style={{ opacity: 0.7 }}>…</span>
-          ) : user ? (
-            <UserChip email={user.email} />
-          ) : (
-            <a className="btn" href="/login">
-              Sign in
-            </a>
-          )}
+          <nav className="site-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <CartButton />
+            {loading ? (
+              <span style={{ opacity: 0.7 }}>…</span>
+            ) : user ? (
+              <UserChip email={user.email} />
+            ) : (
+              <a className="btn" href="/login">Sign in</a>
+            )}
+          </nav>
 
           {/* mobile button */}
           <button

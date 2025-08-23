@@ -1,9 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
 
-type Props = { email?: string | null };
-
-export default function UserChip({ email }: Props) {
+export default function UserChip({ email }: { email?: string | null }) {
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -20,8 +18,6 @@ export default function UserChip({ email }: Props) {
     <div ref={ref} style={{ position: 'relative' }}>
       <button
         onClick={() => setOpen((v) => !v)}
-        aria-haspopup="menu"
-        aria-expanded={open}
         className="btn"
         style={{ display: 'inline-flex', alignItems: 'center', gap: 8, paddingInline: 10 }}
       >
@@ -31,8 +27,6 @@ export default function UserChip({ email }: Props) {
           width={20}
           height={20}
           style={{ borderRadius: 6, background: '#eef3ff' }}
-          loading="lazy"
-          decoding="async"
         />
         <span style={{ maxWidth: 140, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
           {email ?? 'Account'}
@@ -46,8 +40,8 @@ export default function UserChip({ email }: Props) {
             position: 'absolute',
             right: 0,
             marginTop: 8,
-            background: 'var(--card, #fff)',
-            border: '1px solid var(--border, #dbe2f0)',
+            background: 'white',
+            border: '1px solid #dbe2f0',
             borderRadius: 10,
             minWidth: 180,
             boxShadow: '0 4px 16px rgba(2,16,64,0.08)',
@@ -61,7 +55,6 @@ export default function UserChip({ email }: Props) {
             role="menuitem"
             onClick={async () => {
               await supabase.auth.signOut();
-              // Let the hook update navbar; also guard navigation on client
               window.location.href = '/';
             }}
             className="btn"
@@ -80,7 +73,6 @@ const menuItem: React.CSSProperties = {
   width: '100%',
   textAlign: 'left',
   padding: '10px 12px',
-  borderRadius: 0,
   border: 'none',
   background: 'transparent',
 };
