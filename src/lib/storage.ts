@@ -1,17 +1,20 @@
-const KEY_ACTIVE = "naturverse.activeNavatar";
-const KEY_LIBRARY = "naturverse.navatarLibrary";
+import { supabase } from './db'
 
-export function loadActive<T>(): T | null {
-  try { return JSON.parse(localStorage.getItem(KEY_ACTIVE) || "null"); } catch { return null; }
-}
-export function saveActive<T>(v: T | null) {
-  if (v == null) localStorage.removeItem(KEY_ACTIVE);
-  else localStorage.setItem(KEY_ACTIVE, JSON.stringify(v));
+export async function uploadAvatar(file: File, path: string) {
+  // Bucket policies created earlier allow user-specific write
+  const { data, error } = await supabase.storage
+    .from('avatars')
+    .upload(path, file, { upsert: true })
+  if (error) throw error
+  const { data: url } = supabase.storage.from('avatars').getPublicUrl(data.path)
+  return url.publicUrl
 }
 
-export function loadLibrary<T>(): T[] {
-  try { return JSON.parse(localStorage.getItem(KEY_LIBRARY) || "[]"); } catch { return []; }
-}
-export function saveLibrary<T>(list: T[]) {
-  localStorage.setItem(KEY_LIBRARY, JSON.stringify(list));
+export async function uploadNavatarImage(file: File, path: string) {
+  const { data, error } = await supabase.storage
+    .from('navatars')
+    .upload(path, file, { upsert: true })
+  if (error) throw error
+  const { data: url } = supabase.storage.from('navatars').getPublicUrl(data.path)
+  return url.publicUrl
 }
