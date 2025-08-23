@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import CartButton from './cart/CartButton';
 import Img from './Img';
-import AuthMenu from './AuthMenu';
+import { useAuthUser } from '../lib/useAuthUser';
+import UserChip from './UserChip';
 
 const LINKS = [
   { href: '/worlds', label: 'Worlds' },
@@ -17,6 +18,7 @@ const LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuthUser();
 
   // close drawer on route change (hash/path)
   useEffect(() => {
@@ -59,7 +61,15 @@ export default function Header() {
           </nav>
 
           <CartButton />
-          <AuthMenu />
+          {loading ? (
+            <span style={{ opacity: 0.7 }}>…</span>
+          ) : user ? (
+            <UserChip email={user.email} />
+          ) : (
+            <a className="btn" href="/login">
+              Sign in
+            </a>
+          )}
 
           {/* mobile button */}
           <button
