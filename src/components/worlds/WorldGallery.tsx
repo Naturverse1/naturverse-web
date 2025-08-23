@@ -1,5 +1,5 @@
 import React from "react";
-import ImageSmart from "../ImageSmart";
+import Img from "../Img";
 
 type Char = { name: string; img: string; role?: string };
 
@@ -15,7 +15,7 @@ export default function WorldGallery({
   return (
     <>
       <figure className="world-hero">
-        <ImageSmart src={mapSrc} alt={alt} priority />
+        <Img src={mapSrc} alt={alt} />
       </figure>
 
       <section aria-labelledby="gallery" className="world-section">
@@ -24,7 +24,7 @@ export default function WorldGallery({
           <div className="char-grid">
             {characters.map((c) => (
               <article key={c.name} className="char-card">
-                <ImageSmart src={c.img} alt={c.name} />
+                <Img src={c.img} alt={c.name} />
                 <h3>{c.name}</h3>
                 {c.role && <p className="muted">{c.role}</p>}
               </article>

@@ -1,7 +1,7 @@
 import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import './site-header.css';
-import ImageSmart from './ImageSmart';
+import Img from './Img';
 
 export default function SiteHeader(){
   const [open, setOpen] = useState(false);
@@ -10,7 +10,7 @@ export default function SiteHeader(){
       <a href="#main" className="skip-link">Skip to content</a>
       <div className="wrap">
         <Link to="/" className="brand" onClick={() => setOpen(false)}>
-          <ImageSmart src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" priority />
+          <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
           <span>Naturverse</span>
         </Link>
         <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen(v => !v)}>

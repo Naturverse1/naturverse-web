@@ -1,5 +1,5 @@
 import React from 'react';
-import ImageSmart from './ImageSmart';
+import Img from './Img';
 
 export type CardData = {
   id: string;
@@ -39,7 +39,7 @@ export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
       <div className="nv-card__body">
         <div className="nv-card__avatar">
           {avatarDataUrl ? (
-            <ImageSmart src={avatarDataUrl} alt={`${name} avatar`} />
+            <Img src={avatarDataUrl} alt={`${name} avatar`} />
           ) : (
             <div className="nv-card__avatar--placeholder">Add image</div>
           )}

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
-import ImageSmart from "../components/ImageSmart";
+import { Img } from "../components";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -85,7 +85,7 @@ export default function TurianPage() {
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
         {mascotSrc ? (
-          <ImageSmart src={mascotSrc} alt="Turian the Durian mascot" width={44} height={44} style={{ borderRadius: 8 }} />
+          <Img src={mascotSrc} alt="Turian the Durian mascot" width={44} height={44} style={{ borderRadius: 8 }} />
         ) : (
           <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
         )}

@@ -1,5 +1,5 @@
 import React from "react";
-import ImageSmart from "./ImageSmart";
+import Img from "./Img";
 
 export type CharacterItem = { name: string; file: string }; // file includes extension
 
@@ -14,7 +14,7 @@ export default function CharacterGrid({ items, basePath }: {
         const src = `${basePath}/${encodeURIComponent(it.file)}`;
         return (
           <figure className="char" key={it.file}>
-            <ImageSmart src={src} alt={it.name} />
+            <Img src={src} alt={it.name} />
             <figcaption>{it.name}</figcaption>
           </figure>
         );

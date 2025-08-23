@@ -1,5 +1,5 @@
 import React from "react";
-import ImageSmart from "./ImageSmart";
+import Img from "./Img";
 
 type Props = {
   size?: "sm" | "md" | "lg";
@@ -19,7 +19,7 @@ export default function BrandMark({
 
   return (
     <span className={`brand-mark ${className}`} aria-label={title}>
-      <ImageSmart
+      <Img
         src="/turianmedialogo.png"
         alt=""
         role="presentation"
