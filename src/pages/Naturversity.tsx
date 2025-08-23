@@ -4,7 +4,6 @@ import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 import SkeletonGrid from "../components/SkeletonGrid";
 import PageHead from "../components/PageHead";
-import LazyImg from "../components/LazyImg";
 
 export default function NaturversityPage() {
   const [ready, setReady] = useState(false);
@@ -38,13 +37,11 @@ export default function NaturversityPage() {
               title: "Languages",
               desc: "Phrasebooks for each kingdom.",
               icon: (
-                  <LazyImg
-                    src="/assets/amerilandia/flag.png"
-                    alt=""
-                    width={24}
-                    height={16}
-                    style={{ borderRadius: 3 }}
-                  />
+                <img
+                  src="/favicon.png"
+                  alt="Languages Icon"
+                  className="w-6 h-6"
+                />
               ),
             },
           ]}
