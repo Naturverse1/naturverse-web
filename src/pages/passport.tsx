@@ -1,27 +1,25 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase/client";
-import type { PassportStamp } from "../types/passport";
+import { WORLDS, WorldKey } from "../data/worlds";
+import type { PassportStamp, PassportBadge } from "../types/passport";
 
-const LS_KEY = "naturverse.passport.v1";
-
-const WORLDS = [
-  "Thailandia","Chinadia","Japonica","Indiania","Brazilia","Africania",
-  "Europalia","Britannula","Americandia","Australandia","Kiwlandia",
-  "Madagascaria","Greenlandia","Antarcticland",
-];
+const LS_STAMPS = "naturverse.passport.stamps.v1";
+const LS_BADGES = "naturverse.passport.badges.v1";
 
 export default function PassportPage() {
   const [uid, setUid] = useState<string | null>(null);
-  const [stamps, setStamps] = useState<PassportStamp[]>(() => {
-    try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch { return []; }
-  });
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
-  const [world, setWorld] = useState<string>(WORLDS[0]);
-  const [badge, setBadge] = useState<string>("");
-  const [note, setNote] = useState<string>("");
 
-  useEffect(() => { if (usingLocal) localStorage.setItem(LS_KEY, JSON.stringify(stamps)); }, [stamps, usingLocal]);
+  const [stamps, setStamps] = useState<PassportStamp[]>(() => {
+    try { return JSON.parse(localStorage.getItem(LS_STAMPS) || "[]"); } catch { return []; }
+  });
+  const [badges, setBadges] = useState<PassportBadge[]>(() => {
+    try { return JSON.parse(localStorage.getItem(LS_BADGES) || "[]"); } catch { return []; }
+  });
+
+  useEffect(() => { if (usingLocal) localStorage.setItem(LS_STAMPS, JSON.stringify(stamps)); }, [stamps, usingLocal]);
+  useEffect(() => { if (usingLocal) localStorage.setItem(LS_BADGES, JSON.stringify(badges)); }, [badges, usingLocal]);
 
   useEffect(() => {
     (async () => {
@@ -29,16 +27,23 @@ export default function PassportPage() {
       const u = data.session?.user?.id ?? null;
       setUid(u);
       if (!u) { setLoading(false); return; }
-
       try {
-        const { data: rows, error } = await supabase
+        const { data: s, error: es } = await supabase
           .from("passport_stamps")
-          .select("id,user_id,world,badge,note,created_at")
+          .select("id,user_id,world,title,note,created_at")
           .eq("user_id", u)
-          .order("created_at", { ascending: false })
-          .limit(200);
-        if (error) throw error;
-        setStamps((rows || []) as PassportStamp[]);
+          .order("created_at", { ascending: false });
+        if (es) throw es;
+
+        const { data: b, error: eb } = await supabase
+          .from("passport_badges")
+          .select("id,user_id,code,label,created_at")
+          .eq("user_id", u)
+          .order("created_at", { ascending: false });
+        if (eb) throw eb;
+
+        setStamps((s || []) as PassportStamp[]);
+        setBadges((b || []) as PassportBadge[]);
         setUsingLocal(false);
       } catch {
         setUsingLocal(true);
@@ -48,40 +53,55 @@ export default function PassportPage() {
     })();
   }, []);
 
-  const earnedByWorld = useMemo(() => {
-    const map = new Map<string, number>();
-    for (const w of WORLDS) map.set(w, 0);
-    for (const s of stamps) map.set(s.world, (map.get(s.world) || 0) + 1);
+  const progressByWorld = useMemo(() => {
+    const map: Record<string, number> = {};
+    for (const w of WORLDS) map[w] = 0;
+    for (const s of stamps) map[s.world] = (map[s.world] || 0) + 1;
     return map;
   }, [stamps]);
 
-  async function addStamp() {
-    const s: Omit<PassportStamp, "id" | "created_at" | "user_id"> = { world, badge: badge || null, note: note || null };
+  async function addStamp(world: WorldKey, title: string, note?: string) {
+    const base: Omit<PassportStamp, "id" | "created_at"> = {
+      user_id: uid || "local", world, title, note: note || null,
+    };
     if (uid && !usingLocal) {
       const { data, error } = await supabase
         .from("passport_stamps")
-        .insert({ user_id: uid, world: s.world, badge: s.badge, note: s.note })
-        .select("id,user_id,world,badge,note,created_at")
+        .insert(base)
+        .select("id,user_id,world,title,note,created_at")
         .single();
       if (error) { alert(error.message); return; }
       setStamps(prev => [data as PassportStamp, ...prev]);
     } else {
-      const loc: PassportStamp = {
-        id: String(Date.now()),
-        user_id: "local",
-        world: s.world,
-        badge: s.badge,
-        note: s.note,
-        created_at: new Date().toISOString(),
-      };
-      setStamps(prev => [loc, ...prev]);
+      const local: PassportStamp = { ...base, id: String(Date.now()), created_at: new Date().toISOString() };
+      setStamps(prev => [local, ...prev]);
     }
-    setBadge(""); setNote("");
   }
 
-  async function removeStamp(id: string) {
-    if (uid && !usingLocal) { await supabase.from("passport_stamps").delete().eq("id", id); }
-    setStamps(prev => prev.filter(x => x.id !== id));
+  async function grantBadge(code: string, label: string) {
+    const base: Omit<PassportBadge, "id" | "created_at"> = {
+      user_id: uid || "local", code, label,
+    };
+    if (uid && !usingLocal) {
+      const { data, error } = await supabase
+        .from("passport_badges")
+        .insert(base)
+        .select("id,user_id,code,label,created_at")
+        .single();
+      if (error) { alert(error.message); return; }
+      setBadges(prev => [data as PassportBadge, ...prev]);
+    } else {
+      const local: PassportBadge = { ...base, id: String(Date.now()), created_at: new Date().toISOString() };
+      setBadges(prev => [local, ...prev]);
+    }
+  }
+
+  function demoStamp(world: WorldKey) {
+    addStamp(world, "Explorer Stamp", "Demo progress");
+  }
+
+  function demoBadge() {
+    grantBadge("first-steps", "First Steps");
   }
 
   if (loading) return <main><h1>Passport</h1><p>Loading…</p></main>;
@@ -89,67 +109,70 @@ export default function PassportPage() {
   return (
     <main className="passport">
       <h1>Passport</h1>
-      <p className="muted">
-        {usingLocal ? "Local demo mode (not signed in)." : "Synced to your account."}
-      </p>
-
-      <section className="passport-summary">
-        {WORLDS.map(w => (
-          <div key={w} className="stamp-box">
-            <div className="w">{w}</div>
-            <div className="c">{earnedByWorld.get(w) || 0} stamp(s)</div>
-          </div>
-        ))}
-      </section>
+      <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
 
       <section className="panel">
-        <h2>Add Stamp</h2>
-        <div className="row wrap">
-          <label className="field">
-            <span>World</span>
-            <select value={world} onChange={e => setWorld(e.target.value)}>
-              {WORLDS.map(w => <option key={w} value={w}>{w}</option>)}
-            </select>
-          </label>
-          <label className="field">
-            <span>Badge (optional)</span>
-            <input value={badge} onChange={e => setBadge(e.target.value)} placeholder="Explorer, Helper, Champion…" />
-          </label>
-          <label className="field grow">
-            <span>Note (optional)</span>
-            <input value={note} onChange={e => setNote(e.target.value)} placeholder="Finished Songkran quest!" />
-          </label>
-          <button className="btn" onClick={addStamp}>Add</button>
+        <h2>World Stamps</h2>
+        <div className="world-grid">
+          {WORLDS.map((w) => (
+            <div key={w} className="world-card">
+              <div className="world-name">{titleCase(w)}</div>
+              <div className="stamp-count">
+                {progressByWorld[w]} stamp{progressByWorld[w] === 1 ? "" : "s"}
+              </div>
+              <button className="btn tiny" onClick={() => demoStamp(w)}>Add demo stamp</button>
+            </div>
+          ))}
         </div>
       </section>
 
       <section className="panel">
         <h2>Recent Stamps</h2>
         {stamps.length === 0 ? (
-          <p className="muted">No stamps yet. Earn stamps by completing quests and lessons.</p>
+          <p className="muted">No stamps yet. Add one using the world cards above.</p>
         ) : (
           <ul className="stamp-list">
             {stamps.map(s => (
               <li key={s.id} className="stamp-item">
-                <div className="col main">
-                  <div className="top">
-                    <strong>{s.world}</strong>
-                    <span className="when">{s.created_at ? new Date(s.created_at).toLocaleString() : ""}</span>
-                  </div>
-                  {s.badge && <div className="badge">🏅 {s.badge}</div>}
-                  {s.note && <div className="note">{s.note}</div>}
-                </div>
-                <div className="col actions">
-                  <button className="btn outline tiny" onClick={() => removeStamp(s.id)}>Remove</button>
-                </div>
+                <span className="w">{titleCase(s.world)}</span>
+                <span className="t">{s.title}</span>
+                <span className="n">{s.note || ""}</span>
+                <span className="d">{s.created_at ? new Date(s.created_at).toLocaleString() : ""}</span>
               </li>
             ))}
           </ul>
         )}
       </section>
 
-      <p className="muted small">Coming soon: auto-stamps from Quests, World boss events, and teacher-verified badges.</p>
+      <section className="panel">
+        <h2>Badges</h2>
+        <div className="row">
+          <button className="btn" onClick={demoBadge}>Grant demo badge</button>
+        </div>
+        {badges.length === 0 ? (
+          <p className="muted">No badges yet.</p>
+        ) : (
+          <div className="badge-grid">
+            {badges.map(b => (
+              <div key={b.id} className="badge">
+                <div className="badge-icon">🏅</div>
+                <div className="badge-body">
+                  <div className="badge-label">{b.label}</div>
+                  <div className="badge-code">{b.code}</div>
+                  <div className="badge-date">{b.created_at ? new Date(b.created_at).toLocaleDateString() : ""}</div>
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+
+      <p className="muted small">Coming soon: auto-stamps from quizzes, stories, and missions.</p>
     </main>
   );
+}
+
+function titleCase(s: string) {
+  return s.replace(/(^|\s|-)\w/g, (m) => m.toUpperCase());
 }
 
