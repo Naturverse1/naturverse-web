@@ -45,7 +45,7 @@ import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
 import NavatarPage from './pages/Navatar';
 import Passport from './pages/Passport';
-import LoginPage from './pages/Login';
+import LoginPage from './pages/login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/Profile';
 import Terms from './pages/Terms';
