@@ -39,7 +39,7 @@ import Partners from './pages/naturversity/Partners';
 import Courses from './pages/naturversity/Courses';
 import CourseDetail from './pages/naturversity/CourseDetail';
 import LanguagesHub from './pages/naturversity/languages';
-import LanguageDetail from './pages/naturversity/languages/[id]';
+import LanguageDetail from './pages/naturversity/languages/[slug]';
 import NaturBankPage from './pages/naturbank';
 import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
@@ -101,7 +101,7 @@ export const router = createBrowserRouter([
       { path: 'naturversity/courses', element: <Courses /> },
       { path: 'naturversity/course/:slug', element: <CourseDetail /> },
       { path: 'naturversity/languages', element: <LanguagesHub /> },
-      { path: 'naturversity/languages/:id', element: <LanguageDetail /> },
+      { path: 'naturversity/languages/:slug', element: <LanguageDetail /> },
       { path: 'naturbank', element: <NaturBankPage /> },
       { path: 'naturbank/wallet', element: <BankWallet /> },
       { path: 'naturbank/natur', element: <BankToken /> },
