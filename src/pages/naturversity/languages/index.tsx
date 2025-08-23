@@ -48,14 +48,13 @@ export default function LanguagesIndex() {
       <div className="cards-grid">
         {LANG_CARDS.map((k) => (
           <a key={k.slug} className="card" href={`/naturversity/languages/${k.slug}`}>
-            <img
-              src={k.cover}
-              alt=""
-              className="lang-hero"
-              loading="lazy"
-              decoding="async"
-              sizes="(max-width: 768px) 100vw, 480px"
-            />
+          <img
+            src={k.cover}
+            alt=""
+            className="lang-hero"
+            loading="lazy"
+            decoding="async"
+          />
             <div className="card-body">
               <h3>{k.title}</h3>
               <small>Native: {k.native}</small>
