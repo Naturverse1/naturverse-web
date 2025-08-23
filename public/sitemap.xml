@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>https://thenaturverse.com/</loc></url>
-  <url><loc>https://thenaturverse.com/worlds</loc></url>
-  <url><loc>https://thenaturverse.com/zones</loc></url>
-  <url><loc>https://thenaturverse.com/marketplace</loc></url>
-  <url><loc>https://thenaturverse.com/naturversity</loc></url>
-  <url><loc>https://thenaturverse.com/naturbank</loc></url>
-  <url><loc>https://thenaturverse.com/navatar</loc></url>
-  <url><loc>https://thenaturverse.com/passport</loc></url>
-  <url><loc>https://thenaturverse.com/turian</loc></url>
-  <url><loc>https://thenaturverse.com/profile</loc></url>
+  <url><loc>/</loc></url>
+  <url><loc>/worlds</loc></url>
+  <url><loc>/zones</loc></url>
+  <url><loc>/marketplace</loc></url>
+  <url><loc>/naturversity</loc></url>
+  <url><loc>/naturbank</loc></url>
+  <url><loc>/navatar</loc></url>
+  <url><loc>/passport</loc></url>
+  <url><loc>/turian</loc></url>
+  <url><loc>/profile</loc></url>
+  <url><loc>/naturversity/languages</loc></url>
 </urlset>

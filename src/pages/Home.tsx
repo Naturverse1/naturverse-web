@@ -9,8 +9,7 @@ export default function Home() {
   return (
     <Page>
       <Meta title="Naturverse — Playful worlds for families"
-            description="A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
-            url="https://thenaturverse.com/" />
+            description="A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness." />
       <div className="home">
       {/* Hero */}
       <header className="home-hero">

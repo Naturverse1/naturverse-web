@@ -8,9 +8,6 @@ export default function SiteHeader() {
   const [open, setOpen] = useState(false);
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
-      <a href="#main" className="skip-link">
-        Skip to content
-      </a>
       <div className="wrap">
         <Link to="/" className="brand" onClick={() => setOpen(false)}>
           <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />

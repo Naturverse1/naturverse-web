@@ -25,3 +25,14 @@
 .cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
 .card  { background: #ffffff; border: 1px solid #dbeafe; border-radius: 14px; padding: 12px; }
 .card h2 { margin: 10px 0 6px; }
+
+.card.skeleton { position: relative; overflow: hidden; }
+.sk-img { height: 140px; background: #eaf2ff; border-radius: 10px; }
+.sk-line { height: 12px; margin-top: 10px; border-radius: 8px; background: #eaf2ff; }
+.sk-line.short { width: 60%; }
+.card.skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
+  transform: translateX(-100%); animation: sk 1.4s infinite;
+}
+@keyframes sk { to { transform: translateX(100%); } }

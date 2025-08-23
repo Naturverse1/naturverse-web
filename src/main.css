@@ -60,3 +60,10 @@ a.active {
 
 /* profile helpers (safe) */
 .muted { color: #64748b; }
+
+.visually-hidden-focusable {
+  position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
+}
+.visually-hidden-focusable:focus {
+  left:8px; top:8px; width:auto; height:auto; padding:8px 10px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;
+}

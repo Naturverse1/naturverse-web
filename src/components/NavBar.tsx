@@ -3,7 +3,7 @@ import { NavLink } from "react-router-dom";
 export default function NavBar() {
   return (
     <nav className="topnav" aria-label="Primary">
-      <a className="skip-link" href="#main">Skip to content</a>
+      <a className="visually-hidden-focusable" href="#main-content">Skip to content</a>
       <NavLink to="/worlds" className={({isActive})=>isActive?"active":""}>Worlds</NavLink>
       <NavLink to="/zones" className={({isActive})=>isActive?"active":""}>Zones</NavLink>
       <NavLink to="/marketplace" className={({isActive})=>isActive?"active":""}>Marketplace</NavLink>

@@ -7,7 +7,7 @@ import SmartImg from "../../components/SmartImg";
 export default function WorldsIndex() {
   return (
     <div className="container-narrow">
-      <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." url="https://thenaturverse.com/worlds" />
+      <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." />
       <Breadcrumbs />
       <p className="muted">Choose a kingdom to explore.</p>
       <div className="cards">
