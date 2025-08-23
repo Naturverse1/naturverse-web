@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import CartButton from "./cart/CartButton";
-import ImageSmart from "./ImageSmart";
+import Img from "./Img";
 
 const LINKS = [
   { href: "/worlds", label: "Worlds" },
@@ -41,12 +41,10 @@ export default function Header() {
       <header className="nv-header">
         <div className="nv-shell">
             <a href="/" className="header-logo-link" aria-label="Naturverse home">
-              <ImageSmart
+              <Img
                 src="/Turianmedia-logo-footer.png"
                 alt="Turian Media"
-                className="site-logo"
-                priority
-              />
+                className="site-logo"n              />
               <span className="site-title">Naturverse</span>
             </a>
 

@@ -1,7 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Seo from "../components/Seo";
-import ImageSmart from "../components/ImageSmart";
+import { Img } from "../components";
 
 export default function Home() {
   return (
@@ -14,13 +14,12 @@ export default function Home() {
       {/* Hero */}
       <section className="home-hero">
         <div className="home-hero-badge">
-          <ImageSmart
+          <Img
             src="/favicon-32x32.png"
             width={28}
             height={28}
             alt="Turian"
             className="inline-icon"
-            priority
           />
         </div>
         <h1>Welcome to the Naturverse™</h1>

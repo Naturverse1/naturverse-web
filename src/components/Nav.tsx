@@ -1,6 +1,6 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
-import ImageSmart from "./ImageSmart";
+import Img from "./Img";
 
 export default function Nav() {
   return (
@@ -8,7 +8,7 @@ export default function Nav() {
       <a href="#main" className="skip-link">Skip to content</a>
       <nav className="topnav container">
         <a href="/" aria-label="Naturverse Home" className="brand">
-          <ImageSmart src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} priority />
+          <Img src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
         </a>
         <div className="links">
           <NavLink to="/worlds" className={({isActive})=>`nav${isActive?' active':''}`}>Worlds</NavLink>

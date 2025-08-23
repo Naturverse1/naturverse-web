@@ -1,5 +1,5 @@
 import React, { useMemo, useState } from "react";
-import ImageSmart from "./ImageSmart";
+import Img from "./Img";
 
 type Kind = "card" | "hero" | "logo";
 
@@ -39,7 +39,7 @@ export default function KingdomImage({
 
   return (
     // eslint-disable-next-line jsx-a11y/alt-text
-    <ImageSmart
+    <Img
       src={candidates[idx]}
       onError={onErr}
       className={className}
