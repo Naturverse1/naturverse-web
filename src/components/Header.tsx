@@ -67,7 +67,20 @@ export default function Header() {
             ) : user ? (
               <UserChip email={user.email} />
             ) : (
-              <a className="btn" href="/login">Sign in</a>
+              <a
+                className="btn"
+                href="/login"
+                onClick={() => {
+                  try {
+                    sessionStorage.setItem(
+                      'naturverse.returnTo',
+                      window.location.pathname + window.location.search,
+                    );
+                  } catch {}
+                }}
+              >
+                Sign in
+              </a>
             )}
           </nav>
 
