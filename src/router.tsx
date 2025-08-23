@@ -62,7 +62,6 @@ import Accessibility from './pages/Accessibility';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
-import ProtectedRoute from './components/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -99,8 +98,8 @@ export const router = createBrowserRouter([
       { path: 'zones/future', element: <FutureZone /> },
       { path: 'marketplace', element: <Marketplace /> },
       { path: 'marketplace/catalog', element: <Catalog /> },
-        { path: 'marketplace/wishlist', element: <ProtectedRoute component={Wishlist} /> },
-        { path: 'marketplace/checkout', element: <ProtectedRoute component={Checkout} /> },
+        { path: 'marketplace/wishlist', element: <Wishlist /> },
+        { path: 'marketplace/checkout', element: <Checkout /> },
       { path: 'naturversity', element: <Naturversity /> },
       { path: 'naturversity/teachers', element: <Teachers /> },
       { path: 'naturversity/partners', element: <Partners /> },
@@ -123,11 +122,11 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-        { path: 'navatar', element: <ProtectedRoute component={NavatarPage} /> },
-        { path: 'passport', element: <ProtectedRoute component={Passport} /> },
+        { path: 'navatar', element: <NavatarPage /> },
+        { path: 'passport', element: <Passport /> },
         { path: 'login', element: <LoginPage /> },
         { path: 'turian', element: <Turian /> },
-        { path: 'profile', element: <ProtectedRoute component={ProfilePage} /> },
+        { path: 'profile', element: <ProfilePage /> },
         { path: '*', element: <NotFound /> },
     ],
   },

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getCurrentUserAndProfile, NaturProfile } from '../lib/getProfile';
+import RequireAuth from '../components/RequireAuth';
 
 type ViewState =
   | { kind: 'loading' }
@@ -49,8 +50,9 @@ export default function ProfilePage() {
     };
   }, []);
 
+  let content: JSX.Element;
   if (state.kind === 'loading') {
-    return (
+    content = (
       <section>
         <h1>Profile</h1>
         <div style={s.card}>
@@ -64,63 +66,60 @@ export default function ProfilePage() {
         </div>
       </section>
     );
-  }
-
-  if (state.kind === 'signedOut') {
-    return (
+  } else if (state.kind === 'signedOut') {
+    content = (
       <section>
         <h1>Profile</h1>
         <p>You’re not signed in.</p>
         <a className="btn" href="/login">Sign in with Google</a>
       </section>
     );
-  }
-
-  if (state.kind === 'error') {
-    return (
+  } else if (state.kind === 'error') {
+    content = (
       <section>
         <h1>Profile</h1>
         <p role="alert">Oops — {state.message}</p>
       </section>
     );
-  }
-
-  // ready
-  const { user, profile } = state;
-  return (
-    <section>
-      <h1>Profile</h1>
-      <div style={s.card}>
-        <div style={s.row}>
-          <img
-            src={profile?.avatar_url || '/favicon.svg'}
-            alt="Avatar"
-            width={64}
-            height={64}
-            style={{ borderRadius: 12, background: '#eef3ff' }}
-            loading="lazy"
-            decoding="async"
-          />
-          <div style={{ marginLeft: 12 }}>
-            <div style={{ fontWeight: 700, fontSize: 18 }}>
-              {profile?.display_name || 'Explorer'}
-            </div>
-            <div style={{ opacity: 0.8 }}>{user.email || 'No email on file'}</div>
-            {profile?.updated_at && (
-              <div style={{ opacity: 0.6, fontSize: 12, marginTop: 4 }}>
-                Updated: {new Date(profile.updated_at).toLocaleString()}
+  } else {
+    const { user, profile } = state;
+    content = (
+      <section>
+        <h1>Profile</h1>
+        <div style={s.card}>
+          <div style={s.row}>
+            <img
+              src={profile?.avatar_url || '/favicon.svg'}
+              alt="Avatar"
+              width={64}
+              height={64}
+              style={{ borderRadius: 12, background: '#eef3ff' }}
+              loading="lazy"
+              decoding="async"
+            />
+            <div style={{ marginLeft: 12 }}>
+              <div style={{ fontWeight: 700, fontSize: 18 }}>
+                {profile?.display_name || 'Explorer'}
               </div>
-            )}
+              <div style={{ opacity: 0.8 }}>{user.email || 'No email on file'}</div>
+              {profile?.updated_at && (
+                <div style={{ opacity: 0.6, fontSize: 12, marginTop: 4 }}>
+                  Updated: {new Date(profile.updated_at).toLocaleString()}
+                </div>
+              )}
+            </div>
+          </div>
+
+          <div style={{ marginTop: 16 }}>
+            <a className="btn" href="/navatar">Create / Update Navatar</a>{' '}
+            <a className="btn" href="/passport">View Passport</a>
           </div>
         </div>
+      </section>
+    );
+  }
 
-        <div style={{ marginTop: 16 }}>
-          <a className="btn" href="/navatar">Create / Update Navatar</a>{' '}
-          <a className="btn" href="/passport">View Passport</a>
-        </div>
-      </div>
-    </section>
-  );
+  return <RequireAuth>{content}</RequireAuth>;
 }
 
 const s: Record<string, React.CSSProperties> = {

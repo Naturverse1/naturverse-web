@@ -2,9 +2,11 @@ import React from "react";
 import { HubGrid } from "../components/HubGrid";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
+import RequireAuth from "../components/RequireAuth";
 
 export default function NaturbankPage() {
   return (
+    <RequireAuth>
       <div className="page-wrap">
         <Meta title="Naturbank — Naturverse" description="Wallets, token, and collectibles." />
         <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturbank" }]} />
@@ -26,5 +28,6 @@ export default function NaturbankPage() {
       </p>
         </main>
       </div>
-    );
+    </RequireAuth>
+  );
 }

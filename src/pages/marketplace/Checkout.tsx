@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { useCart } from "../../hooks/useCart";
 import { Img } from "../../components";
+import RequireAuth from "../../components/RequireAuth";
 
 const money = (cents: number) => `$${(cents/100).toFixed(2)}`;
 
@@ -9,6 +10,7 @@ export default function CheckoutPage() {
   const [code, setCode] = useState(cart.state.coupon ?? "");
 
   return (
+    <RequireAuth>
     <main id="main" className="page-wrap checkout">
       <h1>Checkout</h1>
 
@@ -68,5 +70,6 @@ export default function CheckoutPage() {
         </>
       )}
     </main>
+    </RequireAuth>
   );
 }

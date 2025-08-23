@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { CATALOG } from "../../lib/shop/data";
 import { addToCart, loadWishlist, toggleWish } from "../../lib/shop/store";
+import RequireAuth from "../../components/RequireAuth";
 
 export default function Wishlist() {
   const [ids, setIds] = useState<string[]>([]);
@@ -9,6 +10,7 @@ export default function Wishlist() {
   const items = CATALOG.filter(i => ids.includes(i.id));
 
   return (
+    <RequireAuth>
     <main id="main" className="page-wrap">
       <h1>❤️ Wishlist</h1>
       {items.length === 0 && <p>No favorites yet. Add some from the Catalog.</p>}
@@ -28,6 +30,7 @@ export default function Wishlist() {
         ))}
       </div>
     </main>
+    </RequireAuth>
   );
 }
 

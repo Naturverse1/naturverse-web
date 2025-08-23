@@ -1,9 +1,15 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { HubGrid } from "../components/HubGrid";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
+import SkeletonGrid from "../components/SkeletonGrid";
 
 export default function NaturversityPage() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 250);
+    return () => clearTimeout(t);
+  }, []);
   return (
       <>
         <div className="page-wrap">
@@ -13,6 +19,7 @@ export default function NaturversityPage() {
           <h1>Naturversity</h1>
           <p className="muted">Teachers, partners, and courses.</p>
 
+        {ready ? (
         <HubGrid
           items={[
             { to: "/naturversity/teachers", title: "Teachers", desc: "Mentors across the 14 kingdoms.", icon: "🎓" },
@@ -40,6 +47,9 @@ export default function NaturversityPage() {
             },
           ]}
         />
+        ) : (
+          <SkeletonGrid count={4} />
+        )}
 
         <p className="muted" style={{ marginTop: 12 }}>
           Coming soon: AI tutors and step-by-step lessons.
