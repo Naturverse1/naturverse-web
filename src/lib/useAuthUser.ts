@@ -2,20 +2,16 @@ import { useEffect, useState } from 'react';
 import { supabase } from './supabaseClient';
 
 export function useAuthUser() {
-  const [user, setUser] = useState<null | { id: string; email?: string | null; avatar_url?: string | null }>(null);
+  const [user, setUser] = useState<null | { id: string; email?: string | null }>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
 
     (async () => {
-      const { data, error } = await supabase.auth.getUser();
+      const { data } = await supabase.auth.getUser();
       if (!active) return;
-      if (!error && data.user) {
-        setUser({ id: data.user.id, email: data.user.email });
-      } else {
-        setUser(null);
-      }
+      setUser(data.user ? { id: data.user.id, email: data.user.email } : null);
       setLoading(false);
     })();
 
