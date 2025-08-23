@@ -1,56 +1,66 @@
-import React, { useEffect, useState } from "react";
-import { HubGrid } from "../components/HubGrid";
-import Meta from "../components/Meta";
-import Breadcrumbs from "../components/Breadcrumbs";
-import SkeletonGrid from "../components/SkeletonGrid";
-import PageHead from "../components/PageHead";
+import { Link } from "react-router-dom";
+import "../styles/cards-unify.css";
 
 export default function NaturversityPage() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setReady(true), 250);
-    return () => clearTimeout(t);
-  }, []);
   return (
-      <>
-        <PageHead title="Naturverse — Naturversity" description="Teachers, partners, and courses." />
-        <div className="page-wrap">
-          <Meta title="Naturversity — Naturverse" description="Teachers, partners, and courses." />
-          <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturversity" }]} />
-          <main id="main">
-          <h1>Naturversity</h1>
-          <p className="muted">Teachers, partners, and courses.</p>
+    <main className="page">
+      <h1>Naturversity</h1>
+      <p>Teachers, partners, and courses.</p>
 
-        {ready ? (
-        <HubGrid
-          items={[
-            { to: "/naturversity/teachers", title: "Teachers", desc: "Mentors across the 14 kingdoms.", icon: "🎓" },
-            { to: "/naturversity/partners", title: "Partners", desc: "Brands & orgs supporting missions.", icon: "🤝" },
-            {
-              to: "/naturversity/courses",
-              title: "Courses",
-              desc: "Nature, art, music, wellness, crypto basics.",
-              icon: "📚",
-            },
-            {
-              to: "/naturversity/languages",
-              title: "Languages",
-              desc: "Phrasebooks for each kingdom.",
-              icon: (
-                <img src="/favicon.ico" alt="Languages" className="icon--sm" />
-              ),
-            },
-          ]}
-        />
-        ) : (
-          <SkeletonGrid count={4} />
-        )}
+      <div className="grid-tiles">
+        {/* Teachers */}
+        <Link to="/naturversity/teachers" className="tile">
+          <div className="tile__icon" aria-hidden>
+            <span role="img" aria-label="mortarboard">🎓</span>
+          </div>
+          <div className="tile__body">
+            <h2 className="tile__title">Teachers</h2>
+            <p className="tile__subtitle">Mentors across the 14 kingdoms.</p>
+          </div>
+        </Link>
 
-        <p className="muted" style={{ marginTop: 12 }}>
-          Coming soon: AI tutors and step-by-step lessons.
-        </p>
-          </main>
-        </div>
-      </>
+        {/* Partners */}
+        <Link to="/naturversity/partners" className="tile">
+          <div className="tile__icon" aria-hidden>
+            <span role="img" aria-label="heart-hands">🫶</span>
+          </div>
+          <div className="tile__body">
+            <h2 className="tile__title">Partners</h2>
+            <p className="tile__subtitle">Brands & orgs supporting missions.</p>
+          </div>
+        </Link>
+
+        {/* Languages (now uses favicon, sized like the others) */}
+        <Link to="/naturversity/languages" className="tile">
+          <div className="tile__icon" aria-hidden>
+            <img
+              src="/favicon.svg"
+              alt=""
+              width={28}
+              height={28}
+              style={{ display: "block" }}
+            />
+          </div>
+          <div className="tile__body">
+            <h2 className="tile__title">Languages</h2>
+            <p className="tile__subtitle">Phrasebooks for each kingdom.</p>
+          </div>
+        </Link>
+
+        {/* Courses */}
+        <Link to="/naturversity/courses" className="tile">
+          <div className="tile__icon" aria-hidden>
+            <span role="img" aria-label="books">📚</span>
+          </div>
+          <div className="tile__body">
+            <h2 className="tile__title">Courses</h2>
+            <p className="tile__subtitle">Nature, art, music, wellness, crypto basics…</p>
+          </div>
+        </Link>
+      </div>
+
+      <p className="coming-soon">Coming soon: AI tutors and step-by-step lessons.</p>
+    </main>
   );
 }
+
