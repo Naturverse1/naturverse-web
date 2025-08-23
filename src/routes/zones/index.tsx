@@ -1,5 +1,17 @@
 import HubCard from '../../components/HubCard';
 import HubGrid from '../../components/HubGrid';
+import { ld, breadcrumbsLd, itemListLd } from '../../lib/jsonld';
+
+const labels = {
+  '/worlds': 'Worlds',
+  '/zones': 'Zones',
+  '/marketplace': 'Marketplace',
+  '/naturversity': 'Naturversity',
+  '/naturbank': 'Naturbank',
+  '/navatar': 'Navatar',
+  '/passport': 'Passport',
+  '/turian': 'Turian the Durian',
+};
 
 const ZONES = [
   {
@@ -59,18 +71,42 @@ const ZONES = [
   },
 ];
 
+const zoneItems = [
+  { name: 'Arcade', path: '/zones/arcade' },
+  { name: 'Music', path: '/zones/music' },
+  { name: 'Wellness', path: '/zones/wellness' },
+  { name: 'Creator Lab', path: '/zones/creator-lab' },
+  { name: 'Stories', path: '/zones/stories' },
+  { name: 'Quizzes', path: '/zones/quizzes' },
+  { name: 'Observations', path: '/zones/observations' },
+  { name: 'Culture', path: '/zones/culture' },
+  { name: 'Community', path: '/zones/community' },
+  { name: 'Future Zone', path: '/zones/future' },
+];
+
 export default function Zones() {
   return (
-    <main className="container">
-      <div className="breadcrumb">Home / Zones</div>
-      <h1 className="page-title text-brand">Zones</h1>
-      <p className="section-lead">Pick a zone to start an activity.</p>
+    <>
+      <main className="container">
+        <div className="breadcrumb">Home / Zones</div>
+        <h1 className="page-title text-brand">Zones</h1>
+        <p className="section-lead">Pick a zone to start an activity.</p>
 
-      <HubGrid>
-        {ZONES.map((z) => (
-          <HubCard key={z.title} to={z.to} emoji={z.emoji} title={z.title} sub={z.sub} />
-        ))}
-      </HubGrid>
-    </main>
+        <HubGrid>
+          {ZONES.map((z) => (
+            <HubCard key={z.title} to={z.to} emoji={z.emoji} title={z.title} sub={z.sub} />
+          ))}
+        </HubGrid>
+      </main>
+
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={ld(breadcrumbsLd('/zones', labels))}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={ld(itemListLd('Zones', zoneItems))}
+      />
+    </>
   );
 }

@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
+import { ld, breadcrumbsLd } from "../lib/jsonld";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -79,7 +80,8 @@ export default function TurianPage() {
   const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
 
   return (
-    <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.">
+    <>
+      <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.">
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
         {mascotSrc ? (
@@ -149,7 +151,12 @@ export default function TurianPage() {
       </div>
 
       <p className="meta">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
-    </Page>
+      </Page>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={ld(breadcrumbsLd('/turian', { '/turian': 'Turian the Durian' }))}
+      />
+    </>
   );
 }
 

@@ -9,10 +9,13 @@ import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
 import { ErrorBoundary } from './components/ErrorBoundary';
+import { ld, organizationLd, websiteLd } from './lib/jsonld';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       <ErrorBoundary>
+        <script type="application/ld+json" dangerouslySetInnerHTML={ld(organizationLd)} />
+        <script type="application/ld+json" dangerouslySetInnerHTML={ld(websiteLd)} />
         <CartProvider>
           <RouterProvider router={router} />
           <CartDrawer />
