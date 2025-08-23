@@ -21,9 +21,9 @@ export default function AuthMenu() {
       }
 
       const { data: prof } = await supabase
-        .from('profiles')
-        .select('avatar_url')
-        .eq('id', sUser.id)
+        .from("profiles")
+        .select("avatar_url")
+        .eq("id", sUser.id)
         .maybeSingle();
 
       if (mounted) {
@@ -45,8 +45,8 @@ export default function AuthMenu() {
       if (!menuRef.current) return;
       if (!menuRef.current.contains(e.target as Node)) setOpen(false);
     }
-    document.addEventListener('click', onDocClick);
-    return () => document.removeEventListener('click', onDocClick);
+    document.addEventListener("click", onDocClick);
+    return () => document.removeEventListener("click", onDocClick);
   }, []);
 
   async function signOut() {
@@ -65,7 +65,8 @@ export default function AuthMenu() {
   }
 
   const initials =
-    user.email?.slice(0, 1).toUpperCase() ?? (user.id ? user.id.slice(0, 1).toUpperCase() : '?');
+    user.email?.slice(0, 1).toUpperCase() ??
+    (user.id ? user.id.slice(0, 1).toUpperCase() : "?");
 
   return (
     <div className="auth-menu" ref={menuRef}>
