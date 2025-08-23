@@ -47,7 +47,7 @@ import NavatarPage from './pages/Navatar';
 import Passport from './pages/Passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
-import ProfilePage from './pages/Profile';
+import ProfilePage from './pages/profile';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
