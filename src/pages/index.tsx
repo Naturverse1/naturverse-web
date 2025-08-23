@@ -1,9 +1,15 @@
 import React from "react";
 import { Link } from "react-router-dom";
+import Seo from "../components/Seo";
 
 export default function Home() {
   return (
-    <main id="main" className="home">
+    <>
+      <Seo
+        title="Welcome"
+        description="Explore kingdoms, quests, and characters in the Naturverse."
+      />
+      <main id="main" className="home">
       {/* Hero */}
       <section className="home-hero">
         <div className="home-hero-badge">
@@ -101,6 +107,7 @@ export default function Home() {
         </div>
       </section>
     </main>
+    </>
   );
 }
 
