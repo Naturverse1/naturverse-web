@@ -107,7 +107,7 @@ export default function NavatarPage() {
             <input type="file" accept="image/*" onChange={onUpload} />
           </label>
 
-          <div className="actions">
+          <div className="actions navatar-buttons">
             <button type="button" onClick={() => setDraft(generate(draft.base))}>
               Randomize
             </button>

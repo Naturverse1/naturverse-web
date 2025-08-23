@@ -25,7 +25,7 @@ export default function Home() {
         <p className="home-subtitle">
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
         </p>
-        <div className="home-cta">
+        <div className="home-cta hero-buttons">
           <Link className="btn btn-primary" to="/signup">Create account</Link>
           <Link className="btn btn-outline" to="/worlds">Explore Worlds</Link>
         </div>

@@ -48,6 +48,43 @@ button, .btn, .btn-primary {
   border-color: var(--naturverse-blue) !important;
 }
 
+/* Force all buttons to use white text on blue */
+button,
+button span,
+button a {
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Specific for Navatar creator base buttons */
+.navatar-buttons button {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #fff !important;
+  border: none;
+  font-weight: 600;
+}
+
+/* Passport stamps */
+.passport-stamps button {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Turian quest suggestion buttons */
+.turian-quests button {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
+/* Home page hero buttons */
+.hero-buttons button {
+  background: linear-gradient(180deg, #3b82f6 0%, #2563eb 100%) !important;
+  color: #fff !important;
+  font-weight: 600;
+}
+
 /* Any subtle accent lines */
 hr, .divider, .line {
   border-color: var(--naturverse-blue) !important;

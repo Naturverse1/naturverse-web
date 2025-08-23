@@ -56,7 +56,7 @@ export default function PassportPage() {
       {/* Stamps */}
       <h2 className="mt">Stamps</h2>
       <p className="muted">Tap a kingdom to toggle a stamp. ({stampCount}/14)</p>
-      <div className="stamps-grid">
+      <div className="stamps-grid passport-stamps">
         {KINGDOMS.map(k => {
           const on = stamps.includes(k);
           return (
