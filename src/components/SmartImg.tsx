@@ -7,11 +7,15 @@ type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
 
 export default function SmartImg({ rounded = true, ratio = "wide", className = "", ...rest }: Props) {
   const [loaded, setLoaded] = useState(false);
+  const width = rest.width ?? 800;
+  const height = rest.height ?? 450;
   return (
     <div className={`smartimg ${ratio} ${rounded ? "rounded" : ""} ${loaded ? "is-loaded" : ""}`}>
       <img
         {...rest}
         loading={rest.loading ?? "lazy"}
+        width={width}
+        height={height}
         onLoad={(e) => {
           rest.onLoad?.(e as any);
           setLoaded(true);

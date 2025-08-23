@@ -1,11 +1,13 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
+import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function NaturversityPage() {
   return (
       <>
         <div className="page-wrap">
+          <Meta title="Naturversity — Naturverse" description="Teachers, partners, and courses." />
           <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturversity" }]} />
           <main id="main">
           <h1>Naturversity</h1>

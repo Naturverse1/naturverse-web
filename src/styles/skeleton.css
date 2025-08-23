@@ -26,13 +26,16 @@
 .card  { background: #ffffff; border: 1px solid #dbeafe; border-radius: 14px; padding: 12px; }
 .card h2 { margin: 10px 0 6px; }
 
-.card.skeleton { position: relative; overflow: hidden; }
-.sk-img { height: 140px; background: #eaf2ff; border-radius: 10px; }
-.sk-line { height: 12px; margin-top: 10px; border-radius: 8px; background: #eaf2ff; }
-.sk-line.short { width: 60%; }
-.card.skeleton::after {
-  content: ""; position: absolute; inset: 0;
-  background: linear-gradient(90deg, transparent, rgba(255,255,255,.6), transparent);
-  transform: translateX(-100%); animation: sk 1.4s infinite;
+.card.skeleton { pointer-events:none; }
+.sk-img {
+  width:100%; aspect-ratio:16/9; border-radius:10px;
+  background: linear-gradient(90deg, #eaf2ff 25%, #f4f7ff 37%, #eaf2ff 63%);
+  background-size: 400% 100%; animation: sk 1.2s ease-in-out infinite;
 }
-@keyframes sk { to { transform: translateX(100%); } }
+.sk-line {
+  height:14px; margin-top:10px; border-radius:8px;
+  background: linear-gradient(90deg, #eaf2ff 25%, #f4f7ff 37%, #eaf2ff 63%);
+  background-size: 400% 100%; animation: sk 1.2s ease-in-out infinite;
+}
+.sk-line.small { width:60%; height:12px; }
+@keyframes sk { 0%{background-position:100% 0} 100%{background-position:0 0} }

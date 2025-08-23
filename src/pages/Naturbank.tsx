@@ -1,10 +1,12 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
+import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function NaturbankPage() {
   return (
       <div className="page-wrap">
+        <Meta title="Naturbank — Naturverse" description="Wallets, token, and collectibles." />
         <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturbank" }]} />
         <main id="main">
         <h1>Naturbank</h1>

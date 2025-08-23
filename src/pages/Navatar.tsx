@@ -3,6 +3,7 @@ import type { Navatar, NavatarBase } from "../types/navatar";
 import { SPECIES, POWERS_BANK, randomFrom } from "../lib/navatarCatalog";
 import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/localStorage";
 import NavatarCard from "../components/NavatarCard";
+import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
@@ -64,6 +65,7 @@ export default function NavatarPage() {
 
   return (
     <div className="page-wrap">
+      <Meta title="Navatar Creator — Naturverse" description="Design your character and save cards." />
       <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
       <main id="main" className="wrap">
         <h1>Navatar Creator</h1>

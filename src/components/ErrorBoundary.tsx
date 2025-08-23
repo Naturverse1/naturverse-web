@@ -1,28 +1,26 @@
 import React from "react";
 
-type State = { hasError: boolean };
+type State = { hasError: boolean; err?: unknown };
 
 export default class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(err: unknown) {
+    return { hasError: true, err };
   }
 
-  componentDidCatch(err: unknown) {
-    // eslint-disable-next-line no-console
-    console.error("ErrorBoundary caught:", err);
+  componentDidCatch(error: unknown, info: unknown) {
+    // no-op; could log to Supabase later
+    void error; void info;
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        <div style={{ maxWidth: 820, margin: "30px auto" }}>
+        <div className="page-wrap" style={{ paddingTop: 24 }}>
           <h1>Something went wrong</h1>
-          <p className="muted">
-            A page component crashed. Try reloading or going back home.
-          </p>
-          <a className="btn" href="/">← Back to Home</a>
+          <p className="muted">Try refreshing, or head back home.</p>
+          <a className="btn" href="/">Back to Home</a>
         </div>
       );
     }
