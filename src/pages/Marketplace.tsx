@@ -1,5 +1,6 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
+import Seo from "../components/Seo";
 import { breadcrumbs } from "../lib/jsonld";
 
 const labels = { '/marketplace': 'Marketplace' };
@@ -7,6 +8,10 @@ const labels = { '/marketplace': 'Marketplace' };
 export default function MarketplacePage() {
   return (
     <>
+      <Seo
+        title="Marketplace"
+        description="Shop Naturverse creations, merch, and bundles."
+      />
       <main id="main">
         <h1>Marketplace</h1>
         <p className="muted">Shop creations and merch.</p>

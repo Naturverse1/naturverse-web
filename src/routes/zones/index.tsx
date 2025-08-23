@@ -1,5 +1,6 @@
 import HubCard from '../../components/HubCard';
 import HubGrid from '../../components/HubGrid';
+import Seo from '../../components/Seo';
 import { breadcrumbs } from '../../lib/jsonld';
 
 const ZONES = [
@@ -64,6 +65,10 @@ const ZONES = [
 export default function Zones() {
   return (
     <>
+      <Seo
+        title="Zones"
+        description="Pick a zone to start games, music, wellness, and more."
+      />
       <main className="container">
         <div className="breadcrumb">Home / Zones</div>
         <h1 className="page-title text-brand">Zones</h1>
