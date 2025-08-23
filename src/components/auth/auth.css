@@ -1,0 +1,103 @@
+/* Minimal, neutral styles; isolated class names */
+
+.nv-auth-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
+  display: grid;
+  place-items: center;
+  z-index: 50;
+}
+
+.nv-auth-modal {
+  width: 92%;
+  max-width: 420px;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+  padding: 20px 22px;
+}
+
+.nv-auth-close {
+  float: right;
+  border: 0;
+  background: transparent;
+  font-size: 20px;
+  cursor: pointer;
+}
+.nv-auth-sub {
+  margin-top: 4px;
+  color: #667085;
+}
+.nv-auth-label {
+  display: block;
+  font-weight: 600;
+  margin: 12px 0 6px;
+}
+.nv-auth-input {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #c9d4f5;
+  border-radius: 8px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px rgba(0, 0, 0, 0);
+}
+.nv-auth-input:focus {
+  border-color: #6aa0ff;
+}
+
+.nv-auth-button {
+  margin-top: 12px;
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 10px;
+  border: 0;
+  background: linear-gradient(#5ea1ff, #2873e6);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.nv-auth-ok {
+  color: #067647;
+  margin-top: 10px;
+}
+.nv-auth-err {
+  color: #b42318;
+  margin-top: 10px;
+}
+.nv-auth-small {
+  color: #98a2b3;
+  font-size: 12px;
+  margin-top: 12px;
+}
+
+/* Session chip */
+.nv-session-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 999px;
+  background: #eef4ff;
+  border: 1px solid #c9d4f5;
+  font-size: 12px;
+}
+.nv-session-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+}
+.nv-session-email {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.nv-session-out {
+  border: 0;
+  background: transparent;
+  color: #2463eb;
+  cursor: pointer;
+}
