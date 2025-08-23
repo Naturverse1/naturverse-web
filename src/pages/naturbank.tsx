@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../supabase/client";
 
 type Tx = {
   id: string;
@@ -9,7 +9,7 @@ type Tx = {
 
 export default function NaturbankPage() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [balance, setBalance] = useState<number>(0);
+  const [balance, setBalance] = useState(0);
   const [txs, setTxs] = useState<Tx[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -30,7 +30,7 @@ export default function NaturbankPage() {
         .eq("user_id", uid)
         .order("created_at", { ascending: false });
 
-      const rows = (data as Tx[]) || [];
+      const rows = data || [];
       const total = rows.reduce((acc, r) => acc + (r.amount ?? 0), 0);
       setBalance(total);
       setTxs(rows);
@@ -50,12 +50,7 @@ export default function NaturbankPage() {
 
   if (loading) return <main><h1>Naturbank</h1><p>Loading…</p></main>;
 
-  if (!userId) return (
-    <main>
-      <h1>Naturbank</h1>
-      <p>Please sign in to view your wallet.</p>
-    </main>
-  );
+  if (!userId) return <main><h1>Naturbank</h1><p>Please sign in.</p></main>;
 
   return (
     <main className="naturbank-page">
@@ -69,7 +64,7 @@ export default function NaturbankPage() {
           <p>No transactions yet.</p>
         ) : (
           <ul>
-            {txs.map((t) => (
+            {txs.map(t => (
               <li key={t.id}>
                 {t.amount > 0 ? "+" : ""}{t.amount} — {new Date(t.created_at).toLocaleString()}
               </li>
