@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import CartButton from './cart/CartButton';
 import Img from './Img';
-import { useAuthUser } from '../lib/useAuthUser';
-import UserChip from './UserChip';
+import UserMenu from './UserMenu';
 
 const LINKS = [
   { href: '/worlds', label: 'Worlds' },
@@ -18,7 +17,6 @@ const LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const { user, loading } = useAuthUser();
 
   // close drawer on route change (hash/path)
   useEffect(() => {
@@ -62,26 +60,7 @@ export default function Header() {
 
           <nav className="site-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <CartButton />
-            {loading ? (
-              <span style={{ opacity: 0.7 }}>…</span>
-            ) : user ? (
-              <UserChip email={user.email} />
-            ) : (
-              <a
-                className="btn"
-                href="/login"
-                onClick={() => {
-                  try {
-                    sessionStorage.setItem(
-                      'naturverse.returnTo',
-                      window.location.pathname + window.location.search,
-                    );
-                  } catch {}
-                }}
-              >
-                Sign in
-              </a>
-            )}
+            <UserMenu />
           </nav>
 
           {/* mobile button */}
