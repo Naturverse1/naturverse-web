@@ -3,12 +3,14 @@ import { HubGrid } from "../components/HubGrid";
 import Meta from "../components/Meta";
 import { breadcrumbs } from "../lib/jsonld";
 import Breadcrumbs from "../components/Breadcrumbs";
+import PageHead from "../components/PageHead";
 
 const labels = { '/marketplace': 'Marketplace' };
 
 export default function MarketplacePage() {
     return (
       <>
+        <PageHead title="Naturverse — Marketplace" description="Shop Naturverse creations, merch, and bundles." />
         <Meta title="Marketplace — Naturverse" description="Shop Naturverse creations, merch, and bundles." />
         <div className="page-wrap">
           <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Marketplace" }]} />

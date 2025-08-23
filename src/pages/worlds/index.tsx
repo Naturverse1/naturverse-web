@@ -4,6 +4,7 @@ import Meta from "../../components/Meta";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import SmartImg from "../../components/SmartImg";
 import SkeletonGrid from "../../components/SkeletonGrid";
+import PageHead from "../../components/PageHead";
 
 export default function WorldsIndex() {
   const [ready, setReady] = useState(false);
@@ -14,6 +15,7 @@ export default function WorldsIndex() {
 
   return (
       <div id="main" className="page-wrap">
+        <PageHead title="Naturverse — Worlds" description="Explore the 14 kingdoms." />
         <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." />
         <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Worlds" }]} />
       <p className="muted">Choose a kingdom to explore.</p>

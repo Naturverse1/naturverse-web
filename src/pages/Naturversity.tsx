@@ -3,6 +3,7 @@ import { HubGrid } from "../components/HubGrid";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 import SkeletonGrid from "../components/SkeletonGrid";
+import PageHead from "../components/PageHead";
 
 export default function NaturversityPage() {
   const [ready, setReady] = useState(false);
@@ -12,6 +13,7 @@ export default function NaturversityPage() {
   }, []);
   return (
       <>
+        <PageHead title="Naturverse — Naturversity" description="Teachers, partners, and courses." />
         <div className="page-wrap">
           <Meta title="Naturversity — Naturverse" description="Teachers, partners, and courses." />
           <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturversity" }]} />

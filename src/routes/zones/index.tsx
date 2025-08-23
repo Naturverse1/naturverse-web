@@ -4,6 +4,7 @@ import Meta from '../../components/Meta';
 import { breadcrumbs } from '../../lib/jsonld';
 import { useEffect, useState } from 'react';
 import SkeletonGrid from '../../components/SkeletonGrid';
+import PageHead from '../../components/PageHead';
 
 const ZONES = [
   {
@@ -73,6 +74,7 @@ export default function Zones() {
 
   return (
     <div className="container-narrow">
+      <PageHead title="Naturverse — Zones" description="Pick a zone to start games, music, wellness, and more." />
       <Meta title="Zones — Naturverse" description="Pick a zone to start games, music, wellness, and more." />
       <main id="main" className="container">
         <div className="breadcrumb">Home / Zones</div>

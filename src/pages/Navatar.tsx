@@ -5,6 +5,7 @@ import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/localSt
 import NavatarCard from "../components/NavatarCard";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
+import PageHead from "../components/PageHead";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
 
@@ -65,6 +66,7 @@ export default function NavatarPage() {
 
   return (
     <div className="page-wrap">
+      <PageHead title="Naturverse — Navatar Creator" description="Design your character and save cards." />
       <Meta title="Navatar Creator — Naturverse" description="Design your character and save cards." />
       <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
       <main id="main" className="wrap">
