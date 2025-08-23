@@ -1,23 +1,38 @@
-import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 type Stamp = {
   id: string;
-  region: string;
-  stamp_name: string;
-  earned_at: string;
+  world: string;
+  earned_at: string | null;
 };
+
+const WORLDS = [
+  'Thailandia',
+  'Chilandia',
+  'Japonica',
+  'Indilandia',
+  'Brazilandia',
+  'Africonia',
+  'Europalia',
+  'Britannula',
+  'Amerilandia',
+  'Australandia',
+  'Kiwlandia',
+  'Madagascaria',
+  'Greenlandia',
+  'Antarcticland',
+];
 
 export default function PassportPage() {
   const [userId, setUserId] = useState<string | null>(null);
   const [stamps, setStamps] = useState<Stamp[]>([]);
-  const [xp, setXp] = useState<number>(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData.session;
+      const { data: sess } = await supabase.auth.getSession();
+      const session = sess.session;
       if (!session) {
         setLoading(false);
         return;
@@ -25,76 +40,72 @@ export default function PassportPage() {
       const uid = session.user.id;
       setUserId(uid);
 
-      // load stamps
-      const { data: stampData } = await supabase
-        .from("stamps")
-        .select("*")
-        .eq("user_id", uid)
-        .order("earned_at", { ascending: false });
-      setStamps(stampData || []);
+      const { data, error } = await supabase
+        .from('passport_stamps')
+        .select('id, world, earned_at')
+        .eq('user_id', uid)
+        .order('earned_at', { ascending: false });
 
-      // load XP
-      const { data: xpData } = await supabase
-        .from("xp_ledger")
-        .select("amount")
-        .eq("user_id", uid);
-
-      const total = (xpData || []).reduce((acc, row: any) => acc + (row.amount ?? 0), 0);
-      setXp(total);
-
+      if (!error && data) setStamps(data as Stamp[]);
       setLoading(false);
     })();
   }, []);
 
-  async function earnStamp() {
+  async function addDemoStamp(world: string) {
     if (!userId) return;
-    const region = "Thailandia";
-    const stamp_name = "Temple Visit";
-
-    // insert stamp
-    const { error: sErr } = await supabase
-      .from("stamps")
-      .insert({ user_id: userId, region, stamp_name });
-    if (sErr) return alert(sErr.message);
-
-    // add xp
-    const { error: xErr } = await supabase
-      .from("xp_ledger")
-      .insert({ user_id: userId, amount: 10 });
-    if (xErr) return alert(xErr.message);
-
-    alert("Stamp earned +10 XP!");
+    const { error } = await supabase
+      .from('passport_stamps')
+      .insert({ user_id: userId, world, earned_at: new Date().toISOString() });
+    if (error) return alert(error.message);
     location.reload();
   }
 
   if (loading) return <main><h1>Passport</h1><p>Loading…</p></main>;
+  if (!userId) return <main><h1>Passport</h1><p>Please sign in.</p></main>;
 
-  if (!userId) return (
-    <main>
-      <h1>Passport</h1>
-      <p>Please sign in to view your passport.</p>
-    </main>
-  );
+  const earned = new Set(stamps.map((s) => s.world));
 
   return (
-    <main className="passport-page">
+    <main className="passport">
       <h1>Passport</h1>
-      <p>Total XP: <strong>{xp}</strong></p>
-      <button className="btn" onClick={earnStamp}>Earn Sample Stamp</button>
+      <p className="muted">Collect stamps by completing kingdoms.</p>
 
-      <div className="stamps">
-        {stamps.length === 0 ? (
-          <p>No stamps yet — start exploring!</p>
-        ) : (
-          stamps.map((s) => (
-            <div key={s.id} className="stamp">
-              <h3>{s.stamp_name}</h3>
-              <p>{s.region}</p>
-              <span>{new Date(s.earned_at).toLocaleString()}</span>
+      <div className="stamp-grid">
+        {WORLDS.map((w) => {
+          const has = earned.has(w);
+          return (
+            <div key={w} className={`stamp ${has ? 'earned' : 'locked'}`}>
+              <div className="stamp-title">{w}</div>
+              <div className="stamp-mark">{has ? '✅' : '—'}</div>
+              {!has && (
+                <button
+                  className="btn tiny outline"
+                  onClick={() => addDemoStamp(w)}
+                >
+                  Add demo stamp
+                </button>
+              )}
             </div>
-          ))
-        )}
+          );
+        })}
       </div>
+
+      <section className="stamp-list">
+        <h2>Recent stamps</h2>
+        {stamps.length === 0 ? (
+          <p>No stamps yet.</p>
+        ) : (
+          <ul>
+            {stamps.map((s) => (
+              <li key={s.id}>
+                {s.world} —{' '}
+                {s.earned_at ? new Date(s.earned_at).toLocaleString() : ''}
+              </li>
+            ))}
+          </ul>
+        )}
+      </section>
     </main>
   );
 }
+

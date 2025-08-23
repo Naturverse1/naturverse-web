@@ -17,7 +17,13 @@ export default function NavBar() {
       <a href="/naturversity" className={path.startsWith('/naturversity') ? 'active' : undefined} aria-current={path.startsWith('/naturversity') ? 'page' : undefined}>Naturversity</a>
       <a href="/naturbank" className={path.startsWith('/naturbank') ? 'active' : undefined} aria-current={path.startsWith('/naturbank') ? 'page' : undefined}>Naturbank</a>
       <a href="/navatar" className={path.startsWith('/navatar') ? 'active' : undefined} aria-current={path.startsWith('/navatar') ? 'page' : undefined}>Navatar</a>
-      <a href="/passport" className={path.startsWith('/passport') ? 'active' : undefined} aria-current={path.startsWith('/passport') ? 'page' : undefined}>Passport</a>
+      <a
+        href="/passport"
+        className={`nav-link${path.startsWith('/passport') ? ' active' : ''}`}
+        aria-current={path.startsWith('/passport') ? 'page' : undefined}
+      >
+        Passport
+      </a>
       <a href="/turian" className={path.startsWith('/turian') ? 'active' : undefined} aria-current={path.startsWith('/turian') ? 'page' : undefined}>Turian</a>
       <a href="/profile" className={path.startsWith('/profile') ? 'active' : undefined} aria-current={path.startsWith('/profile') ? 'page' : undefined}>Profile</a>
     </nav>
