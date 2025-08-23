@@ -1,0 +1,8 @@
+.guard{
+  max-width:680px; margin:32px auto; padding:24px;
+  background:#ffffff; border:1px solid #e5e7eb; border-radius:16px;
+  text-align:center;
+}
+.guard h1{ margin:0 0 8px; }
+.guard .muted{ color:#64748b; margin-bottom:14px; }
+.guard .row{ display:flex; gap:10px; justify-content:center; flex-wrap:wrap; }

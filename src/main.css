@@ -13,6 +13,7 @@
 @import './styles/img.css';
 @import './styles/skeleton.css';
 @import './styles/a11y.css';
+@import './styles/guard.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
