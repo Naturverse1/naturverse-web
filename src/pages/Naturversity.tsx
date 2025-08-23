@@ -37,7 +37,7 @@ export default function NaturversityPage() {
               title: "Languages",
               desc: "Phrasebooks for each kingdom.",
               icon: (
-                <img src="/favicon.svg" alt="" className="nv-languages-icon" />
+                <img src="/favicon.ico" alt="Languages" className="icon--sm" />
               ),
             },
           ]}

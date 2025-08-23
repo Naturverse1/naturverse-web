@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import CartButton from './cart/CartButton';
 import Img from './Img';
 import UserMenu from './UserMenu';
+import { signOut } from '../lib/auth';
 
 const LINKS = [
   { href: '/worlds', label: 'Worlds' },
@@ -17,6 +18,11 @@ const LINKS = [
 
 export default function Header() {
   const [open, setOpen] = useState(false);
+
+  async function handleSignOut() {
+    await signOut();
+    window.location.assign('/');
+  }
 
   // close drawer on route change (hash/path)
   useEffect(() => {
@@ -60,6 +66,13 @@ export default function Header() {
 
           <nav className="site-actions" style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
             <CartButton />
+            <button
+              onClick={handleSignOut}
+              className="btn btn--sm btn--primary"
+              aria-label="Sign out"
+            >
+              Sign out
+            </button>
             <UserMenu />
           </nav>
 
