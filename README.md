@@ -10,10 +10,11 @@ VITE_SUPABASE_ANON_KEY=…
 
 Also set the same variables in Netlify → Site settings → Environment variables.
 
-### NaturBank (demo)
-- Works without servers (localStorage) OR with Supabase tables if present.
+### NaturBank
 - Page: `/naturbank`
-- To enable server sync, run SQL in `supabase/sql/2025-setup-naturbank.sql`.
+- Demo wallet label/address; NATUR balance computed from transactions; grant/spend buttons.
+- LocalStorage fallback when not signed in.
+- To enable server persistence: run `supabase/sql/2025-naturbank.sql`.
 
 ### Passport
 - Page: `/passport`
