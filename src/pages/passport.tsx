@@ -1,110 +1,154 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import { useEffect, useMemo, useState } from "react";
+import { supabase } from "../supabase/client";
+import type { PassportStamp } from "../types/passport";
 
-type Stamp = {
-  id: string;
-  world: string;
-  earned_at: string | null;
-};
+const LS_KEY = "naturverse.passport.v1";
 
 const WORLDS = [
-  'Thailandia',
-  'Chilandia',
-  'Japonica',
-  'Indilandia',
-  'Brazilandia',
-  'Africonia',
-  'Europalia',
-  'Britannula',
-  'Amerilandia',
-  'Australandia',
-  'Kiwlandia',
-  'Madagascaria',
-  'Greenlandia',
-  'Antarcticland',
+  "Thailandia","Chinadia","Japonica","Indiania","Brazilia","Africania",
+  "Europalia","Britannula","Americandia","Australandia","Kiwlandia",
+  "Madagascaria","Greenlandia","Antarcticland",
 ];
 
 export default function PassportPage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [stamps, setStamps] = useState<Stamp[]>([]);
+  const [uid, setUid] = useState<string | null>(null);
+  const [stamps, setStamps] = useState<PassportStamp[]>(() => {
+    try { return JSON.parse(localStorage.getItem(LS_KEY) || "[]"); } catch { return []; }
+  });
+  const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [world, setWorld] = useState<string>(WORLDS[0]);
+  const [badge, setBadge] = useState<string>("");
+  const [note, setNote] = useState<string>("");
+
+  useEffect(() => { if (usingLocal) localStorage.setItem(LS_KEY, JSON.stringify(stamps)); }, [stamps, usingLocal]);
 
   useEffect(() => {
     (async () => {
-      const { data: sess } = await supabase.auth.getSession();
-      const session = sess.session;
-      if (!session) {
+      const { data } = await supabase.auth.getSession();
+      const u = data.session?.user?.id ?? null;
+      setUid(u);
+      if (!u) { setLoading(false); return; }
+
+      try {
+        const { data: rows, error } = await supabase
+          .from("passport_stamps")
+          .select("id,user_id,world,badge,note,created_at")
+          .eq("user_id", u)
+          .order("created_at", { ascending: false })
+          .limit(200);
+        if (error) throw error;
+        setStamps((rows || []) as PassportStamp[]);
+        setUsingLocal(false);
+      } catch {
+        setUsingLocal(true);
+      } finally {
         setLoading(false);
-        return;
       }
-      const uid = session.user.id;
-      setUserId(uid);
-
-      const { data, error } = await supabase
-        .from('passport_stamps')
-        .select('id, world, earned_at')
-        .eq('user_id', uid)
-        .order('earned_at', { ascending: false });
-
-      if (!error && data) setStamps(data as Stamp[]);
-      setLoading(false);
     })();
   }, []);
 
-  async function addDemoStamp(world: string) {
-    if (!userId) return;
-    const { error } = await supabase
-      .from('passport_stamps')
-      .insert({ user_id: userId, world, earned_at: new Date().toISOString() });
-    if (error) return alert(error.message);
-    location.reload();
+  const earnedByWorld = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const w of WORLDS) map.set(w, 0);
+    for (const s of stamps) map.set(s.world, (map.get(s.world) || 0) + 1);
+    return map;
+  }, [stamps]);
+
+  async function addStamp() {
+    const s: Omit<PassportStamp, "id" | "created_at" | "user_id"> = { world, badge: badge || null, note: note || null };
+    if (uid && !usingLocal) {
+      const { data, error } = await supabase
+        .from("passport_stamps")
+        .insert({ user_id: uid, world: s.world, badge: s.badge, note: s.note })
+        .select("id,user_id,world,badge,note,created_at")
+        .single();
+      if (error) { alert(error.message); return; }
+      setStamps(prev => [data as PassportStamp, ...prev]);
+    } else {
+      const loc: PassportStamp = {
+        id: String(Date.now()),
+        user_id: "local",
+        world: s.world,
+        badge: s.badge,
+        note: s.note,
+        created_at: new Date().toISOString(),
+      };
+      setStamps(prev => [loc, ...prev]);
+    }
+    setBadge(""); setNote("");
+  }
+
+  async function removeStamp(id: string) {
+    if (uid && !usingLocal) { await supabase.from("passport_stamps").delete().eq("id", id); }
+    setStamps(prev => prev.filter(x => x.id !== id));
   }
 
   if (loading) return <main><h1>Passport</h1><p>Loading…</p></main>;
-  if (!userId) return <main><h1>Passport</h1><p>Please sign in.</p></main>;
-
-  const earned = new Set(stamps.map((s) => s.world));
 
   return (
     <main className="passport">
       <h1>Passport</h1>
-      <p className="muted">Collect stamps by completing kingdoms.</p>
+      <p className="muted">
+        {usingLocal ? "Local demo mode (not signed in)." : "Synced to your account."}
+      </p>
 
-      <div className="stamp-grid">
-        {WORLDS.map((w) => {
-          const has = earned.has(w);
-          return (
-            <div key={w} className={`stamp ${has ? 'earned' : 'locked'}`}>
-              <div className="stamp-title">{w}</div>
-              <div className="stamp-mark">{has ? '✅' : '—'}</div>
-              {!has && (
-                <button
-                  className="btn tiny outline"
-                  onClick={() => addDemoStamp(w)}
-                >
-                  Add demo stamp
-                </button>
-              )}
-            </div>
-          );
-        })}
-      </div>
+      <section className="passport-summary">
+        {WORLDS.map(w => (
+          <div key={w} className="stamp-box">
+            <div className="w">{w}</div>
+            <div className="c">{earnedByWorld.get(w) || 0} stamp(s)</div>
+          </div>
+        ))}
+      </section>
 
-      <section className="stamp-list">
-        <h2>Recent stamps</h2>
+      <section className="panel">
+        <h2>Add Stamp</h2>
+        <div className="row wrap">
+          <label className="field">
+            <span>World</span>
+            <select value={world} onChange={e => setWorld(e.target.value)}>
+              {WORLDS.map(w => <option key={w} value={w}>{w}</option>)}
+            </select>
+          </label>
+          <label className="field">
+            <span>Badge (optional)</span>
+            <input value={badge} onChange={e => setBadge(e.target.value)} placeholder="Explorer, Helper, Champion…" />
+          </label>
+          <label className="field grow">
+            <span>Note (optional)</span>
+            <input value={note} onChange={e => setNote(e.target.value)} placeholder="Finished Songkran quest!" />
+          </label>
+          <button className="btn" onClick={addStamp}>Add</button>
+        </div>
+      </section>
+
+      <section className="panel">
+        <h2>Recent Stamps</h2>
         {stamps.length === 0 ? (
-          <p>No stamps yet.</p>
+          <p className="muted">No stamps yet. Earn stamps by completing quests and lessons.</p>
         ) : (
-          <ul>
-            {stamps.map((s) => (
-              <li key={s.id}>
-                {s.world} —{' '}
-                {s.earned_at ? new Date(s.earned_at).toLocaleString() : ''}
+          <ul className="stamp-list">
+            {stamps.map(s => (
+              <li key={s.id} className="stamp-item">
+                <div className="col main">
+                  <div className="top">
+                    <strong>{s.world}</strong>
+                    <span className="when">{s.created_at ? new Date(s.created_at).toLocaleString() : ""}</span>
+                  </div>
+                  {s.badge && <div className="badge">🏅 {s.badge}</div>}
+                  {s.note && <div className="note">{s.note}</div>}
+                </div>
+                <div className="col actions">
+                  <button className="btn outline tiny" onClick={() => removeStamp(s.id)}>Remove</button>
+                </div>
               </li>
             ))}
           </ul>
         )}
       </section>
+
+      <p className="muted small">Coming soon: auto-stamps from Quests, World boss events, and teacher-verified badges.</p>
     </main>
   );
 }

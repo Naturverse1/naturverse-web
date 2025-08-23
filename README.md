@@ -14,3 +14,8 @@ Also set the same variables in Netlify → Site settings → Environment variabl
 - Works without servers (localStorage) OR with Supabase tables if present.
 - Page: `/naturbank`
 - To enable server sync, run SQL in `supabase/sql/2025-setup-naturbank.sql`.
+
+### Passport
+- Page: `/passport`
+- Works offline via localStorage, and syncs to Supabase when signed in.
+- Run SQL in `supabase/sql/2025-passport.sql` to enable server storage.
