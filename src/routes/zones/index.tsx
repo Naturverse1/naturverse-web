@@ -2,6 +2,8 @@ import HubCard from '../../components/HubCard';
 import HubGrid from '../../components/HubGrid';
 import Meta from '../../components/Meta';
 import { breadcrumbs } from '../../lib/jsonld';
+import { useEffect, useState } from 'react';
+import SkeletonGrid from '../../components/SkeletonGrid';
 
 const ZONES = [
   {
@@ -63,6 +65,12 @@ const ZONES = [
 
 
 export default function Zones() {
+  const [ready, setReady] = useState(false);
+  useEffect(() => {
+    const t = setTimeout(() => setReady(true), 250);
+    return () => clearTimeout(t);
+  }, []);
+
   return (
     <div className="container-narrow">
       <Meta title="Zones — Naturverse" description="Pick a zone to start games, music, wellness, and more." />
@@ -71,11 +79,15 @@ export default function Zones() {
         <h1 className="page-title text-brand">Zones</h1>
         <p className="section-lead">Pick a zone to start an activity.</p>
 
+        {ready ? (
         <HubGrid>
           {ZONES.map((z) => (
             <HubCard key={z.title} to={z.to} emoji={z.emoji} title={z.title} sub={z.sub} />
           ))}
         </HubGrid>
+        ) : (
+          <SkeletonGrid count={6} />
+        )}
       </main>
 
       <script

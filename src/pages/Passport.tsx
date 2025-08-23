@@ -5,6 +5,7 @@ import { getStamps, toggleStamp, getBadges, addBadge, getXP, addXP, getNatur, ad
 import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
+import RequireAuth from "../components/RequireAuth";
 
 const KINGDOMS = [
   "Thailandia","Brazilandia","Indillandia","Amerilandia",
@@ -32,6 +33,7 @@ export default function PassportPage() {
   const earnNatur = (n: number) => { addNatur(n); setNatur(getNatur()); };
 
     return (
+      <RequireAuth>
       <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href:"/", label:"Home" }, { label:"Passport" }]}> 
       <Meta title="Passport — Naturverse" description="Track stamps, badges, XP, and NATUR." />
       {/* Identity / Navatar */}
@@ -89,5 +91,6 @@ export default function PassportPage() {
 
       <p className="meta">Coming soon: travel logs, per-kingdom progress, leaderboard, wallet-linked NATUR ledger, and verifiable stamp NFTs.</p>
     </Page>
+    </RequireAuth>
   );
 }
