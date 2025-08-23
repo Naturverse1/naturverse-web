@@ -18,5 +18,5 @@ Also set the same variables in Netlify → Site settings → Environment variabl
 
 ### Passport
 - Page: `/passport`
-- Works offline via localStorage, and syncs to Supabase when signed in.
-- Run SQL in `supabase/sql/2025-passport.sql` to enable server storage.
+- Stamps per world + badges; demo buttons to add local/server-backed progress.
+- To persist in Supabase: run `supabase/sql/2025-passport.sql`.
