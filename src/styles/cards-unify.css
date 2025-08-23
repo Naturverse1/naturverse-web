@@ -44,3 +44,68 @@
   );
   border-radius: 8px;
 }
+
+/* ---- Naturversity / Languages ------------------------------------------ */
+.grid-tiles {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 16px;
+  margin-block: 16px 24px;
+}
+
+.tile {
+  display: grid;
+  grid-template-columns: 32px 1fr;
+  gap: 12px;
+  align-items: start;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 14px 16px;
+  background: #fff;
+  text-decoration: none;
+}
+
+.tile__icon { width: 28px; height: 28px; display: grid; place-items: center; }
+.tile__title { margin: 0; font-size: 20px; line-height: 1.2; }
+.tile__subtitle { margin: 4px 0 0; color: #6b7280; }
+
+.grid-langs {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 16px;
+}
+
+.lang-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: 12px;
+  align-items: center;
+  padding: 12px;
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  background: #fff;
+  text-decoration: none;
+}
+
+.lang-thumb {
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+  border-radius: 14px;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+
+.lang-name { margin: 0 0 4px; font-size: 18px; }
+.lang-native { color: #6b7280; }
+
+.hero__img, .secondary__img {
+  width: 100%;
+  max-width: 980px;
+  height: auto;
+  display: block;
+  border-radius: 12px;
+  margin: 12px 0;
+}
+
+.lesson { margin: 18px 0; }
+.lesson h2 { margin: 0 0 8px; }
