@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import LazyImg from "./LazyImg";
 
 type SessionUser = {
   email?: string | null;
@@ -63,12 +64,12 @@ export default function UserMenu() {
   return (
     <div className="usermenu" ref={ref}>
       <button className="avatar-btn" onClick={() => setOpen(v => !v)} aria-expanded={open}>
-        {pic ? <img src={pic} alt={name} /> : <span>{initials(name, user.email)}</span>}
+        {pic ? <LazyImg src={pic} alt={name} /> : <span>{initials(name, user.email)}</span>}
       </button>
       {open && (
         <div className="menu">
           <div className="who">
-            {pic ? <img src={pic} alt={name} /> : <span className="circle">{initials(name, user.email)}</span>}
+            {pic ? <LazyImg src={pic} alt={name} /> : <span className="circle">{initials(name, user.email)}</span>}
             <div className="meta">
               <strong>{name}</strong>
               <small>{user.email}</small>

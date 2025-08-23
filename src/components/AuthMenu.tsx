@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabase";
+import LazyImg from "./LazyImg";
 import "../styles/auth-menu.css";
 
 type MiniUser = { id: string; email: string | null; avatar_url?: string | null };
@@ -71,13 +72,12 @@ export default function AuthMenu() {
   return (
     <div className="auth-menu" ref={menuRef}>
       {user.avatar_url ? (
-        <img
+        <LazyImg
           className="auth-avatar"
           src={user.avatar_url}
           alt="Avatar"
           width={28}
           height={28}
-          loading="lazy"
           decoding="async"
         />
       ) : (

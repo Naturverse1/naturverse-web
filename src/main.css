@@ -3,8 +3,6 @@
 @import './styles/cart.css';
 @import './styles/footer.css';
 @import './styles/home.css';
-@import './styles/cards-unify.css';
-@import './styles/cards.css';
 @import './styles/auth-menu.css';
 @import './styles/buttons.css';
 @import './styles/languages.css';
@@ -20,6 +18,7 @@
 @import "./styles/passport.css";
 @import "./styles/bank.css";
 @import "./styles/polish.css";
+@import "./styles/cards.css";
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
