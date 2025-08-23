@@ -25,7 +25,7 @@ export default function Catalog() {
   );
 
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>🛍️ Catalog</h1>
       <p>Browse items. Add to wishlist or cart.</p>
 

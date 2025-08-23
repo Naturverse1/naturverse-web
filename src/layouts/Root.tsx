@@ -6,9 +6,8 @@ import Footer from '../components/Footer';
 export default function RootLayout() {
   return (
     <div className="nv-root">
-      <a href="#main-content" className="visually-hidden-focusable">Skip to content</a>
       <SiteHeader />
-      <main id="main-content" className="container">
+      <main id="main">
         <Outlet />
       </main>
       <Footer />

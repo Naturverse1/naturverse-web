@@ -9,7 +9,7 @@ export default function CheckoutPage() {
   const [code, setCode] = useState(cart.state.coupon ?? "");
 
   return (
-    <main id="main" className="checkout">
+    <main id="main" className="page-wrap checkout">
       <h1>Checkout</h1>
 
       {!cart.state.items.length && (

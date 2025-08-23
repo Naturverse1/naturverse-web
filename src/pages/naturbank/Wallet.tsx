@@ -8,7 +8,7 @@ export default function Wallet() {
   const create = () => { const nw = createDemoWallet(); setW(nw); setBal(getBalance()); };
 
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>🪪 Wallet</h1>
       {!w ? (
         <div className="panel">

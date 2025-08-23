@@ -18,7 +18,7 @@ export default function Token() {
   };
 
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>🪙 NATUR Token</h1>
 
       <div className="panel">

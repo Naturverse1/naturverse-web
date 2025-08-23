@@ -2,7 +2,7 @@ import React from "react";
 
 export default function Learn() {
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>📘 Learn</h1>
       <ul className="bullet">
         <li><b>Safety:</b> keep keys private, avoid DM links, verify sites.</li>

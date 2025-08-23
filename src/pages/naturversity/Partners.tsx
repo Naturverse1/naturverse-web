@@ -3,7 +3,7 @@ import { PARTNERS } from "../../lib/naturversity/data";
 
 export default function Partners() {
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>🤝 Partners</h1>
       <div className="edu-list">
         {PARTNERS.map(p => (

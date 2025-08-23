@@ -8,7 +8,7 @@ const items = [
 
 export default function NFTs() {
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>🖼️ NFTs</h1>
       <p>Preview collectibles. Minting connects later.</p>
       <div className="hub-grid">
