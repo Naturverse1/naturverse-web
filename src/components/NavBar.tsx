@@ -1,87 +1,25 @@
-const isActive = (href: string) => {
-  try {
-    const p = window.location.pathname;
-    if (href === "/") return p === "/";
-    return p === href || p.startsWith(href + "/");
-  } catch {
-    return false;
-  }
-};
+import { useEffect, useState } from 'react';
 
 export default function NavBar() {
+  const [path, setPath] = useState<string>(location.pathname);
+  useEffect(() => {
+    const onPop = () => setPath(location.pathname);
+    window.addEventListener('popstate', onPop);
+    return () => window.removeEventListener('popstate', onPop);
+  }, []);
+
   return (
     <nav className="topnav" aria-label="Primary">
-      <a
-        href="/"
-        className={isActive("/") ? "active" : ""}
-        aria-current={isActive("/") ? "page" : undefined}
-      >
-        Home
-      </a>
-      <a
-        href="/worlds"
-        className={isActive("/worlds") ? "active" : ""}
-        aria-current={isActive("/worlds") ? "page" : undefined}
-      >
-        Worlds
-      </a>
-      <a
-        href="/zones"
-        className={isActive("/zones") ? "active" : ""}
-        aria-current={isActive("/zones") ? "page" : undefined}
-      >
-        Zones
-      </a>
-      <a
-        href="/marketplace"
-        className={isActive("/marketplace") ? "active" : ""}
-        aria-current={isActive("/marketplace") ? "page" : undefined}
-      >
-        Marketplace
-      </a>
-      <a
-        href="/naturversity"
-        className={isActive("/naturversity") ? "active" : ""}
-        aria-current={isActive("/naturversity") ? "page" : undefined}
-      >
-        Naturversity
-      </a>
-      <a
-        href="/naturbank"
-        className={isActive("/naturbank") ? "active" : ""}
-        aria-current={isActive("/naturbank") ? "page" : undefined}
-      >
-        Naturbank
-      </a>
-      <a
-        href="/navatar"
-        className={isActive("/navatar") ? "active" : ""}
-        aria-current={isActive("/navatar") ? "page" : undefined}
-      >
-        Navatar
-      </a>
-      <a
-        href="/passport"
-        className={isActive("/passport") ? "active" : ""}
-        aria-current={isActive("/passport") ? "page" : undefined}
-      >
-        Passport
-      </a>
-      <a
-        href="/turian"
-        className={isActive("/turian") ? "active" : ""}
-        aria-current={isActive("/turian") ? "page" : undefined}
-      >
-        Turian
-      </a>
-      <a
-        href="/profile"
-        className={isActive("/profile") ? "active" : ""}
-        aria-current={isActive("/profile") ? "page" : undefined}
-      >
-        Profile
-      </a>
+      <a href="/" className={path === '/' ? 'active' : undefined} aria-current={path === '/' ? 'page' : undefined}>Home</a>
+      <a href="/worlds" className={path.startsWith('/worlds') ? 'active' : undefined} aria-current={path.startsWith('/worlds') ? 'page' : undefined}>Worlds</a>
+      <a href="/zones" className={path.startsWith('/zones') ? 'active' : undefined} aria-current={path.startsWith('/zones') ? 'page' : undefined}>Zones</a>
+      <a href="/marketplace" className={path.startsWith('/marketplace') ? 'active' : undefined} aria-current={path.startsWith('/marketplace') ? 'page' : undefined}>Marketplace</a>
+      <a href="/naturversity" className={path.startsWith('/naturversity') ? 'active' : undefined} aria-current={path.startsWith('/naturversity') ? 'page' : undefined}>Naturversity</a>
+      <a href="/naturbank" className={path.startsWith('/naturbank') ? 'active' : undefined} aria-current={path.startsWith('/naturbank') ? 'page' : undefined}>Naturbank</a>
+      <a href="/navatar" className={path.startsWith('/navatar') ? 'active' : undefined} aria-current={path.startsWith('/navatar') ? 'page' : undefined}>Navatar</a>
+      <a href="/passport" className={path.startsWith('/passport') ? 'active' : undefined} aria-current={path.startsWith('/passport') ? 'page' : undefined}>Passport</a>
+      <a href="/turian" className={path.startsWith('/turian') ? 'active' : undefined} aria-current={path.startsWith('/turian') ? 'page' : undefined}>Turian</a>
+      <a href="/profile" className={path.startsWith('/profile') ? 'active' : undefined} aria-current={path.startsWith('/profile') ? 'page' : undefined}>Profile</a>
     </nav>
   );
 }
-

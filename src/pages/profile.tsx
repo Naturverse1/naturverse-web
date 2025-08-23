@@ -118,8 +118,11 @@ export default function ProfilePage() {
       </section>
     );
   }
-
-  return <RequireAuth>{content}</RequireAuth>;
+  return (
+    <RequireAuth>
+      <main id="main" className="page-wrap">{content}</main>
+    </RequireAuth>
+  );
 }
 
 const s: Record<string, React.CSSProperties> = {

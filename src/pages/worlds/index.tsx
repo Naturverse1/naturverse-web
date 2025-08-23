@@ -13,7 +13,7 @@ export default function WorldsIndex() {
   }, []);
 
   return (
-      <div className="page-wrap">
+      <div id="main" className="page-wrap">
         <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." />
         <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Worlds" }]} />
       <p className="muted">Choose a kingdom to explore.</p>

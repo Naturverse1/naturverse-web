@@ -7,9 +7,11 @@ import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
+import SkipToContent from './components/SkipToContent';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
+    <SkipToContent />
     <ErrorBoundary>
       <AuthProvider>
         <App />
@@ -17,3 +19,10 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
     </ErrorBoundary>
   </React.StrictMode>,
 );
+
+// Force lazy loading for any <img> missing it (no deps, safe)
+document.addEventListener('DOMContentLoaded', () => {
+  document
+    .querySelectorAll<HTMLImageElement>('img:not([loading])')
+    .forEach((img) => (img.loading = 'lazy'));
+});
