@@ -5,7 +5,7 @@ import Img from "./Img";
 export default function Nav() {
   return (
     <>
-      <a href="#main" className="skip-link">Skip to content</a>
+      <a href="#main-content" className="visually-hidden-focusable">Skip to content</a>
       <nav className="topnav container">
         <a href="/" aria-label="Naturverse Home" className="brand">
           <Img src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
