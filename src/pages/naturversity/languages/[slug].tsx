@@ -4,7 +4,7 @@ import { useParams } from "react-router-dom";
 const IMAGES: Record<string, { hero: string; spot: string; title: string; native: string }> = {
   thailandia: {
     hero: '/Languages/Mangolanguagemainthai.png',
-    spot: '/Languages/Turianlanguagehindi.png', // secondary Turian in local script per your note
+    spot: '/Languages/Turianlanguage.png',
     title: 'Thailandia (Thai)',
     native: 'ไทย'
   },
@@ -28,7 +28,7 @@ const IMAGES: Record<string, { hero: string; spot: string; title: string; native
   },
   australandia: {
     hero: '/Languages/Koalalanguagemain.png',
-    spot: '/Languages/Birdlanguageaustralandia.png', // unique secondary as requested
+    spot: '/Languages/Birdlanguageaustralandia.png',
     title: 'Australandia (English)',
     native: 'English'
   },
@@ -64,16 +64,13 @@ export default function LanguageDetail() {
         className="lang-hero"
         loading="eager"
         decoding="async"
-        sizes="(max-width: 1024px) 100vw, 960px"
       />
 
-      {/* lessons/content continue to show right after; big image no longer pushes them away */}
       <section>
         <h2>Starter phrases</h2>
         <ul>
           <li><strong>Hello:</strong> สวัสดี — <em>sà-wàt-dee</em></li>
           <li><strong>Thank you:</strong> ขอบคุณ — <em>khàwp-khun</em></li>
-          {/* keep the rest of your content here */}
         </ul>
       </section>
 
@@ -83,7 +80,6 @@ export default function LanguageDetail() {
         className="lang-spot"
         loading="lazy"
         decoding="async"
-        sizes="(max-width: 1024px) 100vw, 960px"
       />
     </article>
   );
