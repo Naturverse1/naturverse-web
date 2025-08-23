@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
+import ImageSmart from "../components/ImageSmart";
 
 /** Local storage keys used around the app (demo only) */
 const K = {
@@ -150,7 +151,7 @@ export default function ProfilePage() {
         <div className="navatar-row">
           <div className="avatar">
             {nav.imageDataUrl ? (
-              <img src={nav.imageDataUrl} alt="Navatar preview" />
+              <ImageSmart src={nav.imageDataUrl} alt="Navatar preview" />
             ) : (
               <div className="avatar-placeholder">No image yet</div>
             )}

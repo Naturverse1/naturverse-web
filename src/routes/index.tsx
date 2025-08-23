@@ -1,6 +1,7 @@
 import HubCard from '../components/HubCard';
 import HubGrid from '../components/HubGrid';
 import "./Home.css";
+import ImageSmart from '../components/ImageSmart';
 
 export default function Home() {
   return (
@@ -8,7 +9,7 @@ export default function Home() {
       {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
         <h1>
-          <img
+          <ImageSmart
             className="brandmark"
             src="/favicon-32x32.png"
             srcSet="/favicon-32x32.png 1x, /favicon-64x64.png 2x"
@@ -16,6 +17,7 @@ export default function Home() {
             height={32}
             alt=""
             aria-hidden="true"
+            priority
           />
           Welcome to the Naturverse™
         </h1>

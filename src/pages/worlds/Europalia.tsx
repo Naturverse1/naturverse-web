@@ -1,5 +1,6 @@
 import React from "react";
 import WorldLayout from "./_WorldLayout";
+import ImageSmart from "../../components/ImageSmart";
 
 type Character = { name: string; src: string };
 
@@ -21,7 +22,7 @@ export default function EuropaliaWorld() {
         <div className="characters-grid">
           {chars.map((c) => (
             <article key={c.src} className="character-card">
-              <img src={c.src} alt={c.name} loading="lazy" decoding="async" />
+              <ImageSmart src={c.src} alt={c.name} />
               <div className="name">{c.name}</div>
             </article>
           ))}

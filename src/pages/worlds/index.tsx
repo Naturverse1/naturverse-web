@@ -3,6 +3,7 @@ import { WORLDS } from "../../data/worlds";
 import Meta from "../../components/Meta";
 import Page from "../../layouts/Page";
 import { Breadcrumbs } from "../../components/Breadcrumbs";
+import ImageSmart from "../../components/ImageSmart";
 
 export default function WorldsIndex() {
   return (
@@ -13,7 +14,7 @@ export default function WorldsIndex() {
       <div className="cards">
         {WORLDS.map(w => (
           <a className="card" key={w.slug} href={`/worlds/${w.slug}`}>
-            <img src={w.map} alt={`${w.name} map`} loading="lazy" />
+            <ImageSmart src={w.map} alt={`${w.name} map`} />
             <h2>{w.name}</h2>
             <p>{w.blurb}</p>
           </a>

@@ -1,15 +1,15 @@
 import React from "react";
+import ImageSmart from "./ImageSmart";
 
 export default function Footer() {
   return (
     <footer className="site-footer">
       <div className="footer-brand" aria-label="A Turian Media Company">
-        <img
+        <ImageSmart
           src="/Turianmedia-logo-footer.png"
           alt="A Turian Media Company"
           width={120}
           height={28}
-          loading="lazy"
         />
       </div>
       <nav className="footer-social">

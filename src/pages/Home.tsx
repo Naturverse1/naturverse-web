@@ -3,6 +3,7 @@ import { Link } from "react-router-dom";
 import "./home.css";
 import Meta from "../components/Meta";
 import Page from "../layouts/Page";
+import ImageSmart from "../components/ImageSmart";
 
 export default function Home() {
   return (
@@ -13,13 +14,14 @@ export default function Home() {
       <div className="home">
       {/* Hero */}
       <header className="home-hero">
-        <img
+        <ImageSmart
           src="/favicon-32x32.png"
           width={28}
           height={28}
           className="home-hero-icon"
           alt=""            /* decorative */
           aria-hidden="true"
+          priority
         />
         <h1 className="home-title">Welcome to the Naturverse™</h1>
         <p className="home-subtitle">

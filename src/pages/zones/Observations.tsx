@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { Breadcrumbs } from '../../components/Breadcrumbs';
 import PhotoUploader from '../../components/PhotoUploader';
+import ImageSmart from '../../components/ImageSmart';
 import { Observation } from '../../lib/observations/types';
 import {
   addObservation,
@@ -188,7 +189,7 @@ export default function Observations() {
                   onClick={() => setSelected(o)}
                   aria-label={`Open ${o.title}`}
                 >
-                  <img src={o.thumb} alt={o.title} />
+                  <ImageSmart src={o.thumb} alt={o.title} />
                   <div className="obs-info">
                     <div className="obs-title">{o.title}</div>
                     <div className="tag-row">
@@ -207,7 +208,7 @@ export default function Observations() {
 
             {selected && (
               <aside className="obs-panel">
-                <img src={selected.src} alt={selected.title} className="obs-full" />
+                <ImageSmart src={selected.src} alt={selected.title} className="obs-full" />
                 <div className="form-row">
                   <input
                     className="input"

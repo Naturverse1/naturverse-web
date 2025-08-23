@@ -1,4 +1,5 @@
 import React from "react";
+import ImageSmart from "./ImageSmart";
 
 type Props = {
   title: string;
@@ -12,11 +13,11 @@ export default function WorldPage({ title, intro, mapSrc }: Props) {
   return (
     <div className="world-page">
       <figure className="world-hero">
-        <img
+        <ImageSmart
           src={mapSrc}
           alt={`${title} map`}
           onError={(e) => ((e.currentTarget.src = fallback))}
-          loading="eager"
+          priority
         />
         <figcaption className="sr-only">{title} map</figcaption>
       </figure>

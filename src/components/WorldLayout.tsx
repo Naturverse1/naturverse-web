@@ -1,6 +1,7 @@
 import React from "react";
 import { KINGDOMS, KingdomId, imgUrl } from "../data/kingdoms";
 import "../styles/worlds.css";
+import ImageSmart from "./ImageSmart";
 
 type Props = { id: KingdomId };
 
@@ -15,12 +16,12 @@ export default function WorldLayout({ id }: Props) {
       {/* Map hero */}
       <section className="world-hero card">
         <figure className="hero-figure">
-          <img
+          <ImageSmart
             src={imgUrl(folder, k.mapFile)}
             alt={`${k.title} map`}
-            loading="eager"
             width={1280}
             height={720}
+            priority
           />
         </figure>
         <div className="hero-meta">
@@ -39,10 +40,9 @@ export default function WorldLayout({ id }: Props) {
             {k.characters.map((file) => (
               <li key={file} className="char-card">
                 <div className="char-thumb">
-                  <img
+                  <ImageSmart
                     src={imgUrl(folder, file)}
                     alt={file.replace(/\.[^.]+$/, "")}
-                    loading="lazy"
                     width={320}
                     height={420}
                     onError={(e) => {
