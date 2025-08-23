@@ -5,6 +5,8 @@
 @import './styles/home.css';
 @import './styles/cards-unify.css';
 @import './styles/skeleton.css';
+@import './styles/auth-menu.css';
+@import './styles/buttons.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,

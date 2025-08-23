@@ -1,0 +1,25 @@
+/* Unified button style across site */
+button,
+a.button {
+  background: #2f6fec;
+  color: #fff !important;
+  border: none;
+  border-radius: 8px;
+  padding: 10px 16px;
+  font-weight: 600;
+  font-size: 15px;
+  text-decoration: none;
+  cursor: pointer;
+  display: inline-block;
+}
+
+button:hover,
+a.button:hover {
+  background: #2457c9;
+}
+
+button:disabled,
+a.button.disabled {
+  background: #a3b8f1;
+  cursor: not-allowed;
+}
