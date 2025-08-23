@@ -7,7 +7,7 @@ type ImgProps = React.ImgHTMLAttributes<HTMLImageElement> & {
 export default function Img({
   src,
   alt,
-  fallbackSrc = "/assets/placeholders/world-bg.svg",
+  fallbackSrc = "/placeholder.png",
   ...rest
 }: ImgProps) {
   const [loaded, setLoaded] = useState(false);
