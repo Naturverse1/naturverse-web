@@ -5,6 +5,35 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
 
+    <!-- ── SEO: Core tags (safe) ───────────────────────── -->
+    <meta
+      name="description"
+      content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
+    />
+    <link rel="canonical" href="https://thenaturverse.com/" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Naturverse" />
+    <meta property="og:title" content="Naturverse — Playful worlds for families" />
+    <meta
+      property="og:description"
+      content="Explore worlds, complete quests, earn badges, and grow together online and off."
+    />
+    <meta property="og:url" content="https://thenaturverse.com/" />
+    <!-- optional image slot; harmless if missing on crawl -->
+    <meta property="og:image" content="https://thenaturverse.com/og.jpg" />
+
+    <!-- Twitter -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content="Naturverse — Playful worlds for families" />
+    <meta
+      name="twitter:description"
+      content="Explore worlds, complete quests, earn badges, and grow together."
+    />
+    <meta name="twitter:image" content="https://thenaturverse.com/og.jpg" />
+    <!-- ─────────────────────────────────────────────────── -->
+
     <!-- Performance: Preconnect + preload main font -->
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -26,20 +55,10 @@
     <meta name="theme-color" content="#2F7AE5" />
     <meta name="color-scheme" content="light" />
 
-    <!-- Preload main CSS -->
-    <link rel="preload" as="style" href="/src/styles/main.css" />
-    <link rel="stylesheet" href="/src/styles/main.css" />
-    <link rel="stylesheet" href="/src/styles/pages.css" />
-
-      <!-- Canonical -->
-      <link rel="canonical" href="/" />
-      <meta name="description" content="Naturverse — kid-friendly worlds, zones, learning and play." />
-      <meta property="og:title" content="Naturverse" />
-      <meta property="og:description" content="Explore 14 magical kingdoms, play, learn, and create." />
-      <meta property="og:type" content="website" />
-      <meta property="og:url" content="/" />
-      <meta property="og:image" content="/apple-touch-icon.png" />
-      <meta name="twitter:card" content="summary_large_image" />
+      <!-- Preload main CSS -->
+      <link rel="preload" as="style" href="/src/styles/main.css" />
+      <link rel="stylesheet" href="/src/styles/main.css" />
+      <link rel="stylesheet" href="/src/styles/pages.css" />
 
 
     <!-- Plausible: cookieless analytics -->
@@ -53,15 +72,7 @@
     <a class="skip-link" href="#main">Skip to content</a>
     <div id="root"></div>
 
-    <!-- Global, safe lazy-loading for any <img> without attrs -->
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        document.querySelectorAll('img:not([loading])').forEach(function (img) {
-          img.setAttribute('loading', 'lazy');
-          img.setAttribute('decoding', 'async');
-        });
-      });
-    </script>
     <script type="module" src="/src/main.tsx"></script>
+    <script defer src="/lazy-images.js"></script>
   </body>
 </html>
