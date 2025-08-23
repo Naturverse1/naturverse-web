@@ -1,12 +1,12 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { getCurrent } from "../lib/navatar/store";
 import type { Badge } from "../lib/passport/store";
 import { getStamps, toggleStamp, getBadges, addBadge, getXP, addXP, getNatur, addNatur } from "../lib/passport/store";
 import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
-import RequireAuth from "../components/RequireAuth";
 import PageHead from "../components/PageHead";
+import { supabase } from "../lib/supabaseClient";
 
 const KINGDOMS = [
   "Thailandia","Brazilandia","Indillandia","Amerilandia",
@@ -21,6 +21,7 @@ export default function PassportPage() {
   const [badges, setBadges] = useState<Badge[]>(getBadges());
   const [xp, setXp] = useState(getXP());
   const [natur, setNatur] = useState(getNatur());
+  const [email, setEmail] = useState<string | null>(null);
 
   const stampCount = stamps.length;
   const level = useMemo(() => 1 + Math.floor(xp / 100), [xp]);
@@ -33,9 +34,17 @@ export default function PassportPage() {
   const earnXP = (n: number) => { addXP(n); setXp(getXP()); };
   const earnNatur = (n: number) => { addNatur(n); setNatur(getNatur()); };
 
-    return (
-      <RequireAuth>
-      <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href:"/", label:"Home" }, { label:"Passport" }]}>
+  useEffect(() => {
+    let mounted = true;
+    supabase.auth.getSession().then(({ data }) => {
+      if (!mounted) return;
+      setEmail(data.session?.user?.email ?? null);
+    });
+    return () => { mounted = false; };
+  }, []);
+
+  return (
+    <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href: "/", label: "Home" }, { label: "Passport" }]}> 
       <PageHead title="Naturverse — Passport" description="Track stamps, badges, XP, and NATUR coin." />
       <Meta title="Passport — Naturverse" description="Track stamps, badges, XP, and NATUR." />
       {/* Identity / Navatar */}
@@ -92,7 +101,11 @@ export default function PassportPage() {
       )}
 
       <p className="meta">Coming soon: travel logs, per-kingdom progress, leaderboard, wallet-linked NATUR ledger, and verifiable stamp NFTs.</p>
+      {email ? (
+        <p style={{ marginTop: 12, opacity: 0.7 }}>Progress will save to {email}.</p>
+      ) : (
+        <p style={{ marginTop: 12, opacity: 0.7 }}>Sign in to save your stamps and XP.</p>
+      )}
     </Page>
-    </RequireAuth>
   );
 }

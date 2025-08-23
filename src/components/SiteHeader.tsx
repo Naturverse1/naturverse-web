@@ -2,12 +2,10 @@ import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import './site-header.css';
 import Img from './Img';
-import { useAuthUser } from '../lib/useAuthUser';
-import UserChip from './UserChip';
+import AuthButton from './AuthButton';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const { user, loading } = useAuthUser();
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="wrap">
@@ -15,11 +13,6 @@ export default function SiteHeader() {
           <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
           <span>Naturverse</span>
         </Link>
-        <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
-          <span />
-          <span />
-          <span />
-        </button>
         <nav className="nav">
           <NavLink
             to="/worlds"
@@ -85,16 +78,15 @@ export default function SiteHeader() {
           >
             🛒
           </NavLink>
-          {loading ? (
-            <span style={{ opacity: 0.7 }}>…</span>
-          ) : user ? (
-            <UserChip email={user.email} />
-          ) : (
-            <a className="btn" href="/login">
-              Sign in
-            </a>
-          )}
         </nav>
+        <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
+          <AuthButton />
+          <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
+            <span />
+            <span />
+            <span />
+          </button>
+        </div>
       </div>
     </header>
   );

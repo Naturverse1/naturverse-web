@@ -22,7 +22,6 @@
   text-decoration: none;
 }
 .site-header .nav {
-  margin-left: auto;
   display: flex;
   gap: 18px;
   align-items: center;
@@ -39,7 +38,6 @@
 
 .nav-toggle {
   display: none;
-  margin-left: auto;
   border: 0;
   background: transparent;
   width: 40px;
