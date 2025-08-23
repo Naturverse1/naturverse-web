@@ -2,6 +2,7 @@ import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import './site-header.css';
 import Img from './Img';
+import AuthButton from './AuthButton';
 
 export default function SiteHeader(){
   const [open, setOpen] = useState(false);
@@ -29,6 +30,7 @@ export default function SiteHeader(){
           <NavLink to="/turian" className={({isActive})=>isActive?"nav-link active":"nav-link"} onClick={() => setOpen(false)}>Turian</NavLink>
           <NavLink to="/profile" aria-label="Profile" className={({isActive})=> (isActive?"nav-link active":"nav-link") + " icon"} onClick={() => setOpen(false)}>👤</NavLink>
           <NavLink to="/cart" aria-label="Cart" className={({isActive})=> (isActive?"nav-link active":"nav-link") + " icon"} onClick={() => setOpen(false)}>🛒</NavLink>
+          <AuthButton />
         </nav>
       </div>
     </header>
