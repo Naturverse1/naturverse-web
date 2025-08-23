@@ -1,46 +1,33 @@
 import React from 'react';
 
-type Props = {
-  children: React.ReactNode;
-  fallback?: React.ReactNode;
-};
+type State = { hasError: boolean; msg?: string };
 
-type State = { hasError: boolean };
-
-export class ErrorBoundary extends React.Component<Props, State> {
+export default class ErrorBoundary extends React.Component<{ children: React.ReactNode }, State> {
   state: State = { hasError: false };
 
-  static getDerivedStateFromError() {
-    return { hasError: true };
+  static getDerivedStateFromError(err: unknown): State {
+    return { hasError: true, msg: err instanceof Error ? err.message : String(err) };
   }
 
-  componentDidCatch(error: unknown, info: unknown) {
-    // Optional: send to your future logging/telemetry
-    // console.error('ErrorBoundary caught', error, info);
+  componentDidCatch(err: unknown, info: unknown) {
+    // noop (can log later)
   }
 
   render() {
     if (this.state.hasError) {
       return (
-        this.props.fallback ?? (
-          <div
-            style={{
-              padding: '16px',
-              margin: '16px',
-              borderRadius: '12px',
-              border: '1px solid rgba(0,0,0,0.08)',
-              background: 'var(--nv-surface, #fff)',
-            }}
-          >
-            <h3 style={{ marginTop: 0 }}>Something went wrong.</h3>
-            <p>Try refreshing the page. If it keeps happening, we’ll fix it fast.</p>
-          </div>
-        )
+        <div className="page">
+          <h1>Something went wrong</h1>
+          <p className="muted">The page failed to render. Try going back home.</p>
+          <a className="btn" href="/">Back to Home</a>
+          {this.state.msg && (
+            <pre className="muted" style={{ whiteSpace: 'pre-wrap' }}>
+              {this.state.msg}
+            </pre>
+          )}
+        </div>
       );
     }
-    return this.props.children;
+    return this.props.children as React.ReactElement;
   }
 }
-
-export default ErrorBoundary;
-

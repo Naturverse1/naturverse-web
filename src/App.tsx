@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { CartProvider } from './hooks/useCart';
 import CartDrawer from './components/cart/CartDrawer';
+import ErrorBoundary from './components/ErrorBoundary';
 import { organizationLd, websiteLd } from './lib/jsonld';
 
 export default function App() {
@@ -22,10 +23,12 @@ export default function App() {
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
       />
-      <CartProvider>
-        <RouterProvider router={router} />
-        <CartDrawer />
-      </CartProvider>
+      <ErrorBoundary>
+        <CartProvider>
+          <RouterProvider router={router} />
+          <CartDrawer />
+        </CartProvider>
+      </ErrorBoundary>
     </>
   );
 }
