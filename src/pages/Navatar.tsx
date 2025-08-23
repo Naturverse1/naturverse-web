@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from "react";
 import type { Navatar, NavatarBase } from "../types/navatar";
 import { SPECIES, POWERS_BANK, randomFrom } from "../lib/navatarCatalog";
-import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/storage";
+import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/localStorage";
 import NavatarCard from "../components/NavatarCard";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
