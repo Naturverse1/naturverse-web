@@ -32,7 +32,20 @@ a.active {
 
 /* centered page wrapper helper */
 .page-wrap {
-  max-width: 1100px;
-  margin: 0 auto;
-  padding: 0 16px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 16px;
+  }
+
+/* a11y + nav active */
+.skip-link {
+  position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden;
 }
+.skip-link:focus { position:static; width:auto; height:auto; padding:8px 12px; background:#e0f2fe; border-radius:8px; }
+
+.nav-link { padding:6px 10px; border-radius:8px; text-decoration:none; }
+.nav-link.active { background:#dbeafe; color:#1e3a8a; font-weight:700; }
+
+/* generic .button for 404/EB */
+.button { display:inline-block; padding:10px 14px; background:#0ea5e9; color:#fff; border-radius:10px; border:1px solid #0ea5e9; text-decoration:none; }
+.button:hover { filter: brightness(0.95); }

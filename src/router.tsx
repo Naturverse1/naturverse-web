@@ -111,6 +111,7 @@ export const router = createBrowserRouter([
       { path: 'passport', element: <Passport /> },
       { path: 'turian', element: <Turian /> },
       { path: 'profile', element: <Profile /> },
+      { path: '404', element: <NotFound /> },
       { path: '*', element: <NotFound /> },
     ],
   },
