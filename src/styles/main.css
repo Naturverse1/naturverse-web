@@ -3,13 +3,39 @@
 @import './components.css';
 
 :root {
-  /* brand blues already defined in your theme */
-  /* fallback in case they aren't */
+  --brand-500: #2a79e0;
+  --brand-600: #0d60c7;
   --brand-700: #1e40af; /* deep blue */
-  --brand-600: #2563eb; /* primary blue */
-
-  /* readable text on brand surfaces */
   --on-brand: #ffffff;
+}
+
+/* Primary buttons (applies to <a> and <button>) */
+.btn, .button, .btn-primary, a.button-primary {
+  color: var(--on-brand) !important;
+  background: linear-gradient(180deg, var(--brand-500), var(--brand-600));
+  border: 0;
+  font-weight: 700;
+  box-shadow: 0 6px 0 rgba(0,0,0,.15);
+}
+.btn:hover, .button:hover, .btn-primary:hover, a.button-primary:hover {
+  filter: brightness(0.98);
+}
+.btn:focus, .button:focus, .btn-primary:focus, a.button-primary:focus {
+  outline: 3px solid rgba(42,121,224,.35);
+  outline-offset: 2px;
+}
+
+/* Fallback: ensure home hero CTAs render white text even if they lack a class */
+.hero .cta a,
+.hero .cta button,
+.home-hero a,
+.home-hero button {
+  color: var(--on-brand) !important;
+}
+
+/* Ensure child elements inherit button label color */
+.btn *, .button *, .btn-primary *, a.button-primary * {
+  color: inherit;
 }
 
 /* --- Card title: consistent bold, brand-blue across app --- */
@@ -41,18 +67,6 @@ a:hover{ color: var(--brand-800); text-decoration: underline; }
 
 /* “pill” chips/tabs light blue */
 .pill{ background: var(--brand-50); border:1px solid var(--brand-200); color: var(--brand-700); }
-
-/* --- Buttons ------------------------------------------------------------ */
-.btn-primary {
-  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
-  border-color: var(--brand-600);
-  color: var(--on-brand);
-}
-.btn-primary:hover {
-  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
-  filter: brightness(.98);
-  color: var(--on-brand);
-}
 
 /* --- Cards / pills that use the blue brand background ------------------- */
 [data-surface="brand"] {
@@ -87,11 +101,3 @@ a:hover{ color: var(--brand-800); text-decoration: underline; }
 /* Utility so we can blue a heading without changing layout/components */
 .text-brand { color: var(--brand-700); }
 
-/* --- Blue CTA buttons always have white label --- */
-.btn-primary,
-.btn-primary:visited{
-  color: #fff;
-}
-.btn-primary *{
-  color: inherit;
-}
