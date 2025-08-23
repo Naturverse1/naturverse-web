@@ -1,26 +1,24 @@
 import React from "react";
 
 /**
- * Drop-in <img> replacement with safe perf defaults.
- * - lazy loads by default
- * - async decodes
- * - lets you opt-in to hero priority
- * - never changes layout (you control size via className or width/height)
+ * Drop-in <img> replacement with safe performance defaults.
+ * - Lazy loads by default
+ * - Async decodes
+ * - Allows opt-in priority for hero/above-fold images
  */
 type Props = React.ImgHTMLAttributes<HTMLImageElement> & {
-  priority?: boolean; // set true for above-the-fold/hero only
-  fetchPriority?: "auto" | "high" | "low";
+  priority?: boolean;
+  fetchpriority?: "auto" | "high" | "low";
 };
 
-export default function ImageSmart({ priority, loading, decoding, fetchPriority, ...rest }: Props) {
+export default function ImageSmart({ priority, loading, decoding, fetchPriority, fetchpriority, ...rest }: Props) {
   const isHero = Boolean(priority);
+  const fp = fetchPriority ?? fetchpriority ?? (isHero ? "high" : "low");
   return (
     <img
       loading={loading ?? (isHero ? "eager" : "lazy")}
       decoding={decoding ?? (isHero ? "sync" : "async")}
-      // helps browsers schedule fetches; ignored by older ones (safe)
-      fetchPriority={fetchPriority ?? (isHero ? "high" : "low")}
-      // pass everything else through (src, alt, width, height, className, etc.)
+      fetchPriority={fp}
       {...rest}
     />
   );
