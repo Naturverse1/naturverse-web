@@ -5,9 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
 
-    <!-- Favicon / icons (files already exist) -->
-    <link rel="icon" href="/favicon-256x256.png" />
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-256x256.png" />
+    <!-- PWA + icons -->
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="manifest" href="/site.webmanifest" />
+    <meta name="theme-color" content="#2F7AE5" />
+    <link rel="mask-icon" href="/favicon.svg" color="#2F7AE5" />
 
     <!-- Preload main CSS -->
     <link rel="preload" as="style" href="/src/styles/main.css" />
@@ -53,8 +55,6 @@
     />
     <meta name="twitter:image" content="/assets/og-card.png" />
 
-    <!-- Theme color -->
-    <meta name="theme-color" content="#4a87ff" />
 
     <!-- Plausible: cookieless analytics -->
     <script
