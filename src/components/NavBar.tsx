@@ -1,17 +1,87 @@
-import { NavLink } from "react-router-dom";
+const isActive = (href: string) => {
+  try {
+    const p = window.location.pathname;
+    if (href === "/") return p === "/";
+    return p === href || p.startsWith(href + "/");
+  } catch {
+    return false;
+  }
+};
 
 export default function NavBar() {
   return (
     <nav className="topnav" aria-label="Primary">
-      <a className="visually-hidden-focusable" href="#main-content">Skip to content</a>
-      <NavLink to="/worlds" className={({isActive})=>isActive?"active":""}>Worlds</NavLink>
-      <NavLink to="/zones" className={({isActive})=>isActive?"active":""}>Zones</NavLink>
-      <NavLink to="/marketplace" className={({isActive})=>isActive?"active":""}>Marketplace</NavLink>
-      <NavLink to="/naturversity" className={({isActive})=>isActive?"active":""}>Naturversity</NavLink>
-      <NavLink to="/passport" className={({isActive})=>isActive?"active":""}>Passport</NavLink>
-      <NavLink to="/turian" className={({isActive})=>isActive?"active":""}>Turian</NavLink>
-      <NavLink to="/profile" className={({isActive})=>isActive?"active":""} aria-label="Profile">👤</NavLink>
-      <NavLink to="/cart" className={({isActive})=>isActive?"active":""} aria-label="Cart">🛒</NavLink>
+      <a
+        href="/"
+        className={isActive("/") ? "active" : ""}
+        aria-current={isActive("/") ? "page" : undefined}
+      >
+        Home
+      </a>
+      <a
+        href="/worlds"
+        className={isActive("/worlds") ? "active" : ""}
+        aria-current={isActive("/worlds") ? "page" : undefined}
+      >
+        Worlds
+      </a>
+      <a
+        href="/zones"
+        className={isActive("/zones") ? "active" : ""}
+        aria-current={isActive("/zones") ? "page" : undefined}
+      >
+        Zones
+      </a>
+      <a
+        href="/marketplace"
+        className={isActive("/marketplace") ? "active" : ""}
+        aria-current={isActive("/marketplace") ? "page" : undefined}
+      >
+        Marketplace
+      </a>
+      <a
+        href="/naturversity"
+        className={isActive("/naturversity") ? "active" : ""}
+        aria-current={isActive("/naturversity") ? "page" : undefined}
+      >
+        Naturversity
+      </a>
+      <a
+        href="/naturbank"
+        className={isActive("/naturbank") ? "active" : ""}
+        aria-current={isActive("/naturbank") ? "page" : undefined}
+      >
+        Naturbank
+      </a>
+      <a
+        href="/navatar"
+        className={isActive("/navatar") ? "active" : ""}
+        aria-current={isActive("/navatar") ? "page" : undefined}
+      >
+        Navatar
+      </a>
+      <a
+        href="/passport"
+        className={isActive("/passport") ? "active" : ""}
+        aria-current={isActive("/passport") ? "page" : undefined}
+      >
+        Passport
+      </a>
+      <a
+        href="/turian"
+        className={isActive("/turian") ? "active" : ""}
+        aria-current={isActive("/turian") ? "page" : undefined}
+      >
+        Turian
+      </a>
+      <a
+        href="/profile"
+        className={isActive("/profile") ? "active" : ""}
+        aria-current={isActive("/profile") ? "page" : undefined}
+      >
+        Profile
+      </a>
     </nav>
   );
 }
+

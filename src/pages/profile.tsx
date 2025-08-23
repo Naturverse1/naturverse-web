@@ -90,7 +90,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <main className="container" style={{ maxWidth: 720, margin: "0 auto" }}>
+    <main id="main" className="page-wrap" style={{ maxWidth: 720, margin: "0 auto" }}>
       <h1>Profile</h1>
 
       {loading && <p>Loading…</p>}

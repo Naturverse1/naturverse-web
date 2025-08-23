@@ -17,7 +17,7 @@ export default function Courses() {
   }, [q]);
 
   return (
-    <main id="main">
+    <main id="main" className="page-wrap">
       <h1>📚 Courses</h1>
       <div className="edu-toolbar">
         <input className="input" placeholder="Search courses…" value={q} onChange={e=>setQ(e.target.value)} />

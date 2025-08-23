@@ -11,8 +11,8 @@
 @import './styles/layout.css';
 @import './styles/nav.css';
 @import './styles/img.css';
-@import './styles/a11y.css';
 @import './styles/skeleton.css';
+@import './styles/a11y.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
@@ -31,12 +31,6 @@ body {
   padding: 4px 8px;
   margin-bottom: 8px;
 }
-
-/* a11y */
-.skip-link {
-  position:absolute; left:-999px; top:auto; width:1px; height:1px; overflow:hidden;
-}
-.skip-link:focus { position:static; width:auto; height:auto; padding:8px 12px; background:#e0f2fe; border-radius:8px; }
 
 /* generic .button for 404/EB */
 .button { display:inline-block; padding:10px 14px; background:#0ea5e9; color:#fff; border-radius:10px; border:1px solid #0ea5e9; text-decoration:none; }
