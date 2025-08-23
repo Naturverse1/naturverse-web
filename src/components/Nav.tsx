@@ -16,6 +16,7 @@ export default function Nav() {
           <NavLink to="/marketplace" className={({isActive})=>`nav${isActive?' active':''}`}>Marketplace</NavLink>
           <NavLink to="/naturversity" className={({isActive})=>`nav${isActive?' active':''}`}>Naturversity</NavLink>
           <NavLink to="/passport" className={({isActive})=>`nav${isActive?' active':''}`}>Passport</NavLink>
+          <NavLink to="/profile" className={({isActive})=>`nav${isActive?' active':''}`}>Profile</NavLink>
           {/* ...rest unchanged */}
         </div>
       </nav>
