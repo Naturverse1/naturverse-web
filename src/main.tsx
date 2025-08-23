@@ -8,7 +8,6 @@ import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
-import './styles/brand.css'; // blue theme overrides (safe, CSS-only)
 import { ErrorBoundary } from './components/ErrorBoundary';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(

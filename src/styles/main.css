@@ -1,66 +1,14 @@
-/* Global brand variables & base styles */
-:root{
-  /* Brand blues */
-  --brand-25: #f2f8ff;
-  --brand-50: #e6f1ff;
-  --brand-100:#d6e9ff;
-  --brand-200:#bcdcff;
-  --brand-300:#8ec3ff;
-  --brand-400:#5ea9ff;
-  --brand-500:#348ef7;   /* primary */
-  --brand-600:#2b7bd6;
-  --brand-700:#1f5aa3;   /* headings / brand text */
-  --brand-800:#1a467f;
+@import './tokens.css';
+@import './typography.css';
+@import './components.css';
 
-  /* UI tokens */
-  --ink:#0f172a;
-  --ink-muted:#475569;
-  --muted: var(--ink-muted);
-  --bg:#ffffff;
-
-  --card: var(--bg);
-  --card-border: var(--brand-200);
-  --card-ring: rgba(52, 142, 247, .18);
-  --radius: 14px;
-  --gap: 16px;
-}
-
-/* Text & links */
-body{ color: var(--ink); background: var(--bg); }
+/* Base text & links */
+body{ color:#0f172a; background:#ffffff; }
 a{ color: var(--brand-700); }
-a:hover{ color: var(--brand-600); text-decoration: underline; }
+a:hover{ color: var(--brand-800); text-decoration: underline; }
 
-/* Site title (Naturverse) */
-.site-title{ color: var(--brand-700); }
-
-/* Buttons */
-.btn{
-  display:inline-flex; align-items:center; justify-content:center;
-  border-radius:12px; padding:.75rem 1.25rem; font-weight:700;
-  border:1px solid transparent; transition:all .15s ease;
-}
-.btn-primary{
-  background: var(--brand-500); color:#fff; border-color: var(--brand-500);
-}
-.btn-primary:hover{ background: var(--brand-600); border-color: var(--brand-600); }
-.btn-outline{
-  background:#fff; color: var(--brand-700); border-color: var(--brand-300);
-}
-.btn-outline:hover{ background: var(--brand-50); border-color: var(--brand-500); color: var(--brand-700); }
-
-/* Cards (zones, marketplace, naturversity, etc.) */
-.card{
-  background:#fff;
-  border:1px solid var(--card-border);
-  border-radius: var(--radius);
-  box-shadow: 0 0 0 0 var(--card-ring);
-}
-.card:hover{ box-shadow: 0 0 0 4px var(--card-ring); }
-.card-header{ color: var(--brand-700); }
-.card-subtle{ background: var(--brand-25); }
-
-/* Section headings pop slightly blue */
-h1,h2,h3{ color: var(--brand-700); }
+/* Site title */
+.site-title{ color: var(--heading-color); }
 
 /* “pill” chips/tabs light blue */
 .pill{ background: var(--brand-50); border:1px solid var(--brand-200); color: var(--brand-700); }

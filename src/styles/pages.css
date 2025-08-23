@@ -1,0 +1,14 @@
+/* Shared page-level tweaks so headings never fall back to black */
+.page h1,
+.page h2 { color: var(--heading-color); }
+
+/* Link accents within feature lists */
+.feature-list a { color: var(--brand-700); }
+.feature-list a:hover { color: var(--brand-800); }
+
+/* Zones/Naturversity/Naturbank tiles keep a subtle blue outline */
+.tile {
+  box-shadow: 0 0 0 1px var(--card-ring);
+  border-radius: 14px;
+}
+.tile:hover { box-shadow: 0 0 0 2px var(--brand-200); }
