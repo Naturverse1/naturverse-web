@@ -46,7 +46,7 @@ import BankLearn from './pages/naturbank/Learn';
 import NavatarPage from './pages/Navatar';
 import Passport from './pages/Passport';
 import Turian from './routes/turian';
-import Profile from './pages/Profile';
+import ProfilePage from './pages/Profile';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
@@ -110,7 +110,7 @@ export const router = createBrowserRouter([
       { path: 'navatar', element: <NavatarPage /> },
       { path: 'passport', element: <Passport /> },
       { path: 'turian', element: <Turian /> },
-      { path: 'profile', element: <Profile /> },
+      { path: 'profile', element: <ProfilePage /> },
       { path: '404', element: <NotFound /> },
       { path: '*', element: <NotFound /> },
     ],
