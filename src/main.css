@@ -49,3 +49,8 @@ a.active {
 /* generic .button for 404/EB */
 .button { display:inline-block; padding:10px 14px; background:#0ea5e9; color:#fff; border-radius:10px; border:1px solid #0ea5e9; text-decoration:none; }
 .button:hover { filter: brightness(0.95); }
+
+/* not-found / error styles */
+.page .btn { padding:10px 14px; border-radius:10px; background:#0ea5e9; color:#fff; border:1px solid #0ea5e9; font-weight:700; }
+.page .btn:hover { filter: brightness(0.95); }
+.page .muted { color:#6b7280; }
