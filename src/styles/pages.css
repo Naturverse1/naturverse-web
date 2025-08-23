@@ -63,3 +63,27 @@
     grid-template-columns: repeat(3, 1fr);
   }
 }
+
+/* ---------- Lazy-fade helpers ---------- */
+.fade-in {
+  opacity: 0;
+  transform: translateY(8px);
+  will-change: opacity, transform;
+  transition:
+    opacity 280ms ease-out,
+    transform 280ms ease-out;
+}
+
+.fade-in.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Reduce/disable motion for those who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .fade-in {
+    opacity: 1;
+    transform: none;
+    transition: none;
+  }
+}

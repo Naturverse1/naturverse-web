@@ -1,4 +1,5 @@
 import React from "react";
+import { useFadeInOnIntersect } from "../../../components/useFadeInOnIntersect";
 
 const LANG_CARDS = [
   {
@@ -46,21 +47,25 @@ export default function LanguagesIndex() {
       <p>Phrasebooks for each kingdom.</p>
 
       <div className="cards-grid">
-        {LANG_CARDS.map((k) => (
-          <a key={k.slug} className="card" href={`/naturversity/languages/${k.slug}`}>
-          <img
-            src={k.cover}
-            alt=""
-            className="lang-hero"
-            loading="lazy"
-            decoding="async"
-          />
-            <div className="card-body">
-              <h3>{k.title}</h3>
-              <small>Native: {k.native}</small>
-            </div>
-          </a>
-        ))}
+        {LANG_CARDS.map((k) => {
+          const imgRef = useFadeInOnIntersect<HTMLImageElement>();
+          return (
+            <a key={k.slug} className="card" href={`/naturversity/languages/${k.slug}`}>
+              <img
+                ref={imgRef}
+                className="lang-hero fade-in"
+                src={k.cover}
+                alt=""
+                loading="lazy"
+                decoding="async"
+              />
+              <div className="card-body">
+                <h3>{k.title}</h3>
+                <small>Native: {k.native}</small>
+              </div>
+            </a>
+          );
+        })}
       </div>
     </section>
   );

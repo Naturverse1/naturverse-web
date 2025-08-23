@@ -1,5 +1,6 @@
 import React from "react";
 import { useParams } from "react-router-dom";
+import { useFadeInOnIntersect } from "../../../components/useFadeInOnIntersect";
 
 const IMAGES: Record<string, { hero: string; spot: string; title: string; native: string }> = {
   thailandia: {
@@ -46,6 +47,9 @@ export default function LanguageDetail() {
 
   if (!data) return <p>Language not found.</p>;
 
+  const heroRef = useFadeInOnIntersect<HTMLImageElement>();
+  const spotRef = useFadeInOnIntersect<HTMLImageElement>();
+
   return (
     <article>
       <nav className="breadcrumb">
@@ -59,10 +63,11 @@ export default function LanguageDetail() {
       <p>Learn greetings, alphabet basics, and common phrases for {data.title.split(' ')[0]}.</p>
 
       <img
+        ref={heroRef}
+        className="lang-hero fade-in"
         src={data.hero}
         alt=""
-        className="lang-hero"
-        loading="eager"
+        loading="lazy"
         decoding="async"
       />
 
@@ -75,9 +80,10 @@ export default function LanguageDetail() {
       </section>
 
       <img
+        ref={spotRef}
+        className="lang-spot fade-in"
         src={data.spot}
         alt=""
-        className="lang-spot"
         loading="lazy"
         decoding="async"
       />
