@@ -94,7 +94,7 @@ export default function TurianPage() {
       </div>
 
       {!hasHistory && (
-        <div className="turian-suggestions">
+        <div className="turian-suggestions turian-quests">
           {groupedSuggestions.map(group => (
             <div className="turian-card" key={group.section}>
               <div className="turian-card-h">
