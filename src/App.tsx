@@ -4,6 +4,7 @@ import { router } from './router';
 import { CartProvider } from './hooks/useCart';
 import CartDrawer from './components/cart/CartDrawer';
 import { organizationLd, websiteLd } from './lib/jsonld';
+import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
   useEffect(() => {
@@ -23,7 +24,11 @@ export default function App() {
         dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
       />
       <CartProvider>
-        <RouterProvider router={router} />
+        <ErrorBoundary>
+          <div id="main">
+            <RouterProvider router={router} />
+          </div>
+        </ErrorBoundary>
         <CartDrawer />
       </CartProvider>
     </>

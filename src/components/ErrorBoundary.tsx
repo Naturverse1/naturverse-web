@@ -1,35 +1,20 @@
 import React from "react";
 
-type State = { hasError: boolean; message?: string };
+type State = { hasError: boolean };
 
 export default class ErrorBoundary extends React.Component<React.PropsWithChildren, State> {
   state: State = { hasError: false };
-
-  static getDerivedStateFromError(err: unknown): State {
-    return { hasError: true, message: err instanceof Error ? err.message : String(err) };
-  }
-
-  componentDidCatch(err: unknown, info: unknown) {
-    // optional: console log so we don't white screen silently
-    console.error("App crashed:", err, info);
-  }
-
+  static getDerivedStateFromError() { return { hasError: true }; }
+  componentDidCatch(err: any) { console.error("ErrorBoundary", err); }
   render() {
     if (this.state.hasError) {
       return (
-        <div id="main" className="page" style={{ maxWidth: 900, margin: "24px auto" }}>
+        <main style={{maxWidth:900,margin:"0 auto",padding:20}}>
           <h1>Something went wrong</h1>
-          <p className="muted">Please try again or go back to the homepage.</p>
-          {this.state.message && (
-            <pre style={{ background:"#fff", border:"1px solid #e5e7eb", padding:12, borderRadius:12, overflow:"auto" }}>
-              {this.state.message}
-            </pre>
-          )}
-          <a className="btn" href="/">← Back to Home</a>
-        </div>
+          <p>Please refresh the page. If this continues, return <a href="/">home</a>.</p>
+        </main>
       );
     }
     return this.props.children;
   }
 }
-

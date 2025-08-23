@@ -1,18 +1,11 @@
-import React, { useEffect } from "react";
+import React from "react";
 
 export default function NotFound() {
-  useEffect(() => {
-    document.title = "Naturverse — Page not found";
-    const m = document.querySelector('meta[name="description"]');
-    if (m) m.setAttribute("content", "This page could not be found.");
-  }, []);
-
   return (
-    <div id="main" className="page" style={{ maxWidth: 900, margin: "24px auto" }}>
-      <h1>404 — Not found</h1>
-      <p className="muted">Looks like this trail doesn’t exist yet.</p>
-      <a className="btn" href="/">← Back to Home</a>
-    </div>
+    <main style={{maxWidth:900,margin:"0 auto",padding:20}}>
+      <h1>Page not found</h1>
+      <p>The page you’re looking for doesn’t exist.</p>
+      <a className="btn" href="/">Back to Home</a>
+    </main>
   );
 }
-

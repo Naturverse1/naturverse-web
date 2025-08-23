@@ -19,6 +19,7 @@
 @import "./styles/naturbank.css";
 @import "./styles/passport.css";
 @import "./styles/bank.css";
+@import "./styles/polish.css";
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
