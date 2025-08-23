@@ -1,8 +1,8 @@
 /* compact, numberless breadcrumbs */
 .crumbs {
-  margin: 4px 0 12px;
-  color: var(--nv-text-muted);
-  font-size: 14px;
+  margin: 2px 0 12px;
+  color:#475569;
+  font-size:14px;
 }
 .crumbs ol {
   list-style: none;

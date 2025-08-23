@@ -81,7 +81,7 @@ export default function TurianPage() {
 
   return (
     <>
-      <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet.">
+        <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet." crumbs={[{ href:"/", label:"Home" }, { label:"Turian" }]}>
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
         {mascotSrc ? (

@@ -1,25 +1,28 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
-import Img from "./Img";
+import SafeImg from "./SafeImg";
+
+const isActive = (href: string) => typeof window !== "undefined" && window.location.pathname === href;
 
 export default function Nav() {
   return (
     <>
       <a href="#main-content" className="visually-hidden-focusable">Skip to content</a>
-      <nav className="topnav container">
-        <a href="/" aria-label="Naturverse Home" className="brand">
-          <Img src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
-        </a>
-        <div className="links">
-          <NavLink to="/worlds" className={({isActive})=>`nav${isActive?' active':''}`}>Worlds</NavLink>
-          <NavLink to="/zones" className={({isActive})=>`nav${isActive?' active':''}`}>Zones</NavLink>
-          <NavLink to="/marketplace" className={({isActive})=>`nav${isActive?' active':''}`}>Marketplace</NavLink>
-          <NavLink to="/naturversity" className={({isActive})=>`nav${isActive?' active':''}`}>Naturversity</NavLink>
-          <NavLink to="/passport" className={({isActive})=>`nav${isActive?' active':''}`}>Passport</NavLink>
-          <NavLink to="/profile" className={({isActive})=>`nav${isActive?' active':''}`}>Profile</NavLink>
-          {/* ...rest unchanged */}
-        </div>
-      </nav>
-    </>
-  );
-}
+        <nav className="topnav container">
+          <a href="/" aria-label="Naturverse Home" className={`toplink brand ${isActive("/") ? "active" : ""}`}>
+            <SafeImg src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
+          </a>
+          <div className="links">
+            <a href="/worlds" className={`toplink ${isActive("/worlds") ? "active" : ""}`}>Worlds</a>
+            <a href="/zones" className={`toplink ${isActive("/zones") ? "active" : ""}`}>Zones</a>
+            <a href="/marketplace" className={`toplink ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</a>
+            <a href="/naturversity" className={`toplink ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</a>
+            <a href="/naturbank" className={`toplink ${isActive("/naturbank") ? "active" : ""}`}>Naturbank</a>
+            <a href="/navatar" className={`toplink ${isActive("/navatar") ? "active" : ""}`}>Navatar</a>
+            <a href="/passport" className={`toplink ${isActive("/passport") ? "active" : ""}`}>Passport</a>
+            <a href="/turian" className={`toplink ${isActive("/turian") ? "active" : ""}`}>Turian</a>
+            <a href="/profile" className={`toplink ${isActive("/profile") ? "active" : ""}`}>Profile</a>
+          </div>
+        </nav>
+      </>
+    );
+  }

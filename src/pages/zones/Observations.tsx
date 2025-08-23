@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { Breadcrumbs } from '../../components/Breadcrumbs';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import PhotoUploader from '../../components/PhotoUploader';
 import { Img } from '../../components';
 import { Observation } from '../../lib/observations/types';
@@ -145,8 +145,9 @@ export default function Observations() {
   }, [list]);
 
   return (
-    <main id="main">
-      <Breadcrumbs />
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Observations" }]} />
+      <main id="main">
       <h1>📷🌿 Observations</h1>
       <p>Upload nature pics; tag, learn, earn. (Local & offline; data stays in your browser.)</p>
 
@@ -341,6 +342,7 @@ export default function Observations() {
           </ul>
         </section>
       )}
-    </main>
+      </main>
+    </div>
   );
 }

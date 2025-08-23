@@ -1,6 +1,12 @@
 import React from "react";
 import WorldLayout from "../../components/WorldLayout";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function ChilandiaPage() {
-  return <WorldLayout id="chilandia" />;
+  return (
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/worlds", label:"Worlds" }, { label:"Chilandia" }]} />
+      <WorldLayout id="chilandia" />
+    </div>
+  );
 }

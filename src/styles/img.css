@@ -1,0 +1,4 @@
+.img-fallback {
+  background: repeating-linear-gradient(45deg, #eaf2ff, #eaf2ff 10px, #fff 10px, #fff 20px);
+  border-radius: 10px;
+}

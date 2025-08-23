@@ -30,8 +30,8 @@ export default function PassportPage() {
   const earnXP = (n: number) => { addXP(n); setXp(getXP()); };
   const earnNatur = (n: number) => { addNatur(n); setNatur(getNatur()); };
 
-  return (
-    <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin.">
+    return (
+      <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href:"/", label:"Home" }, { label:"Passport" }]}>
       {/* Identity / Navatar */}
       <div className="passport-id">
         <div className="avatar">

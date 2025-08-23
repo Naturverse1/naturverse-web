@@ -1,12 +1,15 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function NaturversityPage() {
   return (
-    <>
-      <main id="main">
-        <h1>Naturversity</h1>
-        <p className="muted">Teachers, partners, and courses.</p>
+      <>
+        <div className="page-wrap">
+          <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Naturversity" }]} />
+          <main id="main">
+          <h1>Naturversity</h1>
+          <p className="muted">Teachers, partners, and courses.</p>
 
         <HubGrid
           items={[
@@ -23,13 +26,14 @@ export default function NaturversityPage() {
               title: "Languages",
               desc: "Phrasebooks for each kingdom.",
               icon: (
-                <img
-                  src="/assets/amerilandia/flag.png"
-                  alt=""
-                  width={24}
-                  height={16}
-                  style={{ borderRadius: 3 }}
-                />
+                  <img
+                    src="/assets/amerilandia/flag.png"
+                    alt=""
+                    width={24}
+                    height={16}
+                    loading="lazy"
+                    style={{ borderRadius: 3 }}
+                  />
               ),
             },
           ]}
@@ -38,7 +42,8 @@ export default function NaturversityPage() {
         <p className="muted" style={{ marginTop: 12 }}>
           Coming soon: AI tutors and step-by-step lessons.
         </p>
-      </main>
-    </>
+          </main>
+        </div>
+      </>
   );
 }

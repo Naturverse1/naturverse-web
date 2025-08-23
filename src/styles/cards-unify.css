@@ -14,12 +14,14 @@
   text-decoration: none;
   color: inherit;
 }
-.card img {
-  width: 100%;
-  aspect-ratio: 16/10;
-  object-fit: cover;
-  border-radius: 12px;
-}
+.cards .card img {
+    width: 100%;
+    height: auto;
+    display: block;
+    aspect-ratio: 16/9;
+    object-fit: cover;
+    border-radius: 10px;
+  }
 .card h2 {
   font-size: 18px;
   margin: 10px 0 4px;
