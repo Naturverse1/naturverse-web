@@ -1,7 +1,7 @@
 import React from "react";
 import { KINGDOMS, KingdomId, imgUrl } from "../data/kingdoms";
 import "../styles/worlds.css";
-import ImageSmart from "./ImageSmart";
+import SmartImg from "./SmartImg";
 
 type Props = { id: KingdomId };
 
@@ -10,18 +10,19 @@ export default function WorldLayout({ id }: Props) {
   const folder = k.title; // TitleCase matches your public folder name
 
   return (
-    <main id="main" className="world-wrap">
+    <main id="main" className="world-wrap container-narrow world-page">
       <h1 className="world-title">{k.title}</h1>
 
       {/* Map hero */}
       <section className="world-hero card">
         <figure className="hero-figure">
-          <ImageSmart
+          <SmartImg
             src={imgUrl(folder, k.mapFile)}
             alt={`${k.title} map`}
+            ratio="wide"
             width={1280}
             height={720}
-            priority
+            loading="eager"
           />
         </figure>
         <div className="hero-meta">
@@ -40,9 +41,10 @@ export default function WorldLayout({ id }: Props) {
             {k.characters.map((file) => (
               <li key={file} className="char-card">
                 <div className="char-thumb">
-                  <ImageSmart
+                  <SmartImg
                     src={imgUrl(folder, file)}
                     alt={file.replace(/\.[^.]+$/, "")}
+                    ratio="tall"
                     width={320}
                     height={420}
                     onError={(e) => {

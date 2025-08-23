@@ -3,8 +3,8 @@
 @import './styles/cart.css';
 @import './styles/footer.css';
 @import './styles/home.css';
-@import './styles/skeleton.css';
 @import './styles/cards-unify.css';
+@import './styles/skeleton.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
