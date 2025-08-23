@@ -2,10 +2,12 @@ import { Link, NavLink } from 'react-router-dom';
 import { useState } from 'react';
 import './site-header.css';
 import Img from './Img';
-import AuthMenu from './AuthMenu';
+import { useAuthUser } from '../lib/useAuthUser';
+import UserChip from './UserChip';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
+  const { user, loading } = useAuthUser();
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="wrap">
@@ -76,14 +78,6 @@ export default function SiteHeader() {
             Turian
           </NavLink>
           <NavLink
-            to="/profile"
-            aria-label="Profile"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link') + ' icon'}
-            onClick={() => setOpen(false)}
-          >
-            👤
-          </NavLink>
-          <NavLink
             to="/cart"
             aria-label="Cart"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link') + ' icon'}
@@ -91,7 +85,15 @@ export default function SiteHeader() {
           >
             🛒
           </NavLink>
-          <AuthMenu />
+          {loading ? (
+            <span style={{ opacity: 0.7 }}>…</span>
+          ) : user ? (
+            <UserChip email={user.email} />
+          ) : (
+            <a className="btn" href="/login">
+              Sign in
+            </a>
+          )}
         </nav>
       </div>
     </header>
