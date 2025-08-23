@@ -1,6 +1,13 @@
-.passport-page { max-width: 640px; margin: auto; }
-.passport-page .btn { margin: 12px 0; }
-.stamps { margin-top: 16px; display: grid; gap: 12px; }
-.stamp { padding: 12px; border: 1px solid #ddd; border-radius: 8px; }
-.stamp h3 { margin: 0; }
-.stamp span { opacity: .6; font-size: 12px; }
+.passport { max-width: 960px; margin: 0 auto; padding: 20px; }
+.stamp-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 12px; }
+.stamp { border: 1px solid #cfe8ff; background: #eff7ff; border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 8px; }
+.stamp.earned { background: #e9fce9; border-color: #b9e5b9; }
+.stamp.locked { opacity: 0.95; }
+.stamp-title { font-weight: 800; }
+.stamp-mark { font-size: 28px; }
+.stamp-list ul { list-style: none; padding: 0; }
+.stamp-list li { padding: 6px 0; border-bottom: 1px solid #eee; }
+.btn.tiny { padding: 6px 10px; font-size: 13px; border-radius: 8px; }
+.btn.outline { background: #fff; color: #0ea5e9; border: 1px solid #0ea5e9; }
+.muted { color: #6b7280; }
+
