@@ -63,7 +63,7 @@ export default function Zones() {
   return (
     <main className="container">
       <div className="breadcrumb">Home / Zones</div>
-      <h2 className="section-title">Zones</h2>
+      <h1 className="page-title text-brand">Zones</h1>
       <p className="section-lead">Pick a zone to start an activity.</p>
 
       <HubGrid>

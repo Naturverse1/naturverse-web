@@ -2,6 +2,11 @@
 @import './typography.css';
 @import './components.css';
 
+:root {
+  /* readable text on brand surfaces */
+  --on-brand: #ffffff;
+}
+
 /* Base text & links */
 body{ color:#0f172a; background:#ffffff; }
 a{ color: var(--brand-700); }
@@ -12,3 +17,48 @@ a:hover{ color: var(--brand-800); text-decoration: underline; }
 
 /* “pill” chips/tabs light blue */
 .pill{ background: var(--brand-50); border:1px solid var(--brand-200); color: var(--brand-700); }
+
+/* --- Buttons ------------------------------------------------------------ */
+.btn-primary {
+  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
+  border-color: var(--brand-600);
+  color: var(--on-brand);
+}
+.btn-primary:hover {
+  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
+  filter: brightness(.98);
+  color: var(--on-brand);
+}
+
+/* --- Cards / pills that use the blue brand background ------------------- */
+[data-surface="brand"] {
+  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
+  border-color: var(--brand-600);
+  color: var(--on-brand);
+}
+[data-surface="brand"] a,
+[data-surface="brand"] .link {
+  color: var(--on-brand);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+/* Common “chip/pill” styles that we turned blue earlier */
+.pill.is-brand,
+.chip.is-brand,
+.tag.is-brand,
+.stamp.is-brand,
+.suggestion.is-brand,
+.card.is-brand {
+  background: linear-gradient(180deg, var(--brand-400), var(--brand-600));
+  border-color: var(--brand-600);
+  color: var(--on-brand);
+}
+
+/* --- Section titles (make the H1s consistently Naturverse blue) --------- */
+.page-title {
+  color: var(--brand-700);
+}
+
+/* Utility so we can blue a heading without changing layout/components */
+.text-brand { color: var(--brand-700); }
