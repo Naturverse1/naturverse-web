@@ -1,13 +1,8 @@
 import React from "react";
 import { HubGrid } from "../components/HubGrid";
-import { ld, breadcrumbsLd, itemListLd } from "../lib/jsonld";
+import { breadcrumbs } from "../lib/jsonld";
 
 const labels = { '/marketplace': 'Marketplace' };
-const items = [
-  { name: 'Catalog', path: '/marketplace/catalog' },
-  { name: 'Wishlist', path: '/marketplace/wishlist' },
-  { name: 'Checkout', path: '/marketplace/checkout' },
-];
 
 export default function MarketplacePage() {
   return (
@@ -31,11 +26,11 @@ export default function MarketplacePage() {
 
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={ld(breadcrumbsLd('/marketplace', labels))}
-      />
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={ld(itemListLd('Marketplace', items))}
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(
+            breadcrumbs('/marketplace', labels)
+          ),
+        }}
       />
     </>
   );
