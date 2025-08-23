@@ -18,6 +18,20 @@ export default function NaturversityPage() {
               desc: "Nature, art, music, wellness, crypto basics.",
               icon: "📚",
             },
+            {
+              to: "/naturversity/languages",
+              title: "Languages",
+              desc: "Phrasebooks for each kingdom.",
+              icon: (
+                <img
+                  src="/assets/amerilandia/flag.png"
+                  alt=""
+                  width={24}
+                  height={16}
+                  style={{ borderRadius: 3 }}
+                />
+              ),
+            },
           ]}
         />
 
