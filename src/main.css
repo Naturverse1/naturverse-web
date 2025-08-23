@@ -7,6 +7,7 @@
 @import './styles/skeleton.css';
 @import './styles/auth-menu.css';
 @import './styles/buttons.css';
+@import './styles/languages.css';
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,
