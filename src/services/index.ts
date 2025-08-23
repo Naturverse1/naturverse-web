@@ -5,3 +5,4 @@ export * from '../lib/mappers';
 export * from '../lib/storage';
 export * from '../lib/auth';
 export * from '../lib/queries';
+export * from '../lib/xp';
