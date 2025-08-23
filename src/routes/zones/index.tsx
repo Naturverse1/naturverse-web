@@ -64,7 +64,7 @@ const ZONES = [
 
 export default function Zones() {
   return (
-    <>
+    <div className="container-narrow">
       <Seo
         title="Zones"
         description="Pick a zone to start games, music, wellness, and more."
@@ -89,6 +89,6 @@ export default function Zones() {
           ),
         }}
       />
-    </>
+    </div>
   );
 }

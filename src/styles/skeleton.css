@@ -1,31 +1,27 @@
-.card.sk {
-  background: #fff;
-  border: 1px solid var(--nv-border);
+/* container */
+.container-narrow { max-width: 1100px; margin: 0 auto; padding: 0 16px; }
+
+/* SmartImg skeletons */
+.smartimg { position: relative; display: block; width: 100%; overflow: hidden; background: #e6f0ff; }
+.smartimg.rounded { border-radius: 14px; }
+.smartimg.square { aspect-ratio: 1 / 1; }
+.smartimg.wide   { aspect-ratio: 16 / 9; }
+.smartimg.tall   { aspect-ratio: 3 / 4; }
+
+.smartimg-img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.smartimg-skel {
+  position: absolute; inset: 0;
+  background: linear-gradient(90deg, #e6f0ff 0%, #f3f6ff 50%, #e6f0ff 100%);
+  animation: skel 1.2s infinite;
 }
-.sk-thumb {
-  width: 100%;
-  aspect-ratio: 16/10;
-  border-radius: 12px;
-  background: linear-gradient(90deg, var(--nv-blue-50) 25%, #e2e8f0 37%, var(--nv-blue-50) 63%);
-  background-size: 400% 100%;
-  animation: sh 1.2s infinite;
+.smartimg.is-loaded .smartimg-skel { display: none; }
+
+@keyframes skel {
+  0% { transform: translateX(-30%); }
+  100% { transform: translateX(30%); }
 }
-.sk-line {
-  height: 14px;
-  margin: 10px 0;
-  border-radius: 8px;
-  background: linear-gradient(90deg, var(--nv-blue-50) 25%, #e2e8f0 37%, var(--nv-blue-50) 63%);
-  background-size: 400% 100%;
-  animation: sh 1.2s infinite;
-}
-.sk-line.small {
-  width: 60%;
-}
-@keyframes sh {
-  0% {
-    background-position: 100% 50%;
-  }
-  100% {
-    background-position: 0 50%;
-  }
-}
+
+/* unify card grids (keeps your existing look) */
+.cards { display: grid; gap: 16px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.card  { background: #ffffff; border: 1px solid #dbeafe; border-radius: 14px; padding: 12px; }
+.card h2 { margin: 10px 0 6px; }

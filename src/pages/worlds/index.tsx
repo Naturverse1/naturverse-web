@@ -1,25 +1,24 @@
 import React from "react";
 import { WORLDS } from "../../data/worlds";
 import Meta from "../../components/Meta";
-import Page from "../../layouts/Page";
 import { Breadcrumbs } from "../../components/Breadcrumbs";
-import ImageSmart from "../../components/ImageSmart";
+import SmartImg from "../../components/SmartImg";
 
 export default function WorldsIndex() {
   return (
-    <Page title="Worlds">
+    <div className="container-narrow">
       <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." url="https://thenaturverse.com/worlds" />
       <Breadcrumbs />
       <p className="muted">Choose a kingdom to explore.</p>
       <div className="cards">
-        {WORLDS.map(w => (
+        {WORLDS.map((w) => (
           <a className="card" key={w.slug} href={`/worlds/${w.slug}`}>
-            <ImageSmart src={w.map} alt={`${w.name} map`} />
+            <SmartImg src={w.map} alt={`${w.name} map`} ratio="wide" />
             <h2>{w.name}</h2>
             <p>{w.blurb}</p>
           </a>
         ))}
       </div>
-    </Page>
+    </div>
   );
 }
