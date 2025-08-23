@@ -3,6 +3,7 @@ import { getCurrent } from "../lib/navatar/store";
 import type { Badge } from "../lib/passport/store";
 import { getStamps, toggleStamp, getBadges, addBadge, getXP, addXP, getNatur, addNatur } from "../lib/passport/store";
 import Page from "../components/Page";
+import ImageSmart from "../components/ImageSmart";
 
 const KINGDOMS = [
   "Thailandia","Brazilandia","Indillandia","Amerilandia",
@@ -34,7 +35,7 @@ export default function PassportPage() {
       {/* Identity / Navatar */}
       <div className="passport-id">
         <div className="avatar">
-          {nav?.photo ? <img src={nav.photo} alt="" /> : <span className="emoji">{nav?.emoji || "🪪"}</span>}
+          {nav?.photo ? <ImageSmart src={nav.photo} alt="" /> : <span className="emoji">{nav?.emoji || "🪪"}</span>}
         </div>
         <div className="id-text">
           <div className="name">{nav?.name || "Explorer"}</div>

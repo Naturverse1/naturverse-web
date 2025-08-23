@@ -1,5 +1,6 @@
 import React from "react";
 import type { Navatar } from "../types/navatar";
+import ImageSmart from "./ImageSmart";
 
 type Props = { navatar: Navatar };
 
@@ -17,7 +18,7 @@ export default function NavatarCard({ navatar }: Props) {
 
       <div className="card__media">
         {navatar.imageDataUrl ? (
-          <img src={navatar.imageDataUrl} alt={`${navatar.name || navatar.species}`} />
+          <ImageSmart src={navatar.imageDataUrl} alt={`${navatar.name || navatar.species}`} />
         ) : (
           <div className="card__placeholder" aria-label="No photo">No photo</div>
         )}

@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useCart } from "../../hooks/useCart";
+import ImageSmart from "../../components/ImageSmart";
 
 const money = (cents: number) => `$${(cents/100).toFixed(2)}`;
 
@@ -20,7 +21,7 @@ export default function CheckoutPage() {
           <ul className="cart-list">
             {cart.state.items.map(it => (
               <li key={`${it.id}:${it.variant || ""}`} className="cart-row">
-                <img src={it.image || "/placeholders/box.png"} alt={it.name}/>
+                <ImageSmart src={it.image || "/placeholders/box.png"} alt={it.name}/>
                 <div className="meta">
                   <strong>{it.name}</strong>
                   {it.variant && <div className="muted">{it.variant}</div>}
