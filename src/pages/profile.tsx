@@ -1,5 +1,6 @@
 import { useEffect, useState, useRef } from "react";
 import { supabase } from "../lib/supabaseClient";
+import LazyImg from "../components/LazyImg";
 
 type Profile = {
   id: string;
@@ -135,7 +136,7 @@ export default function ProfilePage() {
             <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
               <input ref={fileRef} type="file" accept="image/*" />
               {profile?.photo_url ? (
-                <img
+                <LazyImg
                   src={profile.photo_url}
                   alt="Avatar preview"
                   width={56}

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { supabase } from '../lib/supabaseClient';
+import LazyImg from './LazyImg';
 
 export default function UserChip({ email }: { email?: string | null }) {
   const [open, setOpen] = useState(false);
@@ -21,7 +22,7 @@ export default function UserChip({ email }: { email?: string | null }) {
         className="btn"
         style={{ display: 'inline-flex', alignItems: 'center', gap: 8, paddingInline: 10 }}
       >
-        <img
+        <LazyImg
           src="/favicon.svg"
           alt="Avatar"
           width={20}

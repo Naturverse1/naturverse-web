@@ -11,10 +11,10 @@ type Item = {
 export function HubGrid({ items, children }: { items?: Item[]; children?: React.ReactNode }) {
   if (items) {
     return (
-      <div className="hub-grid">
+      <div className="cards">
         {items.map((it, i) =>
           it.to ? (
-            <Link key={i} to={it.to} className="hub-card card">
+            <Link key={i} to={it.to} className="card">
               <strong className="hub-card-title card-title">
                 {it.icon && (
                   <span className="hub-ico emoji" aria-hidden>
@@ -26,7 +26,7 @@ export function HubGrid({ items, children }: { items?: Item[]; children?: React.
               {it.desc && <span className="hub-card-desc">{it.desc}</span>}
             </Link>
           ) : (
-            <div key={i} className="hub-card card">
+            <div key={i} className="card">
               <strong className="hub-card-title card-title">
                 {it.icon && (
                   <span className="hub-ico emoji" aria-hidden>
@@ -43,7 +43,7 @@ export function HubGrid({ items, children }: { items?: Item[]; children?: React.
     );
   }
 
-  return <div className="hub-grid">{children}</div>;
+  return <div className="cards">{children}</div>;
 }
 
 export default HubGrid;

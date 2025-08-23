@@ -27,5 +27,5 @@ export function Card({ href, title, subtitle, image }: CardProps) {
 }
 
 export default function CardGrid({ children }: { children: React.ReactNode }) {
-  return <div className="grid">{children}</div>;
+  return <div className="cards">{children}</div>;
 }
