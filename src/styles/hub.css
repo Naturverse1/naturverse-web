@@ -17,11 +17,12 @@
 }
 .hub-card:hover{ box-shadow:0 2px 10px rgba(2,6,23,.06); border-color:#dbe0e6; }
 .hub-card-title{
-  font-weight:800;
   font-size:18px;
-  color:#0f172a;
-  display:flex; align-items:center; gap:10px;
+  display:flex;
+  align-items:center;
+  gap:10px;
 }
+.hub-card-title .emoji{ margin-right:0 !important; }
 .hub-card-desc{ color:#475569; font-size:14px; }
 .hub-ico{ font-size:22px; line-height:1; }
 @media (max-width: 480px){

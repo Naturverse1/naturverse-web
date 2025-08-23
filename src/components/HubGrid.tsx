@@ -15,18 +15,26 @@ export function HubGrid({ items, children }: { items?: Item[]; children?: React.
         {items.map((it, i) =>
           it.to ? (
             <Link key={i} to={it.to} className="hub-card card">
-              <span className="hub-card-title card-header">
-                {it.icon && <span className="hub-ico">{it.icon}</span>}
+              <strong className="hub-card-title card-title">
+                {it.icon && (
+                  <span className="hub-ico emoji" aria-hidden>
+                    {it.icon}
+                  </span>
+                )}
                 {it.title}
-              </span>
+              </strong>
               {it.desc && <span className="hub-card-desc">{it.desc}</span>}
             </Link>
           ) : (
             <div key={i} className="hub-card card">
-              <span className="hub-card-title card-header">
-                {it.icon && <span className="hub-ico">{it.icon}</span>}
+              <strong className="hub-card-title card-title">
+                {it.icon && (
+                  <span className="hub-ico emoji" aria-hidden>
+                    {it.icon}
+                  </span>
+                )}
                 {it.title}
-              </span>
+              </strong>
               {it.desc && <span className="hub-card-desc">{it.desc}</span>}
             </div>
           )
