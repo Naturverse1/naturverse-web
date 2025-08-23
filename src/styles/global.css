@@ -57,40 +57,6 @@ h3 {
   border-color: transparent;
 }
 
-/* Primary & secondary buttons – reused across pages */
-.btn,
-.button,
-button.nv-btn {
-  border-radius: 14px;
-  padding: 0.7rem 1rem;
-  font-weight: 700;
-  line-height: 1.1;
-  border: 1px solid var(--nv-border);
-  background: var(--nv-card);
-  color: var(--nv-blue-700);
-  box-shadow: var(--nv-shadow);
-}
-.btn--primary,
-.button--primary,
-.nv-btn--primary {
-  background: linear-gradient(180deg, var(--nv-grad-start), var(--nv-grad-end));
-  color: var(--nv-accent-contrast);
-  border-color: transparent;
-}
-.btn--primary:hover {
-  filter: brightness(1.03);
-}
-.btn--primary:active {
-  filter: brightness(0.97);
-}
-
-/* Hover/active for neutral buttons */
-.btn:hover {
-  background: var(--nv-blue-50);
-}
-.btn:active {
-  background: var(--nv-blue-100);
-}
 
 /* Inputs & dashed demo areas */
 input,
@@ -142,3 +108,54 @@ textarea {
 .bg-surface {
   background: var(--nv-surface);
 }
+
+/* Language grid */
+.lang-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+.lang-card {
+  display: grid;
+  grid-template-columns: 96px 1fr;
+  gap: .75rem;
+  align-items: center;
+  padding: .875rem;
+  border: 1px solid rgba(0,0,0,.1);
+  border-radius: 14px;
+  background: #fff;
+}
+.lang-card img { border-radius: 12px; width:96px; height:96px; object-fit: cover; }
+
+/* Language hero */
+.lang-hero {
+  max-width: 880px;
+  width: 100%;
+  aspect-ratio: 16/10;
+  object-fit: cover;
+  border-radius: 16px;
+  display: block;
+  margin: 1rem 0 1.25rem;
+}
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: .65rem 1.05rem;
+  border: none;
+  border-radius: 12px;
+  background: #2563eb;
+  color: #fff;
+  font-weight: 600;
+  text-decoration: none;
+}
+.btn:hover { filter: brightness(0.95); }
+.btn-small { padding: .45rem .7rem; border-radius: 10px; font-size: .9rem; }
+
+/* Utilities */
+.container { max-width: 1024px; margin: 0 auto; padding: 0 16px; }
+.stack-md > *+* { margin-top: .75rem; }
+.muted { color: #6b7280; }
