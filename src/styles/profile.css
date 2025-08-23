@@ -96,3 +96,7 @@
 .muted {
   color: var(--nv-text-muted);
 }
+.profile-page .row { display: grid; gap: 6px; margin: 12px 0; }
+.profile-page label { font-weight: 600; }
+.profile-page .actions { margin-top: 16px; }
+.profile-page .meta { opacity: .6; font-size: 12px; margin-top: 8px; }
