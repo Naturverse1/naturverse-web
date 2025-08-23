@@ -8,8 +8,11 @@
     <!-- PWA + icons -->
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="manifest" href="/site.webmanifest" />
-    <meta name="theme-color" content="#2F7AE5" />
     <link rel="mask-icon" href="/favicon.svg" color="#2F7AE5" />
+
+    <!-- Naturverse: UI polish -->
+    <meta name="theme-color" content="#2F7AE5" />
+    <meta name="color-scheme" content="light" />
 
     <!-- Preload main CSS -->
     <link rel="preload" as="style" href="/src/styles/main.css" />
@@ -68,6 +71,7 @@
     ></script>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <div id="root"></div>
 
     <!-- Global, safe lazy-loading for any <img> without attrs -->
