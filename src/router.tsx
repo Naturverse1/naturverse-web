@@ -39,7 +39,12 @@ import Partners from './pages/naturversity/Partners';
 import Courses from './pages/naturversity/Courses';
 import CourseDetail from './pages/naturversity/CourseDetail';
 import LanguagesHub from './pages/naturversity/languages';
-import LanguageDetail from './pages/naturversity/languages/[slug]';
+import ThailandiaLang from './pages/naturversity/languages/thailandia';
+import ChinadiaLang from './pages/naturversity/languages/chinadia';
+import IndillandiaLang from './pages/naturversity/languages/indillandia';
+import BrazilandiaLang from './pages/naturversity/languages/brazilandia';
+import AustralandiaLang from './pages/naturversity/languages/australandia';
+import AmerilandiaLang from './pages/naturversity/languages/amerilandia';
 import NaturBankPage from './pages/naturbank';
 import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
@@ -101,7 +106,12 @@ export const router = createBrowserRouter([
       { path: 'naturversity/courses', element: <Courses /> },
       { path: 'naturversity/course/:slug', element: <CourseDetail /> },
       { path: 'naturversity/languages', element: <LanguagesHub /> },
-      { path: 'naturversity/languages/:slug', element: <LanguageDetail /> },
+      { path: 'naturversity/languages/thailandia', element: <ThailandiaLang /> },
+      { path: 'naturversity/languages/chinadia', element: <ChinadiaLang /> },
+      { path: 'naturversity/languages/indillandia', element: <IndillandiaLang /> },
+      { path: 'naturversity/languages/brazilandia', element: <BrazilandiaLang /> },
+      { path: 'naturversity/languages/australandia', element: <AustralandiaLang /> },
+      { path: 'naturversity/languages/amerilandia', element: <AmerilandiaLang /> },
       { path: 'naturbank', element: <NaturBankPage /> },
       { path: 'naturbank/wallet', element: <BankWallet /> },
       { path: 'naturbank/natur', element: <BankToken /> },
