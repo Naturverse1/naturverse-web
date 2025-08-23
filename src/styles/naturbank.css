@@ -1,4 +1,4 @@
-.naturbank-page { max-width: 640px; margin: auto; }
+.naturbank-page { max-width: 640px; margin: auto; padding: 20px; }
 .naturbank-page .btn { margin: 12px 0; }
 .naturbank-page .txs ul { list-style: none; padding: 0; }
 .naturbank-page .txs li { padding: 6px 0; border-bottom: 1px solid #eee; }
