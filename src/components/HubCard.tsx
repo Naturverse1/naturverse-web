@@ -10,12 +10,12 @@ type HubCardProps = {
 export default function HubCard({ to, emoji, title, sub }: HubCardProps) {
   return (
     <Link to={to} className="hub-card card" aria-label={`${title}${sub ? ` – ${sub}` : ''}`}>
-      <div className="hub-title card-header">
-        <span className="hub-emoji" aria-hidden>
+      <strong className="hub-card-title card-title">
+        <span className="hub-ico emoji" aria-hidden>
           {emoji}
         </span>
-        <span>{title}</span>
-      </div>
+        {title}
+      </strong>
       {sub ? <div className="hub-sub">{sub}</div> : null}
     </Link>
   );

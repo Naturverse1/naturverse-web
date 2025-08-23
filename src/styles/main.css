@@ -3,8 +3,32 @@
 @import './components.css';
 
 :root {
+  /* brand blues already defined in your theme */
+  /* fallback in case they aren't */
+  --brand-700: #1e40af; /* deep blue */
+  --brand-600: #2563eb; /* primary blue */
+
   /* readable text on brand surfaces */
   --on-brand: #ffffff;
+}
+
+/* --- Card title: consistent bold, brand-blue across app --- */
+.card-title{
+  font-weight: 700;
+  color: var(--brand-700);
+  line-height: 1.2;
+}
+.card-title .emoji{ margin-right: 8px; }
+/* Titles inside linked cards keep brand color */
+.card a .card-title,
+.card a:visited .card-title{
+  color: var(--brand-700);
+}
+/* Zones grid titles align nicely next to emoji */
+.zones .card .card-title{
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
 }
 
 /* Base text & links */
@@ -62,3 +86,12 @@ a:hover{ color: var(--brand-800); text-decoration: underline; }
 
 /* Utility so we can blue a heading without changing layout/components */
 .text-brand { color: var(--brand-700); }
+
+/* --- Blue CTA buttons always have white label --- */
+.btn-primary,
+.btn-primary:visited{
+  color: #fff;
+}
+.btn-primary *{
+  color: inherit;
+}
