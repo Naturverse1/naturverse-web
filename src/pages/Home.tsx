@@ -8,8 +8,12 @@ import { Img } from "../components";
 export default function Home() {
   return (
     <Page>
-      <Meta title="Naturverse — Playful worlds for families"
-            description="A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness." />
+      <Meta
+        title="Naturverse — Learn & Play Across 14 Magical Kingdoms"
+        description="Explore worlds, play games, create your Navatar, and learn with Naturversity."
+        image="/og-home.png"
+        url="https://naturverse.netlify.app/"
+      />
       <div className="home">
       {/* Hero */}
       <header className="home-hero">

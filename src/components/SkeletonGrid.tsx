@@ -1,13 +1,13 @@
 import React from "react";
 
-export default function SkeletonGrid({ rows = 6 }: { rows?: number }) {
+export default function SkeletonGrid({ count = 6 }: { count?: number }) {
   return (
     <div className="cards">
-      {Array.from({ length: rows }).map((_, i) => (
-        <div className="card skeleton" key={i} aria-hidden="true">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="card skeleton">
           <div className="sk-img" />
           <div className="sk-line" />
-          <div className="sk-line short" />
+          <div className="sk-line small" />
         </div>
       ))}
     </div>

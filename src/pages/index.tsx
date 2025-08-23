@@ -1,14 +1,16 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import Seo from "../components/Seo";
+import Meta from "../components/Meta";
 import { Img } from "../components";
 
 export default function Home() {
   return (
     <>
-      <Seo
-        title="Welcome"
-        description="Explore kingdoms, quests, and characters in the Naturverse."
+      <Meta
+        title="Naturverse — Learn & Play Across 14 Magical Kingdoms"
+        description="Explore worlds, play games, create your Navatar, and learn with Naturversity."
+        image="/og-home.png"
+        url="https://naturverse.netlify.app/"
       />
       <main id="main" className="home">
       {/* Hero */}
