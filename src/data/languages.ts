@@ -12,8 +12,7 @@ export const LANGUAGES: Language[] = [
     name: "Thailandia (Thai)",
     native: "ไทย",
     cover: "/Languages/Mangolanguagemainthai.png",
-    // You can swap this to a Thai-specific detail later if you add one.
-    detail: "/Languages/Turianlanguage.png",
+    detail: "/Languages/Turianlanguage.png", // Thai secondary
   },
   {
     id: "chinadia",
@@ -40,7 +39,6 @@ export const LANGUAGES: Language[] = [
     id: "australandia",
     name: "Australandia (English)",
     native: "English",
-    // You uploaded both a koala and a bird—use koala as card cover.
     cover: "/Languages/Koalalanguagemain.png",
     detail: "/Languages/Birdlanguageaustralandia.png",
   },
@@ -53,6 +51,6 @@ export const LANGUAGES: Language[] = [
   },
 ];
 
-export function getLanguageById(id: string): Language | undefined {
-  return LANGUAGES.find(l => l.id === id);
+export function getLanguageById(id: string) {
+  return LANGUAGES.find((l) => l.id === id);
 }
