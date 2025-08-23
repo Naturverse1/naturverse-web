@@ -45,7 +45,7 @@ import IndilandiaLang from './pages/naturversity/languages/IndilandiaLang';
 import BrazilandiaLang from './pages/naturversity/languages/BrazilandiaLang';
 import AustralandiaLang from './pages/naturversity/languages/AustralandiaLang';
 import AmerilandiaLang from './pages/naturversity/languages/AmerilandiaLang';
-import Naturbank from './pages/Naturbank';
+import NaturbankPage from './pages/naturbank';
 import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
@@ -112,7 +112,7 @@ export const router = createBrowserRouter([
       { path: 'naturversity/languages/brazilandia', element: <BrazilandiaLang /> },
       { path: 'naturversity/languages/australandia', element: <AustralandiaLang /> },
       { path: 'naturversity/languages/amerilandia', element: <AmerilandiaLang /> },
-      { path: 'naturbank', element: <Naturbank /> },
+      { path: 'naturbank', element: <NaturbankPage /> },
       { path: 'naturbank/wallet', element: <BankWallet /> },
       { path: 'naturbank/natur', element: <BankToken /> },
       { path: 'naturbank/nfts', element: <BankNFTs /> },
