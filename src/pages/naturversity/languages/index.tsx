@@ -1,24 +1,36 @@
-import React from "react";
+import { Link } from "react-router-dom";
 import { LANGUAGES } from "../../../data/languages";
-import Breadcrumbs from "../../../components/Breadcrumbs";
-import SafeImg from "../../../components/SafeImg";
 
-export default function LanguagesHub() {
+export default function LanguagesIndex() {
   return (
-      <div className="page-wrap">
-        <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/naturversity", label:"Naturversity" }, { label:"Languages" }]} />
-        <h1>Languages</h1>
-      <p className="muted">Starter phrasebooks for each kingdom. More coming soon.</p>
+    <main className="wrap">
+      <nav className="breadcrumb"><Link to="/naturversity">Home</Link> / Languages</nav>
+      <h1>Languages</h1>
+      <p>Basics for each kingdom’s language.</p>
 
-      <div className="cards">
-        {LANGUAGES.map((l) => (
-          <a key={l.slug} className="card" href={`/naturversity/languages/${l.slug}`}>
-              <SafeImg src={l.flagPath} alt={`${l.name} flag`} width={800} height={450} />
-            <h2>{l.name}</h2>
-            <p>{l.nativeName ? `Native: ${l.nativeName}` : " "}</p>
-          </a>
+      <div className="grid cards">
+        {LANGUAGES.map(lang => (
+          <Link key={lang.id} to={`/naturversity/languages/${lang.id}`} className="card">
+            <div className="card-media">
+              {lang.cover ? (
+                <img
+                  src={lang.cover}
+                  alt={`${lang.name} cover`}
+                  loading="lazy"
+                  decoding="async"
+                  style={{ width: "100%", height: "auto", display: "block" }}
+                />
+              ) : (
+                <div className="media-placeholder" />
+              )}
+            </div>
+            <div className="card-body">
+              <h3>{lang.name}</h3>
+              <div style={{ opacity: 0.75 }}>Native: {lang.native}</div>
+            </div>
+          </Link>
         ))}
       </div>
-    </div>
+    </main>
   );
 }

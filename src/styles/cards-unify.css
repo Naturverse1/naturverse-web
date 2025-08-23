@@ -31,3 +31,16 @@
   font-size: 14px;
   margin: 0;
 }
+
+.media-placeholder {
+  width: 100%;
+  padding-top: 56%;
+  background: repeating-linear-gradient(
+    45deg,
+    #e9eef6,
+    #e9eef6 10px,
+    #f4f7fb 10px,
+    #f4f7fb 20px
+  );
+  border-radius: 8px;
+}
