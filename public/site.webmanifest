@@ -1,0 +1,18 @@
+{
+  "name": "Naturverse",
+  "short_name": "Naturverse",
+  "description": "Playful worlds of kingdoms, characters, and quests that teach wellness, creativity, and kindness.",
+  "start_url": "/",
+  "scope": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#2F7AE5",
+  "icons": [
+    {
+      "src": "/favicon.svg",
+      "type": "image/svg+xml",
+      "sizes": "any",
+      "purpose": "any maskable"
+    }
+  ]
+}
