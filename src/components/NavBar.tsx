@@ -15,7 +15,13 @@ export default function NavBar() {
       <a href="/zones" className={path.startsWith('/zones') ? 'active' : undefined} aria-current={path.startsWith('/zones') ? 'page' : undefined}>Zones</a>
       <a href="/marketplace" className={path.startsWith('/marketplace') ? 'active' : undefined} aria-current={path.startsWith('/marketplace') ? 'page' : undefined}>Marketplace</a>
       <a href="/naturversity" className={path.startsWith('/naturversity') ? 'active' : undefined} aria-current={path.startsWith('/naturversity') ? 'page' : undefined}>Naturversity</a>
-      <a href="/naturbank" className={path.startsWith('/naturbank') ? 'active' : undefined} aria-current={path.startsWith('/naturbank') ? 'page' : undefined}>Naturbank</a>
+        <a
+          href="/naturbank"
+          className={`nav-link${path.startsWith('/naturbank') ? ' active' : ''}`}
+          aria-current={path.startsWith('/naturbank') ? 'page' : undefined}
+        >
+          NaturBank
+        </a>
       <a href="/navatar" className={path.startsWith('/navatar') ? 'active' : undefined} aria-current={path.startsWith('/navatar') ? 'page' : undefined}>Navatar</a>
       <a
         href="/passport"

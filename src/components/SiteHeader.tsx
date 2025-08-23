@@ -47,7 +47,7 @@ export default function SiteHeader() {
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={() => setOpen(false)}
           >
-            Naturbank
+            NaturBank
           </NavLink>
           <NavLink
             to="/navatar"
