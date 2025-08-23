@@ -2,10 +2,15 @@ import React from "react";
 import { Link } from "react-router-dom";
 import Meta from "../components/Meta";
 import { Img } from "../components";
+import PageHead from "../components/PageHead";
 
 export default function Home() {
   return (
     <>
+      <PageHead
+        title="Naturverse — Learn & Play Across 14 Magical Kingdoms"
+        description="Explore worlds, play games, create your Navatar, and learn with Naturversity."
+      />
       <Meta
         title="Naturverse — Learn & Play Across 14 Magical Kingdoms"
         description="Explore worlds, play games, create your Navatar, and learn with Naturversity."

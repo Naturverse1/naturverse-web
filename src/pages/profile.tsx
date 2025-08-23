@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { supabase } from '../lib/supabaseClient';
 import { getCurrentUserAndProfile, NaturProfile } from '../lib/getProfile';
 import RequireAuth from '../components/RequireAuth';
+import PageHead from '../components/PageHead';
 
 type ViewState =
   | { kind: 'loading' }
@@ -120,7 +121,10 @@ export default function ProfilePage() {
   }
   return (
     <RequireAuth>
-      <main id="main" className="page-wrap">{content}</main>
+      <>
+        <PageHead title="Naturverse — Profile" description="View your profile and account settings." />
+        <main id="main" className="page-wrap">{content}</main>
+      </>
     </RequireAuth>
   );
 }

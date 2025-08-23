@@ -6,6 +6,7 @@ import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
 import RequireAuth from "../components/RequireAuth";
+import PageHead from "../components/PageHead";
 
 const KINGDOMS = [
   "Thailandia","Brazilandia","Indillandia","Amerilandia",
@@ -34,7 +35,8 @@ export default function PassportPage() {
 
     return (
       <RequireAuth>
-      <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href:"/", label:"Home" }, { label:"Passport" }]}> 
+      <Page title="Passport" subtitle="Badges, stamps, XP, and NATUR coin." crumbs={[{ href:"/", label:"Home" }, { label:"Passport" }]}>
+      <PageHead title="Naturverse — Passport" description="Track stamps, badges, XP, and NATUR coin." />
       <Meta title="Passport — Naturverse" description="Track stamps, badges, XP, and NATUR." />
       {/* Identity / Navatar */}
       <div className="passport-id">
