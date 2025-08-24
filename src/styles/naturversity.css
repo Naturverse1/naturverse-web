@@ -1,10 +1,10 @@
 /* Naturversity theme */
 .nvrs-naturversity {
-  --nvrs-blue: #2e63ff;
-  --page-bg: var(--nvrs-blue);
+  /* old: --page-bg: #2e63ff; */
+  --page-bg: #f0f6ff;   /* light Naturverse blue */
   --card-bg: #ffffff;
-  --card-ring: rgba(255, 255, 255, 0.45);
-  --text-on-bg: #ffffff;
+  --card-ring: rgba(0, 0, 0, 0.08);
+  --text-on-bg: #222;   /* dark text on light bg */
   min-height: 100%;
   background: var(--page-bg);
 }
