@@ -4,12 +4,11 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "build:gallery": "node scripts/build-kingdom-gallery.js",
     "dev": "vite",
-    "build": "vite build",
+    "build:galleries": "node scripts/build-kingdom-gallery.js",
+    "build": "npm run build:galleries && vite build",
     "preview": "vite preview --port 5173",
-    "typecheck": "tsc --noEmit",
-    "prebuild": "npm run build:gallery"
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "react": "^18.2.0",
