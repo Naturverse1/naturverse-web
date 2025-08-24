@@ -25,7 +25,7 @@ export default function WorldLayout({ id }: Props) {
       {/* Characters grid */}
       <section className="world-section">
         <h2>Characters</h2>
-        <CharacterGrid world={k.title} />
+        <CharacterGrid kingdom={k.title} />
       </section>
     </main>
   );
