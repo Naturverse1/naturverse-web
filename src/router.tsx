@@ -16,12 +16,11 @@ import Observations from './pages/zones/Observations';
 import Community from './pages/zones/Community';
 import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
-import Marketplace from './pages/marketplace';
-import ProductPage from './pages/marketplace/[slug]';
-import CatalogPage from './pages/marketplace/CatalogPage';
-import WishlistPage from './pages/marketplace/WishlistPage';
-import CheckoutPage from './pages/marketplace/CheckoutPage';
-import CartPage from './pages/cart';
+import Catalog from './routes/marketplace';
+import ProductPage from './routes/marketplace/product/[slug]';
+import Cart from './routes/marketplace/cart';
+import Checkout from './routes/marketplace/checkout';
+import Wishlist from './routes/marketplace/wishlist';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -67,12 +66,16 @@ export const router = createBrowserRouter([
       { path: 'zones/culture', element: <Culture /> },
       { path: 'zones/community', element: <Community /> },
       { path: 'zones/future', element: <FutureZone /> },
-      { path: 'marketplace', element: <Marketplace /> },
-      { path: 'marketplace/:slug', element: <ProductPage /> },
-      { path: 'marketplace/catalog', element: <CatalogPage /> },
-      { path: 'marketplace/wishlist', element: <WishlistPage /> },
-      { path: 'marketplace/checkout', element: <CheckoutPage /> },
-      { path: 'cart', element: <CartPage /> },
+      {
+        path: 'marketplace',
+        children: [
+          { index: true, element: <Catalog /> },
+          { path: 'cart', element: <Cart /> },
+          { path: 'checkout', element: <Checkout /> },
+          { path: 'wishlist', element: <Wishlist /> },
+          { path: ':slug', element: <ProductPage /> },
+        ],
+      },
       { path: 'naturversity', element: <Naturversity /> },
       { path: 'naturversity/teachers', element: <Teachers /> },
       { path: 'naturversity/partners', element: <Partners /> },
