@@ -19,7 +19,7 @@ export default function NavBar() {
         <Link to="/worlds" className={`nav-link ${isActive("/worlds") ? "active" : ""}`}>Worlds</Link>
         <Link to="/zones" className={`nav-link ${isActive("/zones") ? "active" : ""}`}>Zones</Link>
         <Link to="/marketplace" className={`nav-link ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</Link>
-        <Link to="/marketplace/wishlist" className={`nav-link ${isActive("/marketplace/wishlist") ? "active" : ""}`}>Wishlist</Link>
+        <Link to="/wishlist" className={`nav-link ${isActive("/wishlist") ? "active" : ""}`}>Wishlist</Link>
         <Link to="/naturversity" className={`nav-link ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</Link>
         <Link to="/naturbank" className={`nav-link ${isActive("/naturbank") ? "active" : ""}`}>NaturBank</Link>
         <Link to="/navatar" className={`nav-link ${isActive("/navatar") ? "active" : ""}`}>Navatar</Link>
@@ -28,7 +28,7 @@ export default function NavBar() {
         <Link to="/profile" className={`nav-link ${isActive("/profile") ? "active" : ""}`}>Profile</Link>
         <button
           aria-label="Cart"
-          onClick={() => navigate("/marketplace/cart")}
+          onClick={() => navigate("/cart")}
           className="icon-btn"
         >
           {/* your cart svg */}

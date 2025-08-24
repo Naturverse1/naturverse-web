@@ -1,34 +1,21 @@
-import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { PRODUCTS } from "../../data/products";
+import ProductCard from "../../components/ProductCard";
+import "./../../styles/marketplace.css";
 
-export default function Marketplace() {
+const PRODUCTS = [
+  { id:"turian-plush", name:"Turian Plush", price:24, image:"/public/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
+  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/public/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
+  { id:"stickers",     name:"Sticker Pack", price:6,  image:"/public/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
+];
+
+export default function MarketplacePage(){
   return (
-    <main>
+    <>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
-      <h1 className="text-4xl font-extrabold mb-4">Marketplace</h1>
-
-      <div style={{ display: "grid", gap: "1.25rem" }}>
-        {PRODUCTS.map((p) => (
-          <Link key={p.slug} to={`/marketplace/${p.slug}`} style={{ textDecoration: "none" }}>
-            <article style={{ borderRadius: "1rem", border: "1px solid #e5e7eb", padding: "1rem", transition: "box-shadow 0.2s" }}>
-              <div style={{ borderRadius: "0.75rem", border: "1px solid #e5e7eb", overflow: "hidden", marginBottom: "0.75rem", background: "#fff" }}>
-                <div style={{ position: "relative", width: "100%", height: "12rem" }}>
-                  <img
-                    src={p.img}
-                    alt={p.name}
-                    style={{ objectFit: "contain", width: "100%", height: "100%" }}
-                    loading="lazy"
-                  />
-                </div>
-              </div>
-
-              <h3 className="text-2xl font-bold">{p.name}</h3>
-              <p className="text-lg text-gray-700">${p.price.toFixed(2)}</p>
-            </article>
-          </Link>
-        ))}
+      <h1>Marketplace</h1>
+      <div className="nv-grid">
+        {PRODUCTS.map(p => <ProductCard key={p.id} p={p}/>)}
       </div>
-    </main>
+    </>
   );
 }

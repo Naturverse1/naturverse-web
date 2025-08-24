@@ -16,11 +16,10 @@ import Observations from './pages/zones/Observations';
 import Community from './pages/zones/Community';
 import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
-import Catalog from './routes/marketplace';
-import ProductPage from './routes/marketplace/product/[slug]';
-import Cart from './routes/marketplace/cart';
-import Checkout from './routes/marketplace/checkout';
-import Wishlist from './routes/marketplace/wishlist';
+import MarketplacePage from './pages/marketplace';
+import ProductPage from './pages/marketplace/[slug]';
+import CartPage from './pages/cart';
+import WishlistPage from './pages/wishlist';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -69,13 +68,12 @@ export const router = createBrowserRouter([
       {
         path: 'marketplace',
         children: [
-          { index: true, element: <Catalog /> },
-          { path: 'cart', element: <Cart /> },
-          { path: 'checkout', element: <Checkout /> },
-          { path: 'wishlist', element: <Wishlist /> },
+          { index: true, element: <MarketplacePage /> },
           { path: ':slug', element: <ProductPage /> },
         ],
       },
+      { path: 'cart', element: <CartPage /> },
+      { path: 'wishlist', element: <WishlistPage /> },
       { path: 'naturversity', element: <Naturversity /> },
       { path: 'naturversity/teachers', element: <Teachers /> },
       { path: 'naturversity/partners', element: <Partners /> },

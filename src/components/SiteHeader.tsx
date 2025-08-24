@@ -3,6 +3,7 @@ import { useState } from 'react';
 import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
+import CartBadge from './CartBadge';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -36,7 +37,7 @@ export default function SiteHeader() {
             Marketplace
           </NavLink>
           <NavLink
-            to="/marketplace/wishlist"
+            to="/wishlist"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={() => setOpen(false)}
           >
@@ -77,19 +78,10 @@ export default function SiteHeader() {
           >
             Turian
           </NavLink>
-          <NavLink
-            to="/marketplace/cart"
-            aria-label="Cart"
-            className={({ isActive }) =>
-              (isActive ? 'nav-link active' : 'nav-link') + ' icon nav-cart'
-            }
-            onClick={() => setOpen(false)}
-          >
-            <span aria-hidden="true">🛒</span>
-          </NavLink>
         </nav>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
           <AuthButton />
+          <CartBadge />
           <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
             <span />
             <span />

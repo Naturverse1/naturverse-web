@@ -77,7 +77,7 @@ export default function UserMenu() {
           </div>
           <a href="/profile" className="item">Profile</a>
           <a href="/passport" className="item">Passport</a>
-          <a href="/marketplace/wishlist" className="item">Wishlist</a>
+          <a href="/wishlist" className="item">Wishlist</a>
           <button
             className="item danger"
             onClick={async () => {

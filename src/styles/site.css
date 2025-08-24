@@ -95,3 +95,13 @@ header .nv-link,
 header .nv-icon {
   display: inline-flex;
 }
+
+.nv-stepper{ display:flex; align-items:center; gap:.5rem; }
+.btn-primary,.btn-outline,.btn-solid,.btn-ghost,.btn-danger{ padding:.6rem .9rem; border-radius:.75rem; border:1px solid #1f64ff; }
+.btn-primary{ background:#1f64ff; color:#fff; }
+.btn-outline{ background:#fff; color:#1f64ff; }
+.btn-solid{ background:#1f64ff; color:#fff; }
+.btn-ghost{ background:#eef3ff; color:#1f64ff; }
+.btn-danger{ background:#fff0f0; border-color:#e11d48; color:#e11d48; }
+.nv-cart-badge{ position:relative; display:inline-flex; align-items:center; gap:.25rem; }
+.nv-cart-dot{ position:absolute; top:-6px; right:-10px; font:600 12px/1 system-ui; padding:.15rem .35rem; border-radius:999px; background:#1f64ff; color:#fff; }
