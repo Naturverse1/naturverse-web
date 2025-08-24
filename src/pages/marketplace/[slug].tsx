@@ -18,7 +18,9 @@ export default function ProductPage(){
     <>
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace", href: "/marketplace" }, { label: p.name }]} />
       <article className="nv-card">
-        <div className="nv-imgbox"><img src={p.image} alt="" /></div>
+        <div className="mp-hero">
+          <img className="mp-img" src={p.image} alt={p.name} />
+        </div>
         <h1>{p.name}</h1>
         <div>${p.price.toFixed(2)}</div>
         <p>{p.blurb}</p>
