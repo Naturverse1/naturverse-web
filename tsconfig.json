@@ -11,7 +11,10 @@
     "noEmit": true,
     "strict": true,
     "types": ["node"],
-    "baseUrl": "."
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["*"]
+    }
   },
-  "include": ["src"]
+  "include": ["app", "components", "lib", "scripts", "src"]
 }

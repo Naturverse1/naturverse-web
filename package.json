@@ -8,8 +8,7 @@
     "build": "vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
-    "gen:manifests": "node scripts/gen_kingdom_manifests.mjs",
-    "prebuild": "node scripts/gen_kingdom_manifests.mjs"
+    "prebuild": "node -r ts-node/register scripts/build-kingdom-gallery.ts"
   },
   "dependencies": {
     "react": "^18.2.0",
