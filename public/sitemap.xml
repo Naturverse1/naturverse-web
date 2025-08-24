@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>/</loc></url>
-  <url><loc>/worlds</loc></url>
-  <url><loc>/zones</loc></url>
-  <url><loc>/marketplace</loc></url>
-  <url><loc>/naturversity</loc></url>
-  <url><loc>/naturbank</loc></url>
-  <url><loc>/navatar</loc></url>
-  <url><loc>/passport</loc></url>
-  <url><loc>/turian</loc></url>
-  <url><loc>/not-found</loc></url>
+  <url><loc>https://YOUR_DOMAIN/</loc></url>
+  <url><loc>https://YOUR_DOMAIN/worlds</loc></url>
+  <url><loc>https://YOUR_DOMAIN/zones</loc></url>
+  <url><loc>https://YOUR_DOMAIN/marketplace</loc></url>
+  <url><loc>https://YOUR_DOMAIN/naturversity</loc></url>
+  <url><loc>https://YOUR_DOMAIN/naturbank</loc></url>
+  <url><loc>https://YOUR_DOMAIN/navatar</loc></url>
+  <url><loc>https://YOUR_DOMAIN/passport</loc></url>
+  <url><loc>https://YOUR_DOMAIN/turian</loc></url>
+  <url><loc>https://YOUR_DOMAIN/profile</loc></url>
 </urlset>
