@@ -55,7 +55,7 @@ import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Accessibility from './pages/Accessibility';
 import About from './pages/About';
-import NotFound from './pages/NotFound';
+import NotFound from './routes/NotFound';
 import RootLayout from './layouts/Root';
 
 export const router = createBrowserRouter([
