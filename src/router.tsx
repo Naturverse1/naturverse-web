@@ -19,6 +19,7 @@ import Marketplace from './pages/Marketplace';
 import Catalog from './pages/marketplace/Catalog';
 import Wishlist from './pages/marketplace/Wishlist';
 import Checkout from './pages/marketplace/Checkout';
+import CartPage from './pages/cart';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
       { path: 'marketplace/catalog', element: <Catalog /> },
         { path: 'marketplace/wishlist', element: <Wishlist /> },
         { path: 'marketplace/checkout', element: <Checkout /> },
+      { path: 'cart', element: <CartPage /> },
       { path: 'naturversity', element: <Naturversity /> },
       { path: 'naturversity/teachers', element: <Teachers /> },
       { path: 'naturversity/partners', element: <Partners /> },
