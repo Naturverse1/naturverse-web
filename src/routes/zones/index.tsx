@@ -1,7 +1,9 @@
 import React from "react";
 import { ZONES } from "../../data/zones";
+import { setTitle } from "../../pages/_meta";
 
 export default function Zones() {
+  setTitle("Zones");
   return (
     <div>
       <h1>Zones</h1>

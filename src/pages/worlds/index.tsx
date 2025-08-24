@@ -4,8 +4,10 @@ import ImageSafe from "../../components/ImageSafe";
 import Meta from "../../components/Meta";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import PageHead from "../../components/PageHead";
+import { setTitle } from "../_meta";
 
 export default function WorldsIndex() {
+  setTitle("Worlds");
   return (
     <div className="page-wrap">
       <PageHead title="Naturverse — Worlds" description="Explore the 14 kingdoms." />

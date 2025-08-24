@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useRef, useState } from "react";
 import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
+import { setTitle } from "./_meta";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -55,6 +56,7 @@ function cannedReply(q: string): string {
 }
 
 export default function TurianPage() {
+  setTitle("Turian");
   const [text, setText] = useState("");
   const [history, setHistory] = useState<Msg[]>(read());
   const listRef = useRef<HTMLDivElement>(null);

@@ -1,23 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <!-- core hubs -->
-  <url><loc>https://naturverse.netlify.app/</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds</loc></url>
-  <url><loc>https://naturverse.netlify.app/zones</loc></url>
-  <url><loc>https://naturverse.netlify.app/marketplace</loc></url>
-  <url><loc>https://naturverse.netlify.app/naturversity</loc></url>
-  <url><loc>https://naturverse.netlify.app/naturbank</loc></url>
-  <url><loc>https://naturverse.netlify.app/navatar</loc></url>
-  <url><loc>https://naturverse.netlify.app/passport</loc></url>
-  <url><loc>https://naturverse.netlify.app/turian</loc></url>
-  <url><loc>https://naturverse.netlify.app/profile</loc></url>
-  <url><loc>https://naturverse.netlify.app/future</loc></url>
-
-  <!-- worlds detail routes (adjust if you use different slugs) -->
-  <url><loc>https://naturverse.netlify.app/worlds/thailandia</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds/chinadia</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds/indilandia</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds/brazilandia</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds/australandia</loc></url>
-  <url><loc>https://naturverse.netlify.app/worlds/amerilandia</loc></url>
+  <url><loc>/</loc></url>
+  <url><loc>/worlds</loc></url>
+  <url><loc>/zones</loc></url>
+  <url><loc>/marketplace</loc></url>
+  <url><loc>/naturversity</loc></url>
+  <url><loc>/navatar</loc></url>
+  <url><loc>/passport</loc></url>
+  <url><loc>/naturbank</loc></url>
+  <url><loc>/turian</loc></url>
+  <url><loc>/profile</loc></url>
 </urlset>

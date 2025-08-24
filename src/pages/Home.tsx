@@ -4,8 +4,10 @@ import "./home.css";
 import Meta from "../components/Meta";
 import Page from "../layouts/Page";
 import { Img } from "../components";
+import { setTitle } from "./_meta";
 
 export default function Home() {
+  setTitle("");
   return (
     <Page>
       <Meta

@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase/client";
 import type { NaturTxn } from "../types/bank";
+import { setTitle } from "./_meta";
 
 const LS_WALLET = "naturverse.bank.wallet.v1";
 const LS_TXNS = "naturverse.bank.txns.v1";
 const START_BAL = 120;
 
 export default function NaturBankPage() {
+  setTitle("NaturBank");
   const [uid, setUid] = useState<string | null>(null);
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
