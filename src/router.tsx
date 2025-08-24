@@ -38,6 +38,7 @@ import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/profile';
+import AuthCallback from './pages/auth/callback';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
@@ -107,6 +108,7 @@ export const router = createBrowserRouter([
       { path: 'about', element: <About /> },
         { path: 'navatar', element: <NavatarPage /> },
         { path: 'passport', element: <PassportPage /> },
+        { path: 'auth/callback', element: <AuthCallback /> },
         { path: 'login', element: <LoginPage /> },
         { path: 'turian', element: <Turian /> },
         { path: 'profile', element: <ProfilePage /> },
