@@ -36,6 +36,13 @@ export default function SiteHeader() {
             Marketplace
           </NavLink>
           <NavLink
+            to="/marketplace/wishlist"
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+            onClick={() => setOpen(false)}
+          >
+            Wishlist
+          </NavLink>
+          <NavLink
             to="/naturversity"
             className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
             onClick={() => setOpen(false)}
@@ -71,9 +78,11 @@ export default function SiteHeader() {
             Turian
           </NavLink>
           <NavLink
-            to="/cart"
+            to="/marketplace/cart"
             aria-label="Cart"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link') + ' icon nav-cart'}
+            className={({ isActive }) =>
+              (isActive ? 'nav-link active' : 'nav-link') + ' icon nav-cart'
+            }
             onClick={() => setOpen(false)}
           >
             <span aria-hidden="true">🛒</span>
