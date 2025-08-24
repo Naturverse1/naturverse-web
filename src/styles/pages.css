@@ -21,22 +21,16 @@
   box-shadow: 0 0 0 2px var(--nv-blue-200);
 }
 
-/* Languages: responsive image frames */
-.lang-hero,
-.lang-spot {
-  width: 100%;
-  display: block;
-  border-radius: 12px;
-  background: #f4f6f8;         /* pleasant placeholder behind images */
-  object-fit: cover;           /* crop to frame instead of stretching */
-  overflow: hidden;
+/* Languages: detail hero image */
+.lang-hero {
+  width:100%;
+  max-width: 720px;
+  border-radius:16px;
+  display:block;
+  margin: 0 auto 1rem auto;
 }
 
-/* Tallish hero at top of detail page */
-.lang-hero { aspect-ratio: 16 / 9; max-width: 960px; }
-
-/* Second image a bit wider and shorter */
-.lang-spot { aspect-ratio: 21 / 9; max-width: 960px; }
+@media (max-width: 640px){ .lang-hero{ max-width: 100%; } }
 
 /* Languages card icon (Naturversity landing) */
 .card .lang-icon {
@@ -122,18 +116,6 @@
   gap: 24px;
 }
 @media (max-width: 860px) { .lang-page { grid-template-columns: 1fr; } }
-
-.lang-hero, .lang-secondary {
-  width: 100%;
-  max-width: 420px;
-  border-radius: 14px;
-  display: block;
-  object-fit: cover;
-  box-shadow: 0 2px 6px rgba(0,0,0,.06);
-}
-
-.lang-hero { aspect-ratio: 1 / 1; }
-.lang-secondary { aspect-ratio: 16 / 10; margin-top: 12px; }
 
 /* Ensure text content is never hidden by images */
 .lang-content h3 { margin-top: 16px; }

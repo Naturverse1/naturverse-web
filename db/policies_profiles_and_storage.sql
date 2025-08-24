@@ -32,7 +32,9 @@ for insert to authenticated with check (auth.uid() = id);
 
 drop policy if exists "profiles update own" on natur.profiles;
 create policy "profiles update own" on natur.profiles
-for update to authenticated using (auth.uid() = id);
+for update to authenticated
+using (auth.uid() = id)
+with check (auth.uid() = id);
 
 -- Storage bucket
 insert into storage.buckets (id, name, public)
@@ -52,4 +54,5 @@ with check (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::te
 drop policy if exists "avatars owner update" on storage.objects;
 create policy "avatars owner update" on storage.objects
 for update to authenticated
-using (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);
+using (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text)
+with check (bucket_id='avatars' and (storage.foldername(name))[1]=auth.uid()::text);

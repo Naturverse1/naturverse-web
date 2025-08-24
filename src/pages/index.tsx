@@ -33,10 +33,10 @@ export default function Home() {
         <p className="subtitle">
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
         </p>
-        <div className="hero-cta">
-          <a className="btn btn-primary" href="/signup">Create account</a>
-          <a className="btn btn-outline" href="/worlds">Explore Worlds</a>
-        </div>
+          <div className="hero-cta">
+            <a className="button-primary" href="/signup">Create account</a>
+            <a className="button-primary" href="/worlds">Explore Worlds</a>
+          </div>
       </section>
 
       {/* About / Mission */}
@@ -106,13 +106,13 @@ export default function Home() {
       </section>
 
       {/* CTA */}
-      <section className="home-cta">
-        <h2>Ready to join the journey?</h2>
-        <div className="hero-cta">
-          <Link className="btn btn-primary" to="/signup">Sign up free</Link>
-          <Link className="btn" to="/signin">Sign in</Link>
-        </div>
-      </section>
+        <section className="home-cta">
+          <h2>Ready to join the journey?</h2>
+          <div className="hero-cta">
+            <Link className="button-primary" to="/signup">Sign up free</Link>
+            <Link className="button-primary" to="/signin">Sign in</Link>
+          </div>
+        </section>
     </main>
     </>
   );
