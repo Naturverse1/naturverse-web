@@ -1,0 +1,8 @@
+.nvrs-zones {
+  --page-bg: #f0f6ff;   /* light Naturverse blue */
+  --card-bg: #ffffff;
+  --card-ring: rgba(0,0,0,.08);
+  --text-on-bg: #222;
+  min-height: 100%;
+  background: var(--page-bg);
+}
