@@ -6,6 +6,7 @@ export const slugToFolder: Record<string, string> = {
   australandia: "Australandia",
   amerilandia: "Amerilandia",
 };
+export const galleryBase = "/kingdoms"; // explicit source for galleries
 
 export const KINGDOM_FOLDERS = Object.values(slugToFolder) as const;
 export type KingdomFolder = (typeof KINGDOM_FOLDERS)[number];

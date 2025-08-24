@@ -6,6 +6,7 @@ import Image from "next/image";
 type Props = { folder: string }; // e.g., "Thailandia"
 const IMG_RX = /\.(png|jpe?g|webp)$/i;
 const EXCLUDE_RX = /(map|manifest\.json|\.keep)$/i;
+const BASE = "/kingdoms"; // hard lock to /public/kingdoms
 
 export default function CharacterGallery({ folder }: Props) {
   const [files, setFiles] = React.useState<string[] | null>(null);
@@ -14,7 +15,7 @@ export default function CharacterGallery({ folder }: Props) {
     let cancelled = false;
     (async () => {
       try {
-        const res = await fetch(`/kingdoms/${folder}/manifest.json`, { cache: "no-store" });
+        const res = await fetch(`${BASE}/${folder}/manifest.json`, { cache: "no-store" });
         let list: any[] = [];
         if (res.ok) {
           const data = await res.json();
@@ -34,10 +35,13 @@ export default function CharacterGallery({ folder }: Props) {
           })
           .map(String)
           .filter((f) => IMG_RX.test(f) && !EXCLUDE_RX.test(f))
-          .map((f) => {
-            const p = f.startsWith("kingdoms/") || f.startsWith("/kingdoms/") ? `/${f.replace(/^\/?/, "")}` : `/kingdoms/${folder}/${f}`;
-            return encodeURI(p);
-          });
+          .map((f) =>
+            encodeURI(
+              f.startsWith("kingdoms/")
+                ? `/${f.replace(/^kingdoms/, "kingdoms")}`
+                : `${BASE}/${folder}/${f}`
+            )
+          );
         if (!cancelled) setFiles(clean);
       } catch {
         if (!cancelled) setFiles([]);
