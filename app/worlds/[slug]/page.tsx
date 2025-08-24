@@ -9,7 +9,7 @@ export default async function WorldPage({ params }: { params: { slug: string } }
       {/* ... existing world header + map ... */}
 
       <section className="mt-10">
-        <h2 className="text-3xl font-extrabold mb-4">Characters</h2>
+        <h2 className="text-2xl font-bold">Characters</h2>
         <CharacterGallery folder={slugToFolder[params.slug] ?? params.slug} />
       </section>
     </main>
