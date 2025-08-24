@@ -1,5 +1,4 @@
 import { useParams } from "react-router-dom";
-import "../../../components/card.css";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 
 type Content = {
@@ -84,7 +83,9 @@ export default function LanguageDetail() {
         <h1 style={{ marginBottom: 4 }}>{titleFor(slug)}</h1>
         <p>Learn greetings, alphabet basics, and common phrases for {titleFor(slug, true)}.</p>
 
-        <img className="lang-hero" src={d.hero} alt="" />
+        <div className="language-lesson-header">
+          <img src={d.hero} alt={`${titleFor(slug, true)} language`} />
+        </div>
         <section style={{ marginTop: 20 }}>
           <h3>Starter phrases</h3>
         <ul>
@@ -105,7 +106,9 @@ export default function LanguageDetail() {
         </ol>
       </section>
 
-      <img className="lang-hero" src={d.secondary} alt="" style={{ marginTop: 16 }} />
+      <div className="language-lesson-header" style={{ marginTop: 16 }}>
+        <img src={d.secondary} alt="" />
+      </div>
       </main>
     </div>
   );
