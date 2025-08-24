@@ -24,6 +24,11 @@ export default function Navbar() {
     };
   }, [user?.id]);
 
+  if (!user) {
+    // Signed out: don't render navbar
+    return null;
+  }
+
   return (
     <nav className="nv-navbar">
       <div className="nv-left">
@@ -38,25 +43,21 @@ export default function Navbar() {
         🍃
       </button>
       <div className="nv-right">
-        {user ? (
-          <Link href="/profile" className="nv-profile">
-            {avatarUrl ? (
-              <Image
-                src={avatarUrl}
-                alt="Profile"
-                width={28}
-                height={28}
-                className="nv-profile-img"
-              />
-            ) : (
-              <span className="nv-profile-emoji" aria-label="profile">
-                👤
-              </span>
-            )}
-          </Link>
-        ) : (
-          <Link href="/signin">Sign in</Link>
-        )}
+        <Link href="/profile" className="nv-profile">
+          {avatarUrl ? (
+            <Image
+              src={avatarUrl}
+              alt="Profile"
+              width={28}
+              height={28}
+              className="nv-profile-img"
+            />
+          ) : (
+            <span className="nv-profile-emoji" aria-label="profile">
+              👤
+            </span>
+          )}
+        </Link>
       </div>
     </nav>
   );
