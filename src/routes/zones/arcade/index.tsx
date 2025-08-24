@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import "../../../styles/zone-widgets.css";
 
 export default function Arcade() {
   return (
     <main className="container">
-      <div className="breadcrumb">Home / Zones / Arcade</div>
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Arcade" }]} />
       <h2 className="section-title">Arcade</h2>
       <p className="section-lead">Mini-games, leaderboards &amp; tournaments.</p>
 

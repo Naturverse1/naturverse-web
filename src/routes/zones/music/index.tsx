@@ -1,10 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from "react";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import "../../../styles/zone-widgets.css";
 
 export default function Music() {
   return (
     <main className="container">
-      <div className="breadcrumb">Home / Zones / Music</div>
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Music" }]} />
       <h2 className="section-title">Music</h2>
       <p className="section-lead">Karaoke, beats &amp; song maker (client-only).</p>
 

@@ -1,4 +1,5 @@
 import React from "react";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { ZONES } from "../../data/zones";
 import { setTitle } from "../../pages/_meta";
 
@@ -6,6 +7,7 @@ export default function Zones() {
   setTitle("Zones");
   return (
     <div>
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Zones" }]} />
       <h1>Zones</h1>
       <div className="cards grid-gap">
         {ZONES.map((z) => (

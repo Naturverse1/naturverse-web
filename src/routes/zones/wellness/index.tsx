@@ -1,10 +1,11 @@
 import { useEffect, useRef, useState } from "react";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import "../../../styles/zone-widgets.css";
 
 export default function Wellness() {
   return (
     <main className="container">
-      <div className="breadcrumb">Home / Zones / Wellness</div>
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Wellness" }]} />
       <h2 className="section-title">Wellness</h2>
       <p className="section-lead">Yoga, breathing, stretches, mindful quests (client-only).</p>
 
