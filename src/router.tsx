@@ -8,7 +8,7 @@ import Zones from './routes/zones';
 import ArcadeZone from './routes/zones/arcade';
 import MusicZone from './routes/zones/music';
 import WellnessZone from './routes/zones/wellness';
-import CreatorLabZone from './routes/zones/creator-lab';
+import CreatorLabPage from './pages/zones/creator-lab';
 import Stories from './pages/zones/Stories';
 import Quizzes from './pages/zones/Quizzes';
 import Observations from './pages/zones/Observations';
@@ -58,7 +58,7 @@ export const router = createBrowserRouter([
       { path: 'zones/arcade', element: <ArcadeZone /> },
       { path: 'zones/music', element: <MusicZone /> },
       { path: 'zones/wellness', element: <WellnessZone /> },
-      { path: 'zones/creator-lab', element: <CreatorLabZone /> },
+      { path: 'zones/creator-lab', element: <CreatorLabPage /> },
       { path: 'zones/stories', element: <Stories /> },
       { path: 'zones/quizzes', element: <Quizzes /> },
       { path: 'zones/observations', element: <Observations /> },
