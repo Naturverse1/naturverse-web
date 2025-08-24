@@ -1,0 +1,24 @@
+.media {
+  width: 100%;
+  border-radius: 12px;
+  overflow: hidden;
+  background: #edf1ff;
+  margin: 8px 0;
+}
+
+.mediaImg {
+  width: 100%;
+  height: auto;
+  display: block;
+  object-fit: cover;
+}
+
+@media (min-width: 860px) {
+  .media {
+    max-height: 300px;
+  }
+  .mediaImg {
+    height: 300px;
+    object-fit: cover;
+  }
+}

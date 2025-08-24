@@ -1,6 +1,6 @@
 import React from "react";
 import type { Navatar } from "../types/navatar";
-import Img from "./Img";
+import styles from "./NavatarCard.module.css";
 
 type Props = { navatar: Navatar };
 
@@ -16,9 +16,14 @@ export default function NavatarCard({ navatar }: Props) {
         </div>
       </div>
 
-      <div className="card__media">
+      <div className={styles.media}>
         {navatar.imageDataUrl ? (
-          <Img src={navatar.imageDataUrl} alt={`${navatar.name || navatar.species}`} />
+          <img
+            src={navatar.imageDataUrl}
+            alt={navatar.name || navatar.species}
+            className={styles.mediaImg}
+            loading="lazy"
+          />
         ) : (
           <div className="card__placeholder" aria-label="No photo">No photo</div>
         )}
@@ -40,8 +45,6 @@ export default function NavatarCard({ navatar }: Props) {
         .card__header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
         .card__title{font-weight:700}
         .card__meta{opacity:.7;font-size:.9rem}
-        .card__media{display:flex;justify-content:center;align-items:center;background:#fafafa;border-radius:8px;height:220px;overflow:hidden;margin:8px 0}
-        .card__media img{height:100%;object-fit:cover}
         .card__placeholder{color:#aaa}
         .card__section{margin:8px 0}
         .card__backstory{margin:6px 0}
