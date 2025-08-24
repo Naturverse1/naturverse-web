@@ -1,4 +1,3 @@
-import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { CartProvider } from './hooks/useCart';
@@ -7,12 +6,6 @@ import { organizationLd, websiteLd } from './lib/jsonld';
 import ErrorBoundary from './components/ErrorBoundary';
 
 export default function App() {
-  useEffect(() => {
-    // ensure any plain <img> without loading attr is lazy
-    const imgs = document.querySelectorAll('img:not([loading])');
-    imgs.forEach((img) => img.setAttribute('loading', 'lazy'));
-  }, []);
-
   return (
     <>
       <script
@@ -25,9 +18,9 @@ export default function App() {
       />
       <CartProvider>
         <ErrorBoundary>
-          <div id="main">
+          <main id="main">
             <RouterProvider router={router} />
-          </div>
+          </main>
         </ErrorBoundary>
         <CartDrawer />
       </CartProvider>

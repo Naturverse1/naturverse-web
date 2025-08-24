@@ -39,9 +39,25 @@
       crossorigin
     />
     <link rel="stylesheet" href="/src/main.css" />
+
+    <!-- a11y: skip to content -->
+    <style>
+      .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
+      .skip-link:focus{left:12px;top:12px;width:auto;height:auto;background:#0ea5e9;color:#fff;padding:8px 10px;border-radius:8px;z-index:1000}
+    </style>
   </head>
   <body>
+    <a class="skip-link" href="#main">Skip to content</a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
+
+    <!-- perf: lazy-enable all imgs that don't opt-out -->
+    <script>
+      document.addEventListener("DOMContentLoaded", () => {
+        document
+          .querySelectorAll('img:not([loading])')
+          .forEach((img) => img.setAttribute('loading', 'lazy'));
+      });
+    </script>
   </body>
 </html>
