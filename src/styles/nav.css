@@ -5,3 +5,8 @@
   border-bottom: 2px solid #0ea5e9;
   color: #0ea5e9;
 }
+
+/* slightly larger tap area on mobile */
+@media (max-width:640px){
+  .nav-link { padding: 10px 8px; }
+}
