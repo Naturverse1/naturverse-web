@@ -1,0 +1,61 @@
+.nv-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.nv-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 12px;
+  border-radius: 14px;
+  border: 1px solid var(--nv-border, #e2e8f0);
+  background: #fff;
+}
+
+.nv-card-title {
+  margin: 8px 0 4px;
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.nv-card-sub {
+  margin: 0;
+  color: #64748b;
+  font-size: 14px;
+}
+
+/* Card images on the worlds grid */
+.nv-card-img-wrapper {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f6f7fb; /* subtle backdrop */
+}
+
+.nv-card-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* <-- show entire map, no cropping */
+  display: block;
+}
+
+/* Hero image on the detail page */
+.nv-hero-img-wrapper {
+  aspect-ratio: 16 / 9;
+  width: 100%;
+  max-width: 960px;
+  margin: 0 auto 1.25rem;
+  border-radius: 18px;
+  overflow: hidden;
+  background: #f6f7fb;
+}
+
+.nv-hero-img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;   /* <-- no crop at top */
+  display: block;
+}

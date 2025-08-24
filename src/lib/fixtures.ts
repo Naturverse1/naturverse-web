@@ -9,10 +9,10 @@ import {
 export const ALL_KINGDOMS = [
   'thailandia',
   'amerilandia',
-  'indillandia',
+  'indilandia',
   'brazilandia',
   'australandia',
-  'chilanda',
+  'chilandia',
   'japonica',
   'africana',
   'europalia',
@@ -20,7 +20,7 @@ export const ALL_KINGDOMS = [
   'kiwilandia',
   'madagascaria',
   'greenlandia',
-  'antarctland',
+  'antarctiland',
 ]
 
 export const sampleStamps: PassportStampRow[] = [

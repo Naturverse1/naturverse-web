@@ -1,7 +1,7 @@
 export const worlds = [
   { slug: "thailandia",   title: "Thailandia",   emoji: "🐘🪷", blurb: "Coconuts & Elephants" },
   { slug: "brazilandia",  title: "Brazilandia",  emoji: "🍌🦜", blurb: "Bananas & Parrots" },
-  { slug: "indillandia",  title: "Indillandia",  emoji: "🥭🐯", blurb: "Mangoes & Tigers" },
+  { slug: "indilandia",  title: "Indilandia",  emoji: "🥭🐯", blurb: "Mangoes & Tigers" },
   { slug: "amerilandia",  title: "Amerilandia",  emoji: "🍎🦅", blurb: "Apples & Eagles" },
   { slug: "australandia", title: "Australandia", emoji: "🍑🦘", blurb: "Peaches & Kangaroos" },
   { slug: "chilandia",    title: "Chilandia",    emoji: "🐼🐉", blurb: "Pandas & Dragons" },
