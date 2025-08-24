@@ -1,4 +1,5 @@
 import { useParams } from "react-router-dom";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { getWorldBySlug } from "../../data/worlds";
 
 export default function WorldDetail() {
@@ -8,6 +9,7 @@ export default function WorldDetail() {
 
   return (
     <article>
+      <Breadcrumbs items={[{ href: "/worlds", label: "Worlds" }, { label: world.title }]} />
       <h1>{world.title}</h1>
       <p>Zoom into landmarks, routes, and regions.</p>
 
