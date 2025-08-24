@@ -22,16 +22,26 @@ export default function Home() {
       {/* 3-UP: Play / Learn / Earn */}
       <section className="triptych">
         <div className="card">
-          <h3>Play</h3>
+          <h3 className="bubble-title">
+            <span className="bubble-emoji" aria-hidden>🎮</span> Play
+          </h3>
           <p>Mini-games, stories, and map adventures across 14 kingdoms.</p>
         </div>
         <div className="card">
-          <h3>Learn</h3>
+          <h3 className="bubble-title">
+            <span className="bubble-emoji" aria-hidden>📚</span> Learn
+          </h3>
           <p>Naturversity lessons in languages, art, music, wellness, and more.</p>
         </div>
         <div className="card">
-          <h3>Earn</h3>
-          <p>Collect badges, save favorites, and build your Navatar card.</p>
+          <h3 className="bubble-title">
+            <span className="bubble-emoji" aria-hidden>🪙</span> Earn
+          </h3>
+          <p>
+            Collect badges, save favorites, and build your Navatar card.
+            <br />
+            <em>Natur Coin — coming soon</em>
+          </p>
         </div>
       </section>
 
