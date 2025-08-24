@@ -131,7 +131,7 @@ export default function Community() {
 
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Community" }]} />
+      <Breadcrumbs />
       <main id="main">
       <h1>🗳️🌍 Community</h1>
       <p>Vote for new lands & characters, and join local volunteer events.</p>

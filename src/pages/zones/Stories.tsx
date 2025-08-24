@@ -86,7 +86,7 @@ export default function Stories() {
 
   return (
       <div className="page-wrap">
-        <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Stories" }]} />
+        <Breadcrumbs />
         <main id="main">
         <h1>📚✨ Stories</h1>
       <p>AI story paths set in all 14 kingdoms (local, no-backend version).</p>

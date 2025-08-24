@@ -67,7 +67,7 @@ export default function CreatorLab() {
 
   return (
     <div>
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Creator Lab" }]} />
+      <Breadcrumbs />
       <h1>🎨🤖 Creator Lab</h1>
       <p>AI art &amp; character cards (client-only tools for now).</p>
 

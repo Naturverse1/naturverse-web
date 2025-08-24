@@ -65,7 +65,7 @@ export default function Quizzes() {
 
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Quizzes" }]} />
+      <Breadcrumbs />
       <main id="main">
       <h1>🎯 Quizzes</h1>
       <p>Solo & party quiz play with scoring (client-only; no backend).</p>

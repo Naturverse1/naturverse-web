@@ -103,7 +103,7 @@ export default function NaturBankPage() {
 
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "NaturBank" }]} />
+      <Breadcrumbs />
       <main className="bank">
       <h1>NaturBank</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>

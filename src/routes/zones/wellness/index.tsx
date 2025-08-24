@@ -5,7 +5,7 @@ import "../../../styles/zone-widgets.css";
 export default function Wellness() {
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Wellness" }]} />
+      <Breadcrumbs />
       <h2 className="section-title">Wellness</h2>
       <p className="section-lead">Yoga, breathing, stretches, mindful quests (client-only).</p>
 

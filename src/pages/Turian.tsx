@@ -84,7 +84,7 @@ export default function TurianPage() {
 
   return (
     <>
-        <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet." crumbs={[{ href:"/", label:"Home" }, { label:"Turian" }]}> 
+        <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet." >
       <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>

@@ -9,7 +9,7 @@ export default function WorldDetail() {
 
   return (
     <article>
-      <Breadcrumbs items={[{ href: "/worlds", label: "Worlds" }, { label: world.title }]} />
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/worlds", label: "Worlds" }, { label: world.title }]} />
       <h1>{world.title}</h1>
       <p>Zoom into landmarks, routes, and regions.</p>
 

@@ -7,7 +7,7 @@ export default function NaturversityPage() {
   setTitle("Naturversity");
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Naturversity" }]} />
+      <Breadcrumbs />
       <main className="page">
         <h1>Naturversity</h1>
         <p>Teachers, partners, and courses.</p>

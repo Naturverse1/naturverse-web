@@ -5,6 +5,7 @@ import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";
 import type { LocalProfile } from "../types/profile";
 import { setTitle } from "./_meta";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 const K = {
   profile: "naturverse.profile.v1",
@@ -102,6 +103,7 @@ export default function ProfilePage() {
 
   return (
     <main className="container profile-page">
+      <Breadcrumbs />
       <h1>Profile</h1>
       <form
         className="card"
