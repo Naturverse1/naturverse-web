@@ -77,6 +77,12 @@
   width: max-content;
 }
 
+/* Inline dot separator */
+.home .dot {
+  opacity: .4;
+  margin: 0 6px;
+}
+
 /* Muted note for Natur Coin */
 .home .muted {
   color: #667085;
