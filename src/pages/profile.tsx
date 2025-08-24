@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabase";
-import { useWallet } from "../hooks/useWallet";
-import { useXP } from "../hooks/useXP";
+import WalletPanel from "../components/profile/WalletPanel";
+import XPPanel from "../components/profile/XPPanel";
 
 type ProfileRow = {
   id: string;
@@ -19,8 +19,6 @@ export default function ProfilePage() {
   const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [lastUpdated, setLastUpdated] = useState("—");
-  const { wallet, earn, spend } = useWallet();
-  const { xp, addXP } = useXP();
 
   useEffect(() => {
     (async () => {
@@ -91,12 +89,6 @@ export default function ProfilePage() {
   return (
     <main className="container">
       <h1>Profile</h1>
-      <p>XP: {xp}</p>
-      <button onClick={() => addXP(10, "test")}>+10 XP</button>
-
-      <p>Wallet: {wallet?.balance ?? 0} NATUR</p>
-      <button onClick={() => earn(5, { reason: "test earn" })}>+5 NATUR</button>
-      <button onClick={() => spend(2, { reason: "test spend" })}>-2 NATUR</button>
       <form
         className="card"
         onSubmit={(e) => { e.preventDefault(); void handleSave(); }}
@@ -131,6 +123,14 @@ export default function ProfilePage() {
           Sign out
         </button>
       </form>
+
+      <section className="panel">
+        <h2>Account & App Data</h2>
+        <p className="muted">Signed-in data will sync with Supabase as features roll in.</p>
+      </section>
+
+      <WalletPanel />
+      <XPPanel />
     </main>
   );
 }

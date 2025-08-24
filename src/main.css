@@ -19,6 +19,7 @@
 @import "./styles/polish.css";
 @import "./styles/cards.css";
 @import './styles/components.css';
+@import "./styles/profile.css";
 
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont,

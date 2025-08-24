@@ -6,26 +6,30 @@ export function useXP() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchXP() {
+    (async () => {
+      const { data: userRes } = await supabase.auth.getUser();
+      const userId = userRes.user?.id;
+      if (!userId) { setXp(0); setLoading(false); return; }
+
       const { data, error } = await supabase
         .from("xp_ledger")
         .select("delta")
-        .eq("user_id", (await supabase.auth.getUser()).data.user?.id);
+        .eq("user_id", userId);
 
-      if (error) console.error(error);
-
-      const total = data?.reduce((acc, row) => acc + row.delta, 0) ?? 0;
-      setXp(total);
+      if (!error) {
+        const total = (data || []).reduce((a, r) => a + (r?.delta || 0), 0);
+        setXp(total);
+      }
       setLoading(false);
-    }
-    fetchXP();
+    })();
   }, []);
 
   async function addXP(delta: number, source = "manual") {
-    const user = (await supabase.auth.getUser()).data.user;
-    if (!user) return;
-    await supabase.from("xp_ledger").insert({ user_id: user.id, delta, source });
-    setXp((prev) => prev + delta);
+    const { data: userRes } = await supabase.auth.getUser();
+    const userId = userRes.user?.id;
+    if (!userId) return;
+    await supabase.from("xp_ledger").insert({ user_id: userId, delta, source });
+    setXp((v) => v + delta);
   }
 
   return { xp, loading, addXP };
