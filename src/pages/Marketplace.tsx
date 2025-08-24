@@ -4,6 +4,8 @@ import Meta from "../components/Meta";
 import { breadcrumbs } from "../lib/jsonld";
 import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
+import { PRODUCTS } from "../data/products";
+import ImageSafe from "../components/ImageSafe";
 
 const labels = { '/marketplace': 'Marketplace' };
 
@@ -25,6 +27,18 @@ export default function MarketplacePage() {
             { to: "/marketplace/checkout", title: "Checkout", desc: "Pay & ship.", icon: "🧾" },
           ]}
         />
+
+        {PRODUCTS.length > 0 && (
+          <div className="cards grid-gap" style={{ marginTop: 20 }}>
+            {PRODUCTS.map((p) => (
+              <a key={p.id} className="card" href={`/marketplace/${p.id}`}>
+                {p.img && <ImageSafe src={p.img} alt={p.name} />}
+                <h2>{p.name}</h2>
+                <p>${p.price.toFixed(2)}</p>
+              </a>
+            ))}
+          </div>
+        )}
 
         <p className="muted" style={{ marginTop: 12 }}>
           Coming soon: AI assistance for sizing, bundles, and gift ideas.

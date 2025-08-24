@@ -1,37 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { WORLD_DATA } from "../../data/worlds-data";
+import React from "react";
+import { WORLDS } from "../../data/worlds";
+import ImageSafe from "../../components/ImageSafe";
 import Meta from "../../components/Meta";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import SmartImg from "../../components/SmartImg";
-import SkeletonGrid from "../../components/SkeletonGrid";
 import PageHead from "../../components/PageHead";
 
 export default function WorldsIndex() {
-  const [ready, setReady] = useState(false);
-  useEffect(() => {
-    const t = setTimeout(() => setReady(true), 250);
-    return () => clearTimeout(t);
-  }, []);
-
   return (
-      <div id="main" className="page-wrap">
-        <PageHead title="Naturverse — Worlds" description="Explore the 14 kingdoms." />
-        <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." />
-        <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Worlds" }]} />
+    <div className="page-wrap">
+      <PageHead title="Naturverse — Worlds" description="Explore the 14 kingdoms." />
+      <Meta title="Worlds — Naturverse" description="Explore the 14 kingdoms." />
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Worlds" }]} />
+      <h1>Worlds</h1>
       <p className="muted">Choose a kingdom to explore.</p>
-      {ready ? (
-      <div className="cards">
-        {WORLD_DATA.map((w) => (
-            <a className="card" key={w.slug} href={`/worlds/${w.slug}`}>
-              <SmartImg src={w.map} alt={`${w.name} map`} ratio="wide" width={800} height={450} />
-              <h2>{w.name}</h2>
-              <p>{w.blurb}</p>
-            </a>
+      <div className="cards grid-gap">
+        {WORLDS.map((w) => (
+          <a key={w.slug} className="card" href={`/worlds/${w.slug}`}>
+            {w.hero && <ImageSafe src={w.hero} alt={w.title} />}
+            <h2>{w.title}</h2>
+            <p>{w.blurb}</p>
+          </a>
         ))}
       </div>
-      ) : (
-        <SkeletonGrid count={14} />
-      )}
     </div>
   );
 }

@@ -1,6 +1,6 @@
 export type LangSlug =
   | "thailandia"
-  | "chinadia"
+  | "chilandia"
   | "indillandia"
   | "brazilandia"
   | "australandia"
@@ -32,7 +32,7 @@ export const LANGUAGES: Record<LangSlug, Phrasebook> = {
     thumb: "/Languages/Mangolanguagemainthai.png",
     poster: "/Languages/Turianlanguage.png"
   },
-  chinadia: {
+  chilandia: {
     nativeName: "中文",
     hello: { native: "你好", roman: "nǐ hǎo" },
     thankyou: { native: "谢谢", roman: "xièxie" },
@@ -103,3 +103,13 @@ export const LANGUAGES: Record<LangSlug, Phrasebook> = {
     poster: "/Languages/Turianlanguageenglish.png"
   }
 };
+
+export type LanguageItem = { slug: string; name: string; hero?: string; thumb?: string };
+export const LANGUAGE_WORLDS: LanguageItem[] = [
+  { slug: "thailandia",   name: "Thai",       hero: "/assets/naturversity/languages/thailandia/hero.png",   thumb: "/assets/naturversity/languages/thailandia/thumb.png" },
+  { slug: "brazilandia",  name: "Portuguese", hero: "/assets/naturversity/languages/brazilandia/hero.png",  thumb: "/assets/naturversity/languages/brazilandia/thumb.png" },
+  { slug: "indilandia",   name: "Hindi",      hero: "/assets/naturversity/languages/indilandia/hero.png",   thumb: "/assets/naturversity/languages/indilandia/thumb.png" },
+  { slug: "amerilandia",  name: "English",    hero: "/assets/naturversity/languages/amerilandia/hero.png",  thumb: "/assets/naturversity/languages/amerilandia/thumb.png" },
+  { slug: "australandia", name: "English AU", hero: "/assets/naturversity/languages/australandia/hero.png", thumb: "/assets/naturversity/languages/australandia/thumb.png" },
+  { slug: "chilandia",    name: "Mandarin",   hero: "/assets/naturversity/languages/chilandia/hero.png",    thumb: "/assets/naturversity/languages/chilandia/thumb.png" },
+];
