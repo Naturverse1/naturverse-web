@@ -1,271 +1,283 @@
--- ===========
--- Naturverse MVP Schema + RLS (idempotent)
--- Run in Supabase SQL editor as role: postgres
--- ===========
-
--- Extensions (idempotent)
-CREATE EXTENSION IF NOT EXISTS "pgcrypto";
-
--- Schema
-CREATE SCHEMA IF NOT EXISTS natur;
+-- ---------- Extensions ----------
+create extension if not exists pgcrypto;
+create extension if not exists "uuid-ossp";
 
 -- ---------- Helpers ----------
--- updated_at trigger
-CREATE OR REPLACE FUNCTION natur.set_updated_at()
-RETURNS trigger
-LANGUAGE plpgsql
-AS $$
-BEGIN
-  NEW.updated_at = NOW();
-  RETURN NEW;
-END;
-$$;
+create or replace function public.set_updated_at()
+returns trigger language plpgsql as $$
+begin
+  new.updated_at = now();
+  return new;
+end;$$;
 
--- ---------- PROFILES ----------
--- One row per auth user (id mirrors auth.users.id)
-DROP TABLE IF EXISTS natur.profiles CASCADE;
-CREATE TABLE natur.profiles (
-  id          uuid PRIMARY KEY,              -- auth.uid()
-  email       text UNIQUE,
+-- ---------- Profiles ----------
+create table if not exists public.profiles (
+  id uuid primary key references auth.users(id) on delete cascade,
+  email text,
   display_name text,
-  avatar_url  text,
-  kid_safe    boolean DEFAULT true,
-  theme       text DEFAULT 'system',
-  created_at  timestamptz NOT NULL DEFAULT now(),
-  updated_at  timestamptz NOT NULL DEFAULT now()
+  avatar_url text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
 );
-CREATE TRIGGER trg_profiles_updated
-BEFORE UPDATE ON natur.profiles
-FOR EACH ROW EXECUTE FUNCTION natur.set_updated_at();
+drop trigger if exists trg_profiles_updated_at on public.profiles;
+create trigger trg_profiles_updated_at before update on public.profiles
+for each row execute function public.set_updated_at();
 
--- Enable RLS
-ALTER TABLE natur.profiles ENABLE ROW LEVEL SECURITY;
+create or replace function public.handle_new_user()
+returns trigger language plpgsql security definer as $$
+begin
+  insert into public.profiles (id, email)
+  values (new.id, new.email)
+  on conflict (id) do update set email = excluded.email;
+  return new;
+end;$$;
+drop trigger if exists on_auth_user_created on auth.users;
+create trigger on_auth_user_created after insert on auth.users
+for each row execute function public.handle_new_user();
 
--- (Re)create policies
-DROP POLICY IF EXISTS "Profiles: read self"   ON natur.profiles;
-DROP POLICY IF EXISTS "Profiles: upsert self" ON natur.profiles;
-DROP POLICY IF EXISTS "Profiles: update self" ON natur.profiles;
+alter table public.profiles enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='profiles_select_all') then
+    create policy "profiles_select_all"
+    on public.profiles for select to authenticated using (true);
+  end if;
+  if not exists (select 1 from pg_policies where policyname='profiles_insert_self') then
+    create policy "profiles_insert_self"
+    on public.profiles for insert to authenticated with check (id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='profiles_update_self') then
+    create policy "profiles_update_self"
+    on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
+  end if;
+end $$;
 
-CREATE POLICY "Profiles: read self"
-  ON natur.profiles FOR SELECT TO authenticated
-  USING (auth.uid() = id);
+-- ---------- Storage: avatars ----------
+select case
+  when exists (select 1 from storage.buckets where id='avatars') then null
+  else storage.create_bucket('avatars', public := true)
+end;
+alter table storage.objects enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='avatars_public_read') then
+    create policy "avatars_public_read"
+    on storage.objects for select to anon, authenticated using (bucket_id = 'avatars');
+  end if;
+  if not exists (select 1 from pg_policies where policyname='avatars_user_insert_prefix') then
+    create policy "avatars_user_insert_prefix"
+    on storage.objects for insert to authenticated
+    with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
+  end if;
+  if not exists (select 1 from pg_policies where policyname='avatars_user_update_prefix') then
+    create policy "avatars_user_update_prefix"
+    on storage.objects for update to authenticated
+    using ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 )
+    with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
+  end if;
+end $$;
 
-CREATE POLICY "Profiles: upsert self"
-  ON natur.profiles FOR INSERT TO authenticated
-  WITH CHECK (auth.uid() = id);
-
-CREATE POLICY "Profiles: update self"
-  ON natur.profiles FOR UPDATE TO authenticated
-  USING (auth.uid() = id) WITH CHECK (auth.uid() = id);
-
-GRANT USAGE ON SCHEMA natur TO authenticated, anon;
-GRANT SELECT, INSERT, UPDATE ON natur.profiles TO authenticated;
-REVOKE ALL ON natur.profiles FROM anon;
-
--- ---------- NAVATARS (character cards) ----------
-DROP TABLE IF EXISTS natur.navatars CASCADE;
-CREATE TABLE natur.navatars (
-  id          uuid PRIMARY KEY DEFAULT gen_random_uuid(),
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  name        text,
-  base_type   text NOT NULL,        -- 'Animal' | 'Fruit' | 'Insect' | 'Spirit'
-  backstory   text,
-  image_url   text,
-  created_at  timestamptz NOT NULL DEFAULT now(),
-  updated_at  timestamptz NOT NULL DEFAULT now()
+-- ---------- NaturBank ----------
+create table if not exists public.wallets (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  symbol text not null default 'NATUR',
+  balance numeric(20,6) not null default 0,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
+  unique(user_id, symbol)
 );
-CREATE INDEX IF NOT EXISTS idx_navatars_user ON natur.navatars(user_id);
-CREATE TRIGGER trg_navatars_updated
-BEFORE UPDATE ON natur.navatars
-FOR EACH ROW EXECUTE FUNCTION natur.set_updated_at();
+drop trigger if exists trg_wallets_updated_at on public.wallets;
+create trigger trg_wallets_updated_at before update on public.wallets
+for each row execute function public.set_updated_at();
 
-ALTER TABLE natur.navatars ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Navatars: owner read"   ON natur.navatars;
-DROP POLICY IF EXISTS "Navatars: owner write"  ON natur.navatars;
-
-CREATE POLICY "Navatars: owner read"
-  ON natur.navatars FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "Navatars: owner write"
-  ON natur.navatars FOR ALL TO authenticated
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-
-GRANT SELECT, INSERT, UPDATE, DELETE ON natur.navatars TO authenticated;
-
--- ---------- PASSPORT: Stamps ----------
-DROP TABLE IF EXISTS natur.passport_stamps CASCADE;
-CREATE TABLE natur.passport_stamps (
-  id          bigserial PRIMARY KEY,
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  kingdom     text NOT NULL,        -- e.g., 'Thailandia'
-  stamped_at  timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (user_id, kingdom)
+create table if not exists public.transactions (
+  id uuid primary key default gen_random_uuid(),
+  wallet_id uuid not null references public.wallets(id) on delete cascade,
+  kind text not null check (kind in ('earn','spend','airdrop','adjust')),
+  amount numeric(20,6) not null,
+  meta jsonb,
+  created_at timestamptz not null default now()
 );
-CREATE INDEX IF NOT EXISTS idx_stamps_user ON natur.passport_stamps(user_id);
 
-ALTER TABLE natur.passport_stamps ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Stamps: owner read" ON natur.passport_stamps;
-DROP POLICY IF EXISTS "Stamps: owner write" ON natur.passport_stamps;
+alter table public.wallets enable row level security;
+alter table public.transactions enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='wallets_owner_select') then
+    create policy "wallets_owner_select" on public.wallets
+    for select to authenticated using (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='wallets_owner_write') then
+    create policy "wallets_owner_write" on public.wallets
+    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='txns_owner_select') then
+    create policy "txns_owner_select" on public.transactions
+    for select to authenticated
+    using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
+  end if;
+  if not exists (select 1 from pg_policies where policyname='txns_owner_write') then
+    create policy "txns_owner_write" on public.transactions
+    for all to authenticated
+    using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()))
+    with check (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
+  end if;
+end $$;
 
-CREATE POLICY "Stamps: owner read"
-  ON natur.passport_stamps FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
+create or replace view public.v_my_wallet as
+select id, symbol, balance, created_at, updated_at
+from public.wallets where user_id = auth.uid();
 
-CREATE POLICY "Stamps: owner write"
-  ON natur.passport_stamps FOR ALL TO authenticated
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
+-- ---------- Wallet RPC ----------
+create or replace function public.earn_spend_natur(
+  p_kind text,
+  p_amount numeric,
+  p_meta jsonb default '{}'::jsonb
+) returns void
+language plpgsql
+security definer
+as $$
+declare
+  w_id uuid;
+begin
+  -- Validate
+  if p_amount <= 0 then
+    raise exception 'Amount must be > 0';
+  end if;
+  if p_kind not in ('earn','spend') then
+    raise exception 'Kind must be earn or spend';
+  end if;
 
-GRANT SELECT, INSERT, UPDATE, DELETE ON natur.passport_stamps TO authenticated;
+  -- Ensure wallet exists
+  insert into public.wallets(user_id, symbol)
+  values (auth.uid(), 'NATUR')
+  on conflict (user_id, symbol) do nothing;
 
--- ---------- Badges (catalog + user_badges) ----------
-DROP TABLE IF EXISTS natur.badges CASCADE;
-CREATE TABLE natur.badges (
-  id          text PRIMARY KEY,     -- e.g., 'explorer_01'
-  name        text NOT NULL,
+  select id into w_id from public.wallets where user_id = auth.uid() and symbol='NATUR';
+
+  if p_kind = 'earn' then
+    update public.wallets set balance = balance + p_amount, updated_at=now()
+    where id=w_id;
+    insert into public.transactions(wallet_id, kind, amount, meta) values (w_id, 'earn', p_amount, p_meta);
+  elsif p_kind = 'spend' then
+    update public.wallets set balance = balance - p_amount, updated_at=now()
+    where id=w_id and balance >= p_amount;
+    if not found then
+      raise exception 'Insufficient balance';
+    end if;
+    insert into public.transactions(wallet_id, kind, amount, meta) values (w_id, 'spend', p_amount, p_meta);
+  end if;
+end;$$;
+
+grant execute on function public.earn_spend_natur to authenticated;
+
+-- ---------- XP & Badges ----------
+create table if not exists public.xp_ledger (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  source text not null,
+  delta integer not null,
+  meta jsonb,
+  created_at timestamptz not null default now()
+);
+alter table public.xp_ledger enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='xp_self') then
+    create policy "xp_self" on public.xp_ledger
+    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+end $$;
+
+create table if not exists public.badges (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  title text not null,
   description text,
-  icon        text,                 -- emoji or URL
-  active      boolean DEFAULT true
+  icon_url text,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.user_badges (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  badge_id uuid not null references public.badges(id) on delete cascade,
+  earned_at timestamptz not null default now(),
+  primary key(user_id, badge_id)
+);
+alter table public.user_badges enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='user_badges_self') then
+    create policy "user_badges_self" on public.user_badges
+    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+end $$;
+
+-- ---------- Passports ----------
+create table if not exists public.stamps (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  title text not null,
+  description text,
+  icon_url text,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.user_stamps (
+  user_id uuid not null references auth.users(id) on delete cascade,
+  stamp_id uuid not null references public.stamps(id) on delete cascade,
+  earned_at timestamptz not null default now(),
+  primary key(user_id, stamp_id)
+);
+alter table public.user_stamps enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='user_stamps_self') then
+    create policy "user_stamps_self" on public.user_stamps
+    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+end $$;
+
+-- ---------- Languages ----------
+create table if not exists public.languages (
+  id uuid primary key default gen_random_uuid(),
+  slug text unique not null,
+  name text not null,
+  native_name text,
+  created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now()
+);
+drop trigger if exists trg_lang_updated_at on public.languages;
+create trigger trg_lang_updated_at before update on public.languages
+for each row execute function public.set_updated_at();
+
+create table if not exists public.language_lessons (
+  id uuid primary key default gen_random_uuid(),
+  language_id uuid not null references public.languages(id) on delete cascade,
+  key text not null,
+  title text not null,
+  created_at timestamptz not null default now()
+);
+create table if not exists public.language_lesson_items (
+  id uuid primary key default gen_random_uuid(),
+  lesson_id uuid not null references public.language_lessons(id) on delete cascade,
+  label text,
+  value text,
+  romanized text,
+  meta jsonb,
+  position int not null default 0
 );
 
-DROP TABLE IF EXISTS natur.user_badges CASCADE;
-CREATE TABLE natur.user_badges (
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  badge_id    text NOT NULL REFERENCES natur.badges(id),
-  awarded_at  timestamptz NOT NULL DEFAULT now(),
-  PRIMARY KEY (user_id, badge_id)
-);
+alter table public.languages enable row level security;
+alter table public.language_lessons enable row level security;
+alter table public.language_lesson_items enable row level security;
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='lang_public_read') then
+    create policy "lang_public_read" on public.languages for select to anon, authenticated using (true);
+    create policy "lesson_public_read" on public.language_lessons for select to anon, authenticated using (true);
+    create policy "lesson_items_public_read" on public.language_lesson_items for select to anon, authenticated using (true);
+  end if;
+end $$;
 
-ALTER TABLE natur.badges DISABLE ROW LEVEL SECURITY; -- public read via anon
-GRANT SELECT ON natur.badges TO anon, authenticated;
+insert into public.languages (slug, name, native_name) values
+  ('thailandia', 'Thailandia (Thai)', 'ไทย'),
+  ('chinadia', 'Chinadia (Mandarin)', '中文'),
+  ('indillandia', 'Indillandia (Hindi)', 'हिन्दी'),
+  ('brazilandia', 'Brazilandia (Portuguese)', 'Português'),
+  ('australandia', 'Australandia (English)', 'English'),
+  ('amerilandia', 'Amerilandia (English)', 'English')
+on conflict (slug) do update set name=excluded.name, native_name=excluded.native_name;
 
-ALTER TABLE natur.user_badges ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "UserBadges: owner read"  ON natur.user_badges;
-DROP POLICY IF EXISTS "UserBadges: owner write" ON natur.user_badges;
-
-CREATE POLICY "UserBadges: owner read"
-  ON natur.user_badges FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "UserBadges: owner write"
-  ON natur.user_badges FOR ALL TO authenticated
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-
-GRANT SELECT, INSERT, DELETE ON natur.user_badges TO authenticated;
-
--- ---------- XP events + NATUR coin ledger ----------
-DROP TABLE IF EXISTS natur.xp_events CASCADE;
-CREATE TABLE natur.xp_events (
-  id          bigserial PRIMARY KEY,
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  source      text NOT NULL,      -- 'quiz', 'story', etc.
-  amount      int  NOT NULL CHECK (amount <> 0),
-  created_at  timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS idx_xp_user ON natur.xp_events(user_id);
-
-ALTER TABLE natur.xp_events ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "XP: owner read"  ON natur.xp_events;
-DROP POLICY IF EXISTS "XP: owner write" ON natur.xp_events;
-
-CREATE POLICY "XP: owner read"
-  ON natur.xp_events FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "XP: owner write"
-  ON natur.xp_events FOR INSERT TO authenticated
-  WITH CHECK (user_id = auth.uid());
-
-GRANT SELECT, INSERT ON natur.xp_events TO authenticated;
-
-DROP VIEW IF EXISTS natur.user_xp;
-CREATE VIEW natur.user_xp AS
-SELECT user_id, COALESCE(SUM(amount),0)::int AS xp
-FROM natur.xp_events
-GROUP BY user_id;
-
-DROP TABLE IF EXISTS natur.natur_ledger CASCADE;
-CREATE TABLE natur.natur_ledger (
-  id          bigserial PRIMARY KEY,
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  delta       int NOT NULL,       -- positive earn, negative spend
-  reason      text,
-  created_at  timestamptz NOT NULL DEFAULT now()
-);
-CREATE INDEX IF NOT EXISTS idx_ledger_user ON natur.natur_ledger(user_id);
-
-ALTER TABLE natur.natur_ledger ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "NATUR: owner read"  ON natur.natur_ledger;
-DROP POLICY IF EXISTS "NATUR: owner write" ON natur.natur_ledger;
-
-CREATE POLICY "NATUR: owner read"
-  ON natur.natur_ledger FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "NATUR: owner write"
-  ON natur.natur_ledger FOR INSERT TO authenticated
-  WITH CHECK (user_id = auth.uid());
-
-GRANT SELECT, INSERT ON natur.natur_ledger TO authenticated;
-
-DROP VIEW IF EXISTS natur.natur_balances;
-CREATE VIEW natur.natur_balances AS
-SELECT user_id, COALESCE(SUM(delta),0)::int AS balance
-FROM natur.natur_ledger
-GROUP BY user_id;
-
--- ---------- Marketplace (catalog + wishlists) ----------
-DROP TABLE IF EXISTS natur.products CASCADE;
-CREATE TABLE natur.products (
-  id           bigserial PRIMARY KEY,
-  slug         text UNIQUE,
-  name         text NOT NULL,
-  description  text,
-  price_cents  int NOT NULL CHECK (price_cents >= 0),
-  active       boolean DEFAULT true,
-  created_at   timestamptz NOT NULL DEFAULT now()
-);
--- Public read
-ALTER TABLE natur.products DISABLE ROW LEVEL SECURITY;
-GRANT SELECT ON natur.products TO anon, authenticated;
-
-DROP TABLE IF EXISTS natur.wishlists CASCADE;
-CREATE TABLE natur.wishlists (
-  id          bigserial PRIMARY KEY,
-  user_id     uuid NOT NULL REFERENCES natur.profiles(id) ON DELETE CASCADE,
-  product_id  bigint NOT NULL REFERENCES natur.products(id) ON DELETE CASCADE,
-  created_at  timestamptz NOT NULL DEFAULT now(),
-  UNIQUE (user_id, product_id)
-);
-
-ALTER TABLE natur.wishlists ENABLE ROW LEVEL SECURITY;
-DROP POLICY IF EXISTS "Wishlists: owner read"  ON natur.wishlists;
-DROP POLICY IF EXISTS "Wishlists: owner write" ON natur.wishlists;
-
-CREATE POLICY "Wishlists: owner read"
-  ON natur.wishlists FOR SELECT TO authenticated
-  USING (user_id = auth.uid());
-
-CREATE POLICY "Wishlists: owner write"
-  ON natur.wishlists FOR ALL TO authenticated
-  USING (user_id = auth.uid()) WITH CHECK (user_id = auth.uid());
-
-GRANT SELECT, INSERT, DELETE ON natur.wishlists TO authenticated;
-
--- ---------- Newsletter signups (public form) ----------
-DROP TABLE IF EXISTS natur.newsletter_subscribers CASCADE;
-CREATE TABLE natur.newsletter_subscribers (
-  id         bigserial PRIMARY KEY,
-  email      text UNIQUE NOT NULL,
-  created_at timestamptz NOT NULL DEFAULT now()
-);
-ALTER TABLE natur.newsletter_subscribers ENABLE ROW LEVEL SECURITY;
--- Allow anyone to insert; only service role can read
-DROP POLICY IF EXISTS "Newsletter: public insert" ON natur.newsletter_subscribers;
-CREATE POLICY "Newsletter: public insert"
-  ON natur.newsletter_subscribers FOR INSERT TO anon, authenticated
-  WITH CHECK (true);
-REVOKE ALL ON natur.newsletter_subscribers FROM anon, authenticated;
-
--- ---------- Grants (final touch) ----------
-GRANT USAGE ON SCHEMA natur TO anon, authenticated;
