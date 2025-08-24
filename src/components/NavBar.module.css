@@ -8,5 +8,5 @@
 @media (max-width:768px){
   .userPill{display:none}
   .iconDesktop{display:none}
-  .iconMobile{display:inline;font-size:18px/* closer to cart size */;background:none;color:#2563eb;padding:0;border-radius:0;vertical-align:middle}
+  .iconMobile{display:inline-flex;font-size:18px/* match cart height */;background:none/* remove blue box */;color:#2563eb;padding:0;margin:0 4px;border:none;box-shadow:none;vertical-align:middle}
 }
