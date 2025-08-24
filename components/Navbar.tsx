@@ -7,6 +7,7 @@ import { getNavatarUrl } from "@/lib/profile";
 export default function Navbar() {
   const user = useUser();
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
     let mounted = true;
@@ -28,6 +29,14 @@ export default function Navbar() {
       <div className="nv-left">
         {/* existing logo + primary nav */}
       </div>
+      <button
+        onClick={() => setMenuOpen(!menuOpen)}
+        className="text-2xl focus:outline-none"
+        aria-label="Menu"
+        aria-expanded={menuOpen}
+      >
+        🍃
+      </button>
       <div className="nv-right">
         {user ? (
           <Link href="/profile" className="nv-profile">
