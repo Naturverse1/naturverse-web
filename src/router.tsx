@@ -27,6 +27,7 @@ import Courses from './pages/naturversity/Courses';
 import CourseDetail from './pages/naturversity/CourseDetail';
 import LanguagesHub from './pages/naturversity/languages';
 import LanguageDetail from './pages/naturversity/languages/[slug]';
+import NaturversityLayout from './layouts/Naturversity';
 import NaturBankPage from './pages/naturbank';
 import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
@@ -74,13 +75,19 @@ export const router = createBrowserRouter([
       },
       { path: 'cart', element: <CartPage /> },
       { path: 'wishlist', element: <WishlistPage /> },
-      { path: 'naturversity', element: <Naturversity /> },
-      { path: 'naturversity/teachers', element: <Teachers /> },
-      { path: 'naturversity/partners', element: <Partners /> },
-      { path: 'naturversity/courses', element: <Courses /> },
-      { path: 'naturversity/course/:slug', element: <CourseDetail /> },
-      { path: 'naturversity/languages', element: <LanguagesHub /> },
-      { path: 'naturversity/languages/:slug', element: <LanguageDetail /> },
+      {
+        path: 'naturversity',
+        element: <NaturversityLayout />,
+        children: [
+          { index: true, element: <Naturversity /> },
+          { path: 'teachers', element: <Teachers /> },
+          { path: 'partners', element: <Partners /> },
+          { path: 'courses', element: <Courses /> },
+          { path: 'course/:slug', element: <CourseDetail /> },
+          { path: 'languages', element: <LanguagesHub /> },
+          { path: 'languages/:slug', element: <LanguageDetail /> },
+        ],
+      },
       { path: 'naturbank', element: <NaturBankPage /> },
       { path: 'naturbank/wallet', element: <BankWallet /> },
       { path: 'naturbank/natur', element: <BankToken /> },
