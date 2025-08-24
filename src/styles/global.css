@@ -182,3 +182,17 @@ textarea {
 /* Card media stays square and crops cleanly */
 .nv-card__media { aspect-ratio: 1 / 1; }
 .nv-card__media img { width: 100%; height: 100%; object-fit: cover; }
+
+/* Profile icon in navbar */
+.profile-icon {
+  font-size: 1.5rem;
+  margin-left: 1rem;
+  cursor: pointer;
+  transition: transform 0.2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+.profile-icon:hover {
+  transform: scale(1.2);
+}

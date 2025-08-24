@@ -25,8 +25,20 @@ export default function AuthButton() {
   if (loading) return <span style={{ opacity: 0.6 }}>…</span>;
 
   return user ? (
-    <a href="/profile" title="Profile">
-      {user.user_metadata?.user_name ?? user.email}
+    <a href="/profile" title="Profile" className="profile-icon">
+      {user.user_metadata?.avatar_url ? (
+        <img
+          src={user.user_metadata.avatar_url}
+          alt="Profile"
+          width={24}
+          height={24}
+          style={{ borderRadius: "50%" }}
+        />
+      ) : (
+        <span role="img" aria-label="profile">
+          👤
+        </span>
+      )}
     </a>
   ) : (
     <a href="/login" className="btn sm">
