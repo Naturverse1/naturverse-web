@@ -139,6 +139,16 @@ textarea {
   margin: 1rem 0 1.25rem;
 }
 
+/* Language lesson header images */
+.language-lesson-header img {
+  max-width: 250px;
+  height: auto;
+  display: block;
+  margin: 0 auto 1rem auto;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
 /* Buttons */
 .btn {
   display: inline-flex;
