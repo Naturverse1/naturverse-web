@@ -2,20 +2,13 @@ import { useParams } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import { CharacterGrid } from "../../components/CharacterGrid";
 import { getWorldBySlug } from "../../data/worlds";
-
-const FOLDER_BY_SLUG: Record<string, string> = {
-  amerilandia: "Amerilandia",
-  australandia: "Australandia",
-  brazilandia: "Brazilandia",
-  chilandia: "Chilandia",
-  indillandia: "Indillandia",
-  thailandia: "Thailandia",
-};
+import { SLUG_TO_FOLDER, type KingdomSlug } from "../../lib/kingdoms";
 
 export default function WorldDetail() {
-  const { slug = "" } = useParams();
+  const { slug } = useParams<{ slug: KingdomSlug }>();
+  if (!slug) return <p>World not found.</p>;
   const world = getWorldBySlug(slug);
-  const folder = FOLDER_BY_SLUG[slug] ?? slug;
+  const folder = SLUG_TO_FOLDER[slug];
   if (!world) return <p>World not found.</p>;
 
   return (
@@ -35,7 +28,7 @@ export default function WorldDetail() {
 
       <section aria-labelledby="characters-heading" style={{ marginTop: 24 }}>
         <h2 id="characters-heading">Characters</h2>
-        <CharacterGrid kingdom={folder} />
+        <CharacterGrid kingdom={folder} slug={slug} />
       </section>
     </article>
   );

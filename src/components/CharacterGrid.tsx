@@ -22,11 +22,19 @@ function coerceCharacters(raw: any): Character[] {
   if (Array.isArray(raw.characters)) {
     // { characters: [...] }
     return raw.characters
-      .filter((c: any) => typeof c === "string" || (c && typeof c.image === "string"))
+      .filter(
+        (c: any) =>
+          typeof c === "string" ||
+          (c && (typeof c.image === "string" || typeof c.file === "string")),
+      )
       .map((c: any) =>
         typeof c === "string"
           ? { id: stripExt(c), image: c }
-          : { id: c.id ?? stripExt(c.image), name: c.name, image: c.image },
+          : {
+              id: c.id ?? stripExt(c.image ?? c.file),
+              name: c.name,
+              image: c.image ?? c.file,
+            },
       );
   }
   if (Array.isArray(raw.images)) {
@@ -38,7 +46,7 @@ function coerceCharacters(raw: any): Character[] {
   return [];
 }
 
-export function CharacterGrid({ kingdom }: { kingdom: string }) {
+export function CharacterGrid({ kingdom, slug }: { kingdom: string; slug?: string }) {
   const [chars, setChars] = React.useState<Character[] | null>(null);
   const [error, setError] = React.useState<string | null>(null);
 
@@ -98,7 +106,7 @@ export function CharacterGrid({ kingdom }: { kingdom: string }) {
         <a
           key={c.id}
           className="nv-card"
-          href={`/characters/${encodeURIComponent(c.id)}`}
+          href={slug ? `/worlds/${slug}/characters/${encodeURIComponent(c.id)}` : `/characters/${encodeURIComponent(c.id)}`}
           aria-label={c.name ?? c.id}
         >
           <img
