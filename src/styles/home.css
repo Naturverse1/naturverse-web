@@ -88,3 +88,15 @@
   text-decoration: underline;
   text-underline-offset: 2px;
 }
+
+/* Icons for Play / Learn / Earn titles */
+.bubble-title {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bubble-emoji {
+  line-height: 1;
+  transform: translateY(1px); /* subtle optical alignment */
+}
