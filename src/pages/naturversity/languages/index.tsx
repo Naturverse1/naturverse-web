@@ -1,65 +1,64 @@
-import React from "react";
-import NvCard from "../../../components/NvCard";
+import Card from "../../../components/Card";
 
 const langs = [
   {
     slug: "thailandia",
-    title: "Thailandia (Thai)",
+    name: "Thailandia (Thai)",
     native: "ไทย",
     img: "/Languages/Mangolanguagemainthai.png",
   },
   {
     slug: "chinadia",
-    title: "Chinadia (Mandarin)",
+    name: "Chinadia (Mandarin)",
     native: "中文",
     img: "/Languages/Cranelanguagemainchina.png",
   },
   {
     slug: "indillandia",
-    title: "Indillandia (Hindi)",
+    name: "Indillandia (Hindi)",
     native: "हिंदी",
     img: "/Languages/Genielanguagemainindi.png",
   },
   {
     slug: "brazilandia",
-    title: "Brazilandia (Portuguese)",
+    name: "Brazilandia (Portuguese)",
     native: "Português",
     img: "/Languages/Birdlanguagemainbrazil.png",
   },
   {
     slug: "australandia",
-    title: "Australandia (English)",
+    name: "Australandia (English)",
     native: "English",
     img: "/Languages/Koalalanguagemain.png",
   },
   {
     slug: "amerilandia",
-    title: "Amerilandia (English)",
+    name: "Amerilandia (English)",
     native: "English",
     img: "/Languages/Owllanguagemain.png",
   },
 ];
 
-export default function LanguagesPage() {
+export default function LanguagesIndex() {
   return (
-    <section>
+    <main style={{ maxWidth: 980, margin: "24px auto", padding: "0 16px" }}>
       <h1>Languages</h1>
       <p>Phrasebooks for each kingdom.</p>
-      <div className="nvgrid" style={{ marginTop: 16 }}>
+
+      <div className="grid-cards" role="list">
         {langs.map((l) => (
-          <NvCard
+          <Card
             key={l.slug}
             href={`/naturversity/languages/${l.slug}`}
-            title={l.title}
+            title={l.name}
             desc={`Native: ${l.native}`}
             imgSrc={l.img}
-            imgAlt={l.title}
-            imgW={512}
-            imgH={512}
+            imgAlt={l.name}
+            badge="Phrasebook"
           />
         ))}
       </div>
-    </section>
+    </main>
   );
 }
 

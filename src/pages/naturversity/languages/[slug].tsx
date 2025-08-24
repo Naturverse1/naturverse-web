@@ -1,110 +1,115 @@
-import React from "react";
 import { useParams } from "react-router-dom";
-import NvImg from "../../../components/NvImg";
+import "../../../components/card.css";
 
-const meta: Record<string, {title:string; native:string; hero:string; secondary:string; lessons:{hello:string; thanks:string; alphabet:string; numbers:string[];} }> = {
+type Content = {
+  hello: string;
+  thankyou: string;
+  alphabet: string[];
+  count: Array<[number, string, string]>;
+  hero: string;          // main image
+  secondary: string;     // Turian secondary image
+};
+
+const DATA: Record<string, Content> = {
   thailandia: {
-    title: "Thailandia (Thai)",
-    native: "ไทย",
+    hello: "สวัสดี — să-wàt-dee",
+    thankyou: "ขอบคุณ — khâwp-khun",
+    alphabet: ["ก (gor)", "ข (khor)", "ค (khor)", "ง (ngor)", "จ (jor)"],
+    count: [
+      [1, "๑", "nûeng"], [2, "๒", "sǒng"], [3, "๓", "sǎam"], [4, "๔", "sìi"],
+      [5, "๕", "hâa"], [6, "๖", "hòk"], [7, "๗", "jèt"], [8, "๘", "bpàet"],
+      [9, "๙", "gâo"], [10, "๑๐", "sìp"],
+    ],
     hero: "/Languages/Mangolanguagemainthai.png",
     secondary: "/Languages/Turianlanguage.png",
-    lessons: {
-      hello: "สวัสดี — sà-wàt-dee",
-      thanks: "ขอบคุณ — khàwp-khun",
-      alphabet: "ก (gor) • ข (khor) • ค (khor) • ง (ngor) • จ (jor)",
-      numbers: ["๑ — nūeng","๒ — sŏng","๓ — sǎam","๔ — sìi","๕ — hâa","๖ — hòk","๗ — jèt","๘ — bpàet","๙ — găo","๑๐ — sìp"],
-    },
   },
   chinadia: {
-    title: "Chinadia (Mandarin)",
-    native: "中文",
+    hello: "欢迎 — huānyíng",
+    thankyou: "谢谢 — xièxie",
+    alphabet: ["你 (nǐ)", "好 (hǎo)", "学 (xué)", "习 (xí)", "文 (wén)"],
+    count: [[1,"一","yī"],[2,"二","èr"],[3,"三","sān"],[4,"四","sì"],[5,"五","wǔ"],[6,"六","liù"],[7,"七","qī"],[8,"八","bā"],[9,"九","jiǔ"],[10,"十","shí"]],
     hero: "/Languages/Cranelanguagemainchina.png",
     secondary: "/Languages/Turianlanguagechina.png",
-    lessons: {
-      hello: "你好 — nǐ hǎo",
-      thanks: "谢谢 — xièxie",
-      alphabet: "Basic pinyin: a o e i u ü; initials: b p m f …",
-      numbers: ["一 yī","二 èr","三 sān","四 sì","五 wǔ","六 liù","七 qī","八 bā","九 jiǔ","十 shí"],
-    },
   },
   indillandia: {
-    title: "Indillandia (Hindi)",
-    native: "हिंदी",
+    hello: "नमस्ते — namaste",
+    thankyou: "धन्यवाद — dhanyavād",
+    alphabet: ["अ a", "आ ā", "इ i", "ई ī", "उ u"],
+    count: [[1,"१","ek"],[2,"२","do"],[3,"३","tīn"],[4,"४","chār"],[5,"५","pāñch"],[6,"६","chhah"],[7,"७","sāt"],[8,"८","āṭh"],[9,"९","nau"],[10,"१०","das"]],
     hero: "/Languages/Genielanguagemainindi.png",
     secondary: "/Languages/Turianlanguagehindi.png",
-    lessons: {
-      hello: "नमस्ते — namaste",
-      thanks: "धन्यवाद — dhanyavād",
-      alphabet: "अ आ इ ई उ ऊ ए ऐ ओ औ",
-      numbers: ["१ ek","२ do","३ tīn","४ chār","५ pānch","६ chhah","७ sāt","८ āṭh","९ nau","१० das"],
-    },
   },
   brazilandia: {
-    title: "Brazilandia (Portuguese)",
-    native: "Português",
+    hello: "Olá — hello",
+    thankyou: "Obrigado/Obrigada — thank you",
+    alphabet: ["A", "B", "C", "D", "E"],
+    count: [[1,"1","um"],[2,"2","dois"],[3,"3","três"],[4,"4","quatro"],[5,"5","cinco"],[6,"6","seis"],[7,"7","sete"],[8,"8","oito"],[9,"9","nove"],[10,"10","dez"]],
     hero: "/Languages/Birdlanguagemainbrazil.png",
     secondary: "/Languages/Turianlanguagebrazil.png",
-    lessons: {
-      hello: "Olá",
-      thanks: "Obrigado/Obrigada",
-      alphabet: "A B C Ç D E F G H I J L M N O P Q R S T U V X Z",
-      numbers: ["um","dois","três","quatro","cinco","seis","sete","oito","nove","dez"],
-    },
   },
   australandia: {
-    title: "Australandia (English)",
-    native: "English",
+    hello: "Welcome — g’day",
+    thankyou: "Thanks — cheers",
+    alphabet: ["A", "B", "C", "D", "E"],
+    count: [[1,"1","one"],[2,"2","two"],[3,"3","three"],[4,"4","four"],[5,"5","five"],[6,"6","six"],[7,"7","seven"],[8,"8","eight"],[9,"9","nine"],[10,"10","ten"]],
     hero: "/Languages/Koalalanguagemain.png",
     secondary: "/Languages/Turianlanguageenglish.png",
-    lessons: {
-      hello: "Hello",
-      thanks: "Thank you",
-      alphabet: "A B C D E F G … Z",
-      numbers: ["one","two","three","four","five","six","seven","eight","nine","ten"],
-    },
   },
   amerilandia: {
-    title: "Amerilandia (English)",
-    native: "English",
+    hello: "Welcome",
+    thankyou: "Thank you",
+    alphabet: ["A", "B", "C", "D", "E"],
+    count: [[1,"1","one"],[2,"2","two"],[3,"3","three"],[4,"4","four"],[5,"5","five"],[6,"6","six"],[7,"7","seven"],[8,"8","eight"],[9,"9","nine"],[10,"10","ten"]],
     hero: "/Languages/Owllanguagemain.png",
     secondary: "/Languages/Turianlanguageenglish.png",
-    lessons: {
-      hello: "Hello",
-      thanks: "Thank you",
-      alphabet: "A B C D E F G … Z",
-      numbers: ["one","two","three","four","five","six","seven","eight","nine","ten"],
-    },
   },
 };
 
 export default function LanguageDetail() {
-  const { slug = "thailandia" } = useParams();
-  const m = meta[slug] ?? meta.thailandia;
+  const { slug = "thailandia" } = useParams<{ slug: string }>();
+  const d = DATA[slug] ?? DATA.thailandia;
 
   return (
-    <section>
-      <h1>{m.title} — {m.native}</h1>
-      <p>Learn greetings, alphabet basics, and common phrases for {m.title.split(" (")[0]}.</p>
+    <main style={{ maxWidth: 860, margin: "24px auto", padding: "0 16px" }}>
+      <h1 style={{ marginBottom: 4 }}>{titleFor(slug)}</h1>
+      <p>Learn greetings, alphabet basics, and common phrases for {titleFor(slug, true)}.</p>
 
-      <div style={{display:"grid", gap:16, maxWidth:980}}>
-        <NvImg src={m.hero} alt={m.title} width={1024} height={768} />
-        <NvImg src={m.secondary} alt={`${m.title} secondary`} width={1024} height={768} />
-      </div>
-
-      <div style={{marginTop:24}}>
+      <img className="lang-hero" src={d.hero} alt="" />
+      <section style={{ marginTop: 20 }}>
         <h3>Starter phrases</h3>
         <ul>
-          <li><strong>Hello:</strong> {m.lessons.hello}</li>
-          <li><strong>Thank you:</strong> {m.lessons.thanks}</li>
+          <li><strong>Hello:</strong> {d.hello}</li>
+          <li><strong>Thank you:</strong> {d.thankyou}</li>
         </ul>
 
         <h3>Alphabet basics</h3>
-        <p>{m.lessons.alphabet}</p>
+        <p>{d.alphabet.join(" · ")}</p>
 
         <h3>Count to ten</h3>
-        <ol>{m.lessons.numbers.map((n) => <li key={n}>{n}</li>)}</ol>
-      </div>
-    </section>
+        <ol>
+          {d.count.map(([n, glyph, say]) => (
+            <li key={n}>
+              <strong>{n}.</strong> {glyph} — <em>{say}</em>
+            </li>
+          ))}
+        </ol>
+      </section>
+
+      <img className="lang-hero" src={d.secondary} alt="" style={{ marginTop: 16 }} />
+    </main>
   );
+}
+
+function titleFor(slug: string, short = false) {
+  const m: Record<string, string> = {
+    thailandia: "Thailandia (Thai)",
+    chinadia: "Chinadia (Mandarin)",
+    indillandia: "Indillandia (Hindi)",
+    brazilandia: "Brazilandia (Portuguese)",
+    australandia: "Australandia (English)",
+    amerilandia: "Amerilandia (English)",
+  };
+  const t = m[slug] ?? "Thailandia (Thai)";
+  return short ? t.split(" (")[0] : t;
 }
 
