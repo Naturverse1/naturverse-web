@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase"; // existing client
+import { supabase } from "../lib/supabase";
 
-type Profile = {
+type ProfileRow = {
   id: string;
   email: string | null;
   display_name: string | null;
@@ -11,12 +11,12 @@ type Profile = {
 
 export default function ProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [email, setEmail] = useState<string>("");
-  const [displayName, setDisplayName] = useState<string>("");
+  const [email, setEmail] = useState("");
+  const [displayName, setDisplayName] = useState("");
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
-  const [avatarUrl, setAvatarUrl] = useState<string>("");
+  const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
-  const [lastUpdated, setLastUpdated] = useState<string>("—");
+  const [lastUpdated, setLastUpdated] = useState("—");
 
   useEffect(() => {
     (async () => {
@@ -26,23 +26,23 @@ export default function ProfilePage() {
       setUserId(user.id);
       setEmail(user.email ?? "");
 
-      const { data, error: profErr } = await supabase
-        .from<Profile>("natur.profiles")
+      const { data, error: selErr } = await supabase
+        .from<ProfileRow>("natur.profiles")
         .select("*")
         .eq("id", user.id)
         .maybeSingle();
 
-      if (profErr && profErr.code !== "PGRST116") {
-        console.error(profErr);
-      }
+      if (selErr && selErr.code !== "PGRST116") console.error(selErr);
 
       if (data) {
         setDisplayName(data.display_name ?? "");
         setAvatarUrl(data.avatar_url ?? "");
         setLastUpdated(data.updated_at ? new Date(data.updated_at).toLocaleString() : "—");
       } else {
-        // bootstrap empty row so updates work
-        await supabase.from("natur.profiles").insert({ id: user.id, email: user.email }).single().catch(() => {});
+        await supabase.from("natur.profiles")
+          .insert({ id: user.id, email: user.email })
+          .single()
+          .catch(() => {});
       }
     })();
   }, []);
@@ -53,15 +53,12 @@ export default function ProfilePage() {
       setSaving(true);
 
       let newAvatarUrl = avatarUrl;
-
       if (avatarFile) {
         const path = `${userId}/avatar.png`;
         const { error: upErr } = await supabase
-          .storage
-          .from("avatars")
+          .storage.from("avatars")
           .upload(path, avatarFile, { upsert: true, cacheControl: "3600" });
         if (upErr) throw upErr;
-
         const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
         newAvatarUrl = pub.publicUrl;
       }
@@ -90,36 +87,20 @@ export default function ProfilePage() {
   return (
     <main className="container">
       <h1>Profile</h1>
-
       <form
-        onSubmit={(e) => {
-          e.preventDefault();
-          void handleSave();
-        }}
         className="card"
+        onSubmit={(e) => { e.preventDefault(); void handleSave(); }}
       >
         <label>Email</label>
-        <input value={email} disabled aria-readonly="true" />
+        <input value={email} disabled />
 
         <label>Display name</label>
-        <input
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
-          placeholder="Your name"
-        />
+        <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your name" />
 
         <label>Avatar</label>
-        <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
-        />
-        {avatarUrl ? (
-          <div style={{ marginTop: 8 }}>
-            <img src={avatarUrl} alt="Your avatar" width={64} height={64} style={{ borderRadius: 8 }} />
-          </div>
-        ) : (
-          <div style={{ opacity: 0.6, fontSize: 12 }}>No image</div>
+        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)} />
+        {avatarUrl && (
+          <img src={avatarUrl} alt="Your avatar" width={64} height={64} style={{ borderRadius: 8, marginTop: 8 }} />
         )}
 
         <button type="submit" disabled={saving} style={{ marginTop: 12 }}>
@@ -129,8 +110,17 @@ export default function ProfilePage() {
         <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
           Last updated: {lastUpdated}
         </div>
+
+        {/* Local Sign out lives here only */}
+        <button
+          type="button"
+          onClick={async () => { await supabase.auth.signOut(); location.href = "/"; }}
+          className="secondary"
+          style={{ marginTop: 12 }}
+        >
+          Sign out
+        </button>
       </form>
     </main>
   );
 }
-

@@ -14,16 +14,6 @@ export default function Header() {
           <a className="account-name" href="/profile">
             {user.user_metadata?.name || user.email}
           </a>
-          {/* Desktop sign out only */}
-          <form
-            className="ml-2 hidden md:inline-block"
-            action="/logout"
-            method="post"
-          >
-            <button className="btn btn-small" type="submit">
-              Sign out
-            </button>
-          </form>
         </div>
       ) : (
         <a className="btn btn-small" href="/login">

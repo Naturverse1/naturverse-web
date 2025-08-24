@@ -1,19 +1,20 @@
 import { useEffect, useState } from "react";
 import { supabase } from "../lib/supabaseClient";
+import type { User } from "@supabase/supabase-js";
 
 export default function AuthButton() {
-  const [email, setEmail] = useState<string | null>(null);
+  const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
-      setEmail(data.session?.user?.email ?? null);
+      setUser(data.session?.user ?? null);
       setLoading(false);
     });
     const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setEmail(session?.user?.email ?? null);
+      setUser(session?.user ?? null);
     });
     return () => {
       mounted = false;
@@ -23,24 +24,14 @@ export default function AuthButton() {
 
   if (loading) return <span style={{ opacity: 0.6 }}>…</span>;
 
-  async function signIn() {
-    await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/login` },
-    });
-  }
-  async function signOut() {
-    await supabase.auth.signOut();
-    window.location.assign("/");
-  }
-
-  return email ? (
-    <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
-      <a href="/profile" title="Profile">{email.split("@")[0]}</a>
-      <button className="btn sm" onClick={signOut}>Sign out</button>
-    </div>
+  return user ? (
+    <a href="/profile" title="Profile">
+      {user.user_metadata?.user_name ?? user.email}
+    </a>
   ) : (
-    <button className="btn sm" onClick={signIn}>Sign in</button>
+    <a href="/login" className="btn sm">
+      Sign in
+    </a>
   );
 }
 
