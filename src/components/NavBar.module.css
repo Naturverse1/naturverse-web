@@ -8,5 +8,5 @@
 @media (max-width:768px){
   .userPill{display:none}
   .iconDesktop{display:none}
-  .iconMobile{display:inline}
+  .iconMobile{display:inline;font-size:22px}
 }
