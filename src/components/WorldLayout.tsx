@@ -1,5 +1,6 @@
 import React from "react";
 import { KINGDOMS, KingdomId, imgUrl } from "../data/kingdoms";
+import { mapFor } from "../data/maps";
 import "../styles/worlds.css";
 import SmartImg from "./SmartImg";
 
@@ -14,17 +15,13 @@ export default function WorldLayout({ id }: Props) {
       <h1 className="world-title">{k.title}</h1>
 
       {/* Map hero */}
-      <section className="world-hero card">
-        <figure className="hero-figure">
-          <SmartImg
-            src={imgUrl(folder, k.mapFile)}
-            alt={`${k.title} map`}
-            ratio="wide"
-            width={1280}
-            height={720}
-            loading="eager"
-          />
-        </figure>
+      <section className="world-hero-wrap card">
+        <img
+          src={mapFor(id)}
+          alt={`${k.title} map`}
+          className="world-hero"
+          loading="eager"
+        />
         <div className="hero-meta">
           <h2>World Map</h2>
           <p>Zoom into landmarks, routes, and regions.</p>

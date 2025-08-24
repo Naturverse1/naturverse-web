@@ -14,8 +14,8 @@ export default function WorldGallery({
 }) {
   return (
     <>
-      <figure className="world-hero">
-        <Img src={mapSrc} alt={alt} />
+      <figure className="world-hero-wrap">
+        <Img src={mapSrc} alt={alt} className="world-hero" />
       </figure>
 
       <section aria-labelledby="gallery" className="world-section">
