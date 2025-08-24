@@ -51,12 +51,12 @@ export default function LoginForm() {
     }
   }
 
-  async function signInWith(provider: 'google' | 'apple') {
+  async function signInWithGoogle() {
     setStatus('sending');
     setMessage(null);
     try {
       const { error } = await supabase.auth.signInWithOAuth({
-        provider,
+        provider: 'google',
         options: { redirectTo: window.location.origin },
       });
       if (error) throw error;
@@ -103,11 +103,8 @@ export default function LoginForm() {
       </form>
 
       <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={() => signInWith('google')} aria-label="Sign in with Google">
+        <button onClick={signInWithGoogle} aria-label="Sign in with Google">
           Continue with Google
-        </button>
-        <button onClick={() => signInWith('apple')} aria-label="Sign in with Apple">
-          Continue with Apple
         </button>
       </div>
 
