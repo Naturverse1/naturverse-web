@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { TEACHERS } from "../../lib/naturversity/data";
 
 export default function Teachers() {
@@ -14,24 +15,33 @@ export default function Teachers() {
   }, [q]);
 
   return (
-    <main id="main" className="page-wrap">
-      <h1>👩‍🏫 Teachers</h1>
-      <div className="edu-toolbar">
-        <input className="input" placeholder="Search mentors…" value={q} onChange={e=>setQ(e.target.value)} />
-      </div>
-      <div className="edu-list">
-        {list.map(t => (
-          <div key={t.id} className="edu-row">
-            <div className="badge">{t.kingdom}</div>
-            <div className="grow">
-              <div className="title">{t.name}</div>
-              <div className="desc">{t.specialty}</div>
+    <div className="page-wrap">
+      <Breadcrumbs
+        items={[
+          { label: "Home", href: "/" },
+          { label: "Naturversity", href: "/naturversity" },
+          { label: "Teachers" },
+        ]}
+      />
+      <main id="main" className="page">
+        <h1>👩‍🏫 Teachers</h1>
+        <div className="edu-toolbar">
+          <input className="input" placeholder="Search mentors…" value={q} onChange={e=>setQ(e.target.value)} />
+        </div>
+        <div className="edu-list">
+          {list.map(t => (
+            <div key={t.id} className="edu-row">
+              <div className="badge">{t.kingdom}</div>
+              <div className="grow">
+                <div className="title">{t.name}</div>
+                <div className="desc">{t.specialty}</div>
+              </div>
+              <button className="btn tiny outline" disabled>Message (soon)</button>
             </div>
-            <button className="btn tiny outline" disabled>Message (soon)</button>
-          </div>
-        ))}
-      </div>
-    </main>
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }
 

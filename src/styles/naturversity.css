@@ -1,0 +1,55 @@
+/* Naturversity theme */
+.nvrs-naturversity {
+  --nvrs-blue: #2e63ff;
+  --page-bg: var(--nvrs-blue);
+  --card-bg: #ffffff;
+  --card-ring: rgba(255, 255, 255, 0.45);
+  --text-on-bg: #ffffff;
+  min-height: 100%;
+  background: var(--page-bg);
+}
+
+/* page header */
+.nvrs-naturversity .page {
+  color: var(--text-on-bg);
+}
+.nvrs-naturversity .page h1 {
+  color: var(--text-on-bg);
+}
+
+/* breadcrumbs readable on blue */
+.nvrs-naturversity .nv-breadcrumbs a,
+.nvrs-naturversity .nv-breadcrumbs span {
+  color: #e7eeff;
+}
+.nvrs-naturversity .nv-breadcrumbs a:hover {
+  color: #ffffff;
+}
+
+/* cards on Naturversity */
+.nvrs-naturversity .card,
+.nvrs-naturversity .tile,
+.nvrs-naturversity .panel,
+.nvrs-naturversity .hub-card {
+  background: var(--card-bg);
+  border-color: var(--card-ring);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+}
+
+/* “coming soon” panel */
+.nvrs-naturversity .coming-soon {
+  background: rgba(255, 255, 255, 0.7);
+  border-color: var(--card-ring);
+  color: #244;
+}
+
+/* safety net for common wrappers */
+.nvrs-naturversity main,
+.nvrs-naturversity section {
+  /* let the blue show around content */
+}
+.nvrs-naturversity .box,
+.nvrs-naturversity .list,
+.nvrs-naturversity .item {
+  background: #fff;
+}
