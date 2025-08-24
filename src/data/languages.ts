@@ -1,4 +1,10 @@
-export type LangSlug = "thailandia" | "chinadia" | "indillandia" | "brazilandia" | "australandia";
+export type LangSlug =
+  | "thailandia"
+  | "chinadia"
+  | "indillandia"
+  | "brazilandia"
+  | "australandia"
+  | "amerilandia";
 
 type Phrasebook = {
   nativeName: string;        // localized script
@@ -81,5 +87,19 @@ export const LANGUAGES: Record<LangSlug, Phrasebook> = {
     ],
     thumb: "/Languages/Koalalanguagemain.png",
     poster: "/Languages/Birdlanguageaustralandia.png"
+  },
+  amerilandia: {
+    nativeName: "English",
+    hello: { native: "Hello", roman: "heh-loh" },
+    thankyou: { native: "Thank you", roman: "thank yew" },
+    alphabetBasics: ["A", "B", "C", "D", "E"],
+    numbers: [
+      { native: "1", roman: "one" }, { native: "2", roman: "two" }, { native: "3", roman: "three" },
+      { native: "4", roman: "four" }, { native: "5", roman: "five" }, { native: "6", roman: "six" },
+      { native: "7", roman: "seven" }, { native: "8", roman: "eight" }, { native: "9", roman: "nine" },
+      { native: "10", roman: "ten" }
+    ],
+    thumb: "/Languages/Owllanguagemain.png",
+    poster: "/Languages/Turianlanguageenglish.png"
   }
 };
