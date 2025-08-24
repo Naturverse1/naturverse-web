@@ -1,0 +1,10 @@
+/* Primary button used across Naturversity */
+.btn-primary {
+  @apply bg-blue-600 text-white font-extrabold uppercase tracking-wide
+         px-4 py-3 rounded-xl shadow-sm
+         hover:bg-blue-700 active:translate-y-[1px] transition
+         inline-flex items-center justify-center gap-2;
+}
+
+/* Full-width helper when needed */
+.btn-block { @apply w-full; }
