@@ -1,14 +1,13 @@
-import React from "react";
-import { KINGDOMS, KingdomId, imgUrl } from "../data/kingdoms";
-import { mapFor } from "../data/maps";
-import "../styles/worlds.css";
-import SmartImg from "./SmartImg";
+import React from 'react';
+import { KINGDOMS, KingdomId } from '../data/kingdoms';
+import { mapFor } from '../data/maps';
+import '../styles/worlds.css';
+import { CharacterGrid } from './CharacterGrid';
 
 type Props = { id: KingdomId };
 
 export default function WorldLayout({ id }: Props) {
   const k = KINGDOMS[id];
-  const folder = k.title; // TitleCase matches your public folder name
 
   return (
     <main id="main" className="world-wrap container-narrow world-page">
@@ -16,12 +15,7 @@ export default function WorldLayout({ id }: Props) {
 
       {/* Map hero */}
       <section className="world-hero-wrap card">
-        <img
-          src={mapFor(id)}
-          alt={`${k.title} map`}
-          className="world-hero"
-          loading="eager"
-        />
+        <img src={mapFor(id)} alt={`${k.title} map`} className="world-hero" loading="eager" />
         <div className="hero-meta">
           <h2>World Map</h2>
           <p>Zoom into landmarks, routes, and regions.</p>
@@ -31,33 +25,7 @@ export default function WorldLayout({ id }: Props) {
       {/* Characters grid */}
       <section className="world-section">
         <h2>Characters</h2>
-        {k.characters.length === 0 ? (
-          <div className="coming-soon">Gallery coming soon.</div>
-        ) : (
-          <ul className="char-grid">
-            {k.characters.map((file) => (
-              <li key={file} className="char-card">
-                <div className="char-thumb">
-                  <SmartImg
-                    src={imgUrl(folder, file)}
-                    alt={file.replace(/\.[^.]+$/, "")}
-                    ratio="tall"
-                    width={320}
-                    height={420}
-                    onError={(e) => {
-                      // friendly fallback if a filename is missing
-                      (e.currentTarget as HTMLImageElement).style.display = "none";
-                      e.currentTarget.parentElement!.classList.add("thumb-missing");
-                    }}
-                  />
-                </div>
-                <div className="char-name">
-                  {file.replace(/\.[^.]+$/, "")}
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
+        <CharacterGrid world={k.title} />
       </section>
     </main>
   );
