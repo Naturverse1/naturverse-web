@@ -9,7 +9,6 @@ export type KingdomId =
 export type KingdomData = {
   id: KingdomId;
   title: string;
-  mapFile: string; // exact filename in /public/kingdoms/<TitleCase>/
   characters: string[]; // image filenames for that kingdom (PNG/WEBP/JPG)
 };
 
@@ -21,7 +20,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   thailandia: {
     id: "thailandia",
     title: "Thailandia",
-    mapFile: "Thailandiamap.jpg", // per your folder
     characters: [
       "2kay.png",
       "Blu Butterfly.png",
@@ -50,7 +48,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   brazilandia: {
     id: "brazilandia",
     title: "Brazilandia",
-    mapFile: "Brazilandiamap.png",
     characters: [
       "Amzonicaspirit.png",
       "Ariamacaw.png",
@@ -63,7 +60,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   australandia: {
     id: "australandia",
     title: "Australandia",
-    mapFile: "Australaniamap.png",
     characters: [
       "Bird.png",
       "Groupof four.png",
@@ -81,7 +77,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   chilandia: {
     id: "chilandia",
     title: "Chilandia",
-    mapFile: "Chilandiamap.jpg",
     characters: [
       "Baobaopandaandlongweidragon.png",
       "Bodrummer.png",
@@ -96,7 +91,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   indillandia: {
     id: "indillandia",
     title: "Indillandia",
-    mapFile: "Inlandiamap.png",
     characters: [
       "Geniebaba.png",
       "Gurucow.png",
@@ -109,7 +103,6 @@ export const KINGDOMS: Record<KingdomId, KingdomData> = {
   amerilandia: {
     id: "amerilandia",
     title: "Amerilandia",
-    mapFile: "Amerilandiamap.png",
     characters: [
       "Aligatorsport.png",
       "Baldeagle.png",

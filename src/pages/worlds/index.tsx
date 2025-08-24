@@ -1,6 +1,7 @@
 import React from "react";
 import { WORLDS } from "../../data/worlds";
 import ImageSafe from "../../components/ImageSafe";
+import { mapFor } from "../../data/maps";
 import Meta from "../../components/Meta";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import PageHead from "../../components/PageHead";
@@ -18,7 +19,7 @@ export default function WorldsIndex() {
       <div className="cards grid-gap">
         {WORLDS.map((w) => (
           <a key={w.slug} className="card" href={`/worlds/${w.slug}`}>
-            {w.hero && <ImageSafe src={w.hero} alt={w.title} />}
+            <ImageSafe src={mapFor(w.slug)} alt={w.title} />
             <h2>{w.title}</h2>
             <p>{w.blurb}</p>
           </a>

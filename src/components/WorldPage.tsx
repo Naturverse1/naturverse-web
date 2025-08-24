@@ -12,10 +12,11 @@ export default function WorldPage({ title, intro, mapSrc }: Props) {
 
   return (
     <div className="world-page">
-      <figure className="world-hero">
+      <figure className="world-hero-wrap">
         <Img
           src={mapSrc}
           alt={`${title} map`}
+          className="world-hero"
           onError={(e) => ((e.currentTarget.src = fallback))}        />
         <figcaption className="sr-only">{title} map</figcaption>
       </figure>
