@@ -55,7 +55,7 @@ export default function PassportPage() {
 
   const progressByWorld = useMemo(() => {
     const map: Record<string, number> = {};
-    for (const w of WORLDS) map[w] = 0;
+    for (const w of WORLDS) map[w.slug] = 0;
     for (const s of stamps) map[s.world] = (map[s.world] || 0) + 1;
     return map;
   }, [stamps]);
@@ -115,12 +115,12 @@ export default function PassportPage() {
         <h2>World Stamps</h2>
         <div className="world-grid">
           {WORLDS.map((w) => (
-            <div key={w} className="world-card">
-              <div className="world-name">{titleCase(w)}</div>
+            <div key={w.slug} className="world-card">
+              <div className="world-name">{titleCase(w.slug)}</div>
               <div className="stamp-count">
-                {progressByWorld[w]} stamp{progressByWorld[w] === 1 ? "" : "s"}
+                {progressByWorld[w.slug]} stamp{progressByWorld[w.slug] === 1 ? "" : "s"}
               </div>
-              <button className="btn tiny" onClick={() => demoStamp(w)}>Add demo stamp</button>
+              <button className="btn tiny" onClick={() => demoStamp(w.slug as WorldKey)}>Add demo stamp</button>
             </div>
           ))}
         </div>

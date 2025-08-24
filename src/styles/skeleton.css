@@ -39,3 +39,11 @@
 }
 .sk-line.small { width:60%; height:12px; }
 @keyframes sk { 0%{background-position:100% 0} 100%{background-position:0 0} }
+
+/* simple card skeleton */
+.skeleton-card { position: relative; overflow: hidden; }
+.sk { background: linear-gradient(90deg, #e5f2ff 25%, #f3f8ff 37%, #e5f2ff 63%); animation: sk 1.4s ease-in-out infinite; border-radius: 10px; }
+.sk-img { width: 100%; aspect-ratio: 16/9; }
+.sk-line { height: 14px; margin-top: 10px; }
+.sk-line.short { width: 60%; }
+@keyframes sk { 0% { background-position: -200px 0; } 100% { background-position: calc(200px + 100%) 0; } }

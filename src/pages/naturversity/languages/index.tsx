@@ -1,31 +1,20 @@
-import { LANGUAGES } from "../../../data/languages";
+import React from "react";
+import { LANGUAGE_WORLDS } from "../../../data/languages";
+import ImageSafe from "../../../components/ImageSafe";
 
-export default function LanguagesPage() {
+export default function LanguagesIndex() {
   return (
-    <main className="container py-6">
+    <div>
       <h1>Languages</h1>
-      <p>Phrasebooks for each kingdom.</p>
-
-      <div className="lang-grid">
-        {Object.entries(LANGUAGES).map(([slug, data]) => (
-          <a key={slug} className="lang-card" href={`/naturversity/languages/${slug}`}>
-            <img src={data.thumb} alt="" loading="lazy" width={96} height={96} />
-            <div>
-              <h3>{titleFor(slug as any)} <small className="muted">— Native: {data.nativeName}</small></h3>
-            </div>
+      <div className="cards grid-gap">
+        {LANGUAGE_WORLDS.map((it) => (
+          <a key={it.slug} className="card" href={`/naturversity/languages/${it.slug}`}>
+            {it.thumb && <ImageSafe src={it.thumb} alt={it.name} />}
+            <h2>{it.name}</h2>
+            <p>Basics, numbers, greetings.</p>
           </a>
         ))}
       </div>
-    </main>
+    </div>
   );
-}
-
-function titleFor(slug: keyof typeof LANGUAGES) {
-  return {
-    thailandia: "Thailandia (Thai)",
-    chinadia: "Chinadia (Mandarin)",
-    indillandia: "Indillandia (Hindi)",
-    brazilandia: "Brazilandia (Portuguese)",
-    australandia: "Australandia (English)",
-  }[slug];
 }

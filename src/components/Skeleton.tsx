@@ -1,17 +1,15 @@
 import React from "react";
 
-export function SkeletonLine({ w="100%", h=14 }: { w?: number|string, h?: number }) {
-  return <div className="sk-line" style={{width:w, height:h}} />;
-}
-
-export function SkeletonCard() {
+export function CardSkeleton({ count = 6 }: { count?: number }) {
   return (
-    <div className="sk-card">
-      <div className="sk-thumb" />
-      <div className="sk-body">
-        <div className="sk-line" style={{width:"60%"}} />
-        <div className="sk-line" style={{width:"90%"}} />
-      </div>
+    <div className="cards">
+      {Array.from({ length: count }).map((_, i) => (
+        <div key={i} className="card skeleton-card">
+          <div className="sk sk-img" />
+          <div className="sk sk-line" />
+          <div className="sk sk-line short" />
+        </div>
+      ))}
     </div>
   );
 }

@@ -18,7 +18,20 @@ export default function App() {
       />
       <CartProvider>
         <ErrorBoundary>
-          <main id="main">
+          <a
+            href="#main"
+            className="skip-link"
+            style={{ position: "absolute", left: -9999, top: "auto", width: 1, height: 1, overflow: "hidden" }}
+            onFocus={(e) => {
+              Object.assign(e.currentTarget.style, { left: "8px", top: "8px", width: "auto", height: "auto" });
+            }}
+            onBlur={(e) => {
+              Object.assign(e.currentTarget.style, { left: "-9999px", top: "auto", width: 1, height: 1 });
+            }}
+          >
+            Skip to content
+          </a>
+          <main id="main" className="container-nv">
             <RouterProvider router={router} />
           </main>
         </ErrorBoundary>

@@ -35,9 +35,10 @@ export default function LanguageDetail() {
 function titleFor(slug: LangSlug) {
   return {
     thailandia: "Thailandia (Thai)",
-    chinadia: "Chinadia (Mandarin)",
+    chilandia: "Chilandia (Mandarin)",
     indillandia: "Indillandia (Hindi)",
     brazilandia: "Brazilandia (Portuguese)",
     australandia: "Australandia (English)",
+    amerilandia: "Amerilandia (English)",
   }[slug];
 }
