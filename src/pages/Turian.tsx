@@ -3,7 +3,6 @@ import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
 import { setTitle } from "./_meta";
-import Favicon from "/favicon-32x32.png";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -36,7 +35,7 @@ const SUGGESTIONS: { section: string; items: string[] }[] = [
 ];
 
 // Use site favicon as Turian's mascot for consistent branding
-const mascotSrc = Favicon;
+const mascotSrc = "/favicon.ico";
 
 function cannedReply(q: string): string {
   // Lightweight, offline “assistant” so we don’t add deps or call APIs.
@@ -122,13 +121,16 @@ export default function TurianPage() {
           {history.map(m => (
             <div key={m.id} className={"msg " + m.role}>
               {m.role === "turian" && (
-                <Img
-                  src={Favicon}
-                  alt="Turian favicon"
-                  width={32}
-                  height={32}
-                  style={{ borderRadius: 6 }}
-                />
+                <div className="turian-avatar">
+                  <Img
+                    src="/favicon.ico"
+                    alt="Turian"
+                    width={28}
+                    height={28}
+                    className="turian-avatar-img"
+                    style={{ borderRadius: 6 }}
+                  />
+                </div>
               )}
               <div className="bubble">
                 {m.text.split("\n").map((ln, i) => <p key={i}>{ln}</p>)}
@@ -137,13 +139,16 @@ export default function TurianPage() {
           ))}
           {!hasHistory && (
             <div className="msg turian">
-              <Img
-                src={Favicon}
-                alt="Turian favicon"
-                width={32}
-                height={32}
-                style={{ borderRadius: 6 }}
-              />
+              <div className="turian-avatar">
+                <Img
+                  src="/favicon.ico"
+                  alt="Turian"
+                  width={28}
+                  height={28}
+                  className="turian-avatar-img"
+                  style={{ borderRadius: 6 }}
+                />
+              </div>
               <div className="bubble">
                 <p>Try a suggestion above or ask something like:</p>
                 <p><em>“Give me 3 eco-quests for Madagas­caria.”</em></p>
