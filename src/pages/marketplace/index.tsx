@@ -3,9 +3,9 @@ import ProductCard from "../../components/ProductCard";
 import "./../../styles/marketplace.css";
 
 const PRODUCTS = [
-  { id:"turian-plush", name:"Turian Plush", price:24, image:"/public/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
-  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/public/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
-  { id:"stickers",     name:"Sticker Pack", price:6,  image:"/public/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
+  { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
+  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
+  { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 ];
 
 export default function MarketplacePage(){
