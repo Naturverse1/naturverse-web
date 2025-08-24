@@ -1,19 +1,65 @@
-import AddToCartButton from "./AddToCartButton";
-import SaveButton from "./SaveButton";
 import { Link } from "react-router-dom";
+import { Product } from "../lib/commerce/types";
 
-export default function ProductCard({ p }:{ p:{id:string; name:string; price:number; image:string; href:string} }) {
+type CardProduct = Product & { saved?: boolean };
+
+type Props = {
+  product: CardProduct;
+  onAddToCart?: (p: Product) => void;
+  onToggleSave?: (p: Product) => void;
+  showCartButton?: boolean;
+  showSaveButton?: boolean;
+};
+
+export default function ProductCard({
+  product,
+  onAddToCart,
+  onToggleSave,
+  showCartButton = true,
+  showSaveButton = true,
+}: Props) {
   return (
-    <article className="nv-card">
-      <Link to={p.href} className="nv-imgbox" aria-label={p.name}>
-        <img src={p.image} alt="" loading="lazy" />
-      </Link>
-      <h3><Link to={p.href}>{p.name}</Link></h3>
-      <div>${p.price.toFixed(2)}</div>
-      <div className="nv-cta">
-        <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
-        <SaveButton id={p.id}/>
+    <div className="rounded-2xl border border-blue-200/60 p-4 shadow-sm">
+      <div className="rounded-2xl bg-blue-50/40 p-4">
+        <div className="mx-auto flex h-48 w-full items-center justify-center overflow-hidden rounded-xl">
+          <img
+            src={product.image}
+            alt={product.name}
+            className="max-h-48 w-auto object-contain"
+            loading="lazy"
+          />
+        </div>
       </div>
-    </article>
+
+      <Link
+        to={`/marketplace/${product.slug}`}
+        className="mt-3 block text-xl font-bold text-blue-700 underline"
+      >
+        {product.name}
+      </Link>
+
+      <div className="mt-1 text-gray-800">${product.price.toFixed(2)}</div>
+
+      <div className="mt-3 flex gap-3">
+        {showCartButton && (
+          <button
+            className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm active:translate-y-[1px]"
+            onClick={() => onAddToCart?.(product)}
+          >
+            Add to cart
+          </button>
+        )}
+        {showSaveButton && (
+          <button
+            className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm active:translate-y-[1px]"
+            onClick={() => onToggleSave?.(product)}
+            aria-pressed={!!product.saved}
+          >
+            {product.saved ? "Saved" : "Save"}
+          </button>
+        )}
+      </div>
+    </div>
   );
 }
+
