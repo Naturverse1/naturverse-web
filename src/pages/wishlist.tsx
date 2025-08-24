@@ -3,9 +3,9 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
 
 const LOOKUP: Record<string,{name:string; image:string; href:string}> = {
-  "turian-plush": { name:"Turian Plush", image:"/public/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
-  "navatar-tee":  { name:"Navatar Tee",  image:"/public/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
-  "stickers":     { name:"Sticker Pack", image:"/public/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
+  "turian-plush": { name:"Turian Plush", image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
+  "navatar-tee":  { name:"Navatar Tee",  image:"/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
+  "stickers":     { name:"Sticker Pack", image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 };
 
 export default function WishlistPage(){

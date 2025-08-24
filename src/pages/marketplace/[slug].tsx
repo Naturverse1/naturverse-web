@@ -5,9 +5,9 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import "./../../styles/marketplace.css";
 
 const MAP:any = {
-  "turian-plush": { id:"turian-plush", name:"Turian Plush", price:24, image:"/public/Marketplace/Turianplushie.png", blurb:"Cuddly plush of Turian." },
-  "navatar-tee":  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/public/Marketplace/Turiantshirt.png",  blurb:"Soft tee with Navatar." },
-  "stickers":     { id:"stickers",     name:"Sticker Pack", price:6,  image:"/public/Marketplace/Stickerpack.png", blurb:"Six vinyl stickers." },
+  "turian-plush": { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", blurb:"Cuddly plush of Turian." },
+  "navatar-tee":  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/Marketplace/Turiantshirt.png",  blurb:"Soft tee with Navatar." },
+  "stickers":     { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", blurb:"Six vinyl stickers." },
 };
 
 export default function ProductPage(){
