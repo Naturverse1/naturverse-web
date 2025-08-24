@@ -1,165 +1,135 @@
-import { useEffect, useState, useRef } from "react";
-import { supabase } from "../lib/supabaseClient";
-import LazyImg from "../components/LazyImg";
+import { useEffect, useState } from "react";
+import { supabase } from "../lib/supabase"; // existing client
 
 type Profile = {
   id: string;
-  display_name: string | null;
   email: string | null;
-  photo_url: string | null;
+  display_name: string | null;
+  avatar_url: string | null;
   updated_at: string | null;
 };
 
 export default function ProfilePage() {
   const [userId, setUserId] = useState<string | null>(null);
-  const [email, setEmail] = useState<string | null>(null);
-  const [profile, setProfile] = useState<Profile | null>(null);
-  const [displayName, setDisplayName] = useState("");
+  const [email, setEmail] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>("");
+  const [avatarFile, setAvatarFile] = useState<File | null>(null);
+  const [avatarUrl, setAvatarUrl] = useState<string>("");
   const [saving, setSaving] = useState(false);
-  const [loading, setLoading] = useState(true);
-  const fileRef = useRef<HTMLInputElement | null>(null);
+  const [lastUpdated, setLastUpdated] = useState<string>("—");
 
   useEffect(() => {
-    let mounted = true;
     (async () => {
-      const { data: sessionData } = await supabase.auth.getSession();
-      const session = sessionData.session;
-      if (!mounted) return;
+      const { data: { user }, error } = await supabase.auth.getUser();
+      if (error) console.error(error);
+      if (!user) return;
+      setUserId(user.id);
+      setEmail(user.email ?? "");
 
-      if (!session) {
-        setLoading(false);
-        return;
-      }
-
-      const uid = session.user.id;
-      setUserId(uid);
-      setEmail(session.user.email ?? null);
-
-      // ensure a row exists
-      await supabase
-        .from("profiles")
-        .upsert({ id: uid, email: session.user.email ?? null }, { onConflict: "id" });
-
-      // fetch current profile
-      const { data } = await supabase
-        .from("profiles")
+      const { data, error: profErr } = await supabase
+        .from<Profile>("natur.profiles")
         .select("*")
-        .eq("id", uid)
+        .eq("id", user.id)
         .maybeSingle();
 
-      if (!mounted) return;
+      if (profErr && profErr.code !== "PGRST116") {
+        console.error(profErr);
+      }
 
       if (data) {
-        setProfile(data as Profile);
         setDisplayName(data.display_name ?? "");
+        setAvatarUrl(data.avatar_url ?? "");
+        setLastUpdated(data.updated_at ? new Date(data.updated_at).toLocaleString() : "—");
+      } else {
+        // bootstrap empty row so updates work
+        await supabase.from("natur.profiles").insert({ id: user.id, email: user.email }).single().catch(() => {});
       }
-      setLoading(false);
     })();
-    return () => {
-      mounted = false;
-    };
   }, []);
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!userId) return;
-
+  async function handleSave() {
     try {
+      if (!userId) throw new Error("Not signed in.");
       setSaving(true);
 
-      // 1) upload file if chosen
-      let photo_url = profile?.photo_url ?? null;
-      const file = fileRef.current?.files?.[0] ?? null;
+      let newAvatarUrl = avatarUrl;
 
-      if (file) {
-        const ext = file.name.split(".").pop() || "jpg";
-        const path = `${userId}.${ext}`; // overwrite per user
-        const { error: upErr } = await supabase.storage
+      if (avatarFile) {
+        const path = `${userId}/avatar.png`;
+        const { error: upErr } = await supabase
+          .storage
           .from("avatars")
-          .upload(path, file, { upsert: true, cacheControl: "3600" });
+          .upload(path, avatarFile, { upsert: true, cacheControl: "3600" });
         if (upErr) throw upErr;
 
         const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
-        photo_url = pub.publicUrl;
+        newAvatarUrl = pub.publicUrl;
       }
 
-      // 2) save name + photo url
-      const { error } = await supabase
-        .from("profiles")
-        .update({ display_name: displayName || null, photo_url })
-        .eq("id", userId);
+      const { data, error: updErr } = await supabase
+        .from("natur.profiles")
+        .update({ display_name: displayName || null, avatar_url: newAvatarUrl || null })
+        .eq("id", userId)
+        .select("*")
+        .single();
 
-      if (error) throw error;
+      if (updErr) throw updErr;
 
-      // 3) refresh local state
-      setProfile((p) => (p ? { ...p, display_name: displayName || null, photo_url } : p));
-      alert("Profile saved ✅");
-    } catch (err: any) {
-      console.error(err);
-      alert(`Save failed: ${err.message ?? err}`);
+      setAvatarUrl(data.avatar_url ?? "");
+      setLastUpdated(data.updated_at ? new Date(data.updated_at).toLocaleString() : "—");
+      alert("Saved!");
+    } catch (e: any) {
+      const msg = e?.message ?? JSON.stringify(e);
+      console.error(e);
+      alert(`Save failed: ${msg}`);
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <main><h1>Profile</h1><p>Loading…</p></main>;
-  if (!email) return (
-    <main>
-      <h1>Profile</h1>
-      <p>Please sign in to view and edit your profile.</p>
-    </main>
-  );
-
   return (
-    <main className="profile-page">
+    <main className="container">
       <h1>Profile</h1>
-      <form action="/logout" method="post" className="mt-2">
-        <button type="submit" className="btn btn-small">Sign out</button>
+
+      <form
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSave();
+        }}
+        className="card"
+      >
+        <label>Email</label>
+        <input value={email} disabled aria-readonly="true" />
+
+        <label>Display name</label>
+        <input
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+          placeholder="Your name"
+        />
+
+        <label>Avatar</label>
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+        />
+        {avatarUrl ? (
+          <div style={{ marginTop: 8 }}>
+            <img src={avatarUrl} alt="Your avatar" width={64} height={64} style={{ borderRadius: 8 }} />
+          </div>
+        ) : (
+          <div style={{ opacity: 0.6, fontSize: 12 }}>No image</div>
+        )}
+
+        <button type="submit" disabled={saving} style={{ marginTop: 12 }}>
+          {saving ? "Saving…" : "Save profile"}
+        </button>
+
+        <div style={{ marginTop: 8, fontSize: 12, opacity: 0.7 }}>
+          Last updated: {lastUpdated}
+        </div>
       </form>
-
-      <div className="card" style={{ maxWidth: 520 }}>
-        <form onSubmit={onSave}>
-          <div className="row">
-            <label>Email</label>
-            <input type="email" value={email} disabled />
-          </div>
-
-          <div className="row">
-            <label>Display name</label>
-            <input
-              type="text"
-              placeholder="Your name"
-              value={displayName}
-              onChange={(e) => setDisplayName(e.target.value)}
-            />
-          </div>
-
-          <div className="row">
-            <label>Avatar</label>
-            <div style={{ display: "flex", gap: 12, alignItems: "center" }}>
-              <input ref={fileRef} type="file" accept="image/*" />
-              {profile?.photo_url ? (
-                <LazyImg
-                  src={profile.photo_url}
-                  alt="Avatar preview"
-                  width={56}
-                  height={56}
-                  style={{ borderRadius: 8, objectFit: "cover" }}
-                />
-              ) : (
-                <span style={{ opacity: 0.6, fontSize: 12 }}>No image</span>
-              )}
-            </div>
-          </div>
-
-          <div className="actions">
-            <button className="btn" type="submit" disabled={saving}>
-              {saving ? "Saving…" : "Save profile"}
-            </button>
-          </div>
-        </form>
-        <p className="meta">Last updated: {profile?.updated_at ?? "—"}</p>
-      </div>
     </main>
   );
 }
