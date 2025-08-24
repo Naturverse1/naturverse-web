@@ -17,9 +17,9 @@ import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
 import Marketplace from './pages/marketplace';
 import ProductPage from './pages/marketplace/[slug]';
-import Catalog from './pages/marketplace/Catalog';
-import Wishlist from './pages/marketplace/Wishlist';
-import Checkout from './pages/marketplace/Checkout';
+import CatalogPage from './pages/marketplace/CatalogPage';
+import WishlistPage from './pages/marketplace/WishlistPage';
+import CheckoutPage from './pages/marketplace/CheckoutPage';
 import CartPage from './pages/cart';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
@@ -67,9 +67,9 @@ export const router = createBrowserRouter([
       { path: 'zones/future', element: <FutureZone /> },
       { path: 'marketplace', element: <Marketplace /> },
       { path: 'marketplace/:slug', element: <ProductPage /> },
-      { path: 'marketplace/catalog', element: <Catalog /> },
-      { path: 'marketplace/wishlist', element: <Wishlist /> },
-      { path: 'marketplace/checkout', element: <Checkout /> },
+      { path: 'marketplace/catalog', element: <CatalogPage /> },
+      { path: 'marketplace/wishlist', element: <WishlistPage /> },
+      { path: 'marketplace/checkout', element: <CheckoutPage /> },
       { path: 'cart', element: <CartPage /> },
       { path: 'naturversity', element: <Naturversity /> },
       { path: 'naturversity/teachers', element: <Teachers /> },

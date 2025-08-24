@@ -1,3 +1,5 @@
+import { Link, useNavigate } from "react-router-dom";
+
 const isActive = (href: string) => {
   try {
     const path = window.location?.pathname || "/";
@@ -8,20 +10,30 @@ const isActive = (href: string) => {
 };
 
 export default function NavBar() {
+  const navigate = useNavigate();
   return (
     <header>
       <a href="#main" className="skip-link">Skip to content</a>
       <nav className="navbar topnav" aria-label="Primary">
-        <a href="/" className={`nav-link ${isActive("/") ? "active" : ""}`}>Home</a>
-        <a href="/worlds" className={`nav-link ${isActive("/worlds") ? "active" : ""}`}>Worlds</a>
-        <a href="/zones" className={`nav-link ${isActive("/zones") ? "active" : ""}`}>Zones</a>
-        <a href="/marketplace" className={`nav-link ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</a>
-        <a href="/naturversity" className={`nav-link ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</a>
-        <a href="/naturbank" className={`nav-link ${isActive("/naturbank") ? "active" : ""}`}>NaturBank</a>
-        <a href="/navatar" className={`nav-link ${isActive("/navatar") ? "active" : ""}`}>Navatar</a>
-        <a href="/passport" className={`nav-link ${isActive("/passport") ? "active" : ""}`}>Passport</a>
-        <a href="/turian" className={`nav-link ${isActive("/turian") ? "active" : ""}`}>Turian</a>
-        <a href="/profile" className={`nav-link ${isActive("/profile") ? "active" : ""}`}>Profile</a>
+        <Link to="/" className={`nav-link ${isActive("/") ? "active" : ""}`}>Home</Link>
+        <Link to="/worlds" className={`nav-link ${isActive("/worlds") ? "active" : ""}`}>Worlds</Link>
+        <Link to="/zones" className={`nav-link ${isActive("/zones") ? "active" : ""}`}>Zones</Link>
+        <Link to="/marketplace" className={`nav-link ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</Link>
+        <Link to="/marketplace/catalog" className={`nav-link ${isActive("/marketplace/catalog") ? "active" : ""}`}>Catalog</Link>
+        <Link to="/marketplace/wishlist" className={`nav-link ${isActive("/marketplace/wishlist") ? "active" : ""}`}>Wishlist</Link>
+        <Link to="/naturversity" className={`nav-link ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</Link>
+        <Link to="/naturbank" className={`nav-link ${isActive("/naturbank") ? "active" : ""}`}>NaturBank</Link>
+        <Link to="/navatar" className={`nav-link ${isActive("/navatar") ? "active" : ""}`}>Navatar</Link>
+        <Link to="/passport" className={`nav-link ${isActive("/passport") ? "active" : ""}`}>Passport</Link>
+        <Link to="/turian" className={`nav-link ${isActive("/turian") ? "active" : ""}`}>Turian</Link>
+        <Link to="/profile" className={`nav-link ${isActive("/profile") ? "active" : ""}`}>Profile</Link>
+        <button
+          aria-label="Cart"
+          onClick={() => navigate("/marketplace/checkout")}
+          className="icon-btn"
+        >
+          {/* your cart svg */}
+        </button>
       </nav>
     </header>
   );
