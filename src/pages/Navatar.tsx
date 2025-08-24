@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import { setTitle } from "./_meta";
 import type { Navatar, NavatarBase } from "../types/navatar";
 import { SPECIES, POWERS_BANK, randomFrom } from "../lib/navatarCatalog";
 import { loadActive, saveActive, loadLibrary, saveLibrary } from "../lib/localStorage";
@@ -39,6 +40,7 @@ function generate(base: NavatarBase): Navatar {
 }
 
 export default function NavatarPage() {
+  setTitle("Navatar");
   const initial = useMemo(() => loadActive<Navatar>() ?? generate("Animal"), []);
   const [draft, setDraft] = useState<Navatar>(initial);
   const [library, setLibrary] = useState<Navatar[]>(loadLibrary<Navatar>());

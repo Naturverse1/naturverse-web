@@ -2,11 +2,13 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase/client";
 import { WORLDS, WorldKey } from "../data/worlds";
 import type { PassportStamp, PassportBadge } from "../types/passport";
+import { setTitle } from "./_meta";
 
 const LS_STAMPS = "naturverse.passport.stamps.v1";
 const LS_BADGES = "naturverse.passport.badges.v1";
 
 export default function PassportPage() {
+  setTitle("Passport");
   const [uid, setUid] = useState<string | null>(null);
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);

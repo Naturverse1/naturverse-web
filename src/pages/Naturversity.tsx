@@ -1,7 +1,9 @@
 import { Link } from "react-router-dom";
 import "../styles/cards-unify.css";
+import { setTitle } from "./_meta";
 
 export default function NaturversityPage() {
+  setTitle("Naturversity");
   return (
     <main className="page">
       <h1>Naturversity</h1>

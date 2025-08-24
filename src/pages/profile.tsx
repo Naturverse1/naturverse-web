@@ -4,6 +4,7 @@ import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";
 import type { LocalProfile } from "../types/profile";
+import { setTitle } from "./_meta";
 
 const K = {
   profile: "naturverse.profile.v1",
@@ -13,6 +14,7 @@ const K = {
 } as const;
 
 export default function ProfilePage() {
+  setTitle("Profile");
   const [p, setP] = useState<LocalProfile>(() => {
     try {
       return (

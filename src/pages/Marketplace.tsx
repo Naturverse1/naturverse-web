@@ -6,10 +6,12 @@ import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
 import { PRODUCTS } from "../data/products";
 import ImageSafe from "../components/ImageSafe";
+import { setTitle } from "./_meta";
 
 const labels = { '/marketplace': 'Marketplace' };
 
 export default function MarketplacePage() {
+    setTitle("Marketplace");
     return (
       <>
         <PageHead title="Naturverse — Marketplace" description="Shop Naturverse creations, merch, and bundles." />

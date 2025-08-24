@@ -1,0 +1,2 @@
+header a.active { color: #0ea5e9; font-weight: 800; }
+header a.active:hover { text-decoration: underline; }
