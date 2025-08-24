@@ -36,6 +36,7 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
+      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
@@ -55,6 +56,7 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
+      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: window.location.origin },

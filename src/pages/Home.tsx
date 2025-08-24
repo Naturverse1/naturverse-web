@@ -1,103 +1,51 @@
-import React from "react";
-import { Link } from "react-router-dom";
-import "./home.css";
-import Meta from "../components/Meta";
-import Page from "../layouts/Page";
-import { Img } from "../components";
-import { setTitle } from "./_meta";
+import AuthButtons from "../components/AuthButtons";
+import "../styles/home.css";
 
 export default function Home() {
-  setTitle("");
   return (
-    <Page>
-      <Meta
-        title="Naturverse — Learn & Play Across 14 Magical Kingdoms"
-        description="Explore worlds, play games, create your Navatar, and learn with Naturversity."
-        image="/og-home.png"
-        url="https://naturverse.netlify.app/"
-      />
-      <div className="home">
-      {/* Hero */}
-      <header className="home-hero">
-        <Img
-          src="/favicon-32x32.png"
-          width={28}
-          height={28}
-          className="home-hero-icon"
-          alt=""            /* decorative */
-          aria-hidden="true"
-        />
-        <h1 className="home-title">Welcome to the Naturverse™</h1>
-        <p className="home-subtitle">
-          A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
-        </p>
-        <div className="home-cta hero-buttons">
-          <Link className="btn btn-primary" to="/signup">Create account</Link>
-          <Link className="btn btn-outline" to="/worlds">Explore Worlds</Link>
+    <main className="home">
+      {/* HERO */}
+      <section className="hero">
+        <div className="wrap">
+          <h1>Welcome to the Naturverse™</h1>
+          <p className="lead">
+            A playful world of kingdoms, characters, and quests that teach
+            wellness, creativity, and kindness.
+          </p>
+
+          <AuthButtons cta="Create account" className="mt-4" />
         </div>
-      </header>
-
-      {/* About */}
-      <section className="home-section">
-        <h2>About us</h2>
-        <p>
-          Naturverse is an all-ages media universe built by Turian Media. We combine games, stories, music, and learning
-          experiences so families can play and grow together — online and off.
-        </p>
       </section>
 
-      {/* Mission */}
-      <section className="home-section">
-        <h2>Our mission</h2>
-        <p>
-          Inspire healthy habits, spark creativity, and build resilient communities through joyful characters and positive play.
-        </p>
-        <ul className="home-bullets">
-          <li>🧠 Grow wisdom &amp; mindset</li>
-          <li>🏃 Move your body &amp; breathe</li>
-          <li>🎨 Create, share, and collaborate</li>
-          <li>🌍 Celebrate cultures &amp; kindness</li>
-        </ul>
-      </section>
-
-      {/* Values */}
-      <section className="home-card">
-        <h3>Our values</h3>
-        <ul>
-          <li>Safety first</li>
-          <li>Family friendly</li>
-          <li>Privacy by design</li>
-          <li>Accessible &amp; inclusive</li>
-        </ul>
-      </section>
-
-      {/* How it works */}
-      <section className="home-section">
-        <h2>How it works</h2>
-        <ol className="home-steps">
-          <li>Create a free account.</li>
-          <li>Pick a hub (Worlds, Zones, or Marketplace).</li>
-          <li>Play &amp; learn — explore the map, meet characters, earn badges.</li>
-        </ol>
-      </section>
-
-      {/* Join + newsletter */}
-      <section className="home-join">
-        <h3>Ready to join the journey?</h3>
-        <div className="home-cta">
-          <Link className="btn btn-primary" to="/signup">Sign up free</Link>
-          <Link className="btn" to="/login">Sign in</Link>
+      {/* 3-UP: Play / Learn / Earn */}
+      <section className="triptych">
+        <div className="card">
+          <h3>Play</h3>
+          <p>Mini-games, stories, and map adventures across 14 kingdoms.</p>
         </div>
-
-        <form className="home-newsletter" onSubmit={(e) => e.preventDefault()}>
-          <label htmlFor="newsletter" className="sr-only">Email address</label>
-          <input id="newsletter" type="email" placeholder="you@example.com" />
-          <button className="btn" type="submit">Subscribe</button>
-        </form>
-        <small>We send occasional updates. Unsubscribe anytime.</small>
+        <div className="card">
+          <h3>Learn</h3>
+          <p>Naturversity lessons in languages, art, music, wellness, and more.</p>
+        </div>
+        <div className="card">
+          <h3>Earn</h3>
+          <p>Collect badges, save favorites, and build your Navatar card.</p>
+        </div>
       </section>
-      </div>
-    </Page>
+
+      {/* HOW IT WORKS */}
+      <section className="how">
+        <div className="panel">
+          <h2>How it works</h2>
+          <ol>
+            <li>Create a free account.</li>
+            <li>Pick a hub: <a href="/worlds">Worlds</a>, <a href="/zones">Zones</a>, or <a href="/marketplace">Marketplace</a>.</li>
+            <li>Play & learn — explore, meet characters, earn badges.</li>
+          </ol>
+          <AuthButtons cta="Get started" variant="outline" size="md" className="mt-3" />
+        </div>
+      </section>
+    </main>
   );
 }
 
