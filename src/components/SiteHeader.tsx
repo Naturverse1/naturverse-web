@@ -73,10 +73,10 @@ export default function SiteHeader() {
           <NavLink
             to="/cart"
             aria-label="Cart"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link') + ' icon'}
+            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link') + ' icon nav-cart'}
             onClick={() => setOpen(false)}
           >
-            🛒
+            <span aria-hidden="true">🛒</span>
           </NavLink>
         </nav>
         <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>

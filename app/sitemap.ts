@@ -8,6 +8,7 @@ const PAGES = [
   '/worlds',
   '/zones',
   '/marketplace',
+  '/cart',
   '/naturversity',
   '/naturbank',
   '/navatar',
