@@ -9,7 +9,7 @@ import {
 export const ALL_KINGDOMS = [
   'thailandia',
   'amerilandia',
-  'indilandia',
+  'indillandia',
   'brazilandia',
   'australandia',
   'chilandia',

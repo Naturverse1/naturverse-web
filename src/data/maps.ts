@@ -2,8 +2,8 @@
 const V = "v1"; // bump when you replace images
 export const MAPS: Record<string, string> = {
   thailandia:   `/Mapsmain/Thailandiamapmain.png?${V}`,
-  chilandia:     `/Mapsmain/Chilandiamapmain.png?${V}`,
-  indilandia:  `/Mapsmain/Indilandiamapmain.png?${V}`,
+  chilandia:    `/Mapsmain/Chilandiamapmain.png?${V}`,
+  indillandia: `/Mapsmain/Indillandiamapmain.png?${V}`,
   brazilandia:  `/Mapsmain/Brazilandiamapmain.png?${V}`,
   australandia: `/Mapsmain/Australandiamapmain.png?${V}`,
   amerilandia:  `/Mapsmain/Amerilandiamapmain.png?${V}`,

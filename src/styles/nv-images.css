@@ -28,11 +28,11 @@
 
 /* Card images on the worlds grid */
 .nv-card-img-wrapper {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 11;
   width: 100%;
   border-radius: 14px;
   overflow: hidden;
-  background: #f6f7fb; /* subtle backdrop */
+  background: #f7f7f9; /* subtle backdrop */
 }
 
 .nv-card-img {
@@ -44,13 +44,13 @@
 
 /* Hero image on the detail page */
 .nv-hero-img-wrapper {
-  aspect-ratio: 16 / 9;
+  aspect-ratio: 16 / 11;
   width: 100%;
   max-width: 960px;
   margin: 0 auto 1.25rem;
   border-radius: 18px;
   overflow: hidden;
-  background: #f6f7fb;
+  background: #f7f7f9;
 }
 
 .nv-hero-img {

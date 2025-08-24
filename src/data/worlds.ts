@@ -1,7 +1,7 @@
 export type WorldSlug =
   | 'thailandia'
   | 'chilandia'
-  | 'indilandia'
+  | 'indillandia'
   | 'brazilandia'
   | 'australandia'
   | 'amerilandia';
@@ -11,8 +11,8 @@ export type WorldKey = WorldSlug;
 export const WORLD_ALIASES: Record<string, WorldSlug> = {
   chinadia: 'chilandia',
   chilandia: 'chilandia',
-  indillandia: 'indilandia',
-  indilandia: 'indilandia',
+  indillandia: 'indillandia',
+  indilandia: 'indillandia',
 };
 
 export type WorldDef = {
@@ -23,7 +23,10 @@ export type WorldDef = {
   imgAlt: string;
 };
 
-const map = (slug: WorldSlug) => `/Mapsmain/${slug}mapmain.png`;
+const map = (slug: WorldSlug) => {
+  const name = slug.charAt(0).toUpperCase() + slug.slice(1);
+  return `/Mapsmain/${name}mapmain.png`;
+};
 
 export const WORLDS: WorldDef[] = [
   {
@@ -35,17 +38,17 @@ export const WORLDS: WorldDef[] = [
   },
   {
     slug: 'chilandia',
-    title: 'Chilandia (Mandarin)',
+    title: 'Chilandia',
     subtitle: 'Bamboo, pandas, lanterns.',
     imgSrc: map('chilandia'),
     imgAlt: 'Chilandia map',
   },
   {
-    slug: 'indilandia',
-    title: 'Indilandia (Hindi)',
+    slug: 'indillandia',
+    title: 'Indillandia',
     subtitle: 'Mangoes, tigers, temples.',
-    imgSrc: map('indilandia'),
-    imgAlt: 'Indilandia map',
+    imgSrc: map('indillandia'),
+    imgAlt: 'Indillandia map',
   },
   {
     slug: 'brazilandia',
