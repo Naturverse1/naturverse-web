@@ -1,3 +1,4 @@
+@import "./cards.css";
 /* Primary button used across Naturversity */
 .btn-primary {
   @apply bg-blue-600 text-white font-extrabold uppercase tracking-wide
