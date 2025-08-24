@@ -1,5 +1,6 @@
 import { useParams } from "react-router-dom";
 import "../../../components/card.css";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 
 type Content = {
   hello: string;
@@ -70,13 +71,22 @@ export default function LanguageDetail() {
   const d = DATA[slug] ?? DATA.thailandia;
 
   return (
-    <main style={{ maxWidth: 860, margin: "24px auto", padding: "0 16px" }}>
-      <h1 style={{ marginBottom: 4 }}>{titleFor(slug)}</h1>
-      <p>Learn greetings, alphabet basics, and common phrases for {titleFor(slug, true)}.</p>
+    <div className="page-wrap">
+      <Breadcrumbs
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/naturversity", label: "Naturversity" },
+          { href: "/naturversity/languages", label: "Languages" },
+          { label: titleFor(slug, true) },
+        ]}
+      />
+      <main style={{ maxWidth: 860, margin: "24px auto", padding: "0 16px" }}>
+        <h1 style={{ marginBottom: 4 }}>{titleFor(slug)}</h1>
+        <p>Learn greetings, alphabet basics, and common phrases for {titleFor(slug, true)}.</p>
 
-      <img className="lang-hero" src={d.hero} alt="" />
-      <section style={{ marginTop: 20 }}>
-        <h3>Starter phrases</h3>
+        <img className="lang-hero" src={d.hero} alt="" />
+        <section style={{ marginTop: 20 }}>
+          <h3>Starter phrases</h3>
         <ul>
           <li><strong>Hello:</strong> {d.hello}</li>
           <li><strong>Thank you:</strong> {d.thankyou}</li>
@@ -96,7 +106,8 @@ export default function LanguageDetail() {
       </section>
 
       <img className="lang-hero" src={d.secondary} alt="" style={{ marginTop: 16 }} />
-    </main>
+      </main>
+    </div>
   );
 }
 
