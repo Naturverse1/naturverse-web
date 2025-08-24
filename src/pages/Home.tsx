@@ -35,15 +35,35 @@ export default function Home() {
 
       {/* HOW IT WORKS */}
       <section className="how">
-        <div className="panel">
-          <h2>How it works</h2>
-          <ol>
-            <li>Create a free account.</li>
-            <li>Pick a hub: <a href="/worlds">Worlds</a>, <a href="/zones">Zones</a>, or <a href="/marketplace">Marketplace</a>.</li>
-            <li>Play & learn — explore, meet characters, earn badges.</li>
-          </ol>
-          <AuthButtons cta="Get started" variant="outline" size="md" className="mt-3" />
+        <div className="panel flow-vertical">
+          <div className="flow-step">
+            <h4>1) Create</h4>
+            <p>Create a free account.</p>
+          </div>
+          <div className="flow-arrow-down" aria-hidden>↓</div>
+          <div className="flow-step">
+            <h4>2) Pick a hub</h4>
+            <p>
+              <a href="/worlds">Worlds</a> • <a href="/zones">Zones</a> •{" "}
+              <a href="/marketplace">Marketplace</a>
+            </p>
+          </div>
+          <div className="flow-arrow-down" aria-hidden>↓</div>
+          <div className="flow-step">
+            <h4>3) Play · Learn · Earn</h4>
+            <p>
+              Explore, meet characters, earn badges <br />
+              <span className="muted">(Natur Coin — coming soon)</span>
+            </p>
+          </div>
         </div>
+
+        <AuthButtons
+          cta="Get started"
+          variant="outline"
+          size="md"
+          className="flow-cta"
+        />
       </section>
     </main>
   );
