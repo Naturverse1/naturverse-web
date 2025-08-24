@@ -1,7 +1,9 @@
 import AuthButtons from "../components/AuthButtons";
+import { useAuthUser } from "../lib/useAuthUser";
 import "../styles/home.css";
 
 export default function Home() {
+  const { user } = useAuthUser();
   return (
     <main className="home">
       {/* HERO */}
@@ -13,7 +15,7 @@ export default function Home() {
             wellness, creativity, and kindness.
           </p>
 
-          <AuthButtons cta="Create account" className="mt-4" />
+          {!user && <AuthButtons cta="Create account" className="mt-4" />}
         </div>
       </section>
 
@@ -58,12 +60,14 @@ export default function Home() {
           </div>
         </div>
 
-        <AuthButtons
-          cta="Get started"
-          variant="outline"
-          size="md"
-          className="flow-cta"
-        />
+        {!user && (
+          <AuthButtons
+            cta="Get started"
+            variant="outline"
+            size="md"
+            className="flow-cta"
+          />
+        )}
       </section>
     </main>
   );
