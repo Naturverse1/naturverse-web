@@ -4,6 +4,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import Home from './pages/Home';
 import WorldsIndex from './routes/worlds';
 import WorldDetail from './routes/worlds/[slug]';
+import CharacterPage from './routes/worlds/characters/[name]';
 import Zones from './routes/zones';
 import ArcadeZone from './routes/zones/arcade';
 import MusicZone from './routes/zones/music';
@@ -54,6 +55,7 @@ export const router = createBrowserRouter([
       { index: true, element: <Home /> },
       { path: 'worlds', element: <WorldsIndex /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
+      { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
       { path: 'zones', element: <Zones /> },
       { path: 'zones/arcade', element: <ArcadeZone /> },
       { path: 'zones/music', element: <MusicZone /> },
