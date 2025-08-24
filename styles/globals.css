@@ -22,3 +22,11 @@
 .naturverse-subtitle {
   @apply text-blue-100 text-lg mb-6;
 }
+
+/* Light blue background for the 6 main kingdoms */
+.kingdom-detail {
+  background-color: #f0f8ff; /* soft blue */
+  min-height: 100vh;
+  padding: 20px;
+  border-radius: 8px;
+}
