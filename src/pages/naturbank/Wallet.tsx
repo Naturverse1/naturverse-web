@@ -9,7 +9,7 @@ export default function Wallet() {
   const create = () => { const nw = createDemoWallet(); setW(nw); setBal(getBalance()); };
 
   return (
-    <main id="main" className="page-wrap">
+    <main id="main" className="nvrs-section naturbank page-wrap">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Wallet" }]} />
       <h1>🪪 Wallet</h1>
       {!w ? (

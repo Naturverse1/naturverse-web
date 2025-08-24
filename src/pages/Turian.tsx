@@ -84,7 +84,7 @@ export default function TurianPage() {
   const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
 
   return (
-    <>
+    <div className="nvrs-section turian">
         <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet." >
       <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
 
@@ -173,7 +173,7 @@ export default function TurianPage() {
 
       <p className="meta">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
       </Page>
-    </>
+    </div>
   );
 }
 

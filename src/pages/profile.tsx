@@ -102,10 +102,11 @@ export default function ProfilePage() {
   };
 
   return (
-    <main className="container profile-page">
-      <Breadcrumbs />
-      <h1>Profile</h1>
-      <form
+    <div className="nvrs-section profile">
+      <main className="container profile-page">
+        <Breadcrumbs />
+        <h1>Profile</h1>
+        <form
         className="card"
         onSubmit={(e) => {
           e.preventDefault();
@@ -189,8 +190,9 @@ export default function ProfilePage() {
         <p className="muted">Signed-in data will sync with Supabase as features roll in.</p>
       </section>
 
-      <WalletPanel />
-      <XPPanel />
-    </main>
+        <WalletPanel />
+        <XPPanel />
+      </main>
+    </div>
   );
 }

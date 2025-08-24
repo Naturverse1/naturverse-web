@@ -4,7 +4,7 @@ import Breadcrumbs from "../components/Breadcrumbs";
 export default function CartPage(){
   const { items, inc, dec, remove, subtotal } = useCart();
   return (
-    <>
+    <div className="nvrs-section cart">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Cart" }]} />
       <h1>Cart</h1>
       {items.length===0 ? <p>Your cart is empty.</p> :
@@ -32,6 +32,6 @@ export default function CartPage(){
           <button className="btn-primary w-full" style={{marginTop:"1rem"}}>Checkout (stub)</button>
         </div>
       }
-    </>
+    </div>
   );
 }

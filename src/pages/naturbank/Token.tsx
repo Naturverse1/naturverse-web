@@ -19,7 +19,7 @@ export default function Token() {
   };
 
   return (
-    <main id="main" className="page-wrap">
+    <main id="main" className="nvrs-section naturbank page-wrap">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Token" }]} />
       <h1>🪙 NATUR Token</h1>
 

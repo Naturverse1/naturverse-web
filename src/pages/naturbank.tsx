@@ -102,7 +102,7 @@ export default function NaturBankPage() {
   if (loading) return <main><h1>NaturBank</h1><p>Loading…</p></main>;
 
   return (
-    <div className="page-wrap">
+    <div className="nvrs-section naturbank page-wrap">
       <Breadcrumbs />
       <main className="bank">
       <h1>NaturBank</h1>

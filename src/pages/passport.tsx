@@ -109,14 +109,14 @@ export default function PassportPage() {
 
   if (loading)
     return (
-      <div className="page-wrap">
+      <div className="nvrs-section passport page-wrap">
         <Breadcrumbs />
         <main className="passport"><h1>Passport</h1><p>Loading…</p></main>
       </div>
     );
 
   return (
-    <div className="page-wrap">
+    <div className="nvrs-section passport page-wrap">
       <Breadcrumbs />
       <main className="passport">
       <h1>Passport</h1>

@@ -9,7 +9,7 @@ const items = [
 
 export default function NFTs() {
   return (
-    <main id="main" className="page-wrap">
+    <main id="main" className="nvrs-section naturbank page-wrap">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "NFTs" }]} />
       <h1>🖼️ NFTs</h1>
       <p>Preview collectibles. Minting connects later.</p>

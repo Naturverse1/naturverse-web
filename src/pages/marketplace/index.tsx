@@ -12,7 +12,7 @@ const PRODUCTS = [
 
 export default function MarketplacePage(){
   return (
-    <>
+    <div className="nvrs-section marketplace">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
       <h1>Marketplace</h1>
       <div className="nv-grid">
@@ -30,6 +30,6 @@ export default function MarketplacePage(){
           </article>
         ))}
       </div>
-    </>
+    </div>
   );
 }
