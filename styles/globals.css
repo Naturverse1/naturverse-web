@@ -8,3 +8,17 @@
 
 /* Full-width helper when needed */
 .btn-block { @apply w-full; }
+
+/* Naturverse theme */
+.naturverse-bg {
+  background-color: #1d4ed8; /* Tailwind blue-700 */
+}
+.naturverse-card {
+  @apply bg-white rounded-xl shadow-md p-6 transition hover:shadow-lg;
+}
+.naturverse-title {
+  @apply text-white font-extrabold text-3xl;
+}
+.naturverse-subtitle {
+  @apply text-blue-100 text-lg mb-6;
+}
