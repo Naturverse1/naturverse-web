@@ -1,6 +1,7 @@
 import { useCart } from "../lib/cart";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../components/Breadcrumbs";
+import styles from "./Wishlist.module.css";
 
 const LOOKUP: Record<string,{name:string; image:string; href:string}> = {
   "turian-plush": { name:"Turian Plush", image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
@@ -18,11 +19,14 @@ export default function WishlistPage(){
       {ids.length===0? <p>No saved items yet.</p> :
         <div className="nv-grid">
           {ids.map(id=>{
-            const p = LOOKUP[id]; if (!p) return null;
+            const item = LOOKUP[id];
+            if (!item) return null;
             return (
-              <article key={id} className="nv-card">
-                <Link to={p.href} className="nv-imgbox"><img src={p.image} alt="" /></Link>
-                <h3><Link to={p.href}>{p.name}</Link></h3>
+              <article key={id} className={styles.card}>
+                <Link to={item.href} className={styles.imageWrap}>
+                  <img src={item.image} alt={item.name} className={styles.img} />
+                </Link>
+                <h3><Link to={item.href}>{item.name}</Link></h3>
                 <button className="btn-danger" onClick={()=>toggleSave(id)}>Remove</button>
               </article>
             );
