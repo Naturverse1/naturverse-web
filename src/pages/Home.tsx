@@ -1,9 +1,16 @@
+import { useEffect, useState } from "react";
 import AuthButtons from "../components/AuthButtons";
 import { useAuthUser } from "../lib/useAuthUser";
 import "../styles/home.css";
 
 export default function Home() {
-  const { user } = useAuthUser();
+  const { user, loading } = useAuthUser();
+  const [mounted, setMounted] = useState(false);
+
+  useEffect(() => setMounted(true), []);
+
+  const showAuthButtons = mounted && !loading && !user;
+
   return (
     <main className="home">
       {/* HERO */}
@@ -15,7 +22,9 @@ export default function Home() {
             wellness, creativity, and kindness.
           </p>
 
-          {!user && <AuthButtons cta="Create account" className="mt-4" />}
+          {showAuthButtons && (
+            <AuthButtons cta="Create account" className="mt-4" />
+          )}
         </div>
       </section>
 
@@ -50,7 +59,10 @@ export default function Home() {
         <div className="panel flow-vertical">
           <div className="flow-step">
             <h4>1) Create</h4>
-            <p>Create a free account.</p>
+            <p>
+              Create a free account <span className="dot">•</span> create your
+              Navatar
+            </p>
           </div>
           <div className="flow-arrow-down" aria-hidden>↓</div>
           <div className="flow-step">
@@ -70,7 +82,7 @@ export default function Home() {
           </div>
         </div>
 
-        {!user && (
+        {showAuthButtons && (
           <AuthButtons
             cta="Get started"
             variant="outline"
