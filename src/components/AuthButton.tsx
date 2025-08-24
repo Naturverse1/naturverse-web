@@ -23,8 +23,9 @@ export default function AuthButton() {
   }, []);
 
   if (loading) return <span style={{ opacity: 0.6 }}>…</span>;
+  if (!user) return null;
 
-  return user ? (
+  return (
     <a href="/profile" title="Profile" className="profile-icon">
       {user.user_metadata?.avatar_url ? (
         <img
@@ -39,10 +40,6 @@ export default function AuthButton() {
           👤
         </span>
       )}
-    </a>
-  ) : (
-    <a href="/login" className="btn sm">
-      Sign in
     </a>
   );
 }
