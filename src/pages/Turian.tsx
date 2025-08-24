@@ -3,6 +3,7 @@ import Page from "../components/Page";
 import Meta from "../components/Meta";
 import { Img } from "../components";
 import { setTitle } from "./_meta";
+import Favicon from "/favicon-32x32.png";
 
 type Msg = { id: string; role: "user" | "turian"; text: string; ts: number };
 
@@ -34,8 +35,8 @@ const SUGGESTIONS: { section: string; items: string[] }[] = [
   ]},
 ];
 
-// No dedicated mascot image; fall back to an emoji so the header logo remains unique
-const mascotSrc = "";
+// Use site favicon as Turian's mascot for consistent branding
+const mascotSrc = Favicon;
 
 function cannedReply(q: string): string {
   // Lightweight, offline “assistant” so we don’t add deps or call APIs.
@@ -89,7 +90,7 @@ export default function TurianPage() {
 
       <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
         {mascotSrc ? (
-          <Img src={mascotSrc} alt="Turian the Durian mascot" width={44} height={44} style={{ borderRadius: 8 }} />
+          <Img src={mascotSrc} alt="Turian favicon" width={32} height={32} style={{ borderRadius: 8 }} />
         ) : (
           <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
         )}
@@ -120,6 +121,15 @@ export default function TurianPage() {
         <div className="turian-msgs" ref={listRef} aria-live="polite">
           {history.map(m => (
             <div key={m.id} className={"msg " + m.role}>
+              {m.role === "turian" && (
+                <Img
+                  src={Favicon}
+                  alt="Turian favicon"
+                  width={32}
+                  height={32}
+                  style={{ borderRadius: 6 }}
+                />
+              )}
               <div className="bubble">
                 {m.text.split("\n").map((ln, i) => <p key={i}>{ln}</p>)}
               </div>
@@ -127,6 +137,13 @@ export default function TurianPage() {
           ))}
           {!hasHistory && (
             <div className="msg turian">
+              <Img
+                src={Favicon}
+                alt="Turian favicon"
+                width={32}
+                height={32}
+                style={{ borderRadius: 6 }}
+              />
               <div className="bubble">
                 <p>Try a suggestion above or ask something like:</p>
                 <p><em>“Give me 3 eco-quests for Madagas­caria.”</em></p>
