@@ -4,7 +4,7 @@
  */
 import fs from "node:fs";
 import path from "node:path";
-import { KINGDOM_FOLDERS } from "@/lib/kingdoms";
+import { KINGDOM_FOLDERS } from "../lib/kingdoms.js";
 
 const ROOT = process.cwd();
 const PUB = path.join(ROOT, "public");
@@ -13,14 +13,14 @@ const KINGDOMS_DIR = path.join(PUB, "kingdoms");
 const IMG_RE = /\.(png|jpg|jpeg|webp)$/i;
 const EXCLUDE = /(map|\.keep|manifest\.json)/i;
 
-function listImages(dir: string) {
+function listImages(dir) {
   return fs
     .readdirSync(dir)
     .filter((f) => IMG_RE.test(f) && !EXCLUDE.test(f))
     .map((f) => path.posix.join("kingdoms", path.basename(dir), f));
 }
 
-const manifest: Record<string, string[]> = {};
+const manifest = {};
 for (const folder of KINGDOM_FOLDERS) {
   const d = path.join(KINGDOMS_DIR, folder);
   manifest[folder] = fs.existsSync(d) ? listImages(d) : [];
