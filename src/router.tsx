@@ -45,6 +45,7 @@ import Accessibility from './pages/Accessibility';
 import About from './pages/About';
 import NotFound from './routes/NotFound';
 import RootLayout from './layouts/Root';
+import ZonesLayout from './layouts/Zones';
 
 export const router = createBrowserRouter([
   {
@@ -55,17 +56,23 @@ export const router = createBrowserRouter([
       { path: 'worlds', element: <WorldsIndex /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
-      { path: 'zones', element: <Zones /> },
-      { path: 'zones/arcade', element: <ArcadeZone /> },
-      { path: 'zones/music', element: <MusicZone /> },
-      { path: 'zones/wellness', element: <WellnessZone /> },
-      { path: 'zones/creator-lab', element: <CreatorLabPage /> },
-      { path: 'zones/stories', element: <Stories /> },
-      { path: 'zones/quizzes', element: <Quizzes /> },
-      { path: 'zones/observations', element: <Observations /> },
-      { path: 'zones/culture', element: <Culture /> },
-      { path: 'zones/community', element: <Community /> },
-      { path: 'zones/future', element: <FutureZone /> },
+      {
+        path: 'zones',
+        element: <ZonesLayout />,
+        children: [
+          { index: true, element: <Zones /> },
+          { path: 'arcade', element: <ArcadeZone /> },
+          { path: 'music', element: <MusicZone /> },
+          { path: 'wellness', element: <WellnessZone /> },
+          { path: 'creator-lab', element: <CreatorLabPage /> },
+          { path: 'stories', element: <Stories /> },
+          { path: 'quizzes', element: <Quizzes /> },
+          { path: 'observations', element: <Observations /> },
+          { path: 'culture', element: <Culture /> },
+          { path: 'community', element: <Community /> },
+          { path: 'future', element: <FutureZone /> },
+        ],
+      },
       {
         path: 'marketplace',
         children: [
