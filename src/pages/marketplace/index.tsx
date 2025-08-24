@@ -1,5 +1,7 @@
 import Breadcrumbs from "../../components/Breadcrumbs";
-import ProductCard from "../../components/ProductCard";
+import AddToCartButton from "../../components/AddToCartButton";
+import SaveButton from "../../components/SaveButton";
+import { Link } from "react-router-dom";
 import "./../../styles/marketplace.css";
 
 const PRODUCTS = [
@@ -14,7 +16,19 @@ export default function MarketplacePage(){
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
       <h1>Marketplace</h1>
       <div className="nv-grid">
-        {PRODUCTS.map(p => <ProductCard key={p.id} p={p}/>)}
+        {PRODUCTS.map(p => (
+          <article key={p.id} className="nv-card">
+            <Link to={p.href} className="mp-thumb" aria-label={p.name}>
+              <img className="mp-img" src={p.image} alt={p.name} loading="lazy" />
+            </Link>
+            <h3><Link to={p.href}>{p.name}</Link></h3>
+            <div>${p.price.toFixed(2)}</div>
+            <div className="nv-cta">
+              <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
+              <SaveButton id={p.id}/>
+            </div>
+          </article>
+        ))}
       </div>
     </>
   );
