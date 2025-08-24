@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { CharacterGrid } from "../../components/CharacterGrid";
+import CharacterGrid from "../../components/CharacterGrid";
 import { getWorldBySlug } from "../../data/worlds";
 import { SLUG_TO_FOLDER, type KingdomSlug } from "../../lib/kingdoms";
 
@@ -28,7 +28,7 @@ export default function WorldDetail() {
 
       <section aria-labelledby="characters-heading" style={{ marginTop: 24 }}>
         <h2 id="characters-heading">Characters</h2>
-        <CharacterGrid kingdom={folder} slug={slug} />
+        <CharacterGrid kingdom={folder} />
       </section>
     </article>
   );

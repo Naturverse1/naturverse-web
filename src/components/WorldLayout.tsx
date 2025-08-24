@@ -2,7 +2,7 @@ import React from 'react';
 import { KINGDOMS, KingdomId } from '../data/kingdoms';
 import { mapFor } from '../data/maps';
 import '../styles/worlds.css';
-import { CharacterGrid } from './CharacterGrid';
+import CharacterGrid from './CharacterGrid';
 
 type Props = { id: KingdomId };
 
@@ -25,7 +25,7 @@ export default function WorldLayout({ id }: Props) {
       {/* Characters grid */}
       <section className="world-section">
         <h2>Characters</h2>
-        <CharacterGrid kingdom={k.title} slug={id} />
+        <CharacterGrid kingdom={k.title} />
       </section>
     </main>
   );
