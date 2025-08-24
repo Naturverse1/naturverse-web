@@ -36,20 +36,9 @@ create trigger on_auth_user_created after insert on auth.users
 for each row execute function public.handle_new_user();
 
 alter table public.profiles enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='profiles_select_all') then
-    create policy "profiles_select_all"
-    on public.profiles for select to authenticated using (true);
-  end if;
-  if not exists (select 1 from pg_policies where policyname='profiles_insert_self') then
-    create policy "profiles_insert_self"
-    on public.profiles for insert to authenticated with check (id = auth.uid());
-  end if;
-  if not exists (select 1 from pg_policies where policyname='profiles_update_self') then
-    create policy "profiles_update_self"
-    on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
-  end if;
-end $$;
+create policy "profiles_select_all" on public.profiles for select to authenticated using (true);
+create policy "profiles_insert_self" on public.profiles for insert to authenticated with check (id = auth.uid());
+create policy "profiles_update_self" on public.profiles for update to authenticated using (id = auth.uid()) with check (id = auth.uid());
 
 -- ---------- Storage: avatars ----------
 select case
@@ -57,23 +46,12 @@ select case
   else storage.create_bucket('avatars', public := true)
 end;
 alter table storage.objects enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='avatars_public_read') then
-    create policy "avatars_public_read"
-    on storage.objects for select to anon, authenticated using (bucket_id = 'avatars');
-  end if;
-  if not exists (select 1 from pg_policies where policyname='avatars_user_insert_prefix') then
-    create policy "avatars_user_insert_prefix"
-    on storage.objects for insert to authenticated
-    with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
-  end if;
-  if not exists (select 1 from pg_policies where policyname='avatars_user_update_prefix') then
-    create policy "avatars_user_update_prefix"
-    on storage.objects for update to authenticated
-    using ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 )
-    with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
-  end if;
-end $$;
+create policy "avatars_public_read" on storage.objects for select to anon, authenticated using (bucket_id = 'avatars');
+create policy "avatars_user_insert_prefix" on storage.objects for insert to authenticated
+with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
+create policy "avatars_user_update_prefix" on storage.objects for update to authenticated
+using ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 )
+with check ( bucket_id='avatars' and position(auth.uid()::text || '/' in name) = 1 );
 
 -- ---------- NaturBank ----------
 create table if not exists public.wallets (
@@ -100,27 +78,13 @@ create table if not exists public.transactions (
 
 alter table public.wallets enable row level security;
 alter table public.transactions enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='wallets_owner_select') then
-    create policy "wallets_owner_select" on public.wallets
-    for select to authenticated using (user_id = auth.uid());
-  end if;
-  if not exists (select 1 from pg_policies where policyname='wallets_owner_write') then
-    create policy "wallets_owner_write" on public.wallets
-    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-  end if;
-  if not exists (select 1 from pg_policies where policyname='txns_owner_select') then
-    create policy "txns_owner_select" on public.transactions
-    for select to authenticated
-    using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
-  end if;
-  if not exists (select 1 from pg_policies where policyname='txns_owner_write') then
-    create policy "txns_owner_write" on public.transactions
-    for all to authenticated
-    using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()))
-    with check (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
-  end if;
-end $$;
+create policy "wallets_owner_select" on public.wallets for select to authenticated using (user_id = auth.uid());
+create policy "wallets_owner_write" on public.wallets for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+create policy "txns_owner_select" on public.transactions for select to authenticated
+  using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
+create policy "txns_owner_write" on public.transactions for all to authenticated
+  using (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()))
+  with check (exists(select 1 from public.wallets w where w.id = wallet_id and w.user_id = auth.uid()));
 
 create or replace view public.v_my_wallet as
 select id, symbol, balance, created_at, updated_at
@@ -138,7 +102,6 @@ as $$
 declare
   w_id uuid;
 begin
-  -- Validate
   if p_amount <= 0 then
     raise exception 'Amount must be > 0';
   end if;
@@ -146,7 +109,6 @@ begin
     raise exception 'Kind must be earn or spend';
   end if;
 
-  -- Ensure wallet exists
   insert into public.wallets(user_id, symbol)
   values (auth.uid(), 'NATUR')
   on conflict (user_id, symbol) do nothing;
@@ -179,12 +141,7 @@ create table if not exists public.xp_ledger (
   created_at timestamptz not null default now()
 );
 alter table public.xp_ledger enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='xp_self') then
-    create policy "xp_self" on public.xp_ledger
-    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-  end if;
-end $$;
+create policy "xp_self" on public.xp_ledger for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 create table if not exists public.badges (
   id uuid primary key default gen_random_uuid(),
@@ -201,12 +158,8 @@ create table if not exists public.user_badges (
   primary key(user_id, badge_id)
 );
 alter table public.user_badges enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='user_badges_self') then
-    create policy "user_badges_self" on public.user_badges
-    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-  end if;
-end $$;
+create policy "user_badges_self" on public.user_badges
+for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 -- ---------- Passports ----------
 create table if not exists public.stamps (
@@ -224,12 +177,8 @@ create table if not exists public.user_stamps (
   primary key(user_id, stamp_id)
 );
 alter table public.user_stamps enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='user_stamps_self') then
-    create policy "user_stamps_self" on public.user_stamps
-    for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
-  end if;
-end $$;
+create policy "user_stamps_self" on public.user_stamps
+for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
 
 -- ---------- Languages ----------
 create table if not exists public.languages (
@@ -264,13 +213,9 @@ create table if not exists public.language_lesson_items (
 alter table public.languages enable row level security;
 alter table public.language_lessons enable row level security;
 alter table public.language_lesson_items enable row level security;
-do $$ begin
-  if not exists (select 1 from pg_policies where policyname='lang_public_read') then
-    create policy "lang_public_read" on public.languages for select to anon, authenticated using (true);
-    create policy "lesson_public_read" on public.language_lessons for select to anon, authenticated using (true);
-    create policy "lesson_items_public_read" on public.language_lesson_items for select to anon, authenticated using (true);
-  end if;
-end $$;
+create policy "lang_public_read" on public.languages for select to anon, authenticated using (true);
+create policy "lesson_public_read" on public.language_lessons for select to anon, authenticated using (true);
+create policy "lesson_items_public_read" on public.language_lesson_items for select to anon, authenticated using (true);
 
 insert into public.languages (slug, name, native_name) values
   ('thailandia', 'Thailandia (Thai)', 'ไทย'),
@@ -280,4 +225,3 @@ insert into public.languages (slug, name, native_name) values
   ('australandia', 'Australandia (English)', 'English'),
   ('amerilandia', 'Amerilandia (English)', 'English')
 on conflict (slug) do update set name=excluded.name, native_name=excluded.native_name;
-
