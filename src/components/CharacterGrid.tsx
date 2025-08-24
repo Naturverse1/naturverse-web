@@ -1,88 +1,153 @@
-import React, { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabase';
+import * as React from "react";
 
-type Props = {
-  world: string;
-  className?: string;
+type Character = {
+  id: string;
+  name?: string;
+  image: string; // file name inside /public/kingdoms/<Kingdom>/
 };
 
-type Item = {
-  name: string;
-  url: string;
-};
+function stripExt(s: string) {
+  return s.replace(/\.[^.]+$/, "");
+}
 
-const isCharacterImage = (name: string) => {
-  const lower = name.toLowerCase();
-  if (lower === '.keep') return false;
-  if (lower.endsWith('.json')) return false;
-  if (lower.includes('map')) return false;
-  return (
-    lower.endsWith('.png') ||
-    lower.endsWith('.jpg') ||
-    lower.endsWith('.jpeg') ||
-    lower.endsWith('.webp')
-  );
-};
+function coerceCharacters(raw: any): Character[] {
+  // Flexible reader: supports a few simple manifest shapes
+  if (!raw) return [];
+  if (Array.isArray(raw)) {
+    // ["Koala.png", "Platapus.png"]
+    return raw
+      .filter((x) => typeof x === "string" && x.toLowerCase().endsWith(".png"))
+      .map((image) => ({ id: stripExt(image), image }));
+  }
+  if (Array.isArray(raw.characters)) {
+    // { characters: [...] }
+    return raw.characters
+      .filter((c: any) => typeof c === "string" || (c && typeof c.image === "string"))
+      .map((c: any) =>
+        typeof c === "string"
+          ? { id: stripExt(c), image: c }
+          : { id: c.id ?? stripExt(c.image), name: c.name, image: c.image },
+      );
+  }
+  if (Array.isArray(raw.images)) {
+    // { images: ["Koala.png", ...] }
+    return raw.images
+      .filter((x: any) => typeof x === "string" && x.toLowerCase().endsWith(".png"))
+      .map((image: string) => ({ id: stripExt(image), image }));
+  }
+  return [];
+}
 
-export function CharacterGrid({ world, className }: Props) {
-  const [items, setItems] = useState<Item[] | null>(null);
+export function CharacterGrid({ kingdom }: { kingdom: string }) {
+  const [chars, setChars] = React.useState<Character[] | null>(null);
+  const [error, setError] = React.useState<string | null>(null);
 
-  useEffect(() => {
-    let mounted = true;
+  React.useEffect(() => {
+    let cancelled = false;
     (async () => {
-      const folder = `kingdoms/${world}`;
-      const { data, error } = await supabase.storage.from('public').list(folder, { limit: 100 });
-      if (error) {
-        console.error('CharacterGrid:list', error);
-        if (mounted) setItems([]);
-        return;
+      try {
+        const res = await fetch(`/kingdoms/${kingdom}/manifest.json`, { cache: "no-store" });
+        if (!res.ok) {
+          if (res.status === 404) {
+            if (!cancelled) setChars([]); // no manifest yet
+            return;
+          }
+          throw new Error(`HTTP ${res.status}`);
+        }
+        const raw = await res.json();
+        const list = coerceCharacters(raw);
+        if (!cancelled) setChars(list);
+      } catch (e: any) {
+        if (!cancelled) {
+          setError("Could not load characters.");
+          setChars([]);
+        }
       }
-
-      const filtered = (data ?? []).filter((f) => isCharacterImage(f.name));
-      const withUrls: Item[] = filtered.map((f) => {
-        const path = `${folder}/${f.name}`;
-        const { data: urlData } = supabase.storage.from('public').getPublicUrl(path);
-        const label = f.name
-          .replace(/\.[^.]+$/, '')
-          .replace(/[-_]+/g, ' ')
-          .replace(/\s+/g, ' ')
-          .trim();
-        const nice = label.charAt(0).toUpperCase() + label.slice(1);
-        return { name: nice, url: urlData.publicUrl };
-      });
-
-      if (mounted) setItems(withUrls);
     })();
     return () => {
-      mounted = false;
+      cancelled = true;
     };
-  }, [world]);
+  }, [kingdom]);
 
-  if (!items) {
+  if (error) {
     return (
-      <div className={`grid grid-cols-2 gap-4 ${className ?? ''}`}>
-        {Array.from({ length: 4 }).map((_, i) => (
-          <div key={i} className="rounded-xl border border-slate-200 p-2 animate-pulse">
-            <div className="aspect-[3/4] rounded-lg bg-slate-100" />
-            <div className="h-4 mt-2 w-2/3 rounded bg-slate-100" />
-          </div>
+      <p role="status" aria-live="polite">
+        {error}
+      </p>
+    );
+  }
+
+  if (chars === null) {
+    // simple skeletons
+    return (
+      <div className="nv-grid">
+        {Array.from({ length: 6 }).map((_, i) => (
+          <div key={i} className="nv-card nv-skel" />
         ))}
       </div>
     );
   }
 
-  if (items.length === 0) return null;
+  if (chars.length === 0) {
+    return <p>Characters coming soon.</p>;
+  }
 
   return (
-    <div className={`grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 ${className ?? ''}`}>
-      {items.map((it) => (
-        <figure key={it.url} className="rounded-xl border border-slate-200 p-2 bg-white">
-          <div className="aspect-[3/4] overflow-hidden rounded-md">
-            <img src={it.url} alt={it.name} loading="lazy" className="h-full w-full object-cover" />
-          </div>
-          <figcaption className="mt-2 text-sm font-medium text-slate-800">{it.name}</figcaption>
-        </figure>
+    <div className="nv-grid">
+      {chars.map((c) => (
+        <a
+          key={c.id}
+          className="nv-card"
+          href={`/characters/${encodeURIComponent(c.id)}`}
+          aria-label={c.name ?? c.id}
+        >
+          <img
+            loading="lazy"
+            decoding="async"
+            src={`/kingdoms/${kingdom}/${c.image}`}
+            alt={c.name ?? c.id}
+          />
+          <div className="nv-card-title">{c.name ?? c.id}</div>
+        </a>
       ))}
     </div>
   );
 }
+
+// Minimal styles (scoped)
+export const characterGridStyles = `
+.nv-grid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+@media (min-width: 640px) { .nv-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+@media (min-width: 1024px){ .nv-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
+.nv-card {
+  border: 1.5px solid #2c55d3;
+  border-radius: 16px;
+  padding: 12px;
+  background: #fff;
+  text-decoration: none;
+}
+.nv-card img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border-radius: 10px;
+  object-fit: cover;
+  aspect-ratio: 4 / 5;
+}
+.nv-card-title {
+  margin-top: 8px;
+  font-weight: 700;
+  color: #2242a2;
+}
+.nv-skel {
+  background: #eef2ff;
+  aspect-ratio: 4 / 5;
+  border-radius: 16px;
+}
+`;
+

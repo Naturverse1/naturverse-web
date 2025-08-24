@@ -9,6 +9,11 @@ import './styles/edu.css';
 import './main.css';
 import './styles/nvcard.css';
 import SkipToContent from './components/SkipToContent';
+import { characterGridStyles } from './components/CharacterGrid';
+
+const style = document.createElement('style');
+style.innerHTML = characterGridStyles;
+document.head.appendChild(style);
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
