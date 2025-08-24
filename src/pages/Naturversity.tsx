@@ -1,13 +1,16 @@
 import { Link } from "react-router-dom";
 import "../styles/cards-unify.css";
 import { setTitle } from "./_meta";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function NaturversityPage() {
   setTitle("Naturversity");
   return (
-    <main className="page">
-      <h1>Naturversity</h1>
-      <p>Teachers, partners, and courses.</p>
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Naturversity" }]} />
+      <main className="page">
+        <h1>Naturversity</h1>
+        <p>Teachers, partners, and courses.</p>
 
       <div className="grid-tiles">
         {/* Teachers */}
@@ -62,7 +65,8 @@ export default function NaturversityPage() {
       </div>
 
       <p className="coming-soon">Coming soon: AI tutors and step-by-step lessons.</p>
-    </main>
+      </main>
+    </div>
   );
 }
 
