@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { getLedger, addTx, getBalance } from "../../lib/naturbank/store";
 import type { Tx } from "../../lib/naturbank/types";
 
@@ -19,6 +20,7 @@ export default function Token() {
 
   return (
     <main id="main" className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Token" }]} />
       <h1>🪙 NATUR Token</h1>
 
       <div className="panel">

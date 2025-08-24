@@ -1,4 +1,5 @@
 import React, { useMemo, useState } from "react";
+import Breadcrumbs from "../../../components/Breadcrumbs";
 import { CharacterCard, CardData } from "../../../components/CharacterCard";
 import "../../../styles/zone-widgets.css";
 
@@ -66,6 +67,7 @@ export default function CreatorLab() {
 
   return (
     <div>
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Creator Lab" }]} />
       <h1>🎨🤖 Creator Lab</h1>
       <p>AI art &amp; character cards (client-only tools for now).</p>
 

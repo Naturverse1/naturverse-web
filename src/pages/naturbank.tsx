@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase/client";
+import Breadcrumbs from "../components/Breadcrumbs";
 import type { NaturTxn } from "../types/bank";
 import { setTitle } from "./_meta";
 
@@ -101,7 +102,9 @@ export default function NaturBankPage() {
   if (loading) return <main><h1>NaturBank</h1><p>Loading…</p></main>;
 
   return (
-    <main className="bank">
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "NaturBank" }]} />
+      <main className="bank">
       <h1>NaturBank</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
 
@@ -157,5 +160,6 @@ export default function NaturBankPage() {
 
       <p className="muted small">Coming soon: real wallet connect, custodial accounts, and redemptions.</p>
     </main>
+    </div>
   );
 }

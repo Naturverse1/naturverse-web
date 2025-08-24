@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { supabase } from "../supabase/client";
 import { WORLDS, WorldKey } from "../data/worlds";
 import type { PassportStamp, PassportBadge } from "../types/passport";
+import Breadcrumbs from "../components/Breadcrumbs";
 import { setTitle } from "./_meta";
 
 const LS_STAMPS = "naturverse.passport.stamps.v1";
@@ -106,10 +107,18 @@ export default function PassportPage() {
     grantBadge("first-steps", "First Steps");
   }
 
-  if (loading) return <main><h1>Passport</h1><p>Loading…</p></main>;
+  if (loading)
+    return (
+      <div className="page-wrap">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Passport" }]} />
+        <main className="passport"><h1>Passport</h1><p>Loading…</p></main>
+      </div>
+    );
 
   return (
-    <main className="passport">
+    <div className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Passport" }]} />
+      <main className="passport">
       <h1>Passport</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
 
@@ -171,6 +180,7 @@ export default function PassportPage() {
 
       <p className="muted small">Coming soon: auto-stamps from quizzes, stories, and missions.</p>
     </main>
+    </div>
   );
 }
 

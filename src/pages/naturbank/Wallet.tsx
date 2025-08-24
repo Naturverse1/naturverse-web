@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { createDemoWallet, getWallet, getBalance } from "../../lib/naturbank/store";
 
 export default function Wallet() {
@@ -9,6 +10,7 @@ export default function Wallet() {
 
   return (
     <main id="main" className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Wallet" }]} />
       <h1>🪪 Wallet</h1>
       {!w ? (
         <div className="panel">

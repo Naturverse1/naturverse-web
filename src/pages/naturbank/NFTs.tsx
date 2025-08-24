@@ -1,4 +1,5 @@
 import React from "react";
+import Breadcrumbs from "../../components/Breadcrumbs";
 
 const items = [
   { id: "card-thai", title: "Navatar — Thailandia", blurb: "Coconuts & Elephants series" },
@@ -9,6 +10,7 @@ const items = [
 export default function NFTs() {
   return (
     <main id="main" className="page-wrap">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "NFTs" }]} />
       <h1>🖼️ NFTs</h1>
       <p>Preview collectibles. Minting connects later.</p>
       <div className="hub-grid">
