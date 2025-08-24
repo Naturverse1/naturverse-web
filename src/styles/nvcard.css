@@ -1,0 +1,26 @@
+.nvgrid {
+  display: grid;
+  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+}
+
+.nvcard {
+  display: grid;
+  gap: 10px;
+  padding: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  text-decoration: none;
+  color: inherit;
+  background: #fff;
+  transition: box-shadow .15s ease, transform .05s ease;
+}
+.nvcard:where(:hover,:focus-visible){ box-shadow: 0 4px 24px rgba(2,8,23,.08); transform: translateY(-1px); }
+
+.nvcard-body { display: grid; gap: 6px; }
+.nvcard-title { font-weight: 800; display: flex; align-items: center; gap: 8px; }
+.nvcard-badge { font-style: normal; font-size: 12px; padding: 2px 6px; border-radius: 999px; background: #eef2ff; color:#3730a3; }
+.nvcard-desc { margin: 0; color: #475569; font-size: 14px; }
+
+.nvimg img{ display:block; }
+

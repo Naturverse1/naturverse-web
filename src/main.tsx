@@ -7,6 +7,7 @@ import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
+import './styles/nvcard.css';
 import SkipToContent from './components/SkipToContent';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
