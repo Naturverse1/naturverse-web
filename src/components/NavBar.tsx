@@ -14,6 +14,7 @@ export default function NavBar() {
         <ActiveLink href="/navatar" className="nav-link">Navatar</ActiveLink>
         <ActiveLink href="/passport" className="nav-link">Passport</ActiveLink>
         <ActiveLink href="/turian" className="nav-link">Turian</ActiveLink>
+        <ActiveLink href="/profile" className="nav-link">Profile</ActiveLink>
       </nav>
     </header>
   );

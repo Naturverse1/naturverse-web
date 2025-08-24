@@ -1,51 +1,65 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabase";
+import { supabase } from "../lib/supabaseClient";
 import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
+import { useCloudProfile } from "../hooks/useCloudProfile";
+import type { LocalProfile } from "../types/profile";
 
-type ProfileRow = {
-  id: string;
-  email: string | null;
-  display_name: string | null;
-  avatar_url: string | null;
-  updated_at: string | null;
-};
+const K = {
+  profile: "naturverse.profile.v1",
+  navatar: "naturverse.navatar.v1",
+  natur: "naturverse.natur.balance.v1",
+  turian: "naturverse.turian.history.v1",
+} as const;
 
 export default function ProfilePage() {
-  const [userId, setUserId] = useState<string | null>(null);
-  const [email, setEmail] = useState("");
-  const [displayName, setDisplayName] = useState("");
+  const [p, setP] = useState<LocalProfile>(() => {
+    try {
+      return (
+        JSON.parse(localStorage.getItem(K.profile) || "null") || {
+          displayName: "",
+          email: "",
+          kidSafeChat: false,
+          theme: "system",
+          newsletter: false,
+        }
+      );
+    } catch {
+      return { displayName: "", email: "", kidSafeChat: false, theme: "system", newsletter: false };
+    }
+  });
+
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState("");
   const [saving, setSaving] = useState(false);
   const [lastUpdated, setLastUpdated] = useState("—");
 
+  const { userId, cloud, loading: cloudLoading, saveFromLocal } = useCloudProfile();
+
   useEffect(() => {
+    try { localStorage.setItem(K.profile, JSON.stringify(p)); } catch {}
+  }, [p]);
+
+  useEffect(() => {
+    if (cloud) {
+      setP((prev) => ({
+        ...prev,
+        displayName: cloud.display_name ?? "",
+        email: cloud.email ?? "",
+        kidSafeChat: cloud.kid_safe_chat ?? false,
+        theme: (cloud.theme as LocalProfile["theme"]) ?? "system",
+        newsletter: cloud.newsletter ?? false,
+      }));
+      setAvatarUrl(cloud.avatar_url ?? "");
+      setLastUpdated(cloud.updated_at ? new Date(cloud.updated_at).toLocaleString() : "—");
+    }
+  }, [cloud]);
+
+  useEffect(() => {
+    if (p.email) return;
     (async () => {
-      const { data: { user }, error } = await supabase.auth.getUser();
-      if (error) console.error(error);
-      if (!user) return;
-      setUserId(user.id);
-      setEmail(user.email ?? "");
-
-      const { data, error: selErr } = await supabase
-        .from<ProfileRow>("natur.profiles")
-        .select("*")
-        .eq("id", user.id)
-        .maybeSingle();
-
-      if (selErr && selErr.code !== "PGRST116") console.error(selErr);
-
-      if (data) {
-        setDisplayName(data.display_name ?? "");
-        setAvatarUrl(data.avatar_url ?? "");
-        setLastUpdated(data.updated_at ? new Date(data.updated_at).toLocaleString() : "—");
-      } else {
-        await supabase.from("natur.profiles")
-          .insert({ id: user.id, email: user.email })
-          .single()
-          .catch(() => {});
-      }
+      const { data } = await supabase.auth.getUser();
+      if (data.user?.email) setP((prev) => ({ ...prev, email: data.user!.email! }));
     })();
   }, []);
 
@@ -65,17 +79,10 @@ export default function ProfilePage() {
         newAvatarUrl = pub.publicUrl;
       }
 
-      const { data, error: updErr } = await supabase
-        .from("natur.profiles")
-        .update({ display_name: displayName || null, avatar_url: newAvatarUrl || null })
-        .eq("id", userId)
-        .select("*")
-        .single();
-
-      if (updErr) throw updErr;
-
-      setAvatarUrl(data.avatar_url ?? "");
-      setLastUpdated(data.updated_at ? new Date(data.updated_at).toLocaleString() : "—");
+      const { error } = await saveFromLocal(p, newAvatarUrl);
+      if (error) throw error;
+      setAvatarUrl(newAvatarUrl);
+      setLastUpdated(new Date().toLocaleString());
       alert("Saved!");
     } catch (e: any) {
       const msg = e?.message ?? JSON.stringify(e);
@@ -86,23 +93,45 @@ export default function ProfilePage() {
     }
   }
 
+  const saveToCloud = async () => {
+    await saveFromLocal(p, avatarUrl || null);
+    // silent; local UI already shows values
+  };
+
   return (
-    <main className="container">
+    <main className="container profile-page">
       <h1>Profile</h1>
       <form
         className="card"
-        onSubmit={(e) => { e.preventDefault(); void handleSave(); }}
+        onSubmit={(e) => {
+          e.preventDefault();
+          void handleSave();
+        }}
       >
         <label>Email</label>
-        <input value={email} disabled />
+        <input value={p.email} disabled />
 
         <label>Display name</label>
-        <input value={displayName} onChange={(e) => setDisplayName(e.target.value)} placeholder="Your name" />
+        <input
+          value={p.displayName}
+          onChange={(e) => setP({ ...p, displayName: e.target.value })}
+          placeholder="Your name"
+        />
 
         <label>Avatar</label>
-        <input type="file" accept="image/*" onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)} />
+        <input
+          type="file"
+          accept="image/*"
+          onChange={(e) => setAvatarFile(e.target.files?.[0] ?? null)}
+        />
         {avatarUrl && (
-          <img src={avatarUrl} alt="Your avatar" width={64} height={64} style={{ borderRadius: 8, marginTop: 8 }} />
+          <img
+            src={avatarUrl}
+            alt="Your avatar"
+            width={64}
+            height={64}
+            style={{ borderRadius: 8, marginTop: 8 }}
+          />
         )}
 
         <button type="submit" disabled={saving} style={{ marginTop: 12 }}>
@@ -123,6 +152,33 @@ export default function ProfilePage() {
           Sign out
         </button>
       </form>
+
+      <section className="panel">
+        <h2>Cloud Sync</h2>
+        {!userId ? (
+          <p className="muted">Sign in to sync your profile to the cloud.</p>
+        ) : (
+          <>
+            <div className="grid2">
+              <div>
+                <p className="muted">
+                  {cloudLoading ? "Checking cloud…" : cloud ? `Last update ready.` : "No cloud profile yet."}
+                </p>
+                <button className="btn" type="button" onClick={saveToCloud}>Save to Cloud</button>
+              </div>
+              <div>
+                {cloud && (
+                  <div className="muted">
+                    <div><strong>Cloud name:</strong> {cloud.display_name || "—"}</div>
+                    <div><strong>Theme:</strong> {cloud.theme || "—"}</div>
+                    <div><strong>Kid-safe:</strong> {String(!!cloud.kid_safe_chat)}</div>
+                  </div>
+                )}
+              </div>
+            </div>
+          </>
+        )}
+      </section>
 
       <section className="panel">
         <h2>Account & App Data</h2>
