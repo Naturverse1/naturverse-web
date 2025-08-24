@@ -1,4 +1,6 @@
 import Card from "../../../components/Card";
+import Breadcrumbs from "../../../components/Breadcrumbs";
+import { setTitle } from "../../_meta";
 
 const langs = [
   {
@@ -40,25 +42,35 @@ const langs = [
 ];
 
 export default function LanguagesIndex() {
+  setTitle("Languages");
   return (
-    <main style={{ maxWidth: 980, margin: "24px auto", padding: "0 16px" }}>
-      <h1>Languages</h1>
-      <p>Phrasebooks for each kingdom.</p>
+    <div className="page-wrap">
+      <Breadcrumbs
+        items={[
+          { href: "/", label: "Home" },
+          { href: "/naturversity", label: "Naturversity" },
+          { label: "Languages" },
+        ]}
+      />
+      <main style={{ maxWidth: 980, margin: "24px auto", padding: "0 16px" }}>
+        <h1>Languages</h1>
+        <p>Phrasebooks for each kingdom.</p>
 
-      <div className="grid-cards" role="list">
-        {langs.map((l) => (
-          <Card
-            key={l.slug}
-            href={`/naturversity/languages/${l.slug}`}
-            title={l.name}
-            desc={`Native: ${l.native}`}
-            imgSrc={l.img}
-            imgAlt={l.name}
-            badge="Phrasebook"
-          />
-        ))}
-      </div>
-    </main>
+        <div className="grid-cards" role="list">
+          {langs.map((l) => (
+            <Card
+              key={l.slug}
+              href={`/naturversity/languages/${l.slug}`}
+              title={l.name}
+              desc={`Native: ${l.native}`}
+              imgSrc={l.img}
+              imgAlt={l.name}
+              badge="Phrasebook"
+            />
+          ))}
+        </div>
+      </main>
+    </div>
   );
 }
 
