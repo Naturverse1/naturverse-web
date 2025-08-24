@@ -1,10 +1,12 @@
 import Breadcrumbs from "../../components/Breadcrumbs";
-import ProductCard from "../../components/commerce/ProductCard";
+import ProductCard from "../../components/ProductCard";
 import { products } from "../../lib/commerce/products";
+import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 
 export default function Wishlist() {
-  const { items } = useWishlist();
+  const { add } = useCart();
+  const { items, toggle } = useWishlist();
   const liked = products.filter((p) => items.includes(p.slug));
   return (
     <section>
@@ -17,9 +19,16 @@ export default function Wishlist() {
       />
       <h1>Wishlist</h1>
       {liked.length ? (
-        <div className="market-grid">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
           {liked.map((p) => (
-            <ProductCard key={p.slug} p={p} />
+            <ProductCard
+              key={p.slug}
+              product={{ ...p, saved: true }}
+              onAddToCart={(item) => add(item)}
+              onToggleSave={(item) => toggle(item.slug)}
+              showCartButton
+              showSaveButton
+            />
           ))}
         </div>
       ) : (
