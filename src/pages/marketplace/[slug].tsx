@@ -1,45 +1,32 @@
 import { useParams } from "react-router-dom";
+import AddToCartButton from "../../components/AddToCartButton";
+import SaveButton from "../../components/SaveButton";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import { bySlug } from "../../data/products";
+import "./../../styles/marketplace.css";
 
-export default function ProductPage() {
-  const { slug = "" } = useParams();
-  const product = bySlug(slug);
+const MAP:any = {
+  "turian-plush": { id:"turian-plush", name:"Turian Plush", price:24, image:"/public/Marketplace/Turianplushie.png", blurb:"Cuddly plush of Turian." },
+  "navatar-tee":  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/public/Marketplace/Turiantshirt.png",  blurb:"Soft tee with Navatar." },
+  "stickers":     { id:"stickers",     name:"Sticker Pack", price:6,  image:"/public/Marketplace/Stickerpack.png", blurb:"Six vinyl stickers." },
+};
 
-  if (!product) return <main><p>Product not found.</p></main>;
-
+export default function ProductPage(){
+  const { slug="" } = useParams();
+  const p = MAP[slug];
+  if (!p) return null;
   return (
-    <main>
-      <Breadcrumbs
-        items={[
-          { label: "Home", href: "/" },
-          { label: "Marketplace", href: "/marketplace" },
-          { label: product.name },
-        ]}
-      />
-
-      <h1 className="text-4xl font-extrabold mb-4">{product.name}</h1>
-
-      <div style={{ display: "grid", gap: "1.5rem", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))" }}>
-        <div style={{ borderRadius: "1rem", border: "1px solid #e5e7eb", padding: "1rem", background: "#fff" }}>
-          <div style={{ position: "relative", width: "100%", height: "18rem" }}>
-            <img
-              src={product.img}
-              alt={product.name}
-              style={{ objectFit: "contain", width: "100%", height: "100%" }}
-            />
-          </div>
+    <>
+      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace", href: "/marketplace" }, { label: p.name }]} />
+      <article className="nv-card">
+        <div className="nv-imgbox"><img src={p.image} alt="" /></div>
+        <h1>{p.name}</h1>
+        <div>${p.price.toFixed(2)}</div>
+        <p>{p.blurb}</p>
+        <div className="nv-cta">
+          <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
+          <SaveButton id={p.id}/>
         </div>
-
-        <div>
-          <p className="text-3xl font-semibold mb-2">${product.price.toFixed(2)}</p>
-          {product.desc && <p className="text-lg text-gray-700 mb-6">{product.desc}</p>}
-
-          <button className="rounded-xl bg-blue-600 text-white px-6 py-3 font-semibold shadow-sm">
-            Add to cart
-          </button>
-        </div>
-      </div>
-    </main>
+      </article>
+    </>
   );
 }
