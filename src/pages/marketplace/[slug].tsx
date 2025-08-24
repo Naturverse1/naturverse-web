@@ -15,7 +15,7 @@ export default function ProductPage(){
   const p = MAP[slug];
   if (!p) return null;
   return (
-    <>
+    <div className="nvrs-section marketplace">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace", href: "/marketplace" }, { label: p.name }]} />
       <article className="nv-card">
         <div className="mp-hero">
@@ -29,6 +29,6 @@ export default function ProductPage(){
           <SaveButton id={p.id}/>
         </div>
       </article>
-    </>
+    </div>
   );
 }

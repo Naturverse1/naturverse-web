@@ -3,7 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function Learn() {
   return (
-    <main id="main" className="page-wrap">
+    <main id="main" className="nvrs-section naturbank page-wrap">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Learn" }]} />
       <h1>📘 Learn</h1>
       <ul className="bullet">

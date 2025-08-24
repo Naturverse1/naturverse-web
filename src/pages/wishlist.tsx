@@ -12,7 +12,7 @@ export default function WishlistPage(){
   const { saved, toggleSave } = useCart();
   const ids = Object.keys(saved).filter(k=>saved[k]);
   return (
-    <>
+    <div className="nvrs-section wishlist">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Wishlist" }]} />
       <h1>Wishlist</h1>
       {ids.length===0? <p>No saved items yet.</p> :
@@ -28,6 +28,6 @@ export default function WishlistPage(){
             );
           })}
         </div>}
-    </>
+    </div>
   );
 }

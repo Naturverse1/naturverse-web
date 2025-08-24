@@ -67,7 +67,7 @@ export default function NavatarPage() {
   }
 
   return (
-    <div className="page-wrap">
+    <div className="nvrs-section navatar page-wrap">
       <PageHead title="Naturverse — Navatar Creator" description="Design your character and save cards." />
       <Meta title="Navatar Creator — Naturverse" description="Design your character and save cards." />
       <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
