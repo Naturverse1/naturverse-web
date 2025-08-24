@@ -6,22 +6,20 @@ export function useLanguages() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function fetchLanguages() {
-      const { data, error } = await supabase.from("languages").select("*");
-      if (error) console.error(error);
-      setLanguages(data || []);
+    (async () => {
+      const { data, error } = await supabase.from("languages").select("*").order("name");
+      if (!error) setLanguages(data || []);
       setLoading(false);
-    }
-    fetchLanguages();
+    })();
   }, []);
 
   async function getLessons(languageId: string) {
     const { data, error } = await supabase
       .from("language_lessons")
       .select("*, language_lesson_items(*)")
-      .eq("language_id", languageId);
-
-    if (error) console.error(error);
+      .eq("language_id", languageId)
+      .order("order_index", { ascending: true });
+    if (error) return [];
     return data || [];
   }
 
