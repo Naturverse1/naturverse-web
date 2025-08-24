@@ -1,26 +1,30 @@
-import React, { useMemo } from "react";
+import { Link } from 'react-router-dom'
+import styles from './Header.module.css'
+import { useAuth } from '../hooks/useAuth'
 
 export default function Header() {
-  const path = typeof window !== "undefined" ? window.location.pathname : "/";
-  const isActive = useMemo(
-    () => (href: string) => path === href || (href !== "/" && path.startsWith(href)),
-    [path]
-  );
+  const { user, loading } = useAuth()
 
   return (
-    <header>
-      <nav className="topnav" style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-        <a href="/" className={isActive("/") ? "active" : ""}>Home</a>
-        <a href="/worlds" className={isActive("/worlds") ? "active" : ""}>Worlds</a>
-        <a href="/zones" className={isActive("/zones") ? "active" : ""}>Zones</a>
-        <a href="/marketplace" className={isActive("/marketplace") ? "active" : ""}>Marketplace</a>
-        <a href="/naturversity" className={isActive("/naturversity") ? "active" : ""}>Naturversity</a>
-        <a href="/navatar" className={isActive("/navatar") ? "active" : ""}>Navatar</a>
-        <a href="/passport" className={isActive("/passport") ? "active" : ""}>Passport</a>
-        <a href="/naturbank" className={isActive("/naturbank") ? "active" : ""}>NaturBank</a>
-        <a href="/turian" className={isActive("/turian") ? "active" : ""}>Turian</a>
-        <a href="/profile" className={isActive("/profile") ? "active" : ""}>Profile</a>
-      </nav>
+    <header className={styles.header}>
+      <div className={styles.brand}>
+        <Link to="/">🌿 Naturverse</Link>
+      </div>
+
+      {!loading && user && (
+        <nav className={styles.nav}>
+          <Link to="/worlds">Worlds</Link>
+          <Link to="/zones">Zones</Link>
+          <Link to="/marketplace">Marketplace</Link>
+          <Link to="/wishlist">Wishlist</Link>
+          <Link to="/naturversity">Naturversity</Link>
+          <Link to="/naturbank">NaturBank</Link>
+          <Link to="/navatar">Navatar</Link>
+          <Link to="/passport">Passport</Link>
+          <Link to="/turian">Turian</Link>
+          <Link to="/cart" aria-label="Cart">🛒</Link>
+        </nav>
+      )}
     </header>
-  );
+  )
 }
