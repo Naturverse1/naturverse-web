@@ -17,3 +17,11 @@
 
 /* --- Minor typography ----------------------------------------------------- */
 .kicker { color:#6b7280; font:500 13px/1.2 system-ui; }
+
+/* --- Breadcrumbs --------------------------------------------------------- */
+.nv-breadcrumbs { margin: 0 0 0.75rem; }
+.nv-breadcrumbs ol { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; }
+.nv-breadcrumbs li { font-size: .9rem; }
+.nv-breadcrumbs .sep { opacity:.5; margin: 0 .25rem; }
+.nv-breadcrumbs a { text-decoration: none; }
+.nv-breadcrumbs a:hover { text-decoration: underline; }

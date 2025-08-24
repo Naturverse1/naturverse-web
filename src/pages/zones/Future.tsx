@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 export default function FutureZone() {
   return (
       <div className="page-wrap">
-        <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Future" }]} />
+        <Breadcrumbs />
         <main id="main" className="page">
 
         <h1>🔮 Future Zone</h1>

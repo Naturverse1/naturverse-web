@@ -7,7 +7,7 @@ export default function Zones() {
   setTitle("Zones");
   return (
     <div>
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Zones" }]} />
+      <Breadcrumbs />
       <h1>Zones</h1>
       <div className="cards grid-gap">
         {ZONES.map((z) => (

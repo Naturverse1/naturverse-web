@@ -5,7 +5,7 @@ import "../../../styles/zone-widgets.css";
 export default function Arcade() {
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Arcade" }]} />
+      <Breadcrumbs />
       <h2 className="section-title">Arcade</h2>
       <p className="section-lead">Mini-games, leaderboards &amp; tournaments.</p>
 

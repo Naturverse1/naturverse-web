@@ -146,7 +146,7 @@ export default function Observations() {
 
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href:"/", label:"Home" }, { href:"/zones", label:"Zones" }, { label:"Observations" }]} />
+      <Breadcrumbs />
       <main id="main">
       <h1>📷🌿 Observations</h1>
       <p>Upload nature pics; tag, learn, earn. (Local & offline; data stays in your browser.)</p>

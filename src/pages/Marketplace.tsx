@@ -4,8 +4,7 @@ import Meta from "../components/Meta";
 import { breadcrumbs } from "../lib/jsonld";
 import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
-import { PRODUCTS } from "../data/products";
-import ImageSafe from "../components/ImageSafe";
+import { PRODUCTS } from "../data/marketplace";
 import { setTitle } from "./_meta";
 
 const labels = { '/marketplace': 'Marketplace' };
@@ -34,7 +33,14 @@ export default function MarketplacePage() {
           <div className="cards grid-gap" style={{ marginTop: 20 }}>
             {PRODUCTS.map((p) => (
               <a key={p.id} className="card" href={`/marketplace/${p.id}`}>
-                {p.img && <ImageSafe src={p.img} alt={p.name} />}
+                {p.imageSrc && (
+                  <img
+                    src={p.imageSrc}
+                    alt={p.imageAlt ?? p.name}
+                    loading="lazy"
+                    style={{ width: "100%", height: "auto", borderRadius: "0.5rem" }}
+                  />
+                )}
                 <h2>{p.name}</h2>
                 <p>${p.price.toFixed(2)}</p>
               </a>

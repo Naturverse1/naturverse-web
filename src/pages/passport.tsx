@@ -110,14 +110,14 @@ export default function PassportPage() {
   if (loading)
     return (
       <div className="page-wrap">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Passport" }]} />
+        <Breadcrumbs />
         <main className="passport"><h1>Passport</h1><p>Loading…</p></main>
       </div>
     );
 
   return (
     <div className="page-wrap">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Passport" }]} />
+      <Breadcrumbs />
       <main className="passport">
       <h1>Passport</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>

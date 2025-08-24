@@ -5,7 +5,7 @@ import "../../../styles/zone-widgets.css";
 export default function Music() {
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/zones", label: "Zones" }, { label: "Music" }]} />
+      <Breadcrumbs />
       <h2 className="section-title">Music</h2>
       <p className="section-lead">Karaoke, beats &amp; song maker (client-only).</p>
 

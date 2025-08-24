@@ -1,11 +1,12 @@
 import CardGrid, { Card } from "../components/CardGrid";
 import KingdomImage from "../components/KingdomImage";
 import { KINGDOMS } from "../content/kingdoms";
+import Breadcrumbs from "../components/Breadcrumbs";
 
 export default function Worlds() {
   return (
     <main id="main" className="container">
-      <div className="breadcrumb">Home / Worlds</div>
+      <Breadcrumbs />
       <h2 className="section-title">Worlds</h2>
       <p className="section-lead">Explore the 14 kingdoms.</p>
 
