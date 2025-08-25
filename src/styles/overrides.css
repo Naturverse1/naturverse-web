@@ -1,21 +1,4 @@
 /* === load LAST: global overrides === */
-:root{
-  --nv-blue: #1E40AF;            /* brand blue */
-}
-
-/* 1) Make all secondary/tertiary text blue site-wide */
-html, body { color: var(--nv-blue); }
-
-p, small, li, dd, dt, figcaption, label,
-.breadcrumbs, .breadcrumbs a, .nv-breadcrumbs, .nv-breadcrumbs a,
-.nv-card p, .nv-tile p, .nv-desc, .nv-note, .nv-help,
-.section p, .panel p, .muted, .subtext, .copy,
-input::placeholder, textarea::placeholder {
-  color: var(--nv-blue) !important;
-}
-
-/* keep buttons readable */
-button, .btn, .nv-btn, [role="button"] { color:#fff !important; }
 
 /* 2) Nuke mobile nav box; keep only the three lines */
 header .nav-toggle,
