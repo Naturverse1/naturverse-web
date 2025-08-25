@@ -6,9 +6,9 @@
   --nv-blue-200: #cfe2ff;
   --nv-blue-300: #a9caff;
   --nv-blue-400: #7eacff;
-  --nv-blue-500: #4a87ff; /* primary */
-  --nv-blue-600: #2f6ceb; /* hover */
-  --nv-blue-700: #2559c5; /* active/focus ring */
+  --nv-blue-500: #3b82f6; /* primary */
+  --nv-blue-600: #2563eb; /* hover */
+  --nv-blue-700: #1e4ed8; /* active/focus ring */
   --nv-blue-800: #1e479e;
   --nv-blue-900: #173878;
 
@@ -24,8 +24,9 @@
   --nv-shadow: 0 2px 10px rgba(17, 34, 68, 0.06);
 
   /* Text */
-  --nv-text: #1b2233;
-  --nv-text-muted: #5b6883;
+  --nv-text: #1f2937;
+  --nv-text-muted: #6b7280;
+  --nv-muted: var(--nv-text-muted);
   --nv-text-on-accent: #ffffff;
 
   /* Semantic shortcuts */
