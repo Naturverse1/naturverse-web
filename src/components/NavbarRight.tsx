@@ -1,22 +1,55 @@
 'use client';
 import { Link } from 'react-router-dom';
 import styles from './NavBar.module.css';
-import { useAuthState } from '../lib/auth-context';
-import { useProfileEmoji } from '../lib/use-profile-emoji';
+import { useEffect, useState } from 'react';
+import { supabase } from '@/lib/supabase-client';
 
 export default function NavbarRight() {
-  const { loading, signedIn, email, version } = useAuthState();
-  const emoji = useProfileEmoji();
+  type SBUser = NonNullable<
+    Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']
+  >['user'];
+  const [user, setUser] = useState<SBUser | null>(null);
+  const [displayEmoji, setDisplayEmoji] = useState('🧑');
 
-  // Do not render any placeholder while loading or signed out — avoids the "little line"
-  if (loading || !signedIn) return null;
+  // On mount, read current session and subscribe to auth changes
+  useEffect(() => {
+    let isMounted = true;
 
-  // Key forces a clean remount whenever auth flips (fixes first-load stale UI)
+    supabase.auth.getSession().then(({ data }) => {
+      if (!isMounted) return;
+      setUser(data.session?.user ?? null);
+    });
+
+    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!isMounted) return;
+      setUser(session?.user ?? null);
+    });
+
+    return () => {
+      isMounted = false;
+      sub.subscription.unsubscribe();
+    };
+  }, []);
+
+  // Reflect custom emoji stored in user metadata
+  useEffect(() => {
+    const emoji =
+      (user?.user_metadata &&
+        (user.user_metadata.navemoji || user.user_metadata.avatar_emoji)) ||
+      '🧑';
+    setDisplayEmoji(emoji);
+  }, [user]);
+
+  // Do not render any placeholder while signed out
+  if (!user) return null;
+
   return (
-    <div key={`${version}-${email ?? ''}`} className={styles.icons}>
-      <Link to="/cart" aria-label="Cart" className={styles.iconBtn}>🛒</Link>
+    <div key={user.id} className={styles.icons}>
+      <Link to="/cart" aria-label="Cart" className={styles.iconBtn}>
+        🛒
+      </Link>
       <Link to="/profile" aria-label="Profile" className={styles.iconBtn}>
-        <span className={styles.avatarEmoji}>{emoji}</span>
+        <span className={styles.avatarEmoji}>{displayEmoji}</span>
       </Link>
     </div>
   );
