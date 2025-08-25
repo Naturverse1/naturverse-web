@@ -1,0 +1,27 @@
+:root{
+  /* existing tokens... */
+  --nv-blue-700: #2D5CFF; /* our brand blue */
+}
+
+/* Scope helper: everything *except* big headings inherits secondary blue */
+.nv-secondary-scope {
+  /* nothing here – color is applied to child types */
+}
+.nv-secondary-scope p,
+.nv-secondary-scope small,
+.nv-secondary-scope .desc,
+.nv-secondary-scope .meta,
+.nv-secondary-scope .helper,
+.nv-secondary-scope li,
+.nv-secondary-scope label,
+.nv-secondary-scope .subtitle,
+.nv-secondary-scope .breadcrumb,
+.nv-secondary-scope .price {
+  color: var(--nv-blue-700);
+}
+/* Keep major headings and primary links on their existing colors/weights */
+.nv-secondary-scope h1,
+.nv-secondary-scope h2,
+.nv-secondary-scope h3 {
+  color: inherit;
+}

@@ -83,7 +83,7 @@ export default function TurianPage() {
   const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
 
   return (
-    <div className="nvrs-section turian">
+    <div className="nvrs-section turian nv-secondary-scope">
         <Page title="Turian the Durian" subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet." >
       <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
 

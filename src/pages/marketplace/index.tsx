@@ -12,7 +12,7 @@ const PRODUCTS = [
 
 export default function MarketplacePage(){
   return (
-    <div className="nvrs-section marketplace">
+    <div className="nvrs-section marketplace nv-secondary-scope">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
       <h1>Marketplace</h1>
       <div className="nv-grid">
