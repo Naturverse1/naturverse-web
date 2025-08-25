@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useEffect, useState } from 'react';
-import { createClient } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabase-client';
 
 type AuthState = {
   loading: boolean;
@@ -15,7 +15,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [state, setState] = useState<AuthState>({ loading: true, signedIn: false });
 
   async function loadOnce() {
-    const supabase = createClient();
     const { data } = await supabase.auth.getSession();
     setState({
       loading: false,
@@ -25,8 +24,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   }
 
   useEffect(() => {
-    const supabase = createClient();
-
     // Initial check (covers coming back from OAuth/magic link)
     loadOnce();
 

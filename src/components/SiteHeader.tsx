@@ -5,7 +5,7 @@ import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
-import { supabase } from '../lib/supabaseClient';
+import { supabase } from '@/lib/supabase-client';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);

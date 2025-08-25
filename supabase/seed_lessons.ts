@@ -1,4 +1,6 @@
-import { supabase } from "../src/lib/supabase";
+import { createClient } from "../lib/supabase-client";
+
+const supabase = createClient();
 
 const lessons = [
   {
