@@ -3,7 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function CatalogPage() {
   return (
-    <main className="container">
+    <main id="main" data-page="marketplace" className="container">
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },

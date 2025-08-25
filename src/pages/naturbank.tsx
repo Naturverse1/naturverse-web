@@ -99,12 +99,18 @@ export default function NaturBankPage() {
   function faucet() { addTxn("grant", 25, "Daily grant"); }
   function spend10() { if (balance >= 10) addTxn("spend", 10, "Shop demo"); }
 
-  if (loading) return <main><h1>NaturBank</h1><p>Loading…</p></main>;
+  if (loading)
+    return (
+      <main id="main" data-page="naturbank">
+        <h1>NaturBank</h1>
+        <p>Loading…</p>
+      </main>
+    );
 
   return (
     <div className="nvrs-section naturbank page-wrap nv-secondary-scope">
       <Breadcrumbs />
-      <main className="bank">
+      <main id="main" data-page="naturbank" className="bank">
       <h1>NaturBank</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
 

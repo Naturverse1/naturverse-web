@@ -1,88 +1,56 @@
-/* === Site blue (already in your vars; keeping the same token) === */
+/* Theme utilities for consistent secondary text color */
 :root {
-  --nv-blue: var(--naturverse-blue, #1f5df0);
+  --nv-blue: var(--naturverse-blue, #1f50ff);
 }
 
-/* === Global defaults: make secondary/tertiary text blue === */
-.nvrs-section p,
-.nvrs-section small,
-.nvrs-section li,
+/* Safe, page-wide section text (not buttons/inputs) */
+.nvrs-section .sub,
 .nvrs-section .desc,
-.nvrs-section .meta,
 .nvrs-section .help,
+.nvrs-section .kicker,
 .nvrs-section .muted,
-.nvrs-section label,
-.nvrs-section .subtext,
-.nvrs-section .price,
-.nvrs-section .note {
-  color: var(--nv-blue) !important;
+.nv-card .sub,
+.nv-card .desc,
+.nv-card .meta,
+.panel .sub,
+.panel .desc,
+.panel .meta {
+  color: var(--nv-blue);
 }
 
-/* Forms (inputs, textareas, selects, helper text) */
-.nvrs-section input,
-.nvrs-section textarea,
-.nvrs-section select,
-.nvrs-section .form-hint,
-.nvrs-section .field-help {
-  color: var(--nv-blue) !important;
+/* Breadcrumbs and small labels */
+.nv-breadcrumbs,
+.nv-breadcrumbs a,
+.badge,
+.chip,
+.tag {
+  color: var(--nv-blue);
 }
 
-/* Placeholder color (slightly lighter blue for readability) */
-.nvrs-section input::placeholder,
-.nvrs-section textarea::placeholder,
-.nvrs-section .placeholder {
-  color: rgba(31, 93, 240, 0.85) !important;
+/* Don’t recolor interactive controls */
+button,
+.btn,
+input,
+select,
+textarea,
+label {
+  color: inherit;
 }
 
-/* Links were already blue; keep it explicit so card titles stay correct */
-a, a:visited { color: var(--nv-blue) !important; }
-
-/* === Page-specific catch-alls to grab remaining black text === */
-
-/* Marketplace: price + small captions */
-.marketplace .price,
-.marketplace .product-card small,
-.marketplace .product-card .meta {
-  color: var(--nv-blue) !important;
+/* Turian */
+[data-page="turian"] .chat-desc,
+[data-page="turian"] .panel .sub {
+  color: var(--nv-blue);
 }
 
-/* Navatar: backstory textarea, labels, mini meta under the card */
-.navatar .panel label,
-.navatar textarea,
-.navatar input,
-.navatar .form-hint,
-.navatar .card .meta,
-.navatar .card .desc {
-  color: var(--nv-blue) !important;
-}
-.navatar textarea::placeholder,
-.navatar input::placeholder {
-  color: rgba(31, 93, 240, 0.85) !important;
+/* NaturBank */
+[data-page="naturbank"] .panel .sub,
+[data-page="naturbank"] .field-help {
+  color: var(--nv-blue);
 }
 
-/* Turian page: chat card description + prompts */
-.turian .chat-card p,
-.turian .chat-card .desc,
-.turian .prompt-list li,
-.turian .prompt-list .meta {
-  color: var(--nv-blue) !important;
+/* Passport */
+[data-page="passport"] .stamp-card .meta {
+  color: var(--nv-blue);
 }
 
-/* Passport: kingdom rows, stamp counts, “demo mode” notes */
-.passport .stamp-card p,
-.passport .stamp-card .meta,
-.passport .stamp-card small,
-.passport .panel .desc {
-  color: var(--nv-blue) !important;
-}
-
-/* NaturBank: wallet labels, balance/transactions text, footnotes */
-.naturbank .wallet label,
-.naturbank .wallet .hint,
-.naturbank .panel p,
-.naturbank .panel .meta,
-.naturbank .balance,
-.naturbank .transactions p,
-.naturbank small {
-  color: var(--nv-blue) !important;
-}
