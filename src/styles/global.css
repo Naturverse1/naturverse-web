@@ -1,11 +1,37 @@
 @import './tokens.css';
 
 :root {
-  --nv-blue-700: #1e4ed8;
-  --nv-blue-600: #2563eb;
-  --nv-blue-500: #3b82f6;
   --page-bg: #f8fbff; /* light blue background used across pages */
 }
+
+/* ========= NEW: secondary text, site-wide ========= */
+/* Any “helper/description/subtext” copy should render in brand blue */
+/* Targets: card descriptions, tile blurbs, section subtitles, small copy */
+.nv-secondary,
+.nv-subtext,
+.nv-desc,
+.nv-helper,
+.nv-muted,
+.nv-note,
+.nvrs-section .subtitle,
+.nv-card .subtitle,
+.nv-card .desc,
+.nv-card p.desc,
+.nv-tiles .tile .desc,
+.nv-tiles .tile p.desc,
+.nv-tiles .tile .subtext,
+.nv-buckets .bucket .desc,
+.nv-list .item .desc,
+.nv-lede + .subtitle,
+.section-subtitle,
+/* sensible fallbacks: any paragraph inside cards/tiles not already a title */
+.nv-card p:not(.title):not(.lead):not(.headline),
+.nv-tiles .tile p:not(.title):not(.headline) {
+  color: var(--nv-text-secondary);
+}
+
+/* Keep titles/links as-is (don’t inherit the rule above) */
+.title, .headline, .lead, a { color: inherit; }
 
 .page-wrapper {
   background-color: var(--page-bg);
