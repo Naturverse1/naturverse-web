@@ -37,3 +37,23 @@ button.hamburger svg, .hamburger svg, .menu-button svg {
   stroke: currentColor !important;
   stroke-width: 2.5;
 }
+
+/* Hamburger menu lines stacked vertically */
+header .nav-toggle svg,
+header [aria-label*="menu"] svg,
+button.hamburger svg, .hamburger svg, .menu-button svg {
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 4px !important;   /* spacing between bars */
+  width: 22px;           /* bar width */
+  height: auto;
+}
+
+header .nav-toggle svg rect,
+header [aria-label*="menu"] svg rect,
+button.hamburger svg rect, .hamburger svg rect, .menu-button svg rect {
+  width: 100% !important;
+  height: 3px !important;
+  rx: 2px;                 /* rounded corners */
+  fill: currentColor !important;
+}
