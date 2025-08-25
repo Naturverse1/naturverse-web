@@ -1,7 +1,7 @@
 /* Unified button style across site */
 button,
 a.button {
-  background: #2f6fec;
+  background: var(--nv-blue-600);
   color: #fff !important;
   border: none;
   border-radius: 8px;
@@ -15,7 +15,7 @@ a.button {
 
 button:hover,
 a.button:hover {
-  background: #2457c9;
+  background: var(--nv-blue-700);
 }
 
 button:disabled,

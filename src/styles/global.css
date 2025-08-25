@@ -198,58 +198,80 @@ textarea {
   transform: scale(1.2);
 }
 
-/* === Auth Buttons === */
-.welcome-buttons {
+/* Give every page a little air under the navbar */
+main,
+.nv-page,
+.page,
+#app main {
+  padding-top: 1.25rem;
+}
+
+/* Shared “hero” centering */
+.nv-hero {
+  text-align: center;
+  margin: 0 auto;
+  max-width: 64rem;
+}
+.nv-hero h1 {
+  color: var(--nv-blue-700);
+  margin-bottom: .5rem;
+}
+.nv-hero p {
+  color: var(--nv-blue-600);
+  margin: 0 0 1rem 0;
+}
+
+/* CTA row under hero */
+.nv-ctaRow {
   display: flex;
   justify-content: center;
-  gap: 20px;
-  margin: 20px auto;
-  flex-wrap: wrap;
+  gap: .75rem;
+  margin-bottom: 1.25rem;
 }
 
-/* === Subtitle Texts (under Welcome + Steps + Tiles) === */
-.welcome-subtitle,
-.step-box p,
-.step-box a,
-.tile-subtitle {
-  color: #2563eb;
-  font-weight: 600;
-  text-align: center;
-  margin: 10px 0;
+/* Tile row on home */
+.nv-tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  justify-items: center;
 }
-
-/* === Tiles (Play, Learn, Earn) === */
-.tile {
-  text-align: center;
-  margin: 10px;
-}
-
-.tile h3 {
-  color: #2563eb;
-  font-weight: 700;
-  margin-bottom: 6px;
-}
-
-/* === Steps Section === */
-.step-box {
-  text-align: center;
-  margin: 15px auto;
-  padding: 10px;
-  border-radius: 8px;
-  border: 1px solid #e0e0e0;
-  max-width: 600px;
-}
-
-/* === Responsive Wrapping (for TV, mobile, tablets) === */
-@media (max-width: 768px) {
-  .welcome-buttons {
-    flex-direction: column;
-    gap: 12px;
-    align-items: center;
+@media (max-width: 900px) {
+  .nv-tiles {
+    grid-template-columns: 1fr;
   }
-  .tile {
-    margin: 12px auto;
-  }
+}
+
+/* Make the blue title + copy consistent inside tiles */
+.nv-tileTitle {
+  color: var(--nv-blue-700);
+  font-weight: 800;
+  text-align: center;
+}
+.nv-tileCopy {
+  color: var(--nv-blue-600);
+  text-align: center;
+}
+
+/* The 3-step flow box */
+.nv-flow {
+  margin: 1.25rem auto 0;
+  max-width: 64rem;
+}
+.nv-flow .nv-stepTitle {
+  color: var(--nv-blue-700);
+  font-weight: 800;
+  text-align: center;
+}
+.nv-flow .nv-stepBody {
+  color: var(--nv-blue-600);
+  text-align: center;
+}
+
+/* Buttons near each other get a tiny gap */
+.button + .button,
+.nv-btn + .nv-btn {
+  margin-left: .5rem;
 }
 
 @media (min-width: 1600px) {
