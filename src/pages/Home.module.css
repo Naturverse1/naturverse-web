@@ -1,8 +1,7 @@
 .page {
-  /* same light-blue you liked elsewhere */
-  background: var(--nv-page-bg, #f5f8ff);
+  background: var(--nv-page-bg, #f5f8ff); /* light blue like other pages */
   min-height: 100%;
-  padding: 24px 0 64px;
+  padding: 28px 0 64px; /* a touch more top space */
 }
 
 .hero {
@@ -21,14 +20,14 @@
 }
 
 .subtitle {
-  margin: 0 auto 20px;
+  margin: 0 auto 22px;
   max-width: 960px;
-  color: var(--nv-text-600, #3a4a66);
+  color: var(--nv-blue-700, #1f4ed8); /* blue (not black/grey) */
 }
 
 .ctaRow {
   display: inline-flex;
-  gap: 16px;
+  gap: 16px; /* space between buttons */
   margin-top: 8px;
 }
 
@@ -37,9 +36,10 @@
   padding: 12px 18px;
   border-radius: 14px;
   background: var(--nv-blue-600, #2563eb);
-  color: #fff;
+  color: #fff; /* readable white text */
   font-weight: 700;
   box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  opacity: 1; /* ensure not dimmed */
   text-decoration: none;
 }
 
@@ -59,7 +59,7 @@
 }
 
 .featureCard {
-  background: var(--nv-surface, #fff);
+  background: #ffffff; /* true white (not grey) */
   border: 2px solid rgba(37, 99, 235, 0.25);
   border-radius: 18px;
   padding: 18px 20px;
@@ -76,6 +76,7 @@
 
 .cardTextCenter {
   text-align: center;
+  color: var(--nv-blue-700, #1f4ed8); /* blue body text under tiles */
 }
 
 .flowWrap {
@@ -88,7 +89,7 @@
 }
 
 .flowStep {
-  background: var(--nv-surface, #fff);
+  background: #ffffff; /* match tile white */
   border: 2px solid rgba(37, 99, 235, 0.25);
   border-radius: 14px;
   padding: 14px 16px;
@@ -103,7 +104,7 @@
 }
 
 .flowBody {
-  color: var(--nv-text-700, #2b3b55);
+  color: var(--nv-blue-700, #1f4ed8); /* blue (not black) */
   text-align: left;
 }
 

@@ -5,7 +5,6 @@ import { useAuth } from '@/lib/auth-context';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
-  const authed = Boolean(user);
   const headEmoji =
     (user?.user_metadata?.navatarEmoji as string) ??
     (user?.user_metadata?.avatar_emoji as string) ??
@@ -23,18 +22,8 @@ export default function NavBar() {
           <Link className="nv-link" href="/wishlist">Wishlist</Link>
           <Link className="nv-link" href="/naturversity">Naturversity</Link>
           <Link className="nv-link" href="/naturbank">NaturBank</Link>
-          {authed ? (
-            <Link className="nv-link" href="/navatar">Navatar</Link>
-          ) : (
-            <a
-              href="#"
-              aria-disabled
-              className="nv-link is-disabled"
-              onClick={(e) => e.preventDefault()}
-            >
-              Navatar
-            </a>
-          )}
+          {/* Navatar is always enabled */}
+          <Link className="nv-link" href="/navatar">Navatar</Link>
           <Link className="nv-link" href="/passport">Passport</Link>
           <Link className="nv-link" href="/turian">Turian</Link>
           {ready && user ? (

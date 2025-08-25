@@ -77,17 +77,14 @@ export default function SiteHeader() {
             >
               NaturBank
             </NavLink>
-            {user ? (
-              <NavLink
-                to="/navatar"
-                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                onClick={() => setOpen(false)}
-              >
-                Navatar
-              </NavLink>
-            ) : (
-              <span className="nav-link disabledLink" aria-disabled="true">Navatar</span>
-            )}
+            {/* Navatar is always enabled */}
+            <NavLink
+              to="/navatar"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Navatar
+            </NavLink>
             <NavLink
               to="/passport"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
