@@ -13,14 +13,15 @@ import SkipToContent from './components/SkipToContent';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
-    <SkipToContent />
-    <ErrorBoundary>
-      <BaseAuthProvider>
-        <AuthProvider>
+    {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
+    <AuthProvider>
+      <SkipToContent />
+      <ErrorBoundary>
+        <BaseAuthProvider>
           <App />
-        </AuthProvider>
-      </BaseAuthProvider>
-    </ErrorBoundary>
+        </BaseAuthProvider>
+      </ErrorBoundary>
+    </AuthProvider>
   </React.StrictMode>,
 );
 
