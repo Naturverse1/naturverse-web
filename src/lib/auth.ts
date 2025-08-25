@@ -23,14 +23,22 @@ export async function signIn(email: string, password: string) {
   return data;
 }
 
-export async function signInWithEmail(email: string, redirectTo?: string) {
-  if (!/^\S+@\S+\.\S+$/.test(email)) throw new Error('Please enter a valid email.');
+export async function signInWithGoogle() {
+  const redirectTo = `${window.location.origin}/auth/callback`;
+  const { error } = await supabase.auth.signInWithOAuth({
+    provider: 'google',
+    options: { redirectTo },
+  });
+  if (error) console.error(error);
+}
+
+export async function signInWithMagic(email: string) {
+  const redirectTo = `${window.location.origin}/auth/callback`;
   const { error } = await supabase.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: redirectTo },
   });
-  if (error) throw error;
-  return true;
+  return { error };
 }
 
 /**

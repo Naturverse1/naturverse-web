@@ -1,21 +1,19 @@
 /* Lightweight, framework-agnostic TSX. It doesn’t mount itself.
    Import and render it where you want later. */
 import { useState } from 'react';
-import { signInWithEmail } from '../../lib/auth';
+import { signInWithMagic } from '../../lib/auth';
 import './auth.css';
 
 type Props = {
   isOpen: boolean;
   onClose: () => void;
   successMessage?: string;
-  redirectTo?: string;
 };
 
 export default function AuthModal({
   isOpen,
   onClose,
   successMessage = 'Check your email for a sign-in link.',
-  redirectTo,
 }: Props) {
   const [email, setEmail] = useState('');
   const [busy, setBusy] = useState(false);
@@ -30,7 +28,7 @@ export default function AuthModal({
     setErr(null);
     setMsg(null);
     try {
-      await signInWithEmail(email.trim(), redirectTo);
+      await signInWithMagic(email.trim());
       setMsg(successMessage);
     } catch (e: any) {
       setErr(e?.message ?? 'Sign-in failed.');

@@ -22,6 +22,8 @@
 .sheet { position: absolute; right: 10px; top: 58px; background: #fff; border: 1px solid #dbe3ff; border-radius: 16px; padding: 18px; width: min(86vw, 360px); display: grid; gap: 14px; box-shadow: 0 10px 30px rgba(0,0,0,.08); }
 .sheet a { text-decoration: none; color: #1b2b4b; font-weight: 700; }
 
+.disabledLink { opacity: .55; pointer-events: none; cursor: default; }
+
 .mobileProfile { display: flex; align-items: center; gap: 10px; padding-bottom: 8px; border-bottom: 1px solid #eef2ff; }
 .mobileEmoji { width: 28px; height: 28px; display: grid; place-items: center; border-radius: 50%; background: #e6f0ff; }
 

@@ -26,8 +26,6 @@ export default function SiteHeader() {
     };
   }, []);
 
-  if (!user) return null;
-
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="container">
@@ -79,13 +77,17 @@ export default function SiteHeader() {
             >
               NaturBank
             </NavLink>
-            <NavLink
-              to="/navatar"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Navatar
-            </NavLink>
+            {user ? (
+              <NavLink
+                to="/navatar"
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+                onClick={() => setOpen(false)}
+              >
+                Navatar
+              </NavLink>
+            ) : (
+              <span className="nav-link disabledLink" aria-disabled="true">Navatar</span>
+            )}
             <NavLink
               to="/passport"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}

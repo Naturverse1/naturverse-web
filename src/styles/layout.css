@@ -5,6 +5,10 @@ main {
   padding: 0 16px 40px;
 }
 
+.pageRoot {
+  padding-top: 12px;
+}
+
 /* Headings */
 h1 {
   font-weight: 800;
