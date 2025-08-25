@@ -1,15 +1,28 @@
-import { useEffect, useState } from "react";
-import AuthButtons from "../components/AuthButtons";
-import { useAuthUser } from "../lib/useAuthUser";
+import AuthButtons from "@/components/AuthButtons";
+import { useAuth } from "@/lib/auth-context";
 import "../styles/home.css";
 
+function MaybeLink({
+  to,
+  enabled,
+  className,
+  children,
+}: React.PropsWithChildren<{ to: string; enabled: boolean; className?: string }>) {
+  return enabled ? (
+    <a href={to} className={className}>
+      {children}
+    </a>
+  ) : (
+    <div className={className} style={{ cursor: "default" }}>
+      {children}
+    </div>
+  );
+}
+
 export default function Home() {
-  const { user, loading } = useAuthUser();
-  const [mounted, setMounted] = useState(false);
-
-  useEffect(() => setMounted(true), []);
-
-  const showAuthButtons = mounted && !loading && !user;
+  const { user, ready } = useAuth();
+  const showAuthButtons = ready && !user;
+  const canClick = ready && !!user;
 
   return (
     <main className="home">
@@ -28,68 +41,59 @@ export default function Home() {
         </div>
       </section>
 
-      {/* 3-UP: Play / Learn / Earn */}
-      <section className="triptych">
-        <div className="card">
-          <h3 className="bubble-title">
-            <span className="bubble-emoji" aria-hidden>🎮</span> Play
-          </h3>
+      {/* === Top tiles === */}
+      <section className="tiles">
+        <MaybeLink to="/zones" enabled={canClick} className="tile clickable">
+          <h3>Play</h3>
           <p>Mini-games, stories, and map adventures across 14 kingdoms.</p>
-        </div>
-        <div className="card">
-          <h3 className="bubble-title">
-            <span className="bubble-emoji" aria-hidden>📚</span> Learn
-          </h3>
+        </MaybeLink>
+
+        <MaybeLink to="/naturversity" enabled={canClick} className="tile clickable">
+          <h3>Learn</h3>
           <p>Naturversity lessons in languages, art, music, wellness, and more.</p>
-        </div>
-        <div className="card">
-          <h3 className="bubble-title">
-            <span className="bubble-emoji" aria-hidden>🪙</span> Earn
-          </h3>
-          <p>
-            Collect badges, save favorites, and build your Navatar card.
-            <br />
-            <em>Natur Coin — coming soon</em>
-          </p>
-        </div>
+        </MaybeLink>
+
+        <MaybeLink to="/naturbank" enabled={canClick} className="tile clickable">
+          <h3>Earn</h3>
+          <p>Collect badges, save favorites, and build your Navatar card.</p>
+          <small>Natur Coin — coming soon</small>
+        </MaybeLink>
       </section>
 
-      {/* HOW IT WORKS */}
-      <section className="how">
-        <div className="panel flow-vertical">
-          <div className="flow-step">
-            <h4>1) Create</h4>
-            <p>
-              Create a free account <span className="dot">•</span> create your
-              Navatar
-            </p>
-          </div>
-          <div className="flow-arrow-down" aria-hidden>↓</div>
-          <div className="flow-step">
-            <h4>2) Pick a hub</h4>
-            <p>
-              <a href="/worlds">Worlds</a> • <a href="/zones">Zones</a> •{" "}
-              <a href="/marketplace">Marketplace</a>
-            </p>
-          </div>
-          <div className="flow-arrow-down" aria-hidden>↓</div>
-          <div className="flow-step">
-            <h4>3) Play · Learn · Earn</h4>
-            <p>
-              Explore, meet characters, earn badges <br />
-              <span className="muted">(Natur Coin — coming soon)</span>
-            </p>
+      {/* === Flow === */}
+      <section className="flow">
+        {/* 1) Create → /navatar */}
+        <MaybeLink to="/navatar" enabled={canClick} className="flowRow clickable">
+          <div className="flowTitle">1) Create</div>
+          <div className="flowDesc">Create a free account · create your Navatar</div>
+        </MaybeLink>
+
+        {/* Arrow */}
+        <div className="flowArrow">↓</div>
+
+        {/* 2) Pick a hub — keep three links, but bold style */}
+        <div className="flowRow">
+          <div className="flowTitle">2) Pick a hub</div>
+          <div className="flowDesc">
+            <a href="/worlds" className="hubLink">
+              Worlds
+            </a>{" "}
+            · <a href="/zones" className="hubLink">Zones</a> ·{" "}
+            <a href="/marketplace" className="hubLink">Marketplace</a>
           </div>
         </div>
 
-        {showAuthButtons && (
-          <AuthButtons
-            cta="Get started"
-            variant="outline"
-            size="md"
-            className="flow-cta"
-          />
-        )}
+        {/* Arrow */}
+        <div className="flowArrow">↓</div>
+
+        {/* 3) Play · Learn · Earn → /worlds (left label clickable) */}
+        <MaybeLink to="/worlds" enabled={canClick} className="flowRow clickable">
+          <div className="flowTitle">3) Play · Learn · Earn</div>
+          <div className="flowDesc">
+            Explore, meet characters, earn badges <br />
+            <small>(Natur Coin — coming soon)</small>
+          </div>
+        </MaybeLink>
       </section>
     </main>
   );
