@@ -2,9 +2,11 @@ import styles from './Home.module.css';
 import { Link } from 'react-router-dom';
 import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
+import ClickableCard from '@/components/ClickableCard';
 
 export default function Home() {
   const { user } = useAuth();
+  const isAuthed = !!user;
 
   return (
     <main className={styles.page}>
@@ -41,58 +43,105 @@ export default function Home() {
 
       {/* Top feature tiles — text centered */}
       <section className={styles.featureGrid}>
-        <Link to={user ? '/worlds' : '#'} className={styles.featureCard} tabIndex={0}>
+        <ClickableCard
+          to="/zones"
+          enabled={isAuthed}
+          ariaLabel="Open Zones"
+          className={styles.featureCard}
+        >
           <h3 className={styles.cardTitleCenter}>Play</h3>
           <p className={styles.cardTextCenter}>
             Mini-games, stories, and map adventures across 14 kingdoms.
           </p>
-        </Link>
-        <Link to={user ? '/naturversity' : '#'} className={styles.featureCard} tabIndex={0}>
+        </ClickableCard>
+        <ClickableCard
+          to="/naturversity"
+          enabled={isAuthed}
+          ariaLabel="Open Naturversity"
+          className={styles.featureCard}
+        >
           <h3 className={styles.cardTitleCenter}>Learn</h3>
           <p className={styles.cardTextCenter}>
             Naturversity lessons in languages, art, music, wellness, and more.
           </p>
-        </Link>
-        <Link to={user ? '/naturbank' : '#'} className={styles.featureCard} tabIndex={0}>
+        </ClickableCard>
+        <ClickableCard
+          to="/naturbank"
+          enabled={isAuthed}
+          ariaLabel="Open NaturBank"
+          className={styles.featureCard}
+        >
           <h3 className={styles.cardTitleCenter}>Earn</h3>
           <p className={styles.cardTextCenter}>
             Collect badges, save favorites, and build your Navatar card.
             <br />
             <em>Natur Coin — coming soon</em>
           </p>
-        </Link>
+        </ClickableCard>
       </section>
 
       {/* Bottom flow — text left-aligned */}
       <section className={styles.flowWrap}>
-        <div className={styles.flowStep}>
+        <ClickableCard
+          to="/navatar"
+          enabled={isAuthed}
+          ariaLabel="Create your Navatar"
+          className={styles.flowStep}
+        >
           <div className={styles.flowHead}>1) Create</div>
           <div className={styles.flowBody}>
-            Create a free account · <Link to="/navatar">create your Navatar</Link>
+            Create a free account ·{' '}
+            {isAuthed ? (
+              <Link to="/navatar">create your Navatar</Link>
+            ) : (
+              <span>create your Navatar</span>
+            )}
           </div>
-        </div>
-        <div className={styles.flowStep}>
+        </ClickableCard>
+        <ClickableCard
+          to="/zones"
+          enabled={isAuthed}
+          ariaLabel="Pick a hub"
+          className={styles.flowStep}
+        >
           <div className={styles.flowHead}>2) Pick a hub</div>
           <div className={styles.flowBody}>
-            <Link to="/worlds" className={styles.flowLink}>
-              Worlds
-            </Link>{' '}
-            ·{' '}
-            <Link to="/zones" className={styles.flowLink}>
-              Zones
-            </Link>{' '}
-            ·{' '}
-            <Link to="/marketplace" className={styles.flowLink}>
-              Marketplace
-            </Link>
+            {isAuthed ? (
+              <>
+                <Link to="/worlds" className={styles.flowLink}>
+                  Worlds
+                </Link>
+                {' '}
+                ·{' '}
+                <Link to="/zones" className={styles.flowLink}>
+                  Zones
+                </Link>
+                {' '}
+                ·{' '}
+                <Link to="/marketplace" className={styles.flowLink}>
+                  Marketplace
+                </Link>
+              </>
+            ) : (
+              <>
+                <span className={styles.flowLink}>Worlds</span> ·{' '}
+                <span className={styles.flowLink}>Zones</span> ·{' '}
+                <span className={styles.flowLink}>Marketplace</span>
+              </>
+            )}
           </div>
-        </div>
-        <div className={styles.flowStep}>
+        </ClickableCard>
+        <ClickableCard
+          to="/passport"
+          enabled={isAuthed}
+          ariaLabel="Play Learn Earn"
+          className={styles.flowStep}
+        >
           <div className={styles.flowHead}>3) Play · Learn · Earn</div>
           <div className={styles.flowBody}>
             Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
           </div>
-        </div>
+        </ClickableCard>
       </section>
     </main>
   );
