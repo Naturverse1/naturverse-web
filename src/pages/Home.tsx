@@ -27,71 +27,69 @@ export default function Home() {
   return (
     <main className="home">
       {/* HERO */}
-      <section className="hero">
-        <div className="wrap">
-          <h1>Welcome to the Naturverse™</h1>
-          <p className="lead">
-            A playful world of kingdoms, characters, and quests that teach
-            wellness, creativity, and kindness.
-          </p>
+      <section className="home-hero">
+        <h1>Welcome to the Naturverse™</h1>
+        <p className="lead">
+          A playful world of kingdoms, characters, and quests that teach
+          wellness, creativity, and kindness.
+        </p>
 
-          {showAuthButtons && (
-            <AuthButtons cta="Create account" className="mt-4" />
-          )}
-        </div>
+        {showAuthButtons && (
+          <AuthButtons cta="Create account" className="mt-4" />
+        )}
       </section>
 
       {/* === Top tiles === */}
-      <section className="tiles">
-        <MaybeLink to="/zones" enabled={canClick} className="tile clickable">
-          <h3>Play</h3>
-          <p>Mini-games, stories, and map adventures across 14 kingdoms.</p>
+      <section className="home-tiles">
+        <MaybeLink to="/zones" enabled={canClick} className="tile card">
+          <h3 className="tile-title">Play</h3>
+          <p className="tile-sub">Mini-games, stories, and map adventures across 14 kingdoms.</p>
         </MaybeLink>
 
-        <MaybeLink to="/naturversity" enabled={canClick} className="tile clickable">
-          <h3>Learn</h3>
-          <p>Naturversity lessons in languages, art, music, wellness, and more.</p>
+        <MaybeLink to="/naturversity" enabled={canClick} className="tile card">
+          <h3 className="tile-title">Learn</h3>
+          <p className="tile-sub">Naturversity lessons in languages, art, music, wellness, and more.</p>
         </MaybeLink>
 
-        <MaybeLink to="/naturbank" enabled={canClick} className="tile clickable">
-          <h3>Earn</h3>
-          <p>Collect badges, save favorites, and build your Navatar card.</p>
-          <small>Natur Coin — coming soon</small>
+        <MaybeLink to="/naturbank" enabled={canClick} className="tile card">
+          <h3 className="tile-title">Earn</h3>
+          <p className="tile-sub">Collect badges, save favorites, and build your Navatar card.</p>
+          <small className="muted">Natur Coin — coming soon</small>
         </MaybeLink>
       </section>
 
       {/* === Flow === */}
-      <section className="flow">
+      <section className="home-flow">
         {/* 1) Create → /navatar */}
-        <MaybeLink to="/navatar" enabled={canClick} className="flowRow clickable">
-          <div className="flowTitle">1) Create</div>
-          <div className="flowDesc">Create a free account · create your Navatar</div>
+        <MaybeLink to="/navatar" enabled={canClick} className="flow-row card flow-click">
+          <div className="flow-title">1) Create</div>
+          <div className="flow-desc">Create a free account · create your Navatar</div>
         </MaybeLink>
 
         {/* Arrow */}
-        <div className="flowArrow">↓</div>
+        <div className="flow-arrow">↓</div>
 
         {/* 2) Pick a hub — keep three links, but bold style */}
-        <div className="flowRow">
-          <div className="flowTitle">2) Pick a hub</div>
-          <div className="flowDesc">
-            <a href="/worlds" className="hubLink">
+        <div className="flow-row card">
+          <div className="flow-title">2) Pick a hub</div>
+          <div className="flow-desc">
+            <a href="/worlds" className="hub-link">
               Worlds
             </a>{" "}
-            · <a href="/zones" className="hubLink">Zones</a> ·{" "}
-            <a href="/marketplace" className="hubLink">Marketplace</a>
+            · <a href="/zones" className="hub-link">Zones</a> ·{" "}
+            <a href="/marketplace" className="hub-link">Marketplace</a>
           </div>
         </div>
 
         {/* Arrow */}
-        <div className="flowArrow">↓</div>
+        <div className="flow-arrow">↓</div>
 
         {/* 3) Play · Learn · Earn → /worlds (left label clickable) */}
-        <MaybeLink to="/worlds" enabled={canClick} className="flowRow clickable">
-          <div className="flowTitle">3) Play · Learn · Earn</div>
-          <div className="flowDesc">
+        <MaybeLink to="/worlds" enabled={canClick} className="flow-row card flow-click">
+          <div className="flow-title">3) Play · Learn · Earn</div>
+          <div className="flow-desc">
             Explore, meet characters, earn badges <br />
-            <small>(Natur Coin — coming soon)</small>
+            <small className="muted">(Natur Coin — coming soon)</small>
           </div>
         </MaybeLink>
       </section>
