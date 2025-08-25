@@ -26,8 +26,8 @@ export default function Home() {
         )}
       </section>
 
-      {/* Top feature tiles: CENTER the group */}
-      <section className={styles.features}>
+      {/* TOP: Play / Learn / Earn (centered) */}
+      <section className={styles.tilesCenter}>
         <div className={styles.tileWrap}>
           <FeatureTile
             title="Play"
@@ -51,30 +51,28 @@ export default function Home() {
         </div>
       </section>
 
-      {/* How it works flow: LEFT aligned */}
-      <section className={styles.flow}>
-        <div className={styles.flowList}>
-          <FlowStep title="1) Create">
-            Create a free account ·{' '}
-            <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
-          </FlowStep>
-          <FlowStep title="2) Pick a hub">
-            <a href="/worlds">
-              <b>Worlds</b>
-            </a>{' '}
-            ·{' '}
-            <a href="/zones">
-              <b>Zones</b>
-            </a>{' '}
-            ·{' '}
-            <a href="/marketplace">
-              <b>Marketplace</b>
-            </a>
-          </FlowStep>
-          <FlowStep title="3) Play · Learn · Earn">
-            Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
-          </FlowStep>
-        </div>
+      {/* BOTTOM: Create flow (left-aligned) */}
+      <section className={styles.flowLeft}>
+        <FlowStep title="1) Create">
+          Create a free account ·{' '}
+          <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
+        </FlowStep>
+        <FlowStep title="2) Pick a hub">
+          <a href="/worlds">
+            <b>Worlds</b>
+          </a>{' '}
+          ·{' '}
+          <a href="/zones">
+            <b>Zones</b>
+          </a>{' '}
+          ·{' '}
+          <a href="/marketplace">
+            <b>Marketplace</b>
+          </a>
+        </FlowStep>
+        <FlowStep title="3) Play · Learn · Earn">
+          Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
+        </FlowStep>
       </section>
     </main>
   );
