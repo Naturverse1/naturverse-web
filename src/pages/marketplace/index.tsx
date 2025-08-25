@@ -2,7 +2,8 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
 import { Link } from "react-router-dom";
-import "./../../styles/marketplace.css";
+import "../../styles/_cards.css";
+import "../../styles/marketplace.css";
 
 const PRODUCTS = [
   { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
@@ -14,18 +15,18 @@ export default function MarketplacePage(){
   return (
     <div className="nvrs-section marketplace nv-secondary-scope">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
-      <h1>Marketplace</h1>
-      <div className="nv-grid">
+      <h1 className="page-title">Marketplace</h1>
+      <div className="mp-grid nv-card-grid">
         {PRODUCTS.map(p => (
-          <article key={p.id} className="nv-card">
-            <Link to={p.href} className="mp-thumb" aria-label={p.name}>
-              <img className="mp-img" src={p.image} alt={p.name} loading="lazy" />
-            </Link>
+          <article key={p.id} className="mp-card nv-card">
+            <div className="mp-image nv-image">
+              <img src={p.image} alt={p.name} loading="lazy" />
+            </div>
             <h3><Link to={p.href}>{p.name}</Link></h3>
-            <div>${p.price.toFixed(2)}</div>
-            <div className="nv-cta">
-              <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
-              <SaveButton id={p.id}/>
+            <p className="price">${p.price.toFixed(2)}</p>
+            <div className="actions">
+              <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image} />
+              <SaveButton id={p.id} />
             </div>
           </article>
         ))}
