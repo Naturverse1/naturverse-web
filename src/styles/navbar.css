@@ -1,0 +1,65 @@
+/* Mobile hamburger: lines only, no blue pill background */
+.nv-menu-btn {
+  display: none;
+}
+
+@media (max-width: 768px) {
+  /* Remove blue background/box-shadow from any old icon button styles */
+  .nv-icon-button,
+  .btn.nv-icon-button {
+    background: transparent !important;
+    box-shadow: none !important;
+    border: none !important;
+  }
+
+  /* New hamburger */
+  .nv-menu-btn {
+    background: transparent;
+    border: none;
+    box-shadow: none;
+    padding: 8px;                 /* still gives us a nice 44px tap target with height below */
+    width: 44px;
+    height: 44px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 8px;           /* just for focus ring rounding */
+  }
+
+  .nv-menu-btn:focus-visible {
+    outline: 2px solid #1a4d9c;   /* accessible focus */
+    outline-offset: 3px;
+  }
+
+  .nv-menu-btn span {
+    display: block;
+    width: 26px;
+    height: 3px;
+    margin: 3.5px 0;
+    background: #1a4d9c;          /* Naturverse blue lines */
+    border-radius: 3px;
+    transition: transform .2s ease, opacity .2s ease;
+  }
+
+  /* Optional: animate to an “X” when open */
+  .nv-menu-btn.is-open span:nth-child(1) {
+    transform: translateY(6.5px) rotate(45deg);
+  }
+  .nv-menu-btn.is-open span:nth-child(2) {
+    opacity: 0;
+  }
+  .nv-menu-btn.is-open span:nth-child(3) {
+    transform: translateY(-6.5px) rotate(-45deg);
+  }
+
+  /* Nuke any background on an existing SVG-based menu button */
+  .nv-nav .nv-icon-button svg,
+  .nv-nav .nv-icon-button {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .nv-nav .nv-icon-button svg path,
+  .nv-nav .nv-icon-button svg rect {
+    fill: #1a4d9c !important; /* keep the lines blue if the SVG remains */
+  }
+}

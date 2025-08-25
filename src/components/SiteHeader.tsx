@@ -104,10 +104,14 @@ export default function SiteHeader() {
         <div className="nav-right">
           <AuthButton />
           <CartBadge />
-          <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
-            <span />
-            <span />
-            <span />
+          <button
+            className={`nv-menu-btn${open ? ' is-open' : ''}`}
+            aria-label="Open menu"
+            onClick={() => setOpen((v) => !v)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
         </div>
       </div>

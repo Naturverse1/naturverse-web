@@ -41,10 +41,14 @@ export default function NavBar() {
             </>
           )}
 
-          <button aria-label="Menu" className={styles.menuBtn} onClick={() => setOpen(!open)}>
-            <span className={styles.bar} />
-            <span className={styles.bar} />
-            <span className={styles.bar} />
+          <button
+            aria-label="Open menu"
+            className={`nv-menu-btn${open ? ' is-open' : ''}`}
+            onClick={() => setOpen(!open)}
+          >
+            <span></span>
+            <span></span>
+            <span></span>
           </button>
         </div>
       </div>
