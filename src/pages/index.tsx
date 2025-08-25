@@ -27,7 +27,7 @@ export default function Home() {
   );
 
   return (
-    <main className="home">
+    <main className="page-wrapper">
       <section className="hero">
         <h1 className="hero__title">Welcome to the Naturverse™</h1>
         <p className="hero__tag">
