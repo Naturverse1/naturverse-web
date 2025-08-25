@@ -9,29 +9,45 @@ const LOOKUP: Record<string,{name:string; image:string; href:string}> = {
   "stickers":     { name:"Sticker Pack", image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 };
 
-export default function WishlistPage(){
+export default function WishlistPage() {
   const { saved, toggleSave } = useCart();
-  const ids = Object.keys(saved).filter(k=>saved[k]);
+  const ids = Object.keys(saved).filter((k) => saved[k]);
   return (
-    <main id="main" className="nvrs-section wishlist wishlist-page">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Wishlist" }]} />
+    <main id="main" data-page="wishlist" className="nvrs-section wishlist page">
+      <Breadcrumbs
+        items={[{ label: "Home", href: "/" }, { label: "Wishlist" }]}
+      />
       <h1>Wishlist</h1>
-      {ids.length===0? <p>No saved items yet.</p> :
+      {ids.length === 0 ? (
+        <p>No saved items yet.</p>
+      ) : (
         <div className="nv-grid">
-          {ids.map(id=>{
+          {ids.map((id) => {
             const item = LOOKUP[id];
             if (!item) return null;
             return (
-              <article key={id} className={`nv-card ${styles.card}`}>
-                <Link to={item.href} className={styles.imageWrap}>
-                  <img src={item.image} alt={item.name} className={styles.img} />
+              <article key={id} className={`nv-card wl-card ${styles.card}`}>
+                <Link
+                  to={item.href}
+                  className={`${styles.imageWrap} imageWrap`}
+                >
+                  <img
+                    src={item.image}
+                    alt={item.name}
+                    className={styles.img}
+                  />
                 </Link>
-                <h3><Link to={item.href}>{item.name}</Link></h3>
-                <button className="btn-danger" onClick={()=>toggleSave(id)}>Remove</button>
+                <h3>
+                  <Link to={item.href}>{item.name}</Link>
+                </h3>
+                <button className="btn-danger" onClick={() => toggleSave(id)}>
+                  Remove
+                </button>
               </article>
             );
           })}
-        </div>}
+        </div>
+      )}
     </main>
   );
 }
