@@ -167,6 +167,58 @@ export default function NavatarPage() {
         .lib li{margin:4px 0}
         .linklike{background:none;border:none;padding:0;color:#0b62d6;cursor:pointer}
         .note{opacity:.75;margin-top:24px}
+
+        /* === Navatar Character Card reset (scoped) === */
+        #navatar-card{
+          max-width:560px;
+          margin:0 auto;
+          padding:16px 18px 20px;
+          border-radius:24px;
+        }
+
+        /* header row: name left, meta right */
+        #navatar-card .cc-head{
+          display:flex;
+          align-items:center;
+          justify-content:space-between;
+          gap:12px;
+          margin:2px 2px 12px;
+        }
+
+        #navatar-card .cc-name{font-weight:700}
+
+        #navatar-card .cc-meta{
+          opacity:.95;
+          font-weight:500;
+        }
+
+        /* big portrait image, full and centered */
+        #navatar-card .cc-hero{
+          width:100%;
+          aspect-ratio:3/4;
+          border-radius:18px;
+          overflow:hidden;
+          background:#f1f5f9;
+          display:flex;
+          align-items:center;
+          justify-content:center;
+          margin-bottom:12px;
+        }
+
+        #navatar-card .cc-hero img{
+          width:100%;
+          height:100%;
+          object-fit:cover;
+        }
+
+        /* details block keeps your existing look */
+        #navatar-card .cc-fields{margin-top:8px}
+
+        /* mobile tweaks */
+        @media(max-width:480px){
+          #navatar-card{max-width:420px}
+          #navatar-card .cc-name{font-size:1.125rem}
+        }
       `}</style>
       </main>
     </div>

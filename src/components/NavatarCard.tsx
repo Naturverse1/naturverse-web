@@ -5,36 +5,40 @@ type Props = { navatar: Navatar };
 
 export default function NavatarCard({ navatar }: Props) {
   return (
-    <div className="character-card">
-      <article className="ccard">
-        <div className="ccard-hero">
-          {navatar.imageDataUrl ? (
-            <img
-              src={navatar.imageDataUrl}
-              alt={navatar.name || navatar.species}
-              loading="lazy"
-            />
-          ) : (
-            <div className="card__placeholder" aria-label="No photo">No photo</div>
-          )}
-        </div>
+    <article id="navatar-card" className="nv-card">
+      <header className="cc-head">
+        <span className="cc-name">{navatar.name || navatar.species}</span>
+        <span className="cc-meta">
+          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
+        </span>
+      </header>
 
-        <div className="ccard-head">
-          <div className="left">
-            <span className="sprout" aria-hidden="true">🌿</span>
-            <strong className="name">{navatar.name || navatar.species}</strong>
-          </div>
-          <div className="right">
-            {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
-          </div>
-        </div>
+      <div className="cc-hero">
+        {navatar.imageDataUrl ? (
+          <img
+            src={navatar.imageDataUrl}
+            alt={navatar.name || navatar.species}
+            loading="lazy"
+          />
+        ) : (
+          <div className="card__placeholder" aria-label="No photo">No photo</div>
+        )}
+      </div>
 
-        <p><span className="label">Species:</span> {navatar.species}</p>
-        <p><span className="label">Powers:</span> {navatar.powers.join(" · ")}</p>
-        <p>
-          <span className="label">Backstory:</span> {navatar.backstory}
-        </p>
-      </article>
-    </div>
+      <dl className="cc-fields">
+        <div>
+          <dt>Species</dt>
+          <dd>{navatar.species}</dd>
+        </div>
+        <div>
+          <dt>Powers</dt>
+          <dd>{navatar.powers.join(" · ")}</dd>
+        </div>
+        <div>
+          <dt>Backstory</dt>
+          <dd>{navatar.backstory}</dd>
+        </div>
+      </dl>
+    </article>
   );
 }
