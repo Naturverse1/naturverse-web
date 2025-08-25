@@ -49,41 +49,67 @@
 .nv-breadcrumbs a:hover { text-decoration: underline; }
 
 /* NAVATAR Character Card */
-[data-page="navatar"] .navatar-card-wrap {
+.nvrs-section.navatar .navatar-card-wrap {
   display: flex;
   justify-content: center;
+  max-width: 840px;
+  margin: 0 auto;
 }
-[data-page="navatar"] .navatar-card {
-  max-width: 360px;     /* bump from ~300 → 360px */
-  width: 100%;
-  margin: 0 auto 24px;
-  padding: 16px;
+
+.nvrs-section.navatar .character-card {
+  max-width: 720px;
+  margin: 0 auto;
+}
+
+@media (min-width: 1024px) {
+  .nvrs-section.navatar .character-card { max-width: 840px; }
+}
+
+.nvrs-section.navatar .ccard {
+  padding: 18px 20px 22px;
   border-radius: 18px;
 }
 
-/* Image area exactly like product cards */
-[data-page="navatar"] .navatar-card .card-hero {
+/* Big hero image, same feel as Marketplace */
+.nvrs-section.navatar .ccard-hero {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 280px;    /* taller image space */
   border-radius: 14px;
   overflow: hidden;
+  background: var(--panel-img, #f1f5f9);
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f1f5f9;
+  margin: 6px 0 12px;
 }
-
-[data-page="navatar"] .navatar-card .card-hero img {
+.nvrs-section.navatar .ccard-hero img {
   width: 100%;
   height: 100%;
   object-fit: contain;
 }
 
-/* Prevent long text from stretching */
-[data-page="navatar"] .navatar-card h3,
-[data-page="navatar"] .navatar-card p,
-[data-page="navatar"] .navatar-card ul {
-  max-width: 100%;
-  word-break: break-word;
+/* Header row: Name on left, meta on right */
+.nvrs-section.navatar .ccard-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 6px 0 10px;
 }
+.nvrs-section.navatar .ccard-head .left {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 700;
+}
+.nvrs-section.navatar .ccard-head .right {
+  font-weight: 600;
+  opacity: 0.9;
+  white-space: nowrap;
+}
+
+/* Keep the rest of the details readable but compact */
+.nvrs-section.navatar .ccard p,
+.nvrs-section.navatar .ccard li { line-height: 1.35; }
+.nvrs-section.navatar .ccard .label { font-weight: 700; }
+.nvrs-section.navatar .ccard .card__placeholder { color: #aaa; }
