@@ -1,25 +1,14 @@
 'use client';
-import * as React from 'react';
 import Link from 'next/link';
 import ProfileHead from '@/components/ProfileHead';
-import { useAuthState } from '@/src/lib/auth-context';
-import { getUser } from '@/lib/auth';
+import { useAuth } from '@/lib/auth-context';
 
 export default function NavBar() {
-  const { signedIn, loading } = useAuthState();
-  const [headEmoji, setHeadEmoji] = React.useState('🙂');
-
-  React.useEffect(() => {
-    if (!signedIn) {
-      setHeadEmoji('🙂');
-      return;
-    }
-    (async () => {
-      const u = await getUser();
-      const meta = (u?.user_metadata ?? {}) as Record<string, any>;
-      setHeadEmoji(meta.navatarEmoji ?? meta.avatar_emoji ?? '🙂');
-    })();
-  }, [signedIn]);
+  const { ready, user } = useAuth();
+  const headEmoji =
+    (user?.user_metadata?.navatarEmoji as string) ??
+    (user?.user_metadata?.avatar_emoji as string) ??
+    '🙂';
 
   return (
     <header className="nv-nav">
@@ -36,7 +25,7 @@ export default function NavBar() {
           <Link href="/navatar">Navatar</Link>
           <Link href="/passport">Passport</Link>
           <Link href="/turian">Turian</Link>
-          {signedIn && !loading && (
+          {ready && user ? (
             <>
               <Link className="nv-cart" href="/cart" aria-label="Cart">
                 🛒
@@ -45,7 +34,7 @@ export default function NavBar() {
                 <ProfileHead emoji={headEmoji} />
               </Link>
             </>
-          )}
+          ) : null}
         </nav>
       </div>
     </header>
