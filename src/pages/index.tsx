@@ -1,6 +1,6 @@
 import { useAuth } from '@/lib/auth-context';
 import { Link, useNavigate } from 'react-router-dom';
-import { supabase } from '@/lib/supabase-client';
+import { signInWithGoogle } from '@/lib/auth';
 import styles from '@/styles/home.module.css';
 
 export default function Home() {
@@ -9,10 +9,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleGoogle = async () => {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
+    await signInWithGoogle();
   };
 
   const handleCreate = () => {
