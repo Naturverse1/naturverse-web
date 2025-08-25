@@ -7,7 +7,7 @@
   --nv-blue-300: #a9caff;
   --nv-blue-400: #7eacff;
   --nv-blue-500: #3b82f6; /* primary */
-  --nv-blue-600: #2563eb; /* hover */
+  --nv-blue-600: #2463EB; /* existing brand blue (keep in sync) */
   --nv-blue-700: #1e4ed8; /* active/focus ring */
   --nv-blue-800: #1e479e;
   --nv-blue-900: #173878;
@@ -27,6 +27,7 @@
   --nv-text: #1f2937;
   --nv-text-muted: #6b7280;
   --nv-muted: var(--nv-text-muted);
+  --nv-text-secondary: var(--nv-blue-600);
   --nv-text-on-accent: #ffffff;
 
   /* Semantic shortcuts */
