@@ -5,7 +5,7 @@ type Props = { navatar: Navatar };
 
 export default function NavatarCard({ navatar }: Props) {
   return (
-    <div className="card navatar-card">
+    <div className="card navatar-card nv-card character-card">
       <div className="card__header">
         <div className="card__title">
           <span role="img" aria-label="leaf">🌿</span> {navatar.name || navatar.species}
@@ -15,9 +15,10 @@ export default function NavatarCard({ navatar }: Props) {
         </div>
       </div>
 
-      <div className="card-media">
+      <div className="card-media cc-hero">
         {navatar.imageDataUrl ? (
           <img
+            className="cc-img"
             src={navatar.imageDataUrl}
             alt={navatar.name || navatar.species}
             loading="lazy"
