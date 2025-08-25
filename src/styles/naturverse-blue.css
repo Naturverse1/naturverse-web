@@ -39,12 +39,40 @@ h6 {
   border-color: var(--naturverse-blue) !important;
 }
 
-/* Links & hover */
-a,
-a:visited {
+/* ---- SITE-WIDE LINK + SECONDARY TEXT COLOR ---- */
+main a,
+main a:visited,
+.page a,
+.page a:visited,
+.nv-breadcrumbs a,
+.nv-breadcrumbs a:visited {
   color: var(--naturverse-blue) !important;
+  text-decoration: underline;
 }
-a:hover {
+
+/* secondary/tertiary text blocks in panels, lists, breadcrumbs, captions */
+.nvrs-section p,
+.panel p,
+.nv-card p,
+.nv-list .desc,
+.muted,
+.caption,
+.subtext,
+.help,
+.price,
+.breadcrumb,
+.nv-breadcrumbs,
+.tag,
+.pill,
+.badge {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Maintain hover state */
+main a:hover,
+.page a:hover,
+.nv-breadcrumbs a:hover {
   color: var(--nv-blue-800) !important; /* darker blue on hover */
 }
 
