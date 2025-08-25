@@ -361,3 +361,47 @@ main,
     margin: 0 auto;
   }
 }
+
+/* ========= ZONES: force secondary copy to Naturverse blue ========= */
+/* uses your existing CSS var */
+:root { /* keep if already defined */ --naturverse-blue: #2b57ff; }
+
+/* 1) Generic “subtitle/description” lines under H1/H2 inside zones */
+.nvrs-section.zones h1 + p,
+.nvrs-section.zones h2 + p,
+.nvrs-section.zones .panel p,
+.nvrs-section.zones .nv-card p,
+.nvrs-section.zones .subhead,
+.nvrs-section.zones .desc,
+.nvrs-section.zones .lead,
+.nvrs-section.zones .meta,
+.nvrs-section.zones .help,
+.nvrs-section.zones .muted,
+.nvrs-section.zones .tagline {
+  color: var(--naturverse-blue) !important;
+}
+
+/* 2) Tailwind/utility grays that were slipping through in zones */
+.nvrs-section.zones .text-slate-500,
+.nvrs-section.zones .text-slate-600,
+.nvrs-section.zones .text-gray-500,
+.nvrs-section.zones .text-gray-600,
+.nvrs-section.zones .text-neutral-500,
+.nvrs-section.zones .text-neutral-600 {
+  color: var(--naturverse-blue) !important;
+}
+
+/* 3) Per-zone shims (everything except Future) */
+.nvrs-section.arcade p,
+.nvrs-section.music  p,
+.nvrs-section.wellness p,
+.nvrs-section.creator-lab p,
+.nvrs-section.stories p,
+.nvrs-section.quizzes p,
+.nvrs-section.observations p,
+.nvrs-section.culture p,
+.nvrs-section.community p {
+  color: var(--naturverse-blue) !important;
+}
+
+/* keep FUTURE as-is: no rule for .nvrs-section.future */
