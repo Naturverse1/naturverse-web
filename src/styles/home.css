@@ -13,14 +13,24 @@ main, .page {
 /* tiles */
 .home-tiles {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(3, minmax(0, 22rem));
   gap: 16px;
-  max-width: 1080px;
-  margin: 0 auto 2.25rem;
-  padding: 0 .5rem;
 }
-@media (max-width: 860px) {
-  .home-tiles { grid-template-columns: 1fr; }
+
+/* Center the whole block horizontally */
+.tiles-centered {
+  justify-content: center;
+  margin-inline: auto;
+  max-width: 72rem;
+}
+
+@media (max-width: 900px) {
+  .home-tiles {
+    grid-template-columns: 1fr;
+    max-width: 34rem;
+  }
+  .tiles-centered { padding-inline: .5rem; }
+  .flow-left { margin-left: .5rem; }
 }
 .home-tile {
   border: 2px solid #9fb9f3;
@@ -41,9 +51,21 @@ main, .page {
 
 /* flow */
 .home-flow {
-  max-width: 980px; margin: 0 auto 56px; padding: 18px; border-radius: 16px;
-  background: linear-gradient(180deg, rgba(153,187,255,.12), rgba(153,187,255,.06));
   border: 2px dashed rgba(39,99,218,.25);
+  background: linear-gradient(180deg, rgba(153,187,255,.12), rgba(153,187,255,.06));
+  border-radius: 16px;
+  padding: 18px;
+  display: grid;
+  gap: .75rem;
+  max-width: 72rem;
+  margin-bottom: 56px;
+}
+
+/* Left-align the flow block and give it a small left margin */
+.flow-left {
+  justify-content: start;
+  margin-left: clamp(0rem, 3vw, 1.25rem);
+  margin-right: 0;
 }
 .flow-card {
   border: 2px solid #9fb9f3; border-radius: 14px; padding: 14px 16px; margin: 0 auto 10px;
