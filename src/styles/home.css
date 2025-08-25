@@ -8,7 +8,13 @@ main, .page {
 .hero { text-align: center; max-width: 980px; margin: 0 auto 2.25rem; }
 .hero__title { color: #2763DA; font-weight: 800; font-size: clamp(28px, 4.2vw, 44px); }
 .hero__tag { color: #4c6280; margin: .5rem 0 1.25rem; }
-.hero__cta { display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; }
+.hero__cta {
+  display:flex;
+  gap:.875rem;
+  flex-wrap:wrap;
+  justify-content:center;
+  margin:.25rem 0 1.25rem;
+}
 
 /* tiles */
 .home-tiles {
