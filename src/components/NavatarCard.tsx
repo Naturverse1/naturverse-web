@@ -5,20 +5,10 @@ type Props = { navatar: Navatar };
 
 export default function NavatarCard({ navatar }: Props) {
   return (
-    <div className="card navatar-card nv-card character-card">
-      <div className="card__header">
-        <div className="card__title">
-          <span role="img" aria-label="leaf">🌿</span> {navatar.name || navatar.species}
-        </div>
-        <div className="card__meta">
-          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
-        </div>
-      </div>
-
-      <div className="card-media cc-hero">
+    <article className="card navatar-card nv-card character-card">
+      <div className="card-hero">
         {navatar.imageDataUrl ? (
           <img
-            className="cc-img"
             src={navatar.imageDataUrl}
             alt={navatar.name || navatar.species}
             loading="lazy"
@@ -26,6 +16,15 @@ export default function NavatarCard({ navatar }: Props) {
         ) : (
           <div className="card__placeholder" aria-label="No photo">No photo</div>
         )}
+      </div>
+
+      <div className="card__header">
+        <div className="card__title">
+          <span role="img" aria-label="leaf">🌿</span> {navatar.name || navatar.species}
+        </div>
+        <div className="card__meta">
+          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
+        </div>
       </div>
 
       <div className="card__section">
@@ -47,6 +46,6 @@ export default function NavatarCard({ navatar }: Props) {
         .card__section{margin:8px 0}
         .card__backstory{margin:6px 0}
       `}</style>
-    </div>
+    </article>
   );
 }

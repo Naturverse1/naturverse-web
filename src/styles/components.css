@@ -15,20 +15,8 @@
   margin-inline: auto;
 }
 
-.cc-hero img,
-.cc-img {
-  width: 100%;
-  height: auto;
-  max-width: var(--hero-max-width);
-  aspect-ratio: var(--hero-aspect);
-  object-fit: contain;
-  display: block;
-  margin-inline: auto;
-}
-
 .character-card,
-.nv-card.character,
-.navatar-card {
+.nv-card.character {
   max-width: calc(var(--hero-max-width) + 2rem);
 }
 
@@ -60,8 +48,44 @@
 .nv-breadcrumbs a { text-decoration: none; }
 .nv-breadcrumbs a:hover { text-decoration: underline; }
 
-/* Center card on wide screens */
-.navatar-card-wrap {
+/* ===== NAVATAR PAGE ONLY ===== */
+[data-page="navatar"] .navatar-card-wrap {
   display: flex;
   justify-content: center;
+}
+
+/* Match the compact Marketplace/Wishlist card sizing */
+[data-page="navatar"] .navatar-card {
+  max-width: 280px;
+  width: 100%;
+  margin: 0 auto 22px;
+  padding: 14px;
+  border-radius: 18px;
+}
+
+/* Image area behaves like the product cards */
+[data-page="navatar"] .navatar-card .card-hero {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  max-height: 220px;
+  border-radius: 14px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f1f5f9;
+}
+
+[data-page="navatar"] .navatar-card .card-hero img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* (optional) keep text from stretching the card */
+[data-page="navatar"] .navatar-card h3,
+[data-page="navatar"] .navatar-card p,
+[data-page="navatar"] .navatar-card ul {
+  max-width: 100%;
+  word-break: break-word;
 }
