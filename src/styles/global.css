@@ -405,3 +405,17 @@ main,
 }
 
 /* keep FUTURE as-is: no rule for .nvrs-section.future */
+
+/* ===== Wishlist: align cards with Marketplace ===== */
+.wishlist-page .nv-card,
+.wishlist-page .product-card,
+.wishlist-page .wl-card {
+  max-width: 640px;
+  margin: 0 auto;
+}
+
+/* Unify spacing under images */
+.wishlist-page .nv-card h3,
+.wishlist-page .wl-title {
+  margin-top: 16px;
+}
