@@ -1,0 +1,60 @@
+/* ===== Naturverse Global Fixes ===== */
+
+/* Center and space homepage buttons */
+.auth-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem; /* space between Create + Google */
+  margin-bottom: 1.5rem;
+}
+
+/* Center Play / Learn / Earn tiles */
+.tiles {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  margin: 2rem auto;
+  flex-wrap: wrap;
+  text-align: center;
+}
+
+.tiles .tile h3 {
+  color: #1d4ed8; /* Naturverse blue */
+  font-weight: bold;
+  margin-bottom: 0.5rem;
+}
+
+/* Center step flow + make text Naturverse blue */
+.steps {
+  text-align: center;
+  margin-top: 2rem;
+}
+
+.steps h3,
+.steps strong,
+.steps a {
+  color: #1d4ed8; /* Naturverse blue */
+  font-weight: bold;
+  text-decoration: none;
+}
+
+/* Responsive fixes for all devices */
+@media (max-width: 768px) {
+  .tiles {
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .auth-buttons {
+    flex-direction: column;
+    gap: 0.75rem;
+  }
+}
+
+@media (min-width: 1600px) {
+  .nav-bar {
+    justify-content: space-between;
+    padding: 0 4rem; /* prevent cutoff on TVs */
+  }
+}

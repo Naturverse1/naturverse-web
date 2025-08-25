@@ -9,6 +9,7 @@ import './styles/shop.css';
 import './styles/edu.css';
 import './main.css';
 import './styles/nvcard.css';
+import './app.css';
 import SkipToContent from './components/SkipToContent';
 import { supabase } from '@/lib/supabase-client';
 
