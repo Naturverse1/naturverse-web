@@ -64,29 +64,7 @@
   order: 2;
 }
 
-.nav-toggle {
-  display: none;
-  border: 0;
-  background: transparent;
-  width: 40px;
-  height: 40px;
-  padding: 6px;
-}
-
-.nav-toggle span {
-  display: block;
-  height: 3px;
-  background: var(--nv-text);
-  border-radius: 3px;
-  margin: 5px 0;
-  transition: 0.2s;
-}
-
-@media (max-width: 820px) {
-  .nav-toggle {
-    display: block;
-  }
-
+@media (max-width: 768px) {
   .nav-links {
     position: fixed;
     inset: 64px 12px auto 12px;
