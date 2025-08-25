@@ -1,0 +1,105 @@
+:root {
+  --nv-blue: #2563eb; /* matches site blue */
+  --nv-blue-ink: #1e3a8a;
+  --nv-ink: #1f2937;
+  --nv-sub: #6b7280;
+  --nv-border: rgba(37, 99, 235, 0.35);
+  --nv-bg: rgba(37, 99, 235, 0.06);
+}
+
+.hero { margin: 0 0 1.5rem; }
+.title { font-size: clamp(2rem, 2.6vw, 3rem); font-weight: 800; color: var(--nv-blue); margin: 0; }
+.subtitle { margin: .5rem 0 1.25rem; color: var(--nv-ink); }
+
+.tilesRow {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin: 0 0 1.75rem;
+}
+
+@media (max-width: 900px) {
+  .tilesRow { grid-template-columns: 1fr; }
+}
+
+.tile {
+  display: block;
+  border: 2px solid var(--nv-border);
+  border-radius: 18px;
+  padding: 1.1rem 1.2rem;
+  background: white;
+  text-decoration: none;
+  transition: transform .08s ease, box-shadow .12s ease, background-color .12s ease;
+}
+
+.tile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 14px rgba(0,0,0,.06);
+}
+
+.tileHeading {
+  text-align: center;
+  font-weight: 800;
+  color: var(--nv-blue);
+  font-size: 1.25rem;
+  margin-bottom: .35rem;
+}
+
+.tileBody {
+  text-align: center;
+  color: var(--nv-ink);
+  line-height: 1.4;
+}
+
+.soon { color: var(--nv-sub); font-size: .9rem; }
+
+.flow {
+  border: 2px dashed var(--nv-border);
+  border-radius: 18px;
+  background: var(--nv-bg);
+  padding: 1.25rem;
+  display: grid;
+  gap: .9rem;
+  margin-bottom: 1.5rem;
+}
+
+.flowCard {
+  border: 2px solid var(--nv-border);
+  border-radius: 16px;
+  background: white;
+  padding: .9rem 1.1rem;
+}
+
+.flowHeading {
+  text-align: center;
+  color: var(--nv-blue);
+  font-weight: 800;
+  margin-bottom: .35rem;
+}
+
+.flowBody {
+  text-align: center;
+  color: var(--nv-ink);
+}
+
+.arrow {
+  text-align: center;
+  color: var(--nv-blue-ink);
+  font-size: 1.25rem;
+  user-select: none;
+}
+
+.inlineLink {
+  color: var(--nv-blue);
+  text-decoration: underline;
+}
+
+.inlineLinkStrong {
+  color: var(--nv-blue);
+  font-weight: 800;
+  text-decoration: none;
+}
+
+.inlineLinkStrong:hover,
+.inlineLink:hover { text-decoration: underline; }
+
