@@ -30,3 +30,22 @@
   align-items: center;
   justify-content: center;
 }
+/* Fix marketplace cards to match Navatar sizing */
+.marketplace .nv-card {
+  max-width: 280px;
+  margin: 0 auto;
+}
+
+.marketplace .mp-img {
+  width: 100%;
+  height: auto;
+  max-height: 320px;
+  object-fit: contain;
+}
+
+.marketplace .nv-card h1,
+.marketplace .nv-card h2,
+.marketplace .nv-card h3 {
+  font-size: 1.1rem;
+  text-align: center;
+}
