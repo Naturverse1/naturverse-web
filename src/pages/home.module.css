@@ -1,0 +1,24 @@
+/* --- TOP TILES (center the whole group) --- */
+.features {
+  max-width: 1100px;
+  margin: 1.25rem auto 1.75rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+  gap: 1rem;
+  justify-items: center;
+}
+.tileWrap {
+  width: 100%;
+  max-width: 360px;
+}
+
+/* --- FLOW (left align) --- */
+.flow {
+  max-width: 1100px;
+  margin: 1.25rem auto 2rem;
+}
+.flowList {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
