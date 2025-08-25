@@ -49,14 +49,14 @@ export default function Home() {
           </div>
         </div>
 
-        <div className="card" style={{ marginTop: "10px" }}>
+        <div className="card">
           <div className="nv-stepTitle">2) Pick a hub</div>
           <div className="nv-stepBody">
             <strong>Worlds</strong> · <strong>Zones</strong> · <strong>Marketplace</strong>
           </div>
         </div>
 
-        <div className="card" style={{ marginTop: "10px" }}>
+        <div className="card">
           <div className="nv-stepTitle">3) Play · Learn · Earn</div>
           <div className="nv-stepBody">
             Explore, meet characters, earn badges
