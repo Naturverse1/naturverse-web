@@ -1,4 +1,4 @@
-@import "./cards.css";
+@import './cards.css';
 /* Primary button used across Naturversity */
 .btn-primary {
   @apply bg-blue-600 text-white font-extrabold uppercase tracking-wide
@@ -8,7 +8,9 @@
 }
 
 /* Full-width helper when needed */
-.btn-block { @apply w-full; }
+.btn-block {
+  @apply w-full;
+}
 
 /* Naturverse theme */
 .naturverse-bg {
@@ -32,26 +34,71 @@
   border-radius: 8px;
 }
 
-.nv-profile { display: inline-flex; align-items: center; margin-left: 12px; }
-.nv-profile-img { border-radius: 8px; box-shadow: 0 1px 0 rgba(0,0,0,.08); }
-.nv-profile-emoji { font-size: 22px; line-height: 1; }
+.nv-profile {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 12px;
+}
+.nv-profile-img {
+  border-radius: 8px;
+  box-shadow: 0 1px 0 rgba(0, 0, 0, 0.08);
+}
+.nv-profile-emoji {
+  font-size: 22px;
+  line-height: 1;
+}
 
 /* Layout helpers */
-.page.narrow { max-width: 1040px; margin: 0 auto; padding: 1rem; }
-.hero { background: #eef4ff; border-radius: 16px; padding: 24px; margin-bottom: 20px; }
-.hero-ctas { display: flex; gap: 12px; flex-wrap: wrap; }
+.page.narrow {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 1rem;
+}
+.hero {
+  background: #eef4ff;
+  border-radius: 16px;
+  padding: 24px;
+  margin-bottom: 20px;
+}
+.hero-ctas {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
 
-.grid { display: grid; gap: 16px; }
-.grid-3 { grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); }
-.gap-lg { gap: 24px; }
+.grid {
+  display: grid;
+  gap: 16px;
+}
+.grid-3 {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+.gap-lg {
+  gap: 24px;
+}
 
-.card.hover { transition: transform .08s ease, box-shadow .12s ease; }
-.card.hover:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(0,0,0,.06); }
+.card.hover {
+  transition:
+    transform 0.08s ease,
+    box-shadow 0.12s ease;
+}
+.card.hover:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
+}
 
 /* Form bits for AuthButtons */
-.card input[type="email"] { height: 44px; padding: 0 12px; }
-.btn.ghost { background: transparent; border: 2px solid var(--brand); }
-.link { text-align: center; }
+.card input[type='email'] {
+  height: 44px;
+  padding: 0 12px;
+}
+.btn.ghost {
+  background: transparent;
+  border: 2px solid var(--brand);
+}
+.link {
+  text-align: center;
+}
 
 /* === Auth Buttons === */
 .welcome-buttons {
@@ -112,4 +159,27 @@
     max-width: 1400px;
     margin: 0 auto;
   }
+}
+/* Apply Naturverse blue globally to all secondary/descriptive text */
+body,
+p,
+span,
+small,
+label,
+.nv-card p,
+.nv-card span,
+.nv-card .secondary-text,
+footer,
+.nv-breadcrumbs {
+  color: #1a4d9c !important;
+}
+
+/* Ensure links keep their current hover/active colors */
+a {
+  color: #1a4d9c;
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
 }
