@@ -2,13 +2,14 @@
   border-radius: 18px;
   border: 1px solid var(--nv-border);
   background: white;
-  padding: 14px;
+  padding: 12px;
 }
 
 /* Show full product image (like Languages cards) */
 .imageWrap {
   width: 100%;
   aspect-ratio: 4 / 3;
+  max-height: 220px;
   border-radius: 14px;
   overflow: hidden;
   background: #f1f5f9;
