@@ -1,5 +1,11 @@
 @import './tokens.css';
 
+:root {
+  --nv-blue-700: #1e4ed8;
+  --nv-blue-600: #2563eb;
+  --nv-blue-500: #3b82f6;
+}
+
 /* Base */
 html,
 body {
@@ -198,12 +204,10 @@ textarea {
   transform: scale(1.2);
 }
 
-/* Give every page a little air under the navbar */
+/* Global page spacing */
 main,
-.nv-page,
-.page,
-#app main {
-  padding-top: 1.25rem;
+.nv-page {
+  padding-top: 1.25rem; /* space under navbar */
 }
 
 /* Shared “hero” centering */
@@ -245,7 +249,7 @@ main,
 /* Make the blue title + copy consistent inside tiles */
 .nv-tileTitle {
   color: var(--nv-blue-700);
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
 }
 .nv-tileCopy {
@@ -260,18 +264,12 @@ main,
 }
 .nv-flow .nv-stepTitle {
   color: var(--nv-blue-700);
-  font-weight: 800;
+  font-weight: 700;
   text-align: center;
 }
 .nv-flow .nv-stepBody {
   color: var(--nv-blue-600);
   text-align: center;
-}
-
-/* Buttons near each other get a tiny gap */
-.button + .button,
-.nv-btn + .nv-btn {
-  margin-left: .5rem;
 }
 
 @media (min-width: 1600px) {
