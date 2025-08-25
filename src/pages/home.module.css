@@ -1,5 +1,5 @@
-/* --- TOP TILES (center the whole group) --- */
-.features {
+/* -------- TOP TILES: Play / Learn / Earn (centered) -------- */
+.tilesCenter {
   max-width: 1100px;
   margin: 1.25rem auto 1.75rem;
   display: grid;
@@ -11,14 +11,22 @@
   width: 100%;
   max-width: 360px;
 }
-
-/* --- FLOW (left align) --- */
-.flow {
-  max-width: 1100px;
-  margin: 1.25rem auto 2rem;
+.tilesCenter :global(.home-tile__title),
+.tilesCenter :global(.home-tile__body) {
+  text-align: center;
 }
-.flowList {
-  display: flex;
-  flex-direction: column;
-  gap: 12px;
+
+/* -------- BOTTOM FLOW: Create / Pick / Play·Learn·Earn (left-aligned) -------- */
+.flowLeft {
+  max-width: 1100px;
+  margin: 1.25rem 0 2rem;
+  display: grid;
+  gap: 0.875rem;
+}
+.flowLeft :global(.flow-card__title),
+.flowLeft :global(.flow-card__body),
+.flowLeft :global(a) {
+  text-align: left;
+  margin-left: 0;
+  margin-right: auto;
 }
