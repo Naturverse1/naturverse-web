@@ -12,7 +12,7 @@ export default function NavBar() {
 
   return (
     <header className={styles.header}>
-      <div className={styles.inner}>
+      <div className={`container ${styles.inner}`}>
         <Link to="/" className={styles.brand}>
           Naturverse
         </Link>

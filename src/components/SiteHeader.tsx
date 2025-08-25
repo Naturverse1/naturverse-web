@@ -30,7 +30,7 @@ export default function SiteHeader() {
 
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
-      <div className="wrap">
+      <div className="container">
         <Link to="/" className="brand" onClick={() => setOpen(false)}>
           <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
           <span>Naturverse</span>
