@@ -30,10 +30,22 @@
   align-items: center;
   justify-content: center;
 }
-/* Fix marketplace cards to match Navatar sizing */
-.marketplace .nv-card {
-  max-width: 280px;
+/* Fix Marketplace card sizing to match Wishlist/Navatar */
+.marketplace .nv-card,
+.marketplace .nv-card .mp-hero img {
+  max-width: 220px;   /* Same cap as Wishlist/Navatar */
+  width: 100%;
+  height: auto;
+  object-fit: contain;
   margin: 0 auto;
+}
+
+.marketplace .nv-card {
+  flex: 0 1 220px;    /* Prevents stretching */
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
 }
 
 .marketplace .mp-img {
