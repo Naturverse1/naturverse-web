@@ -1,67 +1,104 @@
-import { Link } from 'react-router-dom'
-import { useAuth } from '../hooks/useAuth'
-import styles from '../styles/home.module.css'
+import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
-  const { user, loading } = useAuth()
+  const { user } = useAuth();
+  const authed = !!user;
 
-  const SignedOutCTAs = (
-    <div className="welcome-buttons">
-      <Link className={styles.btn} to="/auth">Create account</Link>
-      <Link className={styles.btnSecondary} to="/auth/google">Continue with Google</Link>
-    </div>
-  )
+  const Tile = ({
+    title,
+    body,
+    href,
+  }: {
+    title: string;
+    body: string;
+    href: string;
+  }) => (
+    <a
+      href={authed ? href : '#'}
+      onClick={(e) => {
+        if (!authed) e.preventDefault();
+      }}
+      aria-disabled={!authed}
+      className={`home-tile ${authed ? '' : 'is-disabled'}`}
+    >
+      <div className="home-tile__title">{title}</div>
+      <div className="home-tile__body">{body}</div>
+    </a>
+  );
 
   return (
-    <main className={styles.wrap}>
-      <section className={styles.hero}>
-        <h1>Welcome to the Naturverse™</h1>
-        <p className="welcome-subtitle">A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.</p>
+    <main className="home">
+      <section className="hero">
+        <h1 className="hero__title">Welcome to the Naturverse™</h1>
+        <p className="hero__tag">
+          A playful world of kingdoms, characters, and quests that teach wellness, creativity,
+          and kindness.
+        </p>
 
-        {!loading && !user && SignedOutCTAs}
-      </section>
-
-      <section className={styles.pills}>
-        <div className={`tile ${styles.pill}`}>
-          <h3>🎮 Play</h3>
-          <p className="tile-subtitle">Mini-games, stories, and map adventures across 14 kingdoms.</p>
-        </div>
-        <div className={`tile ${styles.pill}`}>
-          <h3>📚 Learn</h3>
-          <p className="tile-subtitle">Naturversity lessons in languages, art, music, wellness, and more.</p>
-        </div>
-        <div className={`tile ${styles.pill}`}>
-          <h3>🪙 Earn</h3>
-          <p className="tile-subtitle">Collect badges, save favorites, and build your Navatar card.<br/><em>Natur Coin — coming soon</em></p>
+        <div className="hero__cta">
+          <a href="/auth/magic" className="btn btn-primary">
+            Create account
+          </a>
+          <a href="/auth/google" className="btn btn-secondary">
+            Continue with Google
+          </a>
         </div>
       </section>
 
-      <section className={styles.flow}>
-        <div className="step-box">
-          <strong>1) Create</strong>
-          <p>Create a free account / create your Navatar</p>
-        </div>
-        <div className={styles.arrow}>↓</div>
-        <div className="step-box">
-          <strong>2) Pick a hub</strong>
-          <p>
-            <Link to="/worlds">Worlds</Link> • <Link to="/zones">Zones</Link> • <Link to="/marketplace">Marketplace</Link>
-          </p>
-        </div>
-        <div className={styles.arrow}>↓</div>
-        <div className="step-box">
-          <strong>3) Play · Learn · Earn</strong>
-          <p>Explore, meet characters, earn badges</p>
-          <small>(Natur Coin — coming soon)</small>
-        </div>
+      <section className="home-tiles">
+        <Tile
+          title="Play"
+          body="Mini-games, stories, and map adventures across 14 kingdoms."
+          href="/worlds"
+        />
+        <Tile
+          title="Learn"
+          body="Naturversity lessons in languages, art, music, wellness, and more."
+          href="/naturversity"
+        />
+        <Tile
+          title="Earn"
+          body="Collect badges, save favorites, and build your Navatar card. Natur Coin — coming soon"
+          href="/naturbank"
+        />
+      </section>
 
-        {!loading && !user && (
-          <div className="welcome-buttons">
-            <Link className={styles.btn} to="/auth">Get started</Link>
-            <Link className={styles.btnSecondary} to="/auth/google">Continue with Google</Link>
+      <section className="home-flow">
+        <div className="flow-card">
+          <div className="flow-card__title">1) Create</div>
+          <div className="flow-card__body">
+            Create a free account ·{' '}
+            <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
           </div>
-        )}
+        </div>
+        <div className="flow-arrow">↓</div>
+
+        <div className="flow-card">
+          <div className="flow-card__title">2) Pick a hub</div>
+          <div className="flow-card__body flow-links">
+            <a href="/worlds">
+              <b>Worlds</b>
+            </a>{' '}
+            ·{' '}
+            <a href="/zones">
+              <b>Zones</b>
+            </a>{' '}
+            ·{' '}
+            <a href="/marketplace">
+              <b>Marketplace</b>
+            </a>
+          </div>
+        </div>
+        <div className="flow-arrow">↓</div>
+
+        <div className="flow-card">
+          <div className="flow-card__title">3) Play · Learn · Earn</div>
+          <div className="flow-card__body">
+            Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
+          </div>
+        </div>
       </section>
     </main>
-  )
+  );
 }
+

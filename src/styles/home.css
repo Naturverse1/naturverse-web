@@ -1,86 +1,62 @@
-.home { padding: 16px 0 48px; }
-.hero { margin-top: 12px; text-align: center; }
-.homeTitle { margin: 12px 0 8px; }
-.homeSubtitle { margin: 0 auto 18px; max-width: 900px; color: var(--nv-blue-700); }
+/* spacing under the navbar site-wide (small but consistent) */
+main, .page {
+  --top-gap: clamp(8px, 1.5vh, 18px);
+  margin-top: var(--top-gap);
+}
 
+/* hero */
+.hero { text-align: center; max-width: 980px; margin: 0 auto 2.25rem; }
+.hero__title { color: #2763DA; font-weight: 800; font-size: clamp(28px, 4.2vw, 44px); }
+.hero__tag { color: #4c6280; margin: .5rem 0 1.25rem; }
+.hero__cta { display:flex; gap:.8rem; justify-content:center; flex-wrap:wrap; }
 
-/* Hero spacing & centering */
-.ctaRow { display: flex; gap: 16px; justify-content: center; margin: 10px 0 20px; }
-
-/* Tile grid */
-.tiles {
+/* tiles */
+.home-tiles {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 20px;
-  align-items: stretch;
-  margin: 18px auto 8px;
+  gap: 16px;
   max-width: 1080px;
+  margin: 0 auto 2.25rem;
+  padding: 0 .5rem;
 }
-
-/* Clickable wrapper */
-.tileLink { text-decoration: none; display: block; }
-
-/* Tile card */
-.tile {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 10px;
-  padding: 22px;
-  border: 2px solid var(--nv-blue-200);
+@media (max-width: 860px) {
+  .home-tiles { grid-template-columns: 1fr; }
+}
+.home-tile {
+  border: 2px solid #9fb9f3;
   border-radius: 16px;
-  background: var(--nv-card);
-  min-height: 136px;
+  padding: 16px 18px;
+  background: #f7fbff;
+  text-decoration: none;
+  display: block;
+  transition: transform .12s ease, box-shadow .12s ease;
+}
+.home-tile__title {
+  color: #1f53c3; font-weight: 800; font-size: 20px; margin-bottom: 6px;
   text-align: left;
 }
+.home-tile__body { color: #1f53c3; opacity: .95; }
+.home-tile:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(39,99,218,.12); }
+.home-tile.is-disabled { pointer-events: none; opacity: .55; }
 
-/* Prevent weird line stacking */
-.tile * { margin: 0; }
-.tileTitle {
-  font-weight: 800;
-  font-size: 22px;
-  line-height: 1.2;
-  color: var(--nv-blue-700);
-  letter-spacing: .1px;
-  white-space: normal;
-  word-break: keep-all;
+/* flow */
+.home-flow {
+  max-width: 980px; margin: 0 auto 56px; padding: 18px; border-radius: 16px;
+  background: linear-gradient(180deg, rgba(153,187,255,.12), rgba(153,187,255,.06));
+  border: 2px dashed rgba(39,99,218,.25);
 }
-.tileDesc {
-  color: var(--nv-blue-700);
-  line-height: 1.35;
+.flow-card {
+  border: 2px solid #9fb9f3; border-radius: 14px; padding: 14px 16px; margin: 0 auto 10px;
+  background: #fff;
 }
-.tileFoot {
-  color: var(--nv-muted);
-  font-size: 13px;
-}
+.flow-card__title { color:#1f53c3; font-weight:800; text-align:center; margin-bottom:4px; }
+.flow-card__body  { color:#1f53c3; text-align:center; }
+.flow-links a { text-decoration:none; }
+.flow-links a b { color:#1f53c3; }
+.flow-arrow { text-align:center; color:#1f53c3; font-size:20px; margin: 2px 0 10px; }
 
-.tileDisabled { opacity: .55; pointer-events: none; cursor: default; }
+/* buttons */
+.btn { border-radius: 10px; padding: 10px 16px; font-weight: 700; }
+.btn-primary { background:#2763DA; color:#fff; }
+.btn-secondary { background:#1E66F5; color:#fff; }
 
-/* Steps box polish to match tiles */
-.flow {
-  margin: 28px auto 0;
-  max-width: 1080px;
-  background: var(--nv-surface);
-  border-radius: 18px;
-  padding: 20px;
-  border: 2px dashed var(--nv-blue-200);
-}
-.step {
-  margin: 14px auto;
-  padding: 14px 18px;
-  border: 2px solid var(--nv-blue-200);
-  border-radius: 14px;
-  background: var(--nv-card);
-}
-.stepTitle { text-align: center; font-weight: 800; color: var(--nv-blue-700); }
-.stepDesc  { text-align: center; color: var(--nv-blue-700); }
-.muted { color: var(--nv-muted); }
-
-/* universal top spacing under navbar */
-.pageRoot { padding-top: 14px; }
-
-/* Responsive: stack tiles on small screens */
-@media (max-width: 900px) {
-  .tiles { grid-template-columns: 1fr; }
-  .tile  { min-height: 120px; text-align: left; }
-}
