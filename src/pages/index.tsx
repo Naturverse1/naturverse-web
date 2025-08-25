@@ -5,8 +5,8 @@ export default function Home() {
   const { user } = useAuth();
   const authed = !!user;
 
-  return (
-    <main className="page-wrapper">
+    return (
+      <main className="page-wrapper homepage">
       <section className="hero">
         <h1 className="hero__title">Welcome to the Naturverse™</h1>
         <p className="hero__tag">
@@ -27,53 +27,57 @@ export default function Home() {
       </section>
 
       {/* TOP: Play / Learn / Earn (centered) */}
-      <section className={styles.tilesCenter}>
-        <div className={styles.tileWrap}>
-          <FeatureTile
-            title="Play"
-            body="Mini-games, stories, and map adventures across 14 kingdoms."
-            href="/worlds"
-          />
-        </div>
-        <div className={styles.tileWrap}>
-          <FeatureTile
-            title="Learn"
-            body="Naturversity lessons in languages, art, music, wellness, and more."
-            href="/naturversity"
-          />
-        </div>
-        <div className={styles.tileWrap}>
-          <FeatureTile
-            title="Earn"
-            body="Collect badges, save favorites, and build your Navatar card. Natur Coin — coming soon"
-            href="/naturbank"
-          />
-        </div>
-      </section>
+      <div className="play-learn-earn">
+        <section className={styles.tilesCenter}>
+          <div className={styles.tileWrap}>
+            <FeatureTile
+              title="Play"
+              body="Mini-games, stories, and map adventures across 14 kingdoms."
+              href="/worlds"
+            />
+          </div>
+          <div className={styles.tileWrap}>
+            <FeatureTile
+              title="Learn"
+              body="Naturversity lessons in languages, art, music, wellness, and more."
+              href="/naturversity"
+            />
+          </div>
+          <div className={styles.tileWrap}>
+            <FeatureTile
+              title="Earn"
+              body="Collect badges, save favorites, and build your Navatar card. Natur Coin — coming soon"
+              href="/naturbank"
+            />
+          </div>
+        </section>
+      </div>
 
       {/* BOTTOM: Create flow (left-aligned) */}
-      <section className={styles.flowLeft}>
-        <FlowStep title="1) Create">
-          Create a free account ·{' '}
-          <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
-        </FlowStep>
-        <FlowStep title="2) Pick a hub">
-          <a href="/worlds">
-            <b>Worlds</b>
-          </a>{' '}
-          ·{' '}
-          <a href="/zones">
-            <b>Zones</b>
-          </a>{' '}
-          ·{' '}
-          <a href="/marketplace">
-            <b>Marketplace</b>
-          </a>
-        </FlowStep>
-        <FlowStep title="3) Play · Learn · Earn">
-          Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
-        </FlowStep>
-      </section>
+      <div className="create-flow">
+        <section className={styles.flowLeft}>
+          <FlowStep title="1) Create">
+            Create a free account ·{' '}
+            <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
+          </FlowStep>
+          <FlowStep title="2) Pick a hub">
+            <a href="/worlds">
+              <b>Worlds</b>
+            </a>{' '}
+            ·{' '}
+            <a href="/zones">
+              <b>Zones</b>
+            </a>{' '}
+            ·{' '}
+            <a href="/marketplace">
+              <b>Marketplace</b>
+            </a>
+          </FlowStep>
+          <FlowStep title="3) Play · Learn · Earn">
+            Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
+          </FlowStep>
+        </section>
+      </div>
     </main>
   );
 }
