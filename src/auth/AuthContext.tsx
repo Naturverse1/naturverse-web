@@ -54,7 +54,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const signInWithEmail: AuthCtx['signInWithEmail'] = async (email) => {
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: window.location.origin }, // safe default
+      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
     return { error: error?.message };
   };

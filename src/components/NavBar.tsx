@@ -24,7 +24,11 @@ export default function NavBar() {
           <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
-          <Link to="/navatar">Navatar</Link>
+          {user ? (
+            <Link to="/navatar">Navatar</Link>
+          ) : (
+            <span className={styles.disabledLink} aria-disabled="true">Navatar</span>
+          )}
           <Link to="/passport">Passport</Link>
           <Link to="/turian">Turian</Link>
         </nav>
@@ -77,7 +81,11 @@ export default function NavBar() {
           <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
-          <Link to="/navatar">Navatar</Link>
+          {user ? (
+            <Link to="/navatar">Navatar</Link>
+          ) : (
+            <span className={styles.disabledLink} aria-disabled="true">Navatar</span>
+          )}
           <Link to="/passport">Passport</Link>
           <Link to="/turian">Turian</Link>
         </div>
