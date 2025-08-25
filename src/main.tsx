@@ -40,3 +40,5 @@ document.addEventListener('DOMContentLoaded', () => {
     .querySelectorAll<HTMLImageElement>('img:not([loading])')
     .forEach((img) => (img.loading = 'lazy'));
 });
+
+import './styles/overrides.css';
