@@ -24,11 +24,7 @@ export default function NavBar() {
           <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
-          {user ? (
-            <Link to="/navatar">Navatar</Link>
-          ) : (
-            <span className={styles.disabledLink} aria-disabled="true">Navatar</span>
-          )}
+          <Link to="/navatar">Navatar</Link>
           <Link to="/passport">Passport</Link>
           <Link to="/turian">Turian</Link>
         </nav>
@@ -39,21 +35,13 @@ export default function NavBar() {
               <Link to="/cart" aria-label="Cart" className={styles.cartBtn}>
                 🛒
               </Link>
-              <Link
-                to="/profile"
-                aria-label="Profile"
-                className={styles.profileBtn}
-              >
+              <Link to="/profile" aria-label="Profile" className={styles.profileBtn}>
                 {emoji}
               </Link>
             </>
           )}
 
-          <button
-            aria-label="Menu"
-            className={styles.menuBtn}
-            onClick={() => setOpen(!open)}
-          >
+          <button aria-label="Menu" className={styles.menuBtn} onClick={() => setOpen(!open)}>
             <span className={styles.bar} />
             <span className={styles.bar} />
             <span className={styles.bar} />
@@ -61,14 +49,8 @@ export default function NavBar() {
         </div>
       </div>
 
-      <div
-        className={`${styles.mobile} ${open ? styles.open : ''}`}
-        onClick={() => setOpen(false)}
-      >
-        <div
-          className={styles.sheet}
-          onClick={(e) => e.stopPropagation()}
-        >
+      <div className={`${styles.mobile} ${open ? styles.open : ''}`} onClick={() => setOpen(false)}>
+        <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
           {ready && user && (
             <Link to="/profile" className={styles.mobileProfile}>
               <span className={styles.mobileEmoji}>{emoji}</span>
@@ -81,11 +63,7 @@ export default function NavBar() {
           <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
-          {user ? (
-            <Link to="/navatar">Navatar</Link>
-          ) : (
-            <span className={styles.disabledLink} aria-disabled="true">Navatar</span>
-          )}
+          <Link to="/navatar">Navatar</Link>
           <Link to="/passport">Passport</Link>
           <Link to="/turian">Turian</Link>
         </div>
@@ -93,4 +71,3 @@ export default function NavBar() {
     </header>
   );
 }
-

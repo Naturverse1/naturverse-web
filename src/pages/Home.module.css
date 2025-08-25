@@ -1,0 +1,118 @@
+.page {
+  /* same light-blue you liked elsewhere */
+  background: var(--nv-page-bg, #f5f8ff);
+  min-height: 100%;
+  padding: 24px 0 64px;
+}
+
+.hero {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 0 20px 16px;
+  text-align: center;
+}
+
+.title {
+  margin: 0 0 8px;
+  font-size: clamp(28px, 3.6vw, 44px);
+  color: var(--nv-blue-700, #1f4ed8);
+  font-weight: 800;
+  letter-spacing: 0.2px;
+}
+
+.subtitle {
+  margin: 0 auto 20px;
+  max-width: 960px;
+  color: var(--nv-text-600, #3a4a66);
+}
+
+.ctaRow {
+  display: inline-flex;
+  gap: 16px;
+  margin-top: 8px;
+}
+
+.cta {
+  display: inline-block;
+  padding: 12px 18px;
+  border-radius: 14px;
+  background: var(--nv-blue-600, #2563eb);
+  color: #fff;
+  font-weight: 700;
+  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
+  text-decoration: none;
+}
+
+.featureGrid {
+  max-width: 1040px;
+  margin: 28px auto 8px;
+  padding: 0 20px;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 16px;
+}
+
+@media (min-width: 880px) {
+  .featureGrid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+.featureCard {
+  background: var(--nv-surface, #fff);
+  border: 2px solid rgba(37, 99, 235, 0.25);
+  border-radius: 18px;
+  padding: 18px 20px;
+  text-decoration: none;
+  color: inherit;
+}
+
+.cardTitleCenter {
+  margin: 0 0 6px;
+  text-align: center;
+  color: var(--nv-blue-700, #1f4ed8);
+  font-weight: 800;
+}
+
+.cardTextCenter {
+  text-align: center;
+}
+
+.flowWrap {
+  max-width: 1040px;
+  margin: 28px auto 0;
+  padding: 18px 20px;
+  border-radius: 18px;
+  border: 2px dashed rgba(37, 99, 235, 0.25);
+  background: rgba(255, 255, 255, 0.55);
+}
+
+.flowStep {
+  background: var(--nv-surface, #fff);
+  border: 2px solid rgba(37, 99, 235, 0.25);
+  border-radius: 14px;
+  padding: 14px 16px;
+  margin: 0 0 14px;
+}
+
+.flowHead {
+  color: var(--nv-blue-700, #1f4ed8);
+  font-weight: 800;
+  margin-bottom: 4px;
+  text-align: left;
+}
+
+.flowBody {
+  color: var(--nv-text-700, #2b3b55);
+  text-align: left;
+}
+
+.flowLink {
+  font-weight: 800;
+  color: var(--nv-blue-700, #1f4ed8);
+  text-decoration: none;
+}
+
+.flowLink:hover {
+  text-decoration: underline;
+}
