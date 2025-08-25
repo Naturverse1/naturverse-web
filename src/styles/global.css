@@ -1,33 +1,53 @@
 @import './tokens.css';
 
-:root {
+/* ===== Secondary text = blue everywhere ===== */
+:root{
   --page-bg: #f8fbff; /* light blue background used across pages */
+  /* re-use the brand token you already have */
+  --nv-secondary-text: var(--nv-blue-700);
 }
 
-/* ========= NEW: secondary text, site-wide ========= */
-/* Any “helper/description/subtext” copy should render in brand blue */
-/* Targets: card descriptions, tile blurbs, section subtitles, small copy */
-.nv-secondary,
-.nv-subtext,
-.nv-desc,
-.nv-helper,
-.nv-muted,
-.nv-note,
-.nvrs-section .subtitle,
-.nv-card .subtitle,
-.nv-card .desc,
-.nv-card p.desc,
-.nv-tiles .tile .desc,
-.nv-tiles .tile p.desc,
-.nv-tiles .tile .subtext,
-.nv-buckets .bucket .desc,
-.nv-list .item .desc,
-.nv-lede + .subtitle,
-.section-subtitle,
-/* sensible fallbacks: any paragraph inside cards/tiles not already a title */
-.nv-card p:not(.title):not(.lead):not(.headline),
-.nv-tiles .tile p:not(.title):not(.headline) {
-  color: var(--nv-text-secondary);
+/* keep it scoped to page content so nav/logo etc. aren’t affected */
+.nvrs-section,
+.nv-page,
+.nv-content {
+  /* common description/secondary selectors across pages */
+  p, small, .nv-sub, .nv-desc, .nv-meta, .nv-help, .nv-lead {
+    color: var(--nv-secondary-text) !important;
+    opacity: 1 !important;        /* override any dimming */
+  }
+}
+
+/* breadcrumbs too */
+.nv-breadcrumbs,
+.nv-breadcrumbs a,
+.nv-breadcrumbs span {
+  color: var(--nv-secondary-text) !important;
+}
+
+/* footer year stays blue (already set, keep for consistency) */
+.site-footer, .site-footer p, .site-footer small {
+  color: var(--nv-secondary-text) !important;
+}
+
+/* ===== Mobile hamburger: lines only, no pill ===== */
+@media (max-width: 768px){
+  .nv-hamburger {
+    background: transparent !important;
+    border: 0 !important;
+    box-shadow: none !important;
+    padding: 6px 8px;             /* small tap target without the pill */
+    border-radius: 0 !important;
+  }
+  .nv-hamburger:focus { outline: none; }
+  .nv-hamburger .bar {
+    display: block;
+    width: 24px;
+    height: 2px;
+    margin: 5px 0;
+    background: var(--nv-blue-700);
+    border-radius: 1px;
+  }
 }
 
 /* Keep titles/links as-is (don’t inherit the rule above) */
