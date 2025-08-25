@@ -1,0 +1,38 @@
+/* Shared card sizing for Wishlist, Navatar, Marketplace */
+:root {
+  --nv-card-max: 320px;        /* matches Navatar & Wishlist */
+  --nv-card-min: 260px;
+  --nv-card-gap: 24px;
+}
+
+/* shared grid */
+.nv-card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(var(--nv-card-min), 1fr));
+  gap: var(--nv-card-gap);
+}
+
+/* shared card wrapper */
+.nv-card {
+  max-width: var(--nv-card-max);
+  width: 100%;
+  margin-inline: auto;
+}
+
+/* shared image box: same look & feel everywhere */
+.nv-card .nv-image {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #f1f5f9; /* same light gray used elsewhere */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.nv-card .nv-image > img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain; /* consistent with Wishlist & Navatar */
+}

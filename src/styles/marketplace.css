@@ -1,20 +1,14 @@
-.nv-grid{ display:grid; grid-template-columns: repeat(2,minmax(0,1fr)); gap:1rem; }
-@media (min-width:900px){ .nv-grid{ grid-template-columns: repeat(3,minmax(0,1fr)); } }
-.nv-card{ border:2px solid #cfe0ff; border-radius:1rem; padding:1rem; }
-.nv-imgbox{ aspect-ratio: 4/3; border:1px solid #e5efff; border-radius:.8rem; display:grid; place-items:center; overflow:hidden; }
-.nv-imgbox img{ width:100%; height:100%; object-fit:contain; }
-.nv-cta{ display:flex; gap:.5rem; margin-top:.5rem; }
+/* Marketplace card layout uses shared card styles */
+.mp-card,
+.mp-card .mp-image,
+.mp-card img {
+  max-width: var(--nv-card-max) !important;
+}
 
-/* Uniform product thumbnails */
-.mp-thumb {
-  width: 100%;
-  aspect-ratio: 4 / 3;      /* adjust to 1 / 1 if you want squares */
-  border-radius: 14px;
-  overflow: hidden;
-  background: #f6f8ff;
+.actions {
   display: flex;
-  align-items: center;
-  justify-content: center;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
 }
 
 /* Larger, consistent image on the product detail page */
@@ -30,34 +24,13 @@
   align-items: center;
   justify-content: center;
 }
-/* Fix Marketplace card sizing to match Wishlist/Navatar */
-.marketplace .nv-card,
-.marketplace .nv-card .mp-hero img {
-  max-width: 220px;   /* Same cap as Wishlist/Navatar */
-  width: 100%;
-  height: auto;
-  object-fit: contain;
-  margin: 0 auto;
-}
 
-.marketplace .nv-card {
-  flex: 0 1 220px;    /* Prevents stretching */
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  text-align: center;
-}
-
-.marketplace .mp-img {
+.mp-hero img {
   width: 100%;
-  height: auto;
-  max-height: 320px;
+  height: 100%;
   object-fit: contain;
 }
 
-.marketplace .nv-card h1,
-.marketplace .nv-card h2,
-.marketplace .nv-card h3 {
-  font-size: 1.1rem;
-  text-align: center;
+@media (max-width: 640px) {
+  :root { --nv-card-gap: 16px; }
 }
