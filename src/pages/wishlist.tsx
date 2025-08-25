@@ -13,7 +13,7 @@ export default function WishlistPage(){
   const { saved, toggleSave } = useCart();
   const ids = Object.keys(saved).filter(k=>saved[k]);
   return (
-    <div className="nvrs-section wishlist">
+    <main id="main" className="nvrs-section wishlist wishlist-page">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Wishlist" }]} />
       <h1>Wishlist</h1>
       {ids.length===0? <p>No saved items yet.</p> :
@@ -22,7 +22,7 @@ export default function WishlistPage(){
             const item = LOOKUP[id];
             if (!item) return null;
             return (
-              <article key={id} className={styles.card}>
+              <article key={id} className={`nv-card ${styles.card}`}>
                 <Link to={item.href} className={styles.imageWrap}>
                   <img src={item.image} alt={item.name} className={styles.img} />
                 </Link>
@@ -32,6 +32,6 @@ export default function WishlistPage(){
             );
           })}
         </div>}
-    </div>
+    </main>
   );
 }
