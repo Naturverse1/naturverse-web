@@ -128,7 +128,9 @@ export default function NavatarPage() {
 
         <section className="panel">
           <h2>Character Card</h2>
-          <NavatarCard navatar={draft} />
+          <div className="navatar-card-wrap">
+            <NavatarCard navatar={draft} />
+          </div>
 
           <h3 style={{marginTop:16}}>Library (local)</h3>
           {library.length === 0 && <p>No saved Navatars yet.</p>}
