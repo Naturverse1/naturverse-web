@@ -1,30 +1,9 @@
 import { useAuth } from '@/lib/auth-context';
+import styles from './home.module.css';
 
 export default function Home() {
   const { user } = useAuth();
   const authed = !!user;
-
-  const Tile = ({
-    title,
-    body,
-    href,
-  }: {
-    title: string;
-    body: string;
-    href: string;
-  }) => (
-    <a
-      href={authed ? href : '#'}
-      onClick={(e) => {
-        if (!authed) e.preventDefault();
-      }}
-      aria-disabled={!authed}
-      className={`home-tile ${authed ? '' : 'is-disabled'}`}
-    >
-      <div className="home-tile__title">{title}</div>
-      <div className="home-tile__body">{body}</div>
-    </a>
-  );
 
   return (
     <main className="page-wrapper">
@@ -47,39 +26,39 @@ export default function Home() {
         )}
       </section>
 
-      {/* Top feature tiles: centered */}
-      <section className="home-tiles tiles-centered">
-        <Tile
-          title="Play"
-          body="Mini-games, stories, and map adventures across 14 kingdoms."
-          href="/worlds"
-        />
-        <Tile
-          title="Learn"
-          body="Naturversity lessons in languages, art, music, wellness, and more."
-          href="/naturversity"
-        />
-        <Tile
-          title="Earn"
-          body="Collect badges, save favorites, and build your Navatar card. Natur Coin — coming soon"
-          href="/naturbank"
-        />
+      {/* Top feature tiles: CENTER the group */}
+      <section className={styles.features}>
+        <div className={styles.tileWrap}>
+          <FeatureTile
+            title="Play"
+            body="Mini-games, stories, and map adventures across 14 kingdoms."
+            href="/worlds"
+          />
+        </div>
+        <div className={styles.tileWrap}>
+          <FeatureTile
+            title="Learn"
+            body="Naturversity lessons in languages, art, music, wellness, and more."
+            href="/naturversity"
+          />
+        </div>
+        <div className={styles.tileWrap}>
+          <FeatureTile
+            title="Earn"
+            body="Collect badges, save favorites, and build your Navatar card. Natur Coin — coming soon"
+            href="/naturbank"
+          />
+        </div>
       </section>
 
-      {/* Bottom flow tiles: left-aligned with margin-left */}
-      <section className="home-flow flow-left">
-        <div className="flow-card">
-          <div className="flow-card__title">1) Create</div>
-          <div className="flow-card__body">
+      {/* How it works flow: LEFT aligned */}
+      <section className={styles.flow}>
+        <div className={styles.flowList}>
+          <FlowStep title="1) Create">
             Create a free account ·{' '}
             <a href={authed ? '/navatar' : '/auth/magic'}>create your Navatar</a>
-          </div>
-        </div>
-        <div className="flow-arrow">↓</div>
-
-        <div className="flow-card">
-          <div className="flow-card__title">2) Pick a hub</div>
-          <div className="flow-card__body flow-links">
+          </FlowStep>
+          <FlowStep title="2) Pick a hub">
             <a href="/worlds">
               <b>Worlds</b>
             </a>{' '}
@@ -91,18 +70,55 @@ export default function Home() {
             <a href="/marketplace">
               <b>Marketplace</b>
             </a>
-          </div>
-        </div>
-        <div className="flow-arrow">↓</div>
-
-        <div className="flow-card">
-          <div className="flow-card__title">3) Play · Learn · Earn</div>
-          <div className="flow-card__body">
+          </FlowStep>
+          <FlowStep title="3) Play · Learn · Earn">
             Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
-          </div>
+          </FlowStep>
         </div>
       </section>
     </main>
+  );
+}
+
+function FeatureTile({
+  title,
+  body,
+  href,
+}: {
+  title: string;
+  body: string;
+  href: string;
+}) {
+  const { user } = useAuth();
+  const authed = !!user;
+
+  return (
+    <a
+      href={authed ? href : '#'}
+      onClick={(e) => {
+        if (!authed) e.preventDefault();
+      }}
+      aria-disabled={!authed}
+      className={`home-tile ${authed ? '' : 'is-disabled'}`}
+    >
+      <div className="home-tile__title">{title}</div>
+      <div className="home-tile__body">{body}</div>
+    </a>
+  );
+}
+
+function FlowStep({
+  title,
+  children,
+}: {
+  title: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="flow-card">
+      <div className="flow-card__title">{title}</div>
+      <div className="flow-card__body">{children}</div>
+    </div>
   );
 }
 
