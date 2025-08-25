@@ -3,27 +3,84 @@
 .homeTitle { margin: 12px 0 8px; }
 .homeSubtitle { margin: 0 auto 18px; max-width: 900px; color: var(--nv-blue-700); }
 
-.ctaRow { display: flex; gap: 16px; justify-content: center; margin: 6px 0 22px; }
 
-.tiles { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 18px; align-items: stretch; }
-.tileLink { text-decoration: none; }
-.tile { border: 2px solid var(--nv-blue-200); border-radius: 16px; padding: 20px; height: 100%; background: var(--nv-card); }
-.tileTitle { font-weight: 800; font-size: 22px; color: var(--nv-blue-700); margin-bottom: 8px; }
-.tileDesc { color: var(--nv-blue-700); }
-.tileFoot { margin-top: 8px; font-size: 13px; color: var(--nv-muted); }
+/* Hero spacing & centering */
+.ctaRow { display: flex; gap: 16px; justify-content: center; margin: 10px 0 20px; }
+
+/* Tile grid */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  align-items: stretch;
+  margin: 18px auto 8px;
+  max-width: 1080px;
+}
+
+/* Clickable wrapper */
+.tileLink { text-decoration: none; display: block; }
+
+/* Tile card */
+.tile {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 10px;
+  padding: 22px;
+  border: 2px solid var(--nv-blue-200);
+  border-radius: 16px;
+  background: var(--nv-card);
+  min-height: 136px;
+  text-align: left;
+}
+
+/* Prevent weird line stacking */
+.tile * { margin: 0; }
+.tileTitle {
+  font-weight: 800;
+  font-size: 22px;
+  line-height: 1.2;
+  color: var(--nv-blue-700);
+  letter-spacing: .1px;
+  white-space: normal;
+  word-break: keep-all;
+}
+.tileDesc {
+  color: var(--nv-blue-700);
+  line-height: 1.35;
+}
+.tileFoot {
+  color: var(--nv-muted);
+  font-size: 13px;
+}
 
 .tileDisabled { opacity: .55; pointer-events: none; cursor: default; }
 
-.flow { margin: 26px auto 0; max-width: 1080px; background: var(--nv-surface); border-radius: 18px; padding: 18px; border: 2px dashed var(--nv-blue-200); }
-.step { margin: 12px auto; padding: 14px 18px; border: 2px solid var(--nv-blue-200); border-radius: 14px; background: var(--nv-card); }
-.stepTitle { text-align: center; font-weight: 800; color: var(--nv-blue-700); margin-bottom: 6px; }
-.stepDesc { text-align: center; color: var(--nv-blue-700); }
+/* Steps box polish to match tiles */
+.flow {
+  margin: 28px auto 0;
+  max-width: 1080px;
+  background: var(--nv-surface);
+  border-radius: 18px;
+  padding: 20px;
+  border: 2px dashed var(--nv-blue-200);
+}
+.step {
+  margin: 14px auto;
+  padding: 14px 18px;
+  border: 2px solid var(--nv-blue-200);
+  border-radius: 14px;
+  background: var(--nv-card);
+}
+.stepTitle { text-align: center; font-weight: 800; color: var(--nv-blue-700); }
+.stepDesc  { text-align: center; color: var(--nv-blue-700); }
 .muted { color: var(--nv-muted); }
 
 /* universal top spacing under navbar */
-.pageRoot { padding-top: 12px; }
+.pageRoot { padding-top: 14px; }
 
 /* Responsive: stack tiles on small screens */
 @media (max-width: 900px) {
   .tiles { grid-template-columns: 1fr; }
+  .tile  { min-height: 120px; text-align: left; }
 }
