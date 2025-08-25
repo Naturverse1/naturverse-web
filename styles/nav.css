@@ -1,0 +1,8 @@
+.nv-nav { background:#fff; border-bottom:1px solid #eef1f6; }
+.nv-nav-inner { max-width: 1100px; margin: 0 auto; padding: 12px 16px; display:flex; align-items:center; gap:16px; }
+.nv-brand { font-weight:800; font-size:22px; color:#2a57e8; text-decoration:none; margin-right:8px; }
+.nv-links { display:flex; gap:16px; align-items:center; margin-left:auto; }
+.nv-links a { color:#234; text-decoration:none; }
+.nv-links a:hover { text-decoration:underline; }
+.nv-cart { font-size:18px; line-height:1; }
+.nv-profile { display:inline-flex; }
