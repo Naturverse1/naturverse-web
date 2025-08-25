@@ -49,25 +49,26 @@
 .nv-breadcrumbs a:hover { text-decoration: underline; }
 
 /* ===== NAVATAR PAGE ONLY ===== */
+/* NAVATAR page only (won't touch Marketplace/Wishlist) */
 [data-page="navatar"] .navatar-card-wrap {
   display: flex;
   justify-content: center;
 }
 
-/* Match the compact Marketplace/Wishlist card sizing */
+/* Match product/wishlist card width */
 [data-page="navatar"] .navatar-card {
-  max-width: 280px;
+  max-width: 320px;        /* ← bump from 280 → 320 to match */
   width: 100%;
   margin: 0 auto 22px;
   padding: 14px;
   border-radius: 18px;
 }
 
-/* Image area behaves like the product cards */
+/* Image area exactly like product cards */
 [data-page="navatar"] .navatar-card .card-hero {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 220px;
+  max-height: 240px;       /* same visual height */
   border-radius: 14px;
   overflow: hidden;
   display: flex;
@@ -82,7 +83,7 @@
   object-fit: contain;
 }
 
-/* (optional) keep text from stretching the card */
+/* Prevent long text from stretching */
 [data-page="navatar"] .navatar-card h3,
 [data-page="navatar"] .navatar-card p,
 [data-page="navatar"] .navatar-card ul {
