@@ -45,7 +45,8 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="home-tiles">
+      {/* Top feature tiles: centered */}
+      <section className="home-tiles tiles-centered">
         <Tile
           title="Play"
           body="Mini-games, stories, and map adventures across 14 kingdoms."
@@ -63,7 +64,8 @@ export default function Home() {
         />
       </section>
 
-      <section className="home-flow">
+      {/* Bottom flow tiles: left-aligned with margin-left */}
+      <section className="home-flow flow-left">
         <div className="flow-card">
           <div className="flow-card__title">1) Create</div>
           <div className="flow-card__body">
