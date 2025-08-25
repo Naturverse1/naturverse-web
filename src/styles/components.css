@@ -48,19 +48,16 @@
 .nv-breadcrumbs a { text-decoration: none; }
 .nv-breadcrumbs a:hover { text-decoration: underline; }
 
-/* ===== NAVATAR PAGE ONLY ===== */
-/* NAVATAR page only (won't touch Marketplace/Wishlist) */
+/* NAVATAR Character Card */
 [data-page="navatar"] .navatar-card-wrap {
   display: flex;
   justify-content: center;
 }
-
-/* Match product/wishlist card width */
 [data-page="navatar"] .navatar-card {
-  max-width: 320px;        /* ← bump from 280 → 320 to match */
+  max-width: 360px;     /* bump from ~300 → 360px */
   width: 100%;
-  margin: 0 auto 22px;
-  padding: 14px;
+  margin: 0 auto 24px;
+  padding: 16px;
   border-radius: 18px;
 }
 
@@ -68,7 +65,7 @@
 [data-page="navatar"] .navatar-card .card-hero {
   width: 100%;
   aspect-ratio: 4 / 3;
-  max-height: 240px;       /* same visual height */
+  max-height: 280px;    /* taller image space */
   border-radius: 14px;
   overflow: hidden;
   display: flex;
