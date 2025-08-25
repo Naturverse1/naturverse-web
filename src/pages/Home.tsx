@@ -1,66 +1,85 @@
+import styles from './Home.module.css';
+import { Link } from 'react-router-dom';
 import { useAuth } from '@/lib/auth-context';
-import type React from 'react';
-import { signInWithGoogle } from '../lib/auth';
 
 export default function Home() {
   const { user } = useAuth();
-  const authed = !!user;
 
   return (
-    <main className="home">
-      <section className="hero">
-        <h1 className="homeTitle">Welcome to the Naturverse™</h1>
-        <p className="homeSubtitle">A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.</p>
-
-        {!authed && (
-          <div className="ctaRow">
-            <button className="btn-primary" onClick={() => document.getElementById('open-signup')?.click()}>
+    <main className={styles.page}>
+      <section className={styles.hero}>
+        <h1 className={styles.title}>Welcome to the Naturverse™</h1>
+        <p className={styles.subtitle}>
+          A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
+          kindness.
+        </p>
+        {!user && (
+          <div className={styles.ctaRow}>
+            <Link to="/auth/signup" className={styles.cta}>
               Create account
-            </button>
-            <button className="btn-primary" onClick={signInWithGoogle}>
+            </Link>
+            <Link to="/auth/google" className={styles.cta}>
               Continue with Google
-            </button>
+            </Link>
           </div>
         )}
+      </section>
 
-        <div className="tiles">
-          <Tile title="Play" desc="Mini-games, stories, and map adventures across 14 kingdoms."
-                to={authed ? '/zones' : undefined} disabled={!authed} />
-          <Tile title="Learn" desc="Naturversity lessons in languages, art, music, wellness, and more."
-                to={authed ? '/naturversity' : undefined} disabled={!authed} />
-          <Tile title="Earn" desc="Collect badges, save favorites, and build your Navatar card."
-                foot="Natur Coin — coming soon"
-                to={authed ? '/naturbank' : undefined} disabled={!authed} />
+      {/* Top feature tiles — text centered */}
+      <section className={styles.featureGrid}>
+        <Link to={user ? '/worlds' : '#'} className={styles.featureCard} tabIndex={0}>
+          <h3 className={styles.cardTitleCenter}>Play</h3>
+          <p className={styles.cardTextCenter}>
+            Mini-games, stories, and map adventures across 14 kingdoms.
+          </p>
+        </Link>
+        <Link to={user ? '/naturversity' : '#'} className={styles.featureCard} tabIndex={0}>
+          <h3 className={styles.cardTitleCenter}>Learn</h3>
+          <p className={styles.cardTextCenter}>
+            Naturversity lessons in languages, art, music, wellness, and more.
+          </p>
+        </Link>
+        <Link to={user ? '/naturbank' : '#'} className={styles.featureCard} tabIndex={0}>
+          <h3 className={styles.cardTitleCenter}>Earn</h3>
+          <p className={styles.cardTextCenter}>
+            Collect badges, save favorites, and build your Navatar card.
+            <br />
+            <em>Natur Coin — coming soon</em>
+          </p>
+        </Link>
+      </section>
+
+      {/* Bottom flow — text left-aligned */}
+      <section className={styles.flowWrap}>
+        <div className={styles.flowStep}>
+          <div className={styles.flowHead}>1) Create</div>
+          <div className={styles.flowBody}>
+            Create a free account · <Link to="/navatar">create your Navatar</Link>
+          </div>
+        </div>
+        <div className={styles.flowStep}>
+          <div className={styles.flowHead}>2) Pick a hub</div>
+          <div className={styles.flowBody}>
+            <Link to="/worlds" className={styles.flowLink}>
+              Worlds
+            </Link>{' '}
+            ·{' '}
+            <Link to="/zones" className={styles.flowLink}>
+              Zones
+            </Link>{' '}
+            ·{' '}
+            <Link to="/marketplace" className={styles.flowLink}>
+              Marketplace
+            </Link>
+          </div>
+        </div>
+        <div className={styles.flowStep}>
+          <div className={styles.flowHead}>3) Play · Learn · Earn</div>
+          <div className={styles.flowBody}>
+            Explore, meet characters, earn badges <em>(Natur Coin — coming soon)</em>
+          </div>
         </div>
       </section>
-
-      <section className="flow">
-        <Step title="1) Create" desc={<span>Create a free account · <a href="#" onClick={(e)=>{e.preventDefault(); document.getElementById('open-signup')?.click();}}>create your Navatar</a></span>} />
-        <Step title="2) Pick a hub" desc={<span><b>Worlds</b> · <b>Zones</b> · <b>Marketplace</b></span>} />
-        <Step title="3) Play · Learn · Earn" desc={<span>Explore, meet characters, earn badges <small className="muted">(Natur Coin — coming soon)</small></span>} />
-      </section>
     </main>
-  );
-}
-
-function Tile({ title, desc, foot, to, disabled }:{
-  title:string; desc:string; foot?:string; to?:string; disabled?:boolean
-}) {
-  const core = (
-    <div className={`tile ${disabled ? 'tileDisabled' : ''}`} aria-disabled={disabled}>
-      <h3 className="tileTitle">{title}</h3>
-      <p className="tileDesc">{desc}</p>
-      {foot && <p className="tileFoot">{foot}</p>}
-    </div>
-  );
-  return disabled || !to ? core : <a className="tileLink" href={to}>{core}</a>;
-}
-
-function Step({ title, desc }:{title:string; desc:React.ReactNode}) {
-  return (
-    <div className="step">
-      <div className="stepTitle">{title}</div>
-      <div className="stepDesc">{desc}</div>
-    </div>
   );
 }
