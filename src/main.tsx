@@ -10,20 +10,28 @@ import './styles/edu.css';
 import './main.css';
 import './styles/nvcard.css';
 import SkipToContent from './components/SkipToContent';
+import { supabase } from '@/lib/supabase-client';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
-  <React.StrictMode>
-    {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
-    <AuthProvider>
-      <SkipToContent />
-      <ErrorBoundary>
-        <BaseAuthProvider>
-          <App />
-        </BaseAuthProvider>
-      </ErrorBoundary>
-    </AuthProvider>
-  </React.StrictMode>,
-);
+async function bootstrap() {
+  const { data } = await supabase.auth.getSession();
+  const initialSession = data.session ?? null;
+
+  ReactDOM.createRoot(document.getElementById('root')!).render(
+    <React.StrictMode>
+      {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
+      <AuthProvider initialSession={initialSession}>
+        <SkipToContent />
+        <ErrorBoundary>
+          <BaseAuthProvider>
+            <App />
+          </BaseAuthProvider>
+        </ErrorBoundary>
+      </AuthProvider>
+    </React.StrictMode>,
+  );
+}
+
+bootstrap();
 
 // Force lazy loading for any <img> missing it (no deps, safe)
 document.addEventListener('DOMContentLoaded', () => {
