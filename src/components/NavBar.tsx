@@ -1,26 +1,26 @@
+'use client';
+import { Link } from 'react-router-dom';
 import styles from './NavBar.module.css';
-import { useAuth } from '../auth/AuthContext';
-
-function CartIcon() {
-  return <span aria-hidden>🛒</span>;
-}
+import { useAuthState } from '../lib/auth-context';
+import { useProfileEmoji } from '../lib/use-profile-emoji';
 
 export default function NavBar() {
-  const { session } = useAuth();
+  const { loading, signedIn } = useAuthState();
+  const emoji = useProfileEmoji();
+
   return (
     <header className={styles.wrap}>
-      <a href="/" className={styles.brand}>Naturverse</a>
-      <nav className={styles.tools}>
-        <a href="/cart" aria-label="Cart"><CartIcon /></a>
-        {session && (
-          <a href="/profile" aria-label="Profile" className="profile-icon">
-            <span aria-hidden>👤</span>
-          </a>
+      <Link to="/" className={styles.brand}>🌿 Naturverse</Link>
+      <nav className={styles.icons}>
+        {signedIn && !loading && (
+          <>
+            <Link to="/cart" aria-label="Cart" className={styles.iconBtn}>🛒</Link>
+            <Link to="/profile" aria-label="Profile" className={styles.iconBtn}>
+              <span className={styles.avatarEmoji}>{emoji}</span>
+            </Link>
+          </>
         )}
-        <button className={styles.menuBtn} aria-label="Menu">
-          <span className={styles.iconDesktop} aria-hidden>≡</span>
-          <span className={styles.iconMobile} aria-hidden>🍃</span>
-        </button>
+        <button className={styles.menuBtn} aria-label="Menu">≡</button>
       </nav>
     </header>
   );

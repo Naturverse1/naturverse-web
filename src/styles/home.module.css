@@ -1,5 +1,5 @@
 .wrap { padding: 1.25rem 1rem 3rem; }
-.hero { background: linear-gradient(#eef5ff, #ffffff); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; }
+.hero { background: linear-gradient(#eef5ff, #ffffff); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; position: relative; z-index: 1; }
 .ctaRow, .bottomCtas { display: flex; gap: .75rem; flex-wrap: wrap; margin-top: .75rem; }
 .btn { padding: .6rem 1rem; border-radius: 10px; background: #2b6ee7; color: #fff; box-shadow: 0 6px 0 #1d4fb1; }
 .btnSecondary { padding: .6rem 1rem; border-radius: 10px; background: #3a7cf0; color: #fff; box-shadow: 0 6px 0 #285ec7; }
@@ -11,6 +11,8 @@
 .flowCard { background: #fff; border: 1px solid #dbe6ff; border-radius: 12px; padding: .9rem 1rem; margin: .75rem auto; max-width: 560px; text-align: center; }
 .flow small { color: #6b7280; }
 .arrow { text-align: center; font-size: 1.4rem; color: #5c7de7; }
+
+.heroOverlay { pointer-events: none; }
 
 @media (max-width: 768px) {
   .pills { grid-template-columns: 1fr; }

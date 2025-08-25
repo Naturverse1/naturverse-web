@@ -1,7 +1,8 @@
 import React from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { AuthProvider } from './auth/AuthContext';
+import { AuthProvider as BaseAuthProvider } from './auth/AuthContext';
+import { AuthProvider } from './lib/auth-context';
 import ErrorBoundary from './components/ErrorBoundary';
 import './styles.css';
 import './styles/shop.css';
@@ -14,9 +15,11 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <SkipToContent />
     <ErrorBoundary>
-      <AuthProvider>
-        <App />
-      </AuthProvider>
+      <BaseAuthProvider>
+        <AuthProvider>
+          <App />
+        </AuthProvider>
+      </BaseAuthProvider>
     </ErrorBoundary>
   </React.StrictMode>,
 );
