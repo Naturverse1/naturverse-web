@@ -5,7 +5,9 @@ export default function Footer() {
   return (
     <footer>
       <div className="container" style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-        <small>© {new Date().getFullYear()} Naturverse™</small>
+        <small style={{ color: "var(--nv-blue-600)" }}>
+          © {new Date().getFullYear()} Naturverse™
+        </small>
         <nav style={{display:"flex",gap:12,flexWrap:"wrap"}}>
           {FOOTER_LINKS.map(l => (
             <a key={l.href} href={l.href} className="muted">{l.label}</a>

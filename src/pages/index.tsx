@@ -1,10 +1,23 @@
 import { useAuth } from '@/lib/auth-context';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
+import { supabase } from '@/lib/supabase-client';
 import styles from '@/styles/home.module.css';
 
 export default function Home() {
-  const { user, signInWithGoogle, signInWithMagicLink } = useAuth();
+  const { user } = useAuth();
   const isAuthed = !!user;
+  const navigate = useNavigate();
+
+  const handleGoogle = async () => {
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo: `${window.location.origin}/auth/callback` },
+    });
+  };
+
+  const handleCreate = () => {
+    navigate('/login');
+  };
 
   return (
     <main className={styles.page}>
@@ -15,10 +28,10 @@ export default function Home() {
         </p>
         {!isAuthed && (
           <div className={styles.authRow}>
-            <button className={styles.cta} onClick={signInWithMagicLink}>
+            <button className={styles.cta} onClick={handleCreate}>
               Create account
             </button>
-            <button className={styles.cta} onClick={signInWithGoogle}>
+            <button className={styles.cta} onClick={handleGoogle}>
               Continue with Google
             </button>
           </div>
