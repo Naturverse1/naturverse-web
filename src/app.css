@@ -58,3 +58,23 @@
     padding: 0 4rem; /* prevent cutoff on TVs */
   }
 }
+
+/* ===== Center Welcome Hero ===== */
+.hero {
+  text-align: center;
+  margin: 2rem auto;
+}
+
+.hero h1 {
+  font-size: 2.5rem;
+  font-weight: bold;
+  color: #1d4ed8; /* Naturverse blue */
+  margin-bottom: 1rem;
+}
+
+.hero p {
+  font-size: 1.25rem;
+  color: #1d4ed8; /* Naturverse blue to match theme */
+  margin-bottom: 2rem;
+}
+
