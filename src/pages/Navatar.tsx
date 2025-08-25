@@ -193,10 +193,10 @@ export default function NavatarPage() {
         }
 
         /* big portrait image, full and centered */
-        #navatar-card .cc-hero{
+        .navatar-card .imageWrap{
           width:100%;
           aspect-ratio:3/4;
-          border-radius:18px;
+          border-radius:14px;
           overflow:hidden;
           background:#f1f5f9;
           display:flex;
@@ -205,10 +205,13 @@ export default function NavatarPage() {
           margin-bottom:12px;
         }
 
-        #navatar-card .cc-hero img{
-          width:100%;
-          height:100%;
-          object-fit:cover;
+        .navatar-card .imageWrap img{
+          max-width:100%;
+          max-height:100%;
+          width:auto;
+          height:auto;
+          object-fit:contain;
+          display:block;
         }
 
         /* details block keeps your existing look */

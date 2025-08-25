@@ -5,7 +5,7 @@ type Props = { navatar: Navatar };
 
 export default function NavatarCard({ navatar }: Props) {
   return (
-    <article id="navatar-card" className="nv-card">
+    <article id="navatar-card" className="nv-card navatar-card">
       <header className="cc-head">
         <span className="cc-name">{navatar.name || navatar.species}</span>
         <span className="cc-meta">
@@ -13,7 +13,7 @@ export default function NavatarCard({ navatar }: Props) {
         </span>
       </header>
 
-      <div className="cc-hero">
+      <div className="imageWrap">
         {navatar.imageDataUrl ? (
           <img
             src={navatar.imageDataUrl}
