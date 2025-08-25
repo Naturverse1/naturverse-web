@@ -41,14 +41,15 @@ export default function NavBar() {
             </>
           )}
 
+          {/* Mobile hamburger (no blue background) */}
           <button
+            className="nv-hamburger"
             aria-label="Open menu"
-            className={`nv-menu-btn${open ? ' is-open' : ''}`}
-            onClick={() => setOpen(!open)}
+            onClick={() => setOpen(true)}
           >
-            <span></span>
-            <span></span>
-            <span></span>
+            <span className="bar" />
+            <span className="bar" />
+            <span className="bar" />
           </button>
         </div>
       </div>
