@@ -35,14 +35,16 @@ export default function Home() {
           and kindness.
         </p>
 
-        <div className="hero__cta">
-          <a href="/auth/magic" className="btn btn-primary">
-            Create account
-          </a>
-          <a href="/auth/google" className="btn btn-secondary">
-            Continue with Google
-          </a>
-        </div>
+        {!authed && (
+          <div className="hero__cta">
+            <a href="/auth/magic" className="btn btn-primary">
+              Create account
+            </a>
+            <a href="/auth/google" className="btn btn-secondary">
+              Continue with Google
+            </a>
+          </div>
+        )}
       </section>
 
       {/* Top feature tiles: centered */}
