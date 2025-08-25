@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { supabase } from './supabase-client';
+import { supabase, signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
 
 type Ctx = {
   ready: boolean;
@@ -34,21 +34,21 @@ export function AuthProvider({
     const email = window.prompt('Enter your email to receive a sign-in link')?.trim();
     if (!email) return;
     sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) alert(error.message);
-    else alert('Check your inbox for the sign-in link ✉️');
+    try {
+      await sendMagicLink(email);
+      alert('Check your inbox for the sign-in link ✉️');
+    } catch (err) {
+      alert((err as { message: string }).message);
+    }
   };
 
   const signInWithGoogle = async () => {
     sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${window.location.origin}/auth/callback` },
-    });
-    if (error) alert(error.message);
+    try {
+      await startGoogleOAuth();
+    } catch (err) {
+      alert((err as { message: string }).message);
+    }
   };
 
   const signOut = async () => {

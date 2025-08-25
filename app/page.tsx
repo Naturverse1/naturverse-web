@@ -2,14 +2,30 @@
 
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
+import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 
 export default function Home() {
   const user = useUser();
 
   const SignedOutCTA = () => (
     <div className="welcome-buttons">
-      <a className="btn btn-primary" href="/auth">Create account</a>
-      <a className="btn btn-secondary" href="/auth/google">Continue with Google</a>
+      <button
+        className="btn btn-primary"
+        onClick={async () => {
+          const email = prompt('Enter your email to get a magic link:')?.trim();
+          if (email) await sendMagicLink(email);
+        }}
+      >
+        Create account
+      </button>
+      <button
+        className="btn btn-secondary"
+        onClick={async () => {
+          await signInWithGoogle();
+        }}
+      >
+        Continue with Google
+      </button>
     </div>
   );
 
@@ -68,8 +84,23 @@ export default function Home() {
 
         {!user && (
           <div className="welcome-buttons">
-            <a className="btn btn-primary" href="/auth">Get started</a>
-            <a className="btn btn-secondary" href="/auth/google">Continue with Google</a>
+            <button
+              className="btn btn-primary"
+              onClick={async () => {
+                const email = prompt('Enter your email to get a magic link:')?.trim();
+                if (email) await sendMagicLink(email);
+              }}
+            >
+              Get started
+            </button>
+            <button
+              className="btn btn-secondary"
+              onClick={async () => {
+                await signInWithGoogle();
+              }}
+            >
+              Continue with Google
+            </button>
           </div>
         )}
       </section>

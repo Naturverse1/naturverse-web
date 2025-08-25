@@ -1,5 +1,6 @@
 import styles from './Home.module.css';
 import { Link } from 'react-router-dom';
+import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 
 export default function Home() {
@@ -15,12 +16,25 @@ export default function Home() {
         </p>
         {!user && (
           <div className={styles.ctaRow}>
-            <Link to="/auth/signup" className={styles.cta}>
+            <button
+              type="button"
+              className={styles.cta}
+              onClick={async () => {
+                const email = prompt('Enter your email to get a magic link:')?.trim();
+                if (email) await sendMagicLink(email);
+              }}
+            >
               Create account
-            </Link>
-            <Link to="/auth/google" className={styles.cta}>
+            </button>
+            <button
+              type="button"
+              className={styles.cta}
+              onClick={async () => {
+                await signInWithGoogle();
+              }}
+            >
               Continue with Google
-            </Link>
+            </button>
           </div>
         )}
       </section>
