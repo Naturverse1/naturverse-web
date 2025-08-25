@@ -7,15 +7,8 @@
   margin-bottom: 1.5rem;
 }
 
-.ctaRow,
-.ctaRowBottom {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
-  margin-top: 1rem;
-}
 
-/* Top tiles (already present, keep) */
+/* Top tiles (layout wrapper) */
 .tiles3 {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
@@ -23,17 +16,7 @@
   margin: 1.25rem 0 2rem;
 }
 
-.infoCard {
-  background: #fff;
-  border: 2px solid var(--nv-blue-400);
-  border-radius: 16px;
-  padding: 1rem 1.1rem;
-  box-shadow: 0 2px 0 rgba(37,99,235,0.15);
-  text-decoration: none;
-  color: inherit;
-}
-
-/* How it works (make them match infoCard) */
+/* How it works wrapper */
 .flowWrap {
   background: linear-gradient(180deg, #f8fbff 0%, #f6faff 100%);
   padding: 1.25rem;
@@ -41,27 +24,11 @@
   margin-bottom: 2rem;
 }
 
-.flowCard {
-  background: #fff;
-  border: 2px solid var(--nv-blue-400);
-  border-radius: 16px;
-  padding: 0.9rem 1.1rem;
-  box-shadow: 0 2px 0 rgba(37,99,235,0.15);
-}
-
-.flowStep { font-weight: 700; color: var(--nv-blue); margin-bottom: 0.25rem; }
-.flowText { color: #374151; }
 
 .flowArrow {
   text-align: center;
   color: var(--nv-blue);
   margin: 0.5rem 0;
   font-size: 1.25rem;
-}
-
-/* Button polish */
-.btn { /* if you have global btn classes, this can be omitted */ }
-@media (min-width: 768px) {
-  .ctaRowBottom { justify-content: center; }
 }
 

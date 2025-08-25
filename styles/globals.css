@@ -52,3 +52,64 @@
 .card input[type="email"] { height: 44px; padding: 0 12px; }
 .btn.ghost { background: transparent; border: 2px solid var(--brand); }
 .link { text-align: center; }
+
+/* === Auth Buttons === */
+.welcome-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin: 20px auto;
+  flex-wrap: wrap;
+}
+
+/* === Subtitle Texts (under Welcome + Steps + Tiles) === */
+.welcome-subtitle,
+.step-box p,
+.step-box a,
+.tile-subtitle {
+  color: #2563eb;
+  font-weight: 600;
+  text-align: center;
+  margin: 10px 0;
+}
+
+/* === Tiles (Play, Learn, Earn) === */
+.tile {
+  text-align: center;
+  margin: 10px;
+}
+
+.tile h3 {
+  color: #2563eb;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+
+/* === Steps Section === */
+.step-box {
+  text-align: center;
+  margin: 15px auto;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #e0e0e0;
+  max-width: 600px;
+}
+
+/* === Responsive Wrapping (for TV, mobile, tablets) === */
+@media (max-width: 768px) {
+  .welcome-buttons {
+    flex-direction: column;
+    gap: 12px;
+    align-items: center;
+  }
+  .tile {
+    margin: 12px auto;
+  }
+}
+
+@media (min-width: 1600px) {
+  .container {
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+}
