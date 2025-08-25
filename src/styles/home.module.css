@@ -1,17 +1,105 @@
-.wrap { padding: 1.25rem 1rem 3rem; }
-.hero { background: linear-gradient(#eef5ff, #ffffff); border-radius: 12px; padding: 1.25rem; margin-bottom: 1rem; position: relative; z-index: 1; }
-.btn { padding: .6rem 1rem; border-radius: 10px; background: #2b6ee7; color: #fff; box-shadow: 0 6px 0 #1d4fb1; }
-.btnSecondary { padding: .6rem 1rem; border-radius: 10px; background: #3a7cf0; color: #fff; box-shadow: 0 6px 0 #285ec7; }
-
-.pills { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin: 1.25rem 0; }
-.pill { border: 2px solid #9bb9ff; border-radius: 14px; padding: 1rem; background: #fff; }
-
-.flow { background: #f3f7ff; border-radius: 14px; padding: 1rem; }
-.flow small { color: #6b7280; }
-.arrow { text-align: center; font-size: 1.4rem; color: #5c7de7; }
-
-.heroOverlay { pointer-events: none; }
-
-@media (max-width: 768px) {
-  .pills { grid-template-columns: 1fr; }
+.page{
+  --surface: var(--nv-surface, #f5f9ff); /* same light-blue used elsewhere */
+  background: var(--surface);
+  padding-top: 1.25rem; /* space under navbar */
+  padding-bottom: 3rem;
 }
+
+.hero{
+  max-width: 980px;
+  margin: 0 auto 1.25rem;
+  text-align: center;
+}
+
+.title{
+  margin: 0 0 .5rem;
+  color: var(--nv-blue-700, #1f57d6);
+  font-size: clamp(2rem, 4vw, 3rem);
+  font-weight: 800;
+}
+
+.tagline{
+  margin: 0 auto 1.25rem;
+  max-width: 980px;
+  color: var(--nv-blue-600, #2a5ed8);
+}
+
+.authRow{
+  display: flex;
+  justify-content: center;
+  gap: 1rem;            /* clean spacing between the two buttons */
+  margin: 0 auto 1.5rem;
+  flex-wrap: wrap;
+}
+.cta{
+  padding: .75rem 1rem;
+  border-radius: .75rem;
+}
+
+/* TOP TILES (centered) */
+.topTiles{
+  max-width: 1040px;
+  margin: 0 auto 1.25rem;
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
+}
+@media (min-width: 900px){
+  .topTiles{ grid-template-columns: repeat(3,1fr); }
+}
+.topTile{
+  display: grid;
+  place-items: center;              /* centers text */
+  text-align: center;
+  border: 2px solid var(--nv-blue-300,#9bb8ff);
+  border-radius: 16px;
+  padding: 1.25rem;
+  background: rgba(255,255,255,.6);
+  color: var(--nv-blue-700,#1f57d6);
+  text-decoration: none;
+}
+.topTileTitle{
+  font-weight: 800;
+  font-size: 1.2rem;
+  margin-bottom: .25rem;
+}
+.disabled{
+  pointer-events: none;
+  opacity: .55;
+}
+
+/* FLOW (left-aligned text) */
+.flowCard{
+  max-width: 1040px;
+  margin: 1.25rem auto 0;
+  border: 2px dashed var(--nv-blue-200,#cbd9ff);
+  border-radius: 18px;
+  padding: 1rem;
+  background: rgba(255,255,255,.5);
+}
+.flowBox{
+  border: 2px solid var(--nv-blue-300,#9bb8ff);
+  border-radius: 14px;
+  padding: .9rem 1rem;
+  margin: 0 auto .75rem;
+  text-align: left;                  /* ← left aligned */
+  color: var(--nv-blue-700,#1f57d6);
+  background: rgba(255,255,255,.9);
+}
+.flowHeading{
+  font-weight: 800;
+  margin-bottom: .25rem;
+  color: var(--nv-blue-700,#1f57d6);
+}
+.flowArrow{
+  text-align: center;
+  color: var(--nv-blue-500,#5380f5);
+  margin: .25rem 0 .5rem;
+}
+.flowLink{
+  font-weight: 800;                  /* bold blue, not “linky” */
+  color: var(--nv-blue-700,#1f57d6);
+  text-decoration: none;
+}
+.flowLink:hover{ text-decoration: underline; }
+
