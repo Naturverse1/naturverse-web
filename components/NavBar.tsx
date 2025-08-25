@@ -1,40 +1,25 @@
 'use client';
 import * as React from 'react';
 import Link from 'next/link';
-import { supabase, getSession, getUser } from '@/lib/auth';
 import ProfileHead from '@/components/ProfileHead';
+import { useAuthState } from '@/src/lib/auth-context';
+import { getUser } from '@/lib/auth';
 
 export default function NavBar() {
-  const [isAuthed, setIsAuthed] = React.useState(false);
-  const [headEmoji, setHeadEmoji] = React.useState<string | null>(null);
+  const { signedIn, loading } = useAuthState();
+  const [headEmoji, setHeadEmoji] = React.useState('🙂');
 
   React.useEffect(() => {
-    // initial
+    if (!signedIn) {
+      setHeadEmoji('🙂');
+      return;
+    }
     (async () => {
-      const session = await getSession();
-      setIsAuthed(!!session);
-      if (session) {
-        const u = await getUser();
-        // Prefer a saved Navatar emoji in user_metadata, else fallback
-        const meta = (u?.user_metadata ?? {}) as Record<string, any>;
-        setHeadEmoji(meta.navatarEmoji ?? meta.avatar_emoji ?? '🙂');
-      }
+      const u = await getUser();
+      const meta = (u?.user_metadata ?? {}) as Record<string, any>;
+      setHeadEmoji(meta.navatarEmoji ?? meta.avatar_emoji ?? '🙂');
     })();
-
-    // live updates (login/logout)
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      const authed = !!session;
-      setIsAuthed(authed);
-      if (!authed) {
-        setHeadEmoji(null);
-      } else {
-        const meta = (session.user?.user_metadata ?? {}) as Record<string, any>;
-        setHeadEmoji(meta.navatarEmoji ?? meta.avatar_emoji ?? '🙂');
-      }
-    });
-
-    return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [signedIn]);
 
   return (
     <header className="nv-nav">
@@ -51,13 +36,15 @@ export default function NavBar() {
           <Link href="/navatar">Navatar</Link>
           <Link href="/passport">Passport</Link>
           <Link href="/turian">Turian</Link>
-          <Link className="nv-cart" href="/cart" aria-label="Cart">🛒</Link>
-
-          {/* NEW: profile head only when authed */}
-          {isAuthed && (
-            <Link href="/profile" className="nv-profile" aria-label="Profile">
-              <ProfileHead emoji={headEmoji ?? '🙂'} />
-            </Link>
+          {signedIn && !loading && (
+            <>
+              <Link className="nv-cart" href="/cart" aria-label="Cart">
+                🛒
+              </Link>
+              <Link href="/profile" className="nv-profile" aria-label="Profile">
+                <ProfileHead emoji={headEmoji} />
+              </Link>
+            </>
           )}
         </nav>
       </div>
