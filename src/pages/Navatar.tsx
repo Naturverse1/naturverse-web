@@ -71,7 +71,7 @@ export default function NavatarPage() {
       <PageHead title="Naturverse — Navatar Creator" description="Design your character and save cards." />
       <Meta title="Navatar Creator — Naturverse" description="Design your character and save cards." />
       <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
-      <main id="main" className="container">
+      <main id="main" data-page="navatar" className="page container">
         <h1>Navatar Creator</h1>
         <p>Choose a base type, customize details, and save your character card.</p>
 
