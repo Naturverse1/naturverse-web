@@ -1,8 +1,11 @@
+import Breadcrumbs from "../../components/Breadcrumbs";
 import { WORLDS } from "../../data/worlds";
 
 export default function WorldsIndex() {
   return (
     <div className="nvrs-section worlds">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Worlds" }]} />
+      <h1>Worlds</h1>
       <section className="nv-grid">
         {WORLDS.map(w => (
           <a key={w.slug} href={`/worlds/${w.slug}`} className="nv-card">
