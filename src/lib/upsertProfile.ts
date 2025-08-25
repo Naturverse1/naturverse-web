@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase } from '@/lib/supabase-client';
 
 export async function upsertProfile(userId: string, email: string | null) {
   const { error } = await supabase.from('profiles').upsert(

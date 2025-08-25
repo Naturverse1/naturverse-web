@@ -1,10 +1,5 @@
 import { useState } from "react";
-import { createClient } from "@supabase/supabase-js";
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!
-);
+import { supabase } from '@/lib/supabase-client';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -67,4 +62,3 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
     </div>
   );
 }
-

@@ -1,5 +1,5 @@
 // Thin wrappers around supabase-js so pages/components don't touch the client directly
-import { supabase } from './supabaseClient';
+import { supabase } from '@/lib/supabase-client';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 
 /**

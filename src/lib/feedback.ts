@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { supabase } from '@/lib/supabase-client';
 
 /** Submit general app/lesson feedback */
 export async function submitFeedback(input: {

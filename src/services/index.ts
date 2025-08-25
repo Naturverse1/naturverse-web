@@ -1,5 +1,5 @@
 // Single entrypoint for all backend helpers
-export * from '../lib/supabaseClient';
+export * from '@/lib/supabase-client';
 export * from '../lib/types';
 export * from '../lib/mappers';
 export * from '../lib/storage';

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "@/lib/supabase-client";
 import { getUserId } from "../lib/session";
 import type { CloudProfile, LocalProfile } from "../types/profile";
 

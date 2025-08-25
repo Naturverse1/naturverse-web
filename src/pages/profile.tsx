@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "../lib/supabaseClient";
+import { supabase } from "@/lib/supabase-client";
 import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";

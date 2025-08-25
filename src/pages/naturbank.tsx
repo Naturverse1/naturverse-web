@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "../supabase/client";
+import { supabase } from "@/lib/supabase-client";
 import Breadcrumbs from "../components/Breadcrumbs";
 import type { NaturTxn } from "../types/bank";
 import { setTitle } from "./_meta";
