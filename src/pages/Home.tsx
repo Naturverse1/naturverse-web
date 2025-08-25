@@ -46,14 +46,14 @@ export default function Home() {
 function Tile({ title, desc, foot, to, disabled }:{
   title:string; desc:string; foot?:string; to?:string; disabled?:boolean
 }) {
-  const inner = (
-    <div className={`tile ${disabled ? 'tileDisabled':''}`} aria-disabled={disabled}>
-      <div className="tileTitle">{title}</div>
-      <div className="tileDesc">{desc}</div>
-      {foot && <div className="tileFoot">{foot}</div>}
+  const core = (
+    <div className={`tile ${disabled ? 'tileDisabled' : ''}`} aria-disabled={disabled}>
+      <h3 className="tileTitle">{title}</h3>
+      <p className="tileDesc">{desc}</p>
+      {foot && <p className="tileFoot">{foot}</p>}
     </div>
   );
-  return disabled || !to ? inner : <a className="tileLink" href={to}>{inner}</a>;
+  return disabled || !to ? core : <a className="tileLink" href={to}>{core}</a>;
 }
 
 function Step({ title, desc }:{title:string; desc:React.ReactNode}) {
