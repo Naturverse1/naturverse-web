@@ -45,9 +45,25 @@
     width: 24px;
     height: 2px;
     margin: 5px 0;
-    background: var(--nv-blue-700);
+    background: #1E40AF;
     border-radius: 1px;
   }
+}
+
+/* Remove blue background box on mobile nav (hamburger menu) */
+.nav-toggle,
+.nav-toggle button,
+.nav-toggle svg {
+  background: none !important;
+  border: none !important;
+  box-shadow: none !important;
+}
+
+/* Make sure only the lines show */
+.nav-toggle svg {
+  fill: #1E40AF; /* blue lines, match site branding */
+  width: 28px;
+  height: 28px;
 }
 
 /* Keep titles/links as-is (don’t inherit the rule above) */

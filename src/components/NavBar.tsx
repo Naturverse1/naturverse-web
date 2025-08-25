@@ -43,7 +43,7 @@ export default function NavBar() {
 
           {/* Mobile hamburger (no blue background) */}
           <button
-            className="nv-hamburger"
+            className="nv-hamburger nav-toggle"
             aria-label="Open menu"
             onClick={() => setOpen(true)}
           >
