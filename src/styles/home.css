@@ -9,100 +9,39 @@
 .home h1 { font-size: clamp(32px, 4.2vw, 44px); line-height: 1.1; margin: 0 0 8px; }
 .home .lead { font-size: clamp(16px, 2.2vw, 18px); color: #3b3f47; max-width: 820px; }
 
-/* Triptych */
-.home .triptych {
+/* Tiles */
+.home .tiles {
   max-width: 980px; margin: 28px auto; padding: 0 16px;
   display: grid; gap: 16px;
   grid-template-columns: repeat(auto-fit, minmax(220px,1fr));
 }
-.home .card {
-  background: #ffffff;
-  border: 1px solid rgba(36,85,255,.12);
-  border-radius: 16px;
-  padding: 16px 18px;
-  box-shadow: 0 6px 18px rgba(0,0,0,.04);
+.home .tile {
+  border:1px solid #BFD1FF;
+  border-radius:16px;
+  padding:16px;
+  text-decoration:none;
+  color:#1b2b4b;
+  background:#fff;
 }
-.home .card h3 { margin: 4px 0 6px; }
+.home .tile h3 { margin:0 0 6px; }
 
-/* How it works panel */
-.home .how { padding: 8px 0 56px; }
-.home .panel {
-  max-width: 980px;
-  margin: 0 auto;
-  padding: 16px;
-  border-radius: 16px;
-  background: #F7FBFF;
-  border: 1px dashed rgba(36,85,255,.20);
-}
+.home .clickable { transition: transform .08s ease; }
+.home .clickable:hover { transform: translateY(-1px); }
 
-/* Vertical flow */
-.home .panel.flow-vertical {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 14px;
-  padding: 22px 18px;
+/* Flow */
+.home .flow {
+  max-width: 980px; margin: 28px auto 56px; padding: 0 16px;
+  display:flex; flex-direction:column; gap:16px;
 }
+.home .flowRow {
+  display:flex; justify-content:space-between; gap:16px;
+  border:1px solid #E4EBFF; border-radius:12px;
+  padding:12px 16px; background:#fff;
+}
+.home .flowTitle { font-weight:800; color:#1b2b4b; }
+.home .flowDesc { color:#334155; }
+.home .flowArrow { align-self:center; color:#2455FF; text-align:center; }
 
-.home .flow-step {
-  width: 100%;
-  max-width: 420px;
-  background: #fff;
-  border: 1px solid rgba(36,85,255,.12);
-  border-radius: 14px;
-  padding: 16px 18px;
-  text-align: center;
-  box-shadow: 0 6px 18px rgba(0,0,0,.04);
-}
-
-.home .flow-step h4 {
-  margin: 0 0 6px;
-  font-size: 16px;
-}
-
-.home .flow-step p {
-  margin: 0;
-  font-size: 14px;
-}
-
-.home .flow-arrow-down {
-  font-size: 22px;
-  color: #2455FF;
-  opacity: .7;
-}
-
-.home .flow-cta {
-  display: block;
-  margin: 20px auto 0;
-  width: max-content;
-}
-
-/* Inline dot separator */
-.home .dot {
-  opacity: .4;
-  margin: 0 6px;
-}
-
-/* Muted note for Natur Coin */
-.home .muted {
-  color: #667085;
-  font-size: 12px;
-}
-
-.home a {
-  color: #2455FF;
-  text-decoration: underline;
-  text-underline-offset: 2px;
-}
-
-/* Icons for Play / Learn / Earn titles */
-.bubble-title {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-
-.bubble-emoji {
-  line-height: 1;
-  transform: translateY(1px); /* subtle optical alignment */
-}
+/* Hub links */
+.home .hubLink { font-weight:800; color:#1b2b4b; text-decoration:none; }
+.home .hubLink:hover { text-decoration:underline; }
