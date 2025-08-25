@@ -15,8 +15,10 @@ export default function App() {
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
         />
-        <main id="main" className="container-nv">
-          <RouterProvider router={router} />
+        <main id="main">
+          <div className="container">
+            <RouterProvider router={router} />
+          </div>
         </main>
       </>
     </CartProvider>
