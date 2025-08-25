@@ -6,3 +6,9 @@
 .nv-links a:hover { text-decoration:underline; }
 .nv-cart { font-size:18px; line-height:1; }
 .nv-profile { display:inline-flex; }
+
+.nv-link.is-disabled {
+  opacity: .45;
+  pointer-events: none;
+  cursor: default;
+}

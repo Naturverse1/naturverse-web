@@ -1,2 +1,4 @@
+# send auth routes to index for SPA routing
+/auth/*   /index.html   200
 /*  /index.html  200
 

@@ -10,3 +10,9 @@
 @media (max-width:640px){
   .nav-link { padding: 10px 8px; }
 }
+
+.nv-link.is-disabled {
+  opacity: .45;
+  pointer-events: none;
+  cursor: default;
+}
