@@ -5,47 +5,36 @@ type Props = { navatar: Navatar };
 
 export default function NavatarCard({ navatar }: Props) {
   return (
-    <article className="card navatar-card nv-card character-card">
-      <div className="card-hero">
-        {navatar.imageDataUrl ? (
-          <img
-            src={navatar.imageDataUrl}
-            alt={navatar.name || navatar.species}
-            loading="lazy"
-          />
-        ) : (
-          <div className="card__placeholder" aria-label="No photo">No photo</div>
-        )}
-      </div>
-
-      <div className="card__header">
-        <div className="card__title">
-          <span role="img" aria-label="leaf">🌿</span> {navatar.name || navatar.species}
+    <div className="character-card">
+      <article className="ccard">
+        <div className="ccard-hero">
+          {navatar.imageDataUrl ? (
+            <img
+              src={navatar.imageDataUrl}
+              alt={navatar.name || navatar.species}
+              loading="lazy"
+            />
+          ) : (
+            <div className="card__placeholder" aria-label="No photo">No photo</div>
+          )}
         </div>
-        <div className="card__meta">
-          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
+
+        <div className="ccard-head">
+          <div className="left">
+            <span className="sprout" aria-hidden="true">🌿</span>
+            <strong className="name">{navatar.name || navatar.species}</strong>
+          </div>
+          <div className="right">
+            {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
+          </div>
         </div>
-      </div>
 
-      <div className="card__section">
-        <strong>Species:</strong> {navatar.species}
-      </div>
-      <div className="card__section">
-        <strong>Powers:</strong> {navatar.powers.join(" · ")}
-      </div>
-      <div className="card__section">
-        <strong>Backstory:</strong>
-        <p className="card__backstory">{navatar.backstory}</p>
-      </div>
-
-      <style>{`
-        .card__header{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px}
-        .card__title{font-weight:700}
-        .card__meta{opacity:.7;font-size:.9rem}
-        .card__placeholder{color:#aaa}
-        .card__section{margin:8px 0}
-        .card__backstory{margin:6px 0}
-      `}</style>
-    </article>
+        <p><span className="label">Species:</span> {navatar.species}</p>
+        <p><span className="label">Powers:</span> {navatar.powers.join(" · ")}</p>
+        <p>
+          <span className="label">Backstory:</span> {navatar.backstory}
+        </p>
+      </article>
+    </div>
   );
 }
