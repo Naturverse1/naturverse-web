@@ -1,26 +1,19 @@
 import { Link } from "react-router-dom";
-import { useAuth } from "@/lib/auth-context";
 
 export default function Home() {
-  const { user, ready } = useAuth();
-  const showAuthButtons = ready && !user;
-
   return (
     <>
       <section className="nv-hero">
         <h1>Welcome to the Naturverse™</h1>
         <p>A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.</p>
-
-        {showAuthButtons && (
-          <div className="nv-ctaRow">
-            <Link className="button nv-btn" to="/signup">
-              Create account
-            </Link>
-            <a className="button nv-btn" href="/auth/google">
-              Continue with Google
-            </a>
-          </div>
-        )}
+        <div className="nv-ctaRow">
+          <Link className="button" to="/signup">
+            Create account
+          </Link>
+          <a className="button" href="/auth/google">
+            Continue with Google
+          </a>
+        </div>
       </section>
 
       <section className="nv-tiles">
