@@ -4,6 +4,12 @@
   --nv-blue-700: #1e4ed8;
   --nv-blue-600: #2563eb;
   --nv-blue-500: #3b82f6;
+  --page-bg: #f8fbff; /* light blue background used across pages */
+}
+
+.page-wrapper {
+  background-color: var(--page-bg);
+  min-height: 100vh;
 }
 
 /* Base */
