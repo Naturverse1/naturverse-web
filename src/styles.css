@@ -12,13 +12,12 @@
 @import "./styles/kingdom.css";
 @import "./styles/brandmark.css";
 @import "./styles/site.css";
-@import "./styles/naturverse-blue.css";
 @import "./styles/nv-images.css";
 @import "./styles/marketplace.css";
 @import "./styles/home.css";
 @import "./styles/theme.css";
 @import "../app/styles/global-sections.css";
-:root { --ink:#0b2545; --muted:#6c7676; --card:#f6f7fb; --ring:#dbe2ef; --radius:14px; }
+:root { --ink:#0b2545; --muted:#6c7676; --card:#f6f7fb; --ring:#dbe2ef; --radius:14px; --naturverse-blue: var(--nv-blue-700); }
 *{box-sizing:border-box} body{margin:0;font-family:ui-sans-serif,system-ui,Segoe UI,Roboto}
 .wrap{max-width:1120px;margin:0 auto;padding:16px}
 .top{display:flex;gap:16px;align-items:center;border-bottom:1px solid var(--ring);padding-bottom:8px}
@@ -73,3 +72,43 @@
   position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px;
   overflow: hidden; clip: rect(0,0,0,0); white-space: nowrap; border: 0;
 }
+
+/* ===== Zones blue scope (isolated) ===== */
+#zones-root {
+  /* Nothing visual here—colors applied to children only */
+}
+
+/* Headings, labels, breadcrumbs, and small text inside Zones */
+#zones-root :is(h1, h2, h3, h4, h5, h6,
+  .lead, .subhead, .desc, .help,
+  .chip, .pill, .tag,
+  small, label, .label,
+  nav.breadcrumbs a, nav.breadcrumbs span,
+  .card-title, .card-subtitle) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Paragraphs, list items, muted/tertiary copy inside cards/panels */
+#zones-root :is(p, li, dt, dd, .muted, .dim, .secondary, .tertiary, .caption) {
+  color: var(--naturverse-blue) !important;
+  /* keep muted “feel” without going gray/black */
+  opacity: 0.92;
+}
+
+/* Inputs / placeholders that looked gray before */
+#zones-root :is(input, textarea, select, .input, .textarea, .select) {
+  color: var(--naturverse-blue) !important;
+}
+#zones-root :is(input::placeholder, textarea::placeholder) {
+  color: var(--naturverse-blue) !important;
+  opacity: 0.6;
+}
+
+/* Badges/chips in Teachers/Partners, etc. (keeps pill bg, forces text blue) */
+#zones-root :is(.badge, .chip, .pill) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Links that were defaulting to black in some panels */
+#zones-root a { color: var(--naturverse-blue) !important; }
+#zones-root a:visited { color: var(--naturverse-blue) !important; }
