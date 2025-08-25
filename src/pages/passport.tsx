@@ -111,14 +111,14 @@ export default function PassportPage() {
     return (
       <div className="nvrs-section passport page-wrap nv-secondary-scope">
         <Breadcrumbs />
-        <main className="passport"><h1>Passport</h1><p>Loading…</p></main>
+        <main id="main" data-page="passport" className="passport"><h1>Passport</h1><p>Loading…</p></main>
       </div>
     );
 
   return (
     <div className="nvrs-section passport page-wrap nv-secondary-scope">
       <Breadcrumbs />
-      <main className="passport">
+      <main id="main" data-page="passport" className="passport">
       <h1>Passport</h1>
       <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
 

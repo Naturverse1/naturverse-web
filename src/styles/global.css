@@ -1,33 +1,8 @@
 @import './tokens.css';
 
-/* ===== Secondary text = blue everywhere ===== */
-:root{
+/* Page background */
+:root {
   --page-bg: #f8fbff; /* light blue background used across pages */
-  /* re-use the brand token you already have */
-  --nv-secondary-text: var(--nv-blue-700);
-}
-
-/* keep it scoped to page content so nav/logo etc. aren’t affected */
-.nvrs-section,
-.nv-page,
-.nv-content {
-  /* common description/secondary selectors across pages */
-  p, small, .nv-sub, .nv-desc, .nv-meta, .nv-help, .nv-lead {
-    color: var(--nv-secondary-text) !important;
-    opacity: 1 !important;        /* override any dimming */
-  }
-}
-
-/* breadcrumbs too */
-.nv-breadcrumbs,
-.nv-breadcrumbs a,
-.nv-breadcrumbs span {
-  color: var(--nv-secondary-text) !important;
-}
-
-/* footer year stays blue (already set, keep for consistency) */
-.site-footer, .site-footer p, .site-footer small {
-  color: var(--nv-secondary-text) !important;
 }
 
 /* ===== Mobile hamburger: lines only, no pill ===== */
@@ -274,6 +249,14 @@ textarea {
   object-fit: contain;
 }
 
+/* PAGE SCOPED, no cross-bleed */
+[data-page="marketplace"] .product-card,
+[data-page="marketplace"] .mp-card,
+[data-page="wishlist"] .wishlist-card,
+[data-page="wishlist"] .wl-card {
+  max-width: 320px;
+}
+
 /* Profile icon in navbar */
 .profile-icon {
   font-size: 1.5rem;
@@ -362,54 +345,10 @@ main,
   }
 }
 
-/* ========= ZONES: force secondary copy to Naturverse blue ========= */
-/* uses your existing CSS var */
-:root { /* keep if already defined */ --naturverse-blue: #2b57ff; }
-
-/* 1) Generic “subtitle/description” lines under H1/H2 inside zones */
-.nvrs-section.zones h1 + p,
-.nvrs-section.zones h2 + p,
-.nvrs-section.zones .panel p,
-.nvrs-section.zones .nv-card p,
-.nvrs-section.zones .subhead,
-.nvrs-section.zones .desc,
-.nvrs-section.zones .lead,
-.nvrs-section.zones .meta,
-.nvrs-section.zones .help,
-.nvrs-section.zones .muted,
-.nvrs-section.zones .tagline {
-  color: var(--naturverse-blue) !important;
-}
-
-/* 2) Tailwind/utility grays that were slipping through in zones */
-.nvrs-section.zones .text-slate-500,
-.nvrs-section.zones .text-slate-600,
-.nvrs-section.zones .text-gray-500,
-.nvrs-section.zones .text-gray-600,
-.nvrs-section.zones .text-neutral-500,
-.nvrs-section.zones .text-neutral-600 {
-  color: var(--naturverse-blue) !important;
-}
-
-/* 3) Per-zone shims (everything except Future) */
-.nvrs-section.arcade p,
-.nvrs-section.music  p,
-.nvrs-section.wellness p,
-.nvrs-section.creator-lab p,
-.nvrs-section.stories p,
-.nvrs-section.quizzes p,
-.nvrs-section.observations p,
-.nvrs-section.culture p,
-.nvrs-section.community p {
-  color: var(--naturverse-blue) !important;
-}
-
-/* keep FUTURE as-is: no rule for .nvrs-section.future */
-
 /* ===== WISHLIST ONLY ===== */
 [data-page="wishlist"] .wl-card,
 .wishlist-page .wl-card {
-  max-width: 280px; /* matches Marketplace card width */
+  max-width: 320px; /* matches Marketplace card width */
   margin: 0 auto 22px;
   padding: 12px;
 }

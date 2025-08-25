@@ -3,7 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function WishlistPage() {
   return (
-    <main className="container">
+    <main id="main" data-page="wishlist" className="container">
       <Breadcrumbs
         items={[
           { label: "Home", href: "/" },
