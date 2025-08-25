@@ -5,6 +5,7 @@ html,
 body {
   background: var(--nv-bg);
   color: var(--nv-text);
+  overflow-x: hidden;
 }
 a {
   color: var(--nv-blue-600);

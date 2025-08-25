@@ -31,76 +31,78 @@ export default function SiteHeader() {
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="container">
-        <Link to="/" className="brand" onClick={() => setOpen(false)}>
-          <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
-          <span>Naturverse</span>
-        </Link>
-        <nav className="nav">
-          <NavLink
-            to="/worlds"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Worlds
-          </NavLink>
-          <NavLink
-            to="/zones"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Zones
-          </NavLink>
-          <NavLink
-            to="/marketplace"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Marketplace
-          </NavLink>
-          <NavLink
-            to="/wishlist"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Wishlist
-          </NavLink>
-          <NavLink
-            to="/naturversity"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Naturversity
-          </NavLink>
-          <NavLink
-            to="/naturbank"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            NaturBank
-          </NavLink>
-          <NavLink
-            to="/navatar"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Navatar
-          </NavLink>
-          <NavLink
-            to="/passport"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Passport
-          </NavLink>
-          <NavLink
-            to="/turian"
-            className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-            onClick={() => setOpen(false)}
-          >
-            Turian
-          </NavLink>
-        </nav>
-        <div style={{ marginLeft: 'auto', display: 'flex', gap: 12, alignItems: 'center' }}>
+        <div className="nav-left">
+          <Link to="/" className="brand" onClick={() => setOpen(false)}>
+            <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
+            <span>Naturverse</span>
+          </Link>
+          <nav className="nav nav-links">
+            <NavLink
+              to="/worlds"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Worlds
+            </NavLink>
+            <NavLink
+              to="/zones"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Zones
+            </NavLink>
+            <NavLink
+              to="/marketplace"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Marketplace
+            </NavLink>
+            <NavLink
+              to="/wishlist"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Wishlist
+            </NavLink>
+            <NavLink
+              to="/naturversity"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Naturversity
+            </NavLink>
+            <NavLink
+              to="/naturbank"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              NaturBank
+            </NavLink>
+            <NavLink
+              to="/navatar"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Navatar
+            </NavLink>
+            <NavLink
+              to="/passport"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Passport
+            </NavLink>
+            <NavLink
+              to="/turian"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Turian
+            </NavLink>
+          </nav>
+        </div>
+        <div className="nav-right">
           <AuthButton />
           <CartBadge />
           <button className="nav-toggle" aria-label="Menu" onClick={() => setOpen((v) => !v)}>
