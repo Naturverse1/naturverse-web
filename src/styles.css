@@ -125,3 +125,29 @@ main.nv-page .card h3 {
   color: var(--naturverse-blue) !important;
 }
 
+/* 🔹 Force Naturverse brand link blue */
+.navbar a.navbar-brand,
+.navbar .brand,
+header .brand,
+header .logo a {
+  color: var(--naturverse-blue) !important;
+  font-size: 1.35rem !important; /* bump up slightly */
+  font-weight: 700 !important;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem; /* spacing between favicon + text */
+}
+
+.navbar a.navbar-brand:hover,
+header .logo a:hover {
+  color: var(--naturverse-blue) !important;
+  text-decoration: none;
+}
+
+/* 🔹 Ensure favicon (brand logo) stays aligned with text */
+.navbar img,
+header img {
+  height: 28px !important;   /* scales favicon consistently */
+  width: auto !important;
+}
+
