@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
@@ -6,8 +6,12 @@ import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import './styles/magic.css';
+import { initInteractions } from './init/interactions';
 
 export default function App() {
+  useEffect(() => {
+    initInteractions();
+  }, []);
   return (
     <CartProvider>
       <>
