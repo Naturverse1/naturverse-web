@@ -52,39 +52,45 @@ export async function postScore(game: string, value: number) {
   } catch {}
 }
 
-// ---- SAFE AUTO-STAMPS (per world, at most 1x / day) ----
-const FLAG = process.env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS === 'true';
-const AUTO_KEY = 'naturverse.autoStamp.last'; // { [world]: ISO-string }
+// --- AUTO STAMPS (feature-flagged, once-per-day per world) ---
+const AUTO_FLAG = typeof window !== 'undefined' && (process.env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS === 'true');
+const AUTO_KEY = 'naturverse.autoStamp.last'; // { [world]: ISO }
 
+function readAuto(): Record<string, string> {
+  try { return JSON.parse(localStorage.getItem(AUTO_KEY) || '{}') as Record<string,string>; } catch { return {}; }
+}
+function writeAuto(map: Record<string,string>) {
+  try { localStorage.setItem(AUTO_KEY, JSON.stringify(map)); } catch {}
+}
 function canAutoGrant(world: string) {
-  if (!FLAG) return false;
-  try {
-    const map = JSON.parse(localStorage.getItem(AUTO_KEY) || '{}') as Record<string, string>;
-    const last = map[world] ? new Date(map[world]) : null;
-    if (!last) return true;
-    const now = new Date();
-    const sameDay =
-      last.getFullYear() === now.getFullYear() &&
-      last.getMonth() === now.getMonth() &&
-      last.getDate() === now.getDate();
-    return !sameDay;
-  } catch {
-    return FLAG;
-  }
+  if (!AUTO_FLAG) return false;
+  const map = readAuto();
+  const prev = map[world];
+  if (!prev) return true;
+  const last = new Date(prev); const now = new Date();
+  const sameDay = last.getFullYear()===now.getFullYear() && last.getMonth()===now.getMonth() && last.getDate()===now.getDate();
+  return !sameDay;
+}
+function mark(world: string) {
+  const map = readAuto(); map[world] = new Date().toISOString(); writeAuto(map);
 }
 
-function markAutoGrant(world: string) {
-  try {
-    const map = JSON.parse(localStorage.getItem(AUTO_KEY) || '{}') as Record<string, string>;
-    map[world] = new Date().toISOString();
-    localStorage.setItem(AUTO_KEY, JSON.stringify(map));
-  } catch {}
-}
-
-/** Grant once per day per world (local + cloud), with confetti; no-ops if disabled. */
+/** Grant once per day per world; returns true if granted. */
 export async function autoGrantOncePerDay(world: string) {
-  if (!canAutoGrant(world)) return false;
-  await grantStamp({ world, inc: 1 });
-  markAutoGrant(world);
-  return true;
+  try {
+    if (!canAutoGrant(world)) return false;
+    // reuse your existing grant function; falls back to local if offline
+    const ok = await (typeof grantStamp === 'function'
+      ? grantStamp({ world, inc: 1 })
+      : Promise.resolve(true));
+    mark(world);
+    window.dispatchEvent(new CustomEvent('natur:stamp-granted', { detail: { world } }));
+    return !!ok;
+  } catch { return false; }
+}
+
+/** Dev helper: add ?stamps=reset to URL to clear daily throttle (dev only) */
+if (typeof window !== 'undefined') {
+  const p = new URLSearchParams(location.search);
+  if (p.get('stamps') === 'reset') localStorage.removeItem(AUTO_KEY);
 }
