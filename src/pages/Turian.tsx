@@ -98,96 +98,100 @@ export default function TurianPage() {
 
   return (
     <div id="turian-page" className="nvrs-section turian nv-secondary-scope">
-        <Page
-          title="Turian the Durian"
-          subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet."
-          dataPage="turian"
-        >
-      <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
+      <Page
+        title="Turian the Durian"
+        subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet."
+        dataPage="turian"
+      >
+        <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
 
-      <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
-        {mascotSrc ? (
-          <Img src={mascotSrc} alt="Turian favicon" width={32} height={32} style={{ borderRadius: 8 }} />
-        ) : (
-          <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
-        )}
-        <div>
-          <strong>Chat with Turian</strong>
-          <div className="nv-muted">Coming soon: live help across Worlds, Zones, and Marketplace.</div>
-        </div>
-      </div>
-
-        {!hasHistory && (
-          <div className="samplePrompts">
-            {prompts.map((s, i) => (
-              <button key={i} className="promptChip" onClick={() => ask(s)}>
-                {s}
-              </button>
-            ))}
-          </div>
-        )}
-
-      <div className="turian-panel">
-        <div className="turian-msgs" ref={listRef} aria-live="polite">
-          {history.map(m => (
-            <div key={m.id} className={"msg " + m.role}>
-              {m.role === "turian" && (
-                <div className="turian-avatar">
-                  <Img
-                    src="/favicon.ico"
-                    alt="Turian"
-                    width={28}
-                    height={28}
-                    className="turian-avatar-img"
-                    style={{ borderRadius: 6 }}
-                  />
-                </div>
+        <section className="turian-chat">
+          <div className="chatCard">
+            <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
+              {mascotSrc ? (
+                <Img src={mascotSrc} alt="Turian favicon" width={32} height={32} style={{ borderRadius: 8 }} />
+              ) : (
+                <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
               )}
-              <div className="bubble">
-                {m.text.split("\n").map((ln, i) => <p key={i}>{ln}</p>)}
+              <div>
+                <strong>Chat with Turian</strong>
+                <div className="nv-muted">Coming soon: live help across Worlds, Zones, and Marketplace.</div>
               </div>
             </div>
-          ))}
-          {!hasHistory && (
-            <div className="msg turian">
-              <div className="turian-avatar">
-                <Img
-                  src="/favicon.ico"
-                  alt="Turian"
-                  width={28}
-                  height={28}
-                  className="turian-avatar-img"
-                  style={{ borderRadius: 6 }}
+
+            {!hasHistory && (
+              <div className="samplePrompts">
+                {prompts.map((s, i) => (
+                  <button key={i} className="promptChip" onClick={() => ask(s)}>
+                    {s}
+                  </button>
+                ))}
+              </div>
+            )}
+
+            <div className="turian-panel">
+              <div className="turian-msgs" ref={listRef} aria-live="polite">
+                {history.map(m => (
+                  <div key={m.id} className={"msg " + m.role}>
+                    {m.role === "turian" && (
+                      <div className="turian-avatar">
+                        <Img
+                          src="/favicon.ico"
+                          alt="Turian"
+                          width={28}
+                          height={28}
+                          className="turian-avatar-img"
+                          style={{ borderRadius: 6 }}
+                        />
+                      </div>
+                    )}
+                    <div className="bubble">
+                      {m.text.split("\n").map((ln, i) => <p key={i}>{ln}</p>)}
+                    </div>
+                  </div>
+                ))}
+                {!hasHistory && (
+                  <div className="msg turian">
+                    <div className="turian-avatar">
+                      <Img
+                        src="/favicon.ico"
+                        alt="Turian"
+                        width={28}
+                        height={28}
+                        className="turian-avatar-img"
+                        style={{ borderRadius: 6 }}
+                      />
+                    </div>
+                    <div className="bubble">
+                      <p>Try a suggestion above or ask something like:</p>
+                      <p><em>“Give me 3 eco-quests for Madagas­caria.”</em></p>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              <form className="turian-input inputRow" onSubmit={onSubmit}>
+                <input
+                  aria-label="Ask Turian"
+                  placeholder="Ask Turian anything…"
+                  value={text}
+                  onChange={(e) => setText(e.target.value)}
                 />
-              </div>
-              <div className="bubble">
-                <p>Try a suggestion above or ask something like:</p>
-                <p><em>“Give me 3 eco-quests for Madagas­caria.”</em></p>
-              </div>
+                <button className="btn" type="submit">Ask</button>
+                <button
+                  type="button"
+                  className="btn outline"
+                  onClick={() => { setHistory([]); write([]); }}
+                  title="Clear conversation"
+                >
+                  Clear
+                </button>
+              </form>
             </div>
-          )}
-        </div>
 
-        <form className="turian-input inputWrap" onSubmit={onSubmit}>
-          <input
-            aria-label="Ask Turian"
-            placeholder="Ask Turian anything…"
-            value={text}
-            onChange={(e) => setText(e.target.value)}
-          />
-          <button className="btn" type="submit">Ask</button>
-          <button
-            type="button"
-            className="btn outline"
-            onClick={() => { setHistory([]); write([]); }}
-            title="Clear conversation"
-          >
-            Clear
-          </button>
-        </form>
-      </div>
-
-      <p className="meta">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
+            <p className="fineprint">Coming soon: real AI tutor connected across Worlds, Zones, Marketplace, and Naturbank; context-aware hints; quest generation; and Supabase history.</p>
+          </div>
+        </section>
       </Page>
     </div>
   );
