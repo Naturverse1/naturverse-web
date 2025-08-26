@@ -26,7 +26,10 @@ export default function WishlistPage() {
             const item = LOOKUP[id];
             if (!item) return null;
             return (
-              <article key={id} className={`nv-card wl-card ${styles.card}`}>
+              <article
+                key={id}
+                className={`nv-card wl-card wishlist-card ${styles.card}`}
+              >
                 <Link
                   to={item.href}
                   className={`${styles.imageWrap} imageWrap`}
@@ -40,7 +43,7 @@ export default function WishlistPage() {
                 <h3>
                   <Link to={item.href}>{item.name}</Link>
                 </h3>
-                <button className="btn-danger" onClick={() => toggleSave(id)}>
+                <button className="remove" onClick={() => toggleSave(id)}>
                   Remove
                 </button>
               </article>
