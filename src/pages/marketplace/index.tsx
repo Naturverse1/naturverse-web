@@ -26,7 +26,7 @@ export default function MarketplacePage(){
             <p className="price">${p.price.toFixed(2)}</p>
             <div className="actions">
               <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image} />
-              <SaveButton id={p.id} />
+              <SaveButton id={`product:${p.id}`} kind="product" title={p.name} href={p.href} />
             </div>
           </article>
         ))}
