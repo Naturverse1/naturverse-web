@@ -376,3 +376,133 @@ a:hover {
   object-fit: cover;  /* fills the frame like your “perfect” version */
   object-position: center;
 }
+
+/************ ZONES (all levels) ************/
+.zones-page h2,
+.zones-page h3,
+.zones-page .section-title,
+.zones-page .card-title,
+.zones-page a,
+.zones-page .label,
+.zones-page strong,
+.zones-page .subtitle,
+.zones-page .price,
+.zones-page .amount { color: var(--naturverse-blue) !important; }
+
+.zones-page button,
+.zones-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/************ NATURBANK ************/
+.naturbank-page h2,
+.naturbank-page h3,
+.naturbank-page .section-title,
+.naturbank-page .card-title,
+.naturbank-page a,
+.naturbank-page .label,
+.naturbank-page strong,
+.naturbank-page .subtitle,
+.naturbank-page .price,
+.naturbank-page .amount { color: var(--naturverse-blue) !important; }
+
+.naturbank-page button,
+.naturbank-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* keep tiles/cards proportional & not squished */
+.naturbank-page .card,
+.naturbank-page .tile {
+  align-items: stretch;
+}
+
+/************ NAVATAR ************/
+.navatar-page h2,
+.navatar-page h3,
+.navatar-page .section-title,
+.navatar-page .card-title,
+.navatar-page a,
+.navatar-page .label,
+.navatar-page strong,
+.navatar-page .subtitle,
+.navatar-page .stat,
+.navatar-page .price,
+.navatar-page .amount { color: var(--naturverse-blue) !important; }
+
+.navatar-page button,
+.navatar-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* character card specifics */
+.navatar-page .character-card dt,
+.navatar-page .character-card dd { color: var(--naturverse-blue) !important; }
+
+/************ TURIAN (page + chat box) ************/
+/* Turn everything to Naturverse blue like the others */
+.turian-page h2,
+.turian-page h3,
+.turian-page .section-title,
+.turian-page .card-title,
+.turian-page a,
+.turian-page .label,
+.turian-page strong,
+.turian-page .subtitle { color: var(--naturverse-blue) !important; }
+
+.turian-page button,
+.turian-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* 🔧 Fix: chat area was center-locked — force LEFT alignment and normal flow */
+.turian-page .chat-box,
+.turian-page .chat-form,
+.turian-page .chat-form * {
+  text-align: left !important;
+}
+
+/* Inputs & textarea left-aligned and sized normally */
+.turian-page .chat-form input[type="text"],
+.turian-page .chat-form input[type="search"],
+.turian-page .chat-form textarea {
+  text-align: left !important;
+  width: 100%;
+  white-space: normal;
+  word-break: break-word;
+}
+
+/* If a flex container was centering vertically, cancel that */
+.turian-page .chat-row,
+.turian-page .chat-form .row {
+  display: flex;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  gap: 12px;
+}
+
+/* Sample prompts / helper text should flow horizontally from the left */
+.turian-page .prompt-samples {
+  text-align: left !important;
+  display: block !important;     /* override any flex/center grid */
+}
+.turian-page .prompt-samples .sample {
+  display: inline-block;
+  margin-right: 12px;
+}
+
+/* Kill any accidental absolute/center positioning that stacked huge text */
+.turian-page .chat-overlay,
+.turian-page .promo-copy {
+  position: static !important;
+  transform: none !important;
+}
+
