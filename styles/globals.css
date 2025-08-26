@@ -575,66 +575,40 @@ footer a:hover {
    Cart Item Layout Fix
    ===================== */
 .cart-page .cart-item {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  /* make the card wider */
-  width: 100%;
-  max-width: 700px;
-  margin: 1rem auto;
-  padding: 1rem;
-
-  border: 2px solid rgba(46,107,255,.2);
-  border-radius: 16px;
-  background: #fff;
-  box-shadow: 0 3px 6px rgba(0,0,0,.08);
+  width: 100%;              /* fill the parent box */
+  max-width: 600px;         /* keep it reasonable on desktop */
+  margin: 0 auto;           /* center inside parent */
+  display: flex;            /* use flexbox for layout */
+  align-items: center;      /* vertical alignment */
+  justify-content: space-between; /* spread content */
+  padding: 12px 16px;
+  border: 1px solid var(--naturverse-blue);
+  border-radius: 8px;
+  background: white;
 }
 
-/* Thumbnail */
+/* Fix spacing for elements inside cart item */
 .cart-page .cart-item img {
-  width: 96px;
+  width: 60px;
   height: auto;
-  margin-right: 1rem;
-  flex-shrink: 0;
-  object-fit: contain;
+  margin-right: 12px;
 }
 
-/* Product info + name/price block */
-.cart-page .cart-item .product-info {
+.cart-page .cart-item .cart-details {
   flex: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
+  margin: 0 12px;
   color: var(--naturverse-blue);
-  font-weight: 600;
 }
 
-/* Quantity control now sits comfortably */
-.cart-page .cart-item .qty {
-  display: inline-flex;
+.cart-page .cart-item .cart-qty {
+  display: flex;
   align-items: center;
-  gap: 0.5rem;
-  margin-left: 1rem;
+  gap: 8px;
 }
-.cart-page .cart-item .qty button {
-  width: 44px;
-  height: 44px;
-  border-radius: 12px;
-  border: 2px solid var(--naturverse-blue);
-  background: #fff;
+
+.cart-page .cart-item .cart-price {
+  font-weight: bold;
   color: var(--naturverse-blue);
-  font-size: 22px;
-  font-weight: 700;
-}
-.cart-page .cart-item .qty input {
-  width: 70px;
-  height: 44px;
-  text-align: center;
-  border: 2px solid var(--naturverse-blue);
-  border-radius: 12px;
-  font-size: 18px;
-  font-weight: 600;
 }
 
 /* =========================
