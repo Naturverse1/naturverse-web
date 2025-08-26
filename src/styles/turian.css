@@ -182,3 +182,23 @@
 /* Spacing tweaks so the panel breathes on mobile */
 .turian .card { padding: 18px; }
 .turian .chatCard { padding: 20px; border-radius: 16px; }
+
+/* Turian chat box layout fix */
+.chat-container,
+.chat-messages {
+  display: flex;
+  flex-direction: row !important;
+  align-items: flex-start !important;
+  justify-content: flex-start !important;
+  flex-wrap: wrap;
+  text-align: left !important;
+  margin-left: 0 !important;
+}
+
+/* Make text horizontal, left-aligned */
+.chat-message {
+  display: inline-block;
+  margin: 4px 8px;
+  color: var(--naturverse-blue) !important;
+  white-space: normal;
+}
