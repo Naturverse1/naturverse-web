@@ -5,6 +5,45 @@
   --page-bg: #f8fbff; /* light blue background used across pages */
 }
 
+/* ---- Naturverse Navbar Brand ---- */
+:root {
+  /* tweak these once and all pages follow */
+  --nv-logo-size-sm: 40px;   /* mobile */
+  --nv-logo-size-md: 44px;   /* tablets */
+  --nv-logo-size-lg: 48px;   /* desktop */
+}
+
+/* consistent text color token already in your project */
+.text-nv-blue, .nv-brand { color: var(--naturverse-blue) !important; }
+
+.nv-logo {
+  width: var(--nv-logo-size-sm);
+  height: var(--nv-logo-size-sm);
+  display: block;            /* avoid inline-img baseline gap */
+  flex-shrink: 0;            /* never collapse in tight rows */
+}
+
+@media (min-width: 640px) {
+  .nv-logo {
+    width: var(--nv-logo-size-md);
+    height: var(--nv-logo-size-md);
+  }
+}
+
+@media (min-width: 1024px) {
+  .nv-logo {
+    width: var(--nv-logo-size-lg);
+    height: var(--nv-logo-size-lg);
+  }
+}
+
+/* Optional: balance wordmark size without changing your layout */
+.nv-brand {
+  font-weight: 800;
+  font-size: clamp(1.125rem, 1.6vw + 0.6rem, 1.5rem); /* ~18–24px fluid */
+  line-height: 1;
+}
+
 /* ===== Mobile hamburger: lines only, no pill ===== */
 @media (max-width: 768px){
   .nv-hamburger {

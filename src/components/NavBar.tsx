@@ -13,9 +13,27 @@ export default function NavBar() {
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
-        <Link to="/" className={styles.brand}>
-          Naturverse
-        </Link>
+        {/* Left brand (logo + wordmark) */}
+        <a
+          href="/"
+          className="flex items-center gap-2"
+          aria-label="Naturverse home"
+        >
+          <picture>
+            <source srcSet="/favicon.svg" type="image/svg+xml" />
+            <img
+              src="/favicon-64x64.png"
+              alt="Naturverse"
+              className="nv-logo"
+              width={40}
+              height={40}
+              loading="eager"
+              decoding="async"
+            />
+          </picture>
+
+          <span className="nv-brand text-nv-blue">Naturverse</span>
+        </a>
 
         <nav className={styles.links} aria-label="Primary">
           <Link to="/worlds">Worlds</Link>
