@@ -13,6 +13,7 @@ import './app.css';
 import SkipToContent from './components/SkipToContent';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
+import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
@@ -34,6 +35,22 @@ async function bootstrap() {
 }
 
 bootstrap();
+
+// Prefetch common route chunks at idle
+if ('requestIdleCallback' in window) {
+  (window as any).requestIdleCallback(() => {
+    const routes = import.meta.glob('./routes/**/index.tsx');
+    prefetchGlob(routes);
+  });
+} else {
+  setTimeout(() => {
+    const routes = import.meta.glob('./routes/**/index.tsx');
+    prefetchGlob(routes);
+  }, 100);
+}
+
+// Also prefetch when users hover links
+prefetchOnHover();
 
 // Force lazy loading for any <img> missing it (no deps, safe)
 document.addEventListener('DOMContentLoaded', () => {
