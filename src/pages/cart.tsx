@@ -10,23 +10,14 @@ export default function CartPage() {
       {items.length === 0 ? (
         <p>Your cart is empty.</p>
       ) : (
-        <div className="nv-card">
+        <div className="nv-card cart-card">
           {items.map((it) => (
-            <div
-              key={it.id}
-              style={{
-                display: 'grid',
-                gridTemplateColumns: '64px 1fr auto',
-                gap: '1rem',
-                alignItems: 'center',
-                marginBottom: '1rem',
-              }}
-            >
-              <img src={it.image} alt="" width="64" height="64" style={{ objectFit: 'contain' }} />
+            <div key={it.id} className="cart-line">
+              <img src={it.image} alt="" />
               <div>
-                <div>{it.name}</div>
-                <div className="price">${it.price.toFixed(2)}</div>
-                <div style={{ display: 'flex', gap: '.5rem', marginTop: '.25rem' }}>
+                <div className="title">{it.name}</div>
+                <div className="meta price">${it.price.toFixed(2)}</div>
+                <div className="qty-group">
                   <div className="qty">
                     <button onClick={() => dec(it.id)} aria-label="Decrease quantity">
                       −
@@ -41,13 +32,13 @@ export default function CartPage() {
                   </button>
                 </div>
               </div>
-              <div className="price">${(it.qty * it.price).toFixed(2)}</div>
+              <div className="meta price">${(it.qty * it.price).toFixed(2)}</div>
             </div>
           ))}
           <hr />
-          <div className="subtotal" style={{ display: 'flex', justifyContent: 'space-between' }}>
-            <strong>Subtotal</strong>
-            <strong>${subtotal.toFixed(2)}</strong>
+          <div className="subtotal-row subtotal">
+            <strong className="label">Subtotal</strong>
+            <strong className="value">${subtotal.toFixed(2)}</strong>
           </div>
           <button className="btn-primary w-full" style={{ marginTop: '1rem' }}>
             Checkout (stub)

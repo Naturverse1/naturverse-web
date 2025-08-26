@@ -64,7 +64,7 @@ export default function Quizzes() {
   };
 
   return (
-    <div className="page-wrap">
+    <div className="page-wrap zones-page2">
       <Breadcrumbs />
       <main id="main">
       <h1>🎯 Quizzes</h1>
