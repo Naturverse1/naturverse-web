@@ -506,3 +506,16 @@ a:hover {
   transform: none !important;
 }
 
+/* ---- Footer all-blue ---- */
+footer,
+footer a,
+footer p,
+footer span {
+  color: var(--naturverse-blue) !important;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline; /* optional: blue underline on hover */
+}
+
