@@ -1,0 +1,39 @@
+/* ===== NProgress (Naturverse Blue) ===== */
+#nprogress { pointer-events: none; }
+#nprogress .bar {
+  background: var(--naturverse-blue, #2563eb);
+  position: fixed;
+  z-index: 9999;
+  top: 0; left: 0;
+  width: 100%; height: 3px;
+  box-shadow: 0 0 8px rgba(37,99,235,.35);
+}
+#nprogress .peg {
+  display: block; position: absolute; right: 0; width: 100px; height: 100%;
+  opacity: 1; transform: rotate(3deg) translate(0,-4px);
+  box-shadow: 0 0 10px var(--naturverse-blue, #2563eb), 0 0 5px var(--naturverse-blue, #2563eb);
+}
+#nprogress .spinner { display: none; }
+
+/* ===== Skeleton shimmer ===== */
+.nv-skeleton {
+  position: relative; overflow: hidden; border-radius: 12px; background: #e9efff;
+}
+.nv-skeleton::after {
+  content: ""; position: absolute; inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,.6) 50%, rgba(255,255,255,0) 100%);
+  animation: nv-shimmer 1.15s infinite;
+}
+@keyframes nv-shimmer { 100% { transform: translateX(100%); } }
+
+/* Quick sizes you can use */
+.nv-skel-title { height: 28px; margin: 8px 0; }
+.nv-skel-line  { height: 14px; margin: 6px 0; }
+.nv-skel-btn   { height: 44px; border-radius: 14px; }
+
+/* ===== Blur-up images ===== */
+.nv-img { transition: filter .35s ease, opacity .35s ease; }
+.nv-img--blur { filter: blur(14px); opacity: .65; }
+.nv-img--ready { filter: blur(0); opacity: 1; }
+
