@@ -127,3 +127,26 @@ hr,
 .line {
   border-color: var(--naturverse-blue) !important;
 }
+
+/* Navatar Page Fix - force all text to blue */
+.nav-page,
+.nav-page h1,
+.nav-page h2,
+.nav-page h3,
+.nav-page label,
+.nav-page p,
+.nav-page span,
+.nav-page .card,
+.nav-page .card * {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Character Card text */
+.character-card,
+.character-card h1,
+.character-card h2,
+.character-card h3,
+.character-card p,
+.character-card span {
+  color: var(--naturverse-blue) !important;
+}
