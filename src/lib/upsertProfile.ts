@@ -14,12 +14,14 @@ export async function upsertProfile(userId: string, email: string | null) {
     );
     if (error) throw error;
   } catch (err: any) {
-    if (!warned) {
+    if (!warned && import.meta.env.DEV) {
+      // eslint-disable-next-line no-console
       console.info(
         '[naturverse] optional profile upsert unavailable (ok in demo):',
         err?.message ?? err,
       );
       warned = true;
     }
+    // swallow in prod
   }
 }

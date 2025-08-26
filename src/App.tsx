@@ -5,7 +5,7 @@ import { organizationLd, websiteLd } from './lib/jsonld';
 import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
-import CommandPalette from './components/CommandPalette';
+import CommandPaletteSafe from './components/CommandPalette';
 import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
@@ -35,7 +35,7 @@ export default function App() {
       <>
         {/* Global route side-effects (scroll & focus) */}
         <RouteFX />
-        <CommandPalette />
+        <CommandPaletteSafe />
         <script
           type="application/ld+json"
           dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
