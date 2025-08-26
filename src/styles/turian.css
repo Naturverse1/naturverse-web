@@ -113,3 +113,72 @@
   font-size: 13px;
   margin-top: 10px;
 }
+
+/* ===== Turian page – color + layout fix ===== */
+.turian :is(h1,h2,h3,h4,h5,h6, p, span, label, small, a) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Breadcrumbs */
+.turian .breadcrumb,
+.turian .breadcrumb a { color: var(--naturverse-blue) !important; }
+
+/* Only the big page title centered */
+.turian .pageTitle { text-align: center; }
+
+/* Everything inside cards back to LEFT align (the global centering caused the overlap) */
+.turian .card,
+.turian .card *:not(h1):not(h2):not(h3) {
+  text-align: left !important;
+}
+
+/* Chat card heading may stay centered, body left */
+.turian .chatCard .card-title { text-align: center !important; }
+.turian .chatCard .card-text  { text-align: left   !important; }
+
+/* Chat input row: keep it on one line and spaced correctly */
+.turian .chatBar {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+}
+.turian .chatBar input[type="text"],
+.turian .chatBar input[type="search"],
+.turian .chatBar input[type="email"] {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+/* Primary button style (Ask it, etc.) */
+.turian .btn-primary {
+  background: linear-gradient(180deg, #3f7cff 0%, #2452ff 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 6px 0 rgba(25, 55, 170, 0.35);
+}
+.turian .btn-primary:disabled {
+  opacity: .45;
+  box-shadow: none;
+}
+.turian .btn-secondary,
+.turian .btn-outline {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Pills / badges in the panel */
+.turian .badge,
+.turian .pill {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Prevent ghost/overlapping white text from centered wrappers */
+.turian .center-all,
+.turian .text-center-everything {
+  text-align: initial !important;
+}
+
+/* Spacing tweaks so the panel breathes on mobile */
+.turian .card { padding: 18px; }
+.turian .chatCard { padding: 20px; border-radius: 16px; }
