@@ -1,7 +1,6 @@
 import { lazy, Suspense } from 'react'
 import Skeleton from './components/Skeleton'
 
-// Example pages (adjust names/paths to yours)
 const Home        = lazy(()=>import('./pages/Home'))
 const Stories     = lazy(()=>import('./pages/zones/Stories'))
 const Quizzes     = lazy(()=>import('./pages/zones/Quizzes'))
@@ -9,7 +8,11 @@ const CreatorLab  = lazy(()=>import('./pages/zones/creator-lab'))
 const Community   = lazy(()=>import('./pages/zones/Community'))
 const Observations= lazy(()=>import('./pages/zones/Observations'))
 
-export const withSuspense = (el: JSX.Element)=> <Suspense fallback={<div><Skeleton h={24}/><br/><Skeleton h={180}/></div>}>{el}</Suspense>
+export const withSuspense = (el: JSX.Element) => (
+  <Suspense fallback={<div><Skeleton h={24}/><br/><Skeleton h={180}/></div>}>
+    {el}
+  </Suspense>
+)
 
 export const routes = [
   { path: '/',            element: withSuspense(<Home/>) },
