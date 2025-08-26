@@ -4,7 +4,7 @@ import React from "react";
  * Temporary stub for Leaderboard so builds succeed.
  * Replace with a real leaderboard later (scores, player names, etc.)
  */
-export default function Leaderboard() {
+export default function Leaderboard(_props: { game?: string }) {
   return (
     <div
       style={{

@@ -12,6 +12,7 @@ import './styles/nvcard.css';
 import './app.css';
 import SkipToContent from './components/SkipToContent';
 import { supabase } from '@/lib/supabase-client';
+import './runtime-logger';
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();

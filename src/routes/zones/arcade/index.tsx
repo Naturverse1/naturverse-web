@@ -1,9 +1,13 @@
 import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
-import Leaderboard from "../../../components/Leaderboard";
 import { postScore, autoGrantOncePerDay } from "@/lib/rewards";
 import { toast } from "@/components/Toaster";
+import { FLAGS } from "../../../config/flags";
+import { safeLazy } from "../../../components/safeLazy";
+import type { default as Leaderboard } from "../../../components/Leaderboard";
 import "../../../styles/zone-widgets.css";
+
+const LeaderboardSafe = safeLazy<typeof Leaderboard>(() => import("../../../components/Leaderboard"));
 
 export default function Arcade() {
   return (
@@ -17,7 +21,7 @@ export default function Arcade() {
           <div className="zone-title">⚡ Reaction Timer</div>
           <div className="zone-sub">Wait for green, then tap as fast as you can. Best of 5.</div>
           <ReactionTimer />
-          <Leaderboard game="reaction_timer" />
+          {FLAGS.ENABLE_LEADERBOARD ? <LeaderboardSafe game="reaction_timer" /> : null}
         </section>
 
         <section className="zone-card">

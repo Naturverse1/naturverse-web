@@ -6,6 +6,7 @@ import { useCloudProfile } from "../hooks/useCloudProfile";
 import type { LocalProfile } from "../types/profile";
 import { setTitle } from "./_meta";
 import Breadcrumbs from "../components/Breadcrumbs";
+import { lsGet, lsSet } from "../lib/safe";
 
 const K = {
   profile: "naturverse.profile.v1",
@@ -16,21 +17,15 @@ const K = {
 
 export default function ProfilePage() {
   setTitle("Profile");
-  const [p, setP] = useState<LocalProfile>(() => {
-    try {
-      return (
-        JSON.parse(localStorage.getItem(K.profile) || "null") || {
-          displayName: "",
-          email: "",
-          kidSafeChat: false,
-          theme: "system",
-          newsletter: false,
-        }
-      );
-    } catch {
-      return { displayName: "", email: "", kidSafeChat: false, theme: "system", newsletter: false };
-    }
-  });
+  const [p, setP] = useState<LocalProfile>(() =>
+    lsGet(K.profile, {
+      displayName: "",
+      email: "",
+      kidSafeChat: false,
+      theme: "system",
+      newsletter: false,
+    })
+  );
 
   const [avatarFile, setAvatarFile] = useState<File | null>(null);
   const [avatarUrl, setAvatarUrl] = useState("");
@@ -40,7 +35,7 @@ export default function ProfilePage() {
   const { userId, cloud, loading: cloudLoading, saveFromLocal } = useCloudProfile();
 
   useEffect(() => {
-    try { localStorage.setItem(K.profile, JSON.stringify(p)); } catch {}
+    lsSet(K.profile, p);
   }, [p]);
 
   useEffect(() => {
