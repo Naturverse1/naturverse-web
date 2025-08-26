@@ -1,5 +1,5 @@
 import React from 'react';
-import Img from './Img';
+import LazyImage from './LazyImage';
 
 export type CardData = {
   id: string;
@@ -39,7 +39,7 @@ export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
       <div className="nv-card__body">
         <div className="nv-card__avatar">
           {avatarDataUrl ? (
-            <Img src={avatarDataUrl} alt={`${name} avatar`} />
+            <LazyImage src={avatarDataUrl} alt={`${name} avatar`} width="100%" height="100%" />
           ) : (
             <div className="nv-card__avatar--placeholder">Add image</div>
           )}
