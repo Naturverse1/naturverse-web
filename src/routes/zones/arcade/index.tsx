@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { postScore, autoGrantOncePerDay } from "@/lib/rewards";
-import { toast } from "@/components/Toaster";
+import { useToast } from "@/components/Toast";
 import { FLAGS } from "../../../config/flags";
 import { safeLazy } from "../../../components/safeLazy";
 import type { default as Leaderboard } from "../../../components/Leaderboard";
@@ -37,6 +37,7 @@ export default function Arcade() {
 /* ---------- Reaction Timer ---------- */
 function ReactionTimer() {
   type Phase = "idle" | "wait" | "go" | "tooSoon" | "done";
+  const toast = useToast();
   const [phase, setPhase] = useState<Phase>("idle");
   const [results, setResults] = useState<number[]>([]);
   const startAt = useRef<number>(0);
@@ -63,7 +64,7 @@ function ReactionTimer() {
       setResults(next);
       try {
         postScore('reaction_timer', ms * -1);
-        autoGrantOncePerDay('Thailandia').then((granted) => granted && toast('Stamp earned!'));
+        autoGrantOncePerDay('Thailandia').then((granted) => granted && toast({ text: 'Stamp earned!', kind: 'ok' }));
       } catch {}
       if (next.length >= 5) setPhase("done");
       else startRound();

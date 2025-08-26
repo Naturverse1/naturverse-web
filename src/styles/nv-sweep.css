@@ -59,3 +59,6 @@
 
 /* Keep generic anchors blue everywhere (without touching nav) */
 .main a:not(.btn) { color: var(--naturverse-blue); }
+
+:focus-visible { outline: 3px solid var(--naturverse-blue); outline-offset: 2px; }
+#main { outline: none; }

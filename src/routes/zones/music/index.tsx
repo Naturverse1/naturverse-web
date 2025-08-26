@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { autoGrantOncePerDay } from "@/lib/rewards";
-import { toast } from "@/components/Toaster";
+import { useToast } from "@/components/Toast";
 import "../../../styles/zone-widgets.css";
 
   export default function Music() {
@@ -250,6 +250,7 @@ const LYRICS: KLine[] = [
 ];
 
   function Karaoke() {
+    const toast = useToast();
     const [running, setRunning] = useState(false);
     const [bpm, setBpm] = useState(90);
     const [now, setNow] = useState(0);
@@ -274,7 +275,7 @@ const LYRICS: KLine[] = [
       if (now >= last && !grantedRef.current) {
         grantedRef.current = true;
         try {
-          autoGrantOncePerDay('Musiclandia').then((granted) => granted && toast('Stamp earned!'));
+          autoGrantOncePerDay('Musiclandia').then((granted) => granted && toast({ text: 'Stamp earned!', kind: 'ok' }));
         } catch {}
       }
     }, [now, running]);

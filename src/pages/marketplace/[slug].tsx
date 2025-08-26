@@ -26,7 +26,7 @@ export default function ProductPage(){
         <p>{p.blurb}</p>
         <div className="nv-cta">
           <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
-          <SaveButton id={p.id}/>
+          <SaveButton id={`product:${p.id}`} kind="product" title={p.name} href={`/marketplace/${p.id}`} />
         </div>
       </article>
     </main>
