@@ -125,29 +125,48 @@ main.nv-page .card h3 {
   color: var(--naturverse-blue) !important;
 }
 
-/* 🔹 Force Naturverse brand link blue */
+/* 🔹 Naturverse brand (Navbar + Footer) */
 .navbar a.navbar-brand,
 .navbar .brand,
 header .brand,
-header .logo a {
+header .logo a,
+footer .brand,
+footer .logo a,
+footer a[href="/"] {
   color: var(--naturverse-blue) !important;
-  font-size: 1.35rem !important; /* bump up slightly */
+  font-size: 1.35rem !important;
   font-weight: 700 !important;
   display: flex;
   align-items: center;
-  gap: 0.4rem; /* spacing between favicon + text */
+  gap: 0.4rem;
 }
 
 .navbar a.navbar-brand:hover,
-header .logo a:hover {
+header .logo a:hover,
+footer .brand:hover,
+footer .logo a:hover,
+footer a[href="/"]:hover {
   color: var(--naturverse-blue) !important;
   text-decoration: none;
 }
 
-/* 🔹 Ensure favicon (brand logo) stays aligned with text */
+/* 🔹 Footer links (About, Contact, Terms, Privacy, etc.) */
+footer a {
+  color: var(--naturverse-blue) !important;
+  font-weight: 500 !important;
+  text-decoration: none;
+}
+
+footer a:hover {
+  text-decoration: underline;
+  color: var(--naturverse-blue) !important;
+}
+
+/* 🔹 Ensure favicon/logo image scales consistently */
 .navbar img,
-header img {
-  height: 28px !important;   /* scales favicon consistently */
+header img,
+footer img {
+  height: 28px !important;
   width: auto !important;
 }
 
