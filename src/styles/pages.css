@@ -121,3 +121,123 @@
 .lang-content h3 { margin-top: 16px; }
 .lang-content ul  { margin: 6px 0 18px; padding-left: 18px; }
 
+/* ===== Naturverse blue (var already exists) ===== */
+/* Fallback just in case */
+:root { --naturverse-blue: #2563ff; }
+
+/* ---------- CART (inner card wider + tidy line) ---------- */
+.cart-page .cart-card {
+  max-width: 720px;                 /* inner card can breathe on mobile & desktop */
+  width: 100%;
+}
+.cart-page .cart-card .cart-line {
+  display: grid;
+  grid-template-columns: 72px 1fr minmax(140px, 220px); /* img | title/labels | qty group */
+  align-items: center;
+  gap: 14px;
+  padding: 4px 0 10px;
+}
+.cart-page .cart-card .cart-line img,
+.cart-page .cart-card .cart-line .thumb {
+  width: 64px; height: 64px; object-fit: cover; border-radius: 8px;
+}
+.cart-page .cart-card .title,
+.cart-page .cart-card .meta {
+  color: var(--naturverse-blue) !important;
+}
+.cart-page .cart-card .qty-group {
+  display: grid;
+  grid-auto-flow: column;
+  align-items: center;
+  gap: 8px;
+  justify-content: end;
+}
+.cart-page .cart-card .qty-group input[type="number"],
+.cart-page .cart-card .qty-group input[type="text"] {
+  width: 120px; max-width: 160px;
+}
+.cart-page .cart-card .subtotal-row {
+  display: grid; grid-template-columns: 1fr auto; align-items: center;
+}
+.cart-page .cart-card .subtotal-row .label,
+.cart-page .cart-card .subtotal-row .value {
+  color: var(--naturverse-blue) !important;
+}
+
+/* ---------- NAVATAR: fix remaining “secondary” blacks ---------- */
+.navatar-page h2,
+.navatar-page h3,
+.navatar-page .section-title,
+.navatar-page label,
+.navatar-page .field-label,
+.navatar-page .help,
+.navatar-page .eyebrow,
+.navatar-page .muted,
+.navatar-page .card-title,
+.navatar-page .subhead {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Character Card (already blue for you, keep consistent) */
+.navatar-page .character-card h3,
+.navatar-page .character-card .label,
+.navatar-page .character-card .value {
+  color: var(--naturverse-blue) !important;
+}
+
+/* ---------- NATURBANK: labels, stats, subheads ---------- */
+.naturbank-page h2,
+.naturbank-page h3,
+.naturbank-page .section-title,
+.naturbank-page .label,
+.naturbank-page .stat .label,
+.naturbank-page .stat .value,
+.naturbank-page .muted,
+.naturbank-page .subhead,
+.naturbank-page .eyebrow {
+  color: var(--naturverse-blue) !important;
+}
+
+/* ---------- ZONES (second-level screens) ---------- */
+.zones-page2 h2,
+.zones-page2 h3,
+.zones-page2 .section-title,
+.zones-page2 .tool-card .title,
+.zones-page2 .tool-card .subtitle,
+.zones-page2 .muted,
+.zones-page2 .eyebrow,
+.zones-page2 .subhead {
+  color: var(--naturverse-blue) !important;
+}
+
+/* ---------- WORLDS → inside a world (detail pages) ---------- */
+/* Use broad, but scoped selectors to catch seeder text */
+.world-page h2,
+.world-page h3,
+.world-page .section-title,
+.world-page .tile .title,
+.world-page .tile .subtitle,
+.world-page .muted,
+.world-page .eyebrow,
+.world-page .subhead,
+.world-page .label {
+  color: var(--naturverse-blue) !important;
+}
+
+/* ---------- Buttons in these pages (safety, consistent) ---------- */
+.navatar-page .btn,
+.naturbank-page .btn,
+.zones-page2 .btn,
+.world-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* ---------- Don’t let imported “seeder” templates override us ---------- */
+.navatar-page [style*="color:#000"],
+.naturbank-page [style*="color:#000"],
+.zones-page2   [style*="color:#000"],
+.world-page    [style*="color:#000"] {
+  color: var(--naturverse-blue) !important;
+}

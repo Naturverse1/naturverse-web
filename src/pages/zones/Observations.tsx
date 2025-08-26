@@ -145,7 +145,7 @@ export default function Observations() {
   }, [list]);
 
   return (
-    <div className="page-wrap">
+    <div className="page-wrap zones-page2">
       <Breadcrumbs />
       <main id="main">
       <h1>📷🌿 Observations</h1>

@@ -6,7 +6,7 @@ import { setTitle } from "../_meta";
 export default function CreatorLabPage() {
   setTitle("Creator Lab");
   return (
-    <main className="container mx-auto px-4 py-8">
+    <main className="container mx-auto px-4 py-8 zones-page2">
 
       <Breadcrumbs
         items={[

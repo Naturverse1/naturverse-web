@@ -3,7 +3,7 @@ import HubGrid from '../../components/HubGrid';
 
 export default function Naturbank() {
   return (
-    <section className="space-y-6">
+    <section className="space-y-6 naturbank-page">
       <h2 className="text-2xl font-bold">Naturbank</h2>
       <HubGrid>
         <HubCard

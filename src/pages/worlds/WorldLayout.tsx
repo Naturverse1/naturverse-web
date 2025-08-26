@@ -11,7 +11,7 @@ export default function WorldLayout({
   children?: React.ReactNode;
 }) {
   return (
-    <main id="main" className="page-wrap">
+    <main id="main" className="page-wrap world-page">
       <h1>{title}</h1>
       <div className="cards">
         <div className="card">

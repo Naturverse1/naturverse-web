@@ -7,15 +7,17 @@ export default function Page({
   children,
   crumbs = [],
   dataPage,
+  className,
 }: {
   title: string;
   subtitle?: string;
   children: ReactNode;
   crumbs?: { href?: string; label: string }[];
   dataPage?: string;
+  className?: string;
 }) {
   return (
-    <div className="page-wrap">
+    <div className={`page-wrap${className ? ' ' + className : ''}`}> 
       <Breadcrumbs items={crumbs} />
       <main
         id="main"
