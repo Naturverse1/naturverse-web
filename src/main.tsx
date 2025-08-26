@@ -14,7 +14,7 @@ import SkipToContent from './components/SkipToContent';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
-import { warmup } from './boot/warmup';
+import './boot/warmup';
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
@@ -33,8 +33,6 @@ async function bootstrap() {
       </AuthProvider>
     </React.StrictMode>,
   );
-  // kick off after scheduling first paint
-  setTimeout(warmup, 0);
 }
 
 bootstrap();
