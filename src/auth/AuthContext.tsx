@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase-client';
-import { upsertProfile } from '../lib/upsertProfile';
+import { safeProfileUpsert } from '@/lib/safeProfileUpsert';
 
 type AuthCtx = {
   user: User | null;
@@ -30,7 +30,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
 
       if (data.session?.user) {
-        await upsertProfile(data.session.user.id, data.session.user.email);
+        await safeProfileUpsert(supabase, data.session.user, {
+          username: data.session.user.email ?? undefined,
+        });
       }
     })();
 
@@ -40,7 +42,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setLoading(false);
 
       if (s?.user) {
-        upsertProfile(s.user.id, s.user.email);
+        safeProfileUpsert(supabase, s.user, {
+          username: s.user.email ?? undefined,
+        });
       }
     });
 
