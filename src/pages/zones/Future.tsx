@@ -3,7 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 
 export default function FutureZone() {
   return (
-      <div className="page-wrap zones-page2">
+      <div className="page-wrap zones-page zones-page2">
         <Breadcrumbs />
         <main id="main" className="page">
 

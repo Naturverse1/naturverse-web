@@ -10,8 +10,8 @@ import "../../../styles/zone-widgets.css";
 const LeaderboardSafe = safeLazy<typeof Leaderboard>(() => import("../../../components/Leaderboard"));
 
 export default function Arcade() {
-  return (
-    <main className="container">
+    return (
+      <main className="container zones-page">
       <Breadcrumbs />
       <h2 className="section-title">Arcade</h2>
       <p className="section-lead">Mini-games, leaderboards &amp; tournaments.</p>

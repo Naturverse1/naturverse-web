@@ -2,9 +2,9 @@ import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import "../../../styles/zone-widgets.css";
 
-export default function Wellness() {
-  return (
-    <main className="container">
+  export default function Wellness() {
+    return (
+      <main className="container zones-page">
       <Breadcrumbs />
       <h2 className="section-title">Wellness</h2>
       <p className="section-lead">Yoga, breathing, stretches, mindful quests (client-only).</p>
