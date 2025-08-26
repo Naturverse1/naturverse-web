@@ -10,38 +10,42 @@ export default defineConfig({
     splitVendorChunkPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
-      includeAssets: ['favicon.ico', 'favicon.svg', 'icons/*'],
+      includeAssets: ['favicon.ico', 'robots.txt', 'apple-touch-icon.png'],
       manifest: {
         name: 'Naturverse',
         short_name: 'Naturverse',
-        theme_color: '#2b64ff',
-        background_color: '#ffffff',
         start_url: '/',
         display: 'standalone',
+        background_color: '#ffffff',
+        theme_color: '#0ea5e9',
         icons: [
-          { src: '/favicon-128x128.png', sizes: '128x128', type: 'image/png', purpose: 'any' },
-          { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
+          { src: '/pwa-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: '/pwa-512x512.png', sizes: '512x512', type: 'image/png' },
         ],
       },
       workbox: {
         navigateFallback: '/offline.html',
-        globPatterns: ['**/*.{js,css,html,ico,svg,png,webp,woff2}'],
+        // Precache only the essentials so build doesn't fail on large PNGs
+        globPatterns: ['**/*.{js,css,html,svg,ico}'],
+        // Explicitly ignore heavy image folders from precache
+        globIgnores: [
+          '**/kingdoms/**/*.png',
+          '**/Languages/**/*.png',
+          '**/Mapsmain/**/*.png',
+          '**/Marketplace/**/*.png',
+          '**/*.{jpg,jpeg,png,webp,avif,gif}',
+        ],
+        // Runtime caching so images are cached on-demand (fast repeats, smaller SW)
         runtimeCaching: [
           {
             urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'CacheFirst',
+            handler: 'StaleWhileRevalidate',
             options: {
-              cacheName: 'images',
-              expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
-            },
-          },
-          {
-            urlPattern: ({ request }) => request.destination === 'font',
-            handler: 'CacheFirst',
-            options: {
-              cacheName: 'fonts',
-              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
+              cacheName: 'naturverse-images',
+              expiration: {
+                maxEntries: 120,
+                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
+              },
             },
           },
         ],
