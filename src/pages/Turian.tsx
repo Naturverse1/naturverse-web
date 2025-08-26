@@ -14,25 +14,39 @@ const read = (): Msg[] => {
 const write = (v: Msg[]) => { try { localStorage.setItem(K, JSON.stringify(v.slice(-30))); } catch {} };
 
 const SUGGESTIONS: { section: string; items: string[] }[] = [
-  { section: "Worlds", items: [
-    "Give me a 3-stop itinerary for Thailandia.",
-    "Fun facts about penguins in Antarctiland.",
-    "Create a scavenger list for Europalia."
-  ]},
-  { section: "Zones", items: [
-    "Pitch a 1-minute karaoke theme for Music.",
-    "Daily stretch routine for Wellness (5 mins).",
-    "Quest ideas for Creator Lab characters."
-  ]},
-  { section: "Naturbank", items: [
-    "Explain NATUR coin in kid-friendly terms.",
-    "How would a wallet work here (high level)?"
-  ]},
-  { section: "Marketplace", items: [
-    "3 merch ideas tied to Kiwilandia.",
-    "How to word a wishlist description for a tee?"
-  ]},
+  {
+    section: "Worlds",
+    items: [
+      "Give me a 3-stop itinerary for Thailandia.",
+      "Fun facts about penguins in Antarctiland.",
+      "Create a scavenger list for Europalia.",
+    ],
+  },
+  {
+    section: "Zones",
+    items: [
+      "Pitch a 1-minute karaoke theme for Music.",
+      "Daily stretch routine for Wellness (5 mins).",
+      "Quest ideas for Creator Lab characters.",
+    ],
+  },
+  {
+    section: "Naturbank",
+    items: [
+      "Explain NATUR coin in kid-friendly terms.",
+      "How would a wallet work here (high level)?",
+    ],
+  },
+  {
+    section: "Marketplace",
+    items: [
+      "3 merch ideas tied to Kiwilandia.",
+      "How to word a wishlist description for a tee?",
+    ],
+  },
 ];
+const SAMPLE_PROMPTS = SUGGESTIONS.flatMap((g) => g.items);
+
 
 // Use site favicon as Turian's mascot for consistent branding
 const mascotSrc = "/favicon.ico";
@@ -80,10 +94,10 @@ export default function TurianPage() {
   }, [history.length]);
 
   const hasHistory = history.length > 0;
-  const groupedSuggestions = useMemo(() => SUGGESTIONS, []);
+  const prompts = useMemo(() => SAMPLE_PROMPTS, []);
 
   return (
-    <div className="nvrs-section turian nv-secondary-scope">
+    <div id="turian-page" className="nvrs-section turian nv-secondary-scope">
         <Page
           title="Turian the Durian"
           subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet."
@@ -103,22 +117,15 @@ export default function TurianPage() {
         </div>
       </div>
 
-      {!hasHistory && (
-        <div className="turian-suggestions turian-quests">
-          {groupedSuggestions.map(group => (
-            <div className="turian-card" key={group.section}>
-              <div className="turian-card-h">
-                <span className="label">{group.section}</span>
-              </div>
-              <div className="chips">
-                {group.items.map((s, i) => (
-                  <button key={i} className="chip" onClick={() => ask(s)}>{s}</button>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-      )}
+        {!hasHistory && (
+          <div className="samplePrompts">
+            {prompts.map((s, i) => (
+              <button key={i} className="promptChip" onClick={() => ask(s)}>
+                {s}
+              </button>
+            ))}
+          </div>
+        )}
 
       <div className="turian-panel">
         <div className="turian-msgs" ref={listRef} aria-live="polite">
@@ -161,7 +168,7 @@ export default function TurianPage() {
           )}
         </div>
 
-        <form className="turian-input" onSubmit={onSubmit}>
+        <form className="turian-input inputWrap" onSubmit={onSubmit}>
           <input
             aria-label="Ask Turian"
             placeholder="Ask Turian anything…"
