@@ -76,6 +76,7 @@ export default defineConfig({
       'three',
       // add others you always ship:
       // "zustand", "clsx", "dayjs", ...
+      'react-helmet-async',
     ],
   },
   build: {
@@ -95,5 +96,9 @@ export default defineConfig({
       },
     },
     sourcemap: true, // ensure production sourcemaps
+    commonjsOptions: {
+      // allow CJS in node_modules to be bundled
+      include: [/node_modules/],
+    },
   },
 });
