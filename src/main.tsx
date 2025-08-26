@@ -13,6 +13,7 @@ import './styles/nv-sweep.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
+import NVErrorBoundary from './components/NVErrorBoundary';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
@@ -28,10 +29,12 @@ async function bootstrap() {
         <AuthProvider initialSession={initialSession}>
           <SkipLink />
           <ToastProvider>
-            <OfflineBanner />
-            <BaseAuthProvider>
-              <App />
-            </BaseAuthProvider>
+            <NVErrorBoundary>
+              <OfflineBanner />
+              <BaseAuthProvider>
+                <App />
+              </BaseAuthProvider>
+            </NVErrorBoundary>
           </ToastProvider>
         </AuthProvider>
       </React.StrictMode>,

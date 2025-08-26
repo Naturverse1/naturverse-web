@@ -1,5 +1,6 @@
 import React from "react";
 import galleries from "../data/kingdom-galleries.json";
+import LazyImage from "./LazyImage";
 
 type Props = { kingdom: string };
 
@@ -28,19 +29,14 @@ export default function CharacterGrid({ kingdom }: Props) {
               borderRadius: "14px",
               padding: "10px",
               background: "#fff",
+              aspectRatio: "1 / 1",
             }}
           >
-            <img
+            <LazyImage
               src={src}
               alt=""
-              loading="lazy"
-              style={{
-                width: "100%",
-                aspectRatio: "1 / 1",
-                objectFit: "contain",
-                borderRadius: "8px",
-                display: "block",
-              }}
+              width="100%"
+              height="100%"
             />
           </a>
         );

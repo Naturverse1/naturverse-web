@@ -62,3 +62,18 @@
 
 :focus-visible { outline: 3px solid var(--naturverse-blue); outline-offset: 2px; }
 #main { outline: none; }
+
+.btn {
+  background: var(--naturverse-blue);
+  color: #fff;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 12px;
+  box-shadow: 0 6px 0 rgba(11,37,69,.18);
+}
+.btn:active {
+  transform: translateY(1px);
+  box-shadow: 0 5px 0 rgba(11,37,69,.18);
+}
+
+.palette-row:hover { background: #f7faff; }

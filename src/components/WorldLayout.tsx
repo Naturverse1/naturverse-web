@@ -3,6 +3,7 @@ import { KINGDOMS, KingdomId } from '../data/kingdoms';
 import { mapFor } from '../data/maps';
 import '../styles/worlds.css';
 import CharacterGrid from './CharacterGrid';
+import LazyImage from './LazyImage';
 
 type Props = { id: KingdomId };
 
@@ -15,7 +16,7 @@ export default function WorldLayout({ id }: Props) {
 
       {/* Map hero */}
       <section className="world-hero-wrap card">
-        <img src={mapFor(id)} alt={`${k.title} map`} className="world-hero" loading="eager" />
+        <LazyImage src={mapFor(id)} alt={`${k.title} map`} className="world-hero" width="100%" height={520} />
         <div className="hero-meta">
           <h2>World Map</h2>
           <p>Zoom into landmarks, routes, and regions.</p>
