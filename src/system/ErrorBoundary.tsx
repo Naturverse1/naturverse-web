@@ -7,7 +7,6 @@ export class ErrorBoundary extends Component<Props, State> {
   state: State = { hasError: false }
   static getDerivedStateFromError(err: Error) { return { hasError: true, err } }
   componentDidCatch(error: Error, info: any) {
-    // TODO: hook to your telemetry here
     console.error('[AppErrorBoundary]', error, info)
   }
   render() {
