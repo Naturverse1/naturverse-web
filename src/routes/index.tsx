@@ -1,7 +1,7 @@
 import HubCard from '../components/HubCard';
 import HubGrid from '../components/HubGrid';
 import "./Home.css";
-import { Img } from '../components';
+import { NVImage } from '../components';
 
 export default function Home() {
   return (
@@ -9,7 +9,7 @@ export default function Home() {
       {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
         <h1>
-          <Img
+          <NVImage
             className="brandmark"
             src="/favicon-32x32.png"
             srcSet="/favicon-32x32.png 1x, /favicon-64x64.png 2x"
