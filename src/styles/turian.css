@@ -202,3 +202,82 @@
   color: var(--naturverse-blue) !important;
   white-space: normal;
 }
+
+/* ===== Turian page only =====
+   Wrap the page in an id or class like <main id="turian-page"> …
+   (If you already have one, keep it; these selectors include common fallbacks.)
+*/
+#turian-page,
+[data-route="turian"],
+.page--turian {}
+
+/* 1) Force all “secondary” text + UI to Naturverse blue */
+#turian-page a,
+#turian-page h1, #turian-page h2, #turian-page h3,
+#turian-page .title,
+#turian-page .subtitle,
+#turian-page .label,
+#turian-page .price,
+#turian-page .fineprint,
+#turian-page .muted,
+#turian-page .pill,
+#turian-page .link {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Buttons */
+#turian-page .btn-primary {
+  background: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border-color: var(--naturverse-blue) !important;
+}
+#turian-page .btn-ghost,
+#turian-page .btn-outline {
+  background: transparent !important;
+  color: var(--naturverse-blue) !important;
+  border: 2px solid var(--naturverse-blue) !important;
+}
+
+/* 2) Fix the “sample prompts” text: stop centering, stop stacking.
+      Make them left-aligned chips in a horizontal scroll row. */
+#turian-page .samplePrompts,
+#turian-page .comingSoonCopy {
+  /* kill any inherited centering/absolute positioning */
+  position: static !important;
+  display: block !important;
+  text-align: left !important;
+  margin: .25rem 0 0 0 !important;
+  white-space: normal !important;
+  word-break: break-word;
+  overflow-wrap: anywhere;
+}
+
+/* If those prompts live in a flex row that was vertically centered, un-center it */
+#turian-page .chatDemoRow { align-items: stretch !important; }
+
+/* Turn the prompts into horizontal chips (scrollable) */
+#turian-page .samplePrompts {
+  display: flex !important;
+  gap: .6rem;
+  overflow-x: auto;
+  padding: .25rem 0;
+}
+#turian-page .samplePrompts::-webkit-scrollbar { height: 6px; }
+#turian-page .promptChip {
+  flex: 0 0 auto;
+  padding: .5rem .75rem;
+  border-radius: 999px;
+  border: 2px solid var(--naturverse-blue);
+  color: var(--naturverse-blue);
+  background: rgba(40, 120, 255, .06);
+  white-space: nowrap;
+}
+
+/* 3) Input row: keep left alignment inside the chat box */
+#turian-page .inputWrap { display: flex; gap: .75rem; align-items: center; }
+#turian-page .inputWrap input[type="text"],
+#turian-page .inputWrap textarea { text-align: left !important; }
+
+/* Footer blurb under the chat box */
+#turian-page .fineprint { text-align: left !important; margin-left: 0 !important; }
