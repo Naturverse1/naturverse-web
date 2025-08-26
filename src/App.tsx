@@ -17,7 +17,7 @@ export default function App() {
   return (
     <CartProvider>
       <>
-        {/* Global route visual effects (page fade-in) */}
+        {/* Global route side-effects (scroll & focus) */}
         <RouteFX />
         <script
           type="application/ld+json"
@@ -37,4 +37,3 @@ export default function App() {
     </CartProvider>
   );
 }
-
