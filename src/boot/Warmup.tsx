@@ -1,19 +1,13 @@
 import { useEffect } from "react";
 
 function onIdle(cb: () => void) {
-  // Polyfill requestIdleCallback
-  // @ts-ignore
-  if (typeof window !== "undefined" && window.requestIdleCallback) {
+  if (typeof window !== "undefined" && "requestIdleCallback" in window) {
     // @ts-ignore
     return window.requestIdleCallback(cb);
   }
-  return setTimeout(cb, 150);
+  return setTimeout(cb, 120);
 }
 
-/**
- * Preload popular routes + chunks during idle time.
- * All imports are wrapped in catch() to avoid breaking if missing.
- */
 export default function Warmup() {
   useEffect(() => {
     const loaders: Array<() => Promise<unknown>> = [
@@ -33,13 +27,13 @@ export default function Warmup() {
       () => import("../routes/Passport").catch(() => {}),
       () => import("../pages/Turian").catch(() => {}),
       () => import("../routes/Turian").catch(() => {}),
-      // Zone subroutes
+      // zones subroutes
       () => import("../routes/zones/arcade/index").catch(() => {}),
       () => import("../routes/zones/music/index").catch(() => {}),
     ];
 
     loaders.forEach((load, i) => {
-      onIdle(() => setTimeout(() => load(), i * 120));
+      onIdle(() => setTimeout(() => load(), i * 150));
     });
   }, []);
 
