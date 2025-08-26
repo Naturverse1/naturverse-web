@@ -101,17 +101,18 @@ export default function NaturBankPage() {
 
   if (loading)
     return (
-      <main id="naturbank">
-        <div id="main" data-page="naturbank">
-          <h1>NaturBank</h1>
-          <p>Loading…</p>
-        </div>
+      <main id="main" data-page="naturbank" className="naturbank-page">
+        <h1>NaturBank</h1>
+        <p>Loading…</p>
       </main>
     );
 
   return (
-    <main id="naturbank">
-      <div id="main" data-page="naturbank" className="nvrs-section naturbank page-wrap nv-secondary-scope">
+    <main
+      id="main"
+      data-page="naturbank"
+      className="nvrs-section naturbank page-wrap nv-secondary-scope naturbank-page"
+    >
       <Breadcrumbs />
       <div className="bank">
       <h1>NaturBank</h1>
@@ -168,7 +169,6 @@ export default function NaturBankPage() {
       </section>
 
       <p className="muted small">Coming soon: real wallet connect, custodial accounts, and redemptions.</p>
-      </div>
       </div>
     </main>
   );
