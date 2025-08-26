@@ -4,9 +4,9 @@ import { autoGrantOncePerDay } from "@/lib/rewards";
 import { toast } from "@/components/Toaster";
 import "../../../styles/zone-widgets.css";
 
-export default function Music() {
-  return (
-    <main className="container">
+  export default function Music() {
+    return (
+      <main className="container zones-page">
       <Breadcrumbs />
       <h2 className="section-title">Music</h2>
       <p className="section-lead">Karaoke, beats &amp; song maker (client-only).</p>

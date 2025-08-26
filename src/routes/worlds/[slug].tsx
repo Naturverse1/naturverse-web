@@ -11,11 +11,11 @@ export default function WorldDetail() {
   const folder = SLUG_TO_FOLDER[slug];
   if (!world) return <p>World not found.</p>;
 
-  return (
-    <article>
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/worlds", label: "Worlds" }, { label: world.title }]} />
-      <h1>{world.title}</h1>
-      <p>Zoom into landmarks, routes, and regions.</p>
+    return (
+      <article className="world-page">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/worlds", label: "Worlds" }, { label: world.title }]} />
+        <h1>{world.title}</h1>
+        <p>Zoom into landmarks, routes, and regions.</p>
 
       <div className="nv-hero-img-wrapper">
         <img

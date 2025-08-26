@@ -3,7 +3,7 @@ import { FOOTER_LINKS } from "../data/footer";
 
 export default function Footer() {
   return (
-    <footer>
+    <footer className="site-footer">
       <div className="container" style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
         <small style={{ color: "var(--nv-blue-600)" }}>
           © {new Date().getFullYear()} Naturverse™

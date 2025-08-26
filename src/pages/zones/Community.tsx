@@ -130,7 +130,7 @@ export default function Community() {
   };
 
   return (
-    <div className="page-wrap zones-page2">
+    <div className="page-wrap zones-page zones-page2">
       <Breadcrumbs />
       <main id="main">
       <h1>🗳️🌍 Community</h1>

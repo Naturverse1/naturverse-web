@@ -1,0 +1,61 @@
+/* Naturverse blue sweep: scoped so it won't surprise other pages */
+:root {
+  --naturverse-blue: var(--nv-blue-700, #2b64ff);
+}
+
+/* Footer links */
+.site-footer a,
+.footer a { color: var(--naturverse-blue) !important; }
+
+/* --- NaturBank --- */
+.naturbank-page h1,
+.naturbank-page h2,
+.naturbank-page h3,
+.naturbank-page .label,
+.naturbank-page .section-title,
+.naturbank-page .card-title,
+.naturbank-page .balance-title,
+.naturbank-page .transactions-title,
+.naturbank-page .tile-title { color: var(--naturverse-blue) !important; }
+
+.naturbank-page .btn,
+.naturbank-page button {
+  background: var(--naturverse-blue);
+  color: white !important;
+  border: none;
+}
+
+/* --- Navatar Creator --- */
+.navatar-page h1,
+.navatar-page h2,
+.navatar-page h3,
+.navatar-page .section-title,
+.navatar-page label,
+.navatar-page .label,
+.navatar-page .card-title { color: var(--naturverse-blue) !important; }
+
+.navatar-page .btn,
+.navatar-page button {
+  background: var(--naturverse-blue);
+  color: white !important;
+  border: none;
+}
+
+/* --- Zones hub & child pages --- */
+.zones-page h1,
+.zones-page h2,
+.zones-page h3,
+.zones-page .section-title,
+.zones-page .card-title,
+.zones-page .label { color: var(--naturverse-blue) !important; }
+
+/* --- Worlds (internal/zoom) --- */
+.world-page h1,
+.world-page h2,
+.world-page h3,
+.world-page .section-title,
+.world-page .card-title,
+.world-page .label { color: var(--naturverse-blue) !important; }
+
+/* Keep generic anchors blue everywhere (without touching nav) */
+.main a:not(.btn) { color: var(--naturverse-blue); }

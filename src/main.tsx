@@ -9,7 +9,9 @@ import './styles/edu.css';
 import './main.css';
 import './styles/nvcard.css';
 import './app.css';
+import './styles/nv-sweep.css';
 import SkipToContent from './components/SkipToContent';
+import OfflineBanner from './components/OfflineBanner';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
@@ -22,13 +24,14 @@ async function bootstrap() {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
-      <AuthProvider initialSession={initialSession}>
-        <SkipToContent />
-        <BaseAuthProvider>
-          <App />
-        </BaseAuthProvider>
-      </AuthProvider>
-    </React.StrictMode>,
+        <AuthProvider initialSession={initialSession}>
+          <SkipToContent />
+          <OfflineBanner />
+          <BaseAuthProvider>
+            <App />
+          </BaseAuthProvider>
+        </AuthProvider>
+      </React.StrictMode>,
   );
 }
 

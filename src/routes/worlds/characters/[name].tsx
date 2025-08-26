@@ -10,11 +10,11 @@ export default function CharacterPage() {
     (ext) => `/kingdoms/${folder}/${fileGuess}${ext}`,
   );
 
-  return (
-    <div>
-      <nav className="text-sm" aria-label="Breadcrumb">
-        <Link to="/">Home</Link> <span>/</span>{" "}
-        <Link to="/worlds">Worlds</Link> <span>/</span>{" "}
+    return (
+      <div className="world-page">
+        <nav className="text-sm" aria-label="Breadcrumb">
+          <Link to="/">Home</Link> <span>/</span>{" "}
+          <Link to="/worlds">Worlds</Link> <span>/</span>{" "}
         <Link to={`/worlds/${slug}`}>{folder}</Link> <span>/</span>{" "}
         <span className="font-medium">{fileGuess}</span>
       </nav>
