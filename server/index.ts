@@ -6,6 +6,7 @@ import { prisma } from './db';
 import { registerRoutes } from './routes';
 import { observations } from './routes/observations';
 import todosRouter from './routes/todos';
+import turianChatRouter from './routes/turian-chat';
 import { setupVite, serveStatic, log } from './vite';
 
 const app = express();
@@ -30,6 +31,7 @@ app.get('/api/db/health', async (req, res) => {
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/api/turian-chat', turianChatRouter);
 
 app.use((req, res, next) => {
   const start = Date.now();
