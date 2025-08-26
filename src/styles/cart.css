@@ -242,3 +242,47 @@
   color: var(--nv-blue-600);
   cursor: pointer;
 }
+/* ==== Cart Page Fix ==== */
+.cart :is(h1, h2, h3, h4, h5, h6, p, span, label, small, a, strong) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Breadcrumbs */
+.cart .breadcrumb,
+.cart .breadcrumb a {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Prices + subtotal labels */
+.cart .price,
+.cart .subtotal,
+.cart td,
+.cart th {
+  color: var(--naturverse-blue) !important;
+  font-weight: 600;
+}
+
+/* Checkout button */
+.cart .btn-primary {
+  background: linear-gradient(180deg, #3f7cff 0%, #2452ff 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 6px 0 rgba(25, 55, 170, 0.35);
+}
+.cart .btn-primary:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
+
+/* Quantity controls */
+.cart .qty-control button {
+  border: 2px solid var(--naturverse-blue);
+  color: var(--naturverse-blue);
+  background: #fff;
+  font-weight: bold;
+}
+.cart .qty-control input {
+  border: 1px solid var(--naturverse-blue);
+  color: var(--naturverse-blue);
+  text-align: center;
+}
