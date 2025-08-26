@@ -5,6 +5,8 @@ export type Database = {
         Row: {
           id: string;
           email: string | null;
+          username: string | null;
+          full_name: string | null;
           display_name: string | null;
           avatar_url: string | null;
           kid_safe: boolean | null;
@@ -15,6 +17,8 @@ export type Database = {
         Insert: {
           id: string;
           email?: string | null;
+          username?: string | null;
+          full_name?: string | null;
           display_name?: string | null;
           avatar_url?: string | null;
           kid_safe?: boolean | null;

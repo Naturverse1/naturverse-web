@@ -14,6 +14,8 @@ end;$$;
 create table if not exists public.profiles (
   id uuid primary key references auth.users(id) on delete cascade,
   email text,
+  username text,
+  full_name text,
   display_name text,
   avatar_url text,
   created_at timestamptz not null default now(),
@@ -26,14 +28,34 @@ for each row execute function public.set_updated_at();
 create or replace function public.handle_new_user()
 returns trigger language plpgsql security definer as $$
 begin
-  insert into public.profiles (id, email)
-  values (new.id, new.email)
-  on conflict (id) do update set email = excluded.email;
+  insert into public.profiles (id, email, full_name, avatar_url)
+  values (
+    new.id,
+    new.email,
+    coalesce(new.raw_user_meta_data->>'full_name',''),
+    new.raw_user_meta_data->>'avatar_url'
+  )
+  on conflict (id) do nothing;
   return new;
 end;$$;
 drop trigger if exists on_auth_user_created on auth.users;
 create trigger on_auth_user_created after insert on auth.users
 for each row execute function public.handle_new_user();
+
+create or replace function public.sync_profile_on_auth_update()
+returns trigger language plpgsql security definer as $$
+begin
+  update public.profiles
+     set full_name = coalesce(new.raw_user_meta_data->>'full_name', full_name),
+         avatar_url = coalesce(new.raw_user_meta_data->>'avatar_url', avatar_url),
+         updated_at = now()
+   where id = new.id;
+  return new;
+end;$$;
+drop trigger if exists on_auth_user_updated on auth.users;
+create trigger on_auth_user_updated
+after update of raw_user_meta_data on auth.users
+for each row execute function public.sync_profile_on_auth_update();
 
 alter table public.profiles enable row level security;
 do $$ begin
