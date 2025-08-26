@@ -1,18 +1,26 @@
 import React from 'react';
 import { Outlet } from 'react-router-dom';
+import { HelmetProvider } from 'react-helmet-async';
+
+import HeadPreloads from '../components/HeadPreloads';
+import RouteProgress from '../components/RouteProgress';
+import Warmup from '../boot/Warmup';
 import SiteHeader from '../components/SiteHeader';
 import Footer from '../components/Footer';
-import RouteProgress from '../components/RouteProgress';
 
 export default function RootLayout() {
   return (
-    <div className="nv-root">
-      <SiteHeader />
+    <HelmetProvider>
+      <HeadPreloads />
       <RouteProgress />
-      <main className="pageRoot">
-        <Outlet />
-      </main>
-      <Footer />
-    </div>
+      <Warmup />
+      <div className="nv-root">
+        <SiteHeader />
+        <main className="pageRoot">
+          <Outlet />
+        </main>
+        <Footer />
+      </div>
+    </HelmetProvider>
   );
 }
