@@ -1,0 +1,63 @@
+/* Naturverse Magic UI (no new deps) */
+
+/* 1) Button Glow --------------------------------------------------------- */
+button,
+.btn,
+.button,
+[role="button"] {
+  transition: box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+}
+button:hover,
+.btn:hover,
+.button:hover,
+[role="button"]:hover {
+  box-shadow: 0 0 10px var(--naturverse-blue, #2563eb),
+              0 6px 16px rgba(37, 99, 235, 0.25);
+  transform: translateY(-2px);
+}
+button:active,
+.btn:active,
+.button:active,
+[role="button"]:active {
+  transform: translateY(0);
+  box-shadow: 0 3px 8px rgba(0,0,0,0.12);
+}
+
+/* 2) Page Fade-In -------------------------------------------------------- */
+/* We toggle these classes on <html> during route changes. */
+.page-enter {
+  opacity: 0;
+  transform: translateY(10px);
+}
+.page-enter-active {
+  opacity: 1;
+  transform: translateY(0);
+  transition: opacity 420ms ease, transform 420ms ease;
+}
+
+/* Reduce motion for users who prefer it */
+@media (prefers-reduced-motion: reduce) {
+  .page-enter,
+  .page-enter-active {
+    opacity: 1 !important;
+    transform: none !important;
+    transition: none !important;
+  }
+  button,
+  .btn,
+  .button,
+  [role="button"] {
+    transition: none !important;
+  }
+}
+
+/* 3) Floating helper (opt-in per element) ------------------------------- */
+.floating {
+  animation: nv-float 4s ease-in-out infinite;
+}
+@keyframes nv-float {
+  0%   { transform: translateY(0); }
+  50%  { transform: translateY(-8px); }
+  100% { transform: translateY(0); }
+}
+
