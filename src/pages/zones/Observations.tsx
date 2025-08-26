@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import Breadcrumbs from '../../components/Breadcrumbs';
 import PhotoUploader from '../../components/PhotoUploader';
-import { Img } from '../../components';
+import { NVImage } from '../../components';
 import { Observation } from '../../lib/observations/types';
 import {
   addObservation,
@@ -190,7 +190,7 @@ export default function Observations() {
                   onClick={() => setSelected(o)}
                   aria-label={`Open ${o.title}`}
                 >
-                  <Img src={o.thumb} alt={o.title} />
+                  <NVImage src={o.thumb} alt={o.title} />
                   <div className="obs-info">
                     <div className="obs-title">{o.title}</div>
                     <div className="tag-row">
@@ -209,7 +209,7 @@ export default function Observations() {
 
             {selected && (
               <aside className="obs-panel">
-                <Img src={selected.src} alt={selected.title} className="obs-full" />
+                <NVImage src={selected.src} alt={selected.title} className="obs-full" />
                 <div className="form-row">
                   <input
                     className="input"

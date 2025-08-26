@@ -1,5 +1,5 @@
 import React from "react";
-import { Img } from "../../components";
+import { NVImage } from "../../components";
 
 export default function WorldLayout({
   title,
@@ -15,7 +15,7 @@ export default function WorldLayout({
       <h1>{title}</h1>
       <div className="cards">
         <div className="card">
-          <Img src={mapSrc} alt={`${title} map`} className="aspect-16x9" />
+          <NVImage src={mapSrc} alt={`${title} map`} className="aspect-16x9" />
           <h2>World Map</h2>
           <p>Zoom into landmarks, routes, and regions.</p>
         </div>

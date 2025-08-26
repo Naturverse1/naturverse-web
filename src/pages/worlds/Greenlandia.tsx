@@ -1,6 +1,6 @@
 import React from "react";
 import WorldLayout from "./_WorldLayout";
-import { Img } from "../../components";
+import { NVImage } from "../../components";
 import Breadcrumbs from "../../components/Breadcrumbs";
 
 type Character = { name: string; src: string };
@@ -25,7 +25,7 @@ export default function GreenlandiaWorld() {
         <div className="characters-grid">
           {chars.map((c) => (
             <article key={c.src} className="character-card">
-                <Img src={c.src} alt={c.name} width={800} height={450} />
+                <NVImage src={c.src} alt={c.name} width={800} height={450} />
               <div className="name">{c.name}</div>
             </article>
           ))}
