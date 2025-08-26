@@ -3,11 +3,7 @@ import { Helmet } from "react-helmet-async";
 export default function HeadPreloads() {
   return (
     <Helmet>
-      {/* Fonts */}
-      <link rel="preconnect" href="https://fonts.googleapis.com" />
-      <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
-      <link rel="dns-prefetch" href="https://fonts.googleapis.com" />
-      <link rel="dns-prefetch" href="https://fonts.gstatic.com" />
+      {/* Inter is self-hosted; no font preconnects needed */}
 
       {/* Favicons */}
       <link rel="preload" as="image" href="/favicon-32x32.png" />
