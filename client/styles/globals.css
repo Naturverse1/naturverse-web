@@ -1,9 +1,26 @@
+/* Inter variable — local, self-hosted via @fontsource-variable */
+@import "@fontsource-variable/inter/index.css";
+
 html,
 body,
 #root {
   height: 100%;
   background: var(--bg);
   color: var(--fg);
+}
+
+html,
+body {
+  font-family: "Inter Variable", "Inter var", ui-sans-serif, system-ui,
+    -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+}
+
+html {
+  font-synthesis-weight: none;
+  font-optical-sizing: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
 }
 
 /* Center pages like Worlds/Zones baseline from #286 */
