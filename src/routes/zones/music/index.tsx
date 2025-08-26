@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
+import { autoGrantOncePerDay } from "@/lib/rewards";
 import "../../../styles/zone-widgets.css";
 
 export default function Music() {
@@ -247,20 +248,33 @@ const LYRICS: KLine[] = [
   { t: 11, text: "sing loud, you’ll do just fine!" },
 ];
 
-function Karaoke() {
-  const [running, setRunning] = useState(false);
-  const [bpm, setBpm] = useState(90);
-  const [now, setNow] = useState(0);
-  const startTime = useRef<number | null>(null);
-  const boxRef = useRef<HTMLDivElement | null>(null);
+  function Karaoke() {
+    const [running, setRunning] = useState(false);
+    const [bpm, setBpm] = useState(90);
+    const [now, setNow] = useState(0);
+    const startTime = useRef<number | null>(null);
+    const boxRef = useRef<HTMLDivElement | null>(null);
+    const grantedRef = useRef(false);
 
-  useEffect(() => {
-    if (!running) return;
-    const start = performance.now();
-    startTime.current = start;
-    const id = setInterval(() => setNow((performance.now() - start) / 1000), 100);
-    return () => clearInterval(id);
-  }, [running]);
+    useEffect(() => {
+      if (!running) return;
+      const start = performance.now();
+      startTime.current = start;
+      const id = setInterval(() => setNow((performance.now() - start) / 1000), 100);
+      return () => clearInterval(id);
+    }, [running]);
+
+    useEffect(() => {
+      if (!running) {
+        grantedRef.current = false;
+        return;
+      }
+      const last = LYRICS[LYRICS.length - 1].t;
+      if (now >= last && !grantedRef.current) {
+        grantedRef.current = true;
+        autoGrantOncePerDay('Musiclandia');
+      }
+    }, [now, running]);
 
   useEffect(() => {
     const liveIndex = LYRICS.findIndex((l, i) => now >= l.t && (i === LYRICS.length - 1 || now < LYRICS[i + 1].t));
