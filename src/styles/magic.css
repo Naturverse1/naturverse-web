@@ -6,6 +6,8 @@ button,
 .button,
 [role="button"] {
   transition: box-shadow 0.25s ease, transform 0.25s ease, opacity 0.25s ease;
+  position: relative;            /* for ripple */
+  overflow: hidden;              /* clip ripple */
 }
 button:hover,
 .btn:hover,
@@ -59,5 +61,24 @@ button:active,
   0%   { transform: translateY(0); }
   50%  { transform: translateY(-8px); }
   100% { transform: translateY(0); }
+}
+
+/* 4) Button Ripple ------------------------------------------------------- */
+.nv-ripple {
+  position: absolute;
+  border-radius: 50%;
+  pointer-events: none;
+  transform: translate(-50%, -50%);
+  width: 12px;
+  height: 12px;
+  background: radial-gradient(circle, rgba(255,255,255,0.35) 0%, rgba(255,255,255,0.15) 40%, rgba(255,255,255,0) 70%);
+  animation: nv-ripple 520ms ease-out forwards;
+  will-change: transform, opacity;
+}
+@keyframes nv-ripple {
+  to {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(12);
+  }
 }
 
