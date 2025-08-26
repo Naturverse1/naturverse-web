@@ -10,7 +10,14 @@ import { initInteractions } from './init/interactions';
 
 export default function App() {
   useEffect(() => {
-    initInteractions();
+    // Defer one frame to ensure DOM is ready and hydration settled
+    try {
+      if (typeof window !== 'undefined') {
+        requestAnimationFrame(() => initInteractions());
+      }
+    } catch (e) {
+      console && console.warn && console.warn('[naturverse] init skipped:', e);
+    }
   }, []);
   return (
     <CartProvider>

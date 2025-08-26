@@ -10,6 +10,8 @@ export function burst({
   colors = ["#2563eb", "#3b82f6", "#60a5fa", "#93c5fd", "#1d4ed8"],
   count = 40,
 }: Point & { colors?: string[]; count?: number }) {
+  // Guard for SSR / non-DOM environments
+  if (typeof window === "undefined" || typeof document === "undefined") return;
   const dpr = Math.max(1, window.devicePixelRatio || 1);
   const canvas = document.createElement("canvas");
   canvas.style.cssText =
