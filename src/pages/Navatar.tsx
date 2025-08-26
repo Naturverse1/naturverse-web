@@ -7,6 +7,7 @@ import NavatarCard from "../components/NavatarCard";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
+import { ShareNavatar } from "../components/ShareNavatar";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
 
@@ -126,16 +127,26 @@ export default function NavatarPage() {
           </div>
         </section>
 
-        <section className="panel">
-          <h2>Character Card</h2>
-          <div className="navatar-card-wrap">
-            <NavatarCard navatar={draft} />
-          </div>
+          <section className="panel">
+            <h2>Character Card</h2>
+            <div className="navatar-card-wrap">
+              <NavatarCard navatar={draft} />
+            </div>
+            <div style={{ marginTop: 12 }}>
+              <ShareNavatar card={{
+                name: draft.name,
+                species: draft.species,
+                date: new Date().toLocaleDateString(),
+                imageUrl: draft.imageDataUrl,
+                powers: draft.powers,
+                backstory: draft.backstory,
+              }} />
+            </div>
 
-          <h3 style={{marginTop:16}}>Library (local)</h3>
-          {library.length === 0 && <p>No saved Navatars yet.</p>}
-          <ul className="lib">
-            {library.map(n => (
+            <h3 style={{marginTop:16}}>Library (local)</h3>
+            {library.length === 0 && <p>No saved Navatars yet.</p>}
+            <ul className="lib">
+              {library.map(n => (
               <li key={n.id}>
                 <button
                   type="button"

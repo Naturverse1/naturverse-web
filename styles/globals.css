@@ -664,3 +664,8 @@ footer a:hover {
 .cart-page .remove-item {
   align-self: center;
 }
+
+/* Safety net so secondary headings/labels inside cards default to blue */
+.card h3, .card h4, .card .label, .card .section-title {
+  color: var(--naturverse-blue);
+}
