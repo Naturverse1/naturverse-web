@@ -1,5 +1,5 @@
-import { useEffect } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect } from "react";
+import { useLocation } from "react-router-dom";
 
 /**
  * RouteFX
@@ -14,10 +14,10 @@ export default function RouteFX() {
   useEffect(() => {
     try {
       // Guard for SSR / non-browser runtimes
-      if (typeof window !== 'undefined') {
+      if (typeof window !== "undefined") {
         // Scroll to top, but tolerate unsupported smooth behavior
         try {
-          window.scrollTo({ top: 0, left: 0, behavior: 'smooth' as ScrollBehavior });
+          window.scrollTo({ top: 0, left: 0, behavior: "smooth" as ScrollBehavior });
         } catch {
           window.scrollTo(0, 0);
         }
@@ -25,13 +25,13 @@ export default function RouteFX() {
 
       // Focus main for screen readers if it exists
       const main =
-        typeof document !== 'undefined'
-          ? (document.querySelector('main') as HTMLElement | null)
+        typeof document !== "undefined"
+          ? (document.querySelector("main") as HTMLElement | null)
           : null;
 
       if (main) {
         // Ensure focusable
-        if (!main.hasAttribute('tabindex')) main.setAttribute('tabindex', '-1');
+        if (!main.hasAttribute("tabindex")) main.setAttribute("tabindex", "-1");
         try {
           main.focus({ preventScroll: true });
         } catch {
@@ -41,7 +41,7 @@ export default function RouteFX() {
       }
     } catch (err) {
       // Absolutely never let this bubble to the ErrorBoundary
-      console.error('[naturverse] RouteFX error (guarded):', err);
+      console.error("[naturverse] RouteFX error (guarded):", err);
     }
   }, [pathname]);
 
