@@ -325,3 +325,66 @@
   overflow: visible !important;
   margin: .5rem 0 0 0 !important;
 }
+
+/* =========================
+   Turian page — chat box fixes
+   ========================= */
+#turianPage, [data-page="turian"] {}
+
+/* keep the header centered but make the chat area left-aligned */
+#turianPage .chatCard,
+[data-page="turian"] .chatCard { text-align: left !important; }
+
+/* input row: proper layout */
+#turianPage .inputRow,
+[data-page="turian"] .inputRow {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+}
+#turianPage .inputRow input,
+[data-page="turian"] .inputRow input { flex: 1 1 auto !important; }
+#turianPage .inputRow button,
+[data-page="turian"] .inputRow button { flex: 0 0 auto !important; }
+
+/* suggestions: remove absolute/center tricks and flow like normal text */
+#turianPage .promptExamples,
+[data-page="turian"] .promptExamples {
+  position: static !important;
+  transform: none !important;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-start !important;
+  align-items: flex-start !important;
+  gap: 12px !important;
+  margin: 0 !important;
+}
+
+/* each suggestion bubble */
+#turianPage .promptExamples .example,
+[data-page="turian"] .promptExamples .example {
+  position: static !important;
+  transform: none !important;
+  display: inline-block !important;
+  max-width: calc(50% - 12px) !important; /* two columns on mobile */
+  text-align: left !important;
+  white-space: normal !important;
+  line-height: 1.35 !important;
+}
+
+/* nuke any global centering that might leak in */
+#turianPage .promptExamples * ,
+#turianPage .inputRow * ,
+[data-page="turian"] .promptExamples * ,
+[data-page="turian"] .inputRow * {
+  text-align: left !important;
+  top: auto !important; right: auto !important; bottom: auto !important; left: auto !important;
+}
+
+/* color consistency */
+#turianPage .hero h1,
+#turianPage .chatCard h3,
+[data-page="turian"] .hero h1,
+[data-page="turian"] .chatCard h3 {
+  color: var(--naturverse-blue) !important;
+}
