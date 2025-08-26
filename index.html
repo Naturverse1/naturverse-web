@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
     <meta name="theme-color" content="#0ea5e9" />
+    <meta name="mobile-web-app-capable" content="yes" />
 
     <!-- SEO base -->
     <meta
@@ -51,11 +52,11 @@
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Preload assets -->
-    <link rel="preload" as="style" href="/src/main.css" />
+    <link rel="preload" href="/src/main.css" as="style" />
     <link
       rel="preload"
-      as="font"
       href="/fonts/your-main-font.woff2"
+      as="font"
       type="font/woff2"
       crossorigin
     />
@@ -63,8 +64,25 @@
 
     <!-- a11y: skip to content -->
     <style>
-      .skip-link{position:absolute;left:-9999px;top:auto;width:1px;height:1px;overflow:hidden}
-      .skip-link:focus{left:12px;top:12px;width:auto;height:auto;background:#0ea5e9;color:#fff;padding:8px 10px;border-radius:8px;z-index:1000}
+      .skip-link {
+        position: absolute;
+        left: -9999px;
+        top: auto;
+        width: 1px;
+        height: 1px;
+        overflow: hidden;
+      }
+      .skip-link:focus {
+        left: 12px;
+        top: 12px;
+        width: auto;
+        height: auto;
+        background: #0ea5e9;
+        color: #fff;
+        padding: 8px 10px;
+        border-radius: 8px;
+        z-index: 1000;
+      }
     </style>
   </head>
   <body>
@@ -74,7 +92,7 @@
 
     <!-- perf: lazy-enable all imgs that don't opt-out -->
     <script>
-      document.addEventListener("DOMContentLoaded", () => {
+      document.addEventListener('DOMContentLoaded', () => {
         document
           .querySelectorAll('img:not([loading])')
           .forEach((img) => img.setAttribute('loading', 'lazy'));
