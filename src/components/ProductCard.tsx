@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { Product } from "../lib/commerce/types";
+import LazyImage from "./LazyImage";
 
 type CardProduct = Product & { saved?: boolean };
 
@@ -22,11 +23,12 @@ export default function ProductCard({
     <div className="rounded-2xl border border-blue-200/60 p-4 shadow-sm">
       <div className="rounded-2xl bg-blue-50/40 p-4">
         <div className="mx-auto flex h-48 w-full items-center justify-center overflow-hidden rounded-xl">
-          <img
+          <LazyImage
+            className="prod-thumb"
             src={product.image}
             alt={product.name}
-            className="max-h-48 w-auto object-contain"
-            loading="lazy"
+            width={320}
+            height={320}
           />
         </div>
       </div>

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import Price from "../../components/commerce/Price";
+import LazyImage from "../../components/LazyImage";
 import { useCart } from "../../context/CartContext";
 
 export default function Cart() {
@@ -23,7 +24,13 @@ export default function Cart() {
             {items.map((it) => (
               <li key={it.product.slug} className="card">
                 <div className="img-wrap">
-                  <img src={it.product.image} alt={it.product.name} />
+                  <LazyImage
+                    src={it.product.image}
+                    alt={it.product.name}
+                    className="prod-thumb"
+                    width={320}
+                    height={320}
+                  />
                 </div>
                 <div>
                   <h3>{it.product.name}</h3>

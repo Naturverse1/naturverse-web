@@ -1,4 +1,5 @@
 import Breadcrumbs from "../../components/Breadcrumbs";
+import LazyImage from "../../components/LazyImage";
 import { WORLDS } from "../../data/worlds";
 
 export default function WorldsIndex() {
@@ -10,12 +11,7 @@ export default function WorldsIndex() {
         {WORLDS.map(w => (
           <a key={w.slug} href={`/worlds/${w.slug}`} className="nv-card">
             <div className="nv-card-img-wrapper">
-              <img
-                src={w.imgSrc}
-                alt={w.imgAlt}
-                loading="lazy"
-                className="nv-card-img"
-              />
+              <LazyImage src={w.imgSrc} alt={w.imgAlt} className="nv-card-img" />
             </div>
             <h3 className="nv-card-title">{w.title}</h3>
             <p className="nv-card-sub">{w.subtitle}</p>

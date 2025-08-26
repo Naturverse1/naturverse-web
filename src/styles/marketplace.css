@@ -114,3 +114,12 @@
 @media (max-width: 640px) {
   :root { --nv-card-gap: 16px; }
 }
+
+/* keep sizes consistent after switching to LazyImage */
+.prod-thumb{
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  display: block;
+}
