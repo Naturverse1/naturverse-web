@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router-dom";
 import { SLUG_TO_FOLDER, type KingdomSlug } from "../../../lib/kingdoms";
+import LazyImage from "../../../components/LazyImage";
 
 export default function CharacterPage() {
   const { slug, name } = useParams<{ slug: KingdomSlug; name: string }>();
@@ -26,7 +27,7 @@ export default function CharacterPage() {
         style={{ maxWidth: 320, margin: "0 auto" }}
       >
         {candidates.map((src) => (
-          <img
+          <LazyImage
             key={src}
             src={src}
             alt={fileGuess}

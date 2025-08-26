@@ -1,6 +1,7 @@
 import { useParams } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import CharacterGrid from "../../components/CharacterGrid";
+import LazyImage from "../../components/LazyImage";
 import { getWorldBySlug } from "../../data/worlds";
 import { SLUG_TO_FOLDER, type KingdomSlug } from "../../lib/kingdoms";
 
@@ -18,7 +19,7 @@ export default function WorldDetail() {
         <p>Zoom into landmarks, routes, and regions.</p>
 
       <div className="nv-hero-img-wrapper">
-        <img
+        <LazyImage
           src={world.imgSrc}
           alt={world.imgAlt}
           className="nv-hero-img"
