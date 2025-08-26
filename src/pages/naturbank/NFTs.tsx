@@ -9,19 +9,21 @@ const items = [
 
 export default function NFTs() {
   return (
-    <main id="main" data-page="naturbank" className="nvrs-section naturbank page-wrap">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "NFTs" }]} />
-      <h1>🖼️ NFTs</h1>
-      <p>Preview collectibles. Minting connects later.</p>
-      <div className="hub-grid">
-        {items.map(x => (
-          <div key={x.id} className="hub-card">
-            <div className="emoji">🎴</div>
-            <div className="title">{x.title}</div>
-            <div className="desc">{x.blurb}</div>
-            <button className="btn tiny" disabled>Mint (soon)</button>
-          </div>
-        ))}
+    <main id="naturbank">
+      <div id="main" data-page="naturbank" className="nvrs-section naturbank page-wrap">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "NFTs" }]} />
+        <h1>🖼️ NFTs</h1>
+        <p>Preview collectibles. Minting connects later.</p>
+        <div className="hub-grid">
+          {items.map(x => (
+            <div key={x.id} className="hub-card">
+              <div className="emoji">🎴</div>
+              <div className="title">{x.title}</div>
+              <div className="desc">{x.blurb}</div>
+              <button className="btn tiny" disabled>Mint (soon)</button>
+            </div>
+          ))}
+        </div>
       </div>
     </main>
   );
