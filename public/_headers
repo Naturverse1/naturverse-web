@@ -2,13 +2,18 @@
   X-Frame-Options: SAMEORIGIN
   X-Content-Type-Options: nosniff
   Referrer-Policy: strict-origin-when-cross-origin
-  Cache-Control: public, max-age=600
+  Cache-Control: public, max-age=31536000, immutable
 
-/
-  Cache-Control: no-store, max-age=0
+/*.html
+  Content-Type: text/html; charset=UTF-8
+  Cache-Control: no-cache
+
+/static/fonts/*
+  Cache-Control: public, max-age=31536000, immutable
+  Access-Control-Allow-Origin: *
 
 /assets/*
-  Cache-Control: public, max-age=604800, immutable
+  Cache-Control: public, max-age=31536000, immutable
 
 /favicon-*.png
   Cache-Control: public, max-age=604800, immutable
