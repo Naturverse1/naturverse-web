@@ -31,3 +31,26 @@
 .badge-code{ font-size:12px; color:#475569; }
 .badge-date{ font-size:12px; color:#64748b; }
 
+
+/* Passport page text colors */
+.passport,
+.passport h2,
+.passport h3,
+.passport h4,
+.passport h5,
+.passport p,
+.passport span,
+.passport .world-stamps,
+.passport .stamp-entry,
+.passport .stamp-entry h4,
+.passport .stamp-entry p {
+  color: var(--naturverse-blue) !important;
+}
+
+.passport .world-name,
+.passport .stamp-count,
+.passport .badge-label,
+.passport .badge-code,
+.passport .badge-date {
+  color: var(--naturverse-blue) !important;
+}
