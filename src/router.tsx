@@ -44,7 +44,7 @@ import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Accessibility from './pages/Accessibility';
 import About from './pages/About';
-import NotFound from './routes/NotFound';
+import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import ZonesLayout from './layouts/Zones';
 

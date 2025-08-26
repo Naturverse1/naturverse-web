@@ -6,19 +6,22 @@ import HeadPreloads from '../components/HeadPreloads';
 import RouteProgress from '../components/RouteProgress';
 import SiteHeader from '../components/SiteHeader';
 import Footer from '../components/Footer';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export default function RootLayout() {
   return (
-    <HelmetProvider>
-      <HeadPreloads />
-      <RouteProgress />
-      <div className="nv-root">
-        <SiteHeader />
-        <main className="pageRoot">
-          <Outlet />
-        </main>
-        <Footer />
-      </div>
-    </HelmetProvider>
+    <ErrorBoundary>
+      <HelmetProvider>
+        <HeadPreloads />
+        <RouteProgress />
+        <div className="nv-root">
+          <SiteHeader />
+          <main className="pageRoot">
+            <Outlet />
+          </main>
+          <Footer />
+        </div>
+      </HelmetProvider>
+    </ErrorBoundary>
   );
 }
