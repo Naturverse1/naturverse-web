@@ -288,3 +288,91 @@ a:hover {
   color: white !important;
   border: none;
 }
+/* =========================
+   ZONES (all second-level pages)
+   ========================= */
+#zonesPage, [data-page="zones"] { /* keep both hooks */
+  /* make secondary titles/labels blue */
+}
+#zonesPage .hero h1,
+#zonesPage .sectionTitle,
+#zonesPage .featureCard h3,
+#zonesPage .featureCard .subtitle,
+#zonesPage .gameCard h3,
+#zonesPage .gameCard .subtitle,
+#zonesPage .tileTitle,
+[data-page="zones"] .hero h1,
+[data-page="zones"] .sectionTitle,
+[data-page="zones"] .featureCard h3,
+[data-page="zones"] .featureCard .subtitle,
+[data-page="zones"] .gameCard h3,
+[data-page="zones"] .gameCard .subtitle,
+[data-page="zones"] .tileTitle {
+  color: var(--naturverse-blue) !important;
+}
+
+/* =========================
+   NATURBANK
+   ========================= */
+#naturBankPage, [data-page="naturbank"] {}
+
+/* titles + amounts to blue */
+#naturBankPage .sectionTitle,
+#naturBankPage .tileTitle,
+#naturBankPage .balance h3,
+#naturBankPage .balance .amount,
+#naturBankPage .panel h3,
+[data-page="naturbank"] .sectionTitle,
+[data-page="naturbank"] .tileTitle,
+[data-page="naturbank"] .balance h3,
+[data-page="naturbank"] .balance .amount,
+[data-page="naturbank"] .panel h3 {
+  color: var(--naturverse-blue) !important;
+}
+
+/* keep tiles proportional again */
+#naturBankPage .panel, [data-page="naturbank"] .panel {
+  display: block;              /* no flex stretch issues */
+  min-height: unset;
+}
+#naturBankPage .panel .card, [data-page="naturbank"] .panel .card {
+  height: auto;
+}
+
+/* =========================
+   NAVATAR (creator + card)
+   ========================= */
+#navatarPage, [data-page="navatar"] {}
+
+/* headings/labels to blue */
+#navatarPage .hero h1,
+#navatarPage .sectionTitle,
+#navatarPage .stepTitle,
+#navatarPage label,
+#navatarPage .characterCard h3,
+#navatarPage .characterCard .fieldLabel,
+[data-page="navatar"] .hero h1,
+[data-page="navatar"] .sectionTitle,
+[data-page="navatar"] .stepTitle,
+[data-page="navatar"] label,
+[data-page="navatar"] .characterCard h3,
+[data-page="navatar"] .characterCard .fieldLabel {
+  color: var(--naturverse-blue) !important;
+}
+
+/* character image: fill nicely without distortion */
+#navatarPage .characterCard .imageWrap,
+[data-page="navatar"] .characterCard .imageWrap {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  border-radius: 14px;
+  overflow: hidden;
+  display: block;
+}
+#navatarPage .characterCard .imageWrap img,
+[data-page="navatar"] .characterCard .imageWrap img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;  /* fills the frame like your “perfect” version */
+  object-position: center;
+}
