@@ -28,19 +28,30 @@
     <meta name="twitter:image" content="/favicon-512.png" />
     <link rel="canonical" href="https://naturverse.netlify.app/" />
 
-    <!-- Favicon setup: serve large first, scale down safely -->
-    <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png">
-    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png">
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png">
-    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
-    <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
-    <link rel="icon" href="/favicon.ico">
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml">
-    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-180.png" />
+    <!-- ====================
+         Favicon & Preload Fix
+         ==================== -->
+    <link rel="preload" href="/favicon-32x32.png" as="image" type="image/png" importance="high" />
+    <link rel="preload" href="/favicon-64x64.png" as="image" type="image/png" importance="high" />
+    <link rel="preload" href="/favicon-128x128.png" as="image" type="image/png" importance="high" />
+    <link rel="preload" href="/favicon-256x256.png" as="image" type="image/png" importance="high" />
+
+    <!-- Standard Favicons -->
+    <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png" />
+    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
+    <link rel="icon" type="image/png" sizes="128x128" href="/favicon-128x128.png" />
+    <link rel="icon" type="image/png" sizes="256x256" href="/favicon-256x256.png" />
+    <link rel="icon" href="/favicon.ico" />
+
+    <!-- Apple / iOS -->
+    <link rel="apple-touch-icon" sizes="180x180" href="/favicon-256x256.png" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+
+    <!-- SVG fallback (scales well in modern browsers) -->
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 
     <!-- Preload assets -->
     <link rel="preload" as="style" href="/src/main.css" />
-    <link rel="preload" href="/favicon.svg" as="image" type="image/svg+xml" />
     <link
       rel="preload"
       as="font"
