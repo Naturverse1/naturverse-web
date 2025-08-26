@@ -11,7 +11,7 @@ export default function NavBar() {
   const emoji = (user?.user_metadata?.navemoji as string) ?? '🧑';
 
   return (
-    <header className={styles.header}>
+    <nav className="transition-all duration-500 ease-in-out bg-white/80 backdrop-blur-md sticky top-0 z-50">
       <div className={`container ${styles.inner}`}>
         {/* Left brand (logo + wordmark) */}
         <a
@@ -91,6 +91,6 @@ export default function NavBar() {
           <Link to="/turian">Turian</Link>
         </div>
       </div>
-    </header>
+    </nav>
   );
 }
