@@ -16,6 +16,6 @@ export default defineConfig({
     rollupOptions: {
       external: [],
     },
-    sourcemap: true,
+    sourcemap: true, // ensure production sourcemaps
   }
 });
