@@ -6,7 +6,8 @@
   "scripts": {
     "dev": "vite",
     "build:galleries": "node scripts/build-kingdom-gallery.js",
-    "build": "npm run build:galleries && vite build",
+    "optimize:images": "node --loader ts-node/esm scripts/optimize-images.ts",
+    "build": "npm run build:galleries && npm run optimize:images && vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit"
   },
@@ -33,7 +34,9 @@
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
     "vite": "^5.4.2",
-    "vite-plugin-pwa": "^0.20.0"
+    "vite-plugin-pwa": "^0.20.0",
+    "sharp": "^0.33.0",
+    "glob": "^7.2.3"
   },
   "overrides": {
     "react-helmet-async": "^2.0.4"
