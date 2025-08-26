@@ -5,10 +5,63 @@
   max-width: var(--nv-card-max) !important;
 }
 
-.actions {
+/* Marketplace: price text */
+.mp-card .price {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Card action row */
+.mp-card .actions {
   display: flex;
-  gap: 0.5rem;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 12px;
   margin-top: 0.5rem;
+}
+
+/* Quantity controls */
+.mp-card .nv-stepper {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mp-card .nv-stepper button:not(.btn-danger) {
+  width: 44px;
+  height: 44px;
+  border-radius: 14px;
+  border: 2px solid var(--naturverse-blue);
+  background: var(--nv-btn-blue, linear-gradient(180deg,#4b75ff, #1d4ed8));
+  color: #fff;
+  font-weight: 700;
+  line-height: 1;
+  padding: 0;
+}
+
+.mp-card .nv-stepper span {
+  min-width: 24px;
+  text-align: center;
+  font-weight: 700;
+}
+
+/* Primary buttons */
+.mp-card .btn-primary,
+.mp-card .btn-outline,
+.mp-card .btn-solid,
+.mp-card .nv-stepper .btn-danger {
+  height: 48px;
+  padding: 0 18px;
+  border-radius: 14px;
+  flex: none;
+  width: auto;
+}
+
+/* Disabled state (e.g., Remove) */
+.mp-card button[disabled] {
+  background: #f4c9cf;
+  border-color: #eaa1aa;
+  color: #fff;
+  opacity: 1;
 }
 
 /* Larger, consistent image on the product detail page */
