@@ -1,7 +1,7 @@
 @import './cards.css';
 
 :root {
-  --naturverse-blue: var(--nv-blue-700, #1f4ed8);
+  --naturverse-blue: #2e6bff;
 }
 
 /* ================================
@@ -517,5 +517,118 @@ footer span {
 
 footer a:hover {
   text-decoration: underline; /* optional: blue underline on hover */
+}
+
+/* =========================
+   Naturverse Blue helpers
+   ========================= */
+
+/* -------- Navatar: force secondary text & buttons to blue -------- */
+[data-page="navatar"], .navatar-page {
+  /* nothing layout-changing here */
+}
+[data-page="navatar"] h1,
+[data-page="navatar"] h2,
+[data-page="navatar"] h3,
+[data-page="navatar"] .section-title,
+[data-page="navatar"] .card-title,
+[data-page="navatar"] .label,
+[data-page="navatar"] .subtle,
+[data-page="navatar"] a {
+  color: var(--naturverse-blue) !important;
+}
+[data-page="navatar"] button,
+[data-page="navatar"] .btn {
+  background: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* -------- NaturBank: force secondary text & buttons to blue ------- */
+[data-page="naturbank"], .naturbank-page { }
+[data-page="naturbank"] h1,
+[data-page="naturbank"] h2,
+[data-page="naturbank"] h3,
+[data-page="naturbank"] .section-title,
+[data-page="naturbank"] .card-title,
+[data-page="naturbank"] .label,
+[data-page="naturbank"] .stat,
+[data-page="naturbank"] a {
+  color: var(--naturverse-blue) !important;
+}
+[data-page="naturbank"] button,
+[data-page="naturbank"] .btn {
+  background: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* Optional: inputs look consistent next to blue labels */
+[data-page="naturbank"] input,
+[data-page="navatar"] input,
+[data-page="naturbank"] textarea,
+[data-page="navatar"] textarea {
+  border-color: rgba(46,107,255,.35);
+}
+
+/* =========================
+   Cart quantity control fix
+   ========================= */
+/* Markup doesn’t have to change; these selectors try to be forgiving */
+.cart-page .qty,
+.cart-page [data-component="qty"],
+.cart-page .quantity,
+.cart-page .quantity-controls {
+  display: inline-flex !important;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+/* The minus/plus buttons */
+.cart-page .qty button,
+.cart-page .quantity button,
+.cart-page [data-qty="decr"],
+.cart-page [data-qty="incr"] {
+  width: 44px; height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--naturverse-blue);
+  background: #fff;
+  color: var(--naturverse-blue);
+  font-size: 26px;
+  line-height: 1;
+  font-weight: 700;
+  display: inline-flex; align-items: center; justify-content: center;
+  box-shadow: 0 3px 0 rgba(0,0,0,.12);
+}
+
+/* The number field */
+.cart-page .qty input[type="number"],
+.cart-page .quantity input[type="number"],
+.cart-page [data-qty="input"] {
+  width: 80px;
+  height: 44px;
+  text-align: center;
+  border: 2px solid var(--naturverse-blue);
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 18px;
+  appearance: textfield;
+}
+.cart-page .qty input::-webkit-outer-spin-button,
+.cart-page .qty input::-webkit-inner-spin-button {
+  -webkit-appearance: none; margin: 0;
+}
+
+/* Make sure the remove button doesn’t overlap the qty */
+.cart-page .cart-item .remove,
+.cart-page .remove-item {
+  align-self: center;
+}
+
+/* Product thumbnail never overflows the row */
+.cart-page .cart-item img {
+  max-height: 96px;
+  width: auto;
+  object-fit: contain;
 }
 

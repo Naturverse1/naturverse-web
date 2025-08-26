@@ -4,7 +4,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 export default function CartPage() {
   const { items, inc, dec, remove, subtotal } = useCart();
   return (
-    <div className="nvrs-section cart">
+    <main data-page="cart" className="nvrs-section cart cart-page">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
       <h1>Cart</h1>
       {items.length === 0 ? (
@@ -27,7 +27,7 @@ export default function CartPage() {
                 <div>{it.name}</div>
                 <div className="price">${it.price.toFixed(2)}</div>
                 <div style={{ display: 'flex', gap: '.5rem', marginTop: '.25rem' }}>
-                  <div className="qty-control">
+                  <div className="qty">
                     <button onClick={() => dec(it.id)} aria-label="Decrease quantity">
                       −
                     </button>
@@ -54,6 +54,6 @@ export default function CartPage() {
           </button>
         </div>
       )}
-    </div>
+    </main>
   );
 }
