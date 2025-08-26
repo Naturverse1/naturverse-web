@@ -1,5 +1,6 @@
 import { useEffect } from "react";
 import { track } from "../utils/telemetry";
+import { prefetchRoutes } from "../boot/prefetch";
 
 /**
  * RouteFX (safe)
@@ -9,6 +10,10 @@ import { track } from "../utils/telemetry";
  * - Can never crash render; always returns null
  */
 export default function RouteFX(): null {
+  useEffect(() => {
+    prefetchRoutes();
+  }, []);
+
   useEffect(() => {
     function runEffects() {
       try {

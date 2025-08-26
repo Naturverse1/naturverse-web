@@ -15,24 +15,18 @@ export default defineConfig({
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
       },
-      manifest: {
-        name: 'Naturverse',
-        short_name: 'Naturverse',
-        theme_color: '#2563eb',
-        background_color: '#ffffff',
-        start_url: '/',
-        display: 'standalone',
-        icons: [
-          { src: '/favicon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png' },
-          {
-            src: '/favicon-512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any maskable',
-          },
-        ],
-      },
+        manifest: {
+          name: 'Naturverse',
+          short_name: 'Naturverse',
+          theme_color: '#2b64ff',
+          background_color: '#ffffff',
+          start_url: '/',
+          display: 'standalone',
+          icons: [
+            { src: '/favicon-128x128.png', sizes: '128x128', type: 'image/png', purpose: 'any' },
+            { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
+          ],
+        },
       // Runtime caching for stuff that isn’t in the precache
       runtimeCaching: [
         {

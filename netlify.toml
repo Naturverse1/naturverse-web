@@ -23,3 +23,8 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=1800"
+
+[[headers]]
+  for = "/assets/*.js"
+  [headers.values]
+    Content-Type = "application/javascript; charset=utf-8"
