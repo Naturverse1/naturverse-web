@@ -1,9 +1,4 @@
 import { supabase } from '../db'
-import type { Database } from '../../types/db'
-
-type Profile = Database['natur']['Tables']['profiles']['Row']
-type ProfileInsert = Database['natur']['Tables']['profiles']['Insert']
-type ProfileUpdate = Database['natur']['Tables']['profiles']['Update']
 
 export async function getCurrentUser() {
   const { data } = await supabase.auth.getUser()
@@ -19,18 +14,22 @@ export async function getMyProfile() {
     .eq('id', user.id)
     .maybeSingle()
   if (error) throw error
-  return data as Profile | null
+  return data
 }
 
-export async function upsertMyProfile(patch: ProfileUpdate | ProfileInsert) {
-  const user = await getCurrentUser()
-  if (!user) throw new Error('No auth user')
-  const row: ProfileInsert = { id: user.id, ...patch }
-  const { data, error } = await supabase
+export async function upsertMyProfile(partial: {
+  username?: string
+  full_name?: string
+  avatar_url?: string
+}) {
+  const { data: { user }, error: userErr } = await supabase.auth.getUser()
+  if (userErr || !user) throw new Error('Not signed in')
+
+  const row = { id: user.id, ...partial }
+
+  const { error } = await supabase
     .from('profiles')
-    .upsert(row)
-    .select()
-    .single()
+    .upsert(row as any, { onConflict: 'id' })
   if (error) throw error
-  return data as Profile
+  return true
 }
