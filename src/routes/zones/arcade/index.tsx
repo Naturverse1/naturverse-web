@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
-import { Leaderboard } from "../../../components/Leaderboard";
+import Leaderboard from "../../../components/Leaderboard";
 import { postScore, autoGrantOncePerDay } from "@/lib/rewards";
 import { toast } from "@/components/Toaster";
 import "../../../styles/zone-widgets.css";
