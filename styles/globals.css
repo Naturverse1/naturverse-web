@@ -571,6 +571,72 @@ footer a:hover {
   border-color: rgba(46,107,255,.35);
 }
 
+/* =====================
+   Cart Item Layout Fix
+   ===================== */
+.cart-page .cart-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  /* make the card wider */
+  width: 100%;
+  max-width: 700px;
+  margin: 1rem auto;
+  padding: 1rem;
+
+  border: 2px solid rgba(46,107,255,.2);
+  border-radius: 16px;
+  background: #fff;
+  box-shadow: 0 3px 6px rgba(0,0,0,.08);
+}
+
+/* Thumbnail */
+.cart-page .cart-item img {
+  width: 96px;
+  height: auto;
+  margin-right: 1rem;
+  flex-shrink: 0;
+  object-fit: contain;
+}
+
+/* Product info + name/price block */
+.cart-page .cart-item .product-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  color: var(--naturverse-blue);
+  font-weight: 600;
+}
+
+/* Quantity control now sits comfortably */
+.cart-page .cart-item .qty {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-left: 1rem;
+}
+.cart-page .cart-item .qty button {
+  width: 44px;
+  height: 44px;
+  border-radius: 12px;
+  border: 2px solid var(--naturverse-blue);
+  background: #fff;
+  color: var(--naturverse-blue);
+  font-size: 22px;
+  font-weight: 700;
+}
+.cart-page .cart-item .qty input {
+  width: 70px;
+  height: 44px;
+  text-align: center;
+  border: 2px solid var(--naturverse-blue);
+  border-radius: 12px;
+  font-size: 18px;
+  font-weight: 600;
+}
+
 /* =========================
    Cart quantity control fix
    ========================= */
@@ -624,11 +690,3 @@ footer a:hover {
 .cart-page .remove-item {
   align-self: center;
 }
-
-/* Product thumbnail never overflows the row */
-.cart-page .cart-item img {
-  max-height: 96px;
-  width: auto;
-  object-fit: contain;
-}
-
