@@ -6,18 +6,13 @@ import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import './styles/magic.css';
-import { initInteractions } from './init/interactions';
+// TEMP: disable interactions while we isolate the crash
+// import { initInteractions } from './init/interactions';
+import './init/runtime-logger'; // lightweight global error hooks
 
 export default function App() {
   useEffect(() => {
-    // Defer one frame to ensure DOM is ready and hydration settled
-    try {
-      if (typeof window !== 'undefined') {
-        requestAnimationFrame(() => initInteractions());
-      }
-    } catch (e) {
-      console && console.warn && console.warn('[naturverse] init skipped:', e);
-    }
+    // SAFE MODE: interactions temporarily disabled
   }, []);
   return (
     <CartProvider>
