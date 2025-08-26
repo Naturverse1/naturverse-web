@@ -7,7 +7,7 @@ import NavatarCard from "../components/NavatarCard";
 import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
-import { ShareNavatar } from "../components/ShareNavatar";
+import ShareNavatar from "../components/ShareNavatar";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
 
