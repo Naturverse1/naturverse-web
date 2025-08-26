@@ -54,3 +54,40 @@ label {
   color: var(--nv-blue);
 }
 
+/* NaturBank — force all secondary text to Naturverse blue */
+#naturbank h1,
+#naturbank h2,
+#naturbank h3,
+#naturbank .section-title,
+#naturbank .card-title,
+#naturbank .stat,
+#naturbank .balance-amount,
+#naturbank .summary-amount,
+#naturbank strong,
+#naturbank b {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Labels and small helpers inside cards */
+#naturbank label,
+#naturbank .label,
+#naturbank .helper,
+#naturbank .hint {
+  color: var(--naturverse-blue) !important;
+  opacity: 0.9; /* keep it a touch softer if you like */
+}
+
+/* Buttons (in case any reverted) */
+#naturbank .btn,
+#naturbank button {
+  background: var(--naturverse-blue) !important;
+  color: #fff !important;
+  border: none !important;
+}
+
+/* Optional: “NATUR” unit next to the number stays blue too */
+#naturbank .balance-amount .unit,
+#naturbank .summary-amount .unit {
+  color: var(--naturverse-blue) !important;
+}
+

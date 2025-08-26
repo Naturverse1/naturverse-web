@@ -19,41 +19,43 @@ export default function Token() {
   };
 
   return (
-    <main id="main" data-page="naturbank" className="nvrs-section naturbank page-wrap">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Token" }]} />
-      <h1>🪙 NATUR Token</h1>
+    <main id="naturbank">
+      <div id="main" data-page="naturbank" className="nvrs-section naturbank page-wrap">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/naturbank", label: "NaturBank" }, { label: "Token" }]} />
+        <h1>🪙 NATUR Token</h1>
 
-      <div className="panel">
-        <div className="row">
-          <div className="stat"><div className="muted">Balance</div><div className="big">💚 {bal}</div></div>
-          <div className="stat"><div className="muted">Earned</div><div className="big">+{earned}</div></div>
-          <div className="stat"><div className="muted">Spent</div><div className="big">−{spent}</div></div>
-          <div className="spacer" />
-          <button className="btn tiny" onClick={()=>quick("earn", 5, "Daily check-in")}>+5</button>
-          <button className="btn tiny" onClick={()=>quick("spend", 5, "Sample spend")}>−5</button>
-        </div>
-
-        <div className="row">
-          <input className="input" placeholder="Memo…" value={memo} onChange={e=>setMemo(e.target.value)} />
-          <button className="btn tiny outline" onClick={()=>quick("earn", 10, memo || "Custom earn")}>Earn 10</button>
-          <button className="btn tiny outline" onClick={()=>quick("spend", 10, memo || "Custom spend")}>Spend 10</button>
-        </div>
-      </div>
-
-      <h2 className="mt">Ledger</h2>
-      <div className="ledger">
-        {ledger.map(t => (
-          <div key={t.id} className="line">
-            <div className="mono">{new Date(t.ts).toLocaleString()}</div>
-            <div className={"pill " + (t.type === "spend" ? "red" : "green")}>
-              {t.type === "spend" ? "−" : "+"}{t.amount}
-            </div>
-            <div className="grow">{t.memo}</div>
+        <div className="panel">
+          <div className="row">
+            <div className="stat"><div className="muted">Balance</div><div className="big">💚 {bal}</div></div>
+            <div className="stat"><div className="muted">Earned</div><div className="big">+{earned}</div></div>
+            <div className="stat"><div className="muted">Spent</div><div className="big">−{spent}</div></div>
+            <div className="spacer" />
+            <button className="btn tiny" onClick={()=>quick("earn", 5, "Daily check-in")}>+5</button>
+            <button className="btn tiny" onClick={()=>quick("spend", 5, "Sample spend")}>−5</button>
           </div>
-        ))}
-      </div>
 
-      <p className="meta">Redemptions & real transactions connect here later.</p>
+          <div className="row">
+            <input className="input" placeholder="Memo…" value={memo} onChange={e=>setMemo(e.target.value)} />
+            <button className="btn tiny outline" onClick={()=>quick("earn", 10, memo || "Custom earn")}>Earn 10</button>
+            <button className="btn tiny outline" onClick={()=>quick("spend", 10, memo || "Custom spend")}>Spend 10</button>
+          </div>
+        </div>
+
+        <h2 className="mt">Ledger</h2>
+        <div className="ledger">
+          {ledger.map(t => (
+            <div key={t.id} className="line">
+              <div className="mono">{new Date(t.ts).toLocaleString()}</div>
+              <div className={"pill " + (t.type === "spend" ? "red" : "green")}>
+                {t.type === "spend" ? "−" : "+"}{t.amount}
+              </div>
+              <div className="grow">{t.memo}</div>
+            </div>
+          ))}
+        </div>
+
+        <p className="meta">Redemptions & real transactions connect here later.</p>
+      </div>
     </main>
   );
 }
