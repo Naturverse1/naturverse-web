@@ -1,5 +1,4 @@
 /* Inter variable — local, self-hosted via @fontsource-variable */
-@import "@fontsource-variable/inter/index.css";
 @import './styles/main.css';
 @import './styles/worlds.css';
 @import './styles/cart.css';
