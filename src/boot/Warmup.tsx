@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 
-/** requestIdleCallback polyfill */
 function onIdle(cb: () => void) {
+  // Polyfill requestIdleCallback
   // @ts-ignore
   if (typeof window !== "undefined" && window.requestIdleCallback) {
     // @ts-ignore
@@ -11,13 +11,12 @@ function onIdle(cb: () => void) {
 }
 
 /**
- * Warm-up route chunks & heavy components when the browser is idle.
- * Each import is guarded; missing files are ignored safely.
+ * Preload popular routes + chunks during idle time.
+ * All imports are wrapped in catch() to avoid breaking if missing.
  */
 export default function Warmup() {
   useEffect(() => {
     const loaders: Array<() => Promise<unknown>> = [
-      // Top-level pages (two likely paths each, guarded)
       () => import("../pages/Worlds").catch(() => {}),
       () => import("../routes/worlds/index").catch(() => {}),
       () => import("../pages/Zones").catch(() => {}),
@@ -34,12 +33,11 @@ export default function Warmup() {
       () => import("../routes/Passport").catch(() => {}),
       () => import("../pages/Turian").catch(() => {}),
       () => import("../routes/Turian").catch(() => {}),
-      // Popular zone subroutes
+      // Zone subroutes
       () => import("../routes/zones/arcade/index").catch(() => {}),
       () => import("../routes/zones/music/index").catch(() => {}),
     ];
 
-    // Stagger the warmup slightly so we don't spike bandwidth
     loaders.forEach((load, i) => {
       onIdle(() => setTimeout(() => load(), i * 120));
     });
