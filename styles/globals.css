@@ -3,6 +3,83 @@
 :root {
   --naturverse-blue: var(--nv-blue-700, #1f4ed8);
 }
+
+/* ================================
+   NaturBank — color + layout fix
+   Scope: any root with .naturbank-page OR [data-page="naturbank"]
+   ================================ */
+
+.naturbank-page, [data-page="naturbank"] { --nb-blue: var(--naturverse-blue); }
+
+/* 1) Make ALL text on NaturBank blue (no more black) */
+.naturbank-page *,
+[data-page="naturbank"] * {
+  color: var(--nb-blue) !important;
+}
+
+/* Keep inputs readable; soften placeholders slightly */
+.naturbank-page input::placeholder,
+[data-page="naturbank"] input::placeholder {
+  color: rgba(56, 102, 255, 0.75); /* tweak if your --naturverse-blue differs */
+}
+
+/* Ensure key numbers (Balance, amounts) are solid blue & bold */
+.naturbank-page .balance-amount,
+[data-page="naturbank"] .balance-amount,
+.naturbank-page .amount,
+[data-page="naturbank"] .amount {
+  color: var(--nb-blue) !important;
+  font-weight: 800;
+}
+
+/* 2) Tile/card proportions and spacing */
+.naturbank-page .tile,
+[data-page="naturbank"] .tile,
+.naturbank-page .card,
+[data-page="naturbank"] .card {
+  border-radius: 18px;
+  padding: 22px;
+}
+
+/* Mobile spacing consistency */
+@media (max-width: 768px) {
+  .naturbank-page .tile,
+  [data-page="naturbank"] .tile,
+  .naturbank-page .card,
+  [data-page="naturbank"] .card {
+    margin: 0 0 18px 0;
+  }
+}
+
+/* 3) Buttons: full theme + same width, stacked with even gaps */
+.naturbank-page .btn,
+[data-page="naturbank"] .btn {
+  background: var(--nb-blue);
+  color: #fff !important;
+  border: 2px solid var(--nb-blue);
+  border-radius: 12px;
+}
+
+.naturbank-page .btn--ghost,
+[data-page="naturbank"] .btn--ghost {
+  background: transparent;
+  color: var(--nb-blue) !important;
+}
+
+.naturbank-page .wallet-actions,
+[data-page="naturbank"] .wallet-actions {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.naturbank-page .wallet-actions .btn,
+[data-page="naturbank"] .wallet-actions .btn {
+  width: 100%;
+  max-width: 280px; /* keeps all three buttons the same width */
+}
+
 /* Primary button used across Naturversity */
 .btn-primary {
   @apply bg-blue-600 text-white font-extrabold uppercase tracking-wide
