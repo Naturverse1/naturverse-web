@@ -112,3 +112,16 @@
 /* Links that were defaulting to black in some panels */
 #zones-root a { color: var(--naturverse-blue) !important; }
 #zones-root a:visited { color: var(--naturverse-blue) !important; }
+
+/* ---- Zones: make all card/section titles blue on detail pages ---- */
+/* Works for Arcade, Music, Wellness, Stories, Quizzes, Observations,
+   Culture, Community (and any other /zones/* pages). */
+
+main.nv-page .panel h2,
+main.nv-page .panel h3,
+main.nv-page .panel .title,
+main.nv-page .card h2,
+main.nv-page .card h3 {
+  color: var(--naturverse-blue) !important;
+}
+
