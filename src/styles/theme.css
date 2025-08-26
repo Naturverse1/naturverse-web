@@ -91,3 +91,30 @@ label {
   color: var(--naturverse-blue) !important;
 }
 
+/* Navatar section */
+.navatar-card,
+.navatar-card h2,
+.navatar-card h3,
+.navatar-card h4,
+.navatar-card h5,
+.navatar-card p,
+.navatar-card span,
+.navatar-card label,
+.navatar-card .detail-label,
+.navatar-card .detail-value,
+.navatar-card .species,
+.navatar-card .powers,
+.navatar-card .backstory {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Creator form labels + detail text */
+.navatar-creator,
+.navatar-creator h2,
+.navatar-creator h3,
+.navatar-creator label,
+.navatar-creator p,
+.navatar-creator span {
+  color: var(--naturverse-blue) !important;
+}
+
