@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
@@ -12,9 +12,24 @@ import './styles/magic.css';
 import './init/runtime-logger'; // lightweight global error hooks
 
 export default function App() {
+  const [loading, setLoading] = useState(true);
+
   useEffect(() => {
-    // SAFE MODE: interactions temporarily disabled
+    const timer = setTimeout(() => {
+      document.body.classList.add('loaded');
+      setLoading(false);
+    }, 800);
+    return () => clearTimeout(timer);
   }, []);
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-screen bg-sky-50">
+        <img src="/loading.svg" alt="loading..." className="w-24 h-24 animate-spin" />
+      </div>
+    );
+  }
+
   return (
     <CartProvider>
       <>
