@@ -100,3 +100,37 @@
 .profile-page label { font-weight: 600; }
 .profile-page .actions { margin-top: 16px; }
 .profile-page .meta { opacity: .6; font-size: 12px; margin-top: 8px; }
+
+/* ==== Profile Page Fix ==== */
+.profile :is(h1,h2,h3,h4,h5,h6, p, span, label, small, strong, b) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Input labels + placeholder text */
+.profile label,
+.profile input,
+.profile input::placeholder {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+/* Wallet balance (e.g., "0 NATUR") */
+.profile .wallet-balance,
+.profile .natur-wallet,
+.profile .wallet-amount {
+  color: var(--naturverse-blue) !important;
+  font-weight: 600;
+}
+
+/* Buttons (Save, Sign out, Save to Cloud, +5, -2) */
+.profile .btn,
+.profile button {
+  background: linear-gradient(180deg, #3f7cff 0%, #2452ff 100%);
+  color: #fff !important;
+  border: none;
+  box-shadow: 0 6px 0 rgba(25, 55, 170, 0.35);
+}
+.profile .btn:disabled {
+  opacity: 0.45;
+  box-shadow: none;
+}
