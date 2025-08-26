@@ -2,6 +2,7 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
 import { CartProvider } from './lib/cart';
+import ToasterListener from './components/Toaster';
 
 export default function App() {
   return (
@@ -20,6 +21,7 @@ export default function App() {
               <RouterProvider router={router} />
             </div>
           </main>
+        <ToasterListener />
       </>
     </CartProvider>
   );

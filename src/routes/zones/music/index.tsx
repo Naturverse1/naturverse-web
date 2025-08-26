@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { autoGrantOncePerDay } from "@/lib/rewards";
+import { toast } from "@/components/Toaster";
 import "../../../styles/zone-widgets.css";
 
 export default function Music() {
@@ -272,7 +273,9 @@ const LYRICS: KLine[] = [
       const last = LYRICS[LYRICS.length - 1].t;
       if (now >= last && !grantedRef.current) {
         grantedRef.current = true;
-        autoGrantOncePerDay('Musiclandia');
+        try {
+          autoGrantOncePerDay('Musiclandia').then((granted) => granted && toast('Stamp earned!'));
+        } catch {}
       }
     }, [now, running]);
 

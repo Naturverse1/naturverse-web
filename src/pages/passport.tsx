@@ -13,6 +13,7 @@ export default function PassportPage() {
   const [uid, setUid] = useState<string | null>(null);
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
+  const [tick, setTick] = useState(0);
 
   const [stamps, setStamps] = useState<PassportStamp[]>(() => {
     try { return JSON.parse(localStorage.getItem(LS_STAMPS) || "[]"); } catch { return []; }
@@ -23,6 +24,12 @@ export default function PassportPage() {
 
   useEffect(() => { if (usingLocal) localStorage.setItem(LS_STAMPS, JSON.stringify(stamps)); }, [stamps, usingLocal]);
   useEffect(() => { if (usingLocal) localStorage.setItem(LS_BADGES, JSON.stringify(badges)); }, [badges, usingLocal]);
+
+  useEffect(() => {
+    const onGrant = () => setTick(t => t + 1);
+    window.addEventListener("natur:stamp-granted", onGrant);
+    return () => window.removeEventListener("natur:stamp-granted", onGrant);
+  }, []);
 
   useEffect(() => {
     (async () => {

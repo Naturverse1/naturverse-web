@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { Leaderboard } from "../../../components/Leaderboard";
 import { postScore, autoGrantOncePerDay } from "@/lib/rewards";
+import { toast } from "@/components/Toaster";
 import "../../../styles/zone-widgets.css";
 
 export default function Arcade() {
@@ -56,8 +57,10 @@ function ReactionTimer() {
       const ms = Math.round(performance.now() - startAt.current);
       const next = [...results, ms];
       setResults(next);
+      try {
         postScore('reaction_timer', ms * -1);
-        autoGrantOncePerDay('Thailandia');
+        autoGrantOncePerDay('Thailandia').then((granted) => granted && toast('Stamp earned!'));
+      } catch {}
       if (next.length >= 5) setPhase("done");
       else startRound();
     }
