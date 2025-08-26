@@ -54,26 +54,42 @@
   background: #fff;
 }
 
-/* Fix Naturversity colors */
+/* Naturversity page + subpages */
+.naturversity-page h1,
 .naturversity-page h2,
 .naturversity-page h3,
-.naturversity-page .section-title,
-.naturversity-page .card-title,
+.naturversity-page h4,
+.naturversity-page h5,
+.naturversity-page h6,
 .naturversity-page a,
-.naturversity-page .label {
+.naturversity-page a:visited,
+.naturversity-page label,
+.naturversity-page strong,
+.naturversity-page .card-title,
+.naturversity-page .card-subtitle,
+.naturversity-page .button,
+.naturversity-page .btn,
+.naturversity-page .save-btn,
+.naturversity-page .section-title,
+.naturversity-page .subsection-title,
+.naturversity-page p,
+.naturversity-page span,
+.naturversity-page div {
   color: var(--naturverse-blue) !important;
 }
 
-/* Teacher cards labels */
-.naturversity-page .teacher-card span,
-.naturversity-page .teacher-card strong {
-  color: var(--naturverse-blue) !important;
-}
-
-/* Buttons in Naturversity */
+/* Buttons and tags */
 .naturversity-page button,
-.naturversity-page .btn {
+.naturversity-page .btn,
+.naturversity-page input[type="submit"],
+.naturversity-page .tag,
+.naturversity-page .badge {
+  color: var(--naturverse-blue) !important;
+  border-color: var(--naturverse-blue) !important;
+}
+
+.naturversity-page button:hover,
+.naturversity-page .btn:hover {
   background-color: var(--naturverse-blue) !important;
   color: white !important;
-  border: none;
 }
