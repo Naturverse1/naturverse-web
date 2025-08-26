@@ -1,4 +1,8 @@
 @import './cards.css';
+
+:root {
+  --naturverse-blue: var(--nv-blue-700, #1f4ed8);
+}
 /* Primary button used across Naturversity */
 .btn-primary {
   @apply bg-blue-600 text-white font-extrabold uppercase tracking-wide
@@ -182,4 +186,28 @@ a {
 
 a:hover {
   text-decoration: underline;
+}
+
+/* Fix Naturversity colors */
+.naturversity-page h2,
+.naturversity-page h3,
+.naturversity-page .section-title,
+.naturversity-page .card-title,
+.naturversity-page a,
+.naturversity-page .label {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Teacher cards labels */
+.naturversity-page .teacher-card span,
+.naturversity-page .teacher-card strong {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Buttons in Naturversity */
+.naturversity-page button,
+.naturversity-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: white !important;
+  border: none;
 }

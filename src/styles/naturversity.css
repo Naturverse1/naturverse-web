@@ -53,3 +53,27 @@
 .nvrs-naturversity .item {
   background: #fff;
 }
+
+/* Fix Naturversity colors */
+.naturversity-page h2,
+.naturversity-page h3,
+.naturversity-page .section-title,
+.naturversity-page .card-title,
+.naturversity-page a,
+.naturversity-page .label {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Teacher cards labels */
+.naturversity-page .teacher-card span,
+.naturversity-page .teacher-card strong {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Buttons in Naturversity */
+.naturversity-page button,
+.naturversity-page .btn {
+  background-color: var(--naturverse-blue) !important;
+  color: white !important;
+  border: none;
+}

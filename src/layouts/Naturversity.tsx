@@ -3,7 +3,7 @@ import "../styles/naturversity.css";
 
 export default function NaturversityLayout() {
   return (
-    <div className="nvrs-naturversity">
+    <div className="nvrs-naturversity naturversity-page">
       <Outlet />
     </div>
   );
