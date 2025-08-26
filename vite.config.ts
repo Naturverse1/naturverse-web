@@ -11,47 +11,41 @@ export default defineConfig({
     VitePWA({
       registerType: 'autoUpdate',
       injectRegister: 'auto',
-      workbox: {
-        globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,woff2}'],
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+      includeAssets: ['favicon.ico', 'favicon.svg', 'icons/*'],
+      manifest: {
+        name: 'Naturverse',
+        short_name: 'Naturverse',
+        theme_color: '#2b64ff',
+        background_color: '#ffffff',
+        start_url: '/',
+        display: 'standalone',
+        icons: [
+          { src: '/favicon-128x128.png', sizes: '128x128', type: 'image/png', purpose: 'any' },
+          { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
+        ],
       },
-        manifest: {
-          name: 'Naturverse',
-          short_name: 'Naturverse',
-          theme_color: '#2b64ff',
-          background_color: '#ffffff',
-          start_url: '/',
-          display: 'standalone',
-          icons: [
-            { src: '/favicon-128x128.png', sizes: '128x128', type: 'image/png', purpose: 'any' },
-            { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png', purpose: 'any' },
-          ],
-        },
-      // Runtime caching for stuff that isn’t in the precache
-      runtimeCaching: [
-        {
-          urlPattern: ({ request }) => request.destination === 'image',
-          handler: 'CacheFirst',
-          options: {
-            cacheName: 'nv-images',
-            expiration: {
-              maxEntries: 60,
-              maxAgeSeconds: 60 * 60 * 24 * 30,
+      workbox: {
+        navigateFallback: '/offline.html',
+        globPatterns: ['**/*.{js,css,html,ico,svg,png,webp,woff2}'],
+        runtimeCaching: [
+          {
+            urlPattern: ({ request }) => request.destination === 'image',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'images',
+              expiration: { maxEntries: 120, maxAgeSeconds: 60 * 60 * 24 * 30 },
             },
           },
-        },
-        {
-          urlPattern: /https:\/\/[^/]*supabase\.co\/.*/i,
-          handler: 'StaleWhileRevalidate',
-          options: {
-            cacheName: 'nv-supabase',
-            expiration: {
-              maxEntries: 100,
-              maxAgeSeconds: 60 * 60 * 24,
+          {
+            urlPattern: ({ request }) => request.destination === 'font',
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'fonts',
+              expiration: { maxEntries: 20, maxAgeSeconds: 60 * 60 * 24 * 365 },
             },
           },
-        },
-      ],
+        ],
+      },
     }),
   ],
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],

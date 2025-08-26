@@ -10,6 +10,9 @@ import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
+import { initPWA } from './pwa';
+import PwaToasts from './components/PwaToasts';
+import { NetworkBanner } from './hooks/useNetworkBanner';
 
 export default function App() {
   const [loading, setLoading] = useState(true);
@@ -20,6 +23,10 @@ export default function App() {
       setLoading(false);
     }, 800);
     return () => clearTimeout(timer);
+  }, []);
+
+  useEffect(() => {
+    initPWA();
   }, []);
 
   if (loading) {
@@ -33,6 +40,7 @@ export default function App() {
   return (
     <CartProvider>
       <>
+        <NetworkBanner />
         {/* Global route side-effects (scroll & focus) */}
         <RouteFX />
         <CommandPaletteSafe />
@@ -50,6 +58,7 @@ export default function App() {
           </div>
         </main>
         <ToasterListener />
+        <PwaToasts />
       </>
     </CartProvider>
   );
