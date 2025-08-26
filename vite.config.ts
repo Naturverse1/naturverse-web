@@ -65,7 +65,12 @@ export default defineConfig({
       // add others you always ship:
       // "zustand", "clsx", "dayjs", ...
       'react-helmet-async',
+      'copy-to-clipboard',
+      'react-share',
     ],
+  },
+  ssr: {
+    noExternal: ['react-share'],
   },
   build: {
     outDir: 'dist',
