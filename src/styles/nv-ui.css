@@ -1,0 +1,5 @@
+/* Naturverse micro-UI helpers (no framework deps) */
+.btn{background:var(--naturverse-blue,#2a57ff);color:#fff;border:none;padding:10px 14px;border-radius:12px;box-shadow:0 6px 0 rgba(11,37,69,.18);cursor:pointer}
+.btn:active{transform:translateY(1px);box-shadow:0 5px 0 rgba(11,37,69,.18)}
+.palette-row:hover{background:#f7faff}
+@keyframes nv-shimmer{0%{background-position:-200px 0}100%{background-position:200px 0}}

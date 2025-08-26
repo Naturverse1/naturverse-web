@@ -1,12 +1,11 @@
 type Payload = Record<string, unknown>;
-
-const hasDL = () => typeof window !== "undefined" && Array.isArray((window as any).dataLayer);
-const push = (e: string, p: Payload = {}) => {
-  if (hasDL()) (window as any).dataLayer.push({ event: e, ...p });
+const hasDL = () =>
+  typeof window !== "undefined" && Array.isArray((window as any).dataLayer);
+const push = (event: string, p: Payload = {}) => {
+  if (hasDL()) (window as any).dataLayer.push({ event, ...p });
 };
-
 export const track = {
-  pageview(path = location.pathname) {
+  pageview(path = (typeof location !== "undefined" ? location.pathname : "/")) {
     push("nv_page", { path });
   },
   click(name: string, meta: Payload = {}) {

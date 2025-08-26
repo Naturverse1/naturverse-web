@@ -1,4 +1,5 @@
 import { useEffect } from "react";
+import { track } from "../utils/telemetry";
 
 /**
  * RouteFX (safe)
@@ -11,6 +12,7 @@ export default function RouteFX(): null {
   useEffect(() => {
     function runEffects() {
       try {
+        track.pageview(location.pathname);
         // Scroll to top (prefer smooth when available)
         try {
           window.scrollTo({ top: 0, left: 0, behavior: "smooth" as ScrollBehavior });
