@@ -74,6 +74,7 @@ export default defineConfig({
       'react-router-dom',
       '@supabase/supabase-js',
       'three',
+      'react-helmet-async',
       // add others you always ship:
       // "zustand", "clsx", "dayjs", ...
     ],
@@ -95,5 +96,8 @@ export default defineConfig({
       },
     },
     sourcemap: true, // ensure production sourcemaps
+    commonjsOptions: {
+      include: [/node_modules/],
+    },
   },
 });
