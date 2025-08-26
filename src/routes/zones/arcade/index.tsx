@@ -1,5 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
+import { Leaderboard } from "../../../components/Leaderboard";
+import { grantStamp, postScore } from "@/lib/rewards";
 import "../../../styles/zone-widgets.css";
 
 export default function Arcade() {
@@ -14,6 +16,7 @@ export default function Arcade() {
           <div className="zone-title">⚡ Reaction Timer</div>
           <div className="zone-sub">Wait for green, then tap as fast as you can. Best of 5.</div>
           <ReactionTimer />
+          <Leaderboard game="reaction_timer" />
         </section>
 
         <section className="zone-card">
@@ -53,6 +56,8 @@ function ReactionTimer() {
       const ms = Math.round(performance.now() - startAt.current);
       const next = [...results, ms];
       setResults(next);
+      postScore('reaction_timer', ms * -1);
+      grantStamp({ world: 'Thailandia', inc: 1 });
       if (next.length >= 5) setPhase("done");
       else startRound();
     }
