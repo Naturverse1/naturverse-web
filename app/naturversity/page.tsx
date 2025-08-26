@@ -4,7 +4,7 @@ import ComingSoonBanner from "@/components/coming-soon-banner";
 
 export default function Naturversity() {
   return (
-    <main className="naturverse-bg min-h-screen py-12">
+    <main className="naturversity-page naturverse-bg min-h-screen py-12">
       <div className="container mx-auto px-4 md:px-6">
         <Breadcrumbs items={[{ href: '/', label: 'Home' }, { label: 'Naturversity' }]} />
         <h1 className="naturverse-title">Naturversity</h1>
