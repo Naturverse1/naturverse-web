@@ -10,7 +10,8 @@ import './main.css';
 import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
-import SkipToContent from './components/SkipToContent';
+import ToastProvider from './components/Toast';
+import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
@@ -25,11 +26,13 @@ async function bootstrap() {
     <React.StrictMode>
       {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
         <AuthProvider initialSession={initialSession}>
-          <SkipToContent />
-          <OfflineBanner />
-          <BaseAuthProvider>
-            <App />
-          </BaseAuthProvider>
+          <SkipLink />
+          <ToastProvider>
+            <OfflineBanner />
+            <BaseAuthProvider>
+              <App />
+            </BaseAuthProvider>
+          </ToastProvider>
         </AuthProvider>
       </React.StrictMode>,
   );
