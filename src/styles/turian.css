@@ -274,10 +274,54 @@
   white-space: nowrap;
 }
 
-/* 3) Input row: keep left alignment inside the chat box */
-#turian-page .inputWrap { display: flex; gap: .75rem; align-items: center; }
-#turian-page .inputWrap input[type="text"],
-#turian-page .inputWrap textarea { text-align: left !important; }
+/* ===== Turian chat: UNLOCK CENTER, FORCE LEFT LAYOUT ===== */
+#turian-page .turian-chat,                 /* container */
+#turian-page .turian-chat * {
+  text-align: left !important;
+}
 
-/* Footer blurb under the chat box */
-#turian-page .fineprint { text-align: left !important; margin-left: 0 !important; }
+/* kill any vertical-centering hacks */
+#turian-page .turian-chat [style*="translateY"],
+#turian-page .turian-chat.vcenter,
+#turian-page .turian-chat .vcenter {
+  transform: none !important;
+}
+#turian-page .turian-chat [style*="top:"],
+#turian-page .turian-chat [style*="left:"],
+#turian-page .turian-chat .absolute,
+#turian-page .turian-chat .centered {
+  position: static !important;
+  top: auto !important;
+  left: auto !important;
+}
+
+/* chat card layout */
+#turian-page .turian-chat .chatCard {
+  display: block !important;
+}
+
+/* input row: text box grows, button at right */
+#turian-page .turian-chat .inputRow {
+  display: flex !important;
+  align-items: center !important;
+  gap: .75rem !important;
+}
+#turian-page .turian-chat .inputRow input,
+#turian-page .turian-chat .inputRow textarea {
+  flex: 1 1 auto !important;
+  text-align: left !important;
+}
+#turian-page .turian-chat .inputRow input::placeholder,
+#turian-page .turian-chat .inputRow textarea::placeholder {
+  text-align: left !important;
+}
+
+/* “Here’s a playful 3-stop itinerary …” prompts: normal flowing text */
+#turian-page .turian-chat .promptText,
+#turian-page .turian-chat .sampleText,
+#turian-page .turian-chat .fineprint {
+  display: block !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  margin: .5rem 0 0 0 !important;
+}
