@@ -84,3 +84,26 @@
     grid-template-columns: 2fr 1fr;
   }
 }
+
+/* Worlds — force all secondary/caption text to Naturverse Blue */
+.page-worlds :is(p, small, .muted, .subtle, .desc, .kicker, .eyebrow) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Card subtitles under the map images */
+.page-worlds .card :is(.subtitle, .subhead, .summary) {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Breadcrumbs on this page */
+.page-worlds .crumbs a,
+.page-worlds .crumbs {
+  color: var(--naturverse-blue) !important;
+}
+
+/* Safety: links in cards remain blue even after visit */
+.page-worlds .card a,
+.page-worlds .card a:visited {
+  color: var(--naturverse-blue) !important;
+}
+
