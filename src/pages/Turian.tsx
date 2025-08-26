@@ -1,40 +1,60 @@
 import React from "react";
-import Page from "../components/Page";
-import Meta from "../components/Meta";
-import { Img } from "../components";
-import { setTitle } from "./_meta";
+import "./turian.css";
 
-// Use site favicon as Turian's mascot for consistent branding
-const mascotSrc = "/favicon.ico";
+/** Optional: drop-in hook you can wire later */
+function useTurianChat() {
+  // Wire this to your API route when ready
+  async function send(message: string): Promise<string> {
+    const res = await fetch("/api/turian-chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message }),
+    });
+    const data = await res.json().catch(() => ({}));
+    return data?.reply ?? "";
+  }
+  return { send };
+}
 
-export default function TurianPage() {
-  setTitle("Turian");
+export default function Turian() {
+  // const { send } = useTurianChat(); // keep for later
   return (
-    <div id="turian-page" className="nvrs-section turian nv-secondary-scope">
-      <Page
-        title="Turian the Durian"
-        subtitle="Ask for tips, quests, and facts. This is an offline demo—no external calls or models yet."
-        dataPage="turian"
-      >
-        <Meta title="Turian — Naturverse" description="Offline AI assistant demo." />
-        <section className="turian-chat">
-          <div className="chatCard">
-            <div className="nv-card" style={{ display: "flex", alignItems: "center", gap: 14, marginTop: 12 }}>
-              {mascotSrc ? (
-                <Img src={mascotSrc} alt="Turian favicon" width={32} height={32} style={{ borderRadius: 8 }} />
-              ) : (
-                <span role="img" aria-label="durian" style={{ fontSize: 32 }}>🥭</span>
-              )}
-              <div>
-                <strong>Chat with Turian</strong>
-                <div className="nv-muted">Chat feature temporarily disabled.</div>
-              </div>
-            </div>
-            <p className="fineprint">Live chat coming soon.</p>
-          </div>
-        </section>
-      </Page>
-    </div>
+    <main className="turian-page" role="main" aria-labelledby="turian-title">
+      <nav className="turian-breadcrumb">
+        <a href="/">Home</a> <span>/</span> <span>Turian</span>
+      </nav>
+
+      <header className="turian-hero">
+        <h1 id="turian-title">Turian the Durian</h1>
+        <p className="lead">
+          Ask for tips, quests, and facts. This is an offline demo—no external
+          calls or models yet.
+        </p>
+      </header>
+
+      {/* Status card (kept), chat fully removed */}
+      <section className="turian-card" aria-live="polite">
+        <div className="turian-card__title">Chat with Turian</div>
+        <p className="turian-card__text">Chat feature temporarily disabled.</p>
+      </section>
+
+      <p className="coming-soon">Live chat coming soon.</p>
+
+      {/* ------- When you’re ready, drop a new chat form here -------
+      <form className="turian-chat" onSubmit={async (e) => {
+        e.preventDefault();
+        const form = e.currentTarget as HTMLFormElement;
+        const input = form.querySelector("input[name='q']") as HTMLInputElement;
+        // const reply = await send(input.value);
+        // show reply in your UI
+        input.value = "";
+      }}>
+        <label htmlFor="turian-q" className="sr-only">Ask Turian</label>
+        <input id="turian-q" name="q" placeholder="Ask Turian anything…" />
+        <button type="submit" className="btn-primary">Ask</button>
+      </form>
+      ------------------------------------------------------------- */}
+    </main>
   );
 }
 
