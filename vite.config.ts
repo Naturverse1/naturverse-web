@@ -1,9 +1,7 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import { VitePWA } from 'vite-plugin-pwa';
+// import { VitePWA } from 'vite-plugin-pwa'; // keep disabled for now
 import path from 'path';
-
-const enablePWA = (process.env.VITE_ENABLE_PWA ?? 'false') === 'true';
 
 export default defineConfig({
   plugins: [
@@ -14,25 +12,8 @@ export default defineConfig({
       },
       fastRefresh: false,
     }),
-    ...(enablePWA
-      ? [
-          /*
-          VitePWA({
-            registerType: 'autoUpdate',
-            manifest: {
-              name: 'Naturverse',
-              short_name: 'Naturverse',
-              start_url: '/',
-              display: 'standalone',
-              background_color: '#ffffff',
-              theme_color: '#0ea5e9',
-              icons: [] // keep empty until real PNGs exist in /public
-            },
-            workbox: { clientsClaim: true, skipWaiting: true, cleanupOutdatedCaches: true }
-          })
-          */
-        ]
-      : []),
+    // Re-enable later behind an env flag once icons & SW are confirmed good.
+    // VitePWA({ /* ... */ }),
   ],
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
@@ -74,7 +55,7 @@ export default defineConfig({
         },
       },
     },
-    sourcemap: false, // prevents inline eval source maps
+    sourcemap: true, // show real stack traces in prod console
     commonjsOptions: {
       // allow CJS in node_modules to be bundled
       include: [/node_modules/],
