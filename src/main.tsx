@@ -1,32 +1,52 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import AppShell from './AppShell';
 import './index.css';
 
-// --- Boot diagnostics: surface any runtime errors instead of a white screen
-window.addEventListener('error', (e) => {
-  console.error('[boot][error]', (e as ErrorEvent).error || e.message);
-});
-window.addEventListener('unhandledrejection', (e: PromiseRejectionEvent) => {
-  console.error('[boot][unhandledrejection]', e.reason);
-});
+// ---- Boot diagnostics: never silently white-screen
+window.addEventListener('error', (e) =>
+  console.error('[boot:error]', (e as ErrorEvent).error || e.message)
+);
+window.addEventListener('unhandledrejection', (e) =>
+  console.error('[boot:unhandled]', (e as PromiseRejectionEvent).reason)
+);
 console.log('[boot] starting…');
 
-try {
-  ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-      <BrowserRouter>
-        <AppShell />
-      </BrowserRouter>
-    </React.StrictMode>,
-  );
-} catch (err) {
-  console.error('[boot][render-failed]', err);
-  const pre = document.createElement('pre');
-  pre.style.padding = '16px';
-  pre.style.whiteSpace = 'pre-wrap';
-  pre.textContent = 'Boot failed:\n' + ((err as any)?.stack || String(err));
-  document.body.innerHTML = '';
-  document.body.appendChild(pre);
+function mount() {
+  try {
+    let el = document.getElementById('root');
+    if (!el) {
+      el = document.createElement('div');
+      el.id = 'root';
+      document.body.appendChild(el);
+      console.warn('[boot] #root not found; created one');
+    }
+    const root = createRoot(el);
+    root.render(
+      <React.StrictMode>
+        <BrowserRouter>
+          <AppShell />
+        </BrowserRouter>
+      </React.StrictMode>,
+    );
+    console.log('[boot] rendered');
+  } catch (err) {
+    console.error('[boot] render failed:', err);
+    const pre = document.createElement('pre');
+    pre.style.padding = '16px';
+    pre.style.whiteSpace = 'pre-wrap';
+    pre.textContent = 'Boot failed:\n' + ((err as any)?.stack || String(err));
+    document.body.innerHTML = '';
+    document.body.appendChild(pre);
+  }
 }
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', mount);
+} else {
+  mount();
+}
+
+// Make sure NO service worker is registered here.
+// (Leave PWA off until we intentionally re-enable.)

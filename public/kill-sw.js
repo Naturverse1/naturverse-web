@@ -1,14 +1,13 @@
-// Kill any active/installed service workers and clear their caches.
-// Runs once per browser and then removes its own query flag.
+// Kill any service workers + caches so old PWA shells can't hijack prod.
 (async () => {
   try {
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.allSettled(regs.map((r) => r.unregister()));
+      await Promise.allSettled(regs.map(r => r.unregister()));
     }
-    if (window.caches?.keys) {
+    if (self.caches?.keys) {
       const keys = await caches.keys();
-      await Promise.allSettled(keys.map((k) => caches.delete(k)));
+      await Promise.allSettled(keys.map(k => caches.delete(k)));
     }
     const url = new URL(location.href);
     if (url.searchParams.has('kill-sw')) {
