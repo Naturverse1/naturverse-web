@@ -3,6 +3,8 @@ import { createRoot } from 'react-dom/client';
 import { BrowserRouter } from 'react-router-dom';
 import AppShell from './AppShell';
 import './index.css';
+import { loadFlags } from './lib/flags';
+import { sendEvent } from './lib/telemetry';
 
 // ---- Boot diagnostics: never silently white-screen
 window.addEventListener('error', (e) =>
@@ -31,6 +33,12 @@ function mount() {
       </React.StrictMode>,
     );
     console.log('[boot] rendered');
+    (async () => {
+      const flags = await loadFlags();
+      if (flags.telemetry) {
+        sendEvent({ name: 'pageview' });
+      }
+    })();
   } catch (err) {
     console.error('[boot] render failed:', err);
     const pre = document.createElement('pre');
