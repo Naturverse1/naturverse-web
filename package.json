@@ -10,7 +10,7 @@
     "build": "npm run build:galleries && npm run optimize:images && vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
-    "prebuild": "echo NODE_VERSION=$NODE_VERSION && node -v && npm -v"
+    "prebuild": "echo Using Node: $(node -v) && npm -v"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
@@ -37,7 +37,9 @@
     "vite": "^5.4.2",
     "vite-plugin-pwa": "^0.20.0",
     "sharp": "^0.33.0",
-    "glob": "^7.2.3"
+    "glob": "^7.2.3",
+    "@types/glob": "^7.2.0",
+    "@types/sharp": "^0.32.0"
   },
   "overrides": {
     "react-helmet-async": "^2.0.4"
