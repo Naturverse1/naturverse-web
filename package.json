@@ -10,7 +10,7 @@
     "build": "vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
-    "prebuild": "echo Using Node: $(node -v) && npm -v"
+    "prebuild": "echo NODE_VERSION=$NODE_VERSION && node -v && npm -v"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
@@ -46,6 +46,6 @@
   },
   "packageManager": "npm@10",
   "engines": {
-    "node": ">=20 <21"
+    "node": ">=22 <23"
   }
 }
