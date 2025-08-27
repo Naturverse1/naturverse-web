@@ -6,6 +6,13 @@ import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
 
+// safety: disable PWA by default in prod
+const DISABLE_PWA = import.meta.env.VITE_DISABLE_PWA !== '0';
+
+if (DISABLE_PWA && typeof window !== 'undefined') {
+  import('./lib/killSW').then(m => m.killServiceWorkers());
+}
+
 // ---- Boot diagnostics: never silently white-screen
 window.addEventListener('error', (e) =>
   console.error('[boot:error]', (e as ErrorEvent).error || e.message)
