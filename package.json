@@ -7,7 +7,7 @@
     "dev": "vite",
     "build:galleries": "node scripts/build-kingdom-gallery.js",
     "optimize:images": "node --loader ts-node/esm scripts/optimize-images.ts",
-    "build": "npm run build:galleries && npm run optimize:images && vite build",
+    "build": "vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
     "prebuild": "echo Using Node: $(node -v) && npm -v"

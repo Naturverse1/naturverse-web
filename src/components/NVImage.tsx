@@ -1,17 +1,24 @@
-type Props = React.ImgHTMLAttributes<HTMLImageElement> & {w?:number[]}
+type Props = React.ImgHTMLAttributes<HTMLImageElement> & { w?: number[] }
+const toCdn = (src: string, w: number) => `${src}?nf_resize=fit&w=${w}`
 
-const toOptimized = (src:string, w:number)=>{
-  // if you pass /assets/foo.png, it will try /optimized/assets/foo-640.webp
-  return src.replace(/^\/?/, '/optimized/').replace(/\.(png|jpe?g)$/i, `-${w}.webp`)
-}
-
-export default function NVImage({src='', alt='', w=[320,640,960,1280], loading='lazy', ...rest}:Props){
-  if(!src) return null
-  const srcset = w.map(px=>`${toOptimized(src,px)} ${px}w`).join(', ')
+export default function NVImage({ src = '', alt = '', w = [320, 640, 960, 1280], loading = 'lazy', ...rest }: Props) {
+  if (!src) return null
   const sizes = '(max-width: 768px) 90vw, 1200px'
+  const srcset = w.map(px => `${toCdn(src, px)} ${px}w`).join(', ')
+  const webp = src.replace(/\.(png|jpe?g)$/i, '.webp')
+  const webpSet = srcset.replaceAll(src, webp)
   return (
     <picture>
-      <img src={toOptimized(src, w[1]||640)} srcSet={srcset} sizes={sizes} alt={alt} loading={loading} decoding="async" {...rest}/>
+      <source type="image/webp" srcSet={webpSet} sizes={sizes} />
+      <img
+        src={toCdn(src, w[1] || 640)}
+        srcSet={srcset}
+        sizes={sizes}
+        alt={alt}
+        loading={loading}
+        decoding="async"
+        {...rest}
+      />
     </picture>
   )
 }
