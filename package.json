@@ -10,7 +10,7 @@
     "build": "npm run build:galleries && npm run optimize:images && vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
-    "prebuild": "node -v && npm -v"
+    "prebuild": "node -v && npm -v && echo Using NODE_VERSION=$NODE_VERSION"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
@@ -44,6 +44,6 @@
   },
   "packageManager": "npm@10",
   "engines": {
-    "node": "20.12.x"
+    "node": ">=20 <21"
   }
 }
