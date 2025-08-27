@@ -10,7 +10,7 @@
     "build": "npm run build:galleries && npm run optimize:images && vite build",
     "preview": "vite preview --port 5173",
     "typecheck": "tsc --noEmit",
-    "prebuild": "node -v && npm -v && echo Using NODE_VERSION=$NODE_VERSION"
+    "prebuild": "echo NODE_VERSION=$NODE_VERSION && node -v && npm -v"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
