@@ -1,4 +1,5 @@
 {
+  "telemetry": false,
   "enableTurianAI": true,
   "showCreatorLab": true,
   "enablePWAInstallPrompt": true,
