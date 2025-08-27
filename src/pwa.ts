@@ -1,7 +1,10 @@
 // Only runs in production builds by default
 import { registerSW } from 'virtual:pwa-register';
 
+const DISABLE_PWA = import.meta.env.VITE_DISABLE_PWA !== '0';
+
 export const initPWA = () => {
+  if (DISABLE_PWA) return;
   const updateSW = registerSW({
     immediate: true,
     onNeedRefresh() {
