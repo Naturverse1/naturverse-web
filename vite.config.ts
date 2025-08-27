@@ -1,7 +1,9 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import { VitePWA } from 'vite-plugin-pwa';  // temporarily disabled
+// import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
+
+const enablePWA = (process.env.VITE_ENABLE_PWA ?? 'false') === 'true';
 
 export default defineConfig({
   plugins: [
@@ -12,20 +14,25 @@ export default defineConfig({
       },
       fastRefresh: false,
     }),
-    // Re-enable after we add valid icons & test:
-    // VitePWA({
-    //   registerType: 'autoUpdate',
-    //   manifest: {
-    //     name: 'Naturverse',
-    //     short_name: 'Naturverse',
-    //     start_url: '/',
-    //     display: 'standalone',
-    //     background_color: '#ffffff',
-    //     theme_color: '#0ea5e9',
-    //     icons: [] // keep empty until real PNGs exist in /public
-    //   },
-    //   workbox: { clientsClaim: true, skipWaiting: true, cleanupOutdatedCaches: true }
-    // })
+    ...(enablePWA
+      ? [
+          /*
+          VitePWA({
+            registerType: 'autoUpdate',
+            manifest: {
+              name: 'Naturverse',
+              short_name: 'Naturverse',
+              start_url: '/',
+              display: 'standalone',
+              background_color: '#ffffff',
+              theme_color: '#0ea5e9',
+              icons: [] // keep empty until real PNGs exist in /public
+            },
+            workbox: { clientsClaim: true, skipWaiting: true, cleanupOutdatedCaches: true }
+          })
+          */
+        ]
+      : []),
   ],
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
