@@ -9,7 +9,8 @@
     "optimize:images": "node --loader ts-node/esm scripts/optimize-images.ts",
     "build": "npm run build:galleries && npm run optimize:images && vite build",
     "preview": "vite preview --port 5173",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "prebuild": "node -v && npm -v"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
@@ -43,6 +44,6 @@
   },
   "packageManager": "npm@10",
   "engines": {
-    "node": "20.x"
+    "node": "20.12.x"
   }
 }
