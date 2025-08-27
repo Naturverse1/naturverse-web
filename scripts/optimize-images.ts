@@ -1,4 +1,3 @@
-import sharp from 'sharp'
 import glob from 'glob'
 import { promises as fs } from 'fs'
 import path from 'path'
@@ -7,6 +6,14 @@ const srcDirs = ['public/assets', 'public/kingdoms', 'public/Languages', 'public
 const outDir = 'public/optimized'
 
 async function run() {
+  let sharp: any
+  try {
+    sharp = (await import('sharp')).default
+  } catch (err) {
+    console.error('❌ Unable to load "sharp". Please install it to optimize images.')
+    process.exit(1)
+  }
+
   await fs.mkdir(outDir, { recursive: true })
   const files = srcDirs.flatMap(d => glob.sync(`${d}/**/*.{png,jpg,jpeg}`))
 
@@ -28,5 +35,8 @@ async function run() {
   }
 }
 
-run()
+run().catch(err => {
+  console.error('❌ optimize-images failed', err)
+  process.exit(1)
+})
 
