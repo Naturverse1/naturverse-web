@@ -1,7 +1,5 @@
-// Only runs in production builds
-const DISABLE_PWA = import.meta.env.VITE_DISABLE_PWA !== '0';
-
-if (!DISABLE_PWA && import.meta.env.PROD && 'serviceWorker' in navigator) {
+// Only runs when service workers are enabled in production
+if (import.meta.env.VITE_ENABLE_SW === 'true' && import.meta.env.PROD && 'serviceWorker' in navigator) {
   // vite-plugin-pwa injects /sw.js for us
   import('workbox-window').then(({ Workbox }) => {
     const wb = new Workbox('/sw.js');
