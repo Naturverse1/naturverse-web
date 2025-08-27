@@ -5,7 +5,13 @@ import path from 'path';
 
 export default defineConfig({
   plugins: [
-    react(),
+    react({
+      // Disable dev-only transform that uses eval()
+      babel: {
+        plugins: [],
+      },
+      fastRefresh: false,
+    }),
     // Re-enable after we add valid icons & test:
     // VitePWA({
     //   registerType: 'autoUpdate',
@@ -61,7 +67,7 @@ export default defineConfig({
         },
       },
     },
-    sourcemap: true, // ensure production sourcemaps
+    sourcemap: false, // prevents inline eval source maps
     commonjsOptions: {
       // allow CJS in node_modules to be bundled
       include: [/node_modules/],
