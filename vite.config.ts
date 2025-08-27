@@ -1,52 +1,25 @@
-import { defineConfig, splitVendorChunkPlugin } from 'vite';
+import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-import { VitePWA } from 'vite-plugin-pwa';
+// import { VitePWA } from 'vite-plugin-pwa';  // temporarily disabled
 import path from 'path';
 
 export default defineConfig({
   plugins: [
     react(),
-    // keeps a stable vendor chunk so the browser can cache it longer
-    splitVendorChunkPlugin(),
-    VitePWA({
-      registerType: 'autoUpdate',
-      manifest: {
-        name: 'Naturverse',
-        short_name: 'Naturverse',
-        start_url: '/',
-        display: 'standalone',
-        background_color: '#ffffff',
-        theme_color: '#0ea5e9',
-        icons: [],
-      },
-      workbox: {
-        navigateFallback: '/offline.html',
-        // Precache only the essentials so build doesn't fail on large PNGs
-        globPatterns: ['**/*.{js,css,html,svg,ico}'],
-        // Explicitly ignore heavy image folders from precache
-        globIgnores: [
-          '**/kingdoms/**/*.png',
-          '**/Languages/**/*.png',
-          '**/Mapsmain/**/*.png',
-          '**/Marketplace/**/*.png',
-          '**/*.{jpg,jpeg,png,webp,avif,gif}',
-        ],
-        // Runtime caching so images are cached on-demand (fast repeats, smaller SW)
-        runtimeCaching: [
-          {
-            urlPattern: ({ request }) => request.destination === 'image',
-            handler: 'StaleWhileRevalidate',
-            options: {
-              cacheName: 'naturverse-images',
-              expiration: {
-                maxEntries: 120,
-                maxAgeSeconds: 60 * 60 * 24 * 30, // 30 days
-              },
-            },
-          },
-        ],
-      },
-    }),
+    // Re-enable after we add valid icons & test:
+    // VitePWA({
+    //   registerType: 'autoUpdate',
+    //   manifest: {
+    //     name: 'Naturverse',
+    //     short_name: 'Naturverse',
+    //     start_url: '/',
+    //     display: 'standalone',
+    //     background_color: '#ffffff',
+    //     theme_color: '#0ea5e9',
+    //     icons: [] // keep empty until real PNGs exist in /public
+    //   },
+    //   workbox: { clientsClaim: true, skipWaiting: true, cleanupOutdatedCaches: true }
+    // })
   ],
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
