@@ -1,24 +1,19 @@
 import React from "react";
-import { buildSearchIndex } from "../search/buildIndex";
 import { search, type SearchDoc } from "../search";
+import { SearchCtx } from "../search/SearchProvider";
 import "./search.css";
 
 export default function SearchBar() {
   const [q, setQ] = React.useState("");
   const [open, setOpen] = React.useState(false);
   const [results, setResults] = React.useState<SearchDoc[]>([]);
-  const indexRef = React.useRef<SearchDoc[] | null>(null);
   const inputRef = React.useRef<HTMLInputElement>(null);
-
-  React.useEffect(() => {
-    if (!indexRef.current) indexRef.current = buildSearchIndex();
-  }, []);
+  const { docs } = React.useContext(SearchCtx);
 
   React.useEffect(() => {
     if (!q.trim()) { setResults([]); return; }
-    const docs = indexRef.current || [];
     setResults(search(docs, q, 8));
-  }, [q]);
+  }, [q, docs]);
 
   React.useEffect(() => {
     const onKey = (e: KeyboardEvent) => {

@@ -1,6 +1,7 @@
 import { supabase } from "./supabaseClient";
 import { SEED_QUESTS, type Quest } from "../data/quests";
 import { listAllQuests, loadQuests, upsertQuest } from "../utils/quests-store";
+import { emit, EVT } from "./events";
 
 function nowIso() { return new Date().toISOString(); }
 
@@ -41,9 +42,13 @@ export async function fetchAllQuests(): Promise<Quest[]> {
       const prev = byId.get(q.id);
       if (!prev || (q.updatedAt > prev.updatedAt)) byId.set(q.id, q);
     });
-    return listAllQuests([...byId.values()]);
+    const out = listAllQuests([...byId.values()]);
+    emit(EVT.QUESTS_SYNCED, { count: out.length });
+    return out;
   } catch {
-    return listAllQuests(SEED_QUESTS);
+    const out = listAllQuests(SEED_QUESTS);
+    emit(EVT.QUESTS_SYNCED, { count: out.length, offline: true });
+    return out;
   }
 }
 
@@ -60,6 +65,7 @@ export async function fetchQuestBySlug(slug: string): Promise<Quest | undefined>
 
 export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflict?: boolean; id?: string }> {
   upsertQuest(q);
+  emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug });
 
   try {
     const { data: existing } = await supabase.from("quests").select("id, updated_at").eq("id", q.id).maybeSingle();
@@ -85,7 +91,9 @@ export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflic
         const { error: insErr } = await supabase.from("quest_steps").insert(rows);
         if (insErr) throw insErr;
       }
-      return { ok: true, id: q.id };
+      const res = { ok: true, id: q.id };
+      emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug, cloud: true });
+      return res;
     } else {
       const { error: insErr } = await supabase.from("quests").insert({
         id: q.id,
@@ -105,7 +113,9 @@ export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflic
         const { error: sErr } = await supabase.from("quest_steps").insert(rows);
         if (sErr) throw sErr;
       }
-      return { ok: true, id: q.id };
+      const res = { ok: true, id: q.id };
+      emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug, cloud: true });
+      return res;
     }
   } catch (e) {
     console.warn("saveQuestToCloud failed; staying local", e);
