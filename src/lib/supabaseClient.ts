@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js';
-import { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, HAS_SUPABASE_ENV } from './env';
 
-export const supabase =
-  HAS_SUPABASE_ENV ? createClient(VITE_SUPABASE_URL!, VITE_SUPABASE_ANON_KEY!) : null;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL!;
+const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+
+export const supabase = createClient(supabaseUrl, supabaseAnonKey);

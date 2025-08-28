@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider as BaseAuthProvider } from './auth/AuthContext';
 import { AuthProvider } from './lib/auth-context';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
 import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
@@ -21,7 +22,16 @@ import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
 
+function unregisterStaleSW() {
+  if (location.hostname.endsWith('.netlify.app') && 'serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations().then((regs) => {
+      regs.forEach((reg) => reg.unregister());
+    });
+  }
+}
+
 applyTheme(getTheme());
+unregisterStaleSW();
 // Skip service worker registration on Netlify preview hosts
 if (location.hostname.endsWith('.netlify.app')) {
   console.info('[Naturverse] Preview host — skipping SW registration');
@@ -66,7 +76,9 @@ async function bootstrap() {
           <ToastProvider>
             <BaseAuthProvider>
               <RootWithPalette>
-                <App />
+                <AppErrorBoundary>
+                  <App />
+                </AppErrorBoundary>
                 <WorldExtras />
               </RootWithPalette>
             </BaseAuthProvider>
@@ -75,7 +87,9 @@ async function bootstrap() {
       ) : (
         <ToastProvider>
           <RootWithPalette>
-            <App />
+            <AppErrorBoundary>
+              <App />
+            </AppErrorBoundary>
             <WorldExtras />
           </RootWithPalette>
         </ToastProvider>
