@@ -1,0 +1,26 @@
+/* ===== Lightweight skeleton shimmer ===== */
+.nv-skel {
+  display: inline-block;
+  background: linear-gradient(90deg, #f2f4f7 25%, #eceff3 37%, #f2f4f7 63%);
+  background-size: 400% 100%;
+  animation: nv-skel 1.2s ease-in-out infinite;
+}
+@keyframes nv-skel {
+  0% { background-position: 100% 50%; }
+  100% { background-position: 0 50%; }
+}
+.nv-skel-stack { display: grid; }
+.nv-skel-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+@media (prefers-color-scheme: dark) {
+  .nv-skel { background: linear-gradient(90deg, #1b2140 25%, #222a4d 37%, #1b2140 63%); }
+  .nv-skel-card { border-color: #2a2f45; background: #0f152b; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .nv-skel { animation: none; }
+}
+

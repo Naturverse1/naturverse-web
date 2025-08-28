@@ -6,6 +6,7 @@ import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import { logEvent } from './utils/telemetry';
+import RouteFallback from './routes/RouteFallback';
 import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
@@ -15,6 +16,7 @@ import './styles/footer.css';
 import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
 import './styles/images.css';
+import './components/skeleton.css';
 
 export default function App() {
   useEffect(() => {
@@ -35,20 +37,22 @@ export default function App() {
           role="main"
           aria-label="Main content"
         >
-          {/* Global route side-effects (scroll & focus) */}
-          <RouteFX />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-          />
-          <script
-            type="application/ld+json"
-            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
-          />
-          <div className="container">
-            <RouterProvider router={router} />
-          </div>
-          <ToasterListener />
+          <React.Suspense fallback={<RouteFallback />}>
+            {/* Global route side-effects (scroll & focus) */}
+            <RouteFX />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+            />
+            <script
+              type="application/ld+json"
+              dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+            />
+            <div className="container">
+              <RouterProvider router={router} />
+            </div>
+            <ToasterListener />
+          </React.Suspense>
         </main>
 
         <Footer />
