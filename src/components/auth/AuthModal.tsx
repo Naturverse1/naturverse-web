@@ -28,6 +28,7 @@ export default function AuthModal({
     setErr(null);
     setMsg(null);
     try {
+      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
       await sendMagicLink(email.trim());
       setMsg(successMessage);
     } catch (e: any) {

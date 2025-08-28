@@ -9,6 +9,7 @@ export default function Home() {
   const navigate = useNavigate();
 
   const handleGoogle = async () => {
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     await signInWithGoogle();
   };
 

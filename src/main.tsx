@@ -13,6 +13,7 @@ import './app.css';
 import './styles/nv-sweep.css';
 import './styles/mega-features.css';
 import './index.css';
+import './styles/theme.css';
 import { applyTheme, getTheme } from './lib/theme';
 import ToastProvider from './components/Toast';
 import { getSupabase } from '@/lib/supabase-client';

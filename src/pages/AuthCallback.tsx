@@ -1,21 +1,27 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useSupabase } from '../lib/useSupabase';
+import { useEffect, useState } from 'react';
+import { supabase } from '../lib/supabaseClient';
 
 export default function AuthCallback() {
-  const navigate = useNavigate();
-  const supabase = useSupabase();
+  const [msg, setMsg] = useState('Finishing sign-in…');
 
   useEffect(() => {
     (async () => {
-      // PKCE/code exchange (Supabase handles both OAuth & Magic)
-      if (supabase) {
-        const { error } = await supabase.auth.exchangeCodeForSession(window.location.href);
-        if (error) console.error('Auth callback error:', error);
+      try {
+        const { data, error } = await supabase.auth.exchangeCodeForSession(window.location.href);
+        if (error) throw error;
+        const dest = sessionStorage.getItem('post-auth-redirect') || '/';
+        sessionStorage.removeItem('post-auth-redirect');
+        window.location.replace(dest);
+      } catch (e) {
+        console.error('[auth] exchangeCodeForSession failed', e);
+        setMsg('Could not finish sign-in. Please try again.');
       }
-      navigate('/', { replace: true });
     })();
-  }, [navigate, supabase]);
+  }, []);
 
-  return <div style={{ padding: 24 }}>Signing you in…</div>;
+  return (
+    <div style={{ padding: '2rem', textAlign: 'center' }}>
+      <h2>{msg}</h2>
+    </div>
+  );
 }

@@ -12,6 +12,12 @@
   status = 200
   force = false
 
+# Ensure SPA routing works on deep links (worlds, zones, quests, auth)
+[[redirects]]
+  from = "/auth/*"
+  to = "/index.html"
+  status = 200
+
 # SPA routing
 [[redirects]]
   from = "/*"

@@ -2,6 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { useSupabase } from '@/lib/useSupabase';
 import { upsertProfile } from '../lib/upsertProfile';
+import { sendMagicLink } from '../lib/auth';
 
 type AuthCtx = {
   user: User | null;
@@ -58,10 +59,8 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Email magic link
   const signInWithEmail: AuthCtx['signInWithEmail'] = async (email) => {
     if (!supabase) return { error: 'no-supabase' };
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
-    });
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+    const { error } = await sendMagicLink(email);
     return { error: error?.message };
   };
 

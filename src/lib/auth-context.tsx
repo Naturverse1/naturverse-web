@@ -34,7 +34,7 @@ export function AuthProvider({
   const signInWithMagicLink = async () => {
     const email = window.prompt('Enter your email to receive a sign-in link')?.trim();
     if (!email) return;
-    sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     try {
       await sendMagicLink(email);
       alert('Check your inbox for the sign-in link ✉️');
@@ -44,7 +44,7 @@ export function AuthProvider({
   };
 
   const signInWithGoogle = async () => {
-    sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     try {
       await startGoogleOAuth();
     } catch (err) {
