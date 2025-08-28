@@ -60,6 +60,7 @@ export default defineConfig({
       ],
     }),
   ],
+  base: '/', // fix asset URLs on Netlify permalinks & prod
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
     alias: {
