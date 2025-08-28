@@ -17,3 +17,13 @@ This guide helps you deploy Naturverse with Netlify and Supabase.
 3. Paste these values into Netlify's environment variables.
 
 That's it — push to main to trigger future deploys.
+
+## Deploy flags
+
+### Toggle PWA
+Set in Netlify → Site settings → Build & deploy → Environment variables
+
+- `VITE_ENABLE_PWA=true`  → enable service worker registration + install prompt
+- `VITE_ENABLE_PWA=false` → disable SW registration and hide install prompt
+
+**Default:** false (safer). Turn on only after verifying no offline-caching regressions.
