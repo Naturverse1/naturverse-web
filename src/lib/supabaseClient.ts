@@ -33,6 +33,19 @@ type Database = {
 };
 
 const url = import.meta.env.VITE_SUPABASE_URL;
-const anon = import.meta.env.VITE_SUPABASE_ANON_KEY;
+const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
 
-export const supabase: SupabaseClient<Database> = createClient<Database>(url, anon);
+let _supabase: SupabaseClient<Database> | undefined;
+
+if (url && key) {
+  _supabase = createClient<Database>(url, key);
+} else {
+  // Do not crash builds/environments missing env vars (e.g., permalink previews)
+  // Production has these set, so this only affects fallback cases.
+  console.warn(
+    "[naturverse] Supabase env missing (VITE_SUPABASE_URL / VITE_SUPABASE_ANON_KEY)"
+  );
+}
+
+// keep the same named export that the app already uses
+export const supabase = _supabase as SupabaseClient<Database>;
