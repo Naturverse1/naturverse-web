@@ -38,8 +38,8 @@ export class ErrorBoundary extends React.Component<Props, State> {
 }
 
 function Fallback({
-  title = "Something went wrong.",
-  note = "You can try again, or head back to the home page.",
+  title = "Oops! A glitch in the Naturverse.",
+  note = "Please try again or head back home.",
   onRetry,
 }: {
   title?: string;
