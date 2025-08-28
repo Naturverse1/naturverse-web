@@ -1,10 +1,14 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, type SupabaseClient } from '@supabase/supabase-js';
 
-const url = import.meta.env.VITE_SUPABASE_URL;
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
+// Guarded creation so preview/permalink builds without env don't crash.
+const url = (import.meta as any)?.env?.VITE_SUPABASE_URL as string | undefined;
+const key = (import.meta as any)?.env?.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-// If running on preview and no env, return a no-op client
-export const supabase =
-  url && key
-    ? createClient(url, key)
-    : { from: () => ({ select: async () => ({ data: [], error: null }) }) } as any;
+let supabase: SupabaseClient | null = null;
+if (typeof url === 'string' && url && typeof key === 'string' && key) {
+  supabase = createClient(url, key, {
+    auth: { persistSession: false },
+  });
+}
+
+export { supabase };
