@@ -44,6 +44,39 @@
     <meta name="twitter:image" content="/favicon-192x192.png" />
     <!-- === / Naturverse SEO defaults === -->
 
+    <!-- === Naturverse: JSON-LD structured data === -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "Naturverse",
+      "url": "https://thenaturverse.com",
+      "logo": "https://thenaturverse.com/favicon-192x192.png",
+      "sameAs": [
+        "https://thenaturverse.com"
+      ]
+    }
+    </script>
+
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "Naturverse",
+      "url": "https://thenaturverse.com",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://thenaturverse.com/search?q={query}",
+        "query-input": "required name=query"
+      }
+    }
+    </script>
+    <!-- === / JSON-LD === -->
+
+    <!-- Optional iOS hints (safe if present) -->
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <link rel="apple-touch-icon" href="/favicon-192x192.png" />
+
     <!-- Preload the 64x64 (crisp and safe) so favicon appears immediately -->
     <link rel="preload" as="image" href="/favicon-64x64.png" imagesizes="64x64" />
     <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
