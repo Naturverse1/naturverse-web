@@ -1,6 +1,6 @@
 // Netlify Function: server-side OpenAI + Supabase write
 // No external deps; uses fetch + Supabase REST.
-// Env needed (Netlify > Env vars): OPENAI_API_KEY, SUPABASE_URL, SUPABASE_SERVICE_ROLE
+// Env needed (Netlify > Env vars): OPENAI_API_KEY, VITE_SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY
 
 import type { Handler } from "@netlify/functions";
 
@@ -61,8 +61,8 @@ export const handler: Handler = async (event) => {
     }
 
     // Write to Supabase via REST (service role)
-    const supaUrl = process.env.SUPABASE_URL!;
-    const svc = process.env.SUPABASE_SERVICE_ROLE!;
+    const supaUrl = process.env.VITE_SUPABASE_URL!;
+    const svc = process.env.SUPABASE_SERVICE_ROLE_KEY!;
     const table =
       type === "tip" ? "tips" :
       type === "story" ? "tips" : // drop into tips for now

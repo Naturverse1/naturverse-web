@@ -1,5 +1,5 @@
 [build]
-  command = "npm install && node scripts/guard-netlify-env.mjs && npm run build"
+  command = "npm install && npm run build"
   publish = "dist"
 
 [functions]
@@ -33,3 +33,9 @@
   for = "/robots.txt"
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"
+
+[context.production.environment]
+  VITE_SUPABASE_URL = ""
+  VITE_SUPABASE_ANON_KEY = ""
+  SUPABASE_SERVICE_ROLE_KEY = "" # kept only for functions
+  OPENAI_API_KEY = ""

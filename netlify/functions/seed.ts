@@ -23,8 +23,8 @@ const CONTENT = {
 };
 
 export const handler: Handler = async () => {
-  const url = process.env.SUPABASE_URL;
-  const key = process.env.SUPABASE_SERVICE_ROLE;
+  const url = process.env.VITE_SUPABASE_URL;
+  const key = process.env.SUPABASE_SERVICE_ROLE_KEY;
   if (!(url && key)) return { statusCode: 200, body: JSON.stringify({ seeded:false, reason:"No Supabase service key." }) };
 
   const upsert = async (table: string, rows: any[]) => {
