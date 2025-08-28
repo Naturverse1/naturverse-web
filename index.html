@@ -5,11 +5,14 @@
     <script src="/kill-sw.js?v=2" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
-    <link rel="manifest" href="/manifest.webmanifest" />
+    <!-- PWA manifest -->
+    <link rel="manifest" href="/manifest.json" />
+    <meta name="theme-color" content="#1e66ff" />
 
-    <!-- Replace deprecated Apple-only meta with cross-platform one -->
-    <meta name="mobile-web-app-capable" content="yes" />
+    <!-- iOS install hints -->
+    <link rel="apple-touch-icon" href="/favicon-192x192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
 
     <!-- === Naturverse SEO defaults (safe, no runtime/deps) === -->
     <link rel="canonical" href="https://thenaturverse.com" />
@@ -18,9 +21,6 @@
       name="description"
       content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
     />
-
-    <!-- PWA / UI hints -->
-    <meta name="theme-color" content="#1e66ff" />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
@@ -72,10 +72,6 @@
     }
     </script>
     <!-- === / JSON-LD === -->
-
-    <!-- Optional iOS hints (safe if present) -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <link rel="apple-touch-icon" href="/favicon-192x192.png" />
 
     <!-- Preload the 64x64 (crisp and safe) so favicon appears immediately -->
     <link rel="preload" as="image" href="/favicon-64x64.png" imagesizes="64x64" />
@@ -135,6 +131,17 @@
           .querySelectorAll('img:not([loading])')
           .forEach((img) => img.setAttribute('loading', 'lazy'));
       });
+    </script>
+
+    <!-- Register baseline service worker -->
+    <script>
+      if ("serviceWorker" in navigator) {
+        window.addEventListener("load", () => {
+          navigator.serviceWorker
+            .register("/sw.js")
+            .catch((err) => console.error("SW registration failed", err));
+        });
+      }
     </script>
   </body>
 </html>
