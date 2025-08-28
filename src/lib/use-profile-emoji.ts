@@ -10,8 +10,9 @@ export function useProfileEmoji() {
         .from('profiles')
         .select('navatar_emoji, avatar')
         .single();
-      if (data?.navatar_emoji) setEmoji(data.navatar_emoji);
-      else if (data?.avatar) setEmoji('🧑‍🎨');
+      const profile = data as { navatar_emoji?: string | null; avatar?: string | null } | null;
+      if (profile?.navatar_emoji) setEmoji(profile.navatar_emoji);
+      else if (profile?.avatar) setEmoji('🧑‍🎨');
     };
     fetchEmoji();
   }, []);

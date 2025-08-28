@@ -8,7 +8,7 @@
     "build:galleries": "node scripts/build-kingdom-gallery.js",
     "build": "npm run build:galleries && vite build",
     "preview": "vite preview --port 5173",
-    "typecheck": "tsc --noEmit",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
     "guard:netlify": "node scripts/guard-netlify-env.mjs"
   },
   "dependencies": {

@@ -1,5 +1,5 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { supabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Navatar = Database['natur']['Tables']['navatars']['Row']
 type NavatarInsert = Database['natur']['Tables']['navatars']['Insert']

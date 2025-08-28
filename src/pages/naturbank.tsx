@@ -34,16 +34,16 @@ export default function NaturBankPage() {
 
       try {
         const { data: w, error: ew } = await supabase
-          .from("natur_wallets")
+          .from("natur_wallets" as any)
           .select("address,label")
           .eq("user_id", u)
           .limit(1)
           .maybeSingle();
         if (ew) throw ew;
-        if (w?.address) setAddress(w.address);
+        if ((w as any)?.address) setAddress((w as any).address);
 
         const { data: t, error: et } = await supabase
-          .from("natur_transactions")
+          .from("natur_transactions" as any)
           .select("id,user_id,wallet_address,kind,amount,note,created_at")
           .eq("user_id", u)
           .order("created_at", { ascending: false })
@@ -69,8 +69,8 @@ export default function NaturBankPage() {
     if (!address.trim()) return;
     if (uid && !usingLocal) {
       const { error } = await supabase
-        .from("natur_wallets")
-        .upsert({ user_id: uid, address: address.trim(), label: label || null }, { onConflict: "user_id" });
+        .from("natur_wallets" as any)
+        .upsert({ user_id: uid, address: address.trim(), label: label || null } as any, { onConflict: "user_id" });
       if (error) { alert(error.message); return; }
     }
     alert("Wallet saved.");
@@ -84,8 +84,8 @@ export default function NaturBankPage() {
     };
     if (uid && !usingLocal) {
       const { data, error } = await supabase
-        .from("natur_transactions")
-        .insert(newT)
+        .from("natur_transactions" as any)
+        .insert(newT as any)
         .select("id,user_id,wallet_address,kind,amount,note,created_at")
         .single();
       if (error) { alert(error.message); return; }

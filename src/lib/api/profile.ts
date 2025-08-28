@@ -1,5 +1,5 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { supabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Profile = Database['natur']['Tables']['profiles']['Row']
 type ProfileInsert = Database['natur']['Tables']['profiles']['Insert']
