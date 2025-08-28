@@ -1,5 +1,5 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { supabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Stamp = Database['natur']['Tables']['passport_stamps']['Row']
 

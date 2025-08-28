@@ -1,13 +1,19 @@
 import React from "react";
 
-type Props = React.HTMLAttributes<HTMLElement> & { as?: keyof JSX.IntrinsicElements };
+type Props<T extends keyof HTMLElementTagNameMap = "span"> = {
+  as?: T;
+} & React.HTMLAttributes<HTMLElementTagNameMap[T]>;
 
 /** Utility for screen-reader–only text. */
-export default function VisuallyHidden({ as: Tag = "span", children, ...rest }: Props) {
+export default function VisuallyHidden<
+  T extends keyof HTMLElementTagNameMap = "span"
+>({ as, children, ...rest }: Props<T>) {
+  const Tag = (as || "span") as T;
+  const { className, ...restProps } = rest as { className?: string };
   return (
     <Tag
-      {...rest}
-      className={"nv-vh" + (rest.className ? " " + rest.className : "")}
+      {...(restProps as any)}
+      className={"nv-vh" + (className ? " " + className : "")}
     >
       {children}
     </Tag>

@@ -12,7 +12,7 @@ export async function safeUpsertProfile(client: any, values: any) {
 }
 
 export async function saveProfile(
-  supabase: ReturnType<typeof createClient>,
+  supabase: any,
   user: { id: string; email?: string },
   displayName: string,
   file?: File

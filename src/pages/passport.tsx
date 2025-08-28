@@ -39,14 +39,14 @@ export default function PassportPage() {
       if (!u) { setLoading(false); return; }
       try {
         const { data: s, error: es } = await supabase
-          .from("passport_stamps")
+          .from("passport_stamps" as any)
           .select("id,user_id,world,title,note,created_at")
           .eq("user_id", u)
           .order("created_at", { ascending: false });
         if (es) throw es;
 
         const { data: b, error: eb } = await supabase
-          .from("passport_badges")
+          .from("passport_badges" as any)
           .select("id,user_id,code,label,created_at")
           .eq("user_id", u)
           .order("created_at", { ascending: false });
@@ -76,8 +76,8 @@ export default function PassportPage() {
     };
     if (uid && !usingLocal) {
       const { data, error } = await supabase
-        .from("passport_stamps")
-        .insert(base)
+        .from("passport_stamps" as any)
+        .insert(base as any)
         .select("id,user_id,world,title,note,created_at")
         .single();
       if (error) { alert(error.message); return; }
@@ -94,8 +94,8 @@ export default function PassportPage() {
     };
     if (uid && !usingLocal) {
       const { data, error } = await supabase
-        .from("passport_badges")
-        .insert(base)
+        .from("passport_badges" as any)
+        .insert(base as any)
         .select("id,user_id,code,label,created_at")
         .single();
       if (error) { alert(error.message); return; }
