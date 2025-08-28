@@ -1,20 +1,13 @@
-// Kill any service workers + caches so old PWA shells can't hijack prod.
-(async () => {
+/**
+ * Runs early to clear any stale service worker the moment the HTML loads.
+ * Safe to keep in production while SW is disabled.
+ */
+(function killSW(){
   try {
-    if ('serviceWorker' in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.allSettled(regs.map(r => r.unregister()));
+    if ("serviceWorker" in navigator) {
+      navigator.serviceWorker.getRegistrations()
+        .then(rs => rs.forEach(r => r.unregister()))
+        .catch(()=>{});
     }
-    if (self.caches?.keys) {
-      const keys = await caches.keys();
-      await Promise.allSettled(keys.map(k => caches.delete(k)));
-    }
-    const url = new URL(location.href);
-    if (url.searchParams.has('kill-sw')) {
-      url.searchParams.delete('kill-sw');
-      location.replace(url.toString());
-    }
-  } catch (e) {
-    console.warn('[kill-sw] failed:', e);
-  }
+  } catch {}
 })();

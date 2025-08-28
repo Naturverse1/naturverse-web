@@ -5,10 +5,14 @@ import AppShell from './AppShell';
 import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
-import { ensureNoServiceWorker } from './lib/disableSW';
 import { GlobalErrorBoundary } from './components/GlobalErrorBoundary';
 
-ensureNoServiceWorker();
+// TEMP: ensure no service worker remains. This prevents the “Offline” page.
+if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
+  navigator.serviceWorker.getRegistrations?.()
+    .then((rs) => rs.forEach((r) => r.unregister()))
+    .catch(() => {});
+}
 
 declare global {
   interface Window {
