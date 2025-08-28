@@ -15,14 +15,13 @@ import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
-
-if ('serviceWorker' in navigator) {
-  (async () => {
-    try {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      if (regs.length) await Promise.all(regs.map(r => r.unregister().catch(() => {})));
-    } catch {}
-  })();
+// Skip service worker registration on Netlify preview hosts
+if (location.hostname.endsWith('.netlify.app')) {
+  console.info('[Naturverse] Preview host — skipping SW registration');
+} else {
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.register('/sw.js').catch(() => {});
+  }
 }
 
 async function bootstrap() {
