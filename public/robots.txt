@@ -1,4 +1,8 @@
+# Naturverse robots policy
 User-agent: *
 Allow: /
 
-Sitemap: /sitemap.xml
+# Crawl-delay kept minimal to avoid throttling; adjust if needed.
+# Crawl-delay: 2
+
+Sitemap: https://thenaturverse.com/sitemap.xml
