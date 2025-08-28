@@ -3,6 +3,7 @@ import { Quest, QuestStep, Reward } from "../../data/quests";
 import { uid, slugify } from "../../utils/id";
 import { upsertQuest } from "../../utils/quests-store";
 import { validateQuest } from "../../utils/validate";
+import { saveQuestToCloud } from "../../lib/questsApi";
 
 export default function NewQuest() {
   const [title, setTitle] = React.useState("");
@@ -33,7 +34,7 @@ export default function NewQuest() {
     setRewards(r => r.filter((_, idx) => idx !== i));
   }
 
-  function onSave(e: React.FormEvent) {
+  async function onSave(e: React.FormEvent) {
     e.preventDefault();
     const now = new Date().toISOString();
     const quest: Quest = {
@@ -49,7 +50,17 @@ export default function NewQuest() {
     };
     const errs = validateQuest(quest);
     if (errs.length) { setErrors(errs); return; }
+
+    // Optimistic local
     upsertQuest(quest);
+
+    // Try cloud sync (non-blocking)
+    const res = await saveQuestToCloud(quest);
+    if (res.conflict) {
+      alert("This quest was updated elsewhere. Please refresh and try again.");
+      return;
+    }
+
     location.assign(`/quests/${quest.slug}`);
   }
 
