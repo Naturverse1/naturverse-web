@@ -6,6 +6,7 @@ import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
 import { ensureNoServiceWorker } from './lib/disableSW';
+import { GlobalErrorBoundary } from './GlobalErrorBoundary';
 
 ensureNoServiceWorker();
 
@@ -31,7 +32,9 @@ function mount() {
     root.render(
       <React.StrictMode>
         <BrowserRouter>
-          <AppShell />
+          <GlobalErrorBoundary>
+            <AppShell />
+          </GlobalErrorBoundary>
         </BrowserRouter>
       </React.StrictMode>,
     );
@@ -47,8 +50,7 @@ function mount() {
     const pre = document.createElement('pre');
     pre.style.padding = '16px';
     pre.style.whiteSpace = 'pre-wrap';
-    pre.textContent = 'Boot failed:\n' + ((err as any)?.stack || String(err));
-    document.body.innerHTML = '';
+    pre.textContent = String((err as any)?.stack || err);
     document.body.appendChild(pre);
   }
 }
