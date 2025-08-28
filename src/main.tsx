@@ -10,6 +10,12 @@ import { GlobalErrorBoundary } from './components/GlobalErrorBoundary';
 
 ensureNoServiceWorker();
 
+declare global {
+  interface Window {
+    __NATURVERSE_READY__?: boolean;
+  }
+}
+
 // ---- Boot diagnostics: never silently white-screen
 window.addEventListener('error', (e) => {
   console.error('[naturverse] window error', (e as ErrorEvent).error ?? e.message ?? e);
@@ -38,6 +44,8 @@ function mount() {
         </GlobalErrorBoundary>
       </React.StrictMode>,
     );
+    window.__NATURVERSE_READY__ = true;
+    window.dispatchEvent(new Event('naturverse:ready'));
     console.log('[boot] rendered');
     (async () => {
       const flags = await loadFlags();

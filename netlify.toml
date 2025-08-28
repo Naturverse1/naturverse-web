@@ -37,3 +37,17 @@
   for = "/index.html"
   [headers.values]
     Cache-Control = "no-store, must-revalidate"
+
+# Branch deploys: make CSP permissive so previews don’t white-screen,
+# and ensure the service worker cannot get stuck.
+[context."branch-deploy"]
+
+  [[context."branch-deploy".headers]]
+  for = "/*"
+    [context."branch-deploy".headers.values]
+    Content-Security-Policy = "default-src 'self' https: data: blob:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+
+  [[context."branch-deploy".headers]]
+  for = "/sw.js"
+    [context."branch-deploy".headers.values]
+    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"

@@ -61,10 +61,57 @@
         z-index: 1000;
       }
     </style>
+    <!-- Boot fallback styles (visible before JS) -->
+    <style>
+      #boot {
+        position: fixed;
+        inset: 0;
+        display: grid;
+        place-items: center;
+        font: 600 18px/1.4 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+        background: #ffffff;
+        color: #0eae5e;
+        letter-spacing: .2px;
+      }
+      #boot small {
+        display: block;
+        margin-top: .5rem;
+        color: #667085;
+        font-weight: 500;
+      }
+      .hidden {
+        display: none !important;
+      }
+    </style>
   </head>
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
+    <!-- NEW: visible immediately so branch deploys never look blank -->
+    <div id="boot">
+      Naturverse is loading…
+      <small>If this takes more than a few seconds, refresh the page.</small>
+    </div>
+
     <div id="root"></div>
+
+    <!-- Hide boot screen once the app sets window.__NATURVERSE_READY__ -->
+    <script>
+      (function () {
+        function hideBoot() {
+          var el = document.getElementById('boot');
+          if (el) el.classList.add('hidden');
+        }
+        if (window.__NATURVERSE_READY__) hideBoot();
+        else window.addEventListener('naturverse:ready', hideBoot, { once: true });
+        document.addEventListener('DOMContentLoaded', function () {
+          // secondary timeout just in case hydration finishes slightly later
+          setTimeout(function () {
+            if (window.__NATURVERSE_READY__) hideBoot();
+          }, 0);
+        });
+      })();
+    </script>
+
     <script type="module" src="/src/main.tsx"></script>
 
     <!-- perf: lazy-enable all imgs that don't opt-out -->
