@@ -25,17 +25,18 @@ function toAppQuest(row: any, steps: any[]): Quest {
 
 export async function fetchAllQuests(): Promise<Quest[]> {
   try {
-    const { data: qs, error } = await supabase.from("quests").select("*").order("updated_at", { ascending: false });
-    if (error || !qs) throw error || new Error("No quests");
-    const ids = qs.map(q => q.id);
-    const { data: allSteps, error: sErr } = await supabase.from("quest_steps").select("*").in("quest_id", ids);
+    if (!supabase) throw new Error('Supabase client not available');
+    const { data: qs, error } = await supabase.from('quests').select('*').order('updated_at', { ascending: false });
+    if (error || !qs) throw error || new Error('No quests');
+    const ids = qs.map((q: any) => q.id);
+    const { data: allSteps, error: sErr } = await supabase.from('quest_steps').select('*').in('quest_id', ids);
     if (sErr) throw sErr;
     const grouped = new Map<string, any[]>();
-    (allSteps ?? []).forEach(s => {
+    (allSteps ?? []).forEach((s: any) => {
       if (!grouped.has(s.quest_id)) grouped.set(s.quest_id, []);
       grouped.get(s.quest_id)!.push(s);
     });
-    const mapped = qs.map(q => toAppQuest(q, grouped.get(q.id) ?? []));
+    const mapped = qs.map((q: any) => toAppQuest(q, grouped.get(q.id) ?? []));
     const local = loadQuests();
     const byId = new Map<string, Quest>();
     [...mapped, ...local].forEach(q => {
@@ -54,9 +55,10 @@ export async function fetchAllQuests(): Promise<Quest[]> {
 
 export async function fetchQuestBySlug(slug: string): Promise<Quest | undefined> {
   try {
-    const { data: q, error } = await supabase.from("quests").select("*").eq("slug", slug).maybeSingle();
-    if (error || !q) throw error || new Error("Not found");
-    const { data: steps } = await supabase.from("quest_steps").select("*").eq("quest_id", q.id);
+    if (!supabase) throw new Error('Supabase client not available');
+    const { data: q, error } = await supabase.from('quests').select('*').eq('slug', slug).maybeSingle();
+    if (error || !q) throw error || new Error('Not found');
+    const { data: steps } = await supabase.from('quest_steps').select('*').eq('quest_id', q.id);
     return toAppQuest(q, steps ?? []);
   } catch {
     return loadQuests().find(q => q.slug === slug) ?? SEED_QUESTS.find(q => q.slug === slug);
@@ -68,34 +70,35 @@ export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflic
   emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug });
 
   try {
-    const { data: existing } = await supabase.from("quests").select("id, updated_at").eq("id", q.id).maybeSingle();
+    if (!supabase) throw new Error('Supabase client not available');
+    const { data: existing } = await supabase.from('quests').select('id, updated_at').eq('id', q.id).maybeSingle();
 
     if (existing) {
       if (existing.updated_at && existing.updated_at > q.updatedAt) {
         return { ok: false, conflict: true };
       }
-      const { error: upErr } = await supabase.from("quests").update({
+      const { error: upErr } = await supabase.from('quests').update({
         title: q.title,
         summary: q.summary,
         kingdom: q.kingdom ?? null,
         slug: q.slug,
         updated_at: q.updatedAt,
-      }).eq("id", q.id);
+      }).eq('id', q.id);
       if (upErr) throw upErr;
 
-      await supabase.from("quest_steps").delete().eq("quest_id", q.id);
+      await supabase.from('quest_steps').delete().eq('quest_id', q.id);
       const rows = q.steps.map((s, i) => ({
         quest_id: q.id, step_id: s.id, text: s.text, tip: s.tip ?? null, minutes: s.minutes ?? null, order_index: i,
       }));
       if (rows.length) {
-        const { error: insErr } = await supabase.from("quest_steps").insert(rows);
+        const { error: insErr } = await supabase.from('quest_steps').insert(rows);
         if (insErr) throw insErr;
       }
       const res = { ok: true, id: q.id };
       emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug, cloud: true });
       return res;
     } else {
-      const { error: insErr } = await supabase.from("quests").insert({
+      const { error: insErr } = await supabase.from('quests').insert({
         id: q.id,
         slug: q.slug,
         title: q.title,
@@ -110,7 +113,7 @@ export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflic
         quest_id: q.id, step_id: s.id, text: s.text, tip: s.tip ?? null, minutes: s.minutes ?? null, order_index: i,
       }));
       if (rows.length) {
-        const { error: sErr } = await supabase.from("quest_steps").insert(rows);
+        const { error: sErr } = await supabase.from('quest_steps').insert(rows);
         if (sErr) throw sErr;
       }
       const res = { ok: true, id: q.id };
