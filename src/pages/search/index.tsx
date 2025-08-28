@@ -1,7 +1,7 @@
 import React from "react";
-import { buildSearchIndex } from "../../search/buildIndex";
 import { search, type SearchDoc } from "../../search";
 import "../../components/search.css";
+import { SearchCtx } from "../../search/SearchProvider";
 
 const TYPES = ["all", "world", "zone", "product", "quest"] as const;
 type TypeFilter = typeof TYPES[number];
@@ -13,14 +13,13 @@ export default function SearchPage() {
   const [q, setQ] = React.useState(initialQ);
   const [type, setType] = React.useState<TypeFilter>("all");
   const [results, setResults] = React.useState<SearchDoc[]>([]);
-
-  const index = React.useMemo(() => buildSearchIndex(), []);
+  const { docs } = React.useContext(SearchCtx);
 
   React.useEffect(() => {
-    const all = search(index, q, 100);
+    const all = search(docs, q, 100);
     const filtered = type === "all" ? all : all.filter(d => d.type === type);
     setResults(filtered);
-  }, [q, type, index]);
+  }, [q, type, docs]);
 
   React.useEffect(() => {
     const params = new URLSearchParams();
