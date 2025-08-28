@@ -41,6 +41,14 @@ export default function Home() {
         )}
       </section>
 
+      <div className="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-md text-yellow-900 shadow">
+        <h2 className="text-lg font-semibold">🌟 What’s New</h2>
+        <p>
+          Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy
+          is live ✅
+        </p>
+      </div>
+
       {/* Top feature tiles — text centered */}
       <section className={styles.featureGrid}>
         <ClickableCard
