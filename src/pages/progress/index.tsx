@@ -2,7 +2,7 @@ import React from "react";
 import NavatarStepper from "../../components/NavatarStepper";
 
 export default function ProgressPage() {
-  // Simulate logged-in user
+  // Replace with Supabase auth user.id once auth is wired
   const userId = "demo-user-123";
 
   return (
