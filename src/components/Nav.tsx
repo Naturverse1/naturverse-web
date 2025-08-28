@@ -1,27 +1,25 @@
 import React from "react";
-import SafeImg from "./SafeImg";
-
-const isActive = (href: string) => typeof window !== "undefined" && window.location.pathname === href;
+import { Link } from "react-router-dom";
+import Icon from "./Icon";
 
 export default function Nav() {
   return (
-    <>
-        <nav className="topnav container">
-          <a href="/" aria-label="Naturverse Home" className={`toplink brand ${isActive("/") ? "active" : ""}`}>
-            <SafeImg src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
-          </a>
-          <div className="links">
-            <a href="/worlds" className={`toplink ${isActive("/worlds") ? "active" : ""}`}>Worlds</a>
-            <a href="/zones" className={`toplink ${isActive("/zones") ? "active" : ""}`}>Zones</a>
-            <a href="/marketplace" className={`toplink ${isActive("/marketplace") ? "active" : ""}`}>Marketplace</a>
-            <a href="/naturversity" className={`toplink ${isActive("/naturversity") ? "active" : ""}`}>Naturversity</a>
-            <a href="/naturbank" className={`toplink ${isActive("/naturbank") ? "active" : ""}`}>NaturBank</a>
-            <a href="/navatar" className={`toplink ${isActive("/navatar") ? "active" : ""}`}>Navatar</a>
-            <a href="/passport" className={`toplink ${isActive("/passport") ? "active" : ""}`}>Passport</a>
-            <a href="/turian" className={`toplink ${isActive("/turian") ? "active" : ""}`}>Turian</a>
-            <a href="/profile" className={`toplink ${isActive("/profile") ? "active" : ""}`}>Profile</a>
-          </div>
-        </nav>
-      </>
-    );
-  }
+    <nav className="nv-nav">
+      <Link to="/" className="nv-nav-item">
+        <Icon name="home" size={18} /> Home
+      </Link>
+      <Link to="/worlds" className="nv-nav-item">
+        <Icon name="world" size={18} /> Worlds
+      </Link>
+      <Link to="/marketplace" className="nv-nav-item">
+        <Icon name="market" size={18} /> Marketplace
+      </Link>
+      <a href="/contact" className="nv-nav-item">
+        <Icon name="contact" size={18} /> Contact
+      </a>
+      <button className="nv-nav-menu" aria-label="Open menu">
+        <Icon name="menu" size={20} />
+      </button>
+    </nav>
+  );
+}
