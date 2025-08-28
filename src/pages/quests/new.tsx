@@ -4,6 +4,8 @@ import { uid, slugify } from "../../utils/id";
 import { upsertQuest } from "../../utils/quests-store";
 import { validateQuest } from "../../utils/validate";
 import { saveQuestToCloud } from "../../lib/questsApi";
+import QuestTemplatePicker from "../../components/QuestTemplatePicker";
+import { QuestTemplate } from "../../data/questTemplates";
 
 export default function NewQuest() {
   const [title, setTitle] = React.useState("");
@@ -14,6 +16,18 @@ export default function NewQuest() {
   ]);
   const [rewards, setRewards] = React.useState<Reward[]>([]);
   const [errors, setErrors] = React.useState<string[]>([]);
+  const [showTemplates, setShowTemplates] = React.useState(true);
+
+  function useTemplate(t: QuestTemplate) {
+    setTitle(t.title);
+    setSummary(t.summary);
+    setKingdom(t.kingdom || "");
+    // remap step ids so they’re unique in this quest
+    setSteps(t.steps.map(s => ({ ...s, id: uid() })));
+    setRewards((t.rewards ?? []).map(r => ({ ...r })));
+    setShowTemplates(false);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  }
 
   function addStep() {
     setSteps(s => [...s, { id: uid(), text: "" }]);
@@ -51,23 +65,26 @@ export default function NewQuest() {
     const errs = validateQuest(quest);
     if (errs.length) { setErrors(errs); return; }
 
-    // Optimistic local
     upsertQuest(quest);
-
-    // Try cloud sync (non-blocking)
-    const res = await saveQuestToCloud(quest);
-    if (res.conflict) {
-      alert("This quest was updated elsewhere. Please refresh and try again.");
-      return;
-    }
-
+    void saveQuestToCloud(quest); // fire-and-forget sync
     location.assign(`/quests/${quest.slug}`);
   }
 
   return (
     <main style={{ maxWidth: 900, margin:"24px auto", padding:"0 20px" }}>
       <h1>Create a Mini-Quest</h1>
-      <p style={{ opacity:.8, marginTop:0 }}>Keep it short and friendly: 3–6 steps works best.</p>
+      <p style={{ opacity:.8, marginTop:0 }}>
+        Start from a template below, or build your own.
+      </p>
+
+      {showTemplates && (
+        <div id="templates">
+          <QuestTemplatePicker onUse={useTemplate} />
+          <div style={{ textAlign:"right" }}>
+            <button className="btn ghost" type="button" onClick={() => setShowTemplates(false)}>Hide templates</button>
+          </div>
+        </div>
+      )}
 
       {!!errors.length && (
         <div style={{border:"1px solid #e11d48", padding:12, borderRadius:10, color:"#e11d48", marginBottom:12}}>

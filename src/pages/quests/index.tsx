@@ -24,6 +24,7 @@ export default function QuestsList() {
 
       <div style={{ display:"flex", gap:10, margin:"12px 0 18px" }}>
         <a className="btn" href="/quests/new">Create a quest</a>
+        <a className="btn ghost" href="/quests/new#templates">Use a template</a>
       </div>
 
       {loading ? <p>Loading quests…</p> : (
