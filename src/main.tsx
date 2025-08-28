@@ -6,17 +6,17 @@ import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
 import { ensureNoServiceWorker } from './lib/disableSW';
-import { GlobalErrorBoundary } from './GlobalErrorBoundary';
+import { GlobalErrorBoundary } from './components/GlobalErrorBoundary';
 
 ensureNoServiceWorker();
 
 // ---- Boot diagnostics: never silently white-screen
-window.addEventListener('error', (e) =>
-  console.error('[boot:error]', (e as ErrorEvent).error || e.message)
-);
-window.addEventListener('unhandledrejection', (e) =>
-  console.error('[boot:unhandled]', (e as PromiseRejectionEvent).reason)
-);
+window.addEventListener('error', (e) => {
+  console.error('[naturverse] window error', (e as ErrorEvent).error ?? e.message ?? e);
+});
+window.addEventListener('unhandledrejection', (e) => {
+  console.error('[naturverse] unhandledrejection', (e as PromiseRejectionEvent).reason ?? e);
+});
 console.log('[boot] starting…');
 
 function mount() {
@@ -31,11 +31,11 @@ function mount() {
     const root = createRoot(el);
     root.render(
       <React.StrictMode>
-        <BrowserRouter>
-          <GlobalErrorBoundary>
+        <GlobalErrorBoundary>
+          <BrowserRouter>
             <AppShell />
-          </GlobalErrorBoundary>
-        </BrowserRouter>
+          </BrowserRouter>
+        </GlobalErrorBoundary>
       </React.StrictMode>,
     );
     console.log('[boot] rendered');
