@@ -1,0 +1,80 @@
+.worlds-toolbar {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+  margin: 14px 0 18px;
+}
+.worlds-toolbar input[type="search"],
+.worlds-toolbar select {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 10px 12px;
+  min-width: 220px;
+}
+.worlds-toolbar .min-diff {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 6px 10px;
+}
+.worlds-toolbar input[type="range"] { vertical-align: middle; }
+
+.worlds-grid {
+  display: grid;
+  gap: 14px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.world-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 14px;
+  overflow: hidden;
+  background: #fff;
+  display: grid;
+}
+.world-card__image { display: block; aspect-ratio: 16/10; background: #eef2ff; }
+.world-card__ph { width: 100%; height: 100%; background: linear-gradient(45deg, #eef2ff, #e9efff); }
+
+.world-card__body { padding: 12px; display: grid; gap: 8px; }
+.world-card__header { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.world-card__title { margin: 0; font-size: 18px; }
+.world-card__title a { color: inherit; text-decoration: none; border-bottom: 1px dotted transparent; }
+.world-card__title a:hover { border-bottom-color: currentColor; }
+.world-card__share {
+  appearance: none; border: 1px solid #e5e7eb; border-radius: 10px;
+  padding: 6px 8px; background: #fff; cursor: pointer;
+}
+.world-card__meta { margin: 0; display: flex; gap: 10px; align-items: center; font-size: 12px; opacity: .85; }
+.world-card__summary { margin: 0; opacity: .9; }
+
+.world-card__kingdom {
+  border: 1px dashed rgba(0,0,0,.2);
+  border-radius: 999px;
+  padding: 2px 8px;
+  font-size: 11px;
+}
+.k-air { background: #f0f7ff; }
+.k-water { background: #eefaff; }
+.k-earth { background: #f4fbf0; }
+.k-fire { background: #fff4f0; }
+.k-light { background: #fbfaff; }
+.k-shadow { background: #f3f4f6; }
+.k-mind { background: #f0f5ff; }
+.k-heart { background: #fff0f5; }
+
+.worlds-count { margin: 10px 0; opacity: .65; }
+
+.worlds-toast {
+  position: sticky; top: 8px; z-index: 5;
+  display: inline-block; background: #0b5fff; color: #fff;
+  padding: 8px 10px; border-radius: 10px;
+  box-shadow: 0 4px 14px rgba(0,0,0,.2);
+}
+@media (prefers-color-scheme: dark) {
+  .world-card { border-color: #2a2f45; background: #0f152b; }
+  .world-card__share { border-color: #2a2f45; background: #0f152b; color: #eaf0ff; }
+  .worlds-toolbar input[type="search"], .worlds-toolbar select, .worlds-toolbar .min-diff { border-color: #2a2f45; background: #0f152b; color: #eaf0ff; }
+}
+

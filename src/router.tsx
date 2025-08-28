@@ -3,7 +3,7 @@ import { createBrowserRouter } from 'react-router-dom';
 import { logEvent } from './utils/telemetry';
 
 import Home from './pages/Home';
-import WorldsIndex from './routes/worlds';
+import WorldsExplorer from './pages/worlds';
 import WorldDetail from './routes/worlds/[slug]';
 import CharacterPage from './routes/worlds/characters/[name]';
 import Zones from './routes/zones';
@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
     element: <RootLayout />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'worlds', element: <WorldsIndex /> },
+      { path: 'worlds', element: <WorldsExplorer /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
       {
