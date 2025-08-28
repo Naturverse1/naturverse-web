@@ -1,26 +1,36 @@
-import { supabase } from './supabaseClient';
+import { hasSupabase, supabase } from './supabaseClient';
 
 const callbackUrl = `${window.location.origin}/auth/callback`;
 
 export async function signInWithGoogle() {
-  return supabase.auth.signInWithOAuth({
+  if (!hasSupabase()) {
+    alert('Sign-in is unavailable in this preview. Please use the production site.');
+    return;
+  }
+  return supabase!.auth.signInWithOAuth({
     provider: 'google',
     options: { redirectTo: callbackUrl },
   });
 }
 
 export async function sendMagicLink(email: string) {
-  return supabase.auth.signInWithOtp({
+  if (!hasSupabase()) {
+    alert('Magic link is unavailable in this preview. Please use the production site.');
+    return;
+  }
+  return supabase!.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: callbackUrl },
   });
 }
 
 export async function getUser() {
-  const { data } = await supabase.auth.getUser();
+  if (!hasSupabase()) return null;
+  const { data } = await supabase!.auth.getUser();
   return data.user;
 }
 
 export async function signOut() {
-  await supabase.auth.signOut();
+  if (!hasSupabase()) return;
+  await supabase!.auth.signOut();
 }
