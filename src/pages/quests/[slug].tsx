@@ -1,15 +1,28 @@
 import React from "react";
 import { useParams } from "react-router-dom";
-import { getQuestBySlug, getQuestDone, setQuestDone } from "../../utils/quests-store";
-import { SEED_QUESTS } from "../../data/quests";
+import { fetchQuestBySlug } from "../../lib/questsApi";
+import { getQuestDone, setQuestDone } from "../../utils/quests-store";
 
 export default function QuestDetail() {
   const { slug = "" } = useParams();
-  const quest = getQuestBySlug(slug) || SEED_QUESTS.find(q => q.slug === slug);
+  const [quest, setQuest] = React.useState<any>(null);
+  const [loading, setLoading] = React.useState(true);
+
+  React.useEffect(() => {
+    let active = true;
+    (async () => {
+      setLoading(true);
+      const q = await fetchQuestBySlug(slug);
+      if (active) setQuest(q ?? null);
+      setLoading(false);
+    })();
+    return () => { active = false; };
+  }, [slug]);
 
   const [done, setDone] = React.useState<Record<string, boolean>>(() => getQuestDone(slug));
-  const complete = quest ? quest.steps.every(s => done[s.id]) : false;
+  const complete = quest ? quest.steps.every((s: any) => done[s.id]) : false;
 
+  if (loading) return <main style={{maxWidth:800, margin:"24px auto", padding:"0 20px"}}><p>Loading quest…</p></main>;
   if (!quest) return <main style={{maxWidth:800, margin:"24px auto", padding:"0 20px"}}><p>Quest not found.</p></main>;
 
   function toggle(id: string) {
@@ -21,8 +34,7 @@ export default function QuestDetail() {
   async function share() {
     const url = new URL(location.pathname, location.origin).toString();
     try {
-      const q = quest!;
-      if (navigator.share) await navigator.share({ title: q.title, text: q.summary, url });
+      if (navigator.share) await navigator.share({ title: quest.title, text: quest.summary, url });
       else await navigator.clipboard.writeText(url);
     } catch {}
   }
@@ -34,7 +46,7 @@ export default function QuestDetail() {
       {quest.kingdom && <p style={{ opacity:.7 }}>Kingdom: {quest.kingdom}</p>}
 
       <ol style={{ display:"grid", gap:10, paddingLeft:20 }}>
-        {quest.steps.map((s, i) => (
+        {quest.steps.map((s: any, i: number) => (
           <li key={s.id} style={{ border:"1px solid #e5e7eb", borderRadius:12, padding:12 }}>
             <label style={{ display:"grid", gap:6, cursor:"pointer" }}>
               <div style={{ display:"flex", gap:10, alignItems:"center" }}>
@@ -59,7 +71,7 @@ export default function QuestDetail() {
         <div style={{ marginTop:18, border:"1px dashed #e5e7eb", borderRadius:12, padding:12 }}>
           <b>Rewards</b>
           <ul>
-            {quest.rewards.map((r, idx) => (
+            {quest.rewards.map((r: any, idx: number) => (
               <li key={idx}>{r.type.toUpperCase()} — {r.code}{r.amount ? ` (+${r.amount})` : ""}</li>
             ))}
           </ul>
