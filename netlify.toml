@@ -5,6 +5,13 @@
 [functions]
   directory = "netlify/functions"
 
+# Do not rewrite real built assets to index.html
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+  force = false
+
 # SPA routing
 [[redirects]]
   from = "/*"
