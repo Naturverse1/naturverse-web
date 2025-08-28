@@ -11,6 +11,8 @@ import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
 import './styles/mega-features.css';
+import './index.css';
+import { applyTheme, getTheme } from './lib/theme';
 import ToastProvider from './components/Toast';
 import { getSupabase } from '@/lib/supabase-client';
 import WorldExtras from './components/WorldExtras';
@@ -18,6 +20,8 @@ import CommandPalette from './components/CommandPalette';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
+
+applyTheme(getTheme());
 // Skip service worker registration on Netlify preview hosts
 if (location.hostname.endsWith('.netlify.app')) {
   console.info('[Naturverse] Preview host — skipping SW registration');

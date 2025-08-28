@@ -44,6 +44,7 @@ import SearchPage from './pages/search';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
+import MiniQuests from './pages/MiniQuests';
 
 export const router = createBrowserRouter([
   {
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
       { path: 'zones', element: <ZonesExplorer /> },
       { path: 'zones/:slug', element: <ZoneDetail /> },
       { path: 'search', element: <SearchPage /> },
+      { path: 'play/:slug?', element: <MiniQuests /> },
 
       {
         path: 'marketplace',
@@ -94,15 +96,15 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-        { path: 'navatar', element: <NavatarPage /> },
-        { path: 'progress', element: <ProgressPage /> },
-        { path: 'passport', element: <PassportPage /> },
-        { path: 'auth/callback', element: <AuthCallback /> },
-        { path: 'login', element: <LoginPage /> },
-        { path: 'turian', element: <Turian /> },
-        { path: 'profile', element: <ProfilePage /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <NotFound /> },
+      { path: 'navatar', element: <NavatarPage /> },
+      { path: 'progress', element: <ProgressPage /> },
+      { path: 'passport', element: <PassportPage /> },
+      { path: 'auth/callback', element: <AuthCallback /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'turian', element: <Turian /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: '404', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);

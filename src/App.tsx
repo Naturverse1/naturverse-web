@@ -17,7 +17,7 @@ import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
 import './styles/images.css';
 import './components/skeleton.css';
-import ErrorBoundary from './components/ErrorBoundary';
+import { AppErrorBoundary } from './components/AppErrorBoundary';
 import NetworkBanner from './components/NetworkBanner';
 import './components/network.css';
 import SearchProvider from './search/SearchProvider';
@@ -28,7 +28,7 @@ export default function App() {
     // SAFE MODE: interactions temporarily disabled
   }, []);
   return (
-    <ErrorBoundary>
+    <AppErrorBoundary>
       <CartProvider>
         <SearchProvider>
           <div id="nv-page">
@@ -66,6 +66,6 @@ export default function App() {
           </div>
         </SearchProvider>
       </CartProvider>
-    </ErrorBoundary>
+    </AppErrorBoundary>
   );
 }
