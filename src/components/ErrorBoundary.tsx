@@ -1,5 +1,6 @@
 import React from "react";
 import { useNavigate } from "react-router-dom";
+import { logEvent } from "../utils/telemetry";
 
 type Props = {
   children: React.ReactNode;
@@ -17,7 +18,7 @@ export class ErrorBoundary extends React.Component<Props, State> {
   }
 
   componentDidCatch(error: unknown, info: unknown) {
-    // Keep this simple; sending to a logger can be added later.
+    logEvent("ErrorBoundary", { error });
     // eslint-disable-next-line no-console
     console.error("[naturverse] ErrorBoundary caught", error, info);
   }
