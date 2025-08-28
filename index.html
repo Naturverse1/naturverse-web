@@ -128,14 +128,6 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- perf: lazy-enable all imgs that don't opt-out -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        document
-          .querySelectorAll('img:not([loading])')
-          .forEach((img) => img.setAttribute('loading', 'lazy'));
-      });
-    </script>
 
     <!-- Register service worker (gated) -->
     <script>
@@ -226,6 +218,20 @@
       <input type="email" name="email" />
       <textarea name="message"></textarea>
     </form>
+
+    <script>
+      // Progressive enhancement: add lazy+async to any <img> lacking them.
+      (function () {
+        try {
+          var imgs = document.querySelectorAll("img:not([loading])");
+          imgs.forEach(function (img) {
+            // Do not touch if explicitly eager
+            if (!img.hasAttribute("loading")) img.setAttribute("loading", "lazy");
+            if (!img.hasAttribute("decoding")) img.setAttribute("decoding", "async");
+          });
+        } catch {}
+      })();
+    </script>
 
 </body>
 </html>

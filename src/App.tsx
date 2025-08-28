@@ -14,6 +14,7 @@ import Footer from './components/Footer';
 import './styles/footer.css';
 import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
+import './styles/images.css';
 
 export default function App() {
   useEffect(() => {
