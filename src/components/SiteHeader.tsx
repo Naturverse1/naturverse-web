@@ -5,6 +5,7 @@ import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
+import SearchBar from './SearchBar';
 import { supabase } from '@/lib/supabase-client';
 
 export default function SiteHeader() {
@@ -102,6 +103,9 @@ export default function SiteHeader() {
           </nav>
         </div>
         <div className="nav-right">
+          <div style={{ minWidth: 280 }}>
+            <SearchBar />
+          </div>
           <AuthButton />
           <CartBadge />
           <button

@@ -5,6 +5,7 @@ import { useState } from 'react';
 import styles from './NavBar.module.css';
 import './NavBar.css';
 import { useAuth } from '@/lib/auth-context';
+import SearchBar from './SearchBar';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
@@ -48,6 +49,9 @@ export default function NavBar() {
           <NavLink to="/turian">Turian</NavLink>
         </nav>
 
+        <div style={{ marginLeft: "auto", minWidth: 280 }}>
+          <SearchBar />
+        </div>
         <div className={styles.right} key={user?.id ?? 'anon'}>
           {ready && user && (
             <>
