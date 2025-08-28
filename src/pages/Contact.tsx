@@ -1,9 +1,10 @@
+import React from "react";
+
 export default function Contact() {
   return (
-    <main id="main">
+    <main style={{ maxWidth: 900, margin: "24px auto", padding: "0 20px" }}>
       <h1>Contact</h1>
-      <p>Email: <a href="mailto:info@naturverse.com">info@naturverse.com</a></p>
-      <p>X / Twitter: <a href="https://x.com/turianthedurian" target="_blank" rel="noreferrer">@turianthedurian</a></p>
+      <p>Reach us at <a href="mailto:hello@thenaturverse.com">hello@thenaturverse.com</a>.</p>
     </main>
   );
 }

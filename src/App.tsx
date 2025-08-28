@@ -10,6 +10,8 @@ import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
+import Footer from './components/Footer';
+import './styles/footer.css';
 
 export default function App() {
   useEffect(() => {
@@ -18,24 +20,27 @@ export default function App() {
   }, []);
   return (
     <CartProvider>
-      <>
-        {/* Global route side-effects (scroll & focus) */}
-        <RouteFX />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
-        />
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
-        />
-        <main id="main" className="nv-page">
-          <div className="container">
-            <RouterProvider router={router} />
-          </div>
-        </main>
-        <ToasterListener />
-      </>
+      <div id="nv-page">
+        <div className="nv-content">
+          {/* Global route side-effects (scroll & focus) */}
+          <RouteFX />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationLd) }}
+          />
+          <script
+            type="application/ld+json"
+            dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
+          />
+          <main id="main">
+            <div className="container">
+              <RouterProvider router={router} />
+            </div>
+          </main>
+          <ToasterListener />
+        </div>
+        <Footer />
+      </div>
     </CartProvider>
   );
 }

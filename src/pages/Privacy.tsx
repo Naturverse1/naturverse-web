@@ -1,8 +1,10 @@
+import React from "react";
+
 export default function Privacy() {
   return (
-    <main id="main">
+    <main style={{ maxWidth: 900, margin: "24px auto", padding: "0 20px" }}>
       <h1>Privacy Policy</h1>
-      <p>We respect your privacy. This is placeholder content until the full policy is ready.</p>
+      <p>This is a placeholder. Replace with your real policy.</p>
     </main>
   );
 }

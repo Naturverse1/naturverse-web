@@ -1,8 +1,10 @@
+import React from "react";
+
 export default function Terms() {
   return (
-    <main id="main">
+    <main style={{ maxWidth: 900, margin: "24px auto", padding: "0 20px" }}>
       <h1>Terms of Service</h1>
-      <p>These are placeholder terms. Full legal copy will be added later.</p>
+      <p>This is a placeholder. Replace with your real terms.</p>
     </main>
   );
 }

@@ -1,17 +1,22 @@
 import React from "react";
-import { FOOTER_LINKS } from "../data/footer";
 
 export default function Footer() {
+  const year = new Date().getFullYear();
   return (
-    <footer className="site-footer">
-      <div className="container" style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-        <small style={{ color: "var(--nv-blue-600)" }}>
-          © {new Date().getFullYear()} Naturverse™
-        </small>
-        <nav style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          {FOOTER_LINKS.map(l => (
-            <a key={l.href} href={l.href} className="muted">{l.label}</a>
-          ))}
+    <footer
+      role="contentinfo"
+      className="nv-footer"
+      aria-label="Site footer"
+    >
+      <div className="nv-footer__inner">
+        <p className="nv-footer__copy">© {year} Turian Media Company</p>
+
+        <nav aria-label="Footer">
+          <ul className="nv-footer__links">
+            <li><a href="/privacy" className="nv-footer__link">Privacy Policy</a></li>
+            <li><a href="/terms" className="nv-footer__link">Terms</a></li>
+            <li><a href="/contact" className="nv-footer__link">Contact</a></li>
+          </ul>
         </nav>
       </div>
     </footer>

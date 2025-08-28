@@ -1,45 +1,55 @@
-.site-footer {
+/* --- Footer base styles (low-risk) --- */
+.nv-footer {
+  border-top: 1px dashed rgba(0,0,0,.12);
+  margin-top: 24px;
+  background: #ffffff;
+}
+
+.nv-footer__inner {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 16px 20px;
   display: flex;
+  gap: 16px;
   align-items: center;
   justify-content: space-between;
-  gap: 16px;
-  flex-wrap: nowrap;
+  flex-wrap: wrap;
 }
 
-.footer-brand {
+.nv-footer__copy {
+  margin: 0;
+  font-size: 13px;
+  opacity: .8;
+}
+
+.nv-footer__links {
+  margin: 0;
+  padding: 0;
   display: flex;
-  align-items: center;
-  gap: 8px;
-  min-width: 120px; /* keeps logo from shrinking to zero */
+  gap: 14px;
+  list-style: none;
 }
 
-.footer-brand img {
-  height: 28px;
-  width: auto;
-  display: block;
+.nv-footer__link {
+  font-size: 13px;
+  text-decoration: none;
+  border-bottom: 1px dotted transparent;
 }
 
-.footer-links,
-.footer-social {
+.nv-footer__link:hover,
+.nv-footer__link:focus-visible {
+  border-bottom-color: currentColor;
+}
+
+/* Sticky *when content is short* (no overlap) */
+#nv-page {
+  min-height: 100dvh;
   display: flex;
-  gap: 12px;
-  align-items: center;
-  white-space: nowrap;
+  flex-direction: column;
 }
-
-/* small screens: allow wrap but keep logo tidy */
-@media (max-width: 640px) {
-  .site-footer {
-    flex-wrap: wrap;
-    row-gap: 8px;
-  }
-  .footer-brand {
-    order: 0;
-  }
-  .footer-social {
-    order: 1;
-  }
-  .footer-links {
-    order: 2;
-  }
+#nv-page > .nv-content {
+  flex: 1 0 auto;
+}
+#nv-page > .nv-footer {
+  flex-shrink: 0;
 }
