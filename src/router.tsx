@@ -40,6 +40,7 @@ import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Accessibility from './pages/Accessibility';
 import About from './pages/About';
+import SearchPage from './pages/search';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
@@ -56,6 +57,8 @@ export const router = createBrowserRouter([
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
       { path: 'zones', element: <ZonesPage /> },
       { path: 'zones/:slug', element: <ZoneDetail /> },
+      { path: 'search', element: <SearchPage /> },
+
       {
         path: 'marketplace',
         children: [

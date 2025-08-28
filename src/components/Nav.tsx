@@ -1,6 +1,7 @@
 import React from "react";
 import { Link } from "react-router-dom";
 import Icon from "./Icon";
+import SearchBar from "./SearchBar";
 
 export default function Nav() {
   return (
@@ -17,6 +18,9 @@ export default function Nav() {
       <a href="/contact" className="nv-nav-item">
         <Icon name="contact" size={18} /> Contact
       </a>
+      <div style={{ marginLeft: "auto", minWidth: 280 }}>
+        <SearchBar />
+      </div>
       <button className="nv-nav-menu" aria-label="Open menu">
         <Icon name="menu" size={20} />
       </button>
