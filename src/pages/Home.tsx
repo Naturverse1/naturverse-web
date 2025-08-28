@@ -4,13 +4,14 @@ import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
 import MiniQuests from '../components/MiniQuests';
+import SearchBox from '../components/SearchBox';
 
 export default function Home() {
   const { user } = useAuth();
   const isAuthed = !!user;
 
   return (
-    <main className={styles.page}>
+    <main className={`${styles.page} nv-container`}>
       <section className={styles.hero}>
         <h1 className={styles.title}>Welcome to the Naturverse™</h1>
         <p className={styles.subtitle}>
@@ -42,12 +43,14 @@ export default function Home() {
         )}
       </section>
 
-      <div className="mt-4 p-4 bg-yellow-100 border border-yellow-300 rounded-md text-yellow-900 shadow">
-        <h2 className="text-lg font-semibold">🌟 What’s New</h2>
-        <p>
-          Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy
-          is live ✅
-        </p>
+      <div className="nv-what">
+        <span role="img" aria-label="sparkles">✨</span>
+        <strong> What’s New</strong>
+        <span> Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy is live ✅</span>
+      </div>
+
+      <div className="nv-home-tools">
+        <SearchBox onFocus={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))} />
       </div>
 
       {/* Top feature tiles — text centered */}

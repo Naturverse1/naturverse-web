@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
 import { AuthProvider as BaseAuthProvider } from './auth/AuthContext';
@@ -10,9 +10,11 @@ import './main.css';
 import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
+import './styles/mega-features.css';
 import ToastProvider from './components/Toast';
 import { getSupabase } from '@/lib/supabase-client';
 import WorldExtras from './components/WorldExtras';
+import CommandPalette from './components/CommandPalette';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
@@ -23,6 +25,29 @@ if (location.hostname.endsWith('.netlify.app')) {
   if ('serviceWorker' in navigator) {
     navigator.serviceWorker.register('/sw.js').catch(() => {});
   }
+}
+
+function RootWithPalette({ children }: { children: React.ReactNode }) {
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      const mod = e.ctrlKey || e.metaKey;
+      if (mod && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setOpen((o) => !o);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  return (
+    <>
+      {children}
+      <CommandPalette open={open} onClose={() => setOpen(false)} />
+    </>
+  );
 }
 
 async function bootstrap() {
@@ -36,15 +61,19 @@ async function bootstrap() {
         <AuthProvider initialSession={initialSession}>
           <ToastProvider>
             <BaseAuthProvider>
-              <App />
-              <WorldExtras />
+              <RootWithPalette>
+                <App />
+                <WorldExtras />
+              </RootWithPalette>
             </BaseAuthProvider>
           </ToastProvider>
         </AuthProvider>
       ) : (
         <ToastProvider>
-          <App />
-          <WorldExtras />
+          <RootWithPalette>
+            <App />
+            <WorldExtras />
+          </RootWithPalette>
         </ToastProvider>
       )}
     </React.StrictMode>,

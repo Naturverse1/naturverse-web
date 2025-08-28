@@ -6,7 +6,7 @@ import Home from './pages/Home';
 import WorldsExplorer from './pages/worlds';
 import WorldDetail from './routes/worlds/[slug]';
 import CharacterPage from './routes/worlds/characters/[name]';
-import ZonesPage from './pages/zones';
+import ZonesExplorer from './pages/ZonesExplorer';
 import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
 import ProductPage from './pages/marketplace/[slug]';
@@ -55,7 +55,7 @@ export const router = createBrowserRouter([
       { path: 'worlds', element: <WorldsExplorer /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
-      { path: 'zones', element: <ZonesPage /> },
+      { path: 'zones', element: <ZonesExplorer /> },
       { path: 'zones/:slug', element: <ZoneDetail /> },
       { path: 'search', element: <SearchPage /> },
 
