@@ -1,37 +1,56 @@
-import React from 'react';
-import { fetchMiniQuests, type MiniQuest } from '../lib/miniquests';
+import * as React from 'react';
+import { getSupabase } from '../lib/supabase-client';
+
+const localFallback = [
+  { id: 'tuk-tuk', title: 'Tuk-Tuk Dash', xp: 25 },
+  { id: 'spice-run', title: 'Spice Market', xp: 25 },
+  { id: 'temple', title: 'Temple Trivia', xp: 25 },
+];
 
 export default function MiniQuests() {
-  const [quests, setQuests] = React.useState<MiniQuest[] | null>(null);
+  const [quests, setQuests] = React.useState(localFallback);
 
   React.useEffect(() => {
-    let mounted = true;
-    fetchMiniQuests().then(q => { if (mounted) setQuests(q); });
-    return () => { mounted = false; };
+    const supabase = getSupabase();
+    if (!supabase) return;
+    supabase
+      .from('mini_quests')
+      .select('*')
+      .eq('world', 'thailandia')
+      .limit(12)
+      .then(({ data }) => {
+        if (data && data.length) setQuests(data as any);
+      })
+      .catch(() => {
+        // ignore; fallback already shown
+      });
   }, []);
 
   return (
-    <section className="mini-quests">
-      <h2 className="text-xl font-bold mt-8 mb-4">Mini-Quests</h2>
-
-      {!quests && (
-        <div className="text-sm text-gray-500">Loading quests…</div>
-      )}
-
-      {quests && quests.length > 0 && (
-        <ul className="space-y-3">
-          {quests.map((q, i) => (
-            <li key={i} className="border p-3 rounded-md bg-blue-50">
-              <strong>{q.title}</strong>
-              <p className="text-sm text-gray-600">{q.description}</p>
-            </li>
-          ))}
-        </ul>
-      )}
-
-      {quests && quests.length === 0 && (
-        <div className="text-sm text-gray-500">No quests yet.</div>
-      )}
+    <section aria-label="Mini quests">
+      <h3 style={{ marginBottom: '0.5rem' }}>Mini-Quests in Thailandia</h3>
+      <ul
+        style={{
+          display: 'grid',
+          gap: '8px',
+          gridTemplateColumns: 'repeat(auto-fill,minmax(180px,1fr))',
+        }}
+      >
+        {quests.map((q) => (
+          <li
+            key={q.id}
+            style={{
+              padding: '12px',
+              border: '1px dashed #c9d4ff',
+              borderRadius: 12,
+            }}
+          >
+            <div style={{ fontWeight: 600 }}>{q.title}</div>
+            <div style={{ opacity: 0.7, fontSize: 12 }}>{q.xp} XP</div>
+          </li>
+        ))}
+      </ul>
     </section>
   );
 }
+

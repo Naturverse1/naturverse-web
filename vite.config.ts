@@ -20,13 +20,13 @@ export default defineConfig({
         short_name: 'Naturverse',
         theme_color: '#2563eb',
         background_color: '#ffffff',
-        start_url: '/',
+        start_url: '.',
         display: 'standalone',
         icons: [
-          { src: '/favicon-192x192.png', sizes: '192x192', type: 'image/png' },
-          { src: '/favicon-256x256.png', sizes: '256x256', type: 'image/png' },
+          { src: 'favicon-192x192.png', sizes: '192x192', type: 'image/png' },
+          { src: 'favicon-256x256.png', sizes: '256x256', type: 'image/png' },
           {
-            src: '/favicon-512x512.png',
+            src: 'favicon-512x512.png',
             sizes: '512x512',
             type: 'image/png',
             purpose: 'any maskable',
@@ -60,7 +60,8 @@ export default defineConfig({
       ],
     }),
   ],
-  base: '/', // fix asset URLs on Netlify permalinks & prod
+  // Use a relative base so assets resolve on Netlify permalinks and production
+  base: './',
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
     alias: {

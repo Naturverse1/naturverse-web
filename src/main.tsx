@@ -11,7 +11,8 @@ import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
 import ToastProvider from './components/Toast';
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
+import WorldExtras from './components/WorldExtras';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
@@ -25,20 +26,28 @@ if (location.hostname.endsWith('.netlify.app')) {
 }
 
 async function bootstrap() {
-  const { data } = await supabase.auth.getSession();
+  const supabase = getSupabase();
+  const { data } = supabase ? await supabase.auth.getSession() : { data: { session: null } };
   const initialSession = data.session ?? null;
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
+      {supabase ? (
         <AuthProvider initialSession={initialSession}>
           <ToastProvider>
             <BaseAuthProvider>
               <App />
+              <WorldExtras />
             </BaseAuthProvider>
           </ToastProvider>
         </AuthProvider>
-      </React.StrictMode>,
+      ) : (
+        <ToastProvider>
+          <App />
+          <WorldExtras />
+        </ToastProvider>
+      )}
+    </React.StrictMode>,
   );
 }
 
