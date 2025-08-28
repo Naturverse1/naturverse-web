@@ -5,34 +5,44 @@
     <script src="/kill-sw.js?v=2" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
-    <meta name="theme-color" content="#0ea5e9" />
     <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Replace deprecated Apple-only meta with cross-platform one -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
 
-    <!-- SEO base -->
+    <!-- === Naturverse SEO defaults (safe, no runtime/deps) === -->
+    <link rel="canonical" href="https://thenaturverse.com" />
+
     <meta
       name="description"
-      content="Naturverse™ — playful worlds, learning quests, and kid-friendly creation."
+      content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
     />
-    <meta property="og:title" content="Naturverse" />
+
+    <!-- PWA / UI hints -->
+    <meta name="theme-color" content="#1e66ff" />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:site_name" content="Naturverse" />
+    <meta property="og:url" content="https://thenaturverse.com" />
+    <meta property="og:title" content="Naturverse — Play • Learn • Earn" />
     <meta
       property="og:description"
-      content="Play, learn, and explore kingdoms with your Navatar."
+      content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges."
     />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://naturverse.netlify.app/" />
-    <meta property="og:image" content="/favicon-512.png" />
+    <!-- Use an existing public image. Update later to a 1200×630 banner when available -->
+    <meta property="og:image" content="/favicon-192x192.png" />
+
+    <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Naturverse" />
+    <meta name="twitter:title" content="Naturverse — Play • Learn • Earn" />
     <meta
       name="twitter:description"
-      content="Play, learn, and explore kingdoms with your Navatar."
+      content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges."
     />
-    <meta name="twitter:image" content="/favicon-512.png" />
-    <link rel="canonical" href="https://naturverse.netlify.app/" />
+    <meta name="twitter:image" content="/favicon-192x192.png" />
+    <!-- === / Naturverse SEO defaults === -->
 
     <!-- Preload the 64x64 (crisp and safe) so favicon appears immediately -->
     <link rel="preload" as="image" href="/favicon-64x64.png" imagesizes="64x64" />
