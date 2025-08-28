@@ -1,4 +1,5 @@
 import React from "react";
+import { supabase } from "../lib/supabase-client";
 import "./stepper.css";
 
 // Types
@@ -10,7 +11,6 @@ type Step = {
 type Props = {
   userId?: string;
   steps?: Step[];
-  current?: string; // override if provided
 };
 
 // Default step sequence
@@ -22,17 +22,60 @@ const DEFAULT_STEPS: Step[] = [
   { key: "done", label: "Completion" }
 ];
 
-export default function NavatarStepper({ userId, steps = DEFAULT_STEPS, current }: Props) {
-  const [active, setActive] = React.useState<string>(current || "intro");
+export default function NavatarStepper({ userId, steps = DEFAULT_STEPS }: Props) {
+  const [active, setActive] = React.useState<string>("intro");
+  const [loading, setLoading] = React.useState<boolean>(true);
 
-  // In real app: fetch from Supabase
   React.useEffect(() => {
-    if (!userId || current) return;
-    // Fallback logic: simulate user progress
-    // Replace with Supabase fetch when hooked up
-    const saved = localStorage.getItem("nv_progress_" + userId);
-    if (saved) setActive(saved);
-  }, [userId, current]);
+    if (!userId) return;
+
+    const fetchProgress = async () => {
+      setLoading(true);
+      try {
+        // 1. Check quiz attempts
+        const { data: quiz } = await supabase
+          .from("user_quiz_attempts")
+          .select("id")
+          .eq("user_id", userId)
+          .limit(1)
+          .maybeSingle();
+
+        if (!quiz) {
+          setActive("quiz");
+          return;
+        }
+
+        // 2. Check stamps
+        const { data: stamp } = await supabase
+          .from("stamps")
+          .select("id")
+          .eq("user_id", userId)
+          .limit(1)
+          .maybeSingle();
+
+        if (!stamp) {
+          setActive("stamp");
+          return;
+        }
+
+        // 3. If both exist, consider zone unlocked
+        setActive("zone");
+
+        // 4. Optional: mark done if additional flag (expand later)
+      } catch (err) {
+        console.error("Stepper fetch error", err);
+        // fallback to local
+        const saved = localStorage.getItem("nv_progress_" + userId);
+        if (saved) setActive(saved);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchProgress();
+  }, [userId]);
+
+  if (loading) return <div>Loading progress…</div>;
 
   return (
     <div className="stepper">
