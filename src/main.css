@@ -20,7 +20,6 @@
 @import "./styles/page.css";
 @import './styles/components.css';
 @import "./styles/profile.css";
-@import "./styles/util-a11y.css";
 @import "./styles/notfound.css";
 @import "./styles/util.css";
 @import "./styles/nav-active.css";
@@ -54,22 +53,6 @@ body {
 
 /* profile helpers (safe) */
 .muted { color: #64748b; }
-
-.visually-hidden-focusable {
-  position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
-}
-.visually-hidden-focusable:focus {
-  left:8px; top:8px; width:auto; height:auto; padding:8px 10px; background:#eff6ff; border-radius:8px; border:1px solid #bfdbfe;
-}
-
-/* a11y focus */
-:focus-visible { outline: 3px solid #93c5fd; outline-offset: 2px; border-radius: 6px; }
-/* skip-link (already inserted) */
-a.skip-link {
-  position:absolute; left:-999px; top:-999px; background:#0ea5e9; color:#fff;
-  padding:8px 12px; border-radius:10px; z-index:9999;
-}
-a.skip-link:focus { left:12px; top:12px; outline:none; }
 
 /* Ensure all images that lack size don't shift layout */
 img[loading="lazy"] { contain: paint; }

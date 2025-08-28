@@ -6,7 +6,6 @@ const isActive = (href: string) => typeof window !== "undefined" && window.locat
 export default function Nav() {
   return (
     <>
-      <a href="#main-content" className="visually-hidden-focusable">Skip to content</a>
         <nav className="topnav container">
           <a href="/" aria-label="Naturverse Home" className={`toplink brand ${isActive("/") ? "active" : ""}`}>
             <SafeImg src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
