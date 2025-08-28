@@ -1,5 +1,0 @@
-/* focus ring for keyboard users */
-:focus-visible {
-  outline: 3px solid #0ea5e9;
-  outline-offset: 2px;
-}

@@ -1,18 +1,8 @@
-/* active nav + accessibility + skeletons + small helpers */
-.skip-link{
-  position:absolute; left:-9999px; top:auto; width:1px; height:1px; overflow:hidden;
-}
-.skip-link:focus{
-  position:fixed; left:16px; top:12px; width:auto; height:auto; padding:8px 10px;
-  background:#0ea5e9; color:#fff; border-radius:8px; z-index:9999;
-}
-
+/* active nav + skeletons + small helpers */
 .navbar .nav-link.active{
   color:#0ea5e9;
   border-bottom:2px solid #0ea5e9;
 }
-
-:focus-visible { outline: 2px solid #0ea5e9; outline-offset: 2px; }
 
 /* Skeletons */
 @keyframes sk-pulse{ 0%{opacity:.6} 50%{opacity:.35} 100%{opacity:.6} }

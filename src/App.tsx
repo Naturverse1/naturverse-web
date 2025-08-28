@@ -12,6 +12,8 @@ import './styles/magic.css';
 import './init/runtime-logger'; // lightweight global error hooks
 import Footer from './components/Footer';
 import './styles/footer.css';
+import SkipLink from './components/SkipLink';
+import './styles/a11y.css';
 
 export default function App() {
   useEffect(() => {
@@ -21,7 +23,17 @@ export default function App() {
   return (
     <CartProvider>
       <div id="nv-page">
-        <div className="nv-content">
+        {/* Keyboard-accessible jump link (first focusable on the page) */}
+        <SkipLink />
+
+        {/* Convert content wrapper into the "main" landmark and jump target */}
+        <main
+          id="main"
+          className="nv-content"
+          tabIndex={-1}
+          role="main"
+          aria-label="Main content"
+        >
           {/* Global route side-effects (scroll & focus) */}
           <RouteFX />
           <script
@@ -32,13 +44,12 @@ export default function App() {
             type="application/ld+json"
             dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteLd) }}
           />
-          <main id="main">
-            <div className="container">
-              <RouterProvider router={router} />
-            </div>
-          </main>
+          <div className="container">
+            <RouterProvider router={router} />
+          </div>
           <ToasterListener />
-        </div>
+        </main>
+
         <Footer />
       </div>
     </CartProvider>
