@@ -1,5 +1,6 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import { logEvent } from './utils/telemetry';
 
 import Home from './pages/Home';
 import WorldsIndex from './routes/worlds';
@@ -117,3 +118,14 @@ export const router = createBrowserRouter([
     ],
   },
 ]);
+
+if (typeof window !== 'undefined') {
+  let prev = window.location.pathname;
+  router.subscribe((state) => {
+    const next = state.location.pathname;
+    if (next !== prev) {
+      prev = next;
+      logEvent('RouteChange', { path: next });
+    }
+  });
+}
