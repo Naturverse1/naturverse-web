@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
+import MiniQuests from '../components/MiniQuests';
 
 export default function Home() {
   const { user } = useAuth();
@@ -87,6 +88,8 @@ export default function Home() {
           </p>
         </ClickableCard>
       </section>
+
+      <MiniQuests />
 
       {/* Bottom flow — text left-aligned */}
       <section className={styles.flowWrap}>
