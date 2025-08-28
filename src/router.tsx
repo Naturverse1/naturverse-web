@@ -45,6 +45,9 @@ import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
 import MiniQuests from './pages/MiniQuests';
+import TukTukDash from './pages/play/TukTukDash';
+import SpiceMarket from './pages/play/SpiceMarket';
+import TempleTrivia from './pages/play/TempleTrivia';
 
 export const router = createBrowserRouter([
   {
@@ -59,7 +62,10 @@ export const router = createBrowserRouter([
       { path: 'zones', element: <ZonesExplorer /> },
       { path: 'zones/:slug', element: <ZoneDetail /> },
       { path: 'search', element: <SearchPage /> },
-      { path: 'play/:slug?', element: <MiniQuests /> },
+      { path: 'play', element: <MiniQuests /> },
+      { path: 'play/tuktuk-dash', element: <TukTukDash /> },
+      { path: 'play/spice-market', element: <SpiceMarket /> },
+      { path: 'play/temple-trivia', element: <TempleTrivia /> },
 
       {
         path: 'marketplace',

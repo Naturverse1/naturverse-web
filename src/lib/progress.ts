@@ -1,6 +1,7 @@
 import { getSupabase } from '@/lib/supabase-client';
 
 const LS_KEY = (userId: string) => `nv_unlocked_zones_${userId}`;
+const QUEST_LS_KEY = 'nv.quest.progress.v1';
 
 /**
  * Get unlocked zone slugs for a user.
@@ -54,5 +55,58 @@ export function localUnlockZone(userId: string, slug: string) {
     if (!arr.includes(slug)) arr.push(slug);
     localStorage.setItem(key, JSON.stringify(arr));
   } catch {}
+}
+
+type QuestProgress = Record<string, {
+  status: 'new' | 'started' | 'completed';
+  score: number;
+  updatedAt: string;
+}>;
+
+function readQuestLocal(): QuestProgress {
+  try {
+    return JSON.parse(localStorage.getItem(QUEST_LS_KEY) || '{}');
+  } catch {
+    return {};
+  }
+}
+
+function writeQuestLocal(p: QuestProgress) {
+  localStorage.setItem(QUEST_LS_KEY, JSON.stringify(p));
+}
+
+export async function saveProgress(
+  slug: string,
+  score: number,
+  status: QuestProgress[string]['status'],
+) {
+  const now = new Date().toISOString();
+  const state = readQuestLocal();
+  state[slug] = { status, score, updatedAt: now };
+  writeQuestLocal(state);
+
+  const supabase = getSupabase();
+  if (supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    if (user?.user) {
+      await supabase
+        .from('quest_progress')
+        .upsert(
+          {
+            user_id: user.user.id,
+            quest_slug: slug,
+            score,
+            status,
+            updated_at: now,
+          },
+          { onConflict: 'user_id,quest_slug' },
+        );
+    }
+  }
+}
+
+export function getProgress(slug: string) {
+  const state = readQuestLocal();
+  return state[slug] ?? { status: 'new' as const, score: 0, updatedAt: '' };
 }
 
