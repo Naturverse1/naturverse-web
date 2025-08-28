@@ -64,3 +64,7 @@
 /*
   Link: </worlds>; rel=prefetch, </zones>; rel=prefetch
 
+
+/offline.html
+  Cache-Control: no-cache, no-store, must-revalidate
+  Content-Type: text/html; charset=utf-8

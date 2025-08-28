@@ -11,7 +11,6 @@ import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
 import ToastProvider from './components/Toast';
-import OfflineBanner from './components/OfflineBanner';
 import { supabase } from '@/lib/supabase-client';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
@@ -35,7 +34,6 @@ async function bootstrap() {
       {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
         <AuthProvider initialSession={initialSession}>
           <ToastProvider>
-            <OfflineBanner />
             <BaseAuthProvider>
               <App />
             </BaseAuthProvider>

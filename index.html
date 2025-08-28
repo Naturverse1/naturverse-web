@@ -277,5 +277,19 @@
       })();
     </script>
 
-</body>
+    <script>
+      // If a navigation happens while offline and fetch fails, show /offline.html.
+      (function () {
+        if (!('serviceWorker' in navigator)) return; // SW handles most offline
+        // As an extra safety: intercept top-level navigations that fail.
+        window.addEventListener('error', function (e) {
+          try {
+            var isChunkLoad = e && e.message && /Loading chunk/i.test(e.message);
+            if (isChunkLoad && !navigator.onLine) location.href = '/offline.html';
+          } catch {}
+        });
+      })();
+    </script>
+
+  </body>
 </html>

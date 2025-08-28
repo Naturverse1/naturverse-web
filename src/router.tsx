@@ -39,11 +39,13 @@ import Accessibility from './pages/Accessibility';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
+import RouteError from './routes/RouteError';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RouteError />,
     children: [
       { index: true, element: <Home /> },
       { path: 'worlds', element: <WorldsExplorer /> },
