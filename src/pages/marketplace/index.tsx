@@ -1,34 +1,73 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
-import AddToCartButton from "../../components/AddToCartButton";
-import SaveButton from "../../components/SaveButton";
-import { Link } from "react-router-dom";
-import "../../styles/_cards.css";
-import "../../styles/marketplace.css";
+import React from "react";
+import { PRODUCTS } from "../../data/products";
+import ProductCard from "../../components/ProductCard";
+import "../../components/market.css";
+import { getWishlist } from "../../utils/wishlist";
 
-const PRODUCTS = [
-  { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
-  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/Marketplace/Turiantshirt.png",  href:"/marketplace/navatar-tee" },
-  { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
-];
+const CATS = ["All", "Digital", "Physical", "Experience"] as const;
 
-export default function MarketplacePage(){
+export default function Marketplace() {
+  const [q, setQ] = React.useState<string>(() => new URLSearchParams(location.search).get("q") || "");
+  const [cat, setCat] = React.useState<typeof CATS[number]>("All");
+  const [wished, setWished] = React.useState<string[]>(() => getWishlist());
+
+  React.useEffect(() => {
+    const sp = new URLSearchParams();
+    if (q) sp.set("q", q);
+    const next = `${location.pathname}?${sp.toString()}`;
+    history.replaceState(null, "", next);
+  }, [q]);
+
+  const list = PRODUCTS.filter(p => {
+    const passQ = !q || p.name.toLowerCase().includes(q.toLowerCase()) || p.summary.toLowerCase().includes(q.toLowerCase());
+    const passC = cat === "All" || p.category === cat;
+    return passQ && passC;
+  });
+
   return (
-    <main id="main" data-page="marketplace" className="nvrs-section marketplace nv-secondary-scope">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
-      <h1 className="page-title">Marketplace</h1>
-      <div className="mp-grid nv-card-grid">
-        {PRODUCTS.map(p => (
-          <article key={p.id} className="mp-card nv-card">
-            <div className="mp-image nv-image">
-              <img src={p.image} alt={p.name} loading="lazy" />
-            </div>
-            <h3><Link to={p.href}>{p.name}</Link></h3>
-            <p className="price">${p.price.toFixed(2)}</p>
-            <div className="actions">
-              <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image} />
-              <SaveButton id={`product:${p.id}`} kind="product" title={p.name} href={p.href} />
-            </div>
-          </article>
+    <main style={{ maxWidth: 1100, margin: "24px auto", padding: "0 20px" }}>
+      <h1 style={{ marginBottom: 10 }}>Marketplace</h1>
+      <p style={{ opacity: .8, marginTop: 0 }}>Goodies for your journey — digital packs, physical tools, and sessions.</p>
+
+      <div className="market-toolbar" role="search">
+        <input
+          type="search"
+          placeholder="Search marketplace…"
+          value={q}
+          onChange={(e) => setQ(e.target.value)}
+          aria-label="Search marketplace"
+        />
+        <div className="tabs" role="tablist" aria-label="Categories">
+          {CATS.map(c => (
+            <button
+              key={c}
+              role="tab"
+              aria-selected={c === cat}
+              className={`tab ${c === cat ? "is-active" : ""}`}
+              onClick={() => setCat(c)}
+            >
+              {c}
+            </button>
+          ))}
+        </div>
+        <a className="btn ghost" href="/wishlist" aria-label="Open wishlist">
+          Wishlist <span className="badge">{wished.length}</span>
+        </a>
+      </div>
+
+      <div className="market-grid">
+        {list.map(p => (
+          <ProductCard
+            key={p.id}
+            id={p.id}
+            name={p.name}
+            slug={p.slug}
+            summary={p.summary}
+            image={p.image}
+            price={p.price}
+            category={p.category}
+            onChange={() => setWished(getWishlist())}
+          />
         ))}
       </div>
     </main>
