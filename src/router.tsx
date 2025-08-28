@@ -6,17 +6,8 @@ import Home from './pages/Home';
 import WorldsExplorer from './pages/worlds';
 import WorldDetail from './routes/worlds/[slug]';
 import CharacterPage from './routes/worlds/characters/[name]';
-import Zones from './routes/zones';
-import ArcadeZone from './routes/zones/arcade';
-import MusicZone from './routes/zones/music';
-import WellnessZone from './routes/zones/wellness';
-import CreatorLabPage from './pages/zones/creator-lab';
-import Stories from './pages/zones/Stories';
-import Quizzes from './pages/zones/Quizzes';
-import Observations from './pages/zones/Observations';
-import Community from './pages/zones/Community';
-import Culture from './pages/zones/Culture';
-import FutureZone from './pages/zones/Future';
+import ZonesPage from './pages/zones';
+import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
 import ProductPage from './pages/marketplace/[slug]';
 import CartPage from './pages/cart';
@@ -47,7 +38,6 @@ import Accessibility from './pages/Accessibility';
 import About from './pages/About';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
-import ZonesLayout from './layouts/Zones';
 
 export const router = createBrowserRouter([
   {
@@ -58,23 +48,8 @@ export const router = createBrowserRouter([
       { path: 'worlds', element: <WorldsExplorer /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
-      {
-        path: 'zones',
-        element: <ZonesLayout />,
-        children: [
-          { index: true, element: <Zones /> },
-          { path: 'arcade', element: <ArcadeZone /> },
-          { path: 'music', element: <MusicZone /> },
-          { path: 'wellness', element: <WellnessZone /> },
-          { path: 'creator-lab', element: <CreatorLabPage /> },
-          { path: 'stories', element: <Stories /> },
-          { path: 'quizzes', element: <Quizzes /> },
-          { path: 'observations', element: <Observations /> },
-          { path: 'culture', element: <Culture /> },
-          { path: 'community', element: <Community /> },
-          { path: 'future', element: <FutureZone /> },
-        ],
-      },
+      { path: 'zones', element: <ZonesPage /> },
+      { path: 'zones/:slug', element: <ZoneDetail /> },
       {
         path: 'marketplace',
         children: [
