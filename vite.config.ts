@@ -1,6 +1,6 @@
 import { defineConfig } from 'vite';
 import react from '@vitejs/plugin-react';
-// import { VitePWA } from 'vite-plugin-pwa'; // keep disabled for now
+import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
@@ -12,8 +12,9 @@ export default defineConfig({
       },
       fastRefresh: false,
     }),
-    // Re-enable later behind an env flag once icons & SW are confirmed good.
-    // VitePWA({ /* ... */ }),
+    // Completely disable for now:
+    // VitePWA({ disable: true })
+    VitePWA({ registerType: 'autoUpdate', disable: true }),
   ],
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
