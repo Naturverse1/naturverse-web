@@ -1,7 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
 import { supabase } from '@/lib/supabase-client';
-import { safeProfileUpsert } from '@/lib/safeProfileUpsert';
 
 type AuthCtx = {
   user: User | null;
@@ -29,24 +28,31 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.session?.user ?? null);
       setLoading(false);
 
-      if (data.session?.user) {
-        await safeProfileUpsert(supabase, data.session.user, {
-          username: data.session.user.email ?? undefined,
-        });
+      if (data.session?.user?.id) {
+        const { error } = await supabase
+          .from('profiles')
+          .upsert({ id: data.session.user.id }, { onConflict: 'id' });
+        if (error) {
+          console.warn('[naturverse] profile upsert skipped', error.message);
+        }
       }
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s ?? null);
-      setUser(s?.user ?? null);
-      setLoading(false);
+    const { data: sub } = supabase.auth.onAuthStateChange(
+      async (_event, session) => {
+        setSession(session ?? null);
+        setUser(session?.user ?? null);
+        setLoading(false);
 
-      if (s?.user) {
-        safeProfileUpsert(supabase, s.user, {
-          username: s.user.email ?? undefined,
-        });
-      }
-    });
+        if (!session?.user?.id) return;
+        const { error } = await supabase
+          .from('profiles')
+          .upsert({ id: session.user.id }, { onConflict: 'id' });
+        if (error) {
+          console.warn('[naturverse] profile upsert skipped', error.message);
+        }
+      },
+    );
 
     return () => {
       sub.subscription.unsubscribe();
