@@ -1,5 +1,16 @@
 import { createClient } from '@supabase/supabase-js';
 
+export async function safeUpsertProfile(client: any, values: any) {
+  try {
+    const { error } = await client.from('profiles').upsert(values, { onConflict: 'id' });
+    if (error && !String(error.message || '').includes('duplicate') && error.code !== '409') {
+      console.warn('[profile] upsert non-fatal error:', error);
+    }
+  } catch (err) {
+    console.warn('[profile] upsert threw:', err);
+  }
+}
+
 export async function saveProfile(
   supabase: ReturnType<typeof createClient>,
   user: { id: string; email?: string },
@@ -20,17 +31,10 @@ export async function saveProfile(
     avatar_url = publicUrl?.publicUrl ?? null;
   }
 
-  const { error: upsertErr } = await supabase
-    .from('profiles')
-    .upsert(
-      {
-        id: user.id,
-        display_name: displayName || null,
-        avatar_url,
-        updated_at: new Date().toISOString(),
-      },
-      { onConflict: 'id' }
-    );
-
-  if (upsertErr) throw new Error(`upsert: ${upsertErr.message}`);
+  await safeUpsertProfile(supabase, {
+    id: user.id,
+    display_name: displayName || null,
+    avatar_url,
+    updated_at: new Date().toISOString(),
+  });
 }

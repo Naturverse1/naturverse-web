@@ -18,6 +18,15 @@ import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
 
+if ('serviceWorker' in navigator) {
+  (async () => {
+    try {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      if (regs.length) await Promise.all(regs.map(r => r.unregister().catch(() => {})));
+    } catch {}
+  })();
+}
+
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
   const initialSession = data.session ?? null;
@@ -64,7 +73,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import './styles/overrides.css';
-
-if (import.meta.env.PROD) {
-  import('./register-sw');
-}

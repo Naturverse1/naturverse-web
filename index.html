@@ -2,9 +2,11 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
+    <script src="/kill-sw.js?v=2" defer></script>
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Naturverse</title>
     <meta name="theme-color" content="#0ea5e9" />
+    <link rel="manifest" href="/manifest.webmanifest" />
 
     <!-- Replace deprecated Apple-only meta with cross-platform one -->
     <meta name="mobile-web-app-capable" content="yes" />
@@ -40,13 +42,6 @@
 
     <!-- Preload assets -->
     <link rel="preload" href="/src/main.css" as="style" />
-    <link
-      rel="preload"
-      href="/fonts/your-main-font.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
     <link rel="stylesheet" href="/src/main.css" />
 
     <!-- a11y: skip to content -->

@@ -8,9 +8,8 @@
   Content-Type: text/html; charset=UTF-8
   Cache-Control: no-cache
 
-/static/fonts/*
+/fonts/*
   Cache-Control: public, max-age=31536000, immutable
-  Access-Control-Allow-Origin: *
 
 /assets/*
   Cache-Control: public, max-age=31536000, immutable
@@ -33,5 +32,5 @@
   Cache-Control: public, max-age=31536000, immutable
 
 /manifest.webmanifest
-  Content-Type: application/manifest+json
+  Content-Type: application/manifest+json; charset=utf-8
   Cache-Control: no-cache
