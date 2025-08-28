@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
-  <url><loc>/</loc></url>
-  <url><loc>/worlds</loc></url>
-  <url><loc>/zones</loc></url>
-  <url><loc>/marketplace</loc></url>
-  <url><loc>/naturversity</loc></url>
-  <url><loc>/navatar</loc></url>
-  <url><loc>/passport</loc></url>
-  <url><loc>/naturbank</loc></url>
-  <url><loc>/turian</loc></url>
-  <url><loc>/profile</loc></url>
+  <!-- Top-level routes -->
+  <url><loc>https://thenaturverse.com/</loc><changefreq>daily</changefreq><priority>1.0</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/worlds</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/zones</loc><changefreq>weekly</changefreq><priority>0.9</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/marketplace</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/wishlist</loc><changefreq>weekly</changefreq><priority>0.6</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/naturversity</loc><changefreq>weekly</changefreq><priority>0.8</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/naturbank</loc><changefreq>weekly</changefreq><priority>0.6</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/navatar</loc><changefreq>weekly</changefreq><priority>0.6</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/passport</loc><changefreq>weekly</changefreq><priority>0.5</priority><lastmod>2025-08-28</lastmod></url>
+  <url><loc>https://thenaturverse.com/turian</loc><changefreq>weekly</changefreq><priority>0.4</priority><lastmod>2025-08-28</lastmod></url>
 </urlset>
