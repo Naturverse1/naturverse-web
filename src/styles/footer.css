@@ -41,6 +41,23 @@
   border-bottom-color: currentColor;
 }
 
+/* Version chip */
+.nv-footer__ver {
+  opacity: .7;
+  font-size: 12px;
+  white-space: nowrap;
+}
+
+@media (max-width: 640px) {
+  .nv-footer__inner {
+    gap: 8px;
+  }
+  .nv-footer__ver {
+    width: 100%;
+    text-align: right;
+  }
+}
+
 /* Sticky *when content is short* (no overlap) */
 #nv-page {
   min-height: 100dvh;

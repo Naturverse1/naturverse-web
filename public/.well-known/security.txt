@@ -1,0 +1,4 @@
+# Security contact for Naturverse
+Contact: mailto:hello@thenaturverse.com
+Policy: https://thenaturverse.com/security
+Preferred-Languages: en
