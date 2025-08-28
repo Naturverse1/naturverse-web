@@ -1,35 +1,26 @@
-import { getSupabase } from '@/lib/supabase-client';
+import { supabase } from './supabaseClient';
+
+const callbackUrl = `${window.location.origin}/auth/callback`;
 
 export async function signInWithGoogle() {
-  const supabase = getSupabase();
-  if (!supabase) return;
-  await supabase.auth.signInWithOAuth({
+  return supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/`,
-      queryParams: { prompt: 'select_account' },
-    },
+    options: { redirectTo: callbackUrl },
   });
 }
 
 export async function sendMagicLink(email: string) {
-  const supabase = getSupabase();
-  if (!supabase) return;
-  await supabase.auth.signInWithOtp({
+  return supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: `${window.location.origin}/` },
+    options: { emailRedirectTo: callbackUrl },
   });
 }
 
 export async function getUser() {
-  const supabase = getSupabase();
-  if (!supabase) return null;
   const { data } = await supabase.auth.getUser();
   return data.user;
 }
 
 export async function signOut() {
-  const supabase = getSupabase();
-  if (!supabase) return;
   await supabase.auth.signOut();
 }

@@ -25,7 +25,10 @@ export default function Home() {
               className={styles.cta}
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) await sendMagicLink(email);
+                if (email) {
+                  sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+                  await sendMagicLink(email);
+                }
               }}
             >
               Create account
@@ -34,6 +37,7 @@ export default function Home() {
               type="button"
               className={styles.cta}
               onClick={async () => {
+                sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
                 await signInWithGoogle();
               }}
             >

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { useSupabase } from '@/lib/useSupabase';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -38,13 +39,8 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: window.location.origin,
-        },
-      });
+      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+      const { error } = await sendMagicLink(email);
       if (error) throw error;
       setStatus('sent');
       setMessage('Magic link sent! Check your email.');
@@ -54,16 +50,13 @@ export default function LoginForm() {
     }
   }
 
-  async function signInWithGoogle() {
+  async function handleGoogleLogin() {
     if (!supabase) return;
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin },
-      });
+      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+      const { error } = await signInWithGoogle();
       if (error) throw error;
       setStatus('idle');
     } catch (err: any) {
@@ -109,7 +102,7 @@ export default function LoginForm() {
       </form>
 
       <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={signInWithGoogle} aria-label="Sign in with Google">
+        <button onClick={handleGoogleLogin} aria-label="Sign in with Google">
           Continue with Google
         </button>
       </div>

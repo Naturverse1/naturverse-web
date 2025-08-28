@@ -1,6 +1,15 @@
 /* Theme utilities for consistent secondary text color */
 :root {
   --nv-blue: var(--naturverse-blue, #1f50ff);
+  --link: #2563eb; /* blue-600 */
+  --link-hover: #1d4ed8; /* blue-700 */
+}
+
+a {
+  color: var(--link);
+}
+a:hover {
+  color: var(--link-hover);
 }
 
 /* Safe, page-wide section text (not buttons/inputs) */
