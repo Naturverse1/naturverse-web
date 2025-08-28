@@ -1,5 +1,5 @@
 import React from 'react';
-import { MINI_QUESTS } from '../data/miniQuests';
+import { MINI_QUESTS } from '../data/miniQuestsList';
 
 export default function MiniQuests() {
   return (
