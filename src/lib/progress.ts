@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 const LS_KEY = (userId: string) => `nv_unlocked_zones_${userId}`;
 
@@ -14,23 +14,26 @@ export async function getUnlockedZones(userId: string): Promise<Set<string>> {
   if (!userId) return new Set();
 
   // Try 1: explicit unlocks table
-  const { data: unlocks1, error: e1 } = await supabase
-    .from('zone_unlocks')
-    .select('zone_slug')
-    .eq('user_id', userId);
+  const supabase = getSupabase();
+  if (supabase) {
+    const { data: unlocks1, error: e1 } = await supabase
+      .from('zone_unlocks')
+      .select('zone_slug')
+      .eq('user_id', userId);
 
-  if (!e1 && unlocks1 && unlocks1.length) {
-    return new Set(unlocks1.map((r) => r.zone_slug));
-  }
+    if (!e1 && unlocks1 && unlocks1.length) {
+      return new Set(unlocks1.map((r) => r.zone_slug));
+    }
 
-  // Try 2: infer from stamps table if it has zone_slug
-  const { data: unlocks2, error: e2 } = await supabase
-    .from('stamps')
-    .select('zone_slug')
-    .eq('user_id', userId);
+    // Try 2: infer from stamps table if it has zone_slug
+    const { data: unlocks2, error: e2 } = await supabase
+      .from('stamps')
+      .select('zone_slug')
+      .eq('user_id', userId);
 
-  if (!e2 && unlocks2 && unlocks2.length && 'zone_slug' in (unlocks2[0] ?? {})) {
-    return new Set(unlocks2.map((r: any) => r.zone_slug).filter(Boolean));
+    if (!e2 && unlocks2 && unlocks2.length && 'zone_slug' in (unlocks2[0] ?? {})) {
+      return new Set(unlocks2.map((r: any) => r.zone_slug).filter(Boolean));
+    }
   }
 
   // Fallback: localStorage

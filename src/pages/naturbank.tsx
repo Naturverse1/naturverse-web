@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import Breadcrumbs from "../components/Breadcrumbs";
 import type { NaturTxn } from "../types/bank";
 import { setTitle } from "./_meta";
@@ -10,6 +10,7 @@ const START_BAL = 120;
 
 export default function NaturBankPage() {
   setTitle("NaturBank");
+  const supabase = useSupabase();
   const [uid, setUid] = useState<string | null>(null);
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -27,6 +28,7 @@ export default function NaturBankPage() {
 
   useEffect(() => {
     (async () => {
+      if (!supabase) { setLoading(false); return; }
       const { data } = await supabase.auth.getSession();
       const u = data.session?.user?.id ?? null;
       setUid(u);
@@ -57,7 +59,7 @@ export default function NaturBankPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [supabase]);
 
   const balance = useMemo(() => {
     const base = START_BAL;
@@ -66,7 +68,7 @@ export default function NaturBankPage() {
   }, [txns]);
 
   async function saveWallet() {
-    if (!address.trim()) return;
+    if (!address.trim() || !supabase) return;
     if (uid && !usingLocal) {
       const { error } = await supabase
         .from("natur_wallets" as any)
@@ -82,7 +84,7 @@ export default function NaturBankPage() {
       wallet_address: address || "local",
       kind, amount, note: note || null,
     };
-    if (uid && !usingLocal) {
+    if (uid && !usingLocal && supabase) {
       const { data, error } = await supabase
         .from("natur_transactions" as any)
         .insert(newT as any)

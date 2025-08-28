@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
 export default function LoginForm() {
+  const supabase = useSupabase();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState<string | null>(null);
@@ -13,6 +14,7 @@ export default function LoginForm() {
   useEffect(() => {
     let mounted = true;
 
+    if (!supabase) return;
     // Load initial session
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
@@ -28,11 +30,11 @@ export default function LoginForm() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (!email) return;
+    if (!email || !supabase) return;
     setStatus('sending');
     setMessage(null);
     try {
@@ -53,6 +55,7 @@ export default function LoginForm() {
   }
 
   async function signInWithGoogle() {
+    if (!supabase) return;
     setStatus('sending');
     setMessage(null);
     try {
@@ -70,6 +73,7 @@ export default function LoginForm() {
   }
 
   async function handleLogout() {
+    if (!supabase) return;
     await supabase.auth.signOut();
     setMessage('Signed out.');
   }

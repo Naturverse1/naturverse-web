@@ -1,11 +1,12 @@
 import { useEffect, useState, useRef } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import LazyImg from "./LazyImg";
 import "../styles/auth-menu.css";
 
 type MiniUser = { id: string; email: string | null; avatar_url?: string | null };
 
 export default function AuthMenu() {
+  const supabase = useSupabase();
   const [user, setUser] = useState<MiniUser | null>(null);
   const [open, setOpen] = useState(false);
   const menuRef = useRef<HTMLDivElement>(null);
@@ -14,6 +15,7 @@ export default function AuthMenu() {
     let mounted = true;
 
     async function load() {
+      if (!supabase) { if (mounted) setUser(null); return; }
       const { data } = await supabase.auth.getUser();
       const sUser = data.user;
       if (!sUser) {
@@ -37,9 +39,11 @@ export default function AuthMenu() {
     }
 
     load();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => load());
+    const { data: sub } = supabase?.auth.onAuthStateChange(() => load()) ?? {
+      data: { subscription: { unsubscribe() {} } },
+    };
     return () => sub.subscription.unsubscribe();
-  }, []);
+  }, [supabase]);
 
   useEffect(() => {
     function onDocClick(e: MouseEvent) {
@@ -51,6 +55,7 @@ export default function AuthMenu() {
   }, []);
 
   async function signOut() {
+    if (!supabase) return;
     await supabase.auth.signOut();
     setUser(null);
     setOpen(false);

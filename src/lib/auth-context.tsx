@@ -1,11 +1,11 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { supabase, signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
+import type { Session, User, AuthChangeEvent } from '@supabase/supabase-js';
+import { useSupabase } from './useSupabase';
+import { signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
 
 type Ctx = {
   ready: boolean;
-  user: null | NonNullable<
-    Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']
-  >['user'];
+  user: User | null;
   signInWithGoogle: () => Promise<void>;
   signInWithMagicLink: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -25,8 +25,9 @@ export function AuthProvider({
   initialSession,
 }: {
   children: React.ReactNode;
-  initialSession: Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session'] | null;
+  initialSession: Session | null;
 }) {
+  const supabase = useSupabase();
   const [ready, setReady] = useState(Boolean(initialSession));
   const [user, setUser] = useState<Ctx['user']>(initialSession?.user ?? null);
 
@@ -52,23 +53,25 @@ export function AuthProvider({
   };
 
   const signOut = async () => {
+    if (!supabase) return;
     const { error } = await supabase.auth.signOut();
     if (error) alert(error.message);
   };
 
   // Stay in sync after first paint
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((_ev, session) => {
+    if (!supabase) { setReady(true); return; }
+    const { data } = supabase.auth.onAuthStateChange((_ev: AuthChangeEvent, session) => {
       setUser(session?.user ?? null);
       setReady(true);
     });
     // also fetch once on mount so the homepage knows immediately
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       setUser(data.session?.user ?? null);
       setReady(true);
     });
     return () => data.subscription.unsubscribe();
-  }, []);
+  }, [supabase]);
 
   const value = useMemo(
     () => ({ ready, user, signInWithGoogle, signInWithMagicLink, signOut }),

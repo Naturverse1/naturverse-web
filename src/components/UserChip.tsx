@@ -1,8 +1,9 @@
 import { useState, useRef, useEffect } from 'react';
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 import LazyImg from './LazyImg';
 
 export default function UserChip({ email }: { email?: string | null }) {
+  const supabase = useSupabase();
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
 
@@ -55,6 +56,7 @@ export default function UserChip({ email }: { email?: string | null }) {
           <button
             role="menuitem"
             onClick={async () => {
+              if (!supabase) return;
               await supabase.auth.signOut();
               window.location.href = '/';
             }}

@@ -6,14 +6,16 @@ import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
 import SearchBar from './SearchBar';
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 export default function SiteHeader() {
+  const supabase = useSupabase();
   const [open, setOpen] = useState(false);
   const [user, setUser] = useState<User | null>(null);
 
   useEffect(() => {
     let mounted = true;
+    if (!supabase) return;
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
@@ -25,7 +27,7 @@ export default function SiteHeader() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>

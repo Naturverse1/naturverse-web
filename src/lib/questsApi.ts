@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import { getSupabase } from "./supabase-client";
 import { SEED_QUESTS, type Quest } from "../data/quests";
 import { listAllQuests, loadQuests, upsertQuest } from "../utils/quests-store";
 import { emit, EVT } from "./events";
@@ -25,6 +25,7 @@ function toAppQuest(row: any, steps: any[]): Quest {
 
 export async function fetchAllQuests(): Promise<Quest[]> {
   try {
+    const supabase = getSupabase();
     if (!supabase) throw new Error('Supabase client not available');
     const { data: qs, error } = await supabase.from('quests').select('*').order('updated_at', { ascending: false });
     if (error || !qs) throw error || new Error('No quests');
@@ -55,6 +56,7 @@ export async function fetchAllQuests(): Promise<Quest[]> {
 
 export async function fetchQuestBySlug(slug: string): Promise<Quest | undefined> {
   try {
+    const supabase = getSupabase();
     if (!supabase) throw new Error('Supabase client not available');
     const { data: q, error } = await supabase.from('quests').select('*').eq('slug', slug).maybeSingle();
     if (error || !q) throw error || new Error('Not found');
@@ -70,6 +72,7 @@ export async function saveQuestToCloud(q: Quest): Promise<{ ok: boolean; conflic
   emit(EVT.QUEST_SAVED, { id: q.id, slug: q.slug });
 
   try {
+    const supabase = getSupabase();
     if (!supabase) throw new Error('Supabase client not available');
     const { data: existing } = await supabase.from('quests').select('id, updated_at').eq('id', q.id).maybeSingle();
 

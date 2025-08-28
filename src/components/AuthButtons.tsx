@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -9,11 +9,13 @@ type Props = {
 };
 
 export default function AuthButtons({ cta = "Create account", variant="solid", size="lg", className="" }: Props) {
+  const supabase = useSupabase();
   const [loading, setLoading] = useState<"ml"|"google"|"">("");
 
   const signInWithMagicLink = async () => {
     const email = window.prompt("Enter your email to receive a sign-in link")?.trim();
     if (!email) return;
+    if (!supabase) return;
     setLoading("ml");
     sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
     const { error } = await supabase.auth.signInWithOtp({
@@ -26,6 +28,7 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
   };
 
   const signInWithGoogle = async () => {
+    if (!supabase) return;
     setLoading("google");
     sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
     const { error } = await supabase.auth.signInWithOAuth({

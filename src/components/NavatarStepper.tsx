@@ -1,5 +1,5 @@
 import React from "react";
-import { supabase } from "../lib/supabase-client";
+import { useSupabase } from "../lib/useSupabase";
 import "./stepper.css";
 
 // Types
@@ -23,6 +23,7 @@ const DEFAULT_STEPS: Step[] = [
 ];
 
 export default function NavatarStepper({ userId, steps = DEFAULT_STEPS }: Props) {
+  const supabase = useSupabase();
   const [active, setActive] = React.useState<string>("intro");
   const [loading, setLoading] = React.useState<boolean>(true);
 
@@ -32,6 +33,7 @@ export default function NavatarStepper({ userId, steps = DEFAULT_STEPS }: Props)
     const fetchProgress = async () => {
       setLoading(true);
       try {
+        if (!supabase) throw new Error('no-supabase');
         // 1. Check quiz attempts
         const { data: quiz } = await supabase
           .from("user_quiz_attempts")
@@ -73,7 +75,7 @@ export default function NavatarStepper({ userId, steps = DEFAULT_STEPS }: Props)
     };
 
     fetchProgress();
-  }, [userId]);
+  }, [userId, supabase]);
 
   if (loading) return <div>Loading progress…</div>;
 

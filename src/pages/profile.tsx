@@ -54,16 +54,16 @@ export default function ProfilePage() {
   }, [cloud]);
 
   useEffect(() => {
-    if (p.email) return;
+    if (p.email || !supabase) return;
     (async () => {
       const { data } = await supabase.auth.getUser();
       if (data.user?.email) setP((prev) => ({ ...prev, email: data.user!.email! }));
     })();
-  }, []);
+  }, [p.email, supabase]);
 
   async function handleSave() {
     try {
-      if (!userId) throw new Error("Not signed in.");
+      if (!userId || !supabase) throw new Error("Not signed in.");
       setSaving(true);
 
       let newAvatarUrl = avatarUrl;
@@ -143,14 +143,16 @@ export default function ProfilePage() {
         </div>
 
         {/* Local Sign out lives here only */}
-        <button
-          type="button"
-          onClick={async () => { await supabase.auth.signOut(); location.href = "/"; }}
-          className="secondary"
-          style={{ marginTop: 12 }}
-        >
-          Sign out
-        </button>
+        {supabase && (
+          <button
+            type="button"
+            onClick={async () => { if (!supabase) return; await supabase.auth.signOut(); location.href = "/"; }}
+            className="secondary"
+            style={{ marginTop: 12 }}
+          >
+            Sign out
+          </button>
+        )}
       </form>
 
       <section className="panel">

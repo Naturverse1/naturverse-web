@@ -1,13 +1,15 @@
 import { ReactNode, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
+  const supabase = useSupabase();
   const [ready, setReady] = useState(false);
   const [authed, setAuthed] = useState(false);
 
   useEffect(() => {
     let mounted = true;
     (async () => {
+      if (!supabase) { setReady(true); return; }
       const { data } = await supabase.auth.getSession();
       const ok = !!data.session;
       if (!mounted) return;
@@ -20,14 +22,14 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
         location.replace("/login");
       }
     })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase?.auth.onAuthStateChange((_e, session) => {
       setAuthed(!!session);
-    });
+    }) ?? { data: { subscription: { unsubscribe() {} } } };
     return () => {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   if (!ready) return <div className="center-pad"><div className="spinner" /></div>;
   if (!authed) return null;

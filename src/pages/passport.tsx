@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import { WORLDS, WorldKey } from "../data/worlds";
 import type { PassportStamp, PassportBadge } from "../types/passport";
 import Breadcrumbs from "../components/Breadcrumbs";
@@ -10,6 +10,7 @@ const LS_BADGES = "naturverse.passport.badges.v1";
 
 export default function PassportPage() {
   setTitle("Passport");
+  const supabase = useSupabase();
   const [uid, setUid] = useState<string | null>(null);
   const [usingLocal, setUsingLocal] = useState(true);
   const [loading, setLoading] = useState(true);
@@ -33,6 +34,7 @@ export default function PassportPage() {
 
   useEffect(() => {
     (async () => {
+      if (!supabase) { setLoading(false); return; }
       const { data } = await supabase.auth.getSession();
       const u = data.session?.user?.id ?? null;
       setUid(u);
@@ -61,7 +63,7 @@ export default function PassportPage() {
         setLoading(false);
       }
     })();
-  }, []);
+  }, [supabase]);
 
   const progressByWorld = useMemo(() => {
     const map: Record<string, number> = {};
@@ -74,7 +76,7 @@ export default function PassportPage() {
     const base: Omit<PassportStamp, "id" | "created_at"> = {
       user_id: uid || "local", world, title, note: note || null,
     };
-    if (uid && !usingLocal) {
+    if (uid && !usingLocal && supabase) {
       const { data, error } = await supabase
         .from("passport_stamps" as any)
         .insert(base as any)
@@ -92,7 +94,7 @@ export default function PassportPage() {
     const base: Omit<PassportBadge, "id" | "created_at"> = {
       user_id: uid || "local", code, label,
     };
-    if (uid && !usingLocal) {
+    if (uid && !usingLocal && supabase) {
       const { data, error } = await supabase
         .from("passport_badges" as any)
         .insert(base as any)
