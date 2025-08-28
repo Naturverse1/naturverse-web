@@ -1,12 +1,18 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 export function useAuthUser() {
+  const supabase = useSupabase();
   const [user, setUser] = useState<null | { id: string; email?: string | null }>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let active = true;
+
+    if (!supabase) {
+      setLoading(false);
+      return;
+    }
 
     (async () => {
       const { data } = await supabase.auth.getUser();
@@ -27,7 +33,7 @@ export function useAuthUser() {
       active = false;
       sub?.subscription?.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   return { user, loading };
 }

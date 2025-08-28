@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { getSupabase } from './supabase-client';
 
 export type MiniQuest = { title: string; description: string; sort?: number };
 
@@ -15,6 +15,7 @@ const FALLBACK: MiniQuest[] = [
  * - No rows are returned
  */
 export async function fetchMiniQuests(): Promise<MiniQuest[]> {
+  const supabase = getSupabase();
   if (!supabase) return FALLBACK;
   try {
     const { data, error } = await supabase

@@ -1,9 +1,10 @@
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import { getUserId } from "../lib/session";
 import type { CloudProfile, LocalProfile } from "../types/profile";
 
 export function useCloudProfile() {
+  const supabase = useSupabase();
   const [userId, setUserId] = useState<string | null>(null);
   const [cloud, setCloud] = useState<CloudProfile | null>(null);
   const [loading, setLoading] = useState(true);
@@ -13,16 +14,18 @@ export function useCloudProfile() {
       const id = await getUserId();
       setUserId(id);
       if (!id) { setCloud(null); setLoading(false); return; }
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", id).single();
-      if (!error) setCloud(data as CloudProfile);
+      if (supabase) {
+        const { data, error } = await supabase.from("profiles").select("*").eq("id", id).single();
+        if (!error) setCloud(data as CloudProfile);
+      }
       setLoading(false);
     })();
-  }, []);
+  }, [supabase]);
 
   const saveFromLocal = useCallback(
     async (local: LocalProfile, avatar_url?: string | null) => {
       const id = userId ?? (await getUserId());
-      if (!id) return { error: "no-user" } as const;
+      if (!id || !supabase) return { error: "no-user" } as const;
       const payload: Partial<CloudProfile> = {
         id,
         display_name: local.displayName || null,
@@ -37,7 +40,7 @@ export function useCloudProfile() {
       if (!error) setCloud(data as CloudProfile);
       return { data, error } as const;
     },
-    [userId]
+    [userId, supabase]
   );
 
   return { userId, cloud, loading, saveFromLocal };

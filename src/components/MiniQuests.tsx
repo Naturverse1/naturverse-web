@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { getSupabase } from '../lib/supabase-client';
+import { useSupabase } from '../lib/useSupabase';
 
 const localFallback = [
   { id: 'tuk-tuk', title: 'Tuk-Tuk Dash', xp: 25 },
@@ -8,23 +8,24 @@ const localFallback = [
 ];
 
 export default function MiniQuests() {
+  const supabase = useSupabase();
   const [quests, setQuests] = React.useState(localFallback);
 
   React.useEffect(() => {
-    const supabase = getSupabase();
     if (!supabase) return;
-    supabase
-      .from('mini_quests')
-      .select('*')
-      .eq('world', 'thailandia')
-      .limit(12)
-      .then(({ data }) => {
+    (async () => {
+      try {
+        const { data } = await supabase
+          .from('mini_quests')
+          .select('*')
+          .eq('world', 'thailandia')
+          .limit(12);
         if (data && data.length) setQuests(data as any);
-      })
-      .catch(() => {
+      } catch {
         // ignore; fallback already shown
-      });
-  }, []);
+      }
+    })();
+  }, [supabase]);
 
   return (
     <section aria-label="Mini quests">

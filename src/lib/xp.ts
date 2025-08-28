@@ -1,9 +1,11 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 // --------------------
 // XP Ledger
 // --------------------
 export async function addXp(userId: string, amount: number, reason: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('xp_ledger' as any)
     .insert({ user_id: userId, amount, reason } as any)
@@ -13,6 +15,8 @@ export async function addXp(userId: string, amount: number, reason: string) {
 }
 
 export async function getXpTotal(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return 0;
   const { data, error } = await supabase
     .from('xp_ledger' as any)
     .select('amount')
@@ -28,6 +32,8 @@ export async function getXpTotal(userId: string) {
 }
 
 export async function getXpHistory(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('xp_ledger' as any)
     .select('*')
@@ -41,6 +47,8 @@ export async function getXpHistory(userId: string) {
 // Badges
 // --------------------
 export async function awardBadge(userId: string, badgeName: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('badges' as any)
     .insert({ user_id: userId, badge_name: badgeName } as any)
@@ -50,6 +58,8 @@ export async function awardBadge(userId: string, badgeName: string) {
 }
 
 export async function getBadges(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('badges' as any)
     .select('*')

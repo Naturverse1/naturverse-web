@@ -1,12 +1,14 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 
 export function useXP() {
+  const supabase = useSupabase();
   const [xp, setXp] = useState(0);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     (async () => {
+      if (!supabase) { setXp(0); setLoading(false); return; }
       const { data: userRes } = await supabase.auth.getUser();
       const userId = userRes.user?.id;
       if (!userId) { setXp(0); setLoading(false); return; }
@@ -22,9 +24,10 @@ export function useXP() {
       }
       setLoading(false);
     })();
-  }, []);
+  }, [supabase]);
 
   async function addXP(delta: number, source = "manual") {
+    if (!supabase) return;
     const { data: userRes } = await supabase.auth.getUser();
     const userId = userRes.user?.id;
     if (!userId) return;

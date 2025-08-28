@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import type { User } from "@supabase/supabase-js";
 
 export default function AuthButton() {
+  const supabase = useSupabase();
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     let mounted = true;
+    if (!supabase) { setLoading(false); return; }
     supabase.auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
@@ -20,7 +22,7 @@ export default function AuthButton() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   if (loading) return <span style={{ opacity: 0.6 }}>…</span>;
   if (!user) return null;

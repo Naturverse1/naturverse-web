@@ -1,9 +1,11 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 // --------------------
 // Profiles
 // --------------------
 export async function getProfile(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -14,6 +16,8 @@ export async function getProfile(userId: string) {
 }
 
 export async function updateProfile(userId: string, updates: Record<string, unknown>) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('profiles')
     .update(updates)
@@ -27,6 +31,8 @@ export async function updateProfile(userId: string, updates: Record<string, unkn
 // Navatars
 // --------------------
 export async function createNavatar(navatar: Record<string, unknown>) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('navatars')
     .insert(navatar)
@@ -36,6 +42,8 @@ export async function createNavatar(navatar: Record<string, unknown>) {
 }
 
 export async function getNavatarsByUser(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('navatars')
     .select('*')
@@ -48,6 +56,8 @@ export async function getNavatarsByUser(userId: string) {
 // Passport Stamps
 // --------------------
 export async function awardStamp(userId: string, region: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('stamps')
     .insert({ user_id: userId, region })
@@ -57,6 +67,8 @@ export async function awardStamp(userId: string, region: string) {
 }
 
 export async function getStamps(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('stamps')
     .select('*')

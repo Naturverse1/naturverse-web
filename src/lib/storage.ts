@@ -1,10 +1,12 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 function sanitizeFilename(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9\.\-_]/g, '_');
 }
 
 export async function uploadAvatar(userId: string, file: File) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const ext = file.name.split('.').pop() ?? 'png';
   const path = `avatars/${userId}/${Date.now()}-${sanitizeFilename(file.name)}.${ext}`;
 
@@ -19,12 +21,16 @@ export async function uploadAvatar(userId: string, file: File) {
 }
 
 export async function getPublicUrl(path: string) {
+  const supabase = getSupabase();
+  if (!supabase) return '';
   const { data } = supabase.storage.from('avatars').getPublicUrl(path);
   return data.publicUrl;
 }
 
 // Generic helper for other buckets (navatars, products)
 export async function uploadToBucket(bucket: string, userId: string, file: File) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const ext = file.name.split('.').pop() ?? 'png';
   const filePath = `${userId}/${Date.now()}-${sanitizeFilename(file.name)}.${ext}`;
   const { data, error } = await supabase.storage.from(bucket).upload(filePath, file, {

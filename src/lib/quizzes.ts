@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 /** Create a quiz shell (title/metadata); questions inserted separately */
 export async function createQuiz(payload: {
@@ -9,6 +9,8 @@ export async function createQuiz(payload: {
   difficulty?: 'easy' | 'medium' | 'hard';
   is_published?: boolean;
 }) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('quizzes')
     .insert(payload)
@@ -20,6 +22,8 @@ export async function createQuiz(payload: {
 
 /** Fetch quiz with its published questions */
 export async function getQuiz(quizId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data: quiz, error: e1 } = await supabase
     .from('quizzes')
     .select('*')
@@ -47,6 +51,8 @@ export async function submitQuizAttempt(input: {
   duration_ms?: number;
   detail?: unknown; // optional JSON with per-question results
 }) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('quiz_attempts')
     .insert({
@@ -65,6 +71,8 @@ export async function submitQuizAttempt(input: {
 
 /** Attempts for a user (newest first) */
 export async function getUserQuizAttempts(userId: string) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('quiz_attempts')
     .select('*, quizzes(title)')
@@ -76,6 +84,8 @@ export async function getUserQuizAttempts(userId: string) {
 
 /** Simple leaderboard for a quiz (top scores, fastest tiebreak) */
 export async function getLeaderboard(quizId: string, limit = 25) {
+  const supabase = getSupabase();
+  if (!supabase) return [];
   const { data, error } = await supabase
     .from('quiz_attempts')
     .select('user_id, score, max_score, duration_ms, created_at')
