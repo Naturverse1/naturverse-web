@@ -1,0 +1,6 @@
+.nv-nav-item svg,
+.nv-footer-links svg {
+  margin-right: 6px;
+  vertical-align: -2px;
+}
+.nv-nav-menu svg { vertical-align: middle; }
