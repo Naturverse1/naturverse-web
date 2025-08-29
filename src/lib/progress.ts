@@ -57,16 +57,16 @@ export function localUnlockZone(userId: string, slug: string) {
   } catch {}
 }
 
-type QuestProgress = Record<
+type QuestState = Record<
   string,
   {
-    status: 'new' | 'started' | 'completed';
-    score: number;
+    bestScore: number;
+    completed: boolean;
     updatedAt: string;
   }
 >;
 
-function readQuestLocal(): QuestProgress {
+function readQuestLocal(): QuestState {
   try {
     return JSON.parse(localStorage.getItem(QUEST_LS_KEY) || '{}');
   } catch {
@@ -74,18 +74,25 @@ function readQuestLocal(): QuestProgress {
   }
 }
 
-function writeQuestLocal(p: QuestProgress) {
+function writeQuestLocal(p: QuestState) {
   localStorage.setItem(QUEST_LS_KEY, JSON.stringify(p));
 }
 
-export async function saveProgress(
-  slug: string,
-  score: number,
-  status: QuestProgress[string]['status'],
-) {
+export async function saveProgress({
+  questSlug,
+  score,
+  completed,
+}: {
+  questSlug: string;
+  score: number;
+  completed: boolean;
+}) {
   const now = new Date().toISOString();
   const state = readQuestLocal();
-  state[slug] = { status, score, updatedAt: now };
+  const prev = state[questSlug] || { bestScore: 0, completed: false, updatedAt: now };
+  const bestScore = Math.max(prev.bestScore || 0, score);
+  const done = prev.completed || completed;
+  state[questSlug] = { bestScore, completed: done, updatedAt: now };
   writeQuestLocal(state);
 
   const supabase = getSupabase();
@@ -95,9 +102,9 @@ export async function saveProgress(
       await supabase.from('quest_progress').upsert(
         {
           user_id: user.user.id,
-          quest_slug: slug,
-          score,
-          status,
+          quest_slug: questSlug,
+          best_score: bestScore,
+          completed: done,
           updated_at: now,
         },
         { onConflict: 'user_id,quest_slug' },
@@ -106,11 +113,62 @@ export async function saveProgress(
   }
 }
 
-export function getProgress(slug: string) {
-  const state = readQuestLocal();
-  return state[slug] ?? { status: 'new' as const, score: 0, updatedAt: '' };
+export async function getProgress(questSlug: string) {
+  const local = readQuestLocal()[questSlug];
+  const supabase = getSupabase();
+  if (supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    if (user?.user) {
+      const { data } = await supabase
+        .from('quest_progress')
+        .select('best_score, completed')
+        .eq('user_id', user.user.id)
+        .eq('quest_slug', questSlug)
+        .maybeSingle();
+      if (data) {
+        const res = {
+          bestScore: data.best_score || 0,
+          completed: data.completed || false,
+          updatedAt: new Date().toISOString(),
+        };
+        const state = readQuestLocal();
+        state[questSlug] = res;
+        writeQuestLocal(state);
+        return res;
+      }
+    }
+  }
+  return (
+    local || {
+      bestScore: 0,
+      completed: false,
+      updatedAt: '',
+    }
+  );
 }
 
-export function getAllProgress() {
-  return JSON.parse(localStorage.getItem(QUEST_LS_KEY) || '{}') as Record<string, any>;
+export async function getAllProgress() {
+  const supabase = getSupabase();
+  if (supabase) {
+    const { data: user } = await supabase.auth.getUser();
+    if (user?.user) {
+      const { data } = await supabase
+        .from('quest_progress')
+        .select('quest_slug, best_score, completed')
+        .eq('user_id', user.user.id);
+      if (data) {
+        const map: QuestState = {};
+        for (const row of data) {
+          map[row.quest_slug] = {
+            bestScore: row.best_score || 0,
+            completed: row.completed || false,
+            updatedAt: new Date().toISOString(),
+          };
+        }
+        writeQuestLocal(map);
+        return map;
+      }
+    }
+  }
+  return readQuestLocal();
 }

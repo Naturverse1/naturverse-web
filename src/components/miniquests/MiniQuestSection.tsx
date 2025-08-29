@@ -1,18 +1,18 @@
 import React from 'react';
 import MiniQuestCard from './MiniQuestCard';
-import { MINI_QUESTS } from '../../data/miniquests';
+import { QUESTS } from '@/lib/quests';
 
 export default function MiniQuestSection() {
   return (
     <section aria-labelledby="mini-quests">
       <h2 id="mini-quests">Mini-Quests in Thailandia</h2>
       <div className="mq-grid">
-        {MINI_QUESTS.map((q) => (
+        {QUESTS.map((q) => (
           <MiniQuestCard
             key={q.slug}
             slug={q.slug}
             title={q.title}
-            blurb={q.blurb}
+            description={q.description}
             difficulty={q.difficulty}
             zone={q.zone}
           />
