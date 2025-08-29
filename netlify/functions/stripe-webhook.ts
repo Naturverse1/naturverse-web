@@ -1,72 +1,73 @@
-import { Handler } from '@netlify/functions';
-import Stripe from 'stripe';
-import { createClient } from '@supabase/supabase-js';
+import Stripe from "stripe";
+import { createClient } from "@supabase/supabase-js";
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, { apiVersion: '2022-11-15' });
-const supabase = createClient(process.env.VITE_SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
+  apiVersion: "2023-10-16",
+});
 
-export const handler: Handler = async (event) => {
-  const sig = event.headers['stripe-signature'];
-  try {
-    const evt = stripe.webhooks.constructEvent(event.body!, sig!, process.env.STRIPE_WEBHOOK_SECRET!);
-    if (evt.type === 'checkout.session.completed') {
-      const session = evt.data.object as any;
-      if (session.metadata?.type === 'navatar_listing') {
-        const listing_id = session.metadata.listing_id;
-        const buyer_user_id = session.metadata.buyer_user_id;
-        const admin = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
+const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET as string;
 
-        const { data: listing } = await admin
-          .from('navatar_listings')
-          .select('*')
-          .eq('id', listing_id)
-          .maybeSingle();
-        if (listing && listing.status === 'active') {
-          const gross = Number(session.amount_total) / 100;
-          const fee = Math.round(gross * (listing.fee_bps / 10000) * 100) / 100;
-          const royalty = Math.round(gross * (listing.royalty_bps / 10000) * 100) / 100;
-          const seller = Math.max(0, Math.round((gross - fee - royalty) * 100) / 100);
+const supabase = createClient(
+  process.env.SUPABASE_URL as string,
+  process.env.SUPABASE_SERVICE_ROLE_KEY as string
+);
 
-          await admin.from('navatar_sales').insert({
-            listing_id,
-            buyer_user_id,
-            method: 'stripe',
-            gross_amount: gross,
-            fee_amount: fee,
-            royalty_amount: royalty,
-            seller_proceeds: seller,
-            tx_hashes: [],
-          });
-
-          await admin
-            .from('owned_navatars')
-            .delete()
-            .eq('user_id', listing.seller_user_id)
-            .eq('navatar_id', listing.navatar_id);
-          await admin
-            .from('owned_navatars')
-            .upsert({ user_id: buyer_user_id, navatar_id: listing.navatar_id });
-
-          await admin
-            .from('navatar_listings')
-            .update({ status: 'sold', sold_at: new Date().toISOString() })
-            .eq('id', listing_id);
-        }
-      } else {
-        const { user_id, navatar_id } = session.metadata;
-        await supabase.from('navatar_purchases').insert([
-          {
-            user_id,
-            navatar_id,
-            method: 'stripe',
-            amount: session.amount_total / 100,
-          },
-        ]);
-        await supabase.from('profiles').update({ navatar_id }).eq('id', user_id);
-      }
-    }
-    return { statusCode: 200, body: 'ok' };
-  } catch (e) {
-    return { statusCode: 400, body: `Webhook error: ${e}` };
+export async function handler(event: any) {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
   }
-};
+
+  const sig = event.headers["stripe-signature"];
+  let stripeEvent: Stripe.Event;
+
+  try {
+    stripeEvent = stripe.webhooks.constructEvent(
+      event.body,
+      sig as string,
+      webhookSecret
+    );
+  } catch (err: any) {
+    console.error("Webhook signature verification failed.", err.message);
+    return { statusCode: 400, body: `Webhook Error: ${err.message}` };
+  }
+
+  if (stripeEvent.type === "checkout.session.completed") {
+    const session = stripeEvent.data.object as Stripe.Checkout.Session;
+
+    try {
+      const userEmail = (
+        session.customer_details?.email || session.customer_email || ""
+      ).toLowerCase();
+
+      const lineItems = (await stripe.checkout.sessions.listLineItems(session.id)).data;
+
+      for (const li of lineItems) {
+        const productName =
+          typeof li.description === "string" && li.description.length
+            ? li.description
+            : (li.price?.nickname || li.price?.product?.toString() || "unknown");
+
+        await supabase
+          .from("purchases")
+          .upsert(
+            {
+              user_email: userEmail,
+              session_id: session.id,
+              price_id: li.price?.id,
+              product_name: productName,
+              quantity: li.quantity || 1,
+              amount_total: session.amount_total ?? null,
+              currency: session.currency?.toUpperCase(),
+              status: "paid",
+              metadata: session.metadata || {},
+            },
+            { onConflict: "session_id" }
+          );
+      }
+    } catch (e) {
+      console.error("Supabase upsert failed", e);
+    }
+  }
+
+  return { statusCode: 200, body: "ok" };
+}

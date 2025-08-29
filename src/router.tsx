@@ -48,6 +48,8 @@ import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
 import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
+import SuccessPage from './pages/success';
+import CancelPage from './pages/cancel';
 
 export const router = createBrowserRouter([
   {
@@ -75,6 +77,8 @@ export const router = createBrowserRouter([
       },
       { path: 'cart', element: <CartPage /> },
       { path: 'wishlist', element: <WishlistPage /> },
+      { path: 'success', element: <SuccessPage /> },
+      { path: 'cancel', element: <CancelPage /> },
       { path: 'quests', element: <QuestsList /> },
       { path: 'quests/new', element: <NewQuest /> },
       { path: 'quests/:slug', element: <QuestDetail /> },
