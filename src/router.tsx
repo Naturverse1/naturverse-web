@@ -9,6 +9,8 @@ import CharacterPage from './routes/worlds/characters/[name]';
 import ZonesExplorer from './pages/ZonesExplorer';
 import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
+import ProductPage from './pages/marketplace/[sku]';
+import CartLoad from './pages/cart-load';
 import QuestsList from './pages/quests';
 import NewQuest from './pages/quests/new';
 import QuestDetail from './pages/quests/[slug]';
@@ -66,9 +68,11 @@ export const router = createBrowserRouter([
       { path: 'play/:quest', element: <PlayQuest /> },
 
       { path: 'marketplace', element: <MarketplacePage /> },
+      { path: 'marketplace/:sku', element: <ProductPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'success', element: <SuccessPage /> },
       { path: 'cancel', element: <CancelPage /> },
+      { path: 'c/:code', element: <CartLoad /> },
       { path: 'quests', element: <QuestsList /> },
       { path: 'quests/new', element: <NewQuest /> },
       { path: 'quests/:slug', element: <QuestDetail /> },

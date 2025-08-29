@@ -320,3 +320,31 @@
 }
 .cart-panel--in { transform: translateX(0); }
 @keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
+
+.cart__row {
+  display: grid;
+  grid-template-columns: 56px 1fr auto auto;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border-bottom: 1px solid #f1f5f9;
+}
+.cart__thumb {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 8px;
+  transform: translateX(12px);
+  opacity: 0;
+  animation: cartIn 0.35s ease forwards;
+}
+@keyframes cartIn {
+  to {
+    transform: translateX(0);
+    opacity: 1;
+  }
+}
+.cart__thumb:hover {
+  transform: translateY(-2px) scale(1.02);
+  transition: transform 0.15s ease;
+}
