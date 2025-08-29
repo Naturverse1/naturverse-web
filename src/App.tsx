@@ -2,7 +2,6 @@ import React, { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
-import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import { logEvent } from './utils/telemetry';
@@ -27,9 +26,8 @@ export default function App() {
     // SAFE MODE: interactions temporarily disabled
   }, []);
   return (
-    <CartProvider>
-      <SearchProvider>
-        <div id="nv-page">
+    <SearchProvider>
+      <div id="nv-page">
           {/* Keyboard-accessible jump link (first focusable on the page) */}
           <SkipLink />
           <NetworkBanner />
@@ -63,6 +61,5 @@ export default function App() {
           <Footer />
         </div>
       </SearchProvider>
-    </CartProvider>
   );
 }

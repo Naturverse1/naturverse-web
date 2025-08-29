@@ -9,9 +9,6 @@ import CharacterPage from './routes/worlds/characters/[name]';
 import ZonesExplorer from './pages/ZonesExplorer';
 import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
-import ProductPage from './pages/marketplace/[slug]';
-import NavatarMarketplacePage from './pages/marketplace/navatar';
-import WishlistPage from './pages/wishlist';
 import QuestsList from './pages/quests';
 import NewQuest from './pages/quests/new';
 import QuestDetail from './pages/quests/[slug]';
@@ -49,7 +46,6 @@ import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
 import CancelPage from './pages/cancel';
-import CheckoutPage from './pages/checkout';
 
 export const router = createBrowserRouter([
   {
@@ -67,16 +63,7 @@ export const router = createBrowserRouter([
       { path: 'play', element: <MiniQuests /> },
       { path: 'play/:quest', element: <PlayQuest /> },
 
-      {
-        path: 'marketplace',
-        children: [
-          { index: true, element: <MarketplacePage /> },
-          { path: 'navatar', element: <NavatarMarketplacePage /> },
-          { path: ':slug', element: <ProductPage /> },
-        ],
-      },
-      { path: 'checkout', element: <CheckoutPage /> },
-      { path: 'wishlist', element: <WishlistPage /> },
+      { path: 'marketplace', element: <MarketplacePage /> },
       { path: 'success', element: <SuccessPage /> },
       { path: 'cancel', element: <CancelPage /> },
       { path: 'quests', element: <QuestsList /> },

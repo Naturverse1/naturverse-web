@@ -1,6 +1,5 @@
 import { WORLDS } from "../data/worlds";
 import { ZONES } from "../data/zones";
-import { PRODUCTS } from "../data/products";
 import { listAllQuests } from "../utils/quests-store";
 import { SEED_QUESTS } from "../data/quests";
 import type { SearchDoc } from "./index";
@@ -28,16 +27,6 @@ export function buildSearchIndex(): SearchDoc[] {
     url: `/zones/${z.slug}`
   }));
 
-  const products = PRODUCTS.map(p => ({
-    id: p.id,
-    type: "product" as const,
-    title: p.name,
-    slug: p.slug,
-    summary: p.summary,
-    tags: p.tags || [p.category],
-    url: `/marketplace/${p.slug}`
-  }));
-
   const questDocs = quests.map(q => ({
     id: q.id,
     type: "quest" as const,
@@ -48,6 +37,6 @@ export function buildSearchIndex(): SearchDoc[] {
     url: `/quests/${q.slug}`
   }));
 
-  return [...worlds, ...zones, ...products, ...questDocs];
+  return [...worlds, ...zones, ...questDocs];
 }
 
