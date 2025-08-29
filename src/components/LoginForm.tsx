@@ -57,8 +57,7 @@ export default function LoginForm() {
     setMessage(null);
     try {
       sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
-      const { error } = await signInWithGoogle();
-      if (error) throw error;
+      await signInWithGoogle();
       setStatus('idle');
     } catch (err: any) {
       setStatus('error');

@@ -26,9 +26,8 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
   const signInGoogle = async () => {
     setLoading("google");
     sessionStorage.setItem("post-auth-redirect", window.location.pathname + window.location.search);
-    const { error } = await signInWithGoogle();
+    await signInWithGoogle();
     setLoading("");
-    if (error) alert(error.message);
   };
 
   const base =

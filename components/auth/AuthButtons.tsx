@@ -1,42 +1,32 @@
 'use client';
 import { useState } from 'react';
-import { createClient } from '@supabase/supabase-js';
-
-const supabase = createClient(
-  import.meta.env.VITE_SUPABASE_URL!,
-  import.meta.env.VITE_SUPABASE_ANON_KEY!,
-);
+import { sendMagicLink } from '@/lib/auth';
+import { signInWithGoogle } from '@/lib/supabase-client';
 
 export default function AuthButtons() {
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
 
-  async function sendMagicLink(e: React.FormEvent) {
+  async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
     setLoading(true);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${location.origin}/auth/callback` }
-    });
+    const { error } = await sendMagicLink(email);
     setLoading(false);
     if (!error) setSent(true);
     else alert(error.message);
   }
 
   async function signInGoogle() {
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo: `${location.origin}/auth/callback` }
-    });
+    await signInWithGoogle();
   }
 
   return (
     <div className="card" style={{ maxWidth: 560 }}>
       <h3>Sign in or create an account</h3>
 
-      <form onSubmit={sendMagicLink} style={{ display: 'grid', gap: 12 }}>
+      <form onSubmit={handleMagicLink} style={{ display: 'grid', gap: 12 }}>
         <label className="sr-only" htmlFor="email">Email</label>
         <input
           id="email"
@@ -59,4 +49,3 @@ export default function AuthButtons() {
     </div>
   );
 }
-
