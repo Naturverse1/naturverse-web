@@ -1,7 +1,7 @@
 // src/lib/progress.ts
 // Persists progress locally; syncs to Supabase when authed.
 
-type Progress = { bestScore: number; completed: boolean; updatedAt: string };
+export type QuestProgress = { bestScore: number; completed: boolean; updatedAt: string };
 
 const key = (slug: string) => `nv:progress:${slug}`;
 const nowISO = () => new Date().toISOString();
@@ -20,29 +20,29 @@ async function getSupabase() {
   return supabase;
 }
 
-export function getProgress(slug: string): Progress {
+export function getQuestProgress(slug: string): QuestProgress {
   const raw = localStorage.getItem(key(slug));
   if (!raw) return { bestScore: 0, completed: false, updatedAt: nowISO() };
   try {
-    return JSON.parse(raw) as Progress;
+    return JSON.parse(raw) as QuestProgress;
   } catch {
     return { bestScore: 0, completed: false, updatedAt: nowISO() };
   }
 }
 
-export function setLocal(slug: string, p: Progress) {
+export function setLocal(slug: string, p: QuestProgress) {
   localStorage.setItem(key(slug), JSON.stringify(p));
 }
 
-export async function saveProgress(params: {
+export async function saveQuestProgress(params: {
   slug: string;
   score: number;
   completed?: boolean;
 }) {
   const { slug, score, completed = false } = params;
-  const current = getProgress(slug);
+  const current = getQuestProgress(slug);
   const bestScore = Math.max(current.bestScore || 0, score);
-  const merged: Progress = {
+  const merged: QuestProgress = {
     bestScore,
     completed: current.completed || completed,
     updatedAt: nowISO(),
@@ -73,7 +73,7 @@ export async function saveProgress(params: {
   }
 }
 
-export async function getCloudProgress(slug: string) {
+export async function getQuestCloudProgress(slug: string) {
   try {
     const client = await getSupabase();
     if (!client) return null;
@@ -88,7 +88,7 @@ export async function getCloudProgress(slug: string) {
 
     if (!data) return null;
 
-    const merged: Progress = {
+    const merged: QuestProgress = {
       bestScore: data.best_score ?? 0,
       completed: !!data.completed,
       updatedAt: data.updated_at ?? nowISO(),

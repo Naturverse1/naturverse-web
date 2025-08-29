@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../Badge';
-import { getProgress } from '../../lib/progress';
+import { getQuestProgress } from '../../lib/progress';
 
 type Props = {
   slug: string;
@@ -16,7 +16,7 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
   const [completed, setCompleted] = useState(false);
 
   const refresh = async () => {
-    const p = await getProgress(slug);
+    const p = await getQuestProgress(slug);
     setBest(p.bestScore);
     setCompleted(p.completed);
   };
@@ -24,19 +24,19 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
   useEffect(() => {
     refresh();
     const onStorage = (e: StorageEvent) => {
-      if (e.key === 'nv.quest.progress.v1') refresh();
+      if (e.key && e.key.startsWith('nv:progress:')) refresh();
     };
     window.addEventListener('storage', onStorage);
     return () => window.removeEventListener('storage', onStorage);
   }, [slug]);
 
-  const tone = completed ? 'success' : best && best > 0 ? 'info' : 'muted';
+  const tone = completed ? 'success' : 'info';
 
   return (
     <article className="card">
       <header className="card__header">
         <h3 className="card__title">{title}</h3>
-        <Badge tone={tone}>{completed ? 'Completed' : best && best > 0 ? 'Started' : 'New'}</Badge>
+        <Badge tone={tone}>{completed ? '✅ Completed' : '🔵 New'}</Badge>
       </header>
 
       <p className="card__meta">
@@ -51,7 +51,11 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
 
       <footer className="card__footer">
         <span className="card__best">
-          Best: {best === null ? <span className="skeleton" style={{ width: 20 }} /> : <strong>{best}</strong>}
+          {best === null ? (
+            <span className="skeleton" style={{ width: 20 }} />
+          ) : (
+            <span>⭐ Best: <strong>{best}</strong></span>
+          )}
         </span>
         <Link className="btn" to={`/play/${slug}`}>
           Play
