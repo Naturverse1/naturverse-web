@@ -9,6 +9,32 @@ import type {
 } from "@stripe/stripe-js";
 import { startCheckout } from "@/lib/checkout";
 
+function GiftCardApply({ totalCents, onCoupon }: { totalCents: number; onCoupon: (couponId: string) => void }) {
+  const [code, setCode] = React.useState("");
+  const [status, setStatus] = React.useState<string>("");
+
+  async function apply() {
+    setStatus("Applying…");
+    const res = await fetch("/.netlify/functions/redeem-gift-card", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ code: code.trim().toUpperCase(), total_cents: totalCents })
+    });
+    if (!res.ok) { setStatus(await res.text()); return; }
+    const { coupon_id, applied_cents } = await res.json();
+    onCoupon(coupon_id);
+    setStatus(`Applied $${(applied_cents/100).toFixed(2)}`);
+  }
+
+  return (
+    <div style={{ marginTop: 12 }}>
+      <input value={code} onChange={(e)=>setCode(e.target.value)} placeholder="Gift card code" />
+      <button onClick={apply} disabled={!code}>Apply</button>
+      <div className="muted" style={{ marginTop: 4 }}>{status}</div>
+    </div>
+  );
+}
+
 function Estimator({ items, subtotalCents }: { items: any[]; subtotalCents: number }) {
   const [country, setCountry] = React.useState("US");
   const [zip, setZip] = React.useState("");
@@ -68,6 +94,7 @@ export default function CheckoutPage() {
   const { items, setQty, removeFromCart, totalCents } = useCart();
   const stripe = useStripe();
   const [pr, setPr] = useState<PaymentRequest | null>(null);
+  const [couponId, setCouponId] = useState<string | null>(null);
   const cartIds = items.map((i) => i.id);
   const suggestions = bundlesForCart(cartIds);
 
@@ -101,6 +128,7 @@ export default function CheckoutPage() {
             customer_email: ev.payerEmail,
             allow_promotion_codes: true,
             returnPath: "/checkout",
+            coupon_id: couponId || undefined,
           }),
         });
         if (!res.ok) throw new Error(await res.text());
@@ -111,7 +139,7 @@ export default function CheckoutPage() {
         ev.complete("fail");
       }
     });
-  }, [pr, stripe, items]);
+  }, [pr, stripe, items, couponId]);
 
   return (
     <main className="container" style={{ maxWidth: 760, margin: "40px auto" }}>
@@ -167,8 +195,9 @@ export default function CheckoutPage() {
         </section>
       )}
       <div>Subtotal ${(totalCents / 100).toFixed(2)}</div>
+      <GiftCardApply totalCents={totalCents} onCoupon={(id)=>setCouponId(id)} />
       <Estimator items={items} subtotalCents={totalCents} />
-      <button onClick={() => startCheckout({ items, returnPath: "/checkout" })}>
+      <button onClick={() => startCheckout({ items, returnPath: "/checkout", couponId: couponId || undefined })}>
         Pay with card
       </button>
     </main>
