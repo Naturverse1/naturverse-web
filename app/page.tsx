@@ -4,9 +4,11 @@ import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
 import { sendMagicLink } from '@/lib/auth';
 import { signInWithGoogle } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 export default function Home() {
   const user = useUser();
+  const supabase = useSupabase();
 
   const SignedOutCTA = () => (
     <div className="welcome-buttons">
@@ -14,7 +16,11 @@ export default function Home() {
         className="btn btn-primary"
         onClick={async () => {
           const email = prompt('Enter your email to get a magic link:')?.trim();
-          if (email) await sendMagicLink(email);
+          if (!supabase) {
+            alert('Sign-in is unavailable in this preview. Please use production.');
+          } else if (email) {
+            await sendMagicLink(email);
+          }
         }}
       >
         Create account
@@ -22,7 +28,11 @@ export default function Home() {
       <button
         className="btn btn-secondary"
         onClick={async () => {
-          await signInWithGoogle();
+          if (!supabase) {
+            alert('Sign-in is unavailable in this preview. Please use production.');
+          } else {
+            await signInWithGoogle();
+          }
         }}
       >
         Continue with Google
@@ -89,7 +99,11 @@ export default function Home() {
               className="btn btn-primary"
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) await sendMagicLink(email);
+                if (!supabase) {
+                  alert('Sign-in is unavailable in this preview. Please use production.');
+                } else if (email) {
+                  await sendMagicLink(email);
+                }
               }}
             >
               Get started
@@ -97,7 +111,11 @@ export default function Home() {
             <button
               className="btn btn-secondary"
               onClick={async () => {
-                await signInWithGoogle();
+                if (!supabase) {
+                  alert('Sign-in is unavailable in this preview. Please use production.');
+                } else {
+                  await signInWithGoogle();
+                }
               }}
             >
               Continue with Google

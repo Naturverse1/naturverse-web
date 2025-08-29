@@ -2,6 +2,7 @@
    Import and render it where you want later. */
 import { useState } from 'react';
 import { sendMagicLink } from '../../lib/auth';
+import { useSupabase } from '../../lib/useSupabase';
 import './auth.css';
 
 type Props = {
@@ -19,6 +20,7 @@ export default function AuthModal({
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState<string | null>(null);
   const [err, setErr] = useState<string | null>(null);
+  const supabase = useSupabase();
 
   if (!isOpen) return null;
 
@@ -28,6 +30,10 @@ export default function AuthModal({
     setErr(null);
     setMsg(null);
     try {
+      if (!supabase) {
+        alert('Sign-in is unavailable in this preview. Please use production.');
+        return;
+      }
       sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
       await sendMagicLink(email.trim());
       setMsg(successMessage);
