@@ -48,6 +48,7 @@ export default function NavBar() {
           <NavLink to="/navatar">Navatar</NavLink>
           <NavLink to="/create/navatar">Create Navatar</NavLink>
           <NavLink to="/passport">Passport</NavLink>
+          <NavLink to="/orders">Orders</NavLink>
           <NavLink to="/turian">Turian</NavLink>
         </nav>
 
@@ -94,6 +95,7 @@ export default function NavBar() {
           <NavLink to="/navatar">Navatar</NavLink>
           <NavLink to="/create/navatar">Create Navatar</NavLink>
           <NavLink to="/passport">Passport</NavLink>
+          <NavLink to="/orders">Orders</NavLink>
           <NavLink to="/turian">Turian</NavLink>
         </div>
       </div>
