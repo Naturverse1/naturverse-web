@@ -4,6 +4,8 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
+  external_node_modules = ["stripe"]
 
 # Do not rewrite real built assets to index.html
 [[redirects]]
