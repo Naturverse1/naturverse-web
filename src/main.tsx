@@ -23,6 +23,8 @@ import CommandPalette from './components/CommandPalette';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
+import { Elements } from '@stripe/react-stripe-js';
+import { stripePromise } from '@/lib/stripe';
 
 function unregisterStaleSW() {
   if (location.hostname.endsWith('.netlify.app') && 'serviceWorker' in navigator) {
@@ -73,29 +75,31 @@ async function bootstrap() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      {supabase ? (
-        <AuthProvider initialSession={initialSession}>
+      <Elements stripe={stripePromise}>
+        {supabase ? (
+          <AuthProvider initialSession={initialSession}>
+            <ToastProvider>
+              <BaseAuthProvider>
+                <RootWithPalette>
+                  <AppErrorBoundary>
+                    <App />
+                  </AppErrorBoundary>
+                  <WorldExtras />
+                </RootWithPalette>
+              </BaseAuthProvider>
+            </ToastProvider>
+          </AuthProvider>
+        ) : (
           <ToastProvider>
-            <BaseAuthProvider>
-              <RootWithPalette>
-                <AppErrorBoundary>
-                  <App />
-                </AppErrorBoundary>
-                <WorldExtras />
-              </RootWithPalette>
-            </BaseAuthProvider>
+            <RootWithPalette>
+              <AppErrorBoundary>
+                <App />
+              </AppErrorBoundary>
+              <WorldExtras />
+            </RootWithPalette>
           </ToastProvider>
-        </AuthProvider>
-      ) : (
-        <ToastProvider>
-          <RootWithPalette>
-            <AppErrorBoundary>
-              <App />
-            </AppErrorBoundary>
-            <WorldExtras />
-          </RootWithPalette>
-        </ToastProvider>
-      )}
+        )}
+      </Elements>
     </React.StrictMode>,
   );
 }

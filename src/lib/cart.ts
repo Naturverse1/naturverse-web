@@ -23,14 +23,23 @@ export function addToCart(p: Product, qty = 1) {
   if (i >= 0) cart[i].qty += qty;
   else cart.push({ ...p, qty });
   save(); notify();
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Added to cart' } }));
+  } catch {}
 }
 export function setQty(id: string, qty: number) {
   cart = cart.map(i => i.id === id ? { ...i, qty: Math.max(1, qty) } : i);
   save(); notify();
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Quantity updated' } }));
+  } catch {}
 }
 export function removeFromCart(id: string) {
   cart = cart.filter(i => i.id !== id);
   save(); notify();
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Removed from cart' } }));
+  } catch {}
 }
 export function cartTotalCents() {
   return cart.reduce((s, i) => s + i.price * i.qty, 0);
