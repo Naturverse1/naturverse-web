@@ -1,81 +1,54 @@
-import Stripe from "stripe";
+import type { Handler } from '@netlify/functions';
+import Stripe from 'stripe';
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, {
-  apiVersion: "2023-10-16",
-});
+const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-06-20' });
 
-type CartItem =
-  | { price: string; quantity?: number; metadata?: Record<string, string> }
-  | {
-      price_data: {
-        currency: string;
-        unit_amount: number;
-        product_data: { name: string; description?: string };
-      };
-      quantity?: number;
-      metadata?: Record<string, string>;
-    };
-
-type CreateSessionBody = {
-  items: CartItem[];
-  customer_email?: string;
-  mode?: "payment" | "subscription";
-  allow_promotion_codes?: boolean;
-  coupon?: string;
-  metadata?: Record<string, string>;
-  success_url?: string;
-  cancel_url?: string;
+const PRODUCTS: Record<string, { name: string; price: number; physical: boolean }> = {
+  'navatar-style-kit': { name: 'Navatar Style Kit', price: 999, physical: false },
+  'breathwork-starter': { name: 'Breathwork Starter Pack', price: 900, physical: false },
+  'naturverse-plushie': { name: 'Naturverse Plushie', price: 2800, physical: true },
+  'naturverse-tshirt':  { name: 'Naturverse T-Shirt',  price: 2400, physical: true },
+  'sticker-pack':       { name: 'Sticker Pack',        price: 1200, physical: true },
 };
 
-export async function handler(event: any) {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
+export const handler: Handler = async (event) => {
   try {
-    const body = JSON.parse(event.body || "{}");
-    if (!body.items?.length) {
-      return { statusCode: 400, body: "Missing items[]" };
+    const { items } = JSON.parse(event.body || '{}') as { items: { id: string; qty: number }[] };
+
+    const line_items = (items || [])
+      .map(({ id, qty }) => {
+        const p = PRODUCTS[id];
+        if (!p) return null;
+        return {
+          quantity: Math.max(1, qty || 1),
+          price_data: {
+            currency: 'usd',
+            unit_amount: p.price,
+            product_data: { name: p.name },
+          },
+        } as Stripe.Checkout.SessionCreateParams.LineItem;
+      })
+      .filter(Boolean) as Stripe.Checkout.SessionCreateParams.LineItem[];
+
+    if (!line_items.length) {
+      return { statusCode: 400, body: JSON.stringify({ error: 'No valid items.' }) };
     }
 
-    const line_items = body.items.map((it: CartItem) => {
-      if ("price" in it) {
-        return { price: it.price, quantity: it.quantity || 1, metadata: it.metadata };
-      }
-      return {
-        price_data: it.price_data,
-        quantity: it.quantity || 1,
-        metadata: it.metadata,
-      };
+    const hasPhysical = (items || []).some(i => PRODUCTS[i.id]?.physical);
+
+    const url = event.headers.origin || 'https://thenaturverse.com';
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items,
+      allow_promotion_codes: true,
+      shipping_address_collection: hasPhysical ? { allowed_countries: ['US', 'CA', 'GB', 'AU'] } : undefined,
+      success_url: `${url}/?checkout=success`,
+      cancel_url: `${url}/?checkout=cancel`,
     });
 
-    const site = process.env.SITE_URL || process.env.URL || "http://localhost:8888";
-    const success_url = body.success_url || `${site}/success?session_id={CHECKOUT_SESSION_ID}`;
-    const cancel_url = body.cancel_url || `${site}/cancel`;
-
-    const params: Stripe.Checkout.SessionCreateParams = {
-      mode: body.mode || "payment",
-      payment_method_types: ["card"],
-      allow_promotion_codes: body.allow_promotion_codes ?? true,
-      line_items,
-      customer_email: body.customer_email,
-      success_url,
-      cancel_url,
-      metadata: body.metadata,
-      expand: ["line_items", "payment_intent"],
-    };
-    if (body.coupon) {
-      (params.discounts = [{ coupon: body.coupon }]);
-    }
-    const session = await stripe.checkout.sessions.create(params);
-
-    return {
-      statusCode: 200,
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ id: session.id, url: session.url }),
-    };
-  } catch (err: any) {
+    return { statusCode: 200, body: JSON.stringify({ id: session.id, url: session.url }) };
+  } catch (err) {
     console.error(err);
-    return { statusCode: 500, body: err.message || "Server error" };
+    return { statusCode: 500, body: JSON.stringify({ error: 'Internal error' }) };
   }
-}
+};
