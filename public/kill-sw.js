@@ -18,3 +18,10 @@
     }
   } catch (_) { /* no-op */ }
 })();
+
+const showInstall = () => {
+  if (location.pathname.startsWith('/auth/')) return; // don't show on OAuth callback
+  // Install prompt UI handled elsewhere
+};
+
+showInstall();

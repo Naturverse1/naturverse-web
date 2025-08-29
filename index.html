@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
     <head>
-      <!-- Make all asset URLs resolve from site root so /auth/* doesn't try /auth/assets/... -->
-      <base href="/" />
-      <meta charset="UTF-8" />
+        <!-- Ensure all relative URLs resolve from site root so /auth/* doesn't try /auth/assets/... -->
+        <base href="/" />
+        <meta charset="UTF-8" />
     <script src="/kill-sw.js?v=2" defer></script>
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time
@@ -167,6 +167,7 @@
         const no  = document.getElementById("nv-install-no");
 
         window.addEventListener("beforeinstallprompt", (e) => {
+          if (location.pathname.startsWith('/auth/')) return; // don't show on OAuth callback
           e.preventDefault();
           deferred = e;
           // Show prompt only on home route (avoid spamming during deep flows)
