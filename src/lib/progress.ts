@@ -181,3 +181,41 @@ export function localUnlockZone(_userId: string, slug: string) {
   writeZoneProgress(p);
 }
 
+// --- Remote progress helpers (streaks, badges) ---------------------------------
+
+async function authHeader(): Promise<Record<string, string>> {
+  try {
+    const client = await getSupabase();
+    if (!client) return {};
+    const { data } = await client.auth.getSession();
+    const t = data.session?.access_token;
+    return t ? { "x-supabase-token": t } : {};
+  } catch {
+    return {};
+  }
+}
+
+export async function markQuest(quest_id: string, action: "start" | "complete") {
+  const headers = {
+    "content-type": "application/json",
+    ...(await authHeader()),
+  } as Record<string, string>;
+  const res = await fetch("/.netlify/functions/progress-update", {
+    method: "POST",
+    headers,
+    body: JSON.stringify({ quest_id, action }),
+  });
+  if (!res.ok) throw new Error(await res.text());
+}
+
+export async function fetchProgress() {
+  const headers = await authHeader();
+  const res = await fetch("/.netlify/functions/progress-get", { headers });
+  if (!res.ok) throw new Error(await res.text());
+  return res.json() as Promise<{
+    progress: { quest_id: string; completed_at: string | null }[];
+    streak: { current_streak: number; longest_streak: number };
+    badges: { badge_code: string; earned_at: string }[];
+  }>;
+}
+

@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { metaTag } from "@/lib/seo";
 import { track } from "@/lib/analytics";
+import { markQuest } from "@/lib/progress";
 
 type Quest = { id:string; title:string; summary?:string; tags?:string[]; body?:string };
 
@@ -45,9 +46,22 @@ export default function QuestDetail() {
         </article>
 
         <div className="actions" style={{ display:"flex", gap:8, marginTop: 12 }}>
-          <button onClick={() => track("quest_start", { id: q.id })}>Start</button>
-          <button onClick={() => { track("quest_complete", { id: q.id }); alert("Nice work 🌿"); }}>Complete</button>
-          <button onClick={() => navigator.share?.({ title:q.title, url: location.href }) ?? copy(location.href)}>
+          <button onClick={async () => {
+            track("quest_start", { id: q.id });
+            await markQuest(q.id, "start");
+            window.dispatchEvent(new CustomEvent("nv:toast", { detail: { text: "Quest started" } }));
+          }}>
+            Start
+          </button>
+          <button onClick={async () => {
+            track("quest_complete", { id: q.id });
+            await markQuest(q.id, "complete");
+            window.dispatchEvent(new CustomEvent("nv:toast", { detail: { text: "Completed ✔" } }));
+            track("quest_complete_persisted", { id: q.id });
+          }}>
+            Complete
+          </button>
+          <button onClick={() => navigator.share?.({ title: q.title, url: location.href }) ?? copy(location.href)}>
             Share
           </button>
         </div>
