@@ -21,15 +21,27 @@ export function addToCart(id: string, qty = 1) {
   const cart = loadCart();
   const line = cart.find(l => l.id === id);
   if (line) line.qty += qty; else cart.push({ id, qty });
-  write(CK, cart); return cart;
+  write(CK, cart);
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Added to cart' } }));
+  } catch {}
+  return cart;
 }
 export function setQty(id: string, qty: number) {
   let cart = loadCart().map(l => (l.id === id ? { id, qty } : l)).filter(l => l.qty > 0);
-  write(CK, cart); return cart;
+  write(CK, cart);
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Quantity updated' } }));
+  } catch {}
+  return cart;
 }
 export function removeLine(id: string) {
   const cart = loadCart().filter(l => l.id !== id);
-  write(CK, cart); return cart;
+  write(CK, cart);
+  try {
+    window.dispatchEvent(new CustomEvent('nv:toast', { detail: { text: 'Removed from cart' } }));
+  } catch {}
+  return cart;
 }
 export function clearCart() { write(CK, []); }
 

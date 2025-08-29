@@ -20,6 +20,7 @@ import NetworkBanner from './components/NetworkBanner';
 import './components/network.css';
 import SearchProvider from './search/SearchProvider';
 import CheckoutBanner from './components/CheckoutBanner';
+import ToastHost from '@/components/ToastHost';
 
 export default function App() {
   useEffect(() => {
@@ -28,6 +29,7 @@ export default function App() {
   }, []);
   return (
     <SearchProvider>
+      <ToastHost />
       <div id="nv-page">
           {/* Keyboard-accessible jump link (first focusable on the page) */}
           <SkipLink />

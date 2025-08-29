@@ -47,6 +47,7 @@ import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
 import CancelPage from './pages/cancel';
 import OrdersPage from './pages/orders';
+import CheckoutPage from './pages/checkout';
 
 export const router = createBrowserRouter([
   {
@@ -65,6 +66,7 @@ export const router = createBrowserRouter([
       { path: 'play/:quest', element: <PlayQuest /> },
 
       { path: 'marketplace', element: <MarketplacePage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
       { path: 'success', element: <SuccessPage /> },
       { path: 'cancel', element: <CancelPage /> },
       { path: 'quests', element: <QuestsList /> },
