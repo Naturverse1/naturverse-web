@@ -26,26 +26,11 @@ import './boot/warmup';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
-
-function unregisterStaleSW() {
-  if (location.hostname.endsWith('.netlify.app') && 'serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations().then((regs) => {
-      regs.forEach((reg) => reg.unregister());
-    });
-  }
-}
+import { registerPWA } from '@/pwa/register-sw';
 
 applyTheme(getTheme());
-unregisterStaleSW();
 installGlobalLogCapture();
-// Skip service worker registration on Netlify preview hosts
-if (location.hostname.endsWith('.netlify.app')) {
-  console.info('[Naturverse] Preview host — skipping SW registration');
-} else {
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.register('/sw.js').catch(() => {});
-  }
-}
+registerPWA();
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
