@@ -1,6 +1,7 @@
 import { hasSupabase, supabase } from './supabaseClient';
 
-const callbackUrl = `${window.location.origin}/auth/callback`;
+const PROD_ORIGIN = 'https://thenaturverse.com';
+const callbackUrl = `${PROD_ORIGIN}/auth/callback`;
 
 export async function signInWithGoogle() {
   if (!hasSupabase()) {
