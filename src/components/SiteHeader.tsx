@@ -53,6 +53,13 @@ export default function SiteHeader() {
             >
               Zones
             </NavLink>
+              <NavLink
+                to="/quests"
+                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+                onClick={() => setOpen(false)}
+              >
+                Quests
+              </NavLink>
             <NavLink
               to="/marketplace"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
