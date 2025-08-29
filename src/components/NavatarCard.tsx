@@ -5,12 +5,22 @@ type Props = {
   nav: Navatar;
   owned: boolean;
   activeId?: string | null;
-  onGet: (id: string) => void;
+  onGet?: (id: string) => void;
   onUse: (id: string) => void;
 };
 
 export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Props) {
   const isActive = activeId === nav.id;
+
+  async function startCheckout(method: 'stripe' | 'natur') {
+    const res = await fetch('/.netlify/functions/navatar-checkout', {
+      method: 'POST',
+      body: JSON.stringify({ user_id: (window as any).user?.id, navatar_id: nav.id, method }),
+    });
+    const data = await res.json();
+    if (data.url) (window.location.href = data.url);
+    else alert(data.message || 'Checkout started');
+  }
 
   return (
     <div
@@ -31,24 +41,39 @@ export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Prop
         {nav.priceCents > 0 ? <span>${(nav.priceCents / 100).toFixed(2)}</span> : <span>Free</span>}
       </div>
 
-      {owned ? (
-        isActive ? (
-          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#16a34a' }}>
-            <span className={`navatar-frame ${nav.rarity}`}>
-              <img src={nav.img} width={18} height={18} style={{ borderRadius: '50%' }} alt="" />
-            </span>
-            Active
+        {owned ? (
+          isActive ? (
+            <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#16a34a' }}>
+              <span className={`navatar-frame ${nav.rarity}`}>
+                <img src={nav.img} width={18} height={18} style={{ borderRadius: '50%' }} alt="" />
+              </span>
+              Active
+            </div>
+          ) : (
+            <button onClick={() => onUse(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
+              Use
+            </button>
+          )
+        ) : nav.priceCents > 0 ? (
+          <div style={{ display: 'flex', gap: 8 }}>
+            <button
+              onClick={() => startCheckout('stripe')}
+              style={{ padding: '8px 12px', borderRadius: 8 }}
+            >
+              Buy ${(nav.priceCents / 100).toFixed(2)}
+            </button>
+            <button
+              onClick={() => startCheckout('natur')}
+              style={{ padding: '8px 12px', borderRadius: 8 }}
+            >
+              Pay 100 $NATUR
+            </button>
           </div>
         ) : (
-          <button onClick={() => onUse(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
-            Use
+          <button onClick={() => onGet && onGet(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
+            Get
           </button>
-        )
-      ) : (
-        <button onClick={() => onGet(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
-          {nav.priceCents ? 'Buy (soon)' : 'Get'}
-        </button>
-      )}
-    </div>
-  );
-}
+        )}
+      </div>
+    );
+  }
