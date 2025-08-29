@@ -1,5 +1,5 @@
 import { useEffect } from 'react';
-import { supabase } from '@/lib/auth';
+import { supabase } from '@/lib/supabase-client';
 
 /**
  * Supabase parses tokens from the URL on load.
@@ -7,7 +7,7 @@ import { supabase } from '@/lib/auth';
  */
 export default function AuthCallback() {
   useEffect(() => {
-    supabase!.auth.getSession().finally(() => {
+    supabase.auth.getSession().finally(() => {
       // Optional: carry through ?next param if present
       const params = new URLSearchParams(window.location.search);
       const next = params.get('next') || '/';
