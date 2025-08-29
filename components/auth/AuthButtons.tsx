@@ -1,6 +1,6 @@
 'use client';
 import { useState } from 'react';
-import { sendMagicLink, getSupabase, getOAuthRedirect } from '@/lib/auth';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 export default function AuthButtons() {
   const [email, setEmail] = useState('');
@@ -10,30 +10,11 @@ export default function AuthButtons() {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    const supabase = getSupabase();
-    const redirectTo = getOAuthRedirect();
-    if (!supabase || !redirectTo) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return;
-    }
     setLoading(true);
     const { error } = await sendMagicLink(email);
     setLoading(false);
     if (!error) setSent(true);
     else alert(error.message);
-  }
-
-  async function signInGoogle() {
-    const supabase = getSupabase();
-    const redirectTo = getOAuthRedirect();
-    if (!supabase || !redirectTo) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return;
-    }
-    await supabase.auth.signInWithOAuth({
-      provider: 'google',
-      options: { redirectTo }
-    });
   }
 
   return (
@@ -56,7 +37,7 @@ export default function AuthButtons() {
       </form>
 
       <div style={{ display: 'grid', gap: 8, marginTop: 12 }}>
-        <button className="btn" onClick={signInGoogle}>Continue with Google</button>
+        <button className="btn" onClick={() => void signInWithGoogle()}>Continue with Google</button>
         <a className="link" href="/worlds">Continue as guest</a>
         <small>By continuing you agree to our <a href="/terms">Terms</a> and <a href="/privacy">Privacy</a>.</small>
       </div>

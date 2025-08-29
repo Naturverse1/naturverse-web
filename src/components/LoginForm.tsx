@@ -1,13 +1,10 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { useSupabase } from '@/lib/useSupabase';
-import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/auth';
+import { supabase, sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
 export default function LoginForm() {
-  const supabase = useSupabase();
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState<string | null>(null);
@@ -37,14 +34,9 @@ export default function LoginForm() {
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    if (!supabase) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return;
-    }
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
       const { error } = await sendMagicLink(email);
       if (error) throw error;
       setStatus('sent');
@@ -56,13 +48,8 @@ export default function LoginForm() {
   }
 
   async function handleGoogleLogin() {
-    if (!supabase) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return;
-    }
     setStatus('sending');
     setMessage(null);
-    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     const { error } = await signInWithGoogle();
     if (error) {
       setStatus('error');

@@ -15,7 +15,6 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
     const email = window.prompt("Enter your email to receive a sign-in link")?.trim();
     if (!email) return;
     setLoading("ml");
-    sessionStorage.setItem("post-auth-redirect", window.location.pathname + window.location.search);
     const { error } = await sendMagicLink(email);
     setLoading("");
     if (error) alert(error.message);
@@ -24,7 +23,6 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
 
   const signInGoogle = async () => {
     setLoading("google");
-    sessionStorage.setItem("post-auth-redirect", window.location.pathname + window.location.search);
     const { error } = await signInWithGoogle();
     setLoading("");
     if (error) alert(error.message);
