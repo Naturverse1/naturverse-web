@@ -1,7 +1,14 @@
 export function track(event: string, props?: Record<string, any>) {
+  // Send to Umami if available, fall back to console logging
   try {
-    console.log('[track]', event, props);
+    // @ts-ignore
+    (window as any)?.umami?.track?.(event, props);
   } catch {
-    // ignore
+    // ignore failures accessing window
+  }
+  try {
+    console.log("[track]", event, props);
+  } catch {
+    // swallow logging errors
   }
 }
