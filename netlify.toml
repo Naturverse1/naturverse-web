@@ -7,6 +7,19 @@
   node_bundler = "esbuild"
   external_node_modules = ["stripe"]
 
+## Route conventional paths to functions (avoid invalid dot-named files in /functions)
+[[redirects]]
+  from = "/sitemap.xml"
+  to = "/.netlify/functions/sitemap"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/robots.txt"
+  to = "/.netlify/functions/robots"
+  status = 200
+  force = true
+
 # Do not rewrite real built assets to index.html
 [[redirects]]
   from = "/assets/*"
