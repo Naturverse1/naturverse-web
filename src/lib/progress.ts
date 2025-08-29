@@ -99,3 +99,57 @@ export async function getCloudProgress(slug: string) {
     return null;
   }
 }
+
+// --- Zone progress helpers -------------------------------------------------
+
+type ZoneProgress = {
+  zonesUnlocked: Record<string, boolean>;
+  // keep any other existing fields in storage
+  [key: string]: any;
+};
+
+const ZONE_STORAGE_KEY = 'nv_progress_v1';
+
+function readZoneProgress(): ZoneProgress {
+  if (typeof localStorage === 'undefined') return { zonesUnlocked: {} };
+  try {
+    const raw = localStorage.getItem(ZONE_STORAGE_KEY);
+    if (!raw) return { zonesUnlocked: {} };
+    const parsed = JSON.parse(raw);
+    return {
+      zonesUnlocked: parsed?.zonesUnlocked ?? {},
+      ...parsed,
+    } as ZoneProgress;
+  } catch {
+    return { zonesUnlocked: {} };
+  }
+}
+
+function writeZoneProgress(next: ZoneProgress) {
+  if (typeof localStorage === 'undefined') return;
+  try {
+    localStorage.setItem(ZONE_STORAGE_KEY, JSON.stringify(next));
+  } catch {
+    /* ignore write errors */
+  }
+}
+
+/**
+ * Return the set of unlocked zone ids/slugs.
+ * If you pass a world prefix (e.g. "thailandia"), it filters to that world.
+ */
+export async function getUnlockedZones(worldPrefix?: string): Promise<Set<string>> {
+  const p = readZoneProgress();
+  const keys = Object.keys(p.zonesUnlocked || {}).filter((k) => p.zonesUnlocked[k]);
+  if (!worldPrefix) return new Set(keys);
+  const prefix = worldPrefix.endsWith(':') ? worldPrefix : `${worldPrefix}:`;
+  return new Set(keys.filter((k) => k.startsWith(prefix)));
+}
+
+// Dev/demo helper to unlock a zone locally
+export function localUnlockZone(_userId: string, slug: string) {
+  const p = readZoneProgress();
+  p.zonesUnlocked[slug] = true;
+  writeZoneProgress(p);
+}
+
