@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
+import { track } from "@/lib/analytics";
 
 const TAGS = ["starter","breathwork","focus","sleep","grounding","energy","movement","calm","anxiety","sunlight","evening","routine","productivity"];
 
@@ -32,8 +33,7 @@ export default function QuestSearchBar() {
       const data = await r.json();
       if (!gone) {
         setHits(data);
-        // @ts-ignore
-        window?.umami?.track?.('quest_search', { q: debounced, n: data.length });
+        track("quest_search", { q: debounced, n: data.length });
       }
     })();
     return () => { gone = true; };
