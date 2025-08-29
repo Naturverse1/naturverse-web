@@ -1,7 +1,7 @@
 // src/lib/leaderboard.ts
 // Helpers for quest leaderboards and queued score writes
 
-type LeaderboardRow = { rank: number; name: string | null; score: number; time: string };
+type LeaderboardRow = { rank: number; name: string | null; score: number; time: string; avatar_url: string | null };
 type QueueItem = { questId: string; score: number };
 
 const QUEUE_KEY = 'nv:score-queue';
@@ -24,7 +24,7 @@ export async function fetchLeaderboard(questId: string, limit = 10): Promise<Lea
     if (!client) return [];
     const { data } = await client
       .from('quest_leaderboard_public')
-      .select('rank, username, score, created_at')
+      .select('rank, username, avatar_url, score, created_at')
       .eq('quest_slug', questId)
       .order('score', { ascending: false })
       .limit(limit);
@@ -33,6 +33,7 @@ export async function fetchLeaderboard(questId: string, limit = 10): Promise<Lea
       name: r.username ?? null,
       score: r.score,
       time: r.created_at,
+      avatar_url: r.avatar_url ?? null,
     }));
   } catch {
     return [];
@@ -89,4 +90,3 @@ export async function queueFlush() {
     /* ignore */
   }
 }
-

@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../Badge';
+import NavatarBadge from '../NavatarBadge';
 import { getQuestProgress } from '../../lib/progress';
 
 type Props = {
@@ -31,6 +32,7 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
   }, [slug]);
 
   const tone = completed ? 'success' : 'info';
+  const svg = typeof window !== 'undefined' ? localStorage.getItem('navatar_svg') ?? undefined : undefined;
 
   return (
     <article className="card">
@@ -51,6 +53,7 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
 
       <footer className="card__footer">
         <span className="card__best">
+          <NavatarBadge svg={svg} size={20} alt="Your Navatar" />{' '}
           {best === null ? (
             <span className="skeleton" style={{ width: 20 }} />
           ) : (

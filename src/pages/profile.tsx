@@ -133,6 +133,7 @@ export default function ProfilePage() {
             style={{ borderRadius: 8, marginTop: 8 }}
           />
         )}
+        <p style={{ marginTop: 8 }}><a href="/navatar">Change Navatar</a></p>
 
         <button type="submit" disabled={saving} style={{ marginTop: 12 }}>
           {saving ? "Saving…" : "Save profile"}
