@@ -1,5 +1,6 @@
 import type { Handler } from '@netlify/functions';
 import Stripe from 'stripe';
+import { getUserIdFromCookie } from '../../src/lib/auth-server';
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: '2024-06-20' });
 
@@ -13,7 +14,12 @@ const PRODUCTS: Record<string, { name: string; price: number; physical: boolean 
 
 export const handler: Handler = async (event) => {
   try {
-    const { items } = JSON.parse(event.body || '{}') as { items: { id: string; qty: number }[] };
+    const { items, returnPath = '/' } = JSON.parse(event.body || '{}') as {
+      items: { id: string; qty: number }[];
+      returnPath?: string;
+    };
+
+    const user_id = getUserIdFromCookie(event.headers.cookie);
 
     const line_items = (items || [])
       .map(({ id, qty }) => {
@@ -36,14 +42,18 @@ export const handler: Handler = async (event) => {
 
     const hasPhysical = (items || []).some(i => PRODUCTS[i.id]?.physical);
 
-    const url = event.headers.origin || 'https://thenaturverse.com';
+    const url = process.env.PUBLIC_SITE_URL || event.headers.origin || 'https://thenaturverse.com';
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       line_items,
       allow_promotion_codes: true,
       shipping_address_collection: hasPhysical ? { allowed_countries: ['US', 'CA', 'GB', 'AU'] } : undefined,
-      success_url: `${url}/?checkout=success`,
-      cancel_url: `${url}/?checkout=cancel`,
+      success_url: `${url}${returnPath}?checkout=success`,
+      cancel_url: `${url}${returnPath}?checkout=cancel`,
+      metadata: {
+        user_id: user_id || '',
+        cart: JSON.stringify((items || []).map(i => ({ id: i.id, qty: i.qty || 1 }))),
+      },
     });
 
     return { statusCode: 200, body: JSON.stringify({ id: session.id, url: session.url }) };

@@ -46,6 +46,7 @@ import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
 import CancelPage from './pages/cancel';
+import OrdersPage from './pages/orders';
 
 export const router = createBrowserRouter([
   {
@@ -96,6 +97,7 @@ export const router = createBrowserRouter([
       { path: 'create/navatar', element: <CreateNavatarPage /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'passport', element: <PassportPage /> },
+      { path: 'orders', element: <OrdersPage /> },
       { path: 'auth/callback', element: <AuthCallback /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'turian', element: <Turian /> },
