@@ -1,27 +1,42 @@
 import { hasSupabase, supabase } from './supabaseClient';
 
-const PROD_ORIGIN = 'https://thenaturverse.com';
-const callbackUrl = `${PROD_ORIGIN}/auth/callback`;
+export { supabase };
+
+const PROD_ORIGIN = 'https://thenaturverse.com'; // kept for reference/other links
+
+/**
+ * Allow auth on the current host?
+ * - Always allow on production
+ * - Allow on *.netlify.app only when VITE_ALLOW_PREVIEW_AUTH === 'true'
+ */
+export function authAllowedHere(): boolean {
+  if (!hasSupabase()) return false;
+  const allowPreview = import.meta.env.VITE_ALLOW_PREVIEW_AUTH === 'true';
+  const isNetlifyPreview =
+    typeof location !== 'undefined' && location.hostname.endsWith('.netlify.app');
+  return isNetlifyPreview ? allowPreview : true;
+}
 
 export async function signInWithGoogle() {
-  if (!hasSupabase()) {
-    alert('Sign-in is unavailable in this preview. Please use the production site.');
+  if (!authAllowedHere()) {
+    alert('Sign-in is unavailable in this preview.');
     return;
   }
   return supabase!.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: callbackUrl },
+    // Send the user back to whichever origin they started on (prod or preview)
+    options: { redirectTo: `${location.origin}/auth/callback` },
   });
 }
 
 export async function sendMagicLink(email: string) {
-  if (!hasSupabase()) {
-    alert('Magic link is unavailable in this preview. Please use the production site.');
+  if (!authAllowedHere()) {
+    alert('Magic link is unavailable in this preview.');
     return;
   }
   return supabase!.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: callbackUrl },
+    options: { emailRedirectTo: `${location.origin}/auth/callback` },
   });
 }
 
