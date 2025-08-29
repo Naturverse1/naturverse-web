@@ -1,6 +1,6 @@
 // src/components/QuestShell.tsx
 import React from 'react';
-import { saveProgress, getProgress, getCloudProgress } from '../lib/progress';
+import { saveQuestProgress, getQuestProgress, getQuestCloudProgress } from '../lib/progress';
 
 type Props = {
   slug: string;
@@ -14,10 +14,10 @@ export default function QuestShell({ slug, title, onRenderGame }: Props) {
   const [submitting, setSubmitting] = React.useState(false);
 
   React.useEffect(() => {
-    const local = getProgress(slug);
+    const local = getQuestProgress(slug);
     setBest(local.bestScore);
     setCompleted(local.completed);
-    getCloudProgress(slug).then((cloud) => {
+    getQuestCloudProgress(slug).then((cloud) => {
       if (cloud) {
         setBest(cloud.bestScore);
         setCompleted(cloud.completed);
@@ -27,8 +27,8 @@ export default function QuestShell({ slug, title, onRenderGame }: Props) {
 
   async function complete(score: number) {
     setSubmitting(true);
-    await saveProgress({ slug, score, completed: true });
-    const next = getProgress(slug);
+    await saveQuestProgress({ slug, score, completed: true });
+    const next = getQuestProgress(slug);
     setBest(next.bestScore);
     setCompleted(next.completed);
     setSubmitting(false);
@@ -39,8 +39,8 @@ export default function QuestShell({ slug, title, onRenderGame }: Props) {
       <header className="quest__header">
         <h1 id="quest-title">{title}</h1>
         <div className="quest__meta">
-          <span className="badge">{completed ? 'Completed' : 'New'}</span>
-          <span className="best">Best: {best}</span>
+          <span className="badge">{completed ? '✅ Completed' : '🔵 New'}</span>
+          <span className="badge best">⭐ Best: {best}</span>
         </div>
       </header>
 
