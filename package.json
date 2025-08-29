@@ -22,7 +22,8 @@
     "workbox-window": "^7.1.0",
     "nprogress": "^0.2.0",
     "react-helmet-async": "^2.0.4",
-    "stripe": "^12.20.0"
+    "stripe": "^12.20.0",
+    "ethers": "^6.13.2"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",

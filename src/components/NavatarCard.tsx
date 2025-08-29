@@ -1,5 +1,6 @@
 import React from 'react';
 import { Navatar } from '../data/navatars';
+import { buyNavatarWithNatur } from '../lib/natur';
 
 type Props = {
   nav: Navatar;
@@ -12,14 +13,25 @@ type Props = {
 export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Props) {
   const isActive = activeId === nav.id;
 
-  async function startCheckout(method: 'stripe' | 'natur') {
+  async function startCheckout() {
     const res = await fetch('/.netlify/functions/navatar-checkout', {
       method: 'POST',
-      body: JSON.stringify({ user_id: (window as any).user?.id, navatar_id: nav.id, method }),
+      body: JSON.stringify({ user_id: (window as any).user?.id, navatar_id: nav.id, method: 'stripe' }),
     });
     const data = await res.json();
     if (data.url) (window.location.href = data.url);
     else alert(data.message || 'Checkout started');
+  }
+
+  async function payNatur() {
+    try {
+      const amt = nav.priceNatur ?? 100;
+      await buyNavatarWithNatur(nav.id, amt);
+      alert('Purchased with $NATUR \u2713');
+      onGet && onGet(nav.id);
+    } catch (e: any) {
+      alert(e?.message || 'Payment failed');
+    }
   }
 
   return (
@@ -57,16 +69,16 @@ export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Prop
         ) : nav.priceCents > 0 ? (
           <div style={{ display: 'flex', gap: 8 }}>
             <button
-              onClick={() => startCheckout('stripe')}
+              onClick={startCheckout}
               style={{ padding: '8px 12px', borderRadius: 8 }}
             >
               Buy ${(nav.priceCents / 100).toFixed(2)}
             </button>
             <button
-              onClick={() => startCheckout('natur')}
+              onClick={payNatur}
               style={{ padding: '8px 12px', borderRadius: 8 }}
             >
-              Pay 100 $NATUR
+              Pay {nav.priceNatur ?? 100} $NATUR
             </button>
           </div>
         ) : (

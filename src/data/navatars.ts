@@ -6,6 +6,7 @@ export type Navatar = {
   name: string;
   rarity: Rarity;
   priceCents: number; // 0 for free (dev)
+  priceNatur?: number;   // optional $NATUR cost
   img: string; // public path
   tags?: string[];
 };
@@ -17,6 +18,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Seedling',
     rarity: 'starter',
     priceCents: 0,
+    priceNatur: 0,
     img: '/navatars/seedling.svg',
     tags: ['green', 'calm'],
   },
@@ -26,6 +28,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Songkran Splash',
     rarity: 'rare',
     priceCents: 300,
+    priceNatur: 100,
     img: '/navatars/splash.svg',
     tags: ['thailandia', 'festival'],
   },
@@ -35,6 +38,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Zen Panda',
     rarity: 'legendary',
     priceCents: 1200,
+    priceNatur: 400,
     img: '/navatars/zenpanda.svg',
     tags: ['focus', 'balance'],
   },
@@ -44,6 +48,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Fire Fox',
     rarity: 'rare',
     priceCents: 500,
+    priceNatur: 150,
     img: '/navatars/firefox.svg',
     tags: ['energy'],
   },
@@ -53,6 +58,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Ocean Orb',
     rarity: 'starter',
     priceCents: 0,
+    priceNatur: 0,
     img: '/navatars/oceanorb.svg',
     tags: ['water'],
   },
@@ -62,6 +68,7 @@ export const NAVATARS: Navatar[] = [
     name: 'Bamboo Buddy',
     rarity: 'starter',
     priceCents: 0,
+    priceNatur: 0,
     img: '/navatars/bamboo.svg',
     tags: ['earth'],
   },
