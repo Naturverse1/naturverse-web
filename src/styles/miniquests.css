@@ -1,0 +1,56 @@
+.badge {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  background: #eef;
+  border: 1px solid #cfe;
+}
+.badge--success {
+  background: #e9f7ef;
+  border-color: #bfe6cd;
+}
+.badge--info {
+  background: #eaf4ff;
+  border-color: #c9e4ff;
+}
+.badge--muted {
+  background: #f4f4f5;
+  border-color: #e6e6e7;
+  color: #555;
+}
+
+.card {
+  border: 1px solid #e6e6e7;
+  border-radius: 12px;
+  padding: 14px;
+  background: #fff;
+}
+.card__header {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  justify-content: space-between;
+}
+.card__title {
+  margin: 0;
+  font-size: 1.05rem;
+}
+.card__meta {
+  margin: 0.25rem 0 0.5rem 0;
+  color: #5b6b7a;
+}
+.card__blurb {
+  margin: 0.25rem 0 0.75rem 0;
+}
+.card__footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.mq-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 14px;
+}
