@@ -6,6 +6,7 @@ export async function startCheckout(params: {
   email?: string;
   metadata?: Record<string, string>;
   allowPromotionCodes?: boolean;
+  coupon?: string;
 }) {
   // Map CartItem -> function payload shape
   const items = params.items.map((it) =>
@@ -21,6 +22,7 @@ export async function startCheckout(params: {
       items,
       customer_email: params.email,
       allow_promotion_codes: params.allowPromotionCodes ?? true,
+      coupon: params.coupon,
       metadata: params.metadata,
       mode: "payment",
     }),

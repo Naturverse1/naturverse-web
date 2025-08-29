@@ -1,11 +1,23 @@
 import React, { useState } from "react";
-import { useCart } from "@/lib/cart";
+import { useCart, cartSubtotal } from "@/lib/cart";
 import { startCheckout } from "@/lib/checkout";
 
+function PromoBox() {
+  const { cart, setCoupon } = useCart();
+  const [code, setCode] = React.useState(cart.coupon ?? "");
+  return (
+    <div style={{ marginTop: 12 }}>
+      <input value={code} onChange={(e) => setCode(e.target.value)} placeholder="Promo code" />
+      <button onClick={() => setCoupon(code || null)}>Apply</button>
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
-  const { items, setQty, remove, total, clear } = useCart();
+  const { cart, setQty, remove, clear } = useCart();
+  const items = cart.items;
+  const total = cartSubtotal(items);
   const [email, setEmail] = useState("");
-  const [promo, setPromo] = useState("");
   const [busy, setBusy] = useState(false);
   const empty = items.length === 0;
 
@@ -59,11 +71,7 @@ export default function CheckoutPage() {
             <input value={email} onChange={(e) => setEmail(e.target.value)} placeholder="you@example.com" />
           </div>
 
-          <div style={{ marginTop: 12 }}>
-            <label>Promo code (optional): </label>{" "}
-            <input value={promo} onChange={(e) => setPromo(e.target.value)} placeholder="e.g. LAUNCH10" />
-            <small style={{ marginLeft: 8, opacity: 0.7 }}>applies on Stripe</small>
-          </div>
+          <PromoBox />
 
           <div style={{ marginTop: 24, display: "flex", gap: 12 }}>
             <button onClick={clear} disabled={busy}>Clear</button>
@@ -74,8 +82,9 @@ export default function CheckoutPage() {
                   await startCheckout({
                     items,
                     email: email || undefined,
-                    metadata: { source: "naturverse", entered_code: promo || "" },
+                    metadata: { source: "naturverse", entered_code: cart.coupon || "" },
                     allowPromotionCodes: true,
+                    coupon: cart.coupon || undefined,
                   });
                 } finally {
                   setBusy(false);

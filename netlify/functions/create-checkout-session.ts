@@ -21,6 +21,7 @@ type CreateSessionBody = {
   customer_email?: string;
   mode?: "payment" | "subscription";
   allow_promotion_codes?: boolean;
+  coupon?: string;
   metadata?: Record<string, string>;
   success_url?: string;
   cancel_url?: string;
@@ -52,7 +53,7 @@ export async function handler(event: any) {
     const success_url = body.success_url || `${site}/success?session_id={CHECKOUT_SESSION_ID}`;
     const cancel_url = body.cancel_url || `${site}/cancel`;
 
-    const session = await stripe.checkout.sessions.create({
+    const params: Stripe.Checkout.SessionCreateParams = {
       mode: body.mode || "payment",
       payment_method_types: ["card"],
       allow_promotion_codes: body.allow_promotion_codes ?? true,
@@ -62,7 +63,11 @@ export async function handler(event: any) {
       cancel_url,
       metadata: body.metadata,
       expand: ["line_items", "payment_intent"],
-    });
+    };
+    if (body.coupon) {
+      (params.discounts = [{ coupon: body.coupon }]);
+    }
+    const session = await stripe.checkout.sessions.create(params);
 
     return {
       statusCode: 200,

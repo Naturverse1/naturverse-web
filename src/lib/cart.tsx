@@ -1,60 +1,116 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
+import { supabase } from "@/lib/supabaseClient";
 
-export type CartItem =
-  | { id: string; type: "price"; price: string; name?: string; qty: number; meta?: Record<string, string> }
-  | {
-      id: string;
-      type: "adhoc";
-      price_data: { currency: string; unit_amount: number; product_data: { name: string; description?: string } };
-      qty: number;
-      meta?: Record<string, string>;
-    };
+const genId = () => Math.random().toString(36).slice(2, 12);
 
-type CartState = {
-  items: CartItem[];
-  add: (item: CartItem) => void;
-  remove: (id: string) => void;
-  setQty: (id: string, qty: number) => void;
-  clear: () => void;
-  total: number; // cents (adhoc only; price ids shown as "—" in UI)
+export type AdhocLine = {
+  type: "adhoc";
+  id: string; // sku
+  qty: number;
+  price_data: {
+    currency: "usd";
+    unit_amount: number;
+    product_data: { name: string; description?: string };
+  };
+  meta?: Record<string, any>;
 };
 
-const KEY = "naturverse.cart.v1";
-const Ctx = createContext<CartState | null>(null);
+export type PriceLine = {
+  type: "price";
+  id: string;
+  qty: number;
+  price: string;
+  name?: string;
+  meta?: Record<string, any>;
+};
+
+export type CartItem = AdhocLine | PriceLine;
+
+export type CartState = { id: string; items: CartItem[]; coupon?: string | null };
+
+const CartCtx = createContext<{
+  cart: CartState;
+  add: (item: CartItem) => void;
+  setQty: (id: string, delta: number) => void;
+  remove: (id: string) => void;
+  clear: () => void;
+  setCoupon: (code: string | null) => void;
+}>({} as any);
+
+const LS_KEY = "naturverse.cart";
 
 export function CartProvider({ children }: { children: React.ReactNode }) {
-  const [items, setItems] = useState<CartItem[]>(() => {
-    try { return JSON.parse(localStorage.getItem(KEY) || "[]"); } catch { return []; }
+  const [cart, setCart] = useState<CartState>(() => {
+    try {
+      const saved = localStorage.getItem(LS_KEY);
+      return saved ? JSON.parse(saved) : { id: genId(), items: [], coupon: null };
+    } catch {
+      return { id: genId(), items: [], coupon: null };
+    }
   });
 
-  useEffect(() => { localStorage.setItem(KEY, JSON.stringify(items)); }, [items]);
+  // persist
+  useEffect(() => {
+    try { localStorage.setItem(LS_KEY, JSON.stringify(cart)); } catch {}
+  }, [cart]);
 
-  const api = useMemo<CartState>(() => ({
-    items,
-    add: (it) => {
-      setItems((prev) => {
-        const i = prev.findIndex(p => p.id === it.id);
-        if (i >= 0) {
-          const copy = [...prev];
-          // bump qty
-          copy[i] = { ...copy[i], qty: copy[i].qty + it.qty };
-          return copy;
-        }
-        return [...prev, it];
+  // sync to Supabase when authed
+  useEffect(() => {
+    const client = supabase;
+    if (!client) return;
+    client.auth.getUser().then(({ data }) => {
+      if (!data.user) return;
+      client.from("carts").upsert({
+        user_id: data.user.id,
+        cart_json: cart,
+        updated_at: new Date().toISOString(),
       });
-    },
-    remove: (id) => setItems((p) => p.filter((x) => x.id !== id)),
-    setQty: (id, qty) => setItems((p) => p.map((x) => x.id === id ? { ...x, qty } : x)),
-    clear: () => setItems([]),
-    total: items.reduce((sum, it) =>
-      it.type === "adhoc" ? sum + it.qty * it.price_data.unit_amount : sum, 0),
-  }), [items]);
+    });
+  }, [cart]);
 
-  return <Ctx.Provider value={api}>{children}</Ctx.Provider>;
+  const api = useMemo(
+    () => ({
+      add(item: CartItem) {
+        setCart((c) => {
+          const i = c.items.findIndex((x) => x.id === item.id);
+          if (i >= 0) {
+            const copy = [...c.items];
+            copy[i] = { ...copy[i], qty: copy[i].qty + item.qty } as CartItem;
+            return { ...c, items: copy };
+          }
+          return { ...c, items: [...c.items, item] };
+        });
+        window.dispatchEvent(new CustomEvent("nv:cart_add", { detail: { id: item.id } }));
+      },
+      setQty(id: string, delta: number) {
+        setCart((c) => {
+          const items = c.items
+            .map((x) => (x.id === id ? { ...x, qty: x.qty + delta } as CartItem : x))
+            .filter((x) => x.qty > 0);
+          return { ...c, items };
+        });
+      },
+      remove(id: string) {
+        setCart((c) => ({ ...c, items: c.items.filter((x) => x.id !== id) }));
+        window.dispatchEvent(new CustomEvent("nv:cart_remove", { detail: { id } }));
+      },
+      clear() {
+        setCart((c) => ({ ...c, items: [], coupon: null }));
+      },
+      setCoupon(code: string | null) {
+        setCart((c) => ({ ...c, coupon: code }));
+      },
+    }),
+    []
+  );
+
+  return <CartCtx.Provider value={{ cart, ...api }}>{children}</CartCtx.Provider>;
 }
 
-export function useCart() {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error("useCart must be used within <CartProvider>");
-  return ctx;
-}
+export const useCart = () => useContext(CartCtx);
+
+export const cartSubtotal = (items: CartItem[]) =>
+  items.reduce(
+    (s, it) => s + (it.type === "adhoc" ? it.price_data.unit_amount * it.qty : 0),
+    0
+  );
