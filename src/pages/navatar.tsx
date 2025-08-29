@@ -2,11 +2,15 @@ import React, { useEffect, useState } from 'react';
 import { listAll, getOwned, getActive, setActive } from '../lib/navatar';
 import { Navatar } from '../data/navatars';
 import NavatarCard from '../components/NavatarCard';
+import ListNavatarModal from '../components/ListNavatarModal';
+import { useAuth } from '../lib/auth-context';
 
 export default function YourNavatarPage() {
   const [all, setAll] = useState<Navatar[]>([]);
   const [owned, setOwned] = useState<string[]>([]);
   const [active, setActiveId] = useState<string | null>(null);
+  const { user } = useAuth();
+  const [listingFor, setListingFor] = useState<string | undefined>();
 
   useEffect(() => {
     listAll().then(setAll);
@@ -32,16 +36,33 @@ export default function YourNavatarPage() {
       ) : (
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 240px)', gap: 16 }}>
           {mine.map((n) => (
-            <NavatarCard
-              key={n.id}
-              nav={n}
-              owned={true}
-              activeId={active}
-              onGet={() => {}}
-              onUse={onUse}
-            />
+            <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+              <NavatarCard
+                nav={n}
+                owned={true}
+                activeId={active}
+                onGet={() => {}}
+                onUse={onUse}
+              />
+              {user && (
+                <button
+                  onClick={() => setListingFor(n.id)}
+                  style={{ padding: '6px 10px', borderRadius: 8 }}
+                >
+                  List for sale
+                </button>
+              )}
+            </div>
           ))}
         </div>
+      )}
+      {listingFor && user && (
+        <ListNavatarModal
+          navatarId={listingFor}
+          sellerUserId={user.id}
+          onClose={() => setListingFor(undefined)}
+          onListed={async () => {}}
+        />
       )}
     </div>
   );
