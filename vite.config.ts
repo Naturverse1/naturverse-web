@@ -60,8 +60,8 @@ export default defineConfig({
       ],
     }),
   ],
-  // Use a relative base so assets resolve on Netlify permalinks and production
-  base: './',
+  // Use a root base so assets resolve from the site root
+  base: '/',
   envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
     alias: {
