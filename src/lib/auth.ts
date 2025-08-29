@@ -1,67 +1,45 @@
 import { createClient } from '@supabase/supabase-js';
-import { VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, VITE_ALLOW_PREVIEW_AUTH } from './env';
-import { getHost, isPreviewHost, isProdHost } from './hosts';
-
-let _client: ReturnType<typeof createClient> | null = null;
+import { CAN_SIGN_IN, SUPABASE_URL, SUPABASE_ANON_KEY } from './env';
 
 export function getSupabase() {
-  // In previews, allow auth only if explicitly enabled
-  if (isPreviewHost() && !VITE_ALLOW_PREVIEW_AUTH) return null;
-
-  if (!_client) {
-    if (!VITE_SUPABASE_URL || !VITE_SUPABASE_ANON_KEY) return null;
-    _client = createClient(VITE_SUPABASE_URL, VITE_SUPABASE_ANON_KEY, {
-      auth: {
-        // Build redirect URL dynamically; prod domain only
-        autoRefreshToken: true,
-        persistSession: true,
-        detectSessionInUrl: true,
-      },
-    });
+  if (!SUPABASE_URL || !SUPABASE_ANON_KEY) {
+    // In previews we allow the app to render without crashing
+    console.warn('[naturverse] Supabase env missing; auth disabled for this build.');
+    return null;
   }
-  return _client;
-}
-
-export function getOAuthRedirect(): string | undefined {
-  const host = getHost();
-  if (isProdHost(host)) return `https://${host}/auth/callback`;
-  if (isPreviewHost(host) && VITE_ALLOW_PREVIEW_AUTH) return `https://${host}/auth/callback`;
-  return undefined; // previews disabled
+  return createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 }
 
 export async function signInWithGoogle() {
-  const supabase = getSupabase();
-  const redirectTo = getOAuthRedirect();
-  if (!supabase || !redirectTo) {
-    throw new Error('Sign-in is disabled on previews. Please open the production site.');
-  }
-  await supabase.auth.signInWithOAuth({
-    provider: 'google',
-    options: { redirectTo },
-  });
+  if (!CAN_SIGN_IN) return { error: new Error('Sign-in disabled for preview build') };
+  const sb = getSupabase();
+  if (!sb) return { error: new Error('Supabase unavailable in this build') };
+
+  // Redirect back to current host, works for prod & previews.
+  const redirectTo = `${window.location.origin}/auth/callback`;
+  return sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
 }
 
 export async function sendMagicLink(email: string) {
-  const supabase = getSupabase();
-  const redirectTo = getOAuthRedirect();
-  if (!supabase || !redirectTo) {
-    throw new Error('Sign-in is disabled on previews. Please open the production site.');
-  }
-  return supabase.auth.signInWithOtp({
+  if (!CAN_SIGN_IN) return { error: new Error('Sign-in disabled for preview build') };
+  const sb = getSupabase();
+  if (!sb) return { error: new Error('Supabase unavailable in this build') };
+  const redirectTo = `${window.location.origin}/auth/callback`;
+  return sb.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: redirectTo },
   });
 }
 
 export async function getUser() {
-  const supabase = getSupabase();
-  if (!supabase) return null;
-  const { data } = await supabase.auth.getUser();
+  const sb = getSupabase();
+  if (!sb) return null;
+  const { data } = await sb.auth.getUser();
   return data.user;
 }
 
 export async function signOut() {
-  const supabase = getSupabase();
-  if (!supabase) return;
-  await supabase.auth.signOut();
+  const sb = getSupabase();
+  if (!sb) return;
+  await sb.auth.signOut();
 }

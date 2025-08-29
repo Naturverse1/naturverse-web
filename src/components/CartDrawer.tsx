@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useCart } from "@/lib/cart";
 import { getShareLink } from "@/lib/cartShare";
 import { PRODUCT_IMG } from "@/data/productImages";
+import { stripePromise } from '@/lib/stripe';
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, setQty, removeFromCart, clearCart, totalCents } = useCart();
@@ -20,9 +21,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
       body: JSON.stringify({ items: items.map((i) => ({ id: i.id, qty: i.qty })) }),
     });
     const { id, url } = await res.json();
-    const stripe = await (await import("@stripe/stripe-js")).loadStripe(
-      import.meta.env.VITE_STRIPE_PK
-    );
+    const stripe = await stripePromise;
     if (stripe && id) await stripe.redirectToCheckout({ sessionId: id });
     else if (url) location.href = url;
   }

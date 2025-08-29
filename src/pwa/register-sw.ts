@@ -1,20 +1,19 @@
-import { isPreviewHost } from '@/lib/hosts';
-import { VITE_ENABLE_PWA } from '@/lib/env';
+import { IS_NETLIFY_PREVIEW } from '@/lib/env';
 
-export async function registerPWA() {
-  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) return;
-  if (!VITE_ENABLE_PWA) return;
+export function registerPWA() {
+  if (!('serviceWorker' in navigator)) return;
 
-  if (isPreviewHost()) {
-    // Unregister any stray SW from a prior visit
-    const regs = await navigator.serviceWorker.getRegistrations();
-    await Promise.all(regs.map(r => r.unregister()));
+  // Don’t register on Netlify previews; do unregister if one exists.
+  if (IS_NETLIFY_PREVIEW) {
+    navigator.serviceWorker.getRegistrations?.().then((regs) =>
+      regs.forEach((r) => r.unregister())
+    );
     return;
   }
 
-  try {
-    await navigator.serviceWorker.register('/sw.js');
-  } catch {
-    // ignore
-  }
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js').catch((e) =>
+      console.warn('[naturverse] SW register failed', e)
+    );
+  });
 }

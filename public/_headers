@@ -1,75 +1,12 @@
 /*
-  X-Frame-Options: SAMEORIGIN
+  X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  Cache-Control: public, max-age=31536000, immutable
   Referrer-Policy: strict-origin-when-cross-origin
-  Strict-Transport-Security: max-age=31536000; includeSubDomains; preload
-  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
   Content-Security-Policy: default-src 'self';
-    script-src 'self' 'unsafe-inline' plausible.io https://js.stripe.com;
-    connect-src 'self' https://*.supabase.co https://*.supabase.in https://api.stripe.com https://plausible.io;
-    img-src 'self' data: https://*.stripe.com https://*.supabase.co;
+    script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.supabase.co https://plausible.io;
+    connect-src 'self' https://api.stripe.com https://*.supabase.co https://*.supabase.in https://plausible.io https://*.plausible.io;
+    img-src 'self' data: https:;
+    style-src 'self' 'unsafe-inline';
     frame-src https://js.stripe.com https://hooks.stripe.com;
-
-/*.html
-  Content-Type: text/html; charset=UTF-8
-  Cache-Control: no-cache
-
-/fonts/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/assets/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/favicon-*.png
-  Cache-Control: public, max-age=604800, immutable
-
-/sitemap.xml
-  Content-Type: application/xml; charset=utf-8
-  Cache-Control: public, max-age=86400
-
-/robots.txt
-  Content-Type: text/plain; charset=utf-8
-  Cache-Control: public, max-age=86400
-
-  /workbox-*.js
-    Cache-Control: public, max-age=31536000, immutable
-
-  /manifest.webmanifest
-    Content-Type: application/manifest+json; charset=utf-8
-    Cache-Control: no-cache
-
-/404.html
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: text/html; charset=utf-8
-
-/healthz.json
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: application/json; charset=utf-8
-
-/.well-known/security.txt
-  Cache-Control: public, max-age=86400
-  Content-Type: text/plain; charset=utf-8
-
-/manifest.json
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: application/json; charset=utf-8
-
-/sw.js
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: application/javascript; charset=utf-8
-
-/contact-success.html
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: text/html; charset=utf-8
-
-/images/*
-  Cache-Control: public, max-age=31536000, immutable
-
-/*
-  Link: </worlds>; rel=prefetch, </zones>; rel=prefetch
-
-
-/offline.html
-  Cache-Control: no-cache, no-store, must-revalidate
-  Content-Type: text/html; charset=utf-8
+    object-src 'none';
+  Cache-Control: public, max-age=300

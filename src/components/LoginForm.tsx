@@ -62,13 +62,13 @@ export default function LoginForm() {
     }
     setStatus('sending');
     setMessage(null);
-    try {
-      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
-      await signInWithGoogle();
-      setStatus('idle');
-    } catch (err: any) {
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+    const { error } = await signInWithGoogle();
+    if (error) {
       setStatus('error');
-      setMessage(err?.message ?? 'OAuth sign-in failed.');
+      setMessage(error.message ?? 'OAuth sign-in failed.');
+    } else {
+      setStatus('idle');
     }
   }
 

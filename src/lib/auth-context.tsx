@@ -40,21 +40,15 @@ export function AuthProvider({
       return;
     }
     sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
-    try {
-      await sendMagicLink(email);
-      alert('Check your inbox for the sign-in link ✉️');
-    } catch (err) {
-      alert((err as { message: string }).message);
-    }
+    const { error } = await sendMagicLink(email);
+    if (error) alert(error.message);
+    else alert('Check your inbox for the sign-in link ✉️');
   };
 
   const signInWithGoogle = async () => {
     sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
-    try {
-      await startGoogleOAuth();
-    } catch (err) {
-      alert((err as { message: string }).message);
-    }
+    const { error } = await startGoogleOAuth();
+    if (error) alert(error.message);
   };
 
   const signOut = async () => {

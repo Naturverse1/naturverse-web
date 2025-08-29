@@ -29,19 +29,16 @@ export default function AuthModal({
     setBusy(true);
     setErr(null);
     setMsg(null);
-    try {
-      if (!supabase) {
-        alert('Sign-in is unavailable in this preview. Please use production.');
-        return;
-      }
-      sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
-      await sendMagicLink(email.trim());
-      setMsg(successMessage);
-    } catch (e: any) {
-      setErr(e?.message ?? 'Sign-in failed.');
-    } finally {
+    if (!supabase) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
       setBusy(false);
+      return;
     }
+    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+    const { error } = await sendMagicLink(email.trim());
+    if (error) setErr(error.message ?? 'Sign-in failed.');
+    else setMsg(successMessage);
+    setBusy(false);
   }
 
   return (

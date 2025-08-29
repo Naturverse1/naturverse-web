@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { UPSELLS } from "@/lib/upsell";
+import { stripePromise } from '@/lib/stripe';
 
 export default function CheckoutBanner() {
   const [msg, setMsg] = useState<string | null>(null);
@@ -24,7 +25,7 @@ export default function CheckoutBanner() {
       body: JSON.stringify({ items: [{ id: offer.sku, qty: 1 }], returnPath: "/" })
     });
     const { id } = await res.json();
-    const stripe = await (await import("@stripe/stripe-js")).loadStripe(import.meta.env.VITE_STRIPE_PK);
+    const stripe = await stripePromise;
     await stripe?.redirectToCheckout({ sessionId: id });
   }
 
