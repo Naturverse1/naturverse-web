@@ -7,6 +7,7 @@ import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
 import SearchBar from './SearchBar';
 import { useSupabase } from '@/lib/useSupabase';
+import WalletConnect from './WalletConnect';
 
 export default function SiteHeader() {
   const supabase = useSupabase();
@@ -109,6 +110,7 @@ export default function SiteHeader() {
             <SearchBar />
           </div>
           <AuthButton />
+          <WalletConnect />
           <CartBadge />
           <button
             className={`nv-menu-btn${open ? ' is-open' : ''}`}
