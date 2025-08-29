@@ -13,7 +13,7 @@ import ProductPage from './pages/marketplace/[sku]';
 import CartLoad from './pages/cart-load';
 import QuestsList from './pages/quests';
 import NewQuest from './pages/quests/new';
-import QuestDetail from './pages/quests/[slug]';
+import QuestDetail from './pages/quests/[id]';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -76,7 +76,7 @@ export const router = createBrowserRouter([
       { path: 'c/:code', element: <CartLoad /> },
       { path: 'quests', element: <QuestsList /> },
       { path: 'quests/new', element: <NewQuest /> },
-      { path: 'quests/:slug', element: <QuestDetail /> },
+      { path: 'quests/:id', element: <QuestDetail /> },
       {
         path: 'naturversity',
         element: <NaturversityLayout />,

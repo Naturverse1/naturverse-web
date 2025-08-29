@@ -1,0 +1,44 @@
+[
+  {
+    "id": "quest-breath-1",
+    "title": "Breath: Box Breathing",
+    "summary": "Slow your system in 4 steady counts.",
+    "tags": ["breathwork","starter","calm"],
+    "body": "Inhale 4 • Hold 4 • Exhale 4 • Hold 4. Repeat 4–6 cycles. Focus on the corners of a square."
+  },
+  {
+    "id": "quest-breath-2",
+    "title": "Breath: 4-7-8 Reset",
+    "summary": "Quick nervous system downshift.",
+    "tags": ["breathwork","sleep","relax"],
+    "body": "Inhale 4 • Hold 7 • Exhale 8. Do 4 cycles; keep tongue on the roof of mouth, exhale softly."
+  },
+  {
+    "id": "quest-focus-1",
+    "title": "Focus: 3-minute Tab Triage",
+    "summary": "Micro-reset your attention.",
+    "tags": ["focus","productivity"],
+    "body": "Set a 3-minute timer. Close 3 tabs. Pick 1 task. Commit: ‘Just the next 10 minutes’."
+  },
+  {
+    "id": "quest-ground-1",
+    "title": "Ground: Five Senses Scan",
+    "summary": "Return to the room in 60 seconds.",
+    "tags": ["grounding","anxiety","starter"],
+    "body": "Name 5 things you see, 4 you feel, 3 you hear, 2 you smell, 1 you taste."
+  },
+  {
+    "id": "quest-energy-1",
+    "title": "Energy: 20-20-20 Walk",
+    "summary": "Mood + creativity booster.",
+    "tags": ["energy","movement","sunlight"],
+    "body": "Walk 20 minutes; the first 20 outside if possible; last 20 seconds: 6 deep breaths."
+  },
+  {
+    "id": "quest-sleep-1",
+    "title": "Sleep: Digital Sunset",
+    "summary": "Wind-down that actually works.",
+    "tags": ["sleep","evening","routine"],
+    "body": "Pick a ‘screens-off’ time 60–90 mins before bed. Set warm lights, cue calm audio, write tomorrow’s top 3."
+  }
+]
