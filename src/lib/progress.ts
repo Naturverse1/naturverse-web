@@ -57,11 +57,14 @@ export function localUnlockZone(userId: string, slug: string) {
   } catch {}
 }
 
-type QuestProgress = Record<string, {
-  status: 'new' | 'started' | 'completed';
-  score: number;
-  updatedAt: string;
-}>;
+type QuestProgress = Record<
+  string,
+  {
+    status: 'new' | 'started' | 'completed';
+    score: number;
+    updatedAt: string;
+  }
+>;
 
 function readQuestLocal(): QuestProgress {
   try {
@@ -89,18 +92,16 @@ export async function saveProgress(
   if (supabase) {
     const { data: user } = await supabase.auth.getUser();
     if (user?.user) {
-      await supabase
-        .from('quest_progress')
-        .upsert(
-          {
-            user_id: user.user.id,
-            quest_slug: slug,
-            score,
-            status,
-            updated_at: now,
-          },
-          { onConflict: 'user_id,quest_slug' },
-        );
+      await supabase.from('quest_progress').upsert(
+        {
+          user_id: user.user.id,
+          quest_slug: slug,
+          score,
+          status,
+          updated_at: now,
+        },
+        { onConflict: 'user_id,quest_slug' },
+      );
     }
   }
 }
@@ -110,3 +111,6 @@ export function getProgress(slug: string) {
   return state[slug] ?? { status: 'new' as const, score: 0, updatedAt: '' };
 }
 
+export function getAllProgress() {
+  return JSON.parse(localStorage.getItem(QUEST_LS_KEY) || '{}') as Record<string, any>;
+}

@@ -3,7 +3,7 @@ import { Link } from 'react-router-dom';
 import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
-import MiniQuests from '../components/MiniQuests';
+import MiniQuestSection from '../components/miniquests/MiniQuestSection';
 import SearchBox from '../components/SearchBox';
 
 export default function Home() {
@@ -26,7 +26,10 @@ export default function Home() {
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
                 if (email) {
-                  sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+                  sessionStorage.setItem(
+                    'post-auth-redirect',
+                    window.location.pathname + window.location.search,
+                  );
                   await sendMagicLink(email);
                 }
               }}
@@ -37,7 +40,10 @@ export default function Home() {
               type="button"
               className={styles.cta}
               onClick={async () => {
-                sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
+                sessionStorage.setItem(
+                  'post-auth-redirect',
+                  window.location.pathname + window.location.search,
+                );
                 await signInWithGoogle();
               }}
             >
@@ -48,13 +54,23 @@ export default function Home() {
       </section>
 
       <div className="nv-what">
-        <span role="img" aria-label="sparkles">✨</span>
+        <span role="img" aria-label="sparkles">
+          ✨
+        </span>
         <strong> What’s New</strong>
-        <span> Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy is live ✅</span>
+        <span>
+          {' '}
+          Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy is
+          live ✅
+        </span>
       </div>
 
       <div className="nv-home-tools">
-        <SearchBox onFocus={() => document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))} />
+        <SearchBox
+          onFocus={() =>
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+          }
+        />
       </div>
 
       {/* Top feature tiles — text centered */}
@@ -96,7 +112,7 @@ export default function Home() {
         </ClickableCard>
       </section>
 
-      <MiniQuests />
+      <MiniQuestSection />
 
       {/* Bottom flow — text left-aligned */}
       <section className={styles.flowWrap}>
@@ -128,13 +144,11 @@ export default function Home() {
               <>
                 <Link to="/worlds" className={styles.flowLink}>
                   Worlds
-                </Link>
-                {' '}
+                </Link>{' '}
                 ·{' '}
                 <Link to="/zones" className={styles.flowLink}>
                   Zones
-                </Link>
-                {' '}
+                </Link>{' '}
                 ·{' '}
                 <Link to="/marketplace" className={styles.flowLink}>
                   Marketplace
