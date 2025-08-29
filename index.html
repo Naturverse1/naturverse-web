@@ -1,7 +1,7 @@
 <!doctype html>
 <html lang="en">
     <head>
-      <!-- Make all asset URLs root-relative (fixes /auth/* loading /auth/assets/...) -->
+      <!-- Make all asset URLs resolve from site root so /auth/* doesn't try /auth/assets/... -->
       <base href="/" />
       <meta charset="UTF-8" />
     <script src="/kill-sw.js?v=2" defer></script>
@@ -9,7 +9,7 @@
       // Vite replaces %VITE_ENABLE_PWA% at build-time
       window.__NV_PWA_ENABLED__ = "%VITE_ENABLE_PWA%" === "true";
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Naturverse</title>
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
