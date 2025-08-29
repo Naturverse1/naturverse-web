@@ -36,7 +36,11 @@ export default function LoginForm() {
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
-    if (!email || !supabase) return;
+    if (!email) return;
+    if (!supabase) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
+      return;
+    }
     setStatus('sending');
     setMessage(null);
     try {
@@ -52,7 +56,10 @@ export default function LoginForm() {
   }
 
   async function handleGoogleLogin() {
-    if (!supabase) return;
+    if (!supabase) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
+      return;
+    }
     setStatus('sending');
     setMessage(null);
     try {

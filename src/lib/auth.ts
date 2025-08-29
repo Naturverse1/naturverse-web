@@ -21,17 +21,17 @@ export function buildProdFinishUrl(returnTo?: string) {
 }
 
 export async function sendMagicLink(email: string) {
-  return supabase.auth.signInWithOtp({
+  return supabase!.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: buildProdFinishUrl(currentUrl()) },
   });
 }
 
 export async function getUser() {
-  const { data } = await supabase.auth.getUser();
+  const { data } = await supabase!.auth.getUser();
   return data.user;
 }
 
 export async function signOut() {
-  await supabase.auth.signOut();
+  await supabase!.auth.signOut();
 }

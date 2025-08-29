@@ -3,12 +3,14 @@ import { Link } from 'react-router-dom';
 import { sendMagicLink } from '@/lib/auth';
 import { signInWithGoogle } from '@/lib/supabase-client';
 import { useAuth } from '@/lib/auth-context';
+import { useSupabase } from '@/lib/useSupabase';
 import ClickableCard from '@/components/ClickableCard';
 import MiniQuestSection from '../components/miniquests/MiniQuestSection';
 import SearchBox from '../components/SearchBox';
 
 export default function Home() {
   const { user } = useAuth();
+  const supabase = useSupabase();
   const isAuthed = !!user;
 
   return (
@@ -26,7 +28,9 @@ export default function Home() {
               className={styles.cta}
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) {
+                if (!supabase) {
+                  alert('Sign-in is unavailable in this preview. Please use production.');
+                } else if (email) {
                   sessionStorage.setItem(
                     'post-auth-redirect',
                     window.location.pathname + window.location.search,
@@ -41,11 +45,15 @@ export default function Home() {
               type="button"
               className={styles.cta}
               onClick={async () => {
-                sessionStorage.setItem(
-                  'post-auth-redirect',
-                  window.location.pathname + window.location.search,
-                );
-                await signInWithGoogle();
+                if (!supabase) {
+                  alert('Sign-in is unavailable in this preview. Please use production.');
+                } else {
+                  sessionStorage.setItem(
+                    'post-auth-redirect',
+                    window.location.pathname + window.location.search,
+                  );
+                  await signInWithGoogle();
+                }
               }}
             >
               Continue with Google

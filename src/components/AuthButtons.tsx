@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { sendMagicLink } from '@/lib/auth';
 import { signInWithGoogle } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -10,11 +11,16 @@ type Props = {
 };
 
 export default function AuthButtons({ cta = "Create account", variant="solid", size="lg", className="" }: Props) {
+  const supabase = useSupabase();
   const [loading, setLoading] = useState<"ml"|"google"|"">("");
 
   const signInWithMagicLink = async () => {
     const email = window.prompt("Enter your email to receive a sign-in link")?.trim();
     if (!email) return;
+    if (!supabase) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
+      return;
+    }
     setLoading("ml");
     sessionStorage.setItem("post-auth-redirect", window.location.pathname + window.location.search);
     const { error } = await sendMagicLink(email);
@@ -24,6 +30,10 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
   };
 
   const signInGoogle = async () => {
+    if (!supabase) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
+      return;
+    }
     setLoading("google");
     sessionStorage.setItem("post-auth-redirect", window.location.pathname + window.location.search);
     await signInWithGoogle();
