@@ -4,7 +4,7 @@ import type { User } from '@supabase/supabase-js';
 import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
-import CartBadge from './CartBadge';
+import CartButton from './CartButton';
 import SearchBar from './SearchBar';
 import { useSupabase } from '@/lib/useSupabase';
 import WalletConnect from './WalletConnect';
@@ -118,7 +118,7 @@ export default function SiteHeader() {
           </div>
           <AuthButton />
           <WalletConnect />
-          <CartBadge />
+          <CartButton />
           <button
             className={`nv-menu-btn${open ? ' is-open' : ''}`}
             aria-label="Open menu"

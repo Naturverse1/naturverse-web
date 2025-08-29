@@ -1,5 +1,6 @@
 import { Link } from 'react-router-dom'
 import styles from './Header.module.css'
+import CartButton from './CartButton'
 import { useAuth } from '../hooks/useAuth'
 import { useEffect, useState } from 'react'
 import { getActive } from '../lib/navatar'
@@ -52,7 +53,7 @@ export default function Header() {
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/passport">Passport</Link>
           <Link to="/turian">Turian</Link>
-          <Link to="/cart" aria-label="Cart">🛒</Link>
+          <CartButton />
         </nav>
       )}
     </header>
