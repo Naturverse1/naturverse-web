@@ -19,6 +19,7 @@ import './components/skeleton.css';
 import NetworkBanner from './components/NetworkBanner';
 import './components/network.css';
 import SearchProvider from './search/SearchProvider';
+import CheckoutBanner from './components/CheckoutBanner';
 
 export default function App() {
   useEffect(() => {
@@ -31,6 +32,7 @@ export default function App() {
           {/* Keyboard-accessible jump link (first focusable on the page) */}
           <SkipLink />
           <NetworkBanner />
+          <CheckoutBanner />
 
           {/* Convert content wrapper into the "main" landmark and jump target */}
           <main
