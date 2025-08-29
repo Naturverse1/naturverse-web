@@ -2,6 +2,7 @@ import React from "react";
 import NVImage from "../utils/NVImage";
 import { toggleWish, isWished } from "../utils/wishlist";
 import "./market.css";
+import { checkout } from "../lib/stripeCheckout";
 
 type Props = {
   id: string;
@@ -24,6 +25,27 @@ export default function ProductCard(p: Props) {
   }
 
   const url = `/marketplace/${p.slug}`;
+
+  async function onBuy() {
+    try {
+      await checkout(
+        [
+          {
+            price_data: {
+              currency: "usd",
+              unit_amount: p.price * 100,
+              product_data: { name: p.name, description: p.summary },
+            },
+            quantity: 1,
+            metadata: { product: p.id },
+          },
+        ],
+        { metadata: { feature: "marketplace" } }
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }
 
   return (
     <article className="product">
@@ -63,6 +85,7 @@ export default function ProductCard(p: Props) {
         <p className="product__summary">{p.summary}</p>
         <div className="product__actions">
           <a className="btn" href={url}>View</a>
+          <button className="btn ghost" onClick={onBuy}>Buy</button>
         </div>
       </div>
     </article>
