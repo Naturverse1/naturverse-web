@@ -41,6 +41,7 @@ import Contact from './pages/Contact';
 import Accessibility from './pages/Accessibility';
 import About from './pages/About';
 import SearchPage from './pages/search';
+import AdminLogs from './pages/admin/logs';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
@@ -108,6 +109,7 @@ export const router = createBrowserRouter([
       { path: 'login', element: <LoginPage /> },
       { path: 'turian', element: <Turian /> },
       { path: 'profile', element: <ProfilePage /> },
+      { path: 'admin/logs', element: <AdminLogs /> },
       { path: '404', element: <NotFound /> },
       { path: '*', element: <NotFound /> },
     ],
