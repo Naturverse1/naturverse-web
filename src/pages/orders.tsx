@@ -29,6 +29,51 @@ type Order = {
   line_items: { product?: string; description?: string; quantity?: number; amount_total?: number }[];
 };
 
+function Timeline({ orderId }: { orderId: string }) {
+  const [events, setEvents] = useState<any[]>([]);
+  useEffect(() => {
+    (async () => {
+      const { data } = await supabase
+        .from('order_events').select('*')
+        .eq('order_id', orderId).order('created_at', { ascending: true });
+      setEvents(data || []);
+    })();
+  }, [orderId]);
+
+  const eta = (() => {
+    const shipped = events.find(e => e.status === 'shipped')?.created_at;
+    if (!shipped) return null;
+    const d = new Date(shipped); d.setDate(d.getDate() + 5);
+    return d.toLocaleDateString();
+  })();
+
+  return (
+    <div className="timeline">
+      {events.map(e => (
+        <div key={e.id} className={`tl-item ${e.status}`}>
+          <div className="dot" />
+          <div className="txt">
+            <strong>{e.status.toUpperCase()}</strong>
+            <div className="muted">{new Date(e.created_at).toLocaleString()}</div>
+            {e.note && <div>{e.note}</div>}
+          </div>
+        </div>
+      ))}
+      {eta && <div className="eta">Estimated delivery: <strong>{eta}</strong></div>}
+      <style>{`
+        .timeline{margin-top:8px;border-left:2px solid #e5e7eb;padding-left:10px;display:grid;gap:8px}
+        .tl-item{position:relative;padding-left:8px}
+        .tl-item .dot{position:absolute;left:-12px;top:6px;width:10px;height:10px;border-radius:50%;background:#9ca3af}
+        .tl-item.placed .dot{background:#60a5fa}
+        .tl-item.packed .dot{background:#f59e0b}
+        .tl-item.shipped .dot{background:#10b981}
+        .tl-item.delivered .dot{background:#a855f7}
+        .eta{margin-top:6px;font-size:.9rem;color:#111827}
+      `}</style>
+    </div>
+  );
+}
+
 export default function OrdersPage() {
   setTitle('Orders');
   const { ready, user } = useAuth();
@@ -84,6 +129,7 @@ export default function OrdersPage() {
                 );
               })}
             </ul>
+            <Timeline orderId={o.id} />
           </li>
         ))}
       </ul>

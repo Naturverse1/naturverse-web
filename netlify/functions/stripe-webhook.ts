@@ -65,6 +65,22 @@ export const handler: Handler = async (event) => {
       const { error } = await supabase.from("orders").upsert(record, { onConflict: "stripe_session_id" });
       if (error) console.error("orders upsert error", error);
 
+      await supabase.from("order_events").insert({
+        order_id: (await supabase.from("orders").select("id").eq("stripe_session_id", session.id).single()).data?.id,
+        status: "placed",
+        note: "Payment confirmed",
+      });
+
+      if (session.metadata?.kind === "gift_card") {
+        const amount = parseInt(session.metadata.amount_cents || "0", 10) || (session.amount_total ?? 0);
+        const code = Math.random().toString(36).slice(2, 10).toUpperCase();
+        await supabase.from("gift_cards").insert({
+          code,
+          balance_cents: amount,
+          purchaser_email: session.customer_details?.email ?? session.metadata?.purchaser_email ?? null,
+        });
+      }
+
       // Prepare short-lived signed URLs for DIGITAL goods (48h) — optional
       const downloadLinks: { sku: string; url: string }[] = [];
       for (const li of line_items) {

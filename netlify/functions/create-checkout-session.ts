@@ -28,6 +28,7 @@ export const handler: Handler = async (event) => {
     metadata?: Record<string, string>;
     returnPath?: string;
     customer_email?: string;
+    coupon_id?: string;
   };
 
   // Resolve user from Supabase token (optional)
@@ -74,6 +75,10 @@ export const handler: Handler = async (event) => {
   if (applicable) {
     const couponId = process.env[applicable.couponEnv] as string | undefined;
     if (couponId) discounts = [{ coupon: couponId }];
+  }
+
+  if (body.coupon_id) {
+    discounts = [...(discounts || []), { coupon: body.coupon_id }];
   }
 
   const session = await stripe.checkout.sessions.create({

@@ -8,6 +8,7 @@ export async function startCheckout(params: {
   metadata?: Record<string, string>;
   allowPromotionCodes?: boolean;
   returnPath?: string; // e.g. '/marketplace'
+  couponId?: string;
 }) {
   const items = params.items.map((it) => ({ id: it.id, qty: it.qty }));
 
@@ -26,6 +27,7 @@ export async function startCheckout(params: {
       metadata: params.metadata,
       returnPath: params.returnPath || "/",
       customer_email: params.email,
+      coupon_id: params.couponId,
     }),
   });
 
