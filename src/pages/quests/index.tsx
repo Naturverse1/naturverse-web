@@ -1,6 +1,7 @@
 import React from "react";
 import "../../components/market.css";
 import { fetchAllQuests } from "../../lib/questsApi";
+import QuestSearch from "@/components/QuestSearch";
 
 export default function QuestsList() {
   const [quests, setQuests] = React.useState<any[]>([]);
@@ -21,6 +22,8 @@ export default function QuestsList() {
     <main style={{ maxWidth: 1100, margin: "24px auto", padding: "0 20px" }}>
       <h1>Mini-Quests</h1>
       <p style={{ opacity:.8, marginTop:0 }}>Small, focused adventures you can do anywhere.</p>
+
+      <QuestSearch />
 
       <div style={{ display:"flex", gap:10, margin:"12px 0 18px" }}>
         <a className="btn" href="/quests/new">Create a quest</a>

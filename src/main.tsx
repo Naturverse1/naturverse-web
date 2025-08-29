@@ -25,6 +25,7 @@ import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
+import { installGlobalLogCapture } from '@/lib/log';
 
 function unregisterStaleSW() {
   if (location.hostname.endsWith('.netlify.app') && 'serviceWorker' in navigator) {
@@ -36,6 +37,7 @@ function unregisterStaleSW() {
 
 applyTheme(getTheme());
 unregisterStaleSW();
+installGlobalLogCapture();
 // Skip service worker registration on Netlify preview hosts
 if (location.hostname.endsWith('.netlify.app')) {
   console.info('[Naturverse] Preview host — skipping SW registration');

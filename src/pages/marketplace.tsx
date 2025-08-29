@@ -1,12 +1,26 @@
+import { useEffect, useMemo } from "react";
 import { PRODUCTS } from "../data/products";
 import { addToCart } from "../lib/cart";
 import RecentCarousel from "@/components/RecentCarousel";
 import { getStock, isDigital } from "@/data/inventory";
+import { assign, expose, convert } from "@/lib/exp";
 
 export default function Marketplace() {
+  const variant = useMemo(() => assign("market_cta", ["classic","spicy","zen"], [1,1,1]), []);
+  useEffect(() => { expose("market_cta", variant); }, [variant]);
+
+  const ctaText =
+    variant === "spicy" ? "🔥 Level up now"
+    : variant === "zen" ? "🧘 Begin your journey"
+    : "Shop marketplace";
+
   return (
     <main>
-      <section className="grid">
+      <h1>Marketplace</h1>
+      <a className="btn primary" href="#items" onClick={() => convert("market_cta", variant, { click: true })}>
+        {ctaText}
+      </a>
+      <section className="grid" id="items">
         {PRODUCTS.map((p) => {
           const s = getStock(p.id);
           const qty = s?.qty ?? 0;
