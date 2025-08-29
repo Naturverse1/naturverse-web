@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { useSupabase } from '@/lib/useSupabase';
 import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/supabase-client';
+import { signInWithGoogle } from '@/lib/auth';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 

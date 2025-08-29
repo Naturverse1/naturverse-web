@@ -2,7 +2,7 @@ import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User, AuthChangeEvent } from '@supabase/supabase-js';
 import { useSupabase } from './useSupabase';
 import { sendMagicLink } from './auth';
-import { signInWithGoogle as startGoogleOAuth } from './supabase-client';
+import { signInWithGoogle as startGoogleOAuth } from './auth';
 
 type Ctx = {
   ready: boolean;

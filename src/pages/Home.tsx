@@ -1,7 +1,7 @@
 import styles from './Home.module.css';
 import { Link } from 'react-router-dom';
 import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/supabase-client';
+import { signInWithGoogle } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import { useSupabase } from '@/lib/useSupabase';
 import ClickableCard from '@/components/ClickableCard';
