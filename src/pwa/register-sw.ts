@@ -1,6 +1,7 @@
 import { IS_NETLIFY_PREVIEW } from '@/lib/env';
 
 export function registerPWA() {
+  // Avoid registering on the auth callback route to prevent PWA prompts
   if (location.pathname === '/auth/callback') return;
   if (!('serviceWorker' in navigator)) return;
 
