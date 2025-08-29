@@ -10,6 +10,7 @@ import ZonesExplorer from './pages/ZonesExplorer';
 import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
 import ProductPage from './pages/marketplace/[slug]';
+import NavatarMarketplacePage from './pages/marketplace/navatar';
 import CartPage from './pages/cart';
 import WishlistPage from './pages/wishlist';
 import QuestsList from './pages/quests';
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
         path: 'marketplace',
         children: [
           { index: true, element: <MarketplacePage /> },
+          { path: 'navatar', element: <NavatarMarketplacePage /> },
           { path: ':slug', element: <ProductPage /> },
         ],
       },
