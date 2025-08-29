@@ -1,2 +1,5 @@
-export { supabase, getSupabase, signInWithGoogle } from './auth';
+import { getSupabase } from './auth';
 
+export const supabase = getSupabase()!;
+
+export { getSupabase };

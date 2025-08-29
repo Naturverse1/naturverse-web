@@ -129,23 +129,6 @@
     <script type="module" src="/src/main.tsx"></script>
 
 
-    <!-- Register service worker (gated) -->
-    <script>
-      (function () {
-        if (!("serviceWorker" in navigator)) return;
-        if (!window.__NV_PWA_ENABLED__) {
-          console.info("[PWA] Disabled via VITE_ENABLE_PWA");
-          return;
-        }
-        window.addEventListener("load", () => {
-          navigator.serviceWorker
-            .register("/sw.js")
-            .then(() => console.info("[PWA] service worker registered"))
-            .catch((err) => console.error("[PWA] registration failed", err));
-        });
-      })();
-    </script>
-
     <!-- Install prompt banner (hidden until beforeinstallprompt) -->
     <style>
       #nv-install {

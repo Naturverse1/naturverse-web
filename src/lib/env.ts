@@ -1,11 +1,8 @@
-export const VITE_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
-export const VITE_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+export const VITE_SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string | undefined;
+export const VITE_SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY as string | undefined;
 
-// Allow previews to sign in (default true)
-export const VITE_ALLOW_PREVIEW_SIGNIN =
-  (import.meta.env.VITE_ALLOW_PREVIEW_SIGNIN ?? 'true').toString().toLowerCase() !== 'false';
+export const STRIPE_PK = import.meta.env.VITE_STRIPE_PK as string | undefined;
 
-// tiny host helpers
-export const isPreviewHost = () => typeof location !== 'undefined' && /\.netlify\.app$/i.test(location.hostname);
-export const currentOrigin = () =>
-  typeof location !== 'undefined' ? location.origin : (globalThis as any)?.ORIGIN ?? '';
+// Optional flags you already set; safe defaults if absent
+export const VITE_ENABLE_PWA = (import.meta.env.VITE_ENABLE_PWA ?? 'true') === 'true';
+export const VITE_ALLOW_PREVIEW_AUTH = (import.meta.env.VITE_ALLOW_PREVIEW_AUTH ?? 'false') === 'true';

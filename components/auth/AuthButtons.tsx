@@ -1,11 +1,8 @@
 'use client';
 import { useState } from 'react';
-import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/auth';
-import { useSupabase } from '@/lib/useSupabase';
+import { sendMagicLink, getSupabase, getOAuthRedirect } from '@/lib/auth';
 
 export default function AuthButtons() {
-  const supabase = useSupabase();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -13,7 +10,9 @@ export default function AuthButtons() {
   async function handleMagicLink(e: React.FormEvent) {
     e.preventDefault();
     if (!email) return;
-    if (!supabase) {
+    const supabase = getSupabase();
+    const redirectTo = getOAuthRedirect();
+    if (!supabase || !redirectTo) {
       alert('Sign-in is unavailable in this preview. Please use production.');
       return;
     }
@@ -25,7 +24,16 @@ export default function AuthButtons() {
   }
 
   async function signInGoogle() {
-    await signInWithGoogle();
+    const supabase = getSupabase();
+    const redirectTo = getOAuthRedirect();
+    if (!supabase || !redirectTo) {
+      alert('Sign-in is unavailable in this preview. Please use production.');
+      return;
+    }
+    await supabase.auth.signInWithOAuth({
+      provider: 'google',
+      options: { redirectTo }
+    });
   }
 
   return (
