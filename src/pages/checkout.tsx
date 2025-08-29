@@ -8,6 +8,61 @@ import type {
 } from "@stripe/stripe-js";
 import { startCheckout } from "@/lib/checkout";
 
+function Estimator({ items, subtotalCents }: { items: any[]; subtotalCents: number }) {
+  const [country, setCountry] = React.useState("US");
+  const [zip, setZip] = React.useState("");
+  const [estimate, setEstimate] = React.useState<{
+    tax: number;
+    shipping: number;
+    total: number;
+  } | null>(null);
+
+  const hasPhysical = React.useMemo(
+    () => items.some((it) => /plushie|tshirt|sticker|journal/i.test(it.id || it.name)),
+    [items]
+  );
+
+  function calc() {
+    // super simple demo rules:
+    const taxRate = country === "US" ? 0.07 : 0.0; // pretend 7% US, 0% elsewhere (placeholder)
+    const shipping = hasPhysical ? (subtotalCents >= 5000 ? 0 : 600) : 0; // free >= $50, else $6
+    const tax = Math.round(subtotalCents * taxRate);
+    const total = subtotalCents + tax + shipping;
+    setEstimate({ tax, shipping, total });
+  }
+
+  return (
+    <div style={{ marginTop: 16, borderTop: "1px solid #e5e7eb", paddingTop: 12 }}>
+      <h3>Estimate tax & shipping</h3>
+      <div
+        style={{ display: "flex", gap: 8, flexWrap: "wrap", alignItems: "center" }}
+      >
+        <label>Country</label>
+        <select value={country} onChange={(e) => setCountry(e.target.value)}>
+          <option>US</option>
+          <option>CA</option>
+          <option>GB</option>
+          <option>AU</option>
+          <option>TH</option>
+        </select>
+        <label>ZIP/Postal</label>
+        <input value={zip} onChange={(e) => setZip(e.target.value)} placeholder="e.g. 94110" />
+        <button onClick={calc}>Estimate</button>
+      </div>
+      {estimate && (
+        <div style={{ marginTop: 8 }}>
+          <div>Tax: ${(estimate.tax / 100).toFixed(2)}</div>
+          <div>Shipping: ${(estimate.shipping / 100).toFixed(2)}</div>
+          <strong>Total: ${(estimate.total / 100).toFixed(2)}</strong>
+          <div style={{ fontSize: 12, opacity: 0.7, marginTop: 4 }}>
+            * Estimates only. Final amounts shown at payment.
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
 export default function CheckoutPage() {
   const { items, setQty, removeFromCart, totalCents } = useCart();
   const stripe = useStripe();
@@ -79,6 +134,7 @@ export default function CheckoutPage() {
         ))}
       </ul>
       <div>Subtotal ${(totalCents / 100).toFixed(2)}</div>
+      <Estimator items={items} subtotalCents={totalCents} />
       <button onClick={() => startCheckout({ items, returnPath: "/checkout" })}>
         Pay with card
       </button>

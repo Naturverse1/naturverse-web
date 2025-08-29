@@ -308,3 +308,15 @@
   color: var(--naturverse-blue);
   text-align: center;
 }
+
+.cart-drawer { position: fixed; inset: 0; z-index: 60; display:flex; }
+.cart-drawer .backdrop { flex:1; background: rgba(0,0,0,.25); animation: fadeIn .25s ease; }
+.cart-panel {
+  width: 380px; max-width: 100vw; height: 100%; background: #fff;
+  box-shadow: -16px 0 40px rgba(0,0,0,.18);
+  transform: translateX(420px);
+  /* springy slide */
+  transition: transform .36s cubic-bezier(.2,.8,.2,1.2);
+}
+.cart-panel--in { transform: translateX(0); }
+@keyframes fadeIn { from { opacity: 0 } to { opacity: 1 } }
