@@ -1,6 +1,8 @@
 // src/lib/progress.ts
 // Persists progress locally; syncs to Supabase when authed.
 
+import { queuePush, queueFlush } from './leaderboard';
+
 export type QuestProgress = { bestScore: number; completed: boolean; updatedAt: string };
 
 const key = (slug: string) => `nv:progress:${slug}`;
@@ -97,6 +99,32 @@ export async function getQuestCloudProgress(slug: string) {
     return merged;
   } catch {
     return null;
+  }
+}
+
+export async function postScore(questId: string, score: number) {
+  try {
+    const client = await getSupabase();
+    if (!client) {
+      queuePush({ questId, score });
+      return;
+    }
+    const { data: userRes } = await client.auth.getUser();
+    const user = userRes?.user;
+    if (!user) {
+      queuePush({ questId, score });
+      return;
+    }
+    await client
+      .from('quest_scores')
+      .upsert(
+        { user_id: user.id, quest_id: questId, score },
+        { onConflict: 'user_id,quest_id' },
+      );
+  } catch {
+    queuePush({ questId, score });
+  } finally {
+    queueFlush();
   }
 }
 

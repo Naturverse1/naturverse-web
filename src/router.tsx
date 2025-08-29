@@ -45,7 +45,7 @@ import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
 import MiniQuests from './pages/MiniQuests';
-import PlayQuest from './pages/play/[quest]';
+import PlayQuest from './pages/play/[slug]';
 
 export const router = createBrowserRouter([
   {

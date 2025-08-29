@@ -1,13 +1,16 @@
 // src/components/Leaderboard.tsx
 import React from 'react';
-import { getLeaderboard } from '../lib/leaderboard';
+import { fetchLeaderboard, queueFlush } from '../lib/leaderboard';
 
-export default function Leaderboard({ slug }: { slug: string }) {
-  const [rows, setRows] = React.useState<{ rank: number; username: string | null; best_score: number }[] | null>(null);
+type Row = { rank: number; name: string | null; score: number; time: string };
+
+export default function Leaderboard({ questId }: { questId: string }) {
+  const [rows, setRows] = React.useState<Row[] | null>(null);
 
   React.useEffect(() => {
-    getLeaderboard(slug).then(setRows);
-  }, [slug]);
+    queueFlush();
+    fetchLeaderboard(questId).then(setRows);
+  }, [questId]);
 
   if (rows === null) {
     return (
@@ -24,16 +27,28 @@ export default function Leaderboard({ slug }: { slug: string }) {
       {rows.length === 0 ? (
         <p className="muted">No scores yet — be the first!</p>
       ) : (
-        <ol className="leaderboard">
-          {rows.map(r => (
-            <li key={r.rank}>
-              <span className="rank">#{r.rank}</span>
-              <span className="name">{r.username ?? 'Explorer'}</span>
-              <span className="score">{r.best_score}</span>
-            </li>
-          ))}
-        </ol>
+        <table className="leaderboard-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Name</th>
+              <th>Score</th>
+              <th>Time</th>
+            </tr>
+          </thead>
+          <tbody>
+            {rows.map((r) => (
+              <tr key={r.rank}>
+                <td>{r.rank}</td>
+                <td>{r.name ?? 'Explorer'}</td>
+                <td>{r.score}</td>
+                <td>{new Date(r.time).toLocaleString()}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
       )}
     </div>
   );
 }
+

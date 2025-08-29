@@ -1,4 +1,4 @@
-// src/pages/play/[quest].tsx
+// src/pages/play/[slug].tsx
 import React from 'react';
 import { useParams, Navigate } from 'react-router-dom'; // or your router equivalent
 import { getQuest } from '../../lib/quests';
@@ -6,7 +6,7 @@ import QuestShell from '../../components/QuestShell';
 import Leaderboard from '../../components/Leaderboard';
 
 export default function PlayQuestPage() {
-  const { quest: slugParam } = useParams<{ quest: string }>();
+  const { slug: slugParam } = useParams<{ slug: string }>();
   const slug = String(slugParam || '');
   const quest = getQuest(slug);
 
@@ -29,7 +29,7 @@ export default function PlayQuestPage() {
   return (
     <main>
       <QuestShell slug={quest.slug} title={quest.title} onRenderGame={renderGame} />
-      <Leaderboard slug={quest.slug} />
+      <Leaderboard questId={quest.slug} />
     </main>
   );
 }
