@@ -18,23 +18,18 @@ export function getSupabase() {
 export async function signInWithGoogle() {
   if (!supabase) return { data: null, error: new Error('Supabase not configured') };
 
-  const returnTo =
-    location.pathname + (location.search || '') + (location.hash || '');
-  localStorage.setItem('returnTo', returnTo);
-
   const redirectTo = `${location.origin}/auth/callback`;
   return supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo },
+    options: {
+      redirectTo,
+      queryParams: { prompt: 'consent', access_type: 'offline' },
+    },
   });
 }
 
 export async function sendMagicLink(email: string) {
   if (!supabase) return { data: null, error: new Error('Supabase not configured') };
-
-  const returnTo =
-    location.pathname + (location.search || '') + (location.hash || '');
-  localStorage.setItem('returnTo', returnTo);
 
   const redirectTo = `${location.origin}/auth/callback`;
   return supabase.auth.signInWithOtp({

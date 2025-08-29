@@ -93,13 +93,13 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signInWithGoogle = async () => {
-    const returnTo =
-      location.pathname + (location.search || '') + (location.hash || '');
-    localStorage.setItem('returnTo', returnTo);
     const redirectTo = `${location.origin}/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo },
+      options: {
+        redirectTo,
+        queryParams: { prompt: 'consent', access_type: 'offline' },
+      },
     });
     if (error) {
       throw new Error(error.message);

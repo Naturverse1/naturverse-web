@@ -1,6 +1,7 @@
 import { IS_NETLIFY_PREVIEW } from '@/lib/env';
 
 export function registerPWA() {
+  if (location.pathname === '/auth/callback') return;
   if (!('serviceWorker' in navigator)) return;
 
   // Don’t register on Netlify previews; do unregister if one exists.
