@@ -1,0 +1,15 @@
+/* Rarity frames */
+.navatar-frame { display:inline-grid; place-items:center; border-radius:50%; padding:2px; }
+.navatar-frame.starter { box-shadow: 0 0 0 2px #cfe0ff inset; }
+.navatar-frame.rare     { box-shadow: 0 0 0 2px #34d399 inset; }
+.navatar-frame.legendary{ box-shadow: 0 0 0 2px #f59e0b inset; }
+
+/* Compact inline pill */
+.navatar-inline {
+  display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
+  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
+}
+
+.navatar-inline .name { font-weight:600; font-size:.9rem; }
+.navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
+.navatar-inline .action:hover { text-decoration:underline; }

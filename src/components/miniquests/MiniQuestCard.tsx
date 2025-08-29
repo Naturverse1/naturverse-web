@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Badge from '../Badge';
-import NavatarBadge from '../NavatarBadge';
+import { getActive } from '../../lib/navatar';
+import { getNavatarMeta } from '../../lib/navatar-meta';
 import { getQuestProgress } from '../../lib/progress';
 
 type Props = {
@@ -15,6 +16,7 @@ type Props = {
 export default function MiniQuestCard({ slug, title, description, difficulty = 1, zone }: Props) {
   const [best, setBest] = useState<number | null>(null);
   const [completed, setCompleted] = useState(false);
+  const [activeNav, setActiveNav] = useState<ReturnType<typeof getNavatarMeta>>(null);
 
   const refresh = async () => {
     const p = await getQuestProgress(slug);
@@ -31,8 +33,11 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
     return () => window.removeEventListener('storage', onStorage);
   }, [slug]);
 
+  useEffect(() => {
+    getActive().then((id) => setActiveNav(getNavatarMeta(id)));
+  }, []);
+
   const tone = completed ? 'success' : 'info';
-  const svg = typeof window !== 'undefined' ? localStorage.getItem('navatar_svg') ?? undefined : undefined;
 
   return (
     <article className="card">
@@ -53,7 +58,17 @@ export default function MiniQuestCard({ slug, title, description, difficulty = 1
 
       <footer className="card__footer">
         <span className="card__best">
-          <NavatarBadge svg={svg} size={20} alt="Your Navatar" />{' '}
+          {activeNav && (
+            <span className={`navatar-frame ${activeNav.rarity}`} title="Your Navatar">
+              <img
+                src={activeNav.img}
+                width={20}
+                height={20}
+                style={{ borderRadius: '50%' }}
+                alt={activeNav.name}
+              />
+            </span>
+          )}{' '}
           {best === null ? (
             <span className="skeleton" style={{ width: 20 }} />
           ) : (
