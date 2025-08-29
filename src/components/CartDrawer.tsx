@@ -1,6 +1,7 @@
 import React, { useEffect } from "react";
 import { useCart } from "@/lib/cart";
 import { getShareLink } from "@/lib/cartShare";
+import { PRODUCT_IMG } from "@/data/productImages";
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, setQty, removeFromCart, clearCart, totalCents } = useCart();
@@ -35,6 +36,26 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
     );
   }
 
+  async function shareCartShort() {
+    const payload = items.map((i) => ({ id: i.id, qty: i.qty }));
+    const res = await fetch("/.netlify/functions/save-cart", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ items: payload }),
+    });
+    if (!res.ok) {
+      window.dispatchEvent(
+        new CustomEvent("nv:toast", { detail: { text: "Share failed" } })
+      );
+      return;
+    }
+    const { url } = await res.json();
+    await navigator.clipboard.writeText(url);
+    window.dispatchEvent(
+      new CustomEvent("nv:toast", { detail: { text: "Share link copied" } })
+    );
+  }
+
   if (!open) return null;
   return (
     <div className="cart-drawer">
@@ -44,7 +65,10 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           <h3>Your cart</h3>
           <div style={{ display: "flex", gap: 8 }}>
             <button className="link" onClick={shareCart}>
-              Share
+              Quick link
+            </button>
+            <button className="link" onClick={shareCartShort}>
+              Save &amp; share
             </button>
             <button onClick={onClose} aria-label="Close">
               ✕
@@ -56,6 +80,12 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           {items.length === 0 && <li>Cart is empty.</li>}
           {items.map((i) => (
             <li key={i.id} className="cart__row">
+              <img
+                src={PRODUCT_IMG[i.id] || "/img/market/placeholder.png"}
+                alt=""
+                className="cart__thumb"
+                loading="lazy"
+              />
               <div>
                 <div className="cart__name">{i.name ?? i.id}</div>
                 <div className="cart__meta">
@@ -67,7 +97,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
                 <span>{i.qty}</span>
                 <button onClick={() => setQty(i.id, i.qty + 1)}>+</button>
               </div>
-              <button onClick={() => removeFromCart(i.id)} className="link">
+              <button className="link" onClick={() => removeFromCart(i.id)}>
                 Remove
               </button>
             </li>
