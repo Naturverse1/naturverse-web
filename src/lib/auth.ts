@@ -15,6 +15,13 @@ export async function signInWithGoogle() {
   const sb = getSupabase();
   if (!sb) return { error: new Error('Supabase unavailable in this build') };
 
+  // remember where the user was on this host
+  const returnTo =
+    window.location.pathname +
+    (window.location.search || '') +
+    (window.location.hash || '');
+  localStorage.setItem('returnTo', returnTo);
+
   // Redirect back to current host, works for prod & previews.
   const redirectTo = `${window.location.origin}/auth/callback`;
   return sb.auth.signInWithOAuth({ provider: 'google', options: { redirectTo } });
