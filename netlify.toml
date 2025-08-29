@@ -33,11 +33,20 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains; preload"
+    # Safe, SW-free CSP (update if you re-enable SW or add new CDNs)
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob:; script-src 'self' 'unsafe-inline' plausible.io *.plausible.io; style-src 'self' 'unsafe-inline'; connect-src 'self' https://api.stripe.com https://checkout.stripe.com https://r.stripe.com https://api.resend.com https://*.supabase.co plausible.io *.plausible.io; frame-src https://js.stripe.com https://checkout.stripe.com; base-uri 'self'; form-action 'self' https://checkout.stripe.com;"
 
 [[headers]]
-  for = "/*"
+  for = "/assets/*"
   [headers.values]
-    Cache-Control = "public, max-age=1800"
+    Cache-Control = "public, max-age=31536000, immutable"
+
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Cache-Control = "no-store"
 
 [[headers]]
   for = "/sitemap.xml"
