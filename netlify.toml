@@ -71,6 +71,22 @@
   [headers.values]
     Content-Type = "text/plain; charset=utf-8"
 
+# Prevent stale service workers and manifests from pinning old bundles on prod
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/service-worker.js"
+  [headers.values]
+    Cache-Control = "no-store"
+
+[[headers]]
+  for = "/manifest.webmanifest"
+  [headers.values]
+    Cache-Control = "no-store"
+
 [context.production.environment]
   VITE_SUPABASE_URL = ""
   VITE_SUPABASE_ANON_KEY = ""

@@ -1,42 +1,25 @@
-import { hasSupabase, supabase } from './supabaseClient';
+import { hasSupabase, supabase } from './supabase-client';
 
 export { supabase };
 
-const PROD_ORIGIN = 'https://thenaturverse.com'; // kept for reference/other links
+// Centralized auth helpers for safe OAuth from previews/permalinks
 
-/**
- * Allow auth on the current host?
- * - Always allow on production
- * - Allow on *.netlify.app only when VITE_ALLOW_PREVIEW_AUTH === 'true'
- */
-export function authAllowedHere(): boolean {
-  if (!hasSupabase()) return false;
-  const allowPreview = import.meta.env.VITE_ALLOW_PREVIEW_AUTH === 'true';
-  const isNetlifyPreview =
-    typeof location !== 'undefined' && location.hostname.endsWith('.netlify.app');
-  return isNetlifyPreview ? allowPreview : true;
-}
+// Optionally override via env; defaults to your live domain.
+export const PROD_ORIGIN =
+  import.meta.env.VITE_PROD_ORIGIN ?? 'https://thenaturverse.com';
 
-export async function signInWithGoogle() {
-  if (!authAllowedHere()) {
-    alert('Sign-in is unavailable in this preview.');
-    return;
-  }
-  return supabase!.auth.signInWithOAuth({
-    provider: 'google',
-    // Send the user back to whichever origin they started on (prod or preview)
-    options: { redirectTo: `${location.origin}/auth/callback` },
-  });
-}
+export const OAUTH_REDIRECT = `${PROD_ORIGIN}/auth/callback`;
+
+// Helper for any host-specific logic (kept here for reuse if needed)
+export const isPreviewHost = () =>
+  typeof window !== 'undefined' &&
+  /\.netlify\.app$/.test(window.location.hostname);
 
 export async function sendMagicLink(email: string) {
-  if (!authAllowedHere()) {
-    alert('Magic link is unavailable in this preview.');
-    return;
-  }
+  if (!hasSupabase()) return { data: null, error: new Error('Auth unavailable') };
   return supabase!.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: `${location.origin}/auth/callback` },
+    options: { emailRedirectTo: OAUTH_REDIRECT },
   });
 }
 
