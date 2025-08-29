@@ -1,12 +1,6 @@
 /*
   X-Frame-Options: DENY
   X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  Content-Security-Policy: default-src 'self';
-    script-src 'self' 'unsafe-inline' https://js.stripe.com https://*.supabase.co https://plausible.io;
-    connect-src 'self' https://api.stripe.com https://*.supabase.co https://*.supabase.in https://plausible.io https://*.plausible.io;
-    img-src 'self' data: https:;
-    style-src 'self' 'unsafe-inline';
-    frame-src https://js.stripe.com https://hooks.stripe.com;
-    object-src 'none';
-  Cache-Control: public, max-age=300
+  Referrer-Policy: same-origin
+  Content-Security-Policy: default-src 'self' https://*.supabase.co https://*.googleapis.com https://accounts.google.com https://apis.google.com 'unsafe-inline' 'unsafe-eval' data: blob:;
+
