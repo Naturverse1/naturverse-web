@@ -45,6 +45,7 @@ export default function NavBar() {
           <NavLink to="/naturversity">Naturversity</NavLink>
           <NavLink to="/naturbank">NaturBank</NavLink>
           <NavLink to="/navatar">Navatar</NavLink>
+          <NavLink to="/create/navatar">Create Navatar</NavLink>
           <NavLink to="/passport">Passport</NavLink>
           <NavLink to="/turian">Turian</NavLink>
         </nav>
@@ -92,6 +93,7 @@ export default function NavBar() {
           <NavLink to="/naturversity">Naturversity</NavLink>
           <NavLink to="/naturbank">NaturBank</NavLink>
           <NavLink to="/navatar">Navatar</NavLink>
+          <NavLink to="/create/navatar">Create Navatar</NavLink>
           <NavLink to="/passport">Passport</NavLink>
           <NavLink to="/turian">Turian</NavLink>
         </div>

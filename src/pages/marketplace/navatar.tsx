@@ -30,6 +30,7 @@ export default function NavatarMarketplacePage() {
   return (
     <div style={{ padding: '24px 16px', maxWidth: 1100, margin: '0 auto' }}>
       <h1>Navatar Marketplace</h1>
+      <p><a className="btn" href="/create/navatar">✨ Create your own</a></p>
       <div style={{ display: 'flex', gap: 12, alignItems: 'center', marginBottom: 16 }}>
         <label>Filter:</label>
         <select value={filter} onChange={(e) => setFilter(e.target.value as any)}>
