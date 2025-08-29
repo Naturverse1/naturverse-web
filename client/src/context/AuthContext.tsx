@@ -3,15 +3,6 @@ import React, { createContext, useContext, useEffect, useState } from 'react';
 
 import { supabase } from '../lib/supabaseClient';
 
-const PROD_ORIGIN =
-  import.meta.env.VITE_PROD_ORIGIN ?? 'https://thenaturverse.com';
-
-function buildProdFinishUrl(returnTo?: string) {
-  const url = new URL('/auth/complete', PROD_ORIGIN);
-  if (returnTo) url.searchParams.set('return', returnTo);
-  return url.toString();
-}
-
 interface Profile {
   id: string;
   display_name: string | null;
@@ -102,7 +93,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signInWithGoogle = async () => {
-    const redirectTo = buildProdFinishUrl(window.location.href);
+    const returnTo =
+      location.pathname + (location.search || '') + (location.hash || '');
+    localStorage.setItem('returnTo', returnTo);
+    const redirectTo = `${location.origin}/auth/callback`;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
       options: { redirectTo },

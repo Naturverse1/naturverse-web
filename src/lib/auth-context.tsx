@@ -35,18 +35,12 @@ export function AuthProvider({
   const signInWithMagicLink = async () => {
     const email = window.prompt('Enter your email to receive a sign-in link')?.trim();
     if (!email) return;
-    if (!supabase) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return;
-    }
-    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     const { error } = await sendMagicLink(email);
     if (error) alert(error.message);
     else alert('Check your inbox for the sign-in link ✉️');
   };
 
   const signInWithGoogle = async () => {
-    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     const { error } = await startGoogleOAuth();
     if (error) alert(error.message);
   };

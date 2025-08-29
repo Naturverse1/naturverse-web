@@ -58,11 +58,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Email magic link
   const signInWithEmail: AuthCtx['signInWithEmail'] = async (email) => {
-    if (!supabase) {
-      alert('Sign-in is unavailable in this preview. Please use production.');
-      return { error: 'no-supabase' };
-    }
-    sessionStorage.setItem('post-auth-redirect', window.location.pathname + window.location.search);
     const { error } = await sendMagicLink(email);
     return { error: error?.message };
   };

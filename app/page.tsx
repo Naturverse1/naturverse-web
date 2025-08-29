@@ -2,13 +2,10 @@
 
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
-import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/auth';
-import { useSupabase } from '@/lib/useSupabase';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 export default function Home() {
   const user = useUser();
-  const supabase = useSupabase();
 
   const SignedOutCTA = () => (
     <div className="welcome-buttons">
@@ -16,9 +13,7 @@ export default function Home() {
         className="btn btn-primary"
         onClick={async () => {
           const email = prompt('Enter your email to get a magic link:')?.trim();
-          if (!supabase) {
-            alert('Sign-in is unavailable in this preview. Please use production.');
-          } else if (email) {
+          if (email) {
             await sendMagicLink(email);
           }
         }}
@@ -28,11 +23,7 @@ export default function Home() {
       <button
         className="btn btn-secondary"
         onClick={async () => {
-          if (!supabase) {
-            alert('Sign-in is unavailable in this preview. Please use production.');
-          } else {
-            await signInWithGoogle();
-          }
+          await signInWithGoogle();
         }}
       >
         Continue with Google
@@ -99,9 +90,7 @@ export default function Home() {
               className="btn btn-primary"
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (!supabase) {
-                  alert('Sign-in is unavailable in this preview. Please use production.');
-                } else if (email) {
+                if (email) {
                   await sendMagicLink(email);
                 }
               }}
@@ -111,11 +100,7 @@ export default function Home() {
             <button
               className="btn btn-secondary"
               onClick={async () => {
-                if (!supabase) {
-                  alert('Sign-in is unavailable in this preview. Please use production.');
-                } else {
-                  await signInWithGoogle();
-                }
+                await signInWithGoogle();
               }}
             >
               Continue with Google
