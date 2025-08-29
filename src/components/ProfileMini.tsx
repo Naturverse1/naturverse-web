@@ -1,23 +1,22 @@
 import { useEffect, useState } from "react";
 import { fetchProgress } from "@/lib/progress";
 import { BADGES } from "@/data/badges";
-import { track } from "@/lib/analytics";
+import { supabase } from "@/lib/supabase";
 
 export default function ProfileMini() {
   const [streak, setStreak] = useState<{ current_streak: number; longest_streak: number } | null>(null);
   const [badges, setBadges] = useState<string[]>([]);
-  const [err, setErr] = useState("");
 
   useEffect(() => {
     (async () => {
       try {
+        if (!supabase) return;
+        const { data: s } = await supabase.auth.getSession();
+        if (!s.session) return; // signed out, show zero state
         const data = await fetchProgress();
         setStreak(data.streak);
-        setBadges((data.badges || []).map((b) => b.badge_code));
-        track("profile_progress_loaded");
-      } catch (e: any) {
-        setErr("");
-      }
+        setBadges((data.badges || []).map(b => b.badge_code));
+      } catch {}
     })();
   }, []);
 
