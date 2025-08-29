@@ -2,12 +2,17 @@ import { useEffect, useState } from "react";
 import { metaTag } from "@/lib/seo";
 import { track } from "@/lib/analytics";
 import { markQuest } from "@/lib/progress";
+import { supabase } from "@/lib/supabase";
+import AuthRequiredNote from "@/components/AuthRequiredNote";
 
 type Quest = { id:string; title:string; summary?:string; tags?:string[]; body?:string };
 
 export default function QuestDetail() {
   const [q, setQ] = useState<Quest | null>(null);
+  const [authed, setAuthed] = useState(false);
   const id = typeof window !== "undefined" ? window.location.pathname.split("/").pop()! : "";
+
+  useEffect(() => { if (!supabase) return; supabase.auth.getSession().then(({data}) => setAuthed(!!data.session)); }, []);
 
   useEffect(() => {
     (async () => {
@@ -46,25 +51,15 @@ export default function QuestDetail() {
         </article>
 
         <div className="actions" style={{ display:"flex", gap:8, marginTop: 12 }}>
-          <button onClick={async () => {
-            track("quest_start", { id: q.id });
-            await markQuest(q.id, "start");
-            window.dispatchEvent(new CustomEvent("nv:toast", { detail: { text: "Quest started" } }));
-          }}>
+          <button disabled={!authed} onClick={async ()=>{ track("quest_start", { id: q.id }); await markQuest(q.id, "start"); window.dispatchEvent(new CustomEvent("nv:toast",{detail:{text:"Quest started"}})); }}>
             Start
           </button>
-          <button onClick={async () => {
-            track("quest_complete", { id: q.id });
-            await markQuest(q.id, "complete");
-            window.dispatchEvent(new CustomEvent("nv:toast", { detail: { text: "Completed ✔" } }));
-            track("quest_complete_persisted", { id: q.id });
-          }}>
+          <button disabled={!authed} onClick={async ()=>{ track("quest_complete", { id: q.id }); await markQuest(q.id, "complete"); window.dispatchEvent(new CustomEvent("nv:toast",{detail:{text:"Completed ✔"}})); track("quest_complete_persisted", { id: q.id }); }}>
             Complete
           </button>
-          <button onClick={() => navigator.share?.({ title: q.title, url: location.href }) ?? copy(location.href)}>
-            Share
-          </button>
+          <button onClick={() => navigator.share?.({ title:q.title, url: location.href }) ?? copy(location.href)}>Share</button>
         </div>
+        {!authed && <AuthRequiredNote action="track progress" />}
       </main>
     </>
   );
