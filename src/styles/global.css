@@ -146,6 +146,16 @@ h3 {
   border-color: transparent;
 }
 
+.pill.warn {
+  background: #fff7ed;
+  border-color: #fdba74;
+}
+
+.pill.danger {
+  background: #fee2e2;
+  border-color: #fca5a5;
+}
+
 
 /* Inputs & dashed demo areas */
 input,

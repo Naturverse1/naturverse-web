@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { useCart } from "@/lib/cart";
+import { useCart, addToCart } from "@/lib/cart";
 import { useStripe, PaymentRequestButtonElement } from "@stripe/react-stripe-js";
+import { bundlesForCart } from "@/lib/bundles";
 import type {
   PaymentRequest,
   PaymentRequestCanMakePaymentResult,
@@ -67,6 +68,8 @@ export default function CheckoutPage() {
   const { items, setQty, removeFromCart, totalCents } = useCart();
   const stripe = useStripe();
   const [pr, setPr] = useState<PaymentRequest | null>(null);
+  const cartIds = items.map((i) => i.id);
+  const suggestions = bundlesForCart(cartIds);
 
   const amount = useMemo(() => totalCents, [totalCents]);
   const currency = "usd";
@@ -124,15 +127,45 @@ export default function CheckoutPage() {
       )}
 
       <ul>
-        {items.map((i) => (
-          <li key={i.id}>
-            <strong>{i.name}</strong> ${(i.price / 100).toFixed(2)} x {i.qty}
-            <button onClick={() => setQty(i.id, i.qty - 1)}>-</button>
-            <button onClick={() => setQty(i.id, i.qty + 1)}>+</button>
-            <button onClick={() => removeFromCart(i.id)}>Remove</button>
-          </li>
-        ))}
-      </ul>
+      {items.map((i) => (
+        <li key={i.id}>
+          <strong>{i.name}</strong> ${(i.price / 100).toFixed(2)} x {i.qty}
+          <button onClick={() => setQty(i.id, i.qty - 1)}>-</button>
+          <button onClick={() => setQty(i.id, i.qty + 1)}>+</button>
+          <button onClick={() => removeFromCart(i.id)}>Remove</button>
+        </li>
+      ))}
+    </ul>
+      {suggestions.length > 0 && (
+        <section style={{ marginTop: 16, borderTop: "1px solid #e5e7eb", paddingTop: 12 }}>
+          <h3>Bundle &amp; Save</h3>
+          <div style={{ display: "grid", gap: 10 }}>
+            {suggestions.map((b) => (
+              <div key={b.id} style={{ display: "flex", gap: 10, alignItems: "center" }}>
+                <div style={{ flex: 1 }}>
+                  <strong>{b.title}</strong>
+                  {b.blurb && <div className="muted">{b.blurb}</div>}
+                </div>
+                <button
+                  onClick={() => {
+                    b.skus.forEach((sku) =>
+                      addToCart({ id: sku, name: sku, price: 0, type: "physical" } as any, 1)
+                    );
+                    window.dispatchEvent(
+                      new CustomEvent("nv:toast", { detail: { text: "Bundle added" } })
+                    );
+                  }}
+                >
+                  Add bundle
+                </button>
+              </div>
+            ))}
+          </div>
+          <div style={{ fontSize: 12, opacity: 0.7, marginTop: 6 }}>
+            Bundle items added at regular price; your discount is applied at payment.
+          </div>
+        </section>
+      )}
       <div>Subtotal ${(totalCents / 100).toFixed(2)}</div>
       <Estimator items={items} subtotalCents={totalCents} />
       <button onClick={() => startCheckout({ items, returnPath: "/checkout" })}>
