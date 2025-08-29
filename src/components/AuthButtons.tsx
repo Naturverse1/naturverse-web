@@ -1,5 +1,6 @@
 import { useState } from "react";
-import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
+import { sendMagicLink } from '@/lib/auth';
+import { signInWithGoogle } from '@/lib/supabase-client';
 
 type Props = {
   cta?: string;           // e.g., "Create account"

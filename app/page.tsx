@@ -2,7 +2,8 @@
 
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
-import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
+import { sendMagicLink } from '@/lib/auth';
+import { signInWithGoogle } from '@/lib/supabase-client';
 
 export default function Home() {
   const user = useUser();

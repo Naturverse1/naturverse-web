@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
 import { useSupabase } from '@/lib/useSupabase';
-import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
+import { sendMagicLink } from '@/lib/auth';
+import { signInWithGoogle } from '@/lib/supabase-client';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
