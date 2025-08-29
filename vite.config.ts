@@ -60,9 +60,8 @@ export default defineConfig({
       ],
     }),
   ],
-  // Use a root base so assets resolve from the site root
-  base: '/',
-  envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
+    base: '/', // ensure assets are /assets/... instead of /auth/assets/...
+    envPrefix: ['VITE_', 'NEXT_PUBLIC_'],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
