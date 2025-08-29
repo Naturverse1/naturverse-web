@@ -31,15 +31,22 @@ export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Prop
         {nav.priceCents > 0 ? <span>${(nav.priceCents / 100).toFixed(2)}</span> : <span>Free</span>}
       </div>
 
-      {!owned ? (
+      {owned ? (
+        isActive ? (
+          <div style={{ display: 'flex', alignItems: 'center', gap: 8, color: '#16a34a' }}>
+            <span className={`navatar-frame ${nav.rarity}`}>
+              <img src={nav.img} width={18} height={18} style={{ borderRadius: '50%' }} alt="" />
+            </span>
+            Active
+          </div>
+        ) : (
+          <button onClick={() => onUse(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
+            Use
+          </button>
+        )
+      ) : (
         <button onClick={() => onGet(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
           {nav.priceCents ? 'Buy (soon)' : 'Get'}
-        </button>
-      ) : isActive ? (
-        <div style={{ fontSize: 12, color: '#16a34a' }}>Active ✓</div>
-      ) : (
-        <button onClick={() => onUse(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
-          Use
         </button>
       )}
     </div>
