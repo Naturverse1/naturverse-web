@@ -1,8 +1,9 @@
 // src/components/Leaderboard.tsx
 import React from 'react';
 import { fetchLeaderboard, queueFlush } from '../lib/leaderboard';
+import NavatarBadge from './NavatarBadge';
 
-type Row = { rank: number; name: string | null; score: number; time: string };
+type Row = { rank: number; name: string | null; score: number; time: string; avatar_url: string | null };
 
 export default function Leaderboard({ questId }: { questId: string }) {
   const [rows, setRows] = React.useState<Row[] | null>(null);
@@ -40,7 +41,10 @@ export default function Leaderboard({ questId }: { questId: string }) {
             {rows.map((r) => (
               <tr key={r.rank}>
                 <td>{r.rank}</td>
-                <td>{r.name ?? 'Explorer'}</td>
+                <td>
+                  <NavatarBadge url={r.avatar_url ?? undefined} size={20} alt={r.name ?? 'Navatar'} />{' '}
+                  {r.name ?? 'Explorer'}
+                </td>
                 <td>{r.score}</td>
                 <td>{new Date(r.time).toLocaleString()}</td>
               </tr>
@@ -51,4 +55,3 @@ export default function Leaderboard({ questId }: { questId: string }) {
     </div>
   );
 }
-

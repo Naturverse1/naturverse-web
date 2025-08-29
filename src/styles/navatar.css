@@ -1,0 +1,26 @@
+.navatar-picker .grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+  gap: 16px;
+}
+.navatar-picker .card {
+  border: 1px solid #e6ecff;
+  padding: 14px;
+  border-radius: 12px;
+  background: #fff;
+}
+.navatar-picker .card.active {
+  outline: 2px solid #3b82f6;
+}
+.navatar-picker .label {
+  margin-top: 8px;
+  font-weight: 600;
+  text-align: center;
+}
+.navatar-picker .primary {
+  margin-top: 16px;
+  padding: 10px 16px;
+  border-radius: 10px;
+  background: #2563eb;
+  color: #fff;
+}
