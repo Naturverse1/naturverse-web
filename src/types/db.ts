@@ -39,13 +39,30 @@ export type Database = {
         >;
         Update: Partial<Database['natur']['Tables']['navatars']['Insert']>;
       };
-      passport_stamps: {
-        Row: { id: number; user_id: string; kingdom: string; stamped_at: string };
-        Insert: { user_id: string; kingdom: string };
-        Update: Partial<{ kingdom: string }>;
+        passport_stamps: {
+          Row: { id: number; user_id: string; kingdom: string; stamped_at: string };
+          Insert: { user_id: string; kingdom: string };
+          Update: Partial<{ kingdom: string }>;
+        };
+        navatar_purchases: {
+          Row: {
+            id: string;
+            user_id: string | null;
+            navatar_id: string;
+            method: string;
+            amount: number;
+            created_at: string | null;
+          };
+          Insert: {
+            user_id?: string | null;
+            navatar_id: string;
+            method: string;
+            amount: number;
+          };
+          Update: Partial<Database['natur']['Tables']['navatar_purchases']['Insert']>;
+        };
       };
-    };
-    Views: {
+      Views: {
       user_xp: {
         Row: { user_id: string; xp: number };
       };
