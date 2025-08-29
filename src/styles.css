@@ -16,6 +16,7 @@
 @import './styles/marketplace.css';
 @import './styles/home.css';
 @import './styles/miniquests.css';
+@import './styles/quest.css';
 @import './styles/theme.css';
 @import '../app/styles/global-sections.css';
 :root {

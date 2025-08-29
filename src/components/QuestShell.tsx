@@ -1,6 +1,6 @@
 // src/components/QuestShell.tsx
 import React from 'react';
-import { saveQuestProgress, getQuestProgress, getQuestCloudProgress } from '../lib/progress';
+import { saveQuestProgress, getQuestProgress, getQuestCloudProgress, postScore } from '../lib/progress';
 
 type Props = {
   slug: string;
@@ -11,7 +11,8 @@ type Props = {
 export default function QuestShell({ slug, title, onRenderGame }: Props) {
   const [best, setBest] = React.useState(0);
   const [completed, setCompleted] = React.useState(false);
-  const [submitting, setSubmitting] = React.useState(false);
+  const [runScore, setRunScore] = React.useState<number | null>(null);
+  const [gameKey, setGameKey] = React.useState(0);
 
   React.useEffect(() => {
     const local = getQuestProgress(slug);
@@ -25,13 +26,37 @@ export default function QuestShell({ slug, title, onRenderGame }: Props) {
     });
   }, [slug]);
 
-  async function complete(score: number) {
-    setSubmitting(true);
-    await saveQuestProgress({ slug, score, completed: true });
+  function complete(score: number) {
+    setRunScore(score);
+    saveQuestProgress({ slug, score, completed: true });
+    postScore(slug, score);
     const next = getQuestProgress(slug);
     setBest(next.bestScore);
     setCompleted(next.completed);
-    setSubmitting(false);
+  }
+
+  async function share() {
+    if (runScore == null) return;
+    const url = `${window.location.origin}/play/${slug}`;
+    const text = `I scored ${runScore} on ${title}!`;
+    if (navigator.share) {
+      try {
+        await navigator.share({ title, text, url });
+      } catch {
+        /* ignore */
+      }
+    } else {
+      try {
+        await navigator.clipboard.writeText(url);
+      } catch {
+        /* ignore */
+      }
+    }
+  }
+
+  function playAgain() {
+    setRunScore(null);
+    setGameKey((k) => k + 1);
   }
 
   return (
@@ -45,10 +70,23 @@ export default function QuestShell({ slug, title, onRenderGame }: Props) {
       </header>
 
       <div className="quest__body">
-        {onRenderGame({ complete })}
+        {runScore === null ? (
+          <React.Fragment key={gameKey}>{onRenderGame({ complete })}</React.Fragment>
+        ) : (
+          <div className="quest__result">
+            <p>Best: {best}</p>
+            <p>This run: {runScore}</p>
+            <div className="quest__actions">
+              <button className="btn" onClick={share}>
+                Share
+              </button>
+              <button className="btn" onClick={playAgain}>
+                Play again
+              </button>
+            </div>
+          </div>
+        )}
       </div>
-
-      {submitting && <p className="muted">Saving score…</p>}
     </section>
   );
 }
