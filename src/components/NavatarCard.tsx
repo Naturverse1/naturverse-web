@@ -1,44 +1,47 @@
-import React from "react";
-import type { Navatar } from "../types/navatar";
+import React from 'react';
+import { Navatar } from '../data/navatars';
 
-type Props = { navatar: Navatar };
+type Props = {
+  nav: Navatar;
+  owned: boolean;
+  activeId?: string | null;
+  onGet: (id: string) => void;
+  onUse: (id: string) => void;
+};
 
-export default function NavatarCard({ navatar }: Props) {
+export default function NavatarCard({ nav, owned, activeId, onGet, onUse }: Props) {
+  const isActive = activeId === nav.id;
+
   return (
-    <article id="navatar-card" className="nv-card navatar-card character-card">
-      <header className="cc-head">
-        <span className="cc-name">{navatar.name || navatar.species}</span>
-        <span className="cc-meta">
-          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
-        </span>
-      </header>
-
-      <div className="imageWrap">
-        {navatar.imageDataUrl ? (
-          <img
-            src={navatar.imageDataUrl}
-            alt={navatar.name || navatar.species}
-            loading="lazy"
-          />
-        ) : (
-          <div className="card__placeholder" aria-label="No photo">No photo</div>
-        )}
+    <div
+      style={{
+        border: '1px solid #e5e7eb',
+        borderRadius: 12,
+        padding: 16,
+        width: 240,
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 8,
+      }}
+    >
+      <img src={nav.img} alt={nav.name} width={200} height={200} style={{ alignSelf: 'center' }} />
+      <div style={{ fontWeight: 700 }}>{nav.name}</div>
+      <div style={{ display: 'flex', gap: 8, fontSize: 12, opacity: 0.8 }}>
+        <span>{nav.rarity}</span>
+        {nav.priceCents > 0 ? <span>${(nav.priceCents / 100).toFixed(2)}</span> : <span>Free</span>}
       </div>
 
-      <dl className="cc-fields">
-        <div>
-          <dt>Species</dt>
-          <dd>{navatar.species}</dd>
-        </div>
-        <div>
-          <dt>Powers</dt>
-          <dd>{navatar.powers.join(" · ")}</dd>
-        </div>
-        <div>
-          <dt>Backstory</dt>
-          <dd>{navatar.backstory}</dd>
-        </div>
-      </dl>
-    </article>
+      {!owned ? (
+        <button onClick={() => onGet(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
+          {nav.priceCents ? 'Buy (soon)' : 'Get'}
+        </button>
+      ) : isActive ? (
+        <div style={{ fontSize: 12, color: '#16a34a' }}>Active ✓</div>
+      ) : (
+        <button onClick={() => onUse(nav.id)} style={{ padding: '8px 12px', borderRadius: 8 }}>
+          Use
+        </button>
+      )}
+    </div>
   );
 }
