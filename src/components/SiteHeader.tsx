@@ -8,6 +8,7 @@ import CartButton from './CartButton';
 import SearchBar from './SearchBar';
 import { useSupabase } from '@/lib/useSupabase';
 import WalletConnect from './WalletConnect';
+import ProfileMini from './ProfileMini';
 
 export default function SiteHeader() {
   const supabase = useSupabase();
@@ -124,6 +125,7 @@ export default function SiteHeader() {
             <SearchBar />
           </div>
           <AuthButton />
+          <ProfileMini />
           <WalletConnect />
           <CartButton />
           <button
