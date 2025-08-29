@@ -1,24 +1,21 @@
-import { getSupabase } from './supabase-client';
+import { supabase } from './supabaseClient';
 
-export type Profile = { id: string; display_name?: string | null; avatar_id?: string | null; avatar_url?: string | null };
+export type Profile = {
+  id: string;
+  display_name?: string | null;
+  avatar_id?: string | null;
+  avatar_url?: string | null;
+  updated_at?: string | null;
+};
 
-export async function getProfile(userId: string) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase unavailable');
-  const { data, error } = await supabase
-    .from('profiles')
-    .select('*')
-    .eq('id', userId)
-    .maybeSingle();
-  if (error && (error as any).code === 'PGRST116') return null;
+export async function getProfile(userId: string): Promise<Profile | null> {
+  const { data, error } = await supabase!.from('profiles').select('*').eq('id', userId).maybeSingle();
   if (error) throw error;
-  return data as Profile;
+  return data ?? null;
 }
 
-export async function upsertProfile(p: Profile) {
-  const supabase = getSupabase();
-  if (!supabase) throw new Error('Supabase unavailable');
-  const { data, error } = await supabase.from('profiles').upsert(p).select().single();
+export async function upsertProfile(p: Profile): Promise<Profile> {
+  const { data, error } = await supabase!.from('profiles').upsert(p, { onConflict: 'id' }).select().single();
   if (error) throw error;
   return data as Profile;
 }
