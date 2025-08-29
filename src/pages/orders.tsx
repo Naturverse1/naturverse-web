@@ -1,7 +1,24 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-client';
 import { useAuth } from '@/lib/auth-context';
 import { setTitle } from './_meta';
+import { supabase } from '../lib/supabase';
+
+const DIGITAL = new Set(["navatar-style-kit", "breathwork-starter"]);
+const NAME_TO_SKU: Record<string, string> = {
+  "Navatar Style Kit": "navatar-style-kit",
+  "Breathwork Starter Pack": "breathwork-starter",
+};
+
+async function downloadFor(orderId: string, sku: string) {
+  const { data: session } = await supabase!.auth.getSession();
+  const token = session.session?.access_token || "";
+  const res = await fetch(`/.netlify/functions/get-download-url?sku=${sku}&order=${orderId}`, {
+    headers: { "x-supabase-token": token },
+  });
+  if (!res.ok) return alert(await res.text());
+  const { url } = await res.json();
+  window.location.href = url;
+}
 
 type Order = {
   id: string;
@@ -48,11 +65,24 @@ export default function OrdersPage() {
               <span className={`badge ${o.status}`}>{o.status}</span>
             </div>
             <ul className="items">
-              {o.line_items?.map((li, i) => (
-                <li key={i}>
-                  {(li.product || li.description) ?? 'Item'} × {li.quantity ?? 1}
-                </li>
-              ))}
+              {o.line_items?.map((li, i) => {
+                const sku = (li as any).sku || NAME_TO_SKU[(li as any).product || (li as any).description || ""];
+                const isDigital = sku && DIGITAL.has(sku);
+                return (
+                  <li key={i}>
+                    {(li.product || li.description) ?? 'Item'} × {li.quantity ?? 1}
+                    {isDigital && (
+                      <button
+                        style={{ marginLeft: 8 }}
+                        onClick={() => downloadFor(o.id, sku!)}
+                        aria-label="Download"
+                      >
+                        Download
+                      </button>
+                    )}
+                  </li>
+                );
+              })}
             </ul>
           </li>
         ))}
