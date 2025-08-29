@@ -2,7 +2,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithGoogle } from '@/lib/auth';
 import styles from '@/styles/home.module.css';
-import MiniQuestSection from '../components/miniquests/MiniQuestSection';
+import MiniQuestSection from '@/components/miniquests/MiniQuestSection';
 
 export default function Home() {
   const { user } = useAuth();
