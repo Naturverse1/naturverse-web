@@ -1,5 +1,5 @@
 // Only runs in production builds
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+if (import.meta.env.PROD && 'serviceWorker' in navigator && location.pathname !== '/auth/callback') {
   const host = location.hostname;
   const onNetlify = host.endsWith('.netlify.app');
   if (!onNetlify) {
