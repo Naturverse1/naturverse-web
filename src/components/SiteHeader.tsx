@@ -90,6 +90,13 @@ export default function SiteHeader() {
               Navatar
             </NavLink>
             <NavLink
+              to="/create/navatar"
+              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
+              onClick={() => setOpen(false)}
+            >
+              Create Navatar
+            </NavLink>
+            <NavLink
               to="/passport"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
               onClick={() => setOpen(false)}
