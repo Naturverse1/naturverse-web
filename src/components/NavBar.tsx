@@ -6,6 +6,7 @@ import styles from './NavBar.module.css';
 import './NavBar.css';
 import { useAuth } from '@/lib/auth-context';
 import SearchBar from './SearchBar';
+import CartButton from './CartButton';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
@@ -56,9 +57,7 @@ export default function NavBar() {
         <div className={styles.right} key={user?.id ?? 'anon'}>
           {ready && user && (
             <>
-              <NavLink to="/cart" aria-label="Cart" className={styles.cartBtn}>
-                🛒
-              </NavLink>
+              <CartButton className={styles.cartBtn} />
               <NavLink to="/profile" aria-label="Profile" className={styles.profileBtn}>
                 {emoji}
               </NavLink>

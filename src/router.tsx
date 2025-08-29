@@ -11,7 +11,6 @@ import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
 import ProductPage from './pages/marketplace/[slug]';
 import NavatarMarketplacePage from './pages/marketplace/navatar';
-import CartPage from './pages/cart';
 import WishlistPage from './pages/wishlist';
 import QuestsList from './pages/quests';
 import NewQuest from './pages/quests/new';
@@ -50,6 +49,7 @@ import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
 import CancelPage from './pages/cancel';
+import CheckoutPage from './pages/checkout';
 
 export const router = createBrowserRouter([
   {
@@ -75,7 +75,7 @@ export const router = createBrowserRouter([
           { path: ':slug', element: <ProductPage /> },
         ],
       },
-      { path: 'cart', element: <CartPage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
       { path: 'wishlist', element: <WishlistPage /> },
       { path: 'success', element: <SuccessPage /> },
       { path: 'cancel', element: <CancelPage /> },
