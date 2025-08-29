@@ -1,6 +1,7 @@
 import type { Handler } from "@netlify/functions";
 import Stripe from "stripe";
 import { createClient } from "@supabase/supabase-js";
+import { BUNDLES } from "../../src/lib/bundles";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY as string, { apiVersion: "2024-06-20" });
 const supabaseAdmin = createClient(
@@ -64,10 +65,22 @@ export const handler: Handler = async (event) => {
 
   const hasPhysical = (body.items || []).some((i) => PRODUCTS[i.id]?.physical);
 
+  // Bundle detection
+  const ids = (body.items || []).flatMap((i: any) =>
+    Array(i.qty || 1).fill(i.id)
+  );
+  const applicable = BUNDLES.find((b) => b.skus.every((s) => ids.includes(s)));
+  let discounts: { coupon: string }[] | undefined = undefined;
+  if (applicable) {
+    const couponId = process.env[applicable.couponEnv] as string | undefined;
+    if (couponId) discounts = [{ coupon: couponId }];
+  }
+
   const session = await stripe.checkout.sessions.create({
     mode: "payment",
     line_items,
     allow_promotion_codes: body.allow_promotion_codes ?? true,
+    discounts,
     shipping_address_collection: hasPhysical ? { allowed_countries: ["US", "CA", "GB", "AU"] } : undefined,
     customer_email: userEmail,
     success_url: `${SITE}${body.returnPath || "/"}?checkout=success`,
