@@ -26,7 +26,7 @@ export const PRODUCTS: Product[] = [
     slug: "navatar-style-kit",
     summary: "Hats, frames, and effects to customize your Navatar.",
     image: "/images/products/navatar-kit.jpg",
-    price: 5,
+    price: 9.99,
     category: "Digital",
     tags: ["avatar", "style"]
   },
