@@ -1,174 +1,101 @@
-import { getSupabase } from '@/lib/supabase-client';
+// src/lib/progress.ts
+// Persists progress locally; syncs to Supabase when authed.
 
-const LS_KEY = (userId: string) => `nv_unlocked_zones_${userId}`;
-const QUEST_LS_KEY = 'nv.quest.progress.v1';
+type Progress = { bestScore: number; completed: boolean; updatedAt: string };
 
-/**
- * Get unlocked zone slugs for a user.
- * Priority: Supabase -> localStorage -> empty.
- *
- * Expected schemas (choose whichever exists in your DB):
- * 1) zone_unlocks: { user_id: string; zone_slug: string }
- * 2) stamps table with zone_slug column: { user_id: string; zone_slug: string }
- */
-export async function getUnlockedZones(userId: string): Promise<Set<string>> {
-  if (!userId) return new Set();
+const key = (slug: string) => `nv:progress:${slug}`;
+const nowISO = () => new Date().toISOString();
 
-  // Try 1: explicit unlocks table
-  const supabase = getSupabase();
-  if (supabase) {
-    const { data: unlocks1, error: e1 } = await supabase
-      .from('zone_unlocks')
-      .select('zone_slug')
-      .eq('user_id', userId);
-
-    if (!e1 && unlocks1 && unlocks1.length) {
-      return new Set(unlocks1.map((r) => r.zone_slug));
-    }
-
-    // Try 2: infer from stamps table if it has zone_slug
-    const { data: unlocks2, error: e2 } = await supabase
-      .from('stamps')
-      .select('zone_slug')
-      .eq('user_id', userId);
-
-    if (!e2 && unlocks2 && unlocks2.length && 'zone_slug' in (unlocks2[0] ?? {})) {
-      return new Set(unlocks2.map((r: any) => r.zone_slug).filter(Boolean));
-    }
-  }
-
-  // Fallback: localStorage
+// Lazy import to avoid crashing on preview/permalink w/o env
+let supabase: any | null = null;
+async function getSupabase() {
+  if (supabase) return supabase;
   try {
-    const raw = localStorage.getItem(LS_KEY(userId));
-    const arr: string[] = raw ? JSON.parse(raw) : [];
-    return new Set(arr);
+    // Adjust path to your client singleton
+    const mod = await import('../lib/supabase-client');
+    supabase = (mod as any).supabase || (mod as any).default || null;
   } catch {
-    return new Set();
+    supabase = null;
   }
+  return supabase;
 }
 
-/** Dev utility: locally mark a zone unlocked (for demos) */
-export function localUnlockZone(userId: string, slug: string) {
+export function getProgress(slug: string): Progress {
+  const raw = localStorage.getItem(key(slug));
+  if (!raw) return { bestScore: 0, completed: false, updatedAt: nowISO() };
   try {
-    const key = LS_KEY(userId);
-    const arr: string[] = JSON.parse(localStorage.getItem(key) || '[]');
-    if (!arr.includes(slug)) arr.push(slug);
-    localStorage.setItem(key, JSON.stringify(arr));
-  } catch {}
-}
-
-type QuestState = Record<
-  string,
-  {
-    bestScore: number;
-    completed: boolean;
-    updatedAt: string;
-  }
->;
-
-function readQuestLocal(): QuestState {
-  try {
-    return JSON.parse(localStorage.getItem(QUEST_LS_KEY) || '{}');
+    return JSON.parse(raw) as Progress;
   } catch {
-    return {};
+    return { bestScore: 0, completed: false, updatedAt: nowISO() };
   }
 }
 
-function writeQuestLocal(p: QuestState) {
-  localStorage.setItem(QUEST_LS_KEY, JSON.stringify(p));
+export function setLocal(slug: string, p: Progress) {
+  localStorage.setItem(key(slug), JSON.stringify(p));
 }
 
-export async function saveProgress({
-  questSlug,
-  score,
-  completed,
-}: {
-  questSlug: string;
+export async function saveProgress(params: {
+  slug: string;
   score: number;
-  completed: boolean;
+  completed?: boolean;
 }) {
-  const now = new Date().toISOString();
-  const state = readQuestLocal();
-  const prev = state[questSlug] || { bestScore: 0, completed: false, updatedAt: now };
-  const bestScore = Math.max(prev.bestScore || 0, score);
-  const done = prev.completed || completed;
-  state[questSlug] = { bestScore, completed: done, updatedAt: now };
-  writeQuestLocal(state);
+  const { slug, score, completed = false } = params;
+  const current = getProgress(slug);
+  const bestScore = Math.max(current.bestScore || 0, score);
+  const merged: Progress = {
+    bestScore,
+    completed: current.completed || completed,
+    updatedAt: nowISO(),
+  };
+  setLocal(slug, merged);
 
-  const supabase = getSupabase();
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      await supabase.from('quest_progress').upsert(
-        {
-          user_id: user.user.id,
-          quest_slug: questSlug,
-          best_score: bestScore,
-          completed: done,
-          updated_at: now,
-        },
-        { onConflict: 'user_id,quest_slug' },
-      );
-    }
+  // Try cloud sync if signed in
+  try {
+    const client = await getSupabase();
+    if (!client) return;
+
+    const { data: userRes } = await client.auth.getUser();
+    const user = userRes?.user;
+    if (!user) return;
+
+    await client.from('quest_progress').upsert(
+      {
+        user_id: user.id,
+        quest_slug: slug,
+        best_score: merged.bestScore,
+        completed: merged.completed,
+        updated_at: merged.updatedAt,
+      },
+      { onConflict: 'user_id,quest_slug' },
+    );
+  } catch {
+    /* swallow — offline or no table yet */
   }
 }
 
-export async function getProgress(questSlug: string) {
-  const local = readQuestLocal()[questSlug];
-  const supabase = getSupabase();
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      const { data } = await supabase
-        .from('quest_progress')
-        .select('best_score, completed')
-        .eq('user_id', user.user.id)
-        .eq('quest_slug', questSlug)
-        .maybeSingle();
-      if (data) {
-        const res = {
-          bestScore: data.best_score || 0,
-          completed: data.completed || false,
-          updatedAt: new Date().toISOString(),
-        };
-        const state = readQuestLocal();
-        state[questSlug] = res;
-        writeQuestLocal(state);
-        return res;
-      }
-    }
-  }
-  return (
-    local || {
-      bestScore: 0,
-      completed: false,
-      updatedAt: '',
-    }
-  );
-}
+export async function getCloudProgress(slug: string) {
+  try {
+    const client = await getSupabase();
+    if (!client) return null;
+    const { data: userRes } = await client.auth.getUser();
+    if (!userRes?.user) return null;
 
-export async function getAllProgress() {
-  const supabase = getSupabase();
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      const { data } = await supabase
-        .from('quest_progress')
-        .select('quest_slug, best_score, completed')
-        .eq('user_id', user.user.id);
-      if (data) {
-        const map: QuestState = {};
-        for (const row of data) {
-          map[row.quest_slug] = {
-            bestScore: row.best_score || 0,
-            completed: row.completed || false,
-            updatedAt: new Date().toISOString(),
-          };
-        }
-        writeQuestLocal(map);
-        return map;
-      }
-    }
+    const { data } = await client
+      .from('quest_progress')
+      .select('best_score, completed, updated_at')
+      .eq('quest_slug', slug)
+      .single();
+
+    if (!data) return null;
+
+    const merged: Progress = {
+      bestScore: data.best_score ?? 0,
+      completed: !!data.completed,
+      updatedAt: data.updated_at ?? nowISO(),
+    };
+    setLocal(slug, merged);
+    return merged;
+  } catch {
+    return null;
   }
-  return readQuestLocal();
 }
