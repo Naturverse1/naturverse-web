@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/supabase-client';
+import { signInWithGoogle } from '@/lib/auth';
 import { useSupabase } from '@/lib/useSupabase';
 
 export default function AuthButtons() {

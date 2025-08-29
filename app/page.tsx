@@ -3,7 +3,7 @@
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
 import { sendMagicLink } from '@/lib/auth';
-import { signInWithGoogle } from '@/lib/supabase-client';
+import { signInWithGoogle } from '@/lib/auth';
 import { useSupabase } from '@/lib/useSupabase';
 
 export default function Home() {
