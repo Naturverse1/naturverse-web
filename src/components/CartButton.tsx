@@ -3,7 +3,7 @@ import { useCart } from "@/lib/cart";
 import CartDrawer from "./CartDrawer";
 
 export default function CartButton({ className }: { className?: string }) {
-  const { cart } = useCart();
+  const { items } = useCart();
   const [open, setOpen] = useState(false);
 
   useEffect(() => {
@@ -12,7 +12,7 @@ export default function CartButton({ className }: { className?: string }) {
     return () => window.removeEventListener("keydown", f);
   }, []);
 
-  const count = cart.items.reduce((n, it) => n + it.qty, 0);
+  const count = items.reduce((n, it) => n + it.qty, 0);
 
   return (
     <>
