@@ -34,7 +34,7 @@ import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/profile';
-import AuthCallback from './pages/auth/callback';
+import AuthCallback from './routes/auth/callback';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';

@@ -1,9 +1,9 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <base href="/" />
-    <!-- Force root-relative asset paths -->
-    <meta charset="UTF-8" />
+    <head>
+      <!-- Make all asset URLs root-relative (fixes /auth/* loading /auth/assets/...) -->
+      <base href="/" />
+      <meta charset="UTF-8" />
     <script src="/kill-sw.js?v=2" defer></script>
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time

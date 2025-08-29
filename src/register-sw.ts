@@ -1,14 +1,22 @@
-// Only runs in production builds
-if (import.meta.env.PROD && 'serviceWorker' in navigator && location.pathname !== '/auth/callback') {
-  const host = location.hostname;
-  const onNetlify = host.endsWith('.netlify.app');
-  if (!onNetlify) {
-    // vite-plugin-pwa injects /sw.js for us
-    import('workbox-window').then(({ Workbox }) => {
-      const wb = new Workbox('/sw.js');
-      wb.addEventListener('waiting', () => wb.messageSW({ type: 'SKIP_WAITING' }));
-      wb.addEventListener('controlling', () => window.location.reload());
-      wb.register();
-    });
+// Don't register a service worker on the OAuth callback page
+if (location.pathname.startsWith('/auth/callback')) {
+  // If anything registered previously, quietly unregister to avoid shell capture.
+  if ('serviceWorker' in navigator) {
+    navigator.serviceWorker.getRegistrations?.().then(rs => rs.forEach(r => r.unregister()))
+  }
+} else {
+  // Only runs in production builds
+  if (import.meta.env.PROD && 'serviceWorker' in navigator) {
+    const host = location.hostname;
+    const onNetlify = host.endsWith('.netlify.app');
+    if (!onNetlify) {
+      // vite-plugin-pwa injects /sw.js for us
+      import('workbox-window').then(({ Workbox }) => {
+        const wb = new Workbox('/sw.js');
+        wb.addEventListener('waiting', () => wb.messageSW({ type: 'SKIP_WAITING' }));
+        wb.addEventListener('controlling', () => window.location.reload());
+        wb.register();
+      });
+    }
   }
 }
