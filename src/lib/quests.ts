@@ -1,10 +1,11 @@
+// src/lib/quests.ts
 export type Quest = {
   slug: string;
   title: string;
-  zone: string;
+  zone: string;            // e.g., "Bangkok", "Chiang Mai", "Phuket"
   difficulty: 1 | 2 | 3 | 4 | 5;
   description: string;
-  mode?: 'time' | 'score';
+  mode?: 'time' | 'score'; // defaults to 'score'
 };
 
 export const QUESTS: Quest[] = [
@@ -13,16 +14,16 @@ export const QUESTS: Quest[] = [
     title: 'Tuk-Tuk Dash',
     zone: 'Bangkok',
     difficulty: 2,
-    description: 'Quick reaction game—tap to dodge and collect coins.',
+    description: 'Quick reaction game — tap to dodge and collect coins.',
     mode: 'score',
   },
   {
     slug: 'spice-market',
     title: 'Spice Market',
     zone: 'Chiang Mai',
-    difficulty: 2,
-    description: 'Memory match with Thai spices—find pairs before time runs out.',
-    mode: 'time',
+    difficulty: 3,
+    description: 'Memory match with Thai spices — find pairs before time runs out.',
+    mode: 'score',
   },
   {
     slug: 'temple-trivia',
@@ -33,3 +34,5 @@ export const QUESTS: Quest[] = [
     mode: 'score',
   },
 ];
+
+export const getQuest = (slug: string) => QUESTS.find(q => q.slug === slug);
