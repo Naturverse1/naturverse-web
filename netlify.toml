@@ -1,27 +1,19 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
 
-# Serve a real static page for SW cleanup (must be above catch-all)
-[[redirects]]
-  from = "/kill-sw"
-  to = "/kill-sw.html"
-  status = 200
-  force = true
-
-# Auth callback should return the SPA shell so the app handles the hash
+# Auth callback must render the SPA shell (index.html)
 [[redirects]]
   from = "/auth/callback"
   to = "/index.html"
   status = 200
   force = true
 
-# Catch-all SPA
+# Generic SPA fallback (does NOT catch /assets/*)
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# ❗️No CSP while we stabilize (it was blocking inline boot + Stripe)
-# If you see a CSP header after this change, a /public/_headers file is overriding it.
+# No CSP while we stabilize (prevents inline/style/script blocks)
+# (Intentionally omit any headers setting Content-Security-Policy)
