@@ -1,3 +1,6 @@
-/auth/callback  /index.html  200
-/*              /index.html  200
+# Preserve Supabase access token by serving SPA shell on callback
+/auth/callback   /index.html   200
+
+# SPA fallback for everything else
+/*               /index.html   200
 
