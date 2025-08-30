@@ -3,10 +3,10 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width,initial-scale=1" />
-    <title>Kill SW</title>
+    <title>Reset app cache</title>
   </head>
   <body>
-    <pre>Removing service workers & caches…</pre>
+    <pre>Clearing service workers & caches…</pre>
     <script>
       (async () => {
         try {
@@ -18,9 +18,8 @@
             const keys = await caches.keys();
             await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
           }
-        } catch (e) {}
-        // small delay, then go home
-        setTimeout(() => (location.href = '/'), 250);
+        } catch {}
+        setTimeout(() => (location.href = '/'), 300);
       })();
     </script>
   </body>

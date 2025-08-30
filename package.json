@@ -4,13 +4,10 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "node scripts/build-kingdom-gallery.js && vite build",
     "build:galleries": "node scripts/build-kingdom-gallery.js",
-    "preview": "vite preview --port 5173",
-    "test": "echo \"No tests configured\" && exit 0",
-    "typecheck": "tsc -p tsconfig.json --noEmit || true",
-    "guard:netlify": "node scripts/guard-netlify-env.mjs"
+    "build": "npm run build:galleries && vite build",
+    "dev": "vite",
+    "preview": "vite preview"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",

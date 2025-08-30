@@ -3,31 +3,25 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# --- Headers (keep security, drop CSP while we stabilize) ---
-[[headers]]
-  for = "/*"
-  [headers.values]
-  X-Frame-Options = "SAMEORIGIN"
-  X-Content-Type-Options = "nosniff"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  # Intentionally no Content-Security-Policy for now (it was blocking scripts)
-
-# --- Static utility page: do NOT route through SPA ---
+# Serve a real static page for SW cleanup (must be above catch-all)
 [[redirects]]
   from = "/kill-sw"
   to = "/kill-sw.html"
   status = 200
   force = true
 
-# --- Auth callback: serve SPA shell so the app handles the hash params ---
+# Auth callback should return the SPA shell so the app handles the hash
 [[redirects]]
   from = "/auth/callback"
   to = "/index.html"
   status = 200
   force = true
 
-# --- Catch-all: SPA routes ---
+# Catch-all SPA
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
+
+# ❗️No CSP while we stabilize (it was blocking inline boot + Stripe)
+# If you see a CSP header after this change, a /public/_headers file is overriding it.
