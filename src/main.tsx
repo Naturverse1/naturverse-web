@@ -26,12 +26,17 @@ import './boot/warmup';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
-// import { registerSW } from './register-sw';
 
 applyTheme(getTheme());
 installGlobalLogCapture();
-// PWA disabled during auth stabilization
-// registerSW();
+// if you manually register the PWA, guard auth paths
+if ('serviceWorker' in navigator) {
+  if (!location.pathname.startsWith('/auth/')) {
+    window.addEventListener('load', () => {
+      navigator.serviceWorker.register('/sw.js').catch(() => {});
+    });
+  }
+}
 
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {

@@ -1,15 +1,14 @@
-// Kill any registered service workers ASAP and clear caches
+// Kill any registered service workers and hard-reload once
 (async () => {
   try {
     if ('serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+      await Promise.all(regs.map(r => r.unregister().catch(() => {})));
     }
     if (self.caches) {
       const keys = await caches.keys();
-      await Promise.all(keys.map((k) => caches.delete(k).catch(() => {})));
+      await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
     }
-    // Avoid reload loop
     const flag = 'nv-sw-killed';
     if (!sessionStorage.getItem(flag)) {
       sessionStorage.setItem(flag, '1');
