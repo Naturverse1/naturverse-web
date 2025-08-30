@@ -1,14 +1,24 @@
 <!doctype html>
-<html>
-  <head><meta charset="utf-8"><title>Kill SW</title></head>
-  <body>
-    <p>Removing service workers & caches…</p>
-    <script src="/kill-sw.js"></script>
-    <script>
-      // Let the user know it finished (if no auto-reload happened)
-      setTimeout(() => {
-        document.body.insertAdjacentHTML('beforeend','<p>Done. If the page didn’t reload, refresh once.</p>');
-      }, 1500);
-    </script>
-  </body>
-</html>
+<meta charset="utf-8" />
+<title>Reset Naturverse caches</title>
+<script>
+(async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map(r => r.unregister().catch(() => {})));
+    }
+    if (self.caches) {
+      const keys = await caches.keys();
+      await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
+    }
+    // Hard reload once so the new build boots cleanly
+    const flag = 'nv-sw-killed';
+    if (!sessionStorage.getItem(flag)) {
+      sessionStorage.setItem(flag, '1');
+      location.replace('/'); // absolute, avoids /auth/
+    }
+  } catch {}
+})();
+</script>
+<p>Resetting offline caches… You’ll be redirected.</p>

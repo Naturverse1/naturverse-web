@@ -3,7 +3,46 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# --- SPA redirects (absolute assets still work thanks to <base href='/'>)
+[[redirects]]
+  from = "/auth/callback"
+  to   = "/index.html"
+  status = 200
+
+[[redirects]]
+  from = "/*"
+  to   = "/index.html"
+  status = 200
+
+# --- Security headers (explicit CSP; allow what we actually use)
 [[headers]]
   for = "/*"
   [headers.values]
-  Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; font-src 'self' data:; base-uri 'self'; form-action 'self';"
+  X-Frame-Options = "SAMEORIGIN"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  X-Content-Type-Options = "nosniff"
+
+  # EXPLICIT directives so the browser doesn't fall back to default-src
+  Content-Security-Policy = '''
+    default-src 'self';
+    base-uri 'self';
+    script-src
+      'self'
+      'unsafe-inline'
+      https://js.stripe.com
+      https://www.gstatic.com
+      https://accounts.google.com;
+    style-src 'self' 'unsafe-inline';
+    img-src 'self' data: blob:;
+    font-src 'self' data:;
+    connect-src
+      'self'
+      https://*.supabase.co
+      https://api.stripe.com
+      https://js.stripe.com
+      https://www.googleapis.com
+      https://accounts.google.com;
+    frame-src https://js.stripe.com https://accounts.google.com;
+    form-action 'self' https://accounts.google.com;
+    worker-src 'self' blob:;
+  '''
