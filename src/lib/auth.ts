@@ -1,36 +1,17 @@
-import { createClient } from '@supabase/supabase-js';
-
-const url = import.meta.env.VITE_SUPABASE_URL;
-const key = import.meta.env.VITE_SUPABASE_ANON_KEY;
-
-export const supabase =
-  url && key
-    ? createClient(url, key, {
-        auth: { persistSession: true, detectSessionInUrl: true },
-      })
-    : null;
-
-export function getSupabase() {
-  return supabase;
-}
+import { supabase } from './supabase-client';
 
 /** Always return to the current host (preview or prod) */
 export async function signInWithGoogle() {
-  if (!supabase) return { data: null, error: new Error('Supabase not configured') };
-
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // Always land on the homepage after auth (works for Netlify + SPA)
       redirectTo: `${window.location.origin}/`,
-      queryParams: { prompt: 'consent', access_type: 'offline' },
+      queryParams: { prompt: 'select_account' },
     },
   });
 }
 
 export async function sendMagicLink(email: string) {
-  if (!supabase) return { data: null, error: new Error('Supabase not configured') };
-
   const redirectTo = `${window.location.origin}/`;
   return supabase.auth.signInWithOtp({
     email,
@@ -39,12 +20,10 @@ export async function sendMagicLink(email: string) {
 }
 
 export async function getUser() {
-  if (!supabase) return null;
   const { data } = await supabase.auth.getUser();
   return data.user;
 }
 
 export async function signOut() {
-  if (!supabase) return;
   await supabase.auth.signOut();
 }

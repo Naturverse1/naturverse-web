@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { supabase, sendMagicLink, signInWithGoogle } from '@/lib/auth';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
+import { supabase } from '@/lib/supabase-client';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -15,13 +16,13 @@ export default function LoginForm() {
 
     if (!supabase) return;
     // Load initial session
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       if (!mounted) return;
       setSession(data.session ?? null);
     });
 
     // Subscribe to auth state changes
-    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
       setSession(newSession);
     });
 
