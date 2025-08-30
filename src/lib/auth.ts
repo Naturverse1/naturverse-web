@@ -5,8 +5,7 @@ export async function signInWithGoogle() {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // Always land on the app shell; no more /auth/callback
-      redirectTo: `${window.location.origin}/`,
+      redirectTo: `${window.location.origin}/auth/callback`,
       queryParams: { prompt: 'select_account' }
     },
   });

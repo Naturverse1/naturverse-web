@@ -1,14 +1,14 @@
 <!doctype html>
 <html lang="en">
-    <head>
-        <!-- Force relative URLs to resolve from site root -->
-        <base href="/" />
-        <meta charset="UTF-8" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <!-- Make all relative assets resolve from site root (fixes /auth/callback) -->
+    <base href="/" />
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time
       window.__NV_PWA_ENABLED__ = "%VITE_ENABLE_PWA%" === "true";
     </script>
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Naturverse</title>
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />

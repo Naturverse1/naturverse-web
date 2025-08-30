@@ -44,6 +44,7 @@ import AdminLogs from './pages/admin/logs';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
+import AuthCallback from './routes/auth/Callback';
 import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
@@ -104,6 +105,7 @@ export const router = createBrowserRouter([
       { path: 'progress', element: <ProgressPage /> },
       { path: 'passport', element: <PassportPage /> },
       { path: 'orders', element: <OrdersPage /> },
+      { path: 'auth/callback', element: <AuthCallback /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'turian', element: <Turian /> },
       { path: 'profile', element: <ProfilePage /> },
