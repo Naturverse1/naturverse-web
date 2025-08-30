@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "build": "node scripts/build-kingdom-gallery.js && vite build",
     "build:galleries": "node scripts/build-kingdom-gallery.js",
-    "build": "npm run build:galleries && vite build",
     "preview": "vite preview --port 5173",
     "test": "echo \"No tests configured\" && exit 0",
     "typecheck": "tsc -p tsconfig.json --noEmit || true",

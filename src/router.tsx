@@ -44,7 +44,7 @@ import AdminLogs from './pages/admin/logs';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import RouteError from './routes/RouteError';
-import AuthCallback from '@/routes/AuthCallback';
+import AuthCallback from '@/pages/AuthCallback';
 import MiniQuests from './pages/MiniQuests';
 import PlayQuest from './pages/play/[slug]';
 import SuccessPage from './pages/success';
