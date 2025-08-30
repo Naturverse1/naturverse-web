@@ -1,6 +1,7 @@
 import { useEffect, useState, useRef } from "react";
 import { useSupabase } from "@/lib/useSupabase";
 import LazyImg from "./LazyImg";
+import { signOut as globalSignOut } from '@/lib/auth';
 import "../styles/auth-menu.css";
 
 type MiniUser = { id: string; email: string | null; avatar_url?: string | null };
@@ -55,11 +56,9 @@ export default function AuthMenu() {
   }, []);
 
   async function signOut() {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setUser(null);
     setOpen(false);
-    window.location.assign('/');
+    setUser(null);
+    await globalSignOut();
   }
 
   if (!user) {

@@ -1,4 +1,4 @@
-// Temporarily disable PWA while we stabilize auth
-export function registerPWA() {
+// Temporarily disabled to avoid stale shells during auth fixes.
+export function registerSW() {
   /* no-op */
 }

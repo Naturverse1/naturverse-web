@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import { useSupabase } from "@/lib/useSupabase";
 import LazyImg from "./LazyImg";
+import { signOut } from '@/lib/auth';
 
 type SessionUser = {
   email?: string | null;
@@ -83,9 +84,7 @@ export default function UserMenu() {
           <button
             className="item danger"
             onClick={async () => {
-              if (!supabase) return;
-              await supabase.auth.signOut();
-              window.location.assign("/");
+              await signOut();
             }}
           >
             Sign out

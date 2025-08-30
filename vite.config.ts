@@ -4,8 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  // Make all built asset URLs absolute so nested routes like /auth/callback
-  // load /assets/* instead of auth/assets/*
+  // Ensure asset URLs are absolute (/assets/...), so nested routes work
   base: '/',
   plugins: [
     react(),

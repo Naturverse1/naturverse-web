@@ -26,14 +26,13 @@ import './boot/warmup';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
-import { registerPWA } from './register-sw';
+// import { registerSW } from './register-sw';
 
 applyTheme(getTheme());
 installGlobalLogCapture();
-// Temporarily disable PWA unless explicitly enabled
-if (import.meta.env.VITE_ENABLE_PWA === 'true') {
-  registerPWA();
-}
+// PWA disabled during auth stabilization
+// registerSW();
+
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
