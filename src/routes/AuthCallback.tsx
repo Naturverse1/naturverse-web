@@ -1,17 +1,20 @@
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { supabase } from '@/lib/supabase'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!,
+  { auth: { persistSession: true, detectSessionInUrl: true } }
+)
 
 export default function AuthCallback() {
-  const nav = useNavigate()
+  const navigate = useNavigate()
 
   useEffect(() => {
-    // Supabase parses the URL hash and sets the session
-    supabase.auth.getSession().finally(() => {
-      // Optionally, read redirect-to from state; default home:
-      nav('/', { replace: true })
-    })
-  }, [nav])
+    // detectSessionInUrl above will parse #access_token and set the session
+    supabase.auth.getSession().then(() => navigate('/', { replace: true }))
+  }, [navigate])
 
-  return <div style={{ padding: 24 }}>Signing you in…</div>
+  return <div style={{padding: 24}}>Signing you in…</div>
 }

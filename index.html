@@ -1,22 +1,15 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <base href="/" />
+    <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <meta charset="UTF-8" />
-    <meta name="theme-color" content="#0ea5e9" />
-    <script>
-      // Vite replaces %VITE_ENABLE_PWA% at build-time
-      window.__NV_PWA_ENABLED__ = '%VITE_ENABLE_PWA%' === 'true';
-    </script>
-    <title>Naturverse</title>
-    <!-- PWA manifest -->
-    <link rel="manifest" href="/manifest.json" />
+    <base href="/" />
 
-    <!-- iOS install hints -->
-    <link rel="apple-touch-icon" href="/favicon-192x192.png" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <title>Naturverse</title>
+    <meta name="theme-color" content="#0ea5e9" />
+    <link rel="apple-touch-icon" href="/favicon-192x192.png" />
 
     <!-- === Naturverse SEO defaults (safe, no runtime/deps) === -->
     <link rel="canonical" href="https://thenaturverse.com" />
@@ -135,7 +128,6 @@
     <!-- absolute path so /auth/callback doesn’t become /auth/src/main.tsx -->
     <script type="module" src="/src/main.tsx"></script>
 
-    <!-- Install banner removed while PWA is disabled -->
     <!-- Netlify Forms detection: hidden static form (do not remove) -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
@@ -201,18 +193,5 @@
       })();
     </script>
 
-    <script>
-      // If a navigation happens while offline and fetch fails, show /offline.html.
-      (function () {
-        if (!('serviceWorker' in navigator)) return; // SW handles most offline
-        // As an extra safety: intercept top-level navigations that fail.
-        window.addEventListener('error', function (e) {
-          try {
-            var isChunkLoad = e && e.message && /Loading chunk/i.test(e.message);
-            if (isChunkLoad && !navigator.onLine) location.href = '/offline.html';
-          } catch {}
-        });
-      })();
-    </script>
   </body>
 </html>
