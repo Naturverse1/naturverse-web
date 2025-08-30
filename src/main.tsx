@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import ReactDOM from 'react-dom/client';
 import App from './App';
-import { swCleanupOnce } from '@/lib/swCleanup';
 import { AuthProvider as BaseAuthProvider } from './auth/AuthContext';
 import { AuthProvider } from './lib/auth-context';
 import { AppErrorBoundary } from './components/AppErrorBoundary';
@@ -29,7 +28,6 @@ import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
 
-swCleanupOnce();
 applyTheme(getTheme());
 installGlobalLogCapture();
 

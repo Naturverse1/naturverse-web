@@ -1,49 +1,27 @@
 <!doctype html>
-<html lang="en">
+<html>
   <head>
     <meta charset="utf-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Clear Naturverse Service Workers</title>
-    <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif; padding: 24px; line-height: 1.5; }
-      .card { max-width: 680px; margin: 0 auto; border: 1px solid #e5e7eb; border-radius: 12px; padding: 20px; }
-      button { padding: 10px 14px; border-radius: 10px; border: 0; cursor: pointer; }
-    </style>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Kill SW</title>
   </head>
   <body>
-    <div class="card">
-      <h1>Clear Naturverse Service Workers</h1>
-      <p>This page unregisters all Service Workers and clears old caches. Use it if you see “Install Naturverse?” banners or stale pages.</p>
-      <button id="run">Clear now</button>
-      <pre id="log"></pre>
-    </div>
+    <pre>Removing service workers & caches…</pre>
     <script>
-      async function clearAll() {
-        const out = [];
+      (async () => {
         try {
           if ('serviceWorker' in navigator) {
             const regs = await navigator.serviceWorker.getRegistrations();
-            out.push(`Found ${regs.length} service worker(s).`);
             await Promise.all(regs.map(r => r.unregister().catch(() => {})));
-            out.push('Unregistered all service workers.');
           }
-          if (self.caches && caches.keys) {
+          if (window.caches && caches.keys) {
             const keys = await caches.keys();
-            out.push(`Found ${keys.length} cache key(s): ${keys.join(', ')}`);
             await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
-            out.push('Deleted all caches.');
           }
-          out.push('✅ Done. Reloading…');
-          document.getElementById('log').textContent = out.join('\n');
-          setTimeout(() => location.replace('/'), 800);
-        } catch (e) {
-          out.push('Error: ' + (e && e.message ? e.message : e));
-          document.getElementById('log').textContent = out.join('\n');
-        }
-      }
-      document.getElementById('run').addEventListener('click', clearAll);
-      // auto-run on open
-      clearAll();
+        } catch (e) {}
+        // small delay, then go home
+        setTimeout(() => (location.href = '/'), 250);
+      })();
     </script>
   </body>
-  </html>
+</html>

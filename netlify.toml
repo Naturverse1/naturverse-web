@@ -3,29 +3,31 @@
   publish = "dist"
   functions = "netlify/functions"
 
-[build.environment]
-  VITE_ENABLE_PWA = "false"
-  VITE_ALLOW_PREVIEW_AUTH = "false"
-  VITE_ALLOW_PREVIEW_SIGNIN = "false"
+# --- Headers (keep security, drop CSP while we stabilize) ---
+[[headers]]
+  for = "/*"
+  [headers.values]
+  X-Frame-Options = "SAMEORIGIN"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  # Intentionally no Content-Security-Policy for now (it was blocking scripts)
 
-## SPA fallback for client routes (including OAuth callback)
+# --- Static utility page: do NOT route through SPA ---
 [[redirects]]
-  from = "/auth/*"
+  from = "/kill-sw"
+  to = "/kill-sw.html"
+  status = 200
+  force = true
+
+# --- Auth callback: serve SPA shell so the app handles the hash params ---
+[[redirects]]
+  from = "/auth/callback"
   to = "/index.html"
   status = 200
+  force = true
 
+# --- Catch-all: SPA routes ---
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-## Security headers with relaxed CSP to allow Vite’s inline bootstrapping
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    # IMPORTANT: relax CSP while we stabilize OAuth callback and remove inline-block errors.
-    # When everything is stable, we can re-harden this.
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src *; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
