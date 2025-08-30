@@ -18,11 +18,11 @@ export function getSupabase() {
 export async function signInWithGoogle() {
   if (!supabase) return { data: null, error: new Error('Supabase not configured') };
 
-  const redirectTo = `${location.origin}/auth/callback`;
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo,
+      // land on the site root so assets + CSP are happy
+      redirectTo: `${window.location.origin}/`,
       queryParams: { prompt: 'consent', access_type: 'offline' },
     },
   });
@@ -31,7 +31,7 @@ export async function signInWithGoogle() {
 export async function sendMagicLink(email: string) {
   if (!supabase) return { data: null, error: new Error('Supabase not configured') };
 
-  const redirectTo = `${location.origin}/auth/callback`;
+  const redirectTo = `${window.location.origin}/`;
   return supabase.auth.signInWithOtp({
     email,
     options: { emailRedirectTo: redirectTo },
