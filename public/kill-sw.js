@@ -1,4 +1,4 @@
-// Kill any registered service workers (useful after policy/route changes)
+// Kill any registered service workers ASAP and clear caches
 (async () => {
   try {
     if ('serviceWorker' in navigator) {
@@ -9,11 +9,11 @@
       const keys = await caches.keys();
       await Promise.all(keys.map((k) => caches.delete(k).catch(() => {})));
     }
-    // Hard reload once to avoid reload loops
+    // Avoid reload loop
     const flag = 'nv-sw-killed';
     if (!sessionStorage.getItem(flag)) {
       sessionStorage.setItem(flag, '1');
       location.reload();
     }
-  } catch {}
+  } catch (_) {}
 })();
