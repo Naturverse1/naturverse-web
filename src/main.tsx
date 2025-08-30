@@ -30,14 +30,6 @@ import { installGlobalLogCapture } from '@/lib/log';
 
 applyTheme(getTheme());
 installGlobalLogCapture();
-// if you manually register the PWA, guard auth paths
-if ('serviceWorker' in navigator) {
-  if (!location.pathname.startsWith('/auth/')) {
-    window.addEventListener('load', () => {
-      navigator.serviceWorker.register('/sw.js').catch(() => {});
-    });
-  }
-}
 
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {
