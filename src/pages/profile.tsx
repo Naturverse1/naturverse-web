@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase-client";
+import { useAuth } from "../auth/AuthContext";
 import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";
@@ -17,6 +18,7 @@ const K = {
 
 export default function ProfilePage() {
   setTitle("Profile");
+  const { user, loading, signOut } = useAuth();
   const [p, setP] = useState<LocalProfile>(() =>
     lsGet(K.profile, {
       displayName: "",
@@ -96,6 +98,9 @@ export default function ProfilePage() {
     // silent; local UI already shows values
   };
 
+  if (loading) return <div style={{ padding: 24 }}>Loading…</div>;
+  if (!user) return <div style={{ padding: 24 }}>You’re signed out.</div>;
+
   return (
     <div className="nvrs-section profile">
       <main className="container profile-page">
@@ -144,16 +149,14 @@ export default function ProfilePage() {
         </div>
 
         {/* Local Sign out lives here only */}
-        {supabase && (
-          <button
-            type="button"
-            onClick={async () => { if (!supabase) return; await supabase.auth.signOut(); location.href = "/"; }}
-            className="secondary"
-            style={{ marginTop: 12 }}
-          >
-            Sign out
-          </button>
-        )}
+        <button
+          type="button"
+          onClick={signOut}
+          className="secondary"
+          style={{ marginTop: 12 }}
+        >
+          Sign out
+        </button>
       </form>
 
       <section className="panel">

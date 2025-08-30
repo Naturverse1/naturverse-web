@@ -1,10 +1,9 @@
 import { useState } from 'react';
-import { useAuth } from '../auth/AuthContext';
+import { sendMagicLink } from '../lib/auth';
 
 type Props = { open: boolean; onClose: () => void; title?: string };
 
 export default function AuthModal({ open, onClose, title = 'Sign in' }: Props) {
-  const { signInWithEmail } = useAuth();
   const [email, setEmail] = useState('');
   const [sent, setSent] = useState(false);
   const [error, setError] = useState<string | null>(null);
@@ -13,8 +12,8 @@ export default function AuthModal({ open, onClose, title = 'Sign in' }: Props) {
   async function submit(e: React.FormEvent) {
     e.preventDefault();
     setError(null);
-    const { error } = await signInWithEmail(email.trim());
-    if (error) setError(error);
+    const { error } = await sendMagicLink(email.trim());
+    if (error) setError(error.message);
     else setSent(true);
   }
 

@@ -26,6 +26,7 @@
   X-Robots-Tag: noindex
   Cache-Control: no-store
   Service-Worker-Allowed: /
+  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in https://accounts.google.com https://apis.google.com; frame-src https://accounts.google.com
 
 /sw.js
   Cache-Control: no-store
@@ -33,6 +34,3 @@
   Cache-Control: no-store
 /kill-sw.js
   Cache-Control: no-store
-
-/auth/*
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in https://accounts.google.com https://apis.google.com; frame-src https://accounts.google.com
