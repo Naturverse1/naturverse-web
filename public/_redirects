@@ -1,3 +1,10 @@
-# SPA fallback
+# OAuth callback must render the SPA shell so the app can read the hash
 /auth/callback   /index.html   200
-/*               /index.html   200
+
+# When on /auth/*, requests for assets and helper files must resolve from the root
+/auth/assets/*           /assets/:splat        200
+/auth/kill-sw.js         /kill-sw.js           200
+/auth/registerSW.js      /registerSW.js        200
+
+# Standard SPA fallback
+/*                 /index.html   200

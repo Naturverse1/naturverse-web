@@ -20,6 +20,7 @@ import ToastProvider from './components/Toast';
 import { getSupabase } from '@/lib/supabase-client';
 import WorldExtras from './components/WorldExtras';
 import CommandPalette from './components/CommandPalette';
+import { router } from './router';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
@@ -41,8 +42,17 @@ if ('serviceWorker' in navigator) {
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
+  const [path, setPath] = useState<string>(
+    typeof window !== 'undefined' ? window.location.pathname : '/',
+  );
 
   useEffect(() => {
+    if (typeof window === 'undefined') return;
+    return router.subscribe((s) => setPath(s.location.pathname));
+  }, []);
+
+  useEffect(() => {
+    if (path.startsWith('/auth/')) return;
     const onKey = (e: KeyboardEvent) => {
       const mod = e.ctrlKey || e.metaKey;
       if (mod && e.key.toLowerCase() === 'k') {
@@ -52,12 +62,14 @@ function RootWithPalette({ children }: { children: React.ReactNode }) {
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, []);
+  }, [path]);
+
+  const onAuthRoute = path.startsWith('/auth/');
 
   return (
     <>
       {children}
-      <CommandPalette open={open} onClose={() => setOpen(false)} />
+      {!onAuthRoute && <CommandPalette open={open} onClose={() => setOpen(false)} />}
     </>
   );
 }
