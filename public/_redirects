@@ -1,3 +1,2 @@
-# SPA fallback (serve the app shell for any client route)
-/*                /index.html  200
-
+/auth/callback  /  302
+/*              /index.html  200
