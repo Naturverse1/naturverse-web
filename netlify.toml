@@ -1,38 +1,35 @@
 [build]
-  command = "npm run build"
-  publish = "dist"
+command = "npm run build"
+publish = "dist"
+functions = "netlify/functions"
 
-# --- Auth callback served as a real static file (no SPA rewrite) ---
+# SPA routing: send everything (incl. /auth/callback) to index.html
 [[redirects]]
-  from = "/auth/callback"
-  to   = "/auth/callback.html"
-  status = 200
-  force = true
+from = "/auth/*"
+to = "/index.html"
+status = 200
+force = true
 
-# Run the SW killer page as-is (no SPA rewrite)
 [[redirects]]
-  from = "/kill-sw"
-  to   = "/kill-sw.html"
-  status = 200
-  force = true
+from = "/*"
+to = "/index.html"
+status = 200
+force = true
 
-# Keep SPA shell for everything else
-[[redirects]]
-  from = "/*"
-  to   = "/index.html"
-  status = 200
-
-# Slim, permissive CSP for the whole app (fine for now)
+# Relaxed but safe CSP for auth & API calls (no inline scripts)
 [[headers]]
-  for = "/*"
+for = "/*"
   [headers.values]
-    Content-Security-Policy = """
-      default-src 'self';
-      script-src 'self' 'unsafe-inline' https://accounts.google.com https://*.supabase.co https://js.stripe.com;
-      style-src  'self' 'unsafe-inline';
-      img-src    'self' data: blob:;
-      connect-src 'self' https://*.supabase.co https://*.stripe.com wss:;
-      frame-src  https://accounts.google.com https://js.stripe.com;
-      base-uri 'self';
-      form-action 'self' https://accounts.google.com;
-    """
+  Content-Security-Policy = """
+    default-src 'self';
+    script-src 'self' https://*.supabase.co https://accounts.google.com;
+    connect-src 'self' https://*.supabase.co https://accounts.google.com https://*.stripe.com;
+    img-src 'self' data: blob:;
+    style-src 'self' 'unsafe-inline';
+    frame-src https://accounts.google.com;
+    frame-ancestors 'self';
+    base-uri 'self'
+  """
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  X-Content-Type-Options = "nosniff"
+  X-Frame-Options = "SAMEORIGIN"
