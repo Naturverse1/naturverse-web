@@ -18,6 +18,8 @@ export default defineConfig({
             workbox: {
               globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,woff2}'],
               maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+              // don't cache auth pages at all
+              navigateFallbackDenylist: [/^\/auth\/],
             },
             manifest: {
               name: 'Naturverse',
