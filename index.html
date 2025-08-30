@@ -1,7 +1,9 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <!-- Force all relative links to resolve from the site root -->
     <base href="/" />
+    <meta charset="UTF-8" />
     <!-- Ensure proper mobile scaling -->
     <meta
       name="viewport"
@@ -9,8 +11,6 @@
     />
     <!-- Mobile chrome color (optional) -->
     <meta name="theme-color" content="#0ea5e9" />
-    <!-- Make all relative assets resolve from site root (fixes /auth/callback) -->
-    <meta charset="UTF-8" />
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time
       window.__NV_PWA_ENABLED__ = '%VITE_ENABLE_PWA%' === 'true';
@@ -138,6 +138,7 @@
     <!-- END: Safe production banner -->
     <a class="nv-skip" href="#main">Skip to content</a>
     <div id="root"></div>
+    <!-- absolute path so /auth/callback doesn’t become /auth/src/main.tsx -->
     <script type="module" src="/src/main.tsx"></script>
 
     <!-- Install banner removed while PWA is disabled -->
