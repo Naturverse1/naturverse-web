@@ -2,9 +2,24 @@
   command = "npm run build"
   publish = "dist"
 
-# TEMP: permissive CSP so callback page can run.
-# After things work, we'll tighten this.
+# Security headers: allow only what we need for Supabase + Google on the callback
 [[headers]]
   for = "/*"
   [headers.values]
-  Content-Security-Policy = "default-src 'self' https: http: blob: data: 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *;"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "same-origin"
+  Permissions-Policy = "geolocation=(), microphone=(), camera=()"
+  # Keep default-src tight, but allow Supabase/Google domains we actually use.
+  # We temporarily allow 'unsafe-inline' on script/style to let the callback boot.
+  # Once stable, we can replace inline use with nonces/hashes and remove 'unsafe-inline'.
+  Content-Security-Policy = """
+    default-src 'self' https://*.supabase.co https://*.supabase.in https://apis.google.com;
+    script-src  'self' 'unsafe-inline' 'unsafe-eval' https://*.supabase.co https://*.supabase.in https://apis.google.com;
+    style-src   'self' 'unsafe-inline';
+    img-src     'self' data: https:;
+    font-src    'self' data:;
+    connect-src 'self' https://*.supabase.co https://*.supabase.in https://oauth2.googleapis.com https://accounts.google.com;
+    frame-src   'self' https://*.supabase.co https://accounts.google.com https://*.google.com;
+    base-uri    'self';
+    form-action 'self';
+  """

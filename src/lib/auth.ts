@@ -1,12 +1,13 @@
 import { supabase } from './supabase-client';
 
-/** Always return to the current host (preview or prod) */
 export async function signInWithGoogle() {
+  // Ensure OAuth returns to a page that can parse the hash BEFORE any CSP/SW interfere
+  const redirectTo = `${window.location.origin}/auth/callback`;
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/auth/callback`,
-      queryParams: { prompt: 'select_account' }
+      redirectTo,
+      queryParams: { prompt: 'select_account' },
     },
   });
 }
