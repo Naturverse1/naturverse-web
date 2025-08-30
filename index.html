@@ -1,7 +1,8 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <!-- Ensure all relative URLs resolve from site root so /auth/* doesn't try /auth/assets/... -->
+        <!-- Make every relative asset resolve from the site root,
+             so /auth/callback#... still loads /assets/... correctly -->
         <base href="/" />
         <meta charset="UTF-8" />
     <script>

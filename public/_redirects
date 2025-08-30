@@ -1,5 +1,5 @@
-# Hard redirect any auth callback to root
-/auth/callback    /    302!
+# Always bounce the OAuth hash callback back to the app shell
+/auth/callback   /   302!
 
-# SPA fallback for everything else — IMPORTANT: no "!" at the end
-/*                   /index.html                 200
+# SPA fallback
+/*               /index.html   200
