@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
+import { sendMagicLink, signInWithGoogle, signOut } from '@/lib/auth';
 import { supabase } from '@/lib/supabase-client';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
@@ -61,10 +61,7 @@ export default function LoginForm() {
   }
 
   async function handleLogout() {
-    if (!supabase) return;
-    await supabase.auth.signOut();
-    setMessage('Signed out.');
-    window.location.assign('/');
+    await signOut();
   }
 
   if (session) {

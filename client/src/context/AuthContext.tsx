@@ -95,7 +95,11 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: { redirectTo: `${window.location.origin}/` },
+      options: {
+        // Always land on the app shell; no more /auth/callback
+        redirectTo: `${window.location.origin}/`,
+        queryParams: { prompt: 'select_account' },
+      },
     });
     if (error) {
       throw new Error(error.message);
@@ -103,9 +107,17 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
-    if (!error) window.location.assign('/');
-    return { error };
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+      return { error: null };
+    } catch (error: any) {
+      return { error };
+    } finally {
+      Object.keys(localStorage).forEach((k) => {
+        if (k.startsWith('sb-')) localStorage.removeItem(k);
+      });
+      window.location.assign('/');
+    }
   };
 
   const loadProfile = async (userId: string) => {

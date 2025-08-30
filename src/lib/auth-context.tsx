@@ -47,9 +47,14 @@ export function AuthProvider({
 
   const signOut = async () => {
     if (!supabase) return;
-    const { error } = await supabase.auth.signOut();
-    if (error) alert(error.message);
-    else window.location.assign('/');
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } finally {
+      Object.keys(localStorage).forEach((k) => {
+        if (k.startsWith('sb-')) localStorage.removeItem(k);
+      });
+      window.location.assign('/');
+    }
   };
 
   // Stay in sync after first paint

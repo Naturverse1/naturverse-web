@@ -4,7 +4,11 @@ import { supabase } from './supabase-client';
 export async function signInWithGoogle() {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: { redirectTo: `${window.location.origin}/` },
+    options: {
+      // Always land on the app shell; no more /auth/callback
+      redirectTo: `${window.location.origin}/`,
+      queryParams: { prompt: 'select_account' }
+    },
   });
 }
 
@@ -22,6 +26,12 @@ export async function getUser() {
 }
 
 export async function signOut() {
-  await supabase.auth.signOut();
-  window.location.assign('/');
+  try {
+    await supabase.auth.signOut({ scope: 'global' });
+  } finally {
+    Object.keys(localStorage).forEach((k) => {
+      if (k.startsWith('sb-')) localStorage.removeItem(k);
+    });
+    window.location.assign('/');
+  }
 }
