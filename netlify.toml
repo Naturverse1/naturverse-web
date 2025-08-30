@@ -1,33 +1,13 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  functions = "netlify/functions"
 
-# *** IMPORTANT ***
-# Do NOT set Content-Security-Policy headers here.
-# We’re removing previous CSP overrides that blocked all inline and external scripts.
-
-# Serve the static SW killer HTML (no SPA catch)
-[[redirects]]
-  from = "/kill-sw"
-  to = "/kill-sw.html"
-  status = 200
-  force = true
-
-# Auth callback must load the SPA shell (so client JS can handle the token)
 [[redirects]]
   from = "/auth/callback"
   to = "/index.html"
   status = 200
   force = true
 
-# Ensure static assets are never eaten by SPA
-[[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
-  status = 200
-
-# SPA catch-all (last)
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -1,9 +1,10 @@
 import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react-swc'
+import react from '@vitejs/plugin-react'
 
 export default defineConfig({
-  base: '/',
+  base: '/',               // ensure absolute asset URLs (fixes MIME issues)
   plugins: [react()],
-  build: { outDir: 'dist' },
-  server: { port: 5173 }
+  server: { port: 5173 },  // dev only; Netlify ignores this in build
+  preview: { port: 5174 }, // dev only
+  resolve: { alias: { '@': '/src' } },
 })
