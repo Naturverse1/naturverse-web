@@ -1,3 +1,4 @@
+/auth/callback    /auth/callback/index.html   200
 # Force SPA fallback for the Supabase OAuth callback
 /auth/*    /index.html   200
 

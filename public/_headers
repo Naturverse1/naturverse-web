@@ -19,3 +19,6 @@ Content-Security-Policy: default-src 'self' https://*.supabase.co https://*.goog
 /kill-sw.js
   Cache-Control: no-store
 
+/auth/callback/*
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self'
+  X-Robots-Tag: noindex
