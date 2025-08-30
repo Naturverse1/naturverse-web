@@ -1,5 +1,2 @@
-# Send Supabase callback straight to the homepage
-/auth/callback*   /   302
+/*  /index.html  200
 
-# Normal SPA fallback
-/*                /index.html  200

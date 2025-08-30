@@ -58,7 +58,7 @@ export default function UserChip({ email }: { email?: string | null }) {
             onClick={async () => {
               if (!supabase) return;
               await supabase.auth.signOut();
-              window.location.href = '/';
+              window.location.assign('/');
             }}
             className="btn"
             style={menuItem}

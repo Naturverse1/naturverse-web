@@ -4,10 +4,7 @@ import { supabase } from './supabase-client';
 export async function signInWithGoogle() {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
-    options: {
-      redirectTo: `${window.location.origin}/`,
-      queryParams: { prompt: 'select_account' },
-    },
+    options: { redirectTo: `${window.location.origin}/` },
   });
 }
 
@@ -26,4 +23,5 @@ export async function getUser() {
 
 export async function signOut() {
   await supabase.auth.signOut();
+  window.location.assign('/');
 }

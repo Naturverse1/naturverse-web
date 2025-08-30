@@ -34,7 +34,6 @@ import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/profile';
-import AuthCallback from './routes/auth/callback';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
@@ -105,7 +104,6 @@ export const router = createBrowserRouter([
       { path: 'progress', element: <ProgressPage /> },
       { path: 'passport', element: <PassportPage /> },
       { path: 'orders', element: <OrdersPage /> },
-      { path: 'auth/callback', element: <AuthCallback /> },
       { path: 'login', element: <LoginPage /> },
       { path: 'turian', element: <Turian /> },
       { path: 'profile', element: <ProfilePage /> },
