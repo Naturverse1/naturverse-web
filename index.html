@@ -1,7 +1,6 @@
 <!doctype html>
 <html lang="en">
     <head>
-        <!-- Ensure all relative URLs resolve to site root on nested routes -->
         <base href="/" />
         <meta charset="UTF-8" />
     <script>
@@ -157,46 +156,7 @@
       </div>
     </div>
 
-    <script>
-      (function () {
-        if (!window.__NV_PWA_ENABLED__) return;
-        let deferred;
-        const bar = document.getElementById("nv-install");
-        const yes = document.getElementById("nv-install-yes");
-        const no  = document.getElementById("nv-install-no");
-
-        window.addEventListener("beforeinstallprompt", (e) => {
-          if (location.pathname.startsWith('/auth/')) return; // don't show on OAuth callback
-          e.preventDefault();
-          deferred = e;
-          // Show prompt only on home route (avoid spamming during deep flows)
-          const isHome = location.pathname === "/" || location.pathname === "";
-          if (bar && isHome) bar.style.display = "flex";
-        });
-
-        yes?.addEventListener("click", async () => {
-          try {
-            bar.style.display = "none";
-            if (!deferred) return;
-            const r = await deferred.prompt();
-            // Optional: handle r.outcome === 'accepted'/'dismissed'
-            deferred = null;
-          } catch {}
-        });
-
-        no?.addEventListener("click", () => {
-          bar.style.display = "none";
-          deferred = null;
-          // Do not show again this session
-          sessionStorage.setItem("nv-install-skip", "1");
-        });
-
-        // If user already dismissed in this session, keep hidden
-        if (sessionStorage.getItem("nv-install-skip") === "1" && bar) {
-          bar.style.display = "none";
-        }
-      })();
-    </script>
+    <!-- Install banner script disabled while PWA is off -->
   <!-- Netlify Forms detection: hidden static form (do not remove) -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />

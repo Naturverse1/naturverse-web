@@ -30,7 +30,10 @@ import { registerPWA } from './register-sw';
 
 applyTheme(getTheme());
 installGlobalLogCapture();
-registerPWA();
+// Temporarily disable PWA unless explicitly enabled
+if (import.meta.env.VITE_ENABLE_PWA === 'true') {
+  registerPWA();
+}
 
 function RootWithPalette({ children }: { children: React.ReactNode }) {
   const [open, setOpen] = useState(false);
