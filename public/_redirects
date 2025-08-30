@@ -1,7 +1,6 @@
-/auth/callback    /auth/callback/index.html   200
-# Force SPA fallback for the Supabase OAuth callback
-/auth/*    /index.html   200
+# Serve the callback HTML explicitly (so the route works as a page)
+ /auth/callback      /auth/callback/index.html   200
 
-# Force SPA fallback for any other client-side route
-/*         /index.html   200
+# SPA fallback for everything else — IMPORTANT: no "!" at the end
+ /*                   /index.html                 200
 
