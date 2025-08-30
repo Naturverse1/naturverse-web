@@ -1,2 +1,4 @@
-/auth/callback  /index.html  200
-/*              /index.html  200
+# Preserve Supabase access token by serving the SPA shell
+# Both rules must return 200 so the SPA renders and reads the hash
+/auth/callback   /index.html   200
+/*               /index.html   200
