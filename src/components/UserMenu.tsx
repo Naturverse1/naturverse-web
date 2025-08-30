@@ -85,7 +85,7 @@ export default function UserMenu() {
             onClick={async () => {
               if (!supabase) return;
               await supabase.auth.signOut();
-              window.location.replace("/");
+              window.location.assign("/");
             }}
           >
             Sign out

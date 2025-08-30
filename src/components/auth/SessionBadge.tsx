@@ -19,7 +19,7 @@ export default function SessionBadge() {
     <div className="nv-session-chip" title={email}>
       <span className="nv-session-dot" />
       <span className="nv-session-email">{email}</span>
-      <button className="nv-session-out" onClick={() => signOut().then(() => location.reload())}>
+      <button className="nv-session-out" onClick={() => signOut()}>
         Sign out
       </button>
     </div>

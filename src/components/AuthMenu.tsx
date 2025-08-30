@@ -59,6 +59,7 @@ export default function AuthMenu() {
     await supabase.auth.signOut();
     setUser(null);
     setOpen(false);
+    window.location.assign('/');
   }
 
   if (!user) {

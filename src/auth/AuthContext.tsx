@@ -43,7 +43,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           await Promise.all(names.map((n) => caches.delete(n)));
         } catch {}
       }
-      window.location.replace('/');
+      window.location.assign('/');
     }
   };
 

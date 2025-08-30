@@ -64,6 +64,7 @@ export default function LoginForm() {
     if (!supabase) return;
     await supabase.auth.signOut();
     setMessage('Signed out.');
+    window.location.assign('/');
   }
 
   if (session) {

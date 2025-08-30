@@ -95,11 +95,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   const signInWithGoogle = async () => {
     const { error } = await supabase.auth.signInWithOAuth({
       provider: 'google',
-      options: {
-        // Always land on the homepage after auth (works for Netlify + SPA)
-        redirectTo: `${window.location.origin}/`,
-        queryParams: { prompt: 'consent', access_type: 'offline' },
-      },
+      options: { redirectTo: `${window.location.origin}/` },
     });
     if (error) {
       throw new Error(error.message);
@@ -108,6 +104,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    if (!error) window.location.assign('/');
     return { error };
   };
 
