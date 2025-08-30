@@ -17,7 +17,7 @@ import './styles/theme.css';
 import './styles/cart.css';
 import { applyTheme, getTheme } from './lib/theme';
 import ToastProvider from './components/Toast';
-import { getSupabase, handleAuthCallback } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabase-client';
 import WorldExtras from './components/WorldExtras';
 import CommandPalette from './components/CommandPalette';
 import { router } from './router';
@@ -66,10 +66,33 @@ function RootWithPalette({ children }: { children: React.ReactNode }) {
   );
 }
 
+async function finalizeAuthIfNeeded() {
+  try {
+    const savedHash = sessionStorage.getItem('nv_oauth_hash');
+    if (savedHash && savedHash.startsWith('#')) {
+      const p = new URLSearchParams(savedHash.slice(1));
+      const access_token = p.get('access_token');
+      const refresh_token = p.get('refresh_token');
+      if (access_token && refresh_token) {
+        await supabase.auth.setSession({ access_token, refresh_token });
+      }
+      sessionStorage.removeItem('nv_oauth_hash');
+    }
+    const savedSearch = sessionStorage.getItem('nv_oauth_search');
+    if (savedSearch && savedSearch.startsWith('?')) {
+      const url = new URL(location.origin + '/' + savedSearch);
+      const code = url.searchParams.get('code');
+      if (code) {
+        await supabase.auth.exchangeCodeForSession(code);
+      }
+      sessionStorage.removeItem('nv_oauth_search');
+    }
+  } catch (_e) { /* ignore */ }
+}
+
 async function bootstrap() {
-  await handleAuthCallback();
-  const supabase = getSupabase();
-  const { data } = supabase ? await supabase.auth.getSession() : { data: { session: null } };
+  await finalizeAuthIfNeeded();
+  const { data } = await supabase.auth.getSession();
   const initialSession = data.session ?? null;
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
