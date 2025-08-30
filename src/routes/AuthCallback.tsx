@@ -1,41 +1,43 @@
 import { useEffect } from 'react';
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { supabase } from '../lib/supabase-client';
 
-/**
- * Minimal OAuth callback finisher.
- * - Lets Supabase pick the session from the URL hash
- * - Sends the user home when ready
- * - If no session, bounces them to / (where they can try again)
- */
 export default function AuthCallback() {
   const navigate = useNavigate();
-  // Touching search params ensures React Router doesn't treat this as static
-  useSearchParams();
 
   useEffect(() => {
-    let mounted = true;
-    // Give Supabase a tick to hydrate from the hash
-    const timer = setTimeout(async () => {
-      const { data, error } = await supabase.auth.getSession();
-      if (!mounted) return;
-      if (data?.session && !error) {
+    (async () => {
+      try {
+        const url = new URL(window.location.href);
+
+        // PKCE / OAuth code flow: /auth/callback?code=...
+        const code = url.searchParams.get('code');
+        if (code) {
+          await supabase.auth.exchangeCodeForSession(window.location.href);
+          navigate('/', { replace: true });
+          return;
+        }
+
+        // Implicit flow: /auth/callback#access_token=...&refresh_token=...
+        if (window.location.hash.includes('access_token')) {
+          const hash = new URLSearchParams(window.location.hash.slice(1));
+          const access_token = hash.get('access_token') || '';
+          const refresh_token = hash.get('refresh_token') || '';
+
+          if (access_token && refresh_token) {
+            await supabase.auth.setSession({ access_token, refresh_token });
+          }
+          navigate('/', { replace: true });
+          return;
+        }
+
+        // Nothing to process — just go home
         navigate('/', { replace: true });
-      } else {
-        // fallback – the shell will show the "Continue with Google" button
+      } catch {
         navigate('/', { replace: true });
       }
-    }, 0);
-    return () => {
-      mounted = false;
-      clearTimeout(timer);
-    };
+    })();
   }, [navigate]);
 
-  return (
-    <main style={{ padding: 24 }}>
-      <h1>Signing you in…</h1>
-      <p>If this takes more than a couple seconds, refresh the page.</p>
-    </main>
-  );
+  return null;
 }

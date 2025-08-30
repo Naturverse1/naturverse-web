@@ -2,6 +2,12 @@
   command = "npm run build"
   publish = "dist"
 
+# Serve the SPA for any /auth/* URL (prevents wrong MIME/404 HTML for JS files)
+[[redirects]]
+  from = "/auth/*"
+  to   = "/index.html"
+  status = 200
+
 # Security headers: allow only what we need for Supabase + Google on the callback
 [[headers]]
   for = "/*"
