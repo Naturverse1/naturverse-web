@@ -3,52 +3,43 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# --- Security headers (add Stripe & Google, allow external scripts but keep tight) ---
-[[headers]]
-  for = "/*"
-  [headers.values]
-    Content-Security-Policy = '''
-      default-src 'self';
-      base-uri 'self';
-      img-src 'self' data: blob: https:;
-      font-src 'self' data:;
-      script-src 'self' https://js.stripe.com https://accounts.google.com 'unsafe-eval';
-      style-src 'self' 'unsafe-inline';
-      connect-src 'self' https: wss:;
-      frame-src https://js.stripe.com https://accounts.google.com;
-      form-action 'self'
-    '''
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    X-Frame-Options = "SAMEORIGIN"
-    X-Content-Type-Options = "nosniff"
-
-# --- Serve SPA shell for everything except real files ---
-# Keep assets absolute under /
+# IMPORTANT: Do NOT rewrite /auth/*, only the callback document itself.
+# Specific rules must come before the SPA catch-all.
 [[redirects]]
-  from = "/assets/*"
-  to = "/assets/:splat"
+  from = "/auth/callback"
+  to   = "/index.html"
   status = 200
+  force  = true
 
-# Provide JS utilities as real files
+# Keep helper utilities served as actual files (no rewrites)
 [[redirects]]
   from = "/kill-sw"
-  to = "/kill-sw.html"
+  to   = "/kill-sw.html"
   status = 200
   force = true
 
 [[redirects]]
   from = "/kill-sw.js"
-  to = "/kill-sw.js"
+  to   = "/kill-sw.js"
   status = 200
 
-# Auth callback should be handled by the SPA shell (React route), not a standalone HTML
 [[redirects]]
-  from = "/auth/callback"
-  to = "/index.html"
+  from = "/registerSW.js"
+  to   = "/registerSW.js"
   status = 200
 
-# Everything else -> SPA
+# SPA fallback (works for every other client route)
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
+
+# Minimal, permissive CSP for now (no inline hashes needed)
+# Remove once everything is stable and you want to lock it down again.
+[[headers]]
+  for = "/*"
+  [headers.values]
+  Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; script-src 'self'; style-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  Referrer-Policy = "strict-origin-when-cross-origin"
+  X-Frame-Options = "SAMEORIGIN"
+  X-Content-Type-Options = "nosniff"
