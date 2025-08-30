@@ -1,16 +1,20 @@
 <!doctype html>
 <html lang="en">
   <head>
-    <!-- base MUST be the first real tag so /auth/callback resolves assets from / -->
-    <base href="/" />
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
     <title>Naturverse</title>
-    <link rel="icon" href="/favicon-192x192.png" />
-    <!-- Removed PWA and install-banner meta for now -->
+
+    <!-- NO manifest, NO apple-mobile-web-app-capable, NO worker/register -->
+    <!-- Vite will replace this with /assets/... because base='/' -->
+    <script type="module" src="/src/main.tsx"></script>
   </head>
   <body>
     <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
+
+    <!-- NO inline PWA banners or install prompts -->
   </body>
 </html>
