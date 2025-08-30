@@ -1,5 +1,5 @@
-# Always bounce the OAuth hash callback back to the app shell
-/auth/callback   /   302!
+# OAuth callback must rewrite to root so compiled assets load from /
+/auth/callback    /    200
 
 # SPA fallback
-/*               /index.html   200
+/*   /index.html  200

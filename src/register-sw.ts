@@ -1,9 +1,13 @@
-// Don't register a service worker on the OAuth callback page
-if (location.pathname.startsWith('/auth/callback')) {
-  // If anything registered previously, quietly unregister to avoid shell capture.
-  if ('serviceWorker' in navigator) {
-    navigator.serviceWorker.getRegistrations?.().then(rs => rs.forEach(r => r.unregister()))
-  }
+// Never register a SW on auth handoff routes
+if (location.pathname.startsWith('/auth/')) {
+  // make sure we don't leave a stale SW around
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations();
+      await Promise.all(regs.map((r) => r.unregister().catch(() => {})));
+    }
+  } catch {}
+  // Skip registering
 } else {
   // Only runs in production builds
   if (import.meta.env.PROD && 'serviceWorker' in navigator) {
