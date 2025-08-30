@@ -1,6 +1,5 @@
-# Serve the callback HTML explicitly (so the route works as a page)
- /auth/callback      /auth/callback/index.html   200
+# Hard redirect any auth callback to root
+/auth/callback    /    302!
 
 # SPA fallback for everything else — IMPORTANT: no "!" at the end
- /*                   /index.html                 200
-
+/*                   /index.html                 200
