@@ -8,19 +8,22 @@
 /* ---- Naturverse Navbar Brand ---- */
 :root {
   /* tweak these once and all pages follow */
-  --nv-logo-size-sm: 40px;   /* mobile */
-  --nv-logo-size-md: 44px;   /* tablets */
-  --nv-logo-size-lg: 48px;   /* desktop */
+  --nv-logo-size-sm: 40px; /* mobile */
+  --nv-logo-size-md: 44px; /* tablets */
+  --nv-logo-size-lg: 48px; /* desktop */
 }
 
 /* consistent text color token already in your project */
-.text-nv-blue, .nv-brand { color: var(--naturverse-blue) !important; }
+.text-nv-blue,
+.nv-brand {
+  color: var(--naturverse-blue) !important;
+}
 
 .nv-logo {
   width: var(--nv-logo-size-sm);
   height: var(--nv-logo-size-sm);
-  display: block;            /* avoid inline-img baseline gap */
-  flex-shrink: 0;            /* never collapse in tight rows */
+  display: block; /* avoid inline-img baseline gap */
+  flex-shrink: 0; /* never collapse in tight rows */
 }
 
 @media (min-width: 640px) {
@@ -45,21 +48,23 @@
 }
 
 /* ===== Mobile hamburger: lines only, no pill ===== */
-@media (max-width: 768px){
+@media (max-width: 768px) {
   .nv-hamburger {
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
-    padding: 6px 8px;             /* small tap target without the pill */
+    padding: 6px 8px; /* small tap target without the pill */
     border-radius: 0 !important;
   }
-  .nv-hamburger:focus { outline: none; }
+  .nv-hamburger:focus {
+    outline: none;
+  }
   .nv-hamburger .bar {
     display: block;
     width: 24px;
     height: 2px;
     margin: 5px 0;
-    background: #1E40AF;
+    background: #1e40af;
     border-radius: 1px;
   }
 }
@@ -75,13 +80,18 @@
 
 /* Make sure only the lines show */
 .nav-toggle svg {
-  fill: #1E40AF; /* blue lines, match site branding */
+  fill: #1e40af; /* blue lines, match site branding */
   width: 28px;
   height: 28px;
 }
 
 /* Keep titles/links as-is (don’t inherit the rule above) */
-.title, .headline, .lead, a { color: inherit; }
+.title,
+.headline,
+.lead,
+a {
+  color: inherit;
+}
 
 .page-wrapper {
   background-color: var(--page-bg);
@@ -156,7 +166,6 @@ h3 {
   border-color: #fca5a5;
 }
 
-
 /* Inputs & dashed demo areas */
 input,
 select,
@@ -218,14 +227,19 @@ textarea {
 .lang-card {
   display: grid;
   grid-template-columns: 96px 1fr;
-  gap: .75rem;
+  gap: 0.75rem;
   align-items: center;
-  padding: .875rem;
-  border: 1px solid rgba(0,0,0,.1);
+  padding: 0.875rem;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   border-radius: 14px;
   background: #fff;
 }
-.lang-card img { border-radius: 12px; width:96px; height:96px; object-fit: cover; }
+.lang-card img {
+  border-radius: 12px;
+  width: 96px;
+  height: 96px;
+  object-fit: cover;
+}
 
 /* Language hero */
 .lang-hero {
@@ -245,7 +259,7 @@ textarea {
   display: block;
   margin: 0 auto 1rem auto;
   border-radius: 8px;
-  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.15);
 }
 
 /* Buttons */
@@ -253,7 +267,7 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: .65rem 1.05rem;
+  padding: 0.65rem 1.05rem;
   border: none;
   border-radius: 12px;
   background: #2563eb;
@@ -261,13 +275,27 @@ textarea {
   font-weight: 600;
   text-decoration: none;
 }
-.btn:hover { filter: brightness(0.95); }
-.btn-small { padding: .45rem .7rem; border-radius: 10px; font-size: .9rem; }
+.btn:hover {
+  filter: brightness(0.95);
+}
+.btn-small {
+  padding: 0.45rem 0.7rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+}
 
 /* Utilities */
-.container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-.stack-md > *+* { margin-top: .75rem; }
-.muted { color: #6b7280; }
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+.stack-md > * + * {
+  margin-top: 0.75rem;
+}
+.muted {
+  color: #6b7280;
+}
 
 /* World map heroes scale nicely and never overflow */
 .world-hero {
@@ -279,8 +307,14 @@ textarea {
 }
 
 /* Card media stays square and crops cleanly */
-.nv-card__media { aspect-ratio: 1 / 1; }
-.nv-card__media img { width: 100%; height: 100%; object-fit: cover; }
+.nv-card__media {
+  aspect-ratio: 1 / 1;
+}
+.nv-card__media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
 
 /* Ensure all product/character cards stay consistent */
 .nv-card,
@@ -299,10 +333,10 @@ textarea {
 }
 
 /* PAGE SCOPED, no cross-bleed */
-[data-page="marketplace"] .product-card,
-[data-page="marketplace"] .mp-card,
-[data-page="wishlist"] .wishlist-card,
-[data-page="wishlist"] .wl-card {
+[data-page='marketplace'] .product-card,
+[data-page='marketplace'] .mp-card,
+[data-page='wishlist'] .wishlist-card,
+[data-page='wishlist'] .wl-card {
   max-width: 320px;
 }
 
@@ -335,7 +369,7 @@ main,
 }
 .nv-hero h1 {
   color: var(--nv-blue-700);
-  margin-bottom: .5rem;
+  margin-bottom: 0.5rem;
 }
 .nv-hero p {
   color: var(--nv-blue-600);
@@ -374,13 +408,13 @@ main,
   margin: 1.25rem auto 0;
   max-width: 64rem;
   display: grid;
-  gap: .625rem;
+  gap: 0.625rem;
 }
 .nv-flow .nv-stepTitle {
   color: var(--nv-blue-700);
   font-weight: 700;
   text-align: center;
-  margin-bottom: .25rem;
+  margin-bottom: 0.25rem;
 }
 .nv-flow .nv-stepBody {
   color: var(--nv-blue-600);
@@ -395,7 +429,7 @@ main,
 }
 
 /* ===== WISHLIST ONLY ===== */
-[data-page="wishlist"] .wl-card,
+[data-page='wishlist'] .wl-card,
 .wishlist-page .wl-card {
   max-width: 320px; /* matches Marketplace card width */
   margin: 0 auto 22px;
@@ -403,7 +437,7 @@ main,
 }
 
 /* image wrapper inside the card */
-[data-page="wishlist"] .wl-card .imageWrap,
+[data-page='wishlist'] .wl-card .imageWrap,
 .wishlist-page .wl-card .imageWrap {
   aspect-ratio: 4 / 3;
   width: 100%;
@@ -416,7 +450,7 @@ main,
 }
 
 /* image itself */
-[data-page="wishlist"] .wl-card img,
+[data-page='wishlist'] .wl-card img,
 .wishlist-page .wl-card img {
   width: 100%;
   height: 100%;
@@ -454,8 +488,58 @@ main,
   cursor: not-allowed;
   opacity: 0.8;
 }
-.orders-list { display: grid; gap: 12px; }
-.order-card { border: 1px solid #e5e7eb; border-radius: 10px; padding: 12px; background: #fff; }
-.order-card .row { display: flex; gap: 12px; align-items: center; justify-content: space-between; }
-.badge { padding: 2px 8px; border-radius: 9999px; font-size: .75rem; background:#eef; }
-.badge.paid { background:#e6ffe9; }
+.orders-list {
+  display: grid;
+  gap: 12px;
+}
+.order-card {
+  border: 1px solid #e5e7eb;
+  border-radius: 10px;
+  padding: 12px;
+  background: #fff;
+}
+.order-card .row {
+  display: flex;
+  gap: 12px;
+  align-items: center;
+  justify-content: space-between;
+}
+.badge {
+  padding: 2px 8px;
+  border-radius: 9999px;
+  font-size: 0.75rem;
+  background: #eef;
+}
+.badge.paid {
+  background: #e6ffe9;
+}
+
+/* Mobile layout polish */
+@media (max-width: 768px) {
+  .nv-container,
+  .container,
+  main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+  header .nav,
+  .topbar,
+  .menu {
+    gap: 8px;
+    flex-wrap: wrap;
+  }
+  header .nav .right,
+  header .nav .links {
+    flex: 1 1 100%;
+  }
+  /* Prevent giant headings from forcing horizontal zoom */
+  h1 {
+    font-size: clamp(1.5rem, 6vw, 2.25rem);
+  }
+  h2 {
+    font-size: clamp(1.25rem, 4.5vw, 1.75rem);
+  }
+  .card-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
