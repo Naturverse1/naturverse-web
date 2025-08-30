@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="en">
   <head>
+    <base href="/" />
+    <!-- Make all relative assets resolve from site root (fixes /auth/callback) -->
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <!-- Make all relative assets resolve from site root (fixes /auth/callback) -->
-    <base href="/" />
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time
       window.__NV_PWA_ENABLED__ = "%VITE_ENABLE_PWA%" === "true";

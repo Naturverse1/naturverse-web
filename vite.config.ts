@@ -4,8 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  // Ensure asset URLs are absolute (/assets/...), so nested routes work
-  base: '/',
+  base: '/', // Ensure asset URLs are absolute (/assets/...), so nested routes work
   plugins: [
     react(),
     // keeps a stable vendor chunk so the browser can cache it longer
