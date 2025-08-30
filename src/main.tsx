@@ -17,7 +17,7 @@ import './styles/theme.css';
 import './styles/cart.css';
 import { applyTheme, getTheme } from './lib/theme';
 import ToastProvider from './components/Toast';
-import { getSupabase } from '@/lib/supabase-client';
+import { getSupabase, handleAuthCallback } from '@/lib/supabase-client';
 import WorldExtras from './components/WorldExtras';
 import CommandPalette from './components/CommandPalette';
 import { router } from './router';
@@ -67,6 +67,7 @@ function RootWithPalette({ children }: { children: React.ReactNode }) {
 }
 
 async function bootstrap() {
+  await handleAuthCallback();
   const supabase = getSupabase();
   const { data } = supabase ? await supabase.auth.getSession() : { data: { session: null } };
   const initialSession = data.session ?? null;
