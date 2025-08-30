@@ -2,17 +2,22 @@
 <html lang="en">
   <head>
     <base href="/" />
+    <!-- Ensure proper mobile scaling -->
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
+    <!-- Mobile chrome color (optional) -->
+    <meta name="theme-color" content="#0ea5e9" />
     <!-- Make all relative assets resolve from site root (fixes /auth/callback) -->
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script>
       // Vite replaces %VITE_ENABLE_PWA% at build-time
-      window.__NV_PWA_ENABLED__ = "%VITE_ENABLE_PWA%" === "true";
+      window.__NV_PWA_ENABLED__ = '%VITE_ENABLE_PWA%' === 'true';
     </script>
     <title>Naturverse</title>
     <!-- PWA manifest -->
     <link rel="manifest" href="/manifest.json" />
-    <meta name="theme-color" content="#1e66ff" />
 
     <!-- iOS install hints -->
     <link rel="apple-touch-icon" href="/favicon-192x192.png" />
@@ -51,30 +56,28 @@
 
     <!-- === Naturverse: JSON-LD structured data === -->
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "Organization",
-      "name": "Naturverse",
-      "url": "https://thenaturverse.com",
-      "logo": "https://thenaturverse.com/favicon-192x192.png",
-      "sameAs": [
-        "https://thenaturverse.com"
-      ]
-    }
+      {
+        "@context": "https://schema.org",
+        "@type": "Organization",
+        "name": "Naturverse",
+        "url": "https://thenaturverse.com",
+        "logo": "https://thenaturverse.com/favicon-192x192.png",
+        "sameAs": ["https://thenaturverse.com"]
+      }
     </script>
 
     <script type="application/ld+json">
-    {
-      "@context": "https://schema.org",
-      "@type": "WebSite",
-      "name": "Naturverse",
-      "url": "https://thenaturverse.com",
-      "potentialAction": {
-        "@type": "SearchAction",
-        "target": "https://thenaturverse.com/search?q={query}",
-        "query-input": "required name=query"
+      {
+        "@context": "https://schema.org",
+        "@type": "WebSite",
+        "name": "Naturverse",
+        "url": "https://thenaturverse.com",
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://thenaturverse.com/search?q={query}",
+          "query-input": "required name=query"
+        }
       }
-    }
     </script>
     <!-- === / JSON-LD === -->
 
@@ -100,27 +103,35 @@
         padding: 8px 16px;
         background: #1e63ff; /* Naturverse blue */
         color: #fff;
-        font: 600 14px/1.3 system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+        font:
+          600 14px/1.3 system-ui,
+          -apple-system,
+          Segoe UI,
+          Roboto,
+          Helvetica,
+          Arial,
+          'Apple Color Emoji',
+          'Segoe UI Emoji';
         text-align: center;
-        letter-spacing: .1px;
+        letter-spacing: 0.1px;
       }
       #prod-banner a {
         color: #fff;
         text-decoration: underline;
         text-underline-offset: 2px;
       }
-      #prod-banner[hidden] { display: none; }
+      #prod-banner[hidden] {
+        display: none;
+      }
     </style>
 
-    <div id="prod-banner" hidden>
-      Naturverse is Live ✨ — Welcome explorers!
-    </div>
+    <div id="prod-banner" hidden>Naturverse is Live ✨ — Welcome explorers!</div>
 
     <script>
       // Show the banner only on the homepage.
       try {
-        var isHome = (location.pathname === "/" || location.pathname === "");
-        var el = document.getElementById("prod-banner");
+        var isHome = location.pathname === '/' || location.pathname === '';
+        var el = document.getElementById('prod-banner');
         if (el && isHome) el.hidden = false;
       } catch (_) {}
     </script>
@@ -129,9 +140,8 @@
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
 
-
     <!-- Install banner removed while PWA is disabled -->
-  <!-- Netlify Forms detection: hidden static form (do not remove) -->
+    <!-- Netlify Forms detection: hidden static form (do not remove) -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
       <input type="email" name="email" />
@@ -142,11 +152,11 @@
       // Progressive enhancement: add lazy+async to any <img> lacking them.
       (function () {
         try {
-          var imgs = document.querySelectorAll("img:not([loading])");
+          var imgs = document.querySelectorAll('img:not([loading])');
           imgs.forEach(function (img) {
             // Do not touch if explicitly eager
-            if (!img.hasAttribute("loading")) img.setAttribute("loading", "lazy");
-            if (!img.hasAttribute("decoding")) img.setAttribute("decoding", "async");
+            if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
+            if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
           });
         } catch {}
       })();
@@ -159,35 +169,35 @@
           const isInternal = (a) => a.origin === location.origin && !a.hash;
           const prefetch = (href) => {
             if (!href) return;
-            const link = document.createElement("link");
-            link.rel = "prefetch";
+            const link = document.createElement('link');
+            link.rel = 'prefetch';
             link.href = href;
-            link.as = "document";
+            link.as = 'document';
             document.head.appendChild(link);
           };
 
           // Prefetch when user hovers or touches a link
           document.addEventListener(
-            "mouseover",
+            'mouseover',
             (e) => {
-              const a = e.target && (e.target.closest ? e.target.closest("a") : null);
+              const a = e.target && (e.target.closest ? e.target.closest('a') : null);
               if (a && isInternal(a)) prefetch(a.href);
             },
-            { passive: true }
+            { passive: true },
           );
 
           document.addEventListener(
-            "touchstart",
+            'touchstart',
             (e) => {
-              const a = e.target && (e.target.closest ? e.target.closest("a") : null);
+              const a = e.target && (e.target.closest ? e.target.closest('a') : null);
               if (a && isInternal(a)) prefetch(a.href);
             },
-            { passive: true }
+            { passive: true },
           );
 
           // Idle prefetch of common routes (adjust list if needed)
-          const common = ["/worlds", "/zones", "/marketplace"];
-          if ("requestIdleCallback" in window) {
+          const common = ['/worlds', '/zones', '/marketplace'];
+          if ('requestIdleCallback' in window) {
             requestIdleCallback(() => common.forEach((p) => prefetch(p)));
           } else {
             setTimeout(() => common.forEach((p) => prefetch(p)), 1200);
@@ -209,6 +219,5 @@
         });
       })();
     </script>
-
   </body>
 </html>
