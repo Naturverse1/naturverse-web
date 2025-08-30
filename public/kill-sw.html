@@ -1,0 +1,14 @@
+<!doctype html>
+<html>
+  <head><meta charset="utf-8"><title>Kill SW</title></head>
+  <body>
+    <p>Removing service workers & caches…</p>
+    <script src="/kill-sw.js"></script>
+    <script>
+      // Let the user know it finished (if no auto-reload happened)
+      setTimeout(() => {
+        document.body.insertAdjacentHTML('beforeend','<p>Done. If the page didn’t reload, refresh once.</p>');
+      }, 1500);
+    </script>
+  </body>
+</html>
