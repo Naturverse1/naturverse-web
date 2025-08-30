@@ -1,5 +1,5 @@
-# OAuth callback must rewrite to root so compiled assets load from /
-/auth/callback    /    200
+# Send Supabase callback straight to the homepage
+/auth/callback*   /   302
 
-# SPA fallback
-/*   /index.html  200
+# Normal SPA fallback
+/*                /index.html  200
