@@ -1,3 +1,10 @@
 [build]
   command = "npm run build"
   publish = "dist"
+
+# TEMP: permissive CSP so callback page can run.
+# After things work, we'll tighten this.
+[[headers]]
+  for = "/*"
+  [headers.values]
+  Content-Security-Policy = "default-src 'self' https: http: blob: data: 'unsafe-inline' 'unsafe-eval'; img-src * data: blob:; font-src * data:; connect-src *; frame-src *;"

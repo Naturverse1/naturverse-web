@@ -6,28 +6,24 @@ export default function AuthCallback() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Supabase will consume the hash on page load and populate the session
-    (async () => {
+    const hash = window.location.hash || "";
+    const finish = async () => {
       try {
-        const { data, error } = await supabase.auth.getSession();
-        if (error) {
-          console.error("Auth callback error:", error);
-          navigate("/", { replace: true });
-          return;
-        }
-        if (data?.session) {
-          // logged in – go wherever you prefer
-          navigate("/profile", { replace: true });
-        } else {
-          // no session; bounce home
-          navigate("/", { replace: true });
-        }
+        await supabase.auth.getSession();
       } catch (e) {
-        console.error("Auth callback exception:", e);
-        navigate("/", { replace: true });
+        // no-op; we'll still send users home
+      } finally {
+        window.history.replaceState({}, "", "/");
+        navigate("/profile", { replace: true });
       }
-    })();
+    };
+
+    if (hash.includes("access_token") || hash.includes("provider_token")) {
+      finish();
+    } else {
+      navigate("/", { replace: true });
+    }
   }, [navigate]);
 
-  return <div style={{ padding: 24 }}>Finishing sign-in…</div>;
+  return <p style={{ padding: 24 }}>Finishing sign-in…</p>;
 }
