@@ -3,16 +3,29 @@ command = "npm run build"
 publish = "dist"
 functions = "netlify/functions"
 
-# SPA routing: send everything (incl. /auth/callback) to index.html
+# 1) Only the real callback path is handled by the SPA shell
 [[redirects]]
-from = "/auth/*"
+from = "/auth/callback"
 to = "/index.html"
 status = 200
 force = true
 
+# 2) Never rewrite real static assets (important!)
+[[redirects]]
+from = "/assets/*"
+to   = "/assets/:splat"
+status = 200
+
+# Some older builds might have emitted /auth/assets — keep them public too
+[[redirects]]
+from = "/auth/assets/*"
+to   = "/auth/assets/:splat"
+status = 200
+
+# 3) SPA fallback for the rest
 [[redirects]]
 from = "/*"
-to = "/index.html"
+to   = "/index.html"
 status = 200
 force = true
 
