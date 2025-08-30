@@ -21,7 +21,7 @@ export async function signInWithGoogle() {
   return supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      // land on the site root so assets + CSP are happy
+      // Always land on the homepage after auth (works for Netlify + SPA)
       redirectTo: `${window.location.origin}/`,
       queryParams: { prompt: 'consent', access_type: 'offline' },
     },
