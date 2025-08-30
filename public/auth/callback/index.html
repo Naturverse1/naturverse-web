@@ -1,13 +1,18 @@
 <!doctype html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta name="robots" content="noindex" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Signing you in…</title>
-  </head>
-  <body>
-    <noscript>Signing you in…</noscript>
-    <script src="/auth/callback/redirect.js" defer></script>
-  </body>
+  <meta charset="utf-8" />
+  <title>Authenticating…</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <script>
+    // Preserve the OAuth fragment and bounce to site root so assets resolve from "/"
+    (function () {
+      var hash = window.location.hash || '';
+      // Use replace() so the interim URL isn’t kept in history
+      window.location.replace('/' + hash);
+    })();
+  </script>
+  <noscript>
+    <meta http-equiv="refresh" content="0;url=/" />
+  </noscript>
+  <body>Authenticating…</body>
 </html>
