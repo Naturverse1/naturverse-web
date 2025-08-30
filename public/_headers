@@ -1,36 +1,3 @@
 /*
-  # Allow boot inline + required CDNs; keep it tight elsewhere.
-  Content-Security-Policy: default-src 'self';
-    script-src 'self' 'unsafe-inline' https://js.stripe.com https://plausible.io https://*.plausible.io;
-    style-src  'self' 'unsafe-inline';
-    img-src    'self' data: https://*.googleusercontent.com;
-    connect-src 'self' https://*.supabase.co https://*.supabase.in https://plausible.io https://js.stripe.com;
-    frame-src  https://accounts.google.com https://js.stripe.com;
-    font-src   'self' data:;
-    base-uri   'self';
-    form-action 'self';
-
-  X-Content-Type-Options: nosniff
-  Referrer-Policy: strict-origin-when-cross-origin
-  Permissions-Policy: geolocation=(), microphone=(), camera=()
-  Cache-Control: public, max-age=600
+  Content-Security-Policy: default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; font-src 'self' data: https:; base-uri 'self'; form-action 'self'; frame-ancestors 'self'
 */
-
-/index.html
-  Cache-Control: no-cache, no-store, must-revalidate
-  Pragma: no-cache
-  Expires: 0
-
-/auth/*
-  # Keep auth handoff clean
-  X-Robots-Tag: noindex
-  Cache-Control: no-store
-  Service-Worker-Allowed: /
-  Content-Security-Policy: default-src 'self'; script-src 'self' 'unsafe-inline' https://accounts.google.com https://apis.google.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; connect-src 'self' https://*.supabase.co https://*.supabase.in https://accounts.google.com https://apis.google.com; frame-src https://accounts.google.com
-
-/sw.js
-  Cache-Control: no-store
-/register-sw.js
-  Cache-Control: no-store
-/kill-sw.js
-  Cache-Control: no-store
