@@ -2,51 +2,29 @@
   command = "npm run build"
   publish = "dist"
 
-# --- Hard fix: when the callback page requests assets under /auth/*,
-#     rewrite them to the real root assets so MIME types are correct.
-
-# service worker helper
 [[redirects]]
-  from = "/auth/registerSW.js"
-  to   = "/registerSW.js"
-  status = 200
-  force = true
-
-# our SW killer utility
-[[redirects]]
-  from = "/auth/kill-sw.js"
-  to   = "/kill-sw.js"
-  status = 200
-  force = true
-
-# any CSS/JS/images accidentally requested under /auth/assets/* -> /assets/*
-[[redirects]]
-  from = "/auth/assets/:splat"
-  to   = "/assets/:splat"
-  status = 200
-  force = true
-
-# the real callback route must be served by the SPA shell
-[[redirects]]
-  from = "/auth/callback"
-  to   = "/index.html"
-  status = 200
-
-# SPA fallback for everything else
-[[redirects]]
+  # Let React handle all SPA routes including /auth/callback
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
 
-# --- Headers (relax just enough for callback bootstrap; tighten later)
+[[redirects]]
+  # Explicitly remove kill-sw and registerSW from being served as HTML
+  from = "/kill-sw.js"
+  to = "/404.html"
+  status = 404
+
+[[redirects]]
+  from = "/registerSW.js"
+  to = "/404.html"
+  status = 404
+
 [[headers]]
   for = "/*"
   [headers.values]
-    # allow scripts/styles from ourselves; allow inline styles (Tailwind etc);
-    # allow inline scripts during bootstrap (you can remove 'unsafe-inline' after hashing/noncing)
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; font-src 'self' data:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
+    # Relax CSP for Supabase OAuth + inline hydration
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' https://*.supabase.co; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self' https: wss:; font-src 'self' data:; frame-ancestors 'self'; base-uri 'self'; form-action 'self';"
     Referrer-Policy = "strict-origin-when-cross-origin"
     X-Content-Type-Options = "nosniff"
     X-Frame-Options = "SAMEORIGIN"
     X-XSS-Protection = "0"
-

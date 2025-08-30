@@ -15,18 +15,20 @@ export default defineConfig({
             registerType: 'autoUpdate',
             injectRegister: 'auto',
             workbox: {
-              globPatterns: ['**/*.{js,css,html,svg,png,webp,ico}'],
-              maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
-              // Exclude auth routes from SPA fallback to avoid hash/callback quirks
-              navigateFallbackDenylist: [/^\/auth(\/.*)?$/],
+              globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
+              maximumFileSizeToCacheInBytes: 5000000,
+              navigateFallback: '/index.html',
+              // Prevent SW from hijacking auth callback route
+              navigateFallbackDenylist: [/^\/auth\/callback$/],
             },
             manifest: {
               name: 'Naturverse',
               short_name: 'Naturverse',
               theme_color: '#2563eb',
               background_color: '#ffffff',
-              start_url: '.',
+              start_url: '/',
               display: 'standalone',
+              orientation: 'portrait',
               icons: [
                 { src: 'favicon-192x192.png', sizes: '192x192', type: 'image/png' },
                 { src: 'favicon-256x256.png', sizes: '256x256', type: 'image/png' },
