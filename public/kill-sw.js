@@ -1,12 +1,18 @@
-self.addEventListener('install', () => self.skipWaiting());
-self.addEventListener('activate', (event) => {
-  event.waitUntil(
-    (async () => {
-      const regs = await self.registration.unregister();
-      const keys = await caches.keys();
-      await Promise.all(keys.map((k) => caches.delete(k)));
-      self.clients.claim();
-    })()
-  );
-});
-
+// Kill any registered service workers ASAP (prevents "offline shell" traps)
+;(async () => {
+  try {
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(regs.map(r => r.unregister().catch(() => {})))
+      if (self.caches) {
+        const keys = await caches.keys()
+        await Promise.all(keys.map(k => caches.delete(k).catch(() => {})))
+      }
+      const flag = 'nv-sw-killed'
+      if (!sessionStorage.getItem(flag)) {
+        sessionStorage.setItem(flag, '1')
+        location.reload()
+      }
+    }
+  } catch (_) {}
+})()
