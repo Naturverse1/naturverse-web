@@ -2,69 +2,30 @@
 <html lang="en">
   <head>
     <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
     <base href="/" />
-    <meta name="viewport" content="width=device-width, initial-scale=1" />
-
+    <meta name="theme-color" content="#2563eb" />
     <title>Naturverse</title>
-    <meta name="theme-color" content="#0ea5e9" />
+
     <link rel="apple-touch-icon" href="/favicon-192x192.png" />
 
-    <!-- === Naturverse SEO defaults (safe, no runtime/deps) === -->
+    <!-- Naturverse SEO defaults -->
     <link rel="canonical" href="https://thenaturverse.com" />
-
-    <meta
-      name="description"
-      content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness."
-    />
+    <meta name="description" content="Naturverse — a playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness." />
 
     <!-- Open Graph -->
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="Naturverse" />
     <meta property="og:url" content="https://thenaturverse.com" />
     <meta property="og:title" content="Naturverse — Play • Learn • Earn" />
-    <meta
-      property="og:description"
-      content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges."
-    />
-    <!-- Use an existing public image. Update later to a 1200×630 banner when available -->
+    <meta property="og:description" content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges." />
     <meta property="og:image" content="/favicon-192x192.png" />
 
     <!-- Twitter -->
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="Naturverse — Play • Learn • Earn" />
-    <meta
-      name="twitter:description"
-      content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges."
-    />
+    <meta name="twitter:description" content="Explore mini-games, lessons, and quests across 14 kingdoms. Build your Navatar and collect badges." />
     <meta name="twitter:image" content="/favicon-192x192.png" />
-    <!-- === / Naturverse SEO defaults === -->
-
-    <!-- === Naturverse: JSON-LD structured data === -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "Organization",
-        "name": "Naturverse",
-        "url": "https://thenaturverse.com",
-        "logo": "https://thenaturverse.com/favicon-192x192.png",
-        "sameAs": ["https://thenaturverse.com"]
-      }
-    </script>
-
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "Naturverse",
-        "url": "https://thenaturverse.com",
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://thenaturverse.com/search?q={query}",
-          "query-input": "required name=query"
-        }
-      }
-    </script>
-    <!-- === / JSON-LD === -->
 
     <!-- Preload the 64x64 (crisp and safe) so favicon appears immediately -->
     <link rel="preload" as="image" href="/favicon-64x64.png" imagesizes="64x64" />
@@ -77,119 +38,14 @@
     <link rel="stylesheet" href="/src/main.css" />
   </head>
   <body>
-    <!-- BEGIN: Safe production banner -->
-    <style>
-      #prod-banner {
-        position: sticky;
-        top: 0;
-        z-index: 9999;
-        width: 100%;
-        box-sizing: border-box;
-        padding: 8px 16px;
-        background: #1e63ff; /* Naturverse blue */
-        color: #fff;
-        font:
-          600 14px/1.3 system-ui,
-          -apple-system,
-          Segoe UI,
-          Roboto,
-          Helvetica,
-          Arial,
-          'Apple Color Emoji',
-          'Segoe UI Emoji';
-        text-align: center;
-        letter-spacing: 0.1px;
-      }
-      #prod-banner a {
-        color: #fff;
-        text-decoration: underline;
-        text-underline-offset: 2px;
-      }
-      #prod-banner[hidden] {
-        display: none;
-      }
-    </style>
-
-    <div id="prod-banner" hidden>Naturverse is Live ✨ — Welcome explorers!</div>
-
-    <script>
-      // Show the banner only on the homepage.
-      try {
-        var isHome = location.pathname === '/' || location.pathname === '';
-        var el = document.getElementById('prod-banner');
-        if (el && isHome) el.hidden = false;
-      } catch (_) {}
-    </script>
-    <!-- END: Safe production banner -->
     <a class="nv-skip" href="#main">Skip to content</a>
     <div id="root"></div>
-    <!-- absolute path so /auth/callback doesn’t become /auth/src/main.tsx -->
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- Netlify Forms detection: hidden static form (do not remove) -->
+    <!-- Netlify Forms detection: hidden static form -->
     <form name="contact" netlify netlify-honeypot="bot-field" hidden>
       <input type="text" name="name" />
       <input type="email" name="email" />
       <textarea name="message"></textarea>
     </form>
-
-    <script>
-      // Progressive enhancement: add lazy+async to any <img> lacking them.
-      (function () {
-        try {
-          var imgs = document.querySelectorAll('img:not([loading])');
-          imgs.forEach(function (img) {
-            // Do not touch if explicitly eager
-            if (!img.hasAttribute('loading')) img.setAttribute('loading', 'lazy');
-            if (!img.hasAttribute('decoding')) img.setAttribute('decoding', 'async');
-          });
-        } catch {}
-      })();
-    </script>
-
-    <script>
-      // Prefetch internal routes on hover/idle to speed up navigation
-      (function () {
-        try {
-          const isInternal = (a) => a.origin === location.origin && !a.hash;
-          const prefetch = (href) => {
-            if (!href) return;
-            const link = document.createElement('link');
-            link.rel = 'prefetch';
-            link.href = href;
-            link.as = 'document';
-            document.head.appendChild(link);
-          };
-
-          // Prefetch when user hovers or touches a link
-          document.addEventListener(
-            'mouseover',
-            (e) => {
-              const a = e.target && (e.target.closest ? e.target.closest('a') : null);
-              if (a && isInternal(a)) prefetch(a.href);
-            },
-            { passive: true },
-          );
-
-          document.addEventListener(
-            'touchstart',
-            (e) => {
-              const a = e.target && (e.target.closest ? e.target.closest('a') : null);
-              if (a && isInternal(a)) prefetch(a.href);
-            },
-            { passive: true },
-          );
-
-          // Idle prefetch of common routes (adjust list if needed)
-          const common = ['/worlds', '/zones', '/marketplace'];
-          if ('requestIdleCallback' in window) {
-            requestIdleCallback(() => common.forEach((p) => prefetch(p)));
-          } else {
-            setTimeout(() => common.forEach((p) => prefetch(p)), 1200);
-          }
-        } catch {}
-      })();
-    </script>
-
   </body>
 </html>

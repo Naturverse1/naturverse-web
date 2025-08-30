@@ -1,48 +1,54 @@
 [build]
-command = "npm run build"
-publish = "dist"
-functions = "netlify/functions"
+  command = "npm run build"
+  publish = "dist"
+  functions = "netlify/functions"
 
-# 1) Only the real callback path is handled by the SPA shell
-[[redirects]]
-from = "/auth/callback"
-to = "/index.html"
-status = 200
-force = true
-
-# 2) Never rewrite real static assets (important!)
-[[redirects]]
-from = "/assets/*"
-to   = "/assets/:splat"
-status = 200
-
-# Some older builds might have emitted /auth/assets — keep them public too
-[[redirects]]
-from = "/auth/assets/*"
-to   = "/auth/assets/:splat"
-status = 200
-
-# 3) SPA fallback for the rest
-[[redirects]]
-from = "/*"
-to   = "/index.html"
-status = 200
-force = true
-
-# Relaxed but safe CSP for auth & API calls (no inline scripts)
+# --- Security headers (add Stripe & Google, allow external scripts but keep tight) ---
 [[headers]]
-for = "/*"
+  for = "/*"
   [headers.values]
-  Content-Security-Policy = """
-    default-src 'self';
-    script-src 'self' https://*.supabase.co https://accounts.google.com;
-    connect-src 'self' https://*.supabase.co https://accounts.google.com https://*.stripe.com;
-    img-src 'self' data: blob:;
-    style-src 'self' 'unsafe-inline';
-    frame-src https://accounts.google.com;
-    frame-ancestors 'self';
-    base-uri 'self'
-  """
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  X-Content-Type-Options = "nosniff"
-  X-Frame-Options = "SAMEORIGIN"
+    Content-Security-Policy = '''
+      default-src 'self';
+      base-uri 'self';
+      img-src 'self' data: blob: https:;
+      font-src 'self' data:;
+      script-src 'self' https://js.stripe.com https://accounts.google.com 'unsafe-eval';
+      style-src 'self' 'unsafe-inline';
+      connect-src 'self' https: wss:;
+      frame-src https://js.stripe.com https://accounts.google.com;
+      form-action 'self'
+    '''
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+
+# --- Serve SPA shell for everything except real files ---
+# Keep assets absolute under /
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# Provide JS utilities as real files
+[[redirects]]
+  from = "/kill-sw"
+  to = "/kill-sw.html"
+  status = 200
+  force = true
+
+[[redirects]]
+  from = "/kill-sw.js"
+  to = "/kill-sw.js"
+  status = 200
+
+# Auth callback should be handled by the SPA shell (React route), not a standalone HTML
+[[redirects]]
+  from = "/auth/callback"
+  to = "/index.html"
+  status = 200
+
+# Everything else -> SPA
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
