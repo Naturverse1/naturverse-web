@@ -9,9 +9,13 @@ Content-Security-Policy: default-src 'self' https://*.supabase.co https://*.goog
   Pragma: no-cache
   Expires: 0
 
+/auth/*
+  Cache-Control: no-cache, no-store, must-revalidate
+
 /sw.js
   Cache-Control: no-store
 /register-sw.js
   Cache-Control: no-store
 /kill-sw.js
   Cache-Control: no-store
+
