@@ -3,43 +3,29 @@
   publish = "dist"
   functions = "netlify/functions"
 
-# IMPORTANT: Do NOT rewrite /auth/*, only the callback document itself.
-# Specific rules must come before the SPA catch-all.
-[[redirects]]
-  from = "/auth/callback"
-  to   = "/index.html"
-  status = 200
-  force  = true
+[build.environment]
+  VITE_ENABLE_PWA = "false"
+  VITE_ALLOW_PREVIEW_AUTH = "false"
+  VITE_ALLOW_PREVIEW_SIGNIN = "false"
 
-# Keep helper utilities served as actual files (no rewrites)
+## SPA fallback for client routes (including OAuth callback)
 [[redirects]]
-  from = "/kill-sw"
-  to   = "/kill-sw.html"
-  status = 200
-  force = true
-
-[[redirects]]
-  from = "/kill-sw.js"
-  to   = "/kill-sw.js"
+  from = "/auth/*"
+  to = "/index.html"
   status = 200
 
-[[redirects]]
-  from = "/registerSW.js"
-  to   = "/registerSW.js"
-  status = 200
-
-# SPA fallback (works for every other client route)
 [[redirects]]
   from = "/*"
-  to   = "/index.html"
+  to = "/index.html"
   status = 200
 
-# Minimal, permissive CSP for now (no inline hashes needed)
-# Remove once everything is stable and you want to lock it down again.
+## Security headers with relaxed CSP to allow Vite’s inline bootstrapping
 [[headers]]
   for = "/*"
   [headers.values]
-  Content-Security-Policy = "default-src 'self'; img-src 'self' data: blob: https:; connect-src 'self' https: wss:; script-src 'self'; style-src 'self'; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
-  Referrer-Policy = "strict-origin-when-cross-origin"
-  X-Frame-Options = "SAMEORIGIN"
-  X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "SAMEORIGIN"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    # IMPORTANT: relax CSP while we stabilize OAuth callback and remove inline-block errors.
+    # When everything is stable, we can re-harden this.
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.googletagmanager.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https:; font-src 'self' data: https:; connect-src *; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
