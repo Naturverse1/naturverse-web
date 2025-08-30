@@ -33,7 +33,9 @@ export default function WorldExtras() {
     };
   }, []);
 
-  const onThailandia = path.toLowerCase().startsWith('/worlds/thailandia');
+  const lower = path.toLowerCase();
+  if (lower.startsWith('/auth/')) return null;
+  const onThailandia = lower.startsWith('/worlds/thailandia');
   if (!onThailandia) return null;
 
   return (

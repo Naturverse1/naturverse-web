@@ -4,7 +4,8 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
-  base: '/', // asset URLs always resolve from the site root
+  // Absolute asset URLs so routes like /auth/callback don’t request /auth/assets/*
+  base: '/',
   plugins: [
     react(),
     // keeps a stable vendor chunk so the browser can cache it longer
@@ -18,8 +19,8 @@ export default defineConfig({
               globPatterns: ['**/*.{js,css,html,ico,png,svg}'],
               maximumFileSizeToCacheInBytes: 5000000,
               navigateFallback: '/index.html',
-              // Prevent SW from hijacking auth callback route
-              navigateFallbackDenylist: [/^\/auth\/callback$/],
+              // ❗ FIX: valid regex; deny the auth section so SW never takes over there
+              navigateFallbackDenylist: [/^\/auth(\/.*)?$/],
             },
             manifest: {
               name: 'Naturverse',

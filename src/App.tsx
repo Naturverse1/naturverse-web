@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
@@ -24,10 +24,18 @@ import ToastHost from '@/components/ToastHost';
 import CartShareLoader from '@/components/CartShareLoader';
 
 export default function App() {
+  const [path, setPath] = useState(
+    typeof window !== 'undefined' ? window.location.pathname : '/',
+  );
+
   useEffect(() => {
     logEvent('AppStarted', { timestamp: Date.now() });
+    return router.subscribe((s) => setPath(s.location.pathname));
     // SAFE MODE: interactions temporarily disabled
   }, []);
+
+  const onAuthRoute = path.startsWith('/auth/');
+
   return (
     <SearchProvider>
       <CartShareLoader />
@@ -35,8 +43,8 @@ export default function App() {
       <div id="nv-page">
           {/* Keyboard-accessible jump link (first focusable on the page) */}
           <SkipLink />
-          <NetworkBanner />
-          <CheckoutBanner />
+          {!onAuthRoute && <NetworkBanner />}
+          {!onAuthRoute && <CheckoutBanner />}
 
           {/* Convert content wrapper into the "main" landmark and jump target */}
           <main
@@ -64,7 +72,7 @@ export default function App() {
             </React.Suspense>
           </main>
 
-          <Footer />
+          {!onAuthRoute && <Footer />}
         </div>
       </SearchProvider>
   );
