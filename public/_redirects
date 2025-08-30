@@ -1,0 +1,5 @@
+/auth/callback    /index.html    200
+/auth/*           /index.html    200
+/auth/assets/*    /assets/:splat 200
+/kill-sw          /kill-sw.html  200!
+/*                /index.html    200
