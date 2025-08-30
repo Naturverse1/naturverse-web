@@ -1,12 +1,23 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-    <title>Naturverse • Signing in…</title>
-  </head>
-  <body>
-    <noscript>Signing in…</noscript>
-    <script src="/assets/auth-callback.js" defer></script>
-  </body>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Signing in…</title>
+</head>
+<body>
+<script>
+  // Persist the Supabase OAuth fragment so the app can complete the session.
+  // Works for both hash fragments (#access_token=...) and ?code= style.
+  (function () {
+    if (location.hash && /access_token=|refresh_token=|provider_token=|code=/.test(location.hash)) {
+      sessionStorage.setItem('nv_oauth_hash', location.hash);
+    }
+    if (location.search && /code=/.test(location.search)) {
+      sessionStorage.setItem('nv_oauth_search', location.search);
+    }
+    location.replace('/'); // go boot the app
+  })();
+</script>
+</body>
 </html>

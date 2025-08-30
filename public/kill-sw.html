@@ -1,17 +1,32 @@
 <!doctype html>
-<html lang="en">
-  <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-    <title>Reset Naturverse</title>
-    <style>
-      body { font-family: system-ui, -apple-system, Segoe UI, Roboto, sans-serif; padding: 2rem; }
-      .ok { padding:.75rem 1rem; border:1px solid #cbd5e1; border-radius:.5rem; background:#f8fafc; }
-    </style>
-  </head>
-  <body>
-    <h1>Resetting…</h1>
-    <p class="ok">Clearing service workers and old caches. You will be redirected to the home page.</p>
-    <script src="/assets/kill-sw.js" defer></script>
-  </body>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Reset Naturverse Cache</title>
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; padding: 2rem; }
+  </style>
+</head>
+<body>
+  <h1>Clearing offline cache…</h1>
+  <p>This page will unregister service workers, delete caches, and return you to the home page.</p>
+  <script>
+  (async () => {
+    try {
+      if ('serviceWorker' in navigator) {
+        const regs = await navigator.serviceWorker.getRegistrations();
+        await Promise.all(regs.map(r => r.unregister().catch(() => {})));
+      }
+      if (self.caches) {
+        const keys = await caches.keys();
+        await Promise.all(keys.map(k => caches.delete(k).catch(() => {})));
+      }
+      // avoid reload loops
+      sessionStorage.setItem('nv-sw-killed', String(Date.now()));
+    } catch (e) { /* no-op */ }
+    location.replace('/');
+  })();
+  </script>
+</body>
 </html>
