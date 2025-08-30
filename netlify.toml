@@ -2,12 +2,21 @@
   command = "npm run build"
   publish = "dist"
 
+# Serve the static callback page before SPA
 [[redirects]]
   from = "/auth/callback"
-  to = "/index.html"
+  to = "/auth/callback.html"
   status = 200
   force = true
 
+# Serve a real SW killer page
+[[redirects]]
+  from = "/kill-sw"
+  to = "/kill-sw.html"
+  status = 200
+  force = true
+
+# SPA fallback
 [[redirects]]
   from = "/*"
   to = "/index.html"
