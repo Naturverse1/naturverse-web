@@ -26,7 +26,7 @@ import './boot/warmup';
 import { Elements } from '@stripe/react-stripe-js';
 import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
-import { registerPWA } from '@/pwa/register-sw';
+import { registerPWA } from './register-sw';
 
 applyTheme(getTheme());
 installGlobalLogCapture();
