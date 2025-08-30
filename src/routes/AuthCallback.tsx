@@ -1,29 +1,31 @@
-import { useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { supabase } from "../lib/supabase-client";
+import { useEffect } from 'react'
+import { useNavigate } from 'react-router-dom'
+import { createClient } from '@supabase/supabase-js'
+
+const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
+)
 
 export default function AuthCallback() {
-  const navigate = useNavigate();
+  const navigate = useNavigate()
 
   useEffect(() => {
-    const hash = window.location.hash || "";
-    const finish = async () => {
+    // Supabase parses the hash fragment internally; we just wait for a session.
+    // If needed, you can call getSession() in a loop briefly.
+    let mounted = true
+    ;(async () => {
       try {
-        await supabase.auth.getSession();
-      } catch (e) {
-        // no-op; we'll still send users home
-      } finally {
-        window.history.replaceState({}, "", "/");
-        navigate("/profile", { replace: true });
+        const { data } = await supabase.auth.getSession()
+        if (mounted) navigate('/', { replace: true })
+      } catch {
+        if (mounted) navigate('/', { replace: true })
       }
-    };
-
-    if (hash.includes("access_token") || hash.includes("provider_token")) {
-      finish();
-    } else {
-      navigate("/", { replace: true });
+    })()
+    return () => {
+      mounted = false
     }
-  }, [navigate]);
+  }, [navigate])
 
-  return <p style={{ padding: 24 }}>Finishing sign-in…</p>;
+  return null
 }
