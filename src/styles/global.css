@@ -1,5 +1,83 @@
 @import './tokens.css';
 
+/* ===== Mobile polish overrides (load AFTER tokens) ===== */
+/* 1) Hide skip link unless focused (keeps it accessible, not visible) */
+.nv-skip {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+.nv-skip:focus {
+  left: 12px;
+  top: 12px;
+  width: auto;
+  height: auto;
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0,0,0,.12);
+  z-index: 1000;
+}
+
+/* 2) Base type + spacing scale for mobile-first */
+html { font-size: 16px; }
+
+/* Headings – scale down on small screens, keep brand color */
+h1, .section-title, .page-title {
+  color: var(--nv-blue-700);
+  font-weight: 800;
+}
+h1 {
+  /* ~28px to ~36px between 360–768px */
+  font-size: clamp(1.75rem, 4.5vw + 0.5rem, 2.25rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+h2 {
+  font-size: clamp(1.25rem, 3.2vw + 0.4rem, 1.625rem);
+  line-height: 1.2;
+}
+h3 {
+  font-size: clamp(1.1rem, 2.6vw + 0.35rem, 1.35rem);
+  line-height: 1.25;
+}
+
+/* Buttons – shrink a touch on phones */
+.btn {
+  padding: 10px 16px;
+  font-size: 1rem;
+  line-height: 1.1;
+  border-radius: 12px;
+}
+
+/* Hero panel – soften spacing on phones */
+.hero, .welcome, .nv-hero, .panel.hero {
+  padding: clamp(12px, 3.5vw, 20px);
+}
+
+/* Cards/tiles – tighter, single-column on mobile */
+.card, .panel, .tile, .zone-card, .market-card, .nv-card {
+  padding: clamp(12px, 3.5vw, 16px);
+  border-radius: 16px;
+}
+
+/* Container gutters on small screens */
+@media (max-width: 768px) {
+  .container { padding: 0 12px; }
+  /* Any generic responsive grids collapse to single column */
+  .grid, .cards, .nv-grid { grid-template-columns: 1fr; gap: 16px; }
+}
+
+/* Ultra-narrow phones (≤390px, e.g., iPhone mini) */
+@media (max-width: 390px) {
+  html { font-size: 15px; }             /* global nudge down */
+  .btn { padding: 9px 14px; }
+  .container { padding: 0 10px; }
+}
+
 /* Page background */
 :root {
   --page-bg: #f8fbff; /* light blue background */
