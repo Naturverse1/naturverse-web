@@ -1,5 +1,31 @@
 @import './tokens.css';
 
+/* Visually hide skip link, show on keyboard focus (a11y) */
+.skip-link {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+/* When tabbed to, reveal it in a sensible spot */
+.skip-link:focus {
+  left: 12px;
+  top: 12px;
+  width: auto;
+  height: auto;
+  padding: 10px 14px;
+  border-radius: 12px;
+  background: #ffffff;
+  border: 2px solid var(--nv-blue-600, #2463eb);
+  color: var(--nv-blue-700, #2d5cff);
+  z-index: 10000;
+  box-shadow: 0 2px 8px rgba(17, 34, 68, 0.15);
+}
+
 /* Page background */
 :root {
   --page-bg: #f8fbff; /* light blue background */
@@ -609,14 +635,14 @@ main,
   .btn,
   button,
   .button {
-    font-size: 1rem;           /* 16px */
-    padding: 10px 14px;        /* smaller tap-friendly */
+    font-size: 1rem; /* 16px */
+    padding: 10px 14px; /* smaller tap-friendly */
     border-radius: 12px;
   }
 
   /* Search bars / inputs */
-  input[type="search"],
-  input[type="text"],
+  input[type='search'],
+  input[type='text'],
   .search input,
   .searchbar input {
     height: 44px;
@@ -643,4 +669,3 @@ main,
     padding-right: 12px;
   }
 }
-
