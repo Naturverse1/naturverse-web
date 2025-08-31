@@ -1,8 +1,8 @@
 import { confettiBurst } from './confetti';
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
+const supabaseAnon = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const sb = (supabaseUrl && supabaseAnon)
   ? createClient(supabaseUrl, supabaseAnon)
   : null;
@@ -53,7 +53,7 @@ export async function postScore(game: string, value: number) {
 }
 
 // --- AUTO STAMPS (feature-flagged, once-per-day per world) ---
-const AUTO_FLAG = typeof window !== 'undefined' && (process.env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS === 'true');
+const AUTO_FLAG = typeof window !== 'undefined' && (import.meta.env.VITE_ENABLE_AUTO_STAMPS === 'true');
 const AUTO_KEY = 'naturverse.autoStamp.last'; // { [world]: ISO }
 
 function readAuto(): Record<string, string> {

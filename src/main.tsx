@@ -1,7 +1,6 @@
 import React from 'react';
 import { createRoot } from 'react-dom/client';
-import { BrowserRouter } from 'react-router-dom';
-import AppShell from './AppShell';
+import App from './App';
 import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
@@ -42,9 +41,7 @@ function mount() {
     root.render(
       <React.StrictMode>
         <GlobalErrorBoundary>
-          <BrowserRouter>
-            <AppShell />
-          </BrowserRouter>
+          <App />
         </GlobalErrorBoundary>
       </React.StrictMode>,
     );
