@@ -1,0 +1,55 @@
+/* === GLOBAL FIXES === */
+
+/* Force brand/logo text consistent */
+.nv-brand, .nv-logo, .nv-footer, footer, .footer a {
+  color: var(--naturverse-blue) !important;
+  text-decoration: none;
+}
+
+/* Footer layout */
+footer, .nv-footer {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+  padding: 20px 10px;
+  font-size: 14px;
+}
+
+/* Prevent stacked dots (reset ul/li) */
+footer ul, .nv-footer ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+footer li {
+  list-style: none;
+}
+
+/* Nav brand always visible */
+.nv-brand {
+  font-weight: 800;
+  font-size: 1.2rem;
+}
+
+/* Mobile nav toggle */
+@media (max-width: 768px) {
+  .nv-navbar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 0 1rem;
+  }
+  .nv-brand {
+    margin-bottom: 8px;
+  }
+  nav ul {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    text-align: center;
+  }
+}
