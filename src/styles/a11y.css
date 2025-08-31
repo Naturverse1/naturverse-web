@@ -1,29 +1,8 @@
 /* ===== Accessibility primitives (global, low-risk) ===== */
 
-/* 1) Skip link: hidden until focused */
-.nv-skip {
-  position: absolute;
-  left: 12px;
-  top: 10px;
-  padding: 8px 12px;
-  background: #0b5fff;
-  color: #fff;
-  text-decoration: none;
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0,0,0,.18);
-  transform: translateY(-120%);
-  transition: transform .15s ease;
-  z-index: 1000;
-}
-.nv-skip:focus,
-.nv-skip:focus-visible {
-  transform: translateY(0);
-  outline: none;
-}
-
-/* 2) High-visibility focus ring that respects :focus-visible */
-:where(a, button, [role="button"], input, select, textarea, summary):focus-visible {
-  outline: 3px solid rgba(11,95,255,.6);
+/* High-visibility focus ring that respects :focus-visible */
+:where(a, button, [role='button'], input, select, textarea, summary):focus-visible {
+  outline: 3px solid rgba(11, 95, 255, 0.6);
   outline-offset: 2px;
   border-radius: 8px;
 }
@@ -43,5 +22,10 @@
 
 /* 4) Avoid motion for users who prefer reduced motion */
 @media (prefers-reduced-motion: reduce) {
-  * { animation-duration: .001ms !important; animation-iteration-count: 1 !important; transition-duration: .001ms !important; scroll-behavior: auto !important; }
+  * {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+    scroll-behavior: auto !important;
+  }
 }

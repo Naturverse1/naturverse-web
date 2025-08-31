@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 
 /**
  * Keyboard users can press Tab once to reveal this link and jump
@@ -6,7 +6,7 @@ import React from "react";
  */
 export default function SkipLink() {
   return (
-    <a href="#main" className="nv-skip">
+    <a href="#main" className="skip-link">
       Skip to content
     </a>
   );
