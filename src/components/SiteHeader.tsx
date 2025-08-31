@@ -35,10 +35,10 @@ export default function SiteHeader() {
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="container">
         <div className="nav-left">
-          <Link to="/" className="brand" onClick={() => setOpen(false)}>
-            <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
-            <span>Naturverse</span>
-          </Link>
+            <Link to="/" className="brand" onClick={() => setOpen(false)}>
+              <Img src="/favicon-32x32.png" width="28" height="28" alt="" />
+              <span>The Naturverse</span>
+            </Link>
           <nav className="nav nav-links">
             <NavLink
               to="/worlds"

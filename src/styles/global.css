@@ -2,7 +2,7 @@
 
 /* Page background */
 :root {
-  --page-bg: #f8fbff; /* light blue background used across pages */
+  --page-bg: #f8fbff; /* light blue background */
 }
 
 /* ---- Naturverse Navbar Brand ---- */
@@ -13,7 +13,7 @@
   --nv-logo-size-lg: 48px; /* desktop */
 }
 
-/* consistent text color token already in your project */
+/* consistent text color token already in your theme */
 .text-nv-blue,
 .nv-brand {
   color: var(--naturverse-blue) !important;
@@ -22,8 +22,8 @@
 .nv-logo {
   width: var(--nv-logo-size-sm);
   height: var(--nv-logo-size-sm);
-  display: block; /* avoid inline-img baseline gap */
-  flex-shrink: 0; /* never collapse in tight rows */
+  display: block; /* avoid inline-img baseline gaps */
+  flex-shrink: 0; /* never collapse in tight flex rows */
 }
 
 @media (min-width: 640px) {
@@ -47,13 +47,13 @@
   line-height: 1;
 }
 
-/* ===== Mobile hamburger: lines only, no pill ===== */
+/* ====== Mobile hamburger: lines only, no pill ====== */
 @media (max-width: 768px) {
   .nv-hamburger {
     background: transparent !important;
     border: 0 !important;
     box-shadow: none !important;
-    padding: 6px 8px; /* small tap target without the pill */
+    padding: 6px 8px; /* small tap target without visual pill */
     border-radius: 0 !important;
   }
   .nv-hamburger:focus {
@@ -69,7 +69,7 @@
   }
 }
 
-/* Remove blue background box on mobile nav (hamburger menu) */
+/* Fallback for older toggle markup (safe to keep) */
 .nav-toggle,
 .nav-toggle button,
 .nav-toggle svg {
@@ -77,10 +77,8 @@
   border: none !important;
   box-shadow: none !important;
 }
-
-/* Make sure only the lines show */
 .nav-toggle svg {
-  fill: #1e40af; /* blue lines, match site branding */
+  fill: #1e40af;
   width: 28px;
   height: 28px;
 }
@@ -96,6 +94,49 @@ a {
 .page-wrapper {
   background-color: var(--page-bg);
   min-height: 100vh;
+}
+
+/* ====== Responsive container & grid reset (like 642) ====== */
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+@media (max-width: 768px) {
+  .container {
+    padding: 0 12px;
+  }
+
+  /* any generic grids/cards collapse to single column */
+  .grid,
+  .cards,
+  .nv-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+
+  /* hide wide nav links on mobile; use hamburger/menu */
+  .nv-nav-links {
+    display: none;
+  }
+
+  /* footer: single wrapped row with spacing, no bullets */
+  .site-footer nav ul,
+  .nv-footer-links {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    justify-content: center;
+  }
+
+  .site-footer nav li::marker {
+    content: '';
+  }
 }
 
 /* Base */

@@ -14,7 +14,7 @@ export default function Header() {
 
   return (
     <header className="site-header">
-      <a href="/">Naturverse</a>
+        <a href="/">The Naturverse</a>
       <nav>
         <a href="/worlds">Worlds</a>
         <a href="/zones">Zones</a>
