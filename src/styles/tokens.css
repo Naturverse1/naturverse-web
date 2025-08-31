@@ -35,4 +35,51 @@
   --nv-accent-strong: var(--nv-blue-600);
   --nv-accent-contrast: var(--nv-text-on-accent);
   --nv-focus: 0 0 0 3px rgba(74, 135, 255, 0.35); /* focus ring */
+
+  /* ===== Responsive scale tokens (typography + spacing) ===== */
+  /* Base type sizes (used by global.css with clamp for smooth scaling) */
+  --scale-h1-min: 1.9rem;   /* ~30px on small phones */
+  --scale-h1-max: 2.6rem;   /* ~42px on large phones */
+  --scale-h2-min: 1.25rem;  /* ~20px */
+  --scale-h2-max: 1.6rem;   /* ~26px */
+  --scale-h3-min: 1.05rem;  /* ~17px */
+  --scale-h3-max: 1.25rem;  /* ~20px */
+  --scale-body-min: 0.98rem; /* ~15-16px */
+  --scale-body-max: 1.05rem; /* ~16-17px */
+
+  /* Button scale */
+  --btn-font-min: 0.98rem;
+  --btn-font-max: 1.05rem;
+  --btn-pad-v-min: 10px;
+  --btn-pad-v-max: 12px;
+  --btn-pad-h-min: 16px;
+  --btn-pad-h-max: 18px;
+
+  /* Vertical rhythm */
+  --space-unit-min: 10px;
+  --space-unit-max: 16px;
+}
+
+/* Slightly wider phones/phablets: relax the clamp ranges */
+@media (min-width: 480px) {
+  :root {
+    --scale-h1-max: 2.9rem;
+    --scale-h2-max: 1.75rem;
+    --scale-h3-max: 1.3rem;
+    --btn-font-max: 1.1rem;
+  }
+}
+
+/* Tablets and up: defer to existing desktop sizing (no visual change) */
+@media (min-width: 768px) {
+  :root {
+    --scale-h1-min: 2.25rem;
+    --scale-h1-max: 3.25rem;
+    --scale-h2-min: 1.35rem;
+    --scale-h2-max: 1.85rem;
+    --scale-h3-min: 1.1rem;
+    --scale-h3-max: 1.3rem;
+    --space-unit-min: 12px;
+    --space-unit-max: 20px;
+  }
 }

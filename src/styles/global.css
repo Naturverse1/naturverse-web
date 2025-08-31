@@ -145,6 +145,8 @@ body {
   background: var(--nv-bg);
   color: var(--nv-text);
   overflow-x: hidden;
+  /* Prevent iOS zoom wiggles on inputs */
+  -webkit-text-size-adjust: 100%;
 }
 a {
   color: var(--nv-blue-600);
@@ -156,15 +158,32 @@ hr {
   border-color: var(--nv-border);
 }
 
-/* Headings (no layout change) */
-h1,
-h2,
-h3 {
-  color: var(--nv-blue-700);
-}
+/* Headings: responsive scale using clamp; color unchanged */
+h1 { color: var(--nv-blue-700); }
+h2 { color: var(--nv-blue-700); }
+h3 { color: var(--nv-blue-700); }
 .section-title,
 .page-title {
   color: var(--nv-blue-700);
+}
+
+/* Typography ramp */
+h1 {
+  /* From small phones to tablet: ~30px → ~42–52px, then existing desktop */
+  font-size: clamp(var(--scale-h1-min), 3.6vw + 1rem, var(--scale-h1-max));
+  line-height: 1.15;
+}
+h2 {
+  font-size: clamp(var(--scale-h2-min), 1.8vw + 0.8rem, var(--scale-h2-max));
+  line-height: 1.2;
+}
+h3 {
+  font-size: clamp(var(--scale-h3-min), 1.2vw + 0.7rem, var(--scale-h3-max));
+  line-height: 1.25;
+}
+body,
+.nv-content {
+  font-size: clamp(var(--scale-body-min), 0.6vw + 0.85rem, var(--scale-body-max));
 }
 
 /* Cards / panels / list tiles */
@@ -308,12 +327,16 @@ textarea {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  padding: 0.65rem 1.05rem;
+  /* Tighter, responsive button sizing for mobile while preserving desktop */
+  padding: clamp(var(--btn-pad-v-min), 0.6vw + 8px, var(--btn-pad-v-max))
+           clamp(var(--btn-pad-h-min), 1vw + 12px, var(--btn-pad-h-max));
+  font-weight: 700;
+  font-size: clamp(var(--btn-font-min), 0.7vw + 0.9rem, var(--btn-font-max));
+  line-height: 1.1;
+  border-radius: 14px;
   border: none;
-  border-radius: 12px;
   background: #2563eb;
   color: #fff;
-  font-weight: 600;
   text-decoration: none;
 }
 .btn:hover {
@@ -323,6 +346,31 @@ textarea {
   padding: 0.45rem 0.7rem;
   border-radius: 10px;
   font-size: 0.9rem;
+}
+
+/* Home hero tweaks (titles/buttons/search spacing) */
+@media (max-width: 540px) {
+  .welcome .section-title,
+  .welcome .page-title,
+  .page-title {
+    margin-top: calc(var(--space-unit-min) * 1.2);
+    margin-bottom: calc(var(--space-unit-min) * 1.2);
+  }
+  .welcome .btn-group,
+  .welcome .cta-row {
+    gap: 12px;
+  }
+  .welcome .btn-group .btn,
+  .welcome .cta-row .btn {
+    min-width: 46%;
+  }
+  /* Search pill under hero: a bit tighter */
+  .welcome .searchbar,
+  .welcome .nv-search,
+  .nv-search {
+    margin-top: 10px;
+    margin-bottom: 6px;
+  }
 }
 
 /* Utilities */
@@ -582,5 +630,19 @@ main,
   }
   .card-grid {
     grid-template-columns: 1fr !important;
+  }
+}
+
+/* Small phones: tighten generic stack spacing a touch */
+@media (max-width: 480px) {
+  .nv-grid,
+  .grid,
+  .cards {
+    gap: 12px;
+  }
+  .dashed,
+  .hint,
+  .demo-box {
+    border-width: 2px;
   }
 }
