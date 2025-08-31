@@ -69,6 +69,7 @@
   }
 }
 
+
 /* Fallback for older toggle markup (safe to keep) */
 .nav-toggle,
 .nav-toggle button,
@@ -641,6 +642,58 @@ main,
   .container {
     padding-left: 12px;
     padding-right: 12px;
+  }
+}
+
+/* ====== Compact mobile scale (phones ≤ 480px) ====== */
+@media (max-width: 480px) {
+  /* Typography */
+  html { font-size: 16px; } /* anchor the scale */
+  h1 {
+    /* big hero headline */
+    font-size: clamp(1.6rem, 6vw + 0.2rem, 2.1rem);
+    line-height: 1.2;
+    letter-spacing: -0.01em;
+  }
+  h2 {
+    font-size: clamp(1.25rem, 4.5vw + 0.1rem, 1.6rem);
+    line-height: 1.25;
+  }
+  .lead, .headline {
+    font-size: 1rem;
+    line-height: 1.5;
+  }
+
+  /* Containers & cards */
+  .container { padding: 0 12px; }
+  .card, .panel, .tile, .zone-card, .market-card, .nv-card {
+    padding: 14px;
+    border-radius: 12px;
+  }
+
+  /* Buttons */
+  .btn,
+  button.primary,
+  .cta,
+  .nv-cta {
+    font-size: 1rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+  }
+
+  /* “Play / Learn / Earn” tiles */
+  .section-title, .page-title { margin-bottom: 8px; }
+  .nv-grid { gap: 12px; }
+
+  /* Search input + top spacing */
+  .search-bar, .search, .search input {
+    height: 44px;
+    font-size: 1rem;
+  }
+  .hero, .nv-hero, .welcome, .page-hero {
+    margin-top: 8px;
+    margin-bottom: 12px;
+    padding: 14px;
   }
 }
 

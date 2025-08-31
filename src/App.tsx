@@ -6,22 +6,25 @@ import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import { logEvent } from './utils/telemetry';
 import RouteFallback from './routes/RouteFallback';
-import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
-import './init/runtime-logger'; // lightweight global error hooks
-import './styles/footer.css';
 import SkipLink from './components/SkipLink';
-import './styles/a11y.css';
-import './styles/images.css';
-import './components/skeleton.css';
 import NetworkBanner from './components/NetworkBanner';
-import './components/network.css';
-import './styles/global.css';
 import SearchProvider from './search/SearchProvider';
 import CheckoutBanner from './components/CheckoutBanner';
 import ToastHost from '@/components/ToastHost';
 import CartShareLoader from '@/components/CartShareLoader';
+import './init/runtime-logger'; // lightweight global error hooks
+
+import './styles/magic.css';
+import './styles/footer.css';
+import './styles/a11y.css';
+import './styles/images.css';
+import './components/skeleton.css';
+import './components/network.css';
+
+// ⬇️ keep this LAST so it overrides everything above
+import './styles/global.css';
 
 export default function App() {
   const [path, setPath] = useState(
