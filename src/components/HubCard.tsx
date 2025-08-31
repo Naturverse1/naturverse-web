@@ -1,22 +1,32 @@
-import { Link } from 'react-router-dom';
-
-type HubCardProps = {
-  to: string;
-  emoji: string;
-  title: string;
-  sub?: string;
+type Hub = {
+  image: string;
+  name: string;
+  subtitle: string;
+  href?: string;
 };
 
-export default function HubCard({ to, emoji, title, sub }: HubCardProps) {
+export function HubCard({ hub }: { hub: Hub }) {
+  const Wrapper: any = hub.href ? 'a' : 'div';
+  const wrapperProps = hub.href ? { href: hub.href } : {};
+
   return (
-    <Link to={to} className="hub-card card" aria-label={`${title}${sub ? ` – ${sub}` : ''}`}>
-      <strong className="hub-card-title card-title">
-        <span className="hub-ico emoji" aria-hidden>
-          {emoji}
-        </span>
-        {title}
-      </strong>
-      {sub ? <div className="hub-sub">{sub}</div> : null}
-    </Link>
+    <Wrapper
+      {...wrapperProps}
+      className="block overflow-hidden rounded-xl border bg-white"
+    >
+      <img
+        src={hub.image}
+        alt={hub.name}
+        className="w-full max-w-full h-auto object-cover"
+        loading="lazy"
+      />
+      <div className="p-4">
+        <h3 className="text-lg font-semibold">{hub.name}</h3>
+        <p className="mt-1 text-sm text-gray-700">{hub.subtitle}</p>
+      </div>
+    </Wrapper>
   );
 }
+
+export default HubCard;
+
