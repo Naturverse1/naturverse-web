@@ -3,6 +3,7 @@ import { Helmet } from "react-helmet-async";
 export default function HeadPreloads() {
   return (
     <Helmet>
+      <title>The Naturverse</title>
       {/* Fonts */}
       <link rel="preconnect" href="https://fonts.googleapis.com" />
       <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="" />
@@ -19,3 +20,4 @@ export default function HeadPreloads() {
     </Helmet>
   );
 }
+
