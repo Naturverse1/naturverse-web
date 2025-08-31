@@ -3,13 +3,15 @@ import { supabase } from './supabase-client';
 export async function signInWithGoogle() {
   // Ensure OAuth returns to a page that can parse the hash BEFORE any CSP/SW interfere
   const redirectTo = `${window.location.origin}/auth/callback`;
-  return supabase.auth.signInWithOAuth({
+  const { data, error } = await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
       redirectTo,
       queryParams: { prompt: 'select_account' },
     },
   });
+  if (error) console.error('OAuth error:', error);
+  return data;
 }
 
 export async function sendMagicLink(email: string) {
