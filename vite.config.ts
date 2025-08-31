@@ -4,6 +4,7 @@ import { VitePWA } from 'vite-plugin-pwa';
 import path from 'path';
 
 export default defineConfig({
+  base: '/',
   plugins: [
     react({
       // Disable dev-only transform that uses eval()
@@ -56,7 +57,7 @@ export default defineConfig({
         },
       },
     },
-    sourcemap: true, // show real stack traces in prod console
+    sourcemap: false,
     commonjsOptions: {
       // allow CJS in node_modules to be bundled
       include: [/node_modules/],

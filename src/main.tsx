@@ -6,25 +6,8 @@ import './index.css';
 import { loadFlags } from './lib/flags';
 import { sendEvent } from './lib/telemetry';
 import { GlobalErrorBoundary } from './components/GlobalErrorBoundary';
-import { supabase } from '@/lib/supabase-client';
 
 document.documentElement.setAttribute('data-env', import.meta.env.PROD ? 'production' : 'dev');
-
-(async () => {
-  // Complete session after /auth/callback.html bounced us back to "/"
-  const hash = sessionStorage.getItem('nv_oauth_hash');
-  const search = sessionStorage.getItem('nv_oauth_search');
-  if (hash || search) {
-    const url = `${location.origin}${search ? `/${search}` : `/${hash}`}`.replace('//#', '/#');
-    try {
-      // Handles both hash (#access_token=...) and PKCE (?code=...)
-      await supabase.auth.getSessionFromUrl({ storeSession: true, url });
-    } catch {}
-    sessionStorage.removeItem('nv_oauth_hash');
-    sessionStorage.removeItem('nv_oauth_search');
-    history.replaceState({}, '', '/');
-  }
-})();
 
 // TEMP: ensure no service worker remains. This prevents the “Offline” page.
 if (typeof navigator !== 'undefined' && 'serviceWorker' in navigator) {
