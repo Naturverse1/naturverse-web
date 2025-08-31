@@ -584,3 +584,63 @@ main,
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ===== Naturverse: mobile scale + spacing (<=768px) ===== */
+@media (max-width: 768px) {
+  /* Type scale */
+  h1 {
+    /* ~28–32px on phones, never huge */
+    font-size: clamp(1.75rem, 5.2vw + 0.25rem, 2rem);
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+  h2 {
+    /* ~20–24px */
+    font-size: clamp(1.25rem, 3.5vw + 0.2rem, 1.5rem);
+    line-height: 1.2;
+  }
+  h3 {
+    /* ~18–20px */
+    font-size: clamp(1.125rem, 2.6vw + 0.2rem, 1.25rem);
+    line-height: 1.25;
+  }
+
+  /* CTA buttons */
+  .btn,
+  button,
+  .button {
+    font-size: 1rem;           /* 16px */
+    padding: 10px 14px;        /* smaller tap-friendly */
+    border-radius: 12px;
+  }
+
+  /* Search bars / inputs */
+  input[type="search"],
+  input[type="text"],
+  .search input,
+  .searchbar input {
+    height: 44px;
+    font-size: 0.95rem;
+  }
+
+  /* Panels / cards breathe less on mobile */
+  .panel,
+  .nv-card,
+  .card,
+  .tile {
+    padding: 14px !important;
+  }
+
+  /* Generic vertical rhythm */
+  .container > * {
+    margin-top: 12px;
+    margin-bottom: 12px;
+  }
+
+  /* Keep container edges comfortable on small screens */
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
