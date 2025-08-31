@@ -5,7 +5,7 @@ export async function signInWithGoogle() {
   await supabase.auth.signInWithOAuth({
     provider: 'google',
     options: {
-      redirectTo: `${window.location.origin}/`,
+      redirectTo: `${window.location.origin}/auth/callback`,
       queryParams: { prompt: 'select_account' },
     },
   });
@@ -14,6 +14,6 @@ export async function signInWithGoogle() {
 export async function sendMagicLink(email: string) {
   await supabase.auth.signInWithOtp({
     email,
-    options: { emailRedirectTo: `${window.location.origin}/` },
+    options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
   });
 }

@@ -7,6 +7,7 @@ const Quizzes     = lazy(()=>import('./pages/zones/Quizzes'))
 const CreatorLab  = lazy(()=>import('./pages/zones/creator-lab'))
 const Community   = lazy(()=>import('./pages/zones/Community'))
 const Observations= lazy(()=>import('./pages/zones/Observations'))
+const AuthCallback= lazy(()=>import('./pages/AuthCallback'))
 
 export const withSuspense = (el: JSX.Element) => (
   <Suspense fallback={<div><Skeleton h={24}/><br/><Skeleton h={180}/></div>}>
@@ -21,4 +22,5 @@ export const routes = [
   { path: '/creator-lab', element: withSuspense(<CreatorLab/>) },
   { path: '/community',   element: withSuspense(<Community/>) },
   { path: '/observations',element: withSuspense(<Observations/>) },
+  { path: '/auth/callback', element: withSuspense(<AuthCallback/>) },
 ]
