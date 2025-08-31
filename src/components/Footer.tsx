@@ -9,10 +9,20 @@ export default function Footer() {
         <a href="mailto:info@thenaturverse.com" aria-label="Email us">
           <Icon name="contact" size={18} />
         </a>
-        <a href="https://twitter.com/naturverse" target="_blank" rel="noopener" aria-label="Twitter">
+        <a
+          href="https://x.com/TuriantheDurian"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="X"
+        >
           <Icon name="arrow" size={18} />
         </a>
-        <a href="https://instagram.com/naturverse" target="_blank" rel="noopener" aria-label="Instagram">
+        <a
+          href="https://instagram.com/TuriantheDurian"
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+        >
           <Icon name="world" size={18} />
         </a>
       </div>
