@@ -1,53 +1,44 @@
 [build]
   command = "npm run build"
   publish = "dist"
-  node_version = "22"
 
-[build.environment]
-  NODE_VERSION = "22"
+# --- Utility pages that must render as-is ---
+[[redirects]]
+  from = "/kill-sw"
+  to = "/kill-sw.html"
+  status = 200
+  force = true
 
-[[headers]]
-  for = "/*"
-  # Temporary CSP so app can execute while we debug.
-  # TODO: tighten after we confirm no eval usage remains.
-  [headers.values]
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline' https:; connect-src 'self' https:; img-src 'self' https: data: blob:; style-src 'self' 'unsafe-inline' https:; font-src 'self' https: data:; object-src 'none'; base-uri 'self'; frame-ancestors 'self'"
+[[redirects]]
+  from = "/auth/callback"
+  to = "/auth/callback.html"
+  status = 200
+  force = true
 
+# --- Single Page App fallback (AFTER the specific rules) ---
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
+# Security/cache headers (safe defaults)
 [[headers]]
-  for = "/assets/*"
-  [headers.values]
-    Cache-Control = "public, max-age=31536000, immutable"
-
-[[headers]]
-  for = "/sw.js"
-  [headers.values]
-    Cache-Control = "no-store"
-
-[[headers]]
-  for = "/*/sw.js"
-  [headers.values]
-    Cache-Control = "no-store"
-
-[[headers]]
-  for = "/index.html"
-  [headers.values]
-    Cache-Control = "no-store, must-revalidate"
-
-# Branch deploys: make CSP permissive so previews don’t white-screen,
-# and ensure the service worker cannot get stuck.
-[context."branch-deploy"]
-
-  [[context."branch-deploy".headers]]
   for = "/*"
-    [context."branch-deploy".headers.values]
-    Content-Security-Policy = "default-src 'self' https: data: blob:; script-src 'self' https: 'unsafe-inline' 'unsafe-eval'; style-src 'self' https: 'unsafe-inline'; img-src 'self' https: data: blob:; font-src 'self' https: data:; connect-src 'self' https: wss:; frame-ancestors 'self'; base-uri 'self'; form-action 'self'"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Cache-Control = "public, max-age=0, must-revalidate"
 
-  [[context."branch-deploy".headers]]
-  for = "/sw.js"
-    [context."branch-deploy".headers.values]
-    Cache-Control = "no-store, no-cache, must-revalidate, max-age=0"
+# Allow inline JS/CSS on the two tiny utility pages
+[[headers]]
+  for = "/kill-sw.html"
+  [headers.values]
+    Cache-Control = "no-cache, no-store"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+[[headers]]
+  for = "/auth/callback.html"
+  [headers.values]
+    Cache-Control = "no-store"
+    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
