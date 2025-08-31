@@ -24,8 +24,6 @@ import { router } from './router';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
-import { Elements } from '@stripe/react-stripe-js';
-import { stripePromise } from '@/lib/stripe';
 import { installGlobalLogCapture } from '@/lib/log';
 
 applyTheme(getTheme());
@@ -97,31 +95,29 @@ async function bootstrap() {
 
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      <Elements stripe={stripePromise}>
-        {supabase ? (
-          <AuthProvider initialSession={initialSession}>
-            <ToastProvider>
-              <BaseAuthProvider>
-                <RootWithPalette>
-                  <AppErrorBoundary>
-                    <App />
-                  </AppErrorBoundary>
-                  <WorldExtras />
-                </RootWithPalette>
-              </BaseAuthProvider>
-            </ToastProvider>
-          </AuthProvider>
-        ) : (
+      {supabase ? (
+        <AuthProvider initialSession={initialSession}>
           <ToastProvider>
-            <RootWithPalette>
-              <AppErrorBoundary>
-                <App />
-              </AppErrorBoundary>
-              <WorldExtras />
-            </RootWithPalette>
+            <BaseAuthProvider>
+              <RootWithPalette>
+                <AppErrorBoundary>
+                  <App />
+                </AppErrorBoundary>
+                <WorldExtras />
+              </RootWithPalette>
+            </BaseAuthProvider>
           </ToastProvider>
-        )}
-      </Elements>
+        </AuthProvider>
+      ) : (
+        <ToastProvider>
+          <RootWithPalette>
+            <AppErrorBoundary>
+              <App />
+            </AppErrorBoundary>
+            <WorldExtras />
+          </RootWithPalette>
+        </ToastProvider>
+      )}
     </React.StrictMode>,
   );
 }
