@@ -1,9 +1,14 @@
-import { defineConfig } from 'vite';
-import react from '@vitejs/plugin-react';
+import { defineConfig } from 'vite'
+import react from '@vitejs/plugin-react'
 
+// https://vitejs.dev/config/
 export default defineConfig({
-  base: '/',                // critical so /auth/* doesn't rewrite asset URLs
+  base: '/',
   plugins: [react()],
-  resolve: { alias: { '@': '/src' } },
-  build: { sourcemap: false },
-});
+  resolve: {
+    alias: { '@': '/src' },
+  },
+  build: {
+    sourcemap: false,
+  },
+})
