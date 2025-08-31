@@ -17,7 +17,6 @@ import './styles/images.css';
 import './components/skeleton.css';
 import NetworkBanner from './components/NetworkBanner';
 import './components/network.css';
-import './styles/global.css';
 import SearchProvider from './search/SearchProvider';
 import CheckoutBanner from './components/CheckoutBanner';
 import ToastHost from '@/components/ToastHost';
