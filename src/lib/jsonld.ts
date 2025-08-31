@@ -8,9 +8,11 @@ export const organizationLd = {
   url: siteUrl,
   logo: `${siteUrl}/favicons/android-chrome-192x192.png`,
   sameAs: [
-    'https://x.com/naturverse',
-    'https://instagram.com/naturverse',
-    'https://youtube.com/@naturverse',
+    'https://facebook.com/TuriantheDurian',
+    'https://instagram.com/TuriantheDurian',
+    'https://tiktok.com/@TuriantheDurian',
+    'https://youtube.com/@TuriantheDurian',
+    'https://x.com/TuriantheDurian',
     'https://discord.gg',
   ],
 };

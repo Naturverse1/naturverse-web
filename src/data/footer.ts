@@ -3,5 +3,5 @@ export const FOOTER_LINKS = [
   { href: "/contact", label: "Contact" },
   { href: "/terms", label: "Terms" },
   { href: "/privacy", label: "Privacy" },
-  { href: "https://x.com/turianthedurian", label: "X" },
+  { href: "https://x.com/TuriantheDurian", label: "X" },
 ];
