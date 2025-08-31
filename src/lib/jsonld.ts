@@ -4,14 +4,15 @@ export const siteUrl =
 export const organizationLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Naturverse',
+  name: 'Turian Media Company',
   url: siteUrl,
   logo: `${siteUrl}/favicons/android-chrome-192x192.png`,
   sameAs: [
-    'https://x.com/naturverse',
-    'https://instagram.com/naturverse',
-    'https://youtube.com/@naturverse',
-    'https://discord.gg',
+    'https://x.com/TuriantheDurian',
+    'https://instagram.com/turianthedurian',
+    'https://www.tiktok.com/@turian.the.durian',
+    'https://youtube.com/@TuriantheDurian',
+    'https://facebook.com/TurianMediaCompany',
   ],
 };
 

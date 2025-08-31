@@ -10,7 +10,6 @@ import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
-import Footer from './components/Footer';
 import './styles/footer.css';
 import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
@@ -71,8 +70,6 @@ export default function App() {
               <ToasterListener />
             </React.Suspense>
           </main>
-
-          {!onAuthRoute && <Footer />}
         </div>
       </SearchProvider>
   );
