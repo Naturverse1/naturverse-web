@@ -10,8 +10,6 @@ import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
-import Footer from './components/Footer';
-import './styles/footer.css';
 import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
 import './styles/images.css';
@@ -72,7 +70,7 @@ export default function App() {
             </React.Suspense>
           </main>
 
-          {!onAuthRoute && <Footer />}
+          {/* Footer rendered in Root layout */}
         </div>
       </SearchProvider>
   );
