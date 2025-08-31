@@ -100,21 +100,28 @@ a {
 .container {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 16px;
+  padding: 0 16px; /* add mobile padding */
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 12px;
+  html {
+    font-size: 14px; /* scale down all rem-based text */
   }
-
-  /* any generic grids/cards collapse to single column */
-  .grid,
+  body {
+    line-height: 1.4;
+  }
+  .container {
+    padding: 0 8px;
+  }
   .cards,
   .nv-grid {
-    display: grid;
-    grid-template-columns: 1fr;
-    gap: 16px;
+    grid-template-columns: 1fr; /* stack cards in one column */
+    gap: 12px;
+  }
+  .card,
+  .panel,
+  .tile {
+    padding: 12px;
   }
 
   /* hide wide nav links on mobile; use hamburger/menu */
