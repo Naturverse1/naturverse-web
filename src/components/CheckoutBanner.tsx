@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import { UPSELLS } from "@/lib/upsell";
-import { stripePromise } from '@/lib/stripe';
 
 export default function CheckoutBanner() {
   const [msg, setMsg] = useState<string | null>(null);
@@ -17,16 +16,8 @@ export default function CheckoutBanner() {
     if (p.get("checkout") === "cancel") setMsg("❌ Payment canceled. Please try again.");
   }, []);
 
-  async function buyUpsell() {
-    if (!offer) return;
-    const res = await fetch("/.netlify/functions/create-checkout-session", {
-      method: "POST",
-      headers: { "content-type":"application/json" },
-      body: JSON.stringify({ items: [{ id: offer.sku, qty: 1 }], returnPath: "/" })
-    });
-    const { id } = await res.json();
-    const stripe = await stripePromise;
-    await stripe?.redirectToCheckout({ sessionId: id });
+  function buyUpsell() {
+    alert("Checkout is currently unavailable.");
   }
 
   if (!msg) return null;

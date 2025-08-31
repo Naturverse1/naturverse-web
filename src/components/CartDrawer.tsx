@@ -2,7 +2,6 @@ import React, { useEffect } from "react";
 import { useCart } from "@/lib/cart";
 import { getShareLink } from "@/lib/cartShare";
 import { PRODUCT_IMG } from "@/data/productImages";
-import { stripePromise } from '@/lib/stripe';
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
   const { items, setQty, removeFromCart, clearCart, totalCents } = useCart();
@@ -14,16 +13,8 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
     return () => window.removeEventListener("keydown", f);
   }, [onClose]);
 
-  async function checkout() {
-    const res = await fetch("/.netlify/functions/create-checkout-session", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ items: items.map((i) => ({ id: i.id, qty: i.qty })) }),
-    });
-    const { id, url } = await res.json();
-    const stripe = await stripePromise;
-    if (stripe && id) await stripe.redirectToCheckout({ sessionId: id });
-    else if (url) location.href = url;
+  function checkout() {
+    alert("Checkout is currently unavailable.");
   }
 
   // NEW: Share cart
@@ -118,9 +109,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             >
               Checkout
             </a>
-            <button className="btn" onClick={checkout} style={{ display: "none" }}>
-              Pay w/ Stripe
-            </button>
           </div>
         </footer>
       </aside>

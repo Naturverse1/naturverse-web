@@ -20,8 +20,6 @@
     "nprogress": "^0.2.0",
     "react-helmet-async": "^2.0.4",
     "stripe": "^14.0.0",
-    "@stripe/stripe-js": "^2.4.0",
-    "@stripe/react-stripe-js": "^2.6.0",
     "ethers": "^6.13.2",
     "luxon": "^3.4.4"
   },
