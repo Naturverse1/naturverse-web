@@ -669,3 +669,61 @@ main,
     padding-right: 12px;
   }
 }
+/* ===== Mobile fixes (phones) ===== */
+@media (max-width: 768px) {
+  /* Container padding */
+  .container {
+    padding: 0 12px;
+  }
+
+  /* Hero title */
+  .hero h1,
+  h1 {
+    font-size: clamp(1.4rem, 5vw + 0.2rem, 1.8rem);
+    line-height: 1.2;
+    margin-bottom: 0.75rem;
+  }
+
+  /* Hero subtext */
+  .hero p,
+  .lead {
+    font-size: clamp(1rem, 3.5vw + 0.2rem, 1.125rem);
+    line-height: 1.4;
+    margin-bottom: 1rem;
+  }
+
+  /* Hero buttons */
+  .hero .btn,
+  .btn {
+    font-size: 0.95rem;
+    padding: 10px 14px;
+    border-radius: 10px;
+    min-width: 120px;
+  }
+
+  /* Panels / cards */
+  .panel,
+  .card,
+  .nv-card {
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  /* Input / search */
+  input, select, textarea {
+    font-size: 16px;
+  }
+}
+
+/* Extra-tight scaling for very small phones */
+@media (max-width: 430px) {
+  .hero h1,
+  h1 {
+    font-size: 1.25rem;
+  }
+  .hero .btn,
+  .btn {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+  }
+}
