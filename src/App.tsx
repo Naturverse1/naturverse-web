@@ -11,7 +11,6 @@ import './styles/magic.css';
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
 import Footer from './components/Footer';
-import './styles/footer.css';
 import SkipLink from './components/SkipLink';
 import './styles/a11y.css';
 import './styles/images.css';
