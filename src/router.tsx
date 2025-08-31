@@ -51,6 +51,7 @@ import SuccessPage from './pages/success';
 import CancelPage from './pages/cancel';
 import OrdersPage from './pages/orders';
 import CheckoutPage from './pages/checkout';
+import HelloWorld from './routes/hello-world';
 
 export const router = createBrowserRouter([
   {
@@ -67,6 +68,7 @@ export const router = createBrowserRouter([
       { path: 'search', element: <SearchPage /> },
       { path: 'play', element: <MiniQuests /> },
       { path: 'play/:quest', element: <PlayQuest /> },
+      { path: 'hello-world', element: <HelloWorld /> },
 
       { path: 'marketplace', element: <MarketplacePage /> },
       { path: 'marketplace/:sku', element: <ProductPage /> },
