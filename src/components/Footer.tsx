@@ -1,52 +1,39 @@
 import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { SOCIALS } from '@/lib/socials';
+
+const socials = [
+  { name: 'X',        href: 'https://x.com/TuriantheDurian' },
+  { name: 'Instagram',href: 'https://instagram.com/turianthedurian' },
+  { name: 'TikTok',   href: 'https://tiktok.com/@turian.the.durian' },
+  { name: 'YouTube',  href: 'https://youtube.com/@TuriantheDurian' },
+  { name: 'Facebook', href: 'https://facebook.com/TurianMediaCompany' },
+];
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer
-      role="contentinfo"
-      style={{
-        marginTop: '4rem',
-        padding: '1.25rem 0',
-        borderTop: '1px solid var(--border, #e5e7eb)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ opacity: 0.9 }}>© {year} Turian Media Company</div>
+    <footer className="mt-12 border-t border-slate-200/70 bg-white/70">
+      <div className="mx-auto max-w-screen-lg px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col gap-6 md:flex-row md:items-center md:justify-between">
+          {/* Left: copyright */}
+          <p className="text-slate-500 text-sm">
+            © 2025 Turian Media Company
+          </p>
 
-        <nav aria-label="Legal" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          <Link to="/terms" className="link">Terms</Link>
-          <span aria-hidden>·</span>
-          <Link to="/privacy" className="link">Privacy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/contact" className="link">Contact</Link>
-        </nav>
-
-        <nav aria-label="Social media" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          {SOCIALS.map((s) => (
-            <a
-              key={s.name}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-              aria-label={s.name}
-            >
-              {s.name}
-            </a>
-          ))}
-        </nav>
+          {/* Right: links */}
+          <nav aria-label="footer" className="text-sm">
+            <ul className="list-none m-0 p-0 flex flex-wrap gap-x-4 gap-y-2 md:justify-end">
+              <li><a className="text-slate-500 hover:text-slate-800" href="/terms">Terms</a></li>
+              <li><a className="text-slate-500 hover:text-slate-800" href="/privacy">Privacy</a></li>
+              <li><a className="text-slate-500 hover:text-slate-800" href="/contact">Contact</a></li>
+              {socials.map(s => (
+                <li key={s.name}>
+                  <a className="text-slate-500 hover:text-slate-800" href={s.href} target="_blank" rel="noreferrer">
+                    {s.name}
+                  </a>
+                </li>
+              ))}
+            </ul>
+          </nav>
+        </div>
       </div>
     </footer>
   );
