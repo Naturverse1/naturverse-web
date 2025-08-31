@@ -148,3 +148,8 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import './styles/overrides.css';
+
+// ⬇️ Keep other site-wide styles above this line
+
+// ✅ Ensure this is LAST so it can override everything else
+import './styles/global.css';
