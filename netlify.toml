@@ -2,7 +2,6 @@
   command = "npm run build"
   publish = "dist"
 
-# --- Utility pages that must render as-is ---
 [[redirects]]
   from = "/kill-sw"
   to = "/kill-sw.html"
@@ -10,35 +9,6 @@
   force = true
 
 [[redirects]]
-  from = "/auth/callback"
-  to = "/auth/callback.html"
-  status = 200
-  force = true
-
-# --- Single Page App fallback (AFTER the specific rules) ---
-[[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
-
-# Security/cache headers (safe defaults)
-[[headers]]
-  for = "/*"
-  [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
-    Cache-Control = "public, max-age=0, must-revalidate"
-
-# Allow inline JS/CSS on the two tiny utility pages
-[[headers]]
-  for = "/kill-sw.html"
-  [headers.values]
-    Cache-Control = "no-cache, no-store"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
-
-[[headers]]
-  for = "/auth/callback.html"
-  [headers.values]
-    Cache-Control = "no-store"
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
