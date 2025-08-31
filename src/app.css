@@ -78,3 +78,13 @@
   margin-bottom: 2rem;
 }
 
+/* generic section wrapper used across pages */
+.section,
+.section--padded{
+  padding-inline: var(--nv-gutter-sm);
+}
+@media (min-width: 768px){
+  .section,
+  .section--padded{ padding-inline: var(--nv-gutter-md); }
+}
+

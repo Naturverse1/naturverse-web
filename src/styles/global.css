@@ -580,7 +580,140 @@ main,
   h2 {
     font-size: clamp(1.25rem, 4.5vw, 1.75rem);
   }
-  .card-grid {
+.card-grid {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* ===== Mobile layout reset (phones first) ============================= */
+
+/* side gutters + max width */
+:root{
+  --nv-container-max: 1120px;
+  --nv-gutter-sm: 16px;   /* phones */
+  --nv-gutter-md: 24px;   /* tablets */
+}
+
+.page-wrapper,
+.container,
+.container-narrow {
+  max-width: var(--nv-container-max);
+  margin-inline: auto;
+  padding-inline: var(--nv-gutter-sm);
+}
+
+@media (min-width: 768px){
+  .page-wrapper,
+  .container,
+  .container-narrow { padding-inline: var(--nv-gutter-md); }
+}
+
+/* brand on phones – don’t let it dominate */
+.nv-brand,
+.header .nv-brand,
+.header .site-title{
+  font-size: clamp(1.1rem, 3.8vw + 0.15rem, 1.6rem);
+  line-height: 1.15;
+}
+
+/* hero headline / lead */
+h1,
+.title-xl,
+.home-hero h1{
+  font-size: clamp(1.75rem, 4.5vw + 0.25rem, 3rem); /* ~28 → 48px */
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+.lead,
+.hero .lead{
+  font-size: clamp(1rem, 1.2vw + 0.75rem, 1.25rem);
+  line-height: 1.5;
+}
+
+/* hero spacing + CTA buttons grid */
+.hero,
+.home-hero{
+  padding-block: clamp(14px, 4vw, 40px);
+}
+.cta-row,
+.hero .actions{
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+@media (max-width: 390px){
+  .cta-row,
+  .hero .actions{ grid-template-columns: 1fr; } /* stack on tiny phones */
+}
+
+/* buttons – slightly smaller on phones */
+.button,
+.btn,
+button.btn-lg{
+  min-height: 44px;
+  font-size: 16px;  /* avoids iOS zoom */
+  padding: 10px 16px;
+}
+
+/* cards / panels */
+.card,
+.panel,
+.tile{
+  padding: clamp(12px, 2.2vw, 20px);
+  border-radius: 14px;
+}
+.card + .card{ margin-top: 12px; }
+
+/* "Play / Learn / Earn" tiles */
+.feature-tiles,
+.home-tiles{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 600px){
+  .feature-tiles,
+  .home-tiles{ grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1024px){
+  .feature-tiles,
+  .home-tiles{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* mini-quests grid */
+.mini-quests,
+.grid-quests{
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 600px){
+  .mini-quests,
+  .grid-quests{ grid-template-columns: 1fr 1fr; }
+}
+@media (min-width: 1024px){
+  .mini-quests,
+  .grid-quests{ grid-template-columns: repeat(3, 1fr); }
+}
+
+/* steps box (“1) Create / 2) Pick / 3) Play”) */
+.steps-box{ padding: clamp(12px, 2vw, 18px); }
+.steps-box .step{ margin-block: 10px; }
+
+/* search bar sizing – prevent overflow + iOS zoom */
+.search-bar,
+.input-lg{
+  height: 44px;
+  font-size: 16px;
+}
+
+/* footer: keep desktop the same; ensure mobile gutters */
+.site-footer{
+  padding-block: 20px;
+  padding-inline: var(--nv-gutter-sm);
+}
+@media (min-width: 768px){
+  .site-footer{ padding-inline: var(--nv-gutter-md); }
+}
+
