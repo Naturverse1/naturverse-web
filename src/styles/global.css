@@ -1,5 +1,14 @@
 @import './tokens.css';
 
+html {
+  -webkit-text-size-adjust: 100%;
+}
+
+/* keep link color consistent in footer if Tailwind variables ever miss */
+footer a {
+  text-decoration: none;
+}
+
 /* Page background */
 :root {
   --page-bg: #f8fbff; /* light blue background used across pages */
