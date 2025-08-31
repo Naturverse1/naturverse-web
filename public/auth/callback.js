@@ -1,12 +1,10 @@
-﻿(() => {
+(() => {
   try {
-    if (location.hash && location.hash.startsWith("#")) {
-      sessionStorage.setItem("nv_oauth_hash", location.hash);
+    // Persist the Supabase OAuth fragment so your app can pick it up
+    if (location.hash && location.hash.includes('access_token')) {
+      sessionStorage.setItem('nv:supabase:oauth', location.hash);
     }
-    if (location.search && location.search.startsWith("?")) {
-      sessionStorage.setItem("nv_oauth_search", location.search);
-    }
-  } finally {
-    location.replace("/");
-  }
+  } catch {}
+  // Go back to the SPA root
+  location.replace('/');
 })();
