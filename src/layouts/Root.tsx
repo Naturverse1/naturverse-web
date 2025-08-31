@@ -4,7 +4,7 @@ import { HelmetProvider } from 'react-helmet-async';
 
 import HeadPreloads from '../components/HeadPreloads';
 import RouteProgress from '../components/RouteProgress';
-import SiteHeader from '../components/SiteHeader';
+import Header from '../components/Header';
 import Footer from '../components/Footer';
 import ErrorBoundary from '../components/ErrorBoundary';
 
@@ -15,7 +15,7 @@ export default function RootLayout() {
         <HeadPreloads />
         <RouteProgress />
         <div className="nv-root">
-          <SiteHeader />
+          <Header />
           <main className="pageRoot">
             <Outlet />
           </main>

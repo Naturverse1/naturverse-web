@@ -1,53 +1,23 @@
-import * as React from 'react';
-import { Link } from 'react-router-dom';
-import { SOCIALS } from '@/lib/socials';
+import { Container } from "./Container";
 
 export default function Footer() {
-  const year = new Date().getFullYear();
-
   return (
-    <footer
-      role="contentinfo"
-      style={{
-        marginTop: '4rem',
-        padding: '1.25rem 0',
-        borderTop: '1px solid var(--border, #e5e7eb)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ opacity: 0.9 }}>© {year} Turian Media Company</div>
+    <footer className="border-t bg-white">
+      <Container className="flex flex-col gap-3 py-6 sm:flex-row sm:items-center sm:justify-between">
+        <p className="text-sm">&copy; 2025 Turian Media Company</p>
 
-        <nav aria-label="Legal" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          <Link to="/terms" className="link">Terms</Link>
-          <span aria-hidden>·</span>
-          <Link to="/privacy" className="link">Privacy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/contact" className="link">Contact</Link>
+        <nav className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+          <a href="/terms">Terms</a>
+          <a href="/privacy">Privacy</a>
+          <a href="/contact">Contact</a>
+          <a href="https://x.com/TuriantheDurian" target="_blank" rel="noreferrer">X</a>
+          <a href="https://instagram.com/turianthedurian" target="_blank" rel="noreferrer">Instagram</a>
+          <a href="https://tiktok.com/@turianthedurian" target="_blank" rel="noreferrer">TikTok</a>
+          <a href="https://youtube.com/@TuriantheDurian" target="_blank" rel="noreferrer">YouTube</a>
+          <a href="https://facebook.com/TurianMediaCompany" target="_blank" rel="noreferrer">Facebook</a>
         </nav>
-
-        <nav aria-label="Social media" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          {SOCIALS.map((s) => (
-            <a
-              key={s.name}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-              aria-label={s.name}
-            >
-              {s.name}
-            </a>
-          ))}
-        </nav>
-      </div>
+      </Container>
     </footer>
   );
 }
+

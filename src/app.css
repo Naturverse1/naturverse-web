@@ -78,3 +78,14 @@
   margin-bottom: 2rem;
 }
 
+/* Prevent horizontal scroll caused by rogue widths */
+html, body {
+  overflow-x: hidden;
+}
+
+/* Let images shrink in narrow columns */
+img, video {
+  max-width: 100%;
+  height: auto;
+}
+

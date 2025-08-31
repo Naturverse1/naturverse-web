@@ -1,64 +1,49 @@
-import HubCard from '../components/HubCard';
-import HubGrid from '../components/HubGrid';
-import "./Home.css";
-import { Img } from '../components';
+import { Container } from "../components/Container";
 
 export default function Home() {
   return (
-    <main className="container">
-      {/* Clean hero (no oversized emoji) */}
-      <header className="home-hero">
-        <h1>
-          <Img
-            className="brandmark"
-            src="/favicon-32x32.png"
-            srcSet="/favicon-32x32.png 1x, /favicon-64x64.png 2x"
-            width={32}
-            height={32}
-            alt=""
-            aria-hidden="true"
-          />
-          Welcome to the Naturverse™
-        </h1>
-        <p>Pick a hub to begin your adventure.</p>
-      </header>
+    <>
+      {/* Header is global */}
+      <main className="pb-16">
+        <Container className="pt-6 sm:pt-8">
+          {/* Hero */}
+          <section className="mb-8 sm:mb-10">
+            <h1 className="text-3xl sm:text-4xl md:text-5xl font-extrabold leading-tight">
+              Welcome to the Naturverse™
+            </h1>
+            <p className="mt-3 max-w-2xl text-base sm:text-lg text-gray-700">
+              A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
+            </p>
+            <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+              {/* buttons unchanged */}
+            </div>
+          </section>
 
-      <HubGrid>
-        <HubCard to="/worlds" emoji="📚" title="Worlds" sub="Travel the 14 magical kingdoms." />
-        <HubCard
-          to="/zones"
-          emoji="🎮🎵🧘"
-          title="Zones"
-          sub="Arcade, Music, Wellness, Creator Lab, Stories, Quizzes."
-        />
-        <HubCard
-          to="/marketplace"
-          emoji="🛍️"
-          title="Marketplace"
-          sub="Wishlists, catalog, checkout."
-        />
-        <HubCard
-          to="/naturversity"
-          emoji="🎓"
-          title="Naturversity"
-          sub="Teachers, partners, and courses."
-        />
-        <HubCard
-          to="/naturbank"
-          emoji="🪙"
-          title="Naturbank"
-          sub="Wallets, NATUR token, and crypto basics."
-        />
-        <HubCard to="/navatar" emoji="❎" title="Navatar" sub="Create your character." />
-        <HubCard
-          to="/passport"
-          emoji="🪪"
-          title="Passport"
-          sub="Track stamps, badges, XP & coins."
-        />
-        <HubCard to="/turian" emoji="🟢" title="Turian" sub="AI guide for tips & quests." />
-        <HubCard to="/profile" emoji="👤" title="Profile" sub="Your account & saved navatar." />
-      </HubGrid>
-    </main>
+          {/* 3-column feature tiles -> stack on mobile */}
+          <section className="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-3">
+            {/* Play */}
+            <div className="rounded-xl border p-5">
+              <h2 className="text-xl font-semibold">Play</h2>
+              <p className="mt-2 text-gray-700">Mini-games, stories, and map adventures across 14 kingdoms.</p>
+            </div>
+            {/* Learn */}
+            <div className="rounded-xl border p-5">
+              <h2 className="text-xl font-semibold">Learn</h2>
+              <p className="mt-2 text-gray-700">Naturversity lessons in languages, art, music, wellness, and more.</p>
+            </div>
+            {/* Earn */}
+            <div className="rounded-xl border p-5">
+              <h2 className="text-xl font-semibold">Earn</h2>
+              <p className="mt-2 text-gray-700">Collect badges, save favorites, build your Navatar card.</p>
+            </div>
+          </section>
+
+          {/* Mini-quests (if shown) should also use responsive grids */}
+          {/* <MiniQuestsGrid /> */}
+        </Container>
+      </main>
+      {/* Footer is global */}
+    </>
   );
 }
+

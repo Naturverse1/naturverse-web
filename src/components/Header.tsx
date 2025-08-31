@@ -1,29 +1,35 @@
-import { useState, useEffect } from 'react';
-import { useCart } from '../lib/cart';
-import CartDrawer from './CartDrawer';
+import { Link } from "react-router-dom";
+import { Container } from "./Container";
 
 export default function Header() {
-  const { items } = useCart();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
   return (
-    <header className="site-header">
-      <a href="/">Naturverse</a>
-      <nav>
-        <a href="/worlds">Worlds</a>
-        <a href="/zones">Zones</a>
-        <a href="/marketplace">Marketplace</a>
+    <header className="sticky top-0 z-40 w-full border-b bg-white/80 backdrop-blur">
+      <Container className="flex h-14 items-center gap-3">
+        {/* Brand */}
+        <Link to="/" className="flex items-center gap-2 shrink-0">
+          <img src="/logo.png" alt="Naturverse" className="h-7 w-7" />
+          <span className="text-xl font-semibold">Naturverse</span>
+        </Link>
+
+        {/* Search (hide on very small) */}
+        <div className="hidden sm:block grow max-w-md mx-auto">{/* <SearchBar/> */}</div>
+
+        {/* Actions */}
+        <div className="ml-auto flex items-center gap-2 sm:gap-3">
+          {/* <UserButton/> <CartButton/> */}
+          <button
+            className="md:hidden inline-flex h-9 w-9 items-center justify-center rounded-md border"
+            aria-label="Open menu"
+          >
+            ⋮⋮⋮
+          </button>
+        </div>
+      </Container>
+
+      {/* Link row only on desktop/tablet */}
+      <nav className="hidden border-t md:block">
+        <Container className="flex items-center gap-4">{/* <NavLinks/> */}</Container>
       </nav>
-      <button className="cart-btn" onClick={() => setOpen(true)}>
-        🛒 {items.length > 0 && <span className="cart-count">{items.length}</span>}
-      </button>
-      <CartDrawer open={open} onClose={() => setOpen(false)} />
     </header>
   );
 }
