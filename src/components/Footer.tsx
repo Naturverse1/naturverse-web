@@ -1,53 +1,28 @@
-import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { SOCIALS } from '@/lib/socials';
 
-export default function Footer() {
-  const year = new Date().getFullYear();
+const YEAR = new Date().getFullYear();
 
+export function Footer() {
   return (
-    <footer
-      role="contentinfo"
-      style={{
-        marginTop: '4rem',
-        padding: '1.25rem 0',
-        borderTop: '1px solid var(--border, #e5e7eb)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ opacity: 0.9 }}>© {year} Turian Media Company</div>
+    <footer className="mt-16 border-t border-slate-200">
+      <div className="mx-auto max-w-screen-xl px-4 sm:px-6 lg:px-8 py-8">
+        <div className="flex flex-col gap-4 sm:flex-row sm:items-center sm:justify-between">
+          <p className="text-sm text-slate-500">© {YEAR} Turian Media Company</p>
 
-        <nav aria-label="Legal" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          <Link to="/terms" className="link">Terms</Link>
-          <span aria-hidden>·</span>
-          <Link to="/privacy" className="link">Privacy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/contact" className="link">Contact</Link>
-        </nav>
-
-        <nav aria-label="Social media" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          {SOCIALS.map((s) => (
-            <a
-              key={s.name}
-              href={s.href}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="link"
-              aria-label={s.name}
-            >
-              {s.name}
-            </a>
-          ))}
-        </nav>
+          <ul className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm">
+            <li><Link className="text-slate-500 hover:text-primary-600" to="/terms">Terms</Link></li>
+            <li><Link className="text-slate-500 hover:text-primary-600" to="/privacy">Privacy</Link></li>
+            <li><Link className="text-slate-500 hover:text-primary-600" to="/contact">Contact</Link></li>
+            <li><a className="text-slate-500 hover:text-primary-600" href="https://x.com/TuriantheDurian" target="_blank" rel="noreferrer">X</a></li>
+            <li><a className="text-slate-500 hover:text-primary-600" href="https://instagram.com/turianthedurian" target="_blank" rel="noreferrer">Instagram</a></li>
+            <li><a className="text-slate-500 hover:text-primary-600" href="https://tiktok.com/@TuriantheDurian" target="_blank" rel="noreferrer">TikTok</a></li>
+            <li><a className="text-slate-500 hover:text-primary-600" href="https://youtube.com/@TuriantheDurian" target="_blank" rel="noreferrer">YouTube</a></li>
+            <li><a className="text-slate-500 hover:text-primary-600" href="https://facebook.com/TurianMediaCompany" target="_blank" rel="noreferrer">Facebook</a></li>
+          </ul>
+        </div>
       </div>
     </footer>
   );
 }
+
+export default Footer;
