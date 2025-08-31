@@ -1,18 +1,20 @@
 import React from "react";
-import { FOOTER_LINKS } from "../data/footer";
+import Icon from "./Icon";
 
 export default function Footer() {
   return (
-    <footer className="site-footer">
-      <div className="container" style={{display:"flex",justifyContent:"space-between",alignItems:"center",gap:12}}>
-        <small style={{ color: "var(--nv-blue-600)" }}>
-          © {new Date().getFullYear()} Naturverse™
-        </small>
-        <nav style={{display:"flex",gap:12,flexWrap:"wrap"}}>
-          {FOOTER_LINKS.map(l => (
-            <a key={l.href} href={l.href} className="muted">{l.label}</a>
-          ))}
-        </nav>
+    <footer className="nv-footer">
+      <p>© {new Date().getFullYear()} Naturverse</p>
+      <div className="nv-footer-links">
+        <a href="mailto:info@thenaturverse.com" aria-label="Email us">
+          <Icon name="contact" size={18} />
+        </a>
+        <a href="https://twitter.com/naturverse" target="_blank" rel="noopener" aria-label="Twitter">
+          <Icon name="arrow" size={18} />
+        </a>
+        <a href="https://instagram.com/naturverse" target="_blank" rel="noopener" aria-label="Instagram">
+          <Icon name="world" size={18} />
+        </a>
       </div>
     </footer>
   );

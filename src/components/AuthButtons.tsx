@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from '@/lib/supabase-client';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -15,23 +15,15 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
     const email = window.prompt("Enter your email to receive a sign-in link")?.trim();
     if (!email) return;
     setLoading("ml");
-    sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
-    });
+    const { error } = await sendMagicLink(email);
     setLoading("");
     if (error) alert(error.message);
     else alert("Check your inbox for the sign-in link ✉️");
   };
 
-  const signInWithGoogle = async () => {
+  const signInGoogle = async () => {
     setLoading("google");
-    sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOAuth({
-      provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
-    });
+    const { error } = await signInWithGoogle();
     setLoading("");
     if (error) alert(error.message);
   };
@@ -54,7 +46,7 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
         className={`${base} ${sizes} ${variants}`} disabled={!!loading}>
         {loading==="ml" ? "Sending…" : cta}
       </button>
-      <button onClick={signInWithGoogle}
+      <button onClick={signInGoogle}
         className={`${base} ${sizes} bg-white text-[#2455FF] border border-[#2455FF]/30 hover:bg-[#2455FF]/5`}
         disabled={!!loading}>
         {loading==="google" ? "Opening…" : "Continue with Google"}

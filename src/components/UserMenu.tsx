@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { useSupabase } from "@/lib/useSupabase";
 import LazyImg from "./LazyImg";
+import { signOut } from '@/lib/auth';
 
 type SessionUser = {
   email?: string | null;
@@ -14,6 +15,7 @@ function initials(name?: string, email?: string | null) {
 }
 
 export default function UserMenu() {
+  const supabase = useSupabase();
   const [user, setUser] = useState<SessionUser | null>(null);
   const [open, setOpen] = useState(false);
   const ref = useRef<HTMLDivElement>(null);
@@ -21,26 +23,27 @@ export default function UserMenu() {
   useEffect(() => {
     let mounted = true;
     (async () => {
+      if (!supabase) { if (mounted) setUser(null); return; }
       const { data } = await supabase.auth.getSession();
       if (!mounted) return;
       setUser(data.session?.user ?? null);
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase?.auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
-    });
+    }) ?? { data: { subscription: { unsubscribe() {} } } };
 
     const onDoc = (e: MouseEvent) => {
       if (!ref.current) return;
       if (!ref.current.contains(e.target as Node)) setOpen(false);
     };
-    document.addEventListener("click", onDoc);
+      document.addEventListener("click", onDoc);
     return () => {
       mounted = false;
       document.removeEventListener("click", onDoc);
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   if (!user) {
     return (
@@ -81,8 +84,7 @@ export default function UserMenu() {
           <button
             className="item danger"
             onClick={async () => {
-              await supabase.auth.signOut();
-              window.location.replace("/");
+              await signOut();
             }}
           >
             Sign out

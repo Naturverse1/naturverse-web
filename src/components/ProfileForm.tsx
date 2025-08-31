@@ -1,29 +1,30 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-client';
+import { useSupabase } from '@/lib/useSupabase';
 import { useAuth } from '../auth/AuthContext';
 import { saveProfile } from '../lib/saveProfile';
 
 export default function ProfileForm() {
   const { user } = useAuth();
+  const supabase = useSupabase();
   const [displayName, setDisplayName] = useState('');
   const [file, setFile] = useState<File | undefined>();
   const [loading, setLoading] = useState(false);
 
   useEffect(() => {
-    if (!user) return;
-      (async () => {
-        const { data } = await supabase
-          .from('profiles')
-          .select('display_name')
-          .eq('id', user.id)
-          .single();
-        if (data?.display_name) setDisplayName(data.display_name);
-      })();
-    }, [user]);
+    if (!user || !supabase) return;
+    (async () => {
+      const { data } = await supabase
+        .from('profiles')
+        .select('display_name')
+        .eq('id', user.id)
+        .single();
+      if (data?.display_name) setDisplayName(data.display_name);
+    })();
+  }, [user, supabase]);
 
     async function save(e: React.FormEvent) {
       e.preventDefault();
-      if (!user) return;
+      if (!user || !supabase) return;
       try {
         setLoading(true);
         await saveProfile(supabase, user, displayName, file);

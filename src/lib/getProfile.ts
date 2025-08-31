@@ -1,5 +1,5 @@
 // Tiny helper to load the current user and their profile row
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 export type NaturProfile = {
   id: string;
@@ -9,6 +9,8 @@ export type NaturProfile = {
 };
 
 export async function getCurrentUserAndProfile() {
+  const supabase = getSupabase();
+  if (!supabase) return { user: null, profile: null, error: null };
   const { data: userRes, error: userErr } = await supabase.auth.getUser();
   if (userErr || !userRes.user) return { user: null, profile: null, error: userErr ?? null };
 

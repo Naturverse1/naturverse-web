@@ -1,0 +1,12 @@
+.qt-grid { display: grid; gap: 12px; grid-template-columns: repeat(auto-fit, minmax(260px,1fr)); margin: 10px 0 18px; }
+.qt-card { border: 1px solid #e5e7eb; border-radius: 14px; padding: 12px; background: #fff; display: grid; gap: 8px; }
+.qt-head { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.qt-title { margin: 0; font-size: 18px; }
+.qt-tag { font-size: 11px; border: 1px dashed rgba(0,0,0,.2); border-radius: 999px; padding: 2px 8px; }
+.qt-sum { margin: 0; opacity: .9; }
+.qt-steps { margin: 0; padding-left: 18px; display: grid; gap: 4px; font-size: 14px; }
+.qt-actions { display: flex; justify-content: end; }
+@media (prefers-color-scheme: dark) {
+  .qt-card { border-color: #2a2f45; background: #0f152b; color: #eaf0ff; }
+  .qt-tag { border-color: #2a2f45; }
+}

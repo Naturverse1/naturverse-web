@@ -1,30 +1,30 @@
-import { Link } from 'react-router-dom'
-import styles from './Header.module.css'
-import { useAuth } from '../hooks/useAuth'
+import { useState, useEffect } from 'react';
+import { useCart } from '../lib/cart';
+import CartDrawer from './CartDrawer';
 
 export default function Header() {
-  const { user, loading } = useAuth()
+  const { items } = useCart();
+  const [open, setOpen] = useState(false);
+
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
 
   return (
-    <header className={styles.header}>
-      <div className={styles.brand}>
-        <Link to="/">🌿 Naturverse</Link>
-      </div>
-
-      {!loading && user && (
-        <nav className={styles.nav}>
-          <Link to="/worlds">Worlds</Link>
-          <Link to="/zones">Zones</Link>
-          <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
-          <Link to="/naturversity">Naturversity</Link>
-          <Link to="/naturbank">NaturBank</Link>
-          <Link to="/navatar">Navatar</Link>
-          <Link to="/passport">Passport</Link>
-          <Link to="/turian">Turian</Link>
-          <Link to="/cart" aria-label="Cart">🛒</Link>
-        </nav>
-      )}
+    <header className="site-header">
+      <a href="/">Naturverse</a>
+      <nav>
+        <a href="/worlds">Worlds</a>
+        <a href="/zones">Zones</a>
+        <a href="/marketplace">Marketplace</a>
+      </nav>
+      <button className="cart-btn" onClick={() => setOpen(true)}>
+        🛒 {items.length > 0 && <span className="cart-count">{items.length}</span>}
+      </button>
+      <CartDrawer open={open} onClose={() => setOpen(false)} />
     </header>
-  )
+  );
 }
+

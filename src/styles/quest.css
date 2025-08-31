@@ -1,0 +1,32 @@
+.quest__result {
+  margin-top: 1rem;
+  padding: 1rem;
+  border: 1px solid var(--ring);
+  border-radius: var(--radius);
+  background: var(--card);
+}
+
+.quest__actions {
+  margin-top: 0.5rem;
+  display: flex;
+  gap: 8px;
+}
+
+.leaderboard-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 1rem;
+}
+
+.leaderboard-table th,
+.leaderboard-table td {
+  padding: 4px 8px;
+  border-bottom: 1px solid var(--ring);
+  text-align: left;
+}
+
+.leaderboard-table th:last-child,
+.leaderboard-table td:last-child {
+  text-align: right;
+}
+

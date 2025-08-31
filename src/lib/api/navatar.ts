@@ -1,11 +1,13 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { getSupabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Navatar = Database['natur']['Tables']['navatars']['Row']
 type NavatarInsert = Database['natur']['Tables']['navatars']['Insert']
 type NavatarUpdate = Database['natur']['Tables']['navatars']['Update']
 
 export async function listMyNavatars() {
+  const supabase = getSupabase();
+  if (!supabase) return [];
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
   const { data, error } = await supabase
@@ -18,6 +20,8 @@ export async function listMyNavatars() {
 }
 
 export async function createNavatar(input: NavatarInsert) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('navatars')
     .insert(input)
@@ -28,6 +32,8 @@ export async function createNavatar(input: NavatarInsert) {
 }
 
 export async function updateNavatar(id: string, patch: NavatarUpdate) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('navatars')
     .update(patch)

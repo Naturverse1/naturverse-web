@@ -1,7 +1,7 @@
 /* Lightweight, framework-agnostic TSX. It doesn’t mount itself.
    Import and render it where you want later. */
 import { useState } from 'react';
-import { signInWithMagic } from '../../lib/auth';
+import { sendMagicLink } from '../../lib/auth';
 import './auth.css';
 
 type Props = {
@@ -27,14 +27,10 @@ export default function AuthModal({
     setBusy(true);
     setErr(null);
     setMsg(null);
-    try {
-      await signInWithMagic(email.trim());
-      setMsg(successMessage);
-    } catch (e: any) {
-      setErr(e?.message ?? 'Sign-in failed.');
-    } finally {
-      setBusy(false);
-    }
+    const { error } = await sendMagicLink(email.trim());
+    if (error) setErr(error.message ?? 'Sign-in failed.');
+    else setMsg(successMessage);
+    setBusy(false);
   }
 
   return (

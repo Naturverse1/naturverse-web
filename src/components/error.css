@@ -1,0 +1,14 @@
+.nv-err { max-width: 860px; margin: 24px auto; padding: 0 20px; }
+.nv-err__msg {
+  overflow: auto; white-space: pre-wrap;
+  border: 1px solid #e5e7eb; background: #fff; padding: 12px; border-radius: 10px;
+}
+.nv-err__actions { display: flex; gap: 10px; margin-top: 12px; }
+.nv-err__actions .btn,
+.nv-err__actions button {
+  appearance: none; border-radius: 10px; padding: 10px 14px; border: 0; background: #1e63ff; color: #fff; font-weight: 700; cursor: pointer;
+}
+.nv-err__actions a.btn { text-decoration: none; display: inline-flex; align-items: center; }
+@media (prefers-color-scheme: dark) {
+  .nv-err__msg { border-color: #2a2f45; background: #0f152b; color: #eaf0ff; }
+}

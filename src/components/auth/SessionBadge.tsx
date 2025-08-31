@@ -1,5 +1,6 @@
 // Tiny status chip you can drop in the header later
 import { useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
 import { getUser, signOut } from '../../lib/auth';
 import './auth.css';
 
@@ -8,7 +9,7 @@ export default function SessionBadge() {
 
   useEffect(() => {
     getUser()
-      .then((u) => setEmail(u?.email ?? null))
+      .then((u: User | null) => setEmail(u?.email ?? null))
       .catch(() => setEmail(null));
   }, []);
 
@@ -18,7 +19,7 @@ export default function SessionBadge() {
     <div className="nv-session-chip" title={email}>
       <span className="nv-session-dot" />
       <span className="nv-session-email">{email}</span>
-      <button className="nv-session-out" onClick={() => signOut().then(() => location.reload())}>
+      <button className="nv-session-out" onClick={() => signOut()}>
         Sign out
       </button>
     </div>

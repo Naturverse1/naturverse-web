@@ -1,25 +1,19 @@
 import React from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import { logEvent } from './utils/telemetry';
 
 import Home from './pages/Home';
-import WorldsIndex from './routes/worlds';
+import WorldsExplorer from './pages/worlds';
 import WorldDetail from './routes/worlds/[slug]';
 import CharacterPage from './routes/worlds/characters/[name]';
-import Zones from './routes/zones';
-import ArcadeZone from './routes/zones/arcade';
-import MusicZone from './routes/zones/music';
-import WellnessZone from './routes/zones/wellness';
-import CreatorLabPage from './pages/zones/creator-lab';
-import Stories from './pages/zones/Stories';
-import Quizzes from './pages/zones/Quizzes';
-import Observations from './pages/zones/Observations';
-import Community from './pages/zones/Community';
-import Culture from './pages/zones/Culture';
-import FutureZone from './pages/zones/Future';
+import ZonesExplorer from './pages/ZonesExplorer';
+import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
-import ProductPage from './pages/marketplace/[slug]';
-import CartPage from './pages/cart';
-import WishlistPage from './pages/wishlist';
+import ProductPage from './pages/marketplace/[sku]';
+import CartLoad from './pages/cart-load';
+import QuestsList from './pages/quests';
+import NewQuest from './pages/quests/new';
+import QuestDetail from './pages/quests/[id]';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -33,56 +27,56 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarPage from './pages/Navatar';
+import NavatarPage from './pages/navatar';
+import CreateNavatarPage from './pages/create/navatar';
 import PassportPage from './pages/passport';
+import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/profile';
-import AuthCallback from './pages/AuthCallback';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
 import Accessibility from './pages/Accessibility';
 import About from './pages/About';
+import SearchPage from './pages/search';
+import AdminLogs from './pages/admin/logs';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
-import ZonesLayout from './layouts/Zones';
+import RouteError from './routes/RouteError';
+import AuthCallback from '@/pages/AuthCallback';
+import MiniQuests from './pages/MiniQuests';
+import PlayQuest from './pages/play/[slug]';
+import SuccessPage from './pages/success';
+import CancelPage from './pages/cancel';
+import OrdersPage from './pages/orders';
+import CheckoutPage from './pages/checkout';
 
 export const router = createBrowserRouter([
   {
     path: '/',
     element: <RootLayout />,
+    errorElement: <RouteError />,
     children: [
       { index: true, element: <Home /> },
-      { path: 'worlds', element: <WorldsIndex /> },
+      { path: 'worlds', element: <WorldsExplorer /> },
       { path: 'worlds/:slug', element: <WorldDetail /> },
       { path: 'worlds/:slug/characters/:name', element: <CharacterPage /> },
-      {
-        path: 'zones',
-        element: <ZonesLayout />,
-        children: [
-          { index: true, element: <Zones /> },
-          { path: 'arcade', element: <ArcadeZone /> },
-          { path: 'music', element: <MusicZone /> },
-          { path: 'wellness', element: <WellnessZone /> },
-          { path: 'creator-lab', element: <CreatorLabPage /> },
-          { path: 'stories', element: <Stories /> },
-          { path: 'quizzes', element: <Quizzes /> },
-          { path: 'observations', element: <Observations /> },
-          { path: 'culture', element: <Culture /> },
-          { path: 'community', element: <Community /> },
-          { path: 'future', element: <FutureZone /> },
-        ],
-      },
-      {
-        path: 'marketplace',
-        children: [
-          { index: true, element: <MarketplacePage /> },
-          { path: ':slug', element: <ProductPage /> },
-        ],
-      },
-      { path: 'cart', element: <CartPage /> },
-      { path: 'wishlist', element: <WishlistPage /> },
+      { path: 'zones', element: <ZonesExplorer /> },
+      { path: 'zones/:slug', element: <ZoneDetail /> },
+      { path: 'search', element: <SearchPage /> },
+      { path: 'play', element: <MiniQuests /> },
+      { path: 'play/:quest', element: <PlayQuest /> },
+
+      { path: 'marketplace', element: <MarketplacePage /> },
+      { path: 'marketplace/:sku', element: <ProductPage /> },
+      { path: 'checkout', element: <CheckoutPage /> },
+      { path: 'success', element: <SuccessPage /> },
+      { path: 'cancel', element: <CancelPage /> },
+      { path: 'c/:code', element: <CartLoad /> },
+      { path: 'quests', element: <QuestsList /> },
+      { path: 'quests/new', element: <NewQuest /> },
+      { path: 'quests/:id', element: <QuestDetail /> },
       {
         path: 'naturversity',
         element: <NaturversityLayout />,
@@ -106,14 +100,29 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-        { path: 'navatar', element: <NavatarPage /> },
-        { path: 'passport', element: <PassportPage /> },
-        { path: 'auth/callback', element: <AuthCallback /> },
-        { path: 'login', element: <LoginPage /> },
-        { path: 'turian', element: <Turian /> },
-        { path: 'profile', element: <ProfilePage /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <NotFound /> },
+      { path: 'navatar', element: <NavatarPage /> },
+      { path: 'create/navatar', element: <CreateNavatarPage /> },
+      { path: 'progress', element: <ProgressPage /> },
+      { path: 'passport', element: <PassportPage /> },
+      { path: 'orders', element: <OrdersPage /> },
+      { path: 'auth/callback', element: <AuthCallback /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'turian', element: <Turian /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'admin/logs', element: <AdminLogs /> },
+      { path: '404', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);
+
+if (typeof window !== 'undefined') {
+  let prev = window.location.pathname;
+  router.subscribe((state) => {
+    const next = state.location.pathname;
+    if (next !== prev) {
+      prev = next;
+      logEvent('RouteChange', { path: next });
+    }
+  });
+}

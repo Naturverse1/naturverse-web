@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/lib/supabase-client";
+import { useAuth } from "../auth/AuthContext";
 import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";
@@ -17,6 +18,7 @@ const K = {
 
 export default function ProfilePage() {
   setTitle("Profile");
+  const { user, loading, signOut } = useAuth();
   const [p, setP] = useState<LocalProfile>(() =>
     lsGet(K.profile, {
       displayName: "",
@@ -54,16 +56,16 @@ export default function ProfilePage() {
   }, [cloud]);
 
   useEffect(() => {
-    if (p.email) return;
+    if (p.email || !supabase) return;
     (async () => {
       const { data } = await supabase.auth.getUser();
       if (data.user?.email) setP((prev) => ({ ...prev, email: data.user!.email! }));
     })();
-  }, []);
+  }, [p.email, supabase]);
 
   async function handleSave() {
     try {
-      if (!userId) throw new Error("Not signed in.");
+      if (!userId || !supabase) throw new Error("Not signed in.");
       setSaving(true);
 
       let newAvatarUrl = avatarUrl;
@@ -95,6 +97,9 @@ export default function ProfilePage() {
     await saveFromLocal(p, avatarUrl || null);
     // silent; local UI already shows values
   };
+
+  if (loading) return <div style={{ padding: 24 }}>Loading…</div>;
+  if (!user) return <div style={{ padding: 24 }}>You’re signed out.</div>;
 
   return (
     <div className="nvrs-section profile">
@@ -133,6 +138,7 @@ export default function ProfilePage() {
             style={{ borderRadius: 8, marginTop: 8 }}
           />
         )}
+        <p style={{ marginTop: 8 }}><a href="/navatar">Change Navatar</a></p>
 
         <button type="submit" disabled={saving} style={{ marginTop: 12 }}>
           {saving ? "Saving…" : "Save profile"}
@@ -145,7 +151,7 @@ export default function ProfilePage() {
         {/* Local Sign out lives here only */}
         <button
           type="button"
-          onClick={async () => { await supabase.auth.signOut(); location.href = "/"; }}
+          onClick={signOut}
           className="secondary"
           style={{ marginTop: 12 }}
         >

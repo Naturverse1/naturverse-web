@@ -1,79 +1,57 @@
-import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabase-client';
-import { upsertProfile } from '../lib/upsertProfile';
+import { createContext, useContext, useEffect, useState } from 'react';
+import type { User } from '@supabase/supabase-js';
+import { supabase } from '../lib/supabase-client';
 
-type AuthCtx = {
-  user: User | null;
-  session: Session | null;
-  loading: boolean;
-  signInWithEmail: (email: string) => Promise<{ error?: string }>;
-  signOut: () => Promise<void>;
-};
-
-const Ctx = createContext<AuthCtx | null>(null);
+type AuthCtx = { user: User | null; loading: boolean; refresh: () => Promise<void>; signOut: () => Promise<void>; };
+const Ctx = createContext<AuthCtx>({ user: null, loading: true, refresh: async () => {}, signOut: async () => {} });
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
-  const [session, setSession] = useState<Session | null>(null);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
 
-  // Pick up existing session and listen for changes
+  const load = async () => {
+    setLoading(true);
+    const { data } = await supabase.auth.getUser();
+    setUser(data.user ?? null);
+    setLoading(false);
+  };
+
   useEffect(() => {
-    let mounted = true;
-
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!mounted) return;
-      setSession(data.session ?? null);
-      setUser(data.session?.user ?? null);
-      setLoading(false);
-
-      if (data.session?.user) {
-        await upsertProfile(data.session.user.id, data.session.user.email);
-      }
-    })();
-
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
-      setSession(s ?? null);
-      setUser(s?.user ?? null);
-      setLoading(false);
-
-      if (s?.user) {
-        upsertProfile(s.user.id, s.user.email);
-      }
+    load();
+    const { data: sub } = supabase.auth.onAuthStateChange((_evt, session) => {
+      setUser(session?.user ?? null);
     });
-
-    return () => {
-      sub.subscription.unsubscribe();
-      mounted = false;
-    };
+    return () => sub.subscription.unsubscribe();
   }, []);
 
-  // Email magic link
-  const signInWithEmail: AuthCtx['signInWithEmail'] = async (email) => {
-    const { error } = await supabase.auth.signInWithOtp({
-      email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
+  const hardClearLocalAuth = () => {
+    Object.keys(localStorage).forEach((k) => {
+      if (k.startsWith('sb-')) localStorage.removeItem(k);
     });
-    return { error: error?.message };
+    sessionStorage.removeItem('nv-sw-killed');
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut({ scope: 'global' });
+    } catch (_) {
+    } finally {
+      hardClearLocalAuth();
+      if ('caches' in window) {
+        try {
+          const names = await caches.keys();
+          await Promise.all(names.map((n) => caches.delete(n)));
+        } catch {}
+      }
+      window.location.assign('/');
+    }
   };
 
-  const value = useMemo<AuthCtx>(
-    () => ({ user, session, loading, signInWithEmail, signOut }),
-    [user, session, loading],
+  return (
+    <Ctx.Provider value={{ user, loading, refresh: load, signOut }}>
+      {children}
+    </Ctx.Provider>
   );
-
-  return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
-export function useAuth() {
-  const ctx = useContext(Ctx);
-  if (!ctx) throw new Error('useAuth must be used inside <AuthProvider>');
-  return ctx;
-}
-
+export const useAuth = () => useContext(Ctx);

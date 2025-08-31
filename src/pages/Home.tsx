@@ -1,15 +1,17 @@
 import styles from './Home.module.css';
 import { Link } from 'react-router-dom';
-import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
+import MiniQuestSection from '../components/miniquests/MiniQuestSection';
+import SearchBox from '../components/SearchBox';
 
 export default function Home() {
   const { user } = useAuth();
   const isAuthed = !!user;
 
   return (
-    <main className={styles.page}>
+    <main className={`${styles.page} nv-container`}>
       <section className={styles.hero}>
         <h1 className={styles.title}>Welcome to the Naturverse™</h1>
         <p className={styles.subtitle}>
@@ -23,7 +25,9 @@ export default function Home() {
               className={styles.cta}
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) await sendMagicLink(email);
+                if (email) {
+                  await sendMagicLink(email);
+                }
               }}
             >
               Create account
@@ -40,6 +44,26 @@ export default function Home() {
           </div>
         )}
       </section>
+
+      <div className="nv-what">
+        <span role="img" aria-label="sparkles">
+          ✨
+        </span>
+        <strong> What’s New</strong>
+        <span>
+          {' '}
+          Mini-quests and Zones Explorer are coming soon! This message confirms the latest deploy is
+          live ✅
+        </span>
+      </div>
+
+      <div className="nv-home-tools">
+        <SearchBox
+          onFocus={() =>
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+          }
+        />
+      </div>
 
       {/* Top feature tiles — text centered */}
       <section className={styles.featureGrid}>
@@ -80,6 +104,8 @@ export default function Home() {
         </ClickableCard>
       </section>
 
+      <MiniQuestSection />
+
       {/* Bottom flow — text left-aligned */}
       <section className={styles.flowWrap}>
         <ClickableCard
@@ -110,13 +136,11 @@ export default function Home() {
               <>
                 <Link to="/worlds" className={styles.flowLink}>
                   Worlds
-                </Link>
-                {' '}
+                </Link>{' '}
                 ·{' '}
                 <Link to="/zones" className={styles.flowLink}>
                   Zones
-                </Link>
-                {' '}
+                </Link>{' '}
                 ·{' '}
                 <Link to="/marketplace" className={styles.flowLink}>
                   Marketplace

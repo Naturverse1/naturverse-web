@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { getSupabase } from '@/lib/supabase-client';
 
 /** Submit general app/lesson feedback */
 export async function submitFeedback(input: {
@@ -8,6 +8,8 @@ export async function submitFeedback(input: {
   page_path?: string | null;
   meta?: unknown; // optional JSON payload
 }) {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data, error } = await supabase
     .from('feedback')
     .insert({
@@ -25,6 +27,8 @@ export async function submitFeedback(input: {
 
 /** List feedback for a user (or all if no userId provided and RLS allows) */
 export async function listFeedback(opts?: { userId?: string }) {
+  const supabase = getSupabase();
+  if (!supabase) return [];
   const q = supabase
     .from('feedback')
     .select('*')

@@ -1,89 +1,19 @@
 <!doctype html>
 <html lang="en">
-  <head>
+  <head><base href="/" />
+
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, viewport-fit=cover"
+    />
+    <base href="/" />
+    <link rel="icon" href="/favicon.svg" />
     <title>Naturverse</title>
-    <meta name="theme-color" content="#0ea5e9" />
-
-    <!-- Replace deprecated Apple-only meta with cross-platform one -->
-    <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-
-    <!-- SEO base -->
-    <meta
-      name="description"
-      content="Naturverse™ — playful worlds, learning quests, and kid-friendly creation."
-    />
-    <meta property="og:title" content="Naturverse" />
-    <meta
-      property="og:description"
-      content="Play, learn, and explore kingdoms with your Navatar."
-    />
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://naturverse.netlify.app/" />
-    <meta property="og:image" content="/favicon-512.png" />
-    <meta name="twitter:card" content="summary_large_image" />
-    <meta name="twitter:title" content="Naturverse" />
-    <meta
-      name="twitter:description"
-      content="Play, learn, and explore kingdoms with your Navatar."
-    />
-    <meta name="twitter:image" content="/favicon-512.png" />
-    <link rel="canonical" href="https://naturverse.netlify.app/" />
-
-    <!-- Preload the 64x64 (crisp and safe) so favicon appears immediately -->
-    <link rel="preload" as="image" href="/favicon-64x64.png" imagesizes="64x64" />
-    <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
-    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
-    <link rel="alternate icon" href="/favicon.ico" />
-
-    <!-- Preload assets -->
-    <link rel="preload" href="/src/main.css" as="style" />
-    <link
-      rel="preload"
-      href="/fonts/your-main-font.woff2"
-      as="font"
-      type="font/woff2"
-      crossorigin
-    />
-    <link rel="stylesheet" href="/src/main.css" />
-
-    <!-- a11y: skip to content -->
-    <style>
-      .skip-link {
-        position: absolute;
-        left: -9999px;
-        top: auto;
-        width: 1px;
-        height: 1px;
-        overflow: hidden;
-      }
-      .skip-link:focus {
-        left: 12px;
-        top: 12px;
-        width: auto;
-        height: auto;
-        background: #0ea5e9;
-        color: #fff;
-        padding: 8px 10px;
-        border-radius: 8px;
-        z-index: 1000;
-      }
-    </style>
+    <!-- PWA is removed: no manifest, no apple-web-app-* meta, no service worker registration -->
   </head>
   <body>
-    <a class="skip-link" href="#main">Skip to content</a>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-
-    <!-- perf: lazy-enable all imgs that don't opt-out -->
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-        document
-          .querySelectorAll('img:not([loading])')
-          .forEach((img) => img.setAttribute('loading', 'lazy'));
-      });
-    </script>
   </body>
 </html>

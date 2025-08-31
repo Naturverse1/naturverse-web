@@ -1,65 +1,93 @@
-import { Link } from "react-router-dom";
-import { Product } from "../lib/commerce/types";
-
-type CardProduct = Product & { saved?: boolean };
+import React from "react";
+import NVImage from "../utils/NVImage";
+import { toggleWish, isWished } from "../utils/wishlist";
+import "./market.css";
+import { checkout } from "../lib/stripeCheckout";
 
 type Props = {
-  product: CardProduct;
-  onAddToCart?: (p: Product) => void;
-  onToggleSave?: (p: Product) => void;
-  showCartButton?: boolean;
-  showSaveButton?: boolean;
+  id: string;
+  name: string;
+  slug: string;
+  summary: string;
+  image?: string;
+  price: number;
+  category: string;
+  onChange?: () => void;
 };
 
-export default function ProductCard({
-  product,
-  onAddToCart,
-  onToggleSave,
-  showCartButton = true,
-  showSaveButton = true,
-}: Props) {
+export default function ProductCard(p: Props) {
+  const [wish, setWish] = React.useState<boolean>(() => isWished(p.id));
+
+  function onWish() {
+    const next = toggleWish(p.id);
+    setWish(next);
+    p.onChange?.();
+  }
+
+  const url = `/marketplace/${p.slug}`;
+
+  async function onBuy() {
+    try {
+      await checkout(
+        [
+          {
+            price_data: {
+              currency: "usd",
+              unit_amount: p.price * 100,
+              product_data: { name: p.name, description: p.summary },
+            },
+            quantity: 1,
+            metadata: { product: p.id },
+          },
+        ],
+        { metadata: { feature: "marketplace" } }
+      );
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
   return (
-    <div className="rounded-2xl border border-blue-200/60 p-4 shadow-sm">
-      <div className="rounded-2xl bg-blue-50/40 p-4">
-        <div className="mx-auto flex h-48 w-full items-center justify-center overflow-hidden rounded-xl">
-          <img
-            src={product.image}
-            alt={product.name}
-            className="max-h-48 w-auto object-contain"
-            loading="lazy"
+    <article className="product">
+      <a className="product__image" href={url} aria-label={`Open ${p.name}`}>
+        {p.image ? (
+          <NVImage
+            alt={p.name}
+            src={p.image}
+            width={320}
+            height={200}
+            className="nv-object-cover"
+            sizes="(max-width: 768px) 90vw, 320px"
+            placeholder="data:image/svg+xml;charset=utf-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='320' height='200'%3E%3Crect fill='%23f2f4f7' width='100%25' height='100%25'/%3E%3C/svg%3E"
           />
+        ) : (
+          <div className="product__ph" />
+        )}
+      </a>
+
+      <div className="product__body">
+        <header className="product__header">
+          <h3 className="product__title"><a href={url}>{p.name}</a></h3>
+          <button
+            className={`product__wish ${wish ? "is-on" : ""}`}
+            onClick={onWish}
+            aria-pressed={wish}
+            aria-label={wish ? `Remove ${p.name} from wishlist` : `Add ${p.name} to wishlist`}
+            title={wish ? "Wishlisted" : "Add to wishlist"}
+          >
+            ♥
+          </button>
+        </header>
+        <p className="product__meta">
+          <span className={`product__cat c-${p.category.toLowerCase()}`}>{p.category}</span>
+          <span className="product__price">${p.price}</span>
+        </p>
+        <p className="product__summary">{p.summary}</p>
+        <div className="product__actions">
+          <a className="btn" href={url}>View</a>
+          <button className="btn ghost" onClick={onBuy}>Buy</button>
         </div>
       </div>
-
-      <Link
-        to={`/marketplace/${product.slug}`}
-        className="mt-3 block text-xl font-bold text-blue-700 underline"
-      >
-        {product.name}
-      </Link>
-
-      <div className="mt-1 text-gray-800">${product.price.toFixed(2)}</div>
-
-      <div className="mt-3 flex gap-3">
-        {showCartButton && (
-          <button
-            className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm active:translate-y-[1px]"
-            onClick={() => onAddToCart?.(product)}
-          >
-            Add to cart
-          </button>
-        )}
-        {showSaveButton && (
-          <button
-            className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm active:translate-y-[1px]"
-            onClick={() => onToggleSave?.(product)}
-            aria-pressed={!!product.saved}
-          >
-            {product.saved ? "Saved" : "Save"}
-          </button>
-        )}
-      </div>
-    </div>
+    </article>
   );
 }
-

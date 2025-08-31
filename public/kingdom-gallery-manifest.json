@@ -1,4 +1,5 @@
 {
+  "Africania": [],
   "Amerilandia": [
     "kingdoms/Amerilandia/Aligatorsport.png",
     "kingdoms/Amerilandia/Baldeagle.png",
@@ -7,6 +8,7 @@
     "kingdoms/Amerilandia/Racoon.png",
     "kingdoms/Amerilandia/Sunflowersue.png"
   ],
+  "Antarcticland": [],
   "Australandia": [
     "kingdoms/Australandia/Bird.png",
     "kingdoms/Australandia/Groupof four.png",
@@ -28,6 +30,7 @@
     "kingdoms/Brazilandia/Sambasammusic.png",
     "kingdoms/Brazilandia/chamleaan.png"
   ],
+  "Britannula": [],
   "Chilandia": [
     "kingdoms/Chilandia/Baobaopandaandlongweidragon.png",
     "kingdoms/Chilandia/Bodrummer.png",
@@ -38,6 +41,8 @@
     "kingdoms/Chilandia/Rattwins.png",
     "kingdoms/Chilandia/unamamed.png"
   ],
+  "Europalia": [],
+  "Greenlandia": [],
   "Indillandia": [
     "kingdoms/Indillandia/Geniebaba.png",
     "kingdoms/Indillandia/Gurucow.png",
@@ -46,6 +51,9 @@
     "kingdoms/Indillandia/RajaElephant.png",
     "kingdoms/Indillandia/Tigersport.png"
   ],
+  "Japonica": [],
+  "Kiwilandia": [],
+  "Madagascaria": [],
   "Thailandia": [
     "kingdoms/Thailandia/2kay.png",
     "kingdoms/Thailandia/Blu Butterfly.png",
@@ -53,6 +61,7 @@
     "kingdoms/Thailandia/Dow-Mean.png",
     "kingdoms/Thailandia/Dr P.png",
     "kingdoms/Thailandia/Frankie Frogs.png",
+    "kingdoms/Thailandia/Franniebanannies.png",
     "kingdoms/Thailandia/Guide.png",
     "kingdoms/Thailandia/Inkie.png",
     "kingdoms/Thailandia/Jay-Sing.png",
@@ -71,5 +80,6 @@
     "kingdoms/Thailandia/hank.png",
     "kingdoms/Thailandia/tuk kae sora 1.webp",
     "kingdoms/Thailandia/turian_media_logo_transparent.png"
-  ]
+  ],
+  "thailandia": []
 }

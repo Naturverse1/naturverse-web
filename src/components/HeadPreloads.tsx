@@ -16,10 +16,6 @@ export default function HeadPreloads() {
       <link rel="icon" type="image/png" sizes="64x64" href="/favicon-64x64.png" />
       <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
       <link rel="shortcut icon" href="/favicon.ico" />
-
-      {/* PWA meta */}
-      <meta name="mobile-web-app-capable" content="yes" />
-      <meta name="apple-mobile-web-app-capable" content="yes" />
     </Helmet>
   );
 }

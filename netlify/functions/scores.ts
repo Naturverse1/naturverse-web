@@ -2,7 +2,7 @@
 import type { Handler } from "@netlify/functions";
 import { createClient } from "@supabase/supabase-js";
 
-const url = process.env.SUPABASE_URL!;
+const url = process.env.VITE_SUPABASE_URL!;
 const key = process.env.SUPABASE_SERVICE_ROLE_KEY!; // server-only
 const supabase = createClient(url, key);
 

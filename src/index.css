@@ -14,3 +14,35 @@
 .nv-nav {
   pointer-events: auto;
 }
+
+/* Accent defaults; Blue theme is the base */
+:root,
+:root[data-theme='blue'] {
+  --nv-accent: #2563eb; /* blue-600 */
+  --nv-accent-hover: #1d4ed8; /* blue-700 */
+}
+
+:root[data-theme='green'] {
+  --nv-accent: #16a34a;
+  --nv-accent-hover: #15803d;
+}
+:root[data-theme='purple'] {
+  --nv-accent: #7c3aed;
+  --nv-accent-hover: #6d28d9;
+}
+:root[data-theme='sunset'] {
+  --nv-accent: #f97316;
+  --nv-accent-hover: #ea580c;
+}
+
+/* Utilities */
+.a-accent {
+  color: var(--nv-accent);
+}
+.btn-accent {
+  background: var(--nv-accent);
+  color: #fff;
+}
+.btn-accent:hover {
+  background: var(--nv-accent-hover);
+}

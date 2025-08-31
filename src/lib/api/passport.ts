@@ -1,9 +1,11 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { getSupabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Stamp = Database['natur']['Tables']['passport_stamps']['Row']
 
 export async function listMyStamps() {
+  const supabase = getSupabase();
+  if (!supabase) return [];
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
   const { data, error } = await supabase
@@ -16,6 +18,8 @@ export async function listMyStamps() {
 }
 
 export async function toggleStamp(kingdom: string) {
+  const supabase = getSupabase();
+  if (!supabase) throw new Error('No auth user')
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) throw new Error('No auth user')
 

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
+import { sendMagicLink, signInWithGoogle, signOut } from '@/lib/auth';
 import { supabase } from '@/lib/supabase-client';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
@@ -13,14 +14,15 @@ export default function LoginForm() {
   useEffect(() => {
     let mounted = true;
 
+    if (!supabase) return;
     // Load initial session
-    supabase.auth.getSession().then(({ data }) => {
+    supabase.auth.getSession().then(({ data }: { data: { session: Session | null } }) => {
       if (!mounted) return;
       setSession(data.session ?? null);
     });
 
     // Subscribe to auth state changes
-    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession) => {
+    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession: Session | null) => {
       setSession(newSession);
     });
 
@@ -28,7 +30,7 @@ export default function LoginForm() {
       mounted = false;
       sub.subscription.unsubscribe();
     };
-  }, []);
+  }, [supabase]);
 
   async function handleEmailLogin(e: React.FormEvent) {
     e.preventDefault();
@@ -36,13 +38,7 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOtp({
-        email,
-        options: {
-          emailRedirectTo: window.location.origin,
-        },
-      });
+      const { error } = await sendMagicLink(email);
       if (error) throw error;
       setStatus('sent');
       setMessage('Magic link sent! Check your email.');
@@ -52,26 +48,20 @@ export default function LoginForm() {
     }
   }
 
-  async function signInWithGoogle() {
+  async function handleGoogleLogin() {
     setStatus('sending');
     setMessage(null);
-    try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOAuth({
-        provider: 'google',
-        options: { redirectTo: window.location.origin },
-      });
-      if (error) throw error;
-      setStatus('idle');
-    } catch (err: any) {
+    const { error } = await signInWithGoogle();
+    if (error) {
       setStatus('error');
-      setMessage(err?.message ?? 'OAuth sign-in failed.');
+      setMessage(error.message ?? 'OAuth sign-in failed.');
+    } else {
+      setStatus('idle');
     }
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut();
-    setMessage('Signed out.');
+    await signOut();
   }
 
   if (session) {
@@ -105,7 +95,7 @@ export default function LoginForm() {
       </form>
 
       <div style={{ display: 'flex', gap: 8 }}>
-        <button onClick={signInWithGoogle} aria-label="Sign in with Google">
+        <button onClick={handleGoogleLogin} aria-label="Sign in with Google">
           Continue with Google
         </button>
       </div>

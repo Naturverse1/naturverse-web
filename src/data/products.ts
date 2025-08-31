@@ -1,15 +1,9 @@
-export type Product = {
-  slug: string;
-  name: string;
-  price: number;
-  img: string;
-  desc?: string;
-};
+import type { Product } from '../lib/cart';
 
 export const PRODUCTS: Product[] = [
-  { slug: "turian-plush",  name: "Turian Plush",  price: 24, img: "/Marketplace/Turianplushie.png", desc: "Cuddly plush of Turian." },
-  { slug: "navatar-tee",   name: "Navatar Tee",   price: 18, img: "/Marketplace/Turiantshirt.png",  desc: "Graphic tee with Navatar scooter art." },
-  { slug: "sticker-pack",  name: "Sticker Pack",  price: 6,  img: "/Marketplace/Stickerpack.png",   desc: "Assorted Naturverse stickers." },
+  { id: 'navatar-style-kit', name: 'Navatar Style Kit', price: 999, type: 'digital' },
+  { id: 'breathwork-starter', name: 'Breathwork Starter Pack', price: 900, type: 'digital' },
+  { id: 'naturverse-plushie', name: 'Naturverse Plushie', price: 2800, type: 'physical' },
+  { id: 'naturverse-tshirt', name: 'Naturverse T-Shirt', price: 2400, type: 'physical' },
+  { id: 'sticker-pack', name: 'Sticker Pack', price: 1200, type: 'physical' },
 ];
-
-export const bySlug = (slug: string) => PRODUCTS.find(p => p.slug === slug);

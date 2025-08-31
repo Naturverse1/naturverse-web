@@ -1,18 +1,21 @@
-import { supabase } from '../db'
-import type { Database } from '../../types/db'
+import { getSupabase } from '@/lib/supabase-client';
+import type { Database } from '@/types/db';
 
 type Profile = Database['natur']['Tables']['profiles']['Row']
 type ProfileInsert = Database['natur']['Tables']['profiles']['Insert']
 type ProfileUpdate = Database['natur']['Tables']['profiles']['Update']
 
 export async function getCurrentUser() {
+  const supabase = getSupabase();
+  if (!supabase) return null;
   const { data } = await supabase.auth.getUser()
   return data.user ?? null
 }
 
 export async function getMyProfile() {
+  const supabase = getSupabase();
   const user = await getCurrentUser()
-  if (!user) return null
+  if (!user || !supabase) return null
   const { data, error } = await supabase
     .from('profiles')
     .select('*')
@@ -23,8 +26,9 @@ export async function getMyProfile() {
 }
 
 export async function upsertMyProfile(patch: ProfileUpdate | ProfileInsert) {
+  const supabase = getSupabase();
   const user = await getCurrentUser()
-  if (!user) throw new Error('No auth user')
+  if (!user || !supabase) throw new Error('No auth user')
   const row: ProfileInsert = { id: user.id, ...patch }
   const { data, error } = await supabase
     .from('profiles')

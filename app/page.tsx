@@ -2,7 +2,7 @@
 
 import { useUser } from '@supabase/auth-helpers-react';
 import styles from '@/styles/Home.module.css';
-import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
+import { sendMagicLink, signInWithGoogle } from '@/lib/auth';
 
 export default function Home() {
   const user = useUser();
@@ -13,7 +13,9 @@ export default function Home() {
         className="btn btn-primary"
         onClick={async () => {
           const email = prompt('Enter your email to get a magic link:')?.trim();
-          if (email) await sendMagicLink(email);
+          if (email) {
+            await sendMagicLink(email);
+          }
         }}
       >
         Create account
@@ -88,7 +90,9 @@ export default function Home() {
               className="btn btn-primary"
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) await sendMagicLink(email);
+                if (email) {
+                  await sendMagicLink(email);
+                }
               }}
             >
               Get started

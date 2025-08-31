@@ -1,10 +1,17 @@
-import { createClient as createSupabaseClient } from '@supabase/supabase-js';
+import { createClient } from '@supabase/supabase-js'
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL as string;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY as string;
+export const supabase = createClient(
+  import.meta.env.VITE_SUPABASE_URL!,
+  import.meta.env.VITE_SUPABASE_ANON_KEY!
+)
 
-export function createClient() {
-  return createSupabaseClient(supabaseUrl, supabaseAnonKey);
+export function getSupabase() {
+  return supabase
 }
 
-export const supabase = createClient();
+// Handle /auth/callback with hash tokens (implicit flow)
+export async function handleAuthCallback() {
+  if (location.pathname !== '/auth/callback') return
+  await supabase.auth.getSessionFromUrl({ storeSession: true }).catch(() => {})
+  history.replaceState({}, '', '/')
+}
