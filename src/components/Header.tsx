@@ -1,30 +1,39 @@
-import { useState, useEffect } from 'react';
-import { useCart } from '../lib/cart';
-import CartDrawer from './CartDrawer';
+import styles from './Header.module.css'
 
 export default function Header() {
-  const { items } = useCart();
-  const [open, setOpen] = useState(false);
-
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => e.key === 'Escape' && setOpen(false);
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
   return (
-    <header className="site-header">
-      <a href="/">Naturverse</a>
-      <nav>
+    <header className={styles.header}>
+      <div className={styles.shell}>
+        {/* Brand */}
+        <a href="/" className={styles.brand}>
+          <img src="/logo-32.png" alt="" className={styles.brandIcon} />
+          <span className={styles.brandText}>The Naturverse</span>
+        </a>
+
+        {/* Right actions (always visible) */}
+        <div className={styles.actions}>
+          {/* profile/avatar slot */}
+          <div id="header-profile-slot" />
+          {/* cart slot */}
+          <div id="header-cart-slot" />
+          {/* mobile overflow menu (≤1024) */}
+          <button className={styles.overflowBtn} aria-label="Menu">⋯</button>
+        </div>
+      </div>
+
+      {/* Desktop nav only (hidden on mobile) */}
+      <nav className={styles.desktopNav} aria-label="Primary">
         <a href="/worlds">Worlds</a>
         <a href="/zones">Zones</a>
+        <a href="/quests">Quests</a>
         <a href="/marketplace">Marketplace</a>
+        <a href="/wishlist">Wishlist</a>
+        <a href="/naturversity">Naturversity</a>
+        <a href="/naturbank">NaturBank</a>
+        <a href="/navatar">Navatar</a>
+        <a href="/passport">Passport</a>
       </nav>
-      <button className="cart-btn" onClick={() => setOpen(true)}>
-        🛒 {items.length > 0 && <span className="cart-count">{items.length}</span>}
-      </button>
-      <CartDrawer open={open} onClose={() => setOpen(false)} />
     </header>
-  );
+  )
 }
 

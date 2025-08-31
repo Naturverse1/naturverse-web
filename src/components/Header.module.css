@@ -1,18 +1,49 @@
+/* Basic frame */
 .header {
+  position: sticky;
+  top: 0;
+  z-index: 40;
+  backdrop-filter: saturate(180%) blur(8px);
+  background: rgba(255,255,255,.85);
+  border-bottom: 1px solid #e6eaf2;
+}
+
+/* top row */
+.shell {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.75rem 1rem;
+  gap: 16px;
+  padding: 12px 16px;
+  max-width: 1120px;
+  margin: 0 auto;
 }
 
-.brand a {
-  font-weight: 700;
-  text-decoration: none;
-  color: inherit;
+/* brand */
+.brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.brandIcon { width:28px; height:28px; border-radius:6px; }
+.brandText { font-weight: 700; font-size: 20px; color: #1e40ff; }
+
+/* actions */
+.actions { display:flex; align-items:center; gap:14px; }
+.overflowBtn {
+  display: inline-flex;
+  align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:8px;
+  border:1px solid #d9deea; background:#fff;
 }
 
-.nav {
-  display: flex;
+/* primary nav (desktop only) */
+.desktopNav {
+  display:flex; gap:18px; padding: 8px 16px 12px;
+  max-width: 1120px; margin: 0 auto;
   flex-wrap: wrap;
-  gap: 0.75rem;
 }
+.desktopNav a { color:#1f2a44; text-decoration:none; font-weight:600; }
+.desktopNav a:hover { text-decoration:underline; }
+
+/* Hide desktop nav on mobile */
+@media (max-width: 1024px) {
+  .desktopNav { display: none; }
+}
+
