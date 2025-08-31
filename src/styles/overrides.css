@@ -40,3 +40,19 @@ button.hamburger svg rect, .hamburger svg rect, .menu-button svg rect {
   rx: 2px;                 /* rounded corners */
   fill: currentColor !important;
 }
+
+/* Mobile-first fixes */
+@media (max-width: 640px) {
+  .container, main, .nv-root, .pageRoot { padding-left: 12px; padding-right: 12px; }
+  .card-grid { grid-template-columns: 1fr !important; }
+  .top-inline-nav { display: none !important; }
+  .nv-footer { flex-direction: column; gap: 8px; text-align: center; }
+}
+
+/* Hide any debug/experimental ribbons in production */
+:root[data-env="production"] .debug-only,
+:root[data-env="production"] [data-debug],
+:root[data-env="production"] .dev-banner { display: none !important; }
+
+/* Avoid fixed desktop widths leaking to mobile */
+main, .page-wrap, .nv-container { max-width: 100%; }
