@@ -1,5 +1,6 @@
 import React from "react";
 import Icon from "./Icon";
+import { SOCIALS } from "../config/socials";
 
 export default function Footer() {
   return (
@@ -9,11 +10,45 @@ export default function Footer() {
         <a href="mailto:info@thenaturverse.com" aria-label="Email us">
           <Icon name="contact" size={18} />
         </a>
-        <a href="https://twitter.com/naturverse" target="_blank" rel="noopener" aria-label="Twitter">
-          <Icon name="arrow" size={18} />
+        <a
+          href={SOCIALS.x}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="X (Twitter)"
+        >
+          @TuriantheDurian
         </a>
-        <a href="https://instagram.com/naturverse" target="_blank" rel="noopener" aria-label="Instagram">
-          <Icon name="world" size={18} />
+        <a
+          href={SOCIALS.instagram}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Instagram"
+        >
+          @TuriantheDurian
+        </a>
+        <a
+          href={SOCIALS.youtube}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="YouTube"
+        >
+          @TuriantheDurian
+        </a>
+        <a
+          href={SOCIALS.tiktok}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="TikTok"
+        >
+          @TuriantheDurian
+        </a>
+        <a
+          href={SOCIALS.facebook}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-label="Facebook"
+        >
+          @TuriantheDurian
         </a>
       </div>
     </footer>
