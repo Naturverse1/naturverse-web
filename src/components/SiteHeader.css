@@ -15,22 +15,23 @@
 
 /* brand */
 .nv-brand {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 0.5rem;
   text-decoration: none;
 }
 
 .nv-brand-icon {
-  width: 24px;
-  height: 24px;
+  width: 40px;
+  height: 40px;
   filter: none; /* keep icon green (no tinting) */
 }
 
 .nv-brand-name {
   color: var(--nv-brand, #2563eb);
-  font-weight: 700;
-  font-size: 20px;
+  font-weight: 800;
+  font-size: 1.25rem;
+  line-height: 1;
 }
 
 /* desktop nav */
@@ -60,12 +61,6 @@
   margin-left: auto;
 }
 
-.nv-profile-link .nv-emoji {
-  font-size: 1.25rem;
-  display: inline-block;
-  line-height: 1;
-}
-
 /* mobile actions (cart/hamburger) */
 .nv-mobile-actions {
   margin-left: auto;
@@ -73,19 +68,71 @@
   gap: 10px;
 }
 
-/* remove blue default button styles */
+/* Icon button reset (no blue pill) */
 .nv-icon-btn {
-  appearance: none;
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
   border: 0;
   background: transparent;
-  padding: 6px;
+  padding: 0;
   border-radius: 8px;
-  line-height: 1;
-  font-size: 18px;
+  cursor: pointer;
 }
 .nv-icon-btn:focus-visible {
-  outline: 2px solid #2563eb;
+  outline: 2px solid var(--nv-focus, #2563eb);
   outline-offset: 2px;
+}
+
+/* Cart tweaks */
+.nv-cart span[aria-hidden] {
+  font-size: 20px;
+  line-height: 1;
+}
+
+/* Small count badge (only rendered when > 0) */
+.nv-cart-badge {
+  position: absolute;
+  top: -4px;
+  right: -6px;
+  min-width: 18px;
+  height: 18px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: var(--nv-badge, #2563eb);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 700;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Avatar */
+.nv-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 999px;
+  overflow: hidden;
+  background: var(--nv-avatar-bg, #e5e7eb);
+  text-decoration: none;
+}
+.nv-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.nv-avatar-initial {
+  font-weight: 800;
+  font-size: 14px;
+  color: #111827;
 }
 
 /* responsive rules */
@@ -96,6 +143,13 @@
   .nv-mobile-actions {
     display: none;
   } /* hide mobile UI on desktop */
+  .nv-brand-icon {
+    width: 48px;
+    height: 48px;
+  }
+  .nv-brand-name {
+    font-size: 1.5rem;
+  }
 }
 
 /* screen-reader only utility */
