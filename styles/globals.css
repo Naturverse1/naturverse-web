@@ -4,6 +4,22 @@
   --naturverse-blue: #2e6bff;
 }
 
+:where(a,button,[role="button"],input,select,textarea):focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 40%);
+}
+
+.btn-tap {
+  min-height: 44px;
+  min-width: 44px;
+}
+
+a,
+button {
+  cursor: pointer;
+  transition: opacity 0.15s ease, color 0.15s ease, background-color 0.15s ease;
+}
+
 /* ================================
    NaturBank — color + layout fix
    Scope: any root with .naturbank-page OR [data-page="naturbank"]

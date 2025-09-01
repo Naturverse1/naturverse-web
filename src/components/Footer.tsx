@@ -1,52 +1,70 @@
 import * as React from 'react';
 import { Link } from 'react-router-dom';
-import { SOCIALS } from '@/lib/socials';
 
 export default function Footer() {
   const year = new Date().getFullYear();
 
   return (
-    <footer
-      role="contentinfo"
-      style={{
-        marginTop: '4rem',
-        padding: '1.25rem 0',
-        borderTop: '1px solid var(--border, #e5e7eb)',
-      }}
-    >
-      <div
-        style={{
-          display: 'flex',
-          gap: '1rem',
-          flexWrap: 'wrap',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-        }}
-      >
-        <div style={{ opacity: 0.9 }}>© {year} Turian Media Company</div>
-
-        <nav aria-label="Legal" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          <Link to="/terms" className="link">Terms</Link>
-          <span aria-hidden>·</span>
-          <Link to="/privacy" className="link">Privacy</Link>
-          <span aria-hidden>·</span>
-          <Link to="/contact" className="link">Contact</Link>
-        </nav>
-
-        <nav aria-label="Social media" style={{ display: 'flex', gap: '.75rem', flexWrap: 'wrap' }}>
-          {SOCIALS.map((s) => (
+    <footer role="contentinfo" className="border-t bg-neutral-50">
+      <div className="mx-auto max-w-7xl px-4 py-8 sm:px-6 lg:px-8">
+        <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-4">
+          <div className="space-y-2 text-sm text-neutral-600">
+            <p className="text-neutral-900 font-semibold">Naturverse</p>
+            <p>Where learning becomes adventure.</p>
+            <p>© {year} Turian Media Company</p>
+          </div>
+          <div className="space-y-2 text-sm text-neutral-600">
+            <p className="text-neutral-900 font-semibold">Company</p>
+            <Link to="/about" className="hover:text-neutral-900 transition-colors">
+              About
+            </Link>
+            <Link to="/contact" className="hover:text-neutral-900 transition-colors">
+              Contact
+            </Link>
             <a
-              key={s.name}
-              href={s.href}
+              href="mailto:turianmediacompany@gmail.com"
+              className="hover:text-neutral-900 transition-colors"
+            >
+              Email
+            </a>
+          </div>
+          <div className="space-y-2 text-sm text-neutral-600">
+            <p className="text-neutral-900 font-semibold">Legal</p>
+            <Link to="/privacy" className="hover:text-neutral-900 transition-colors">
+              Privacy Policy
+            </Link>
+            <Link to="/terms" className="hover:text-neutral-900 transition-colors">
+              Terms of Service
+            </Link>
+          </div>
+          <div className="space-y-2 text-sm text-neutral-600">
+            <p className="text-neutral-900 font-semibold">Follow</p>
+            <a
+              href="https://x.com/TuriantheDurian"
               target="_blank"
               rel="noopener noreferrer"
-              className="link"
-              aria-label={s.name}
+              className="hover:text-neutral-900 transition-colors"
             >
-              {s.name}
+              X
             </a>
-          ))}
-        </nav>
+            <a
+              href="https://instagram.com/turianthedurian"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-neutral-900 transition-colors"
+            >
+              Instagram
+            </a>
+            <a
+              href="https://facebook.com/TurianMediaCompany"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="hover:text-neutral-900 transition-colors"
+            >
+              Facebook
+            </a>
+          </div>
+        </div>
       </div>
     </footer>
   );
