@@ -910,3 +910,10 @@ main,
     margin-right: auto;
   }
 }
+
+:where(a,button,[role="button"],input,select,textarea):focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(16 185 129 / 40%);
+}
+
+.btn-tap{min-height:44px;min-width:44px;}

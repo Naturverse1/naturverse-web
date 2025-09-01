@@ -2,8 +2,10 @@ import React, { useEffect } from "react";
 import { useCart } from "@/lib/cart";
 import { getShareLink } from "@/lib/cartShare";
 import { PRODUCT_IMG } from "@/data/productImages";
+import { useAuth } from "@/lib/auth-context";
 
 export default function CartDrawer({ open, onClose }: { open: boolean; onClose: () => void }) {
+  const { user, ready } = useAuth();
   const { items, setQty, removeFromCart, clearCart, totalCents } = useCart();
 
   // close on ESC
@@ -46,7 +48,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
     );
   }
 
-  if (!open) return null;
+  if (!ready || !user || !open) return null;
   return (
     <div
       className="cart-drawer"

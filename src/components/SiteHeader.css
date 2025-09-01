@@ -4,11 +4,17 @@
 
 .nv-site-header { position: sticky; top: 0; z-index: 50; background: #fff; }
 .nv-header-inner { display:flex; align-items:center; gap:12px; padding:12px 16px; }
-.nv-brand { display:flex; align-items:center; gap:10px; text-decoration:none; }
+.nv-brand { display:flex; align-items:center; gap:10px; text-decoration:none; flex-shrink:0; transition:opacity .2s; }
+.nv-brand:hover { opacity:.8; }
 .nv-brand-icon { width:40px; height:40px; }
-.nv-brand-name { font-weight:800; color:#2563eb; }
+.nv-brand-name { font-weight:800; color:var(--nv-blue-500); transition:color .2s; }
+.nv-brand:hover .nv-brand-name { color:var(--nv-blue-600); }
 
-.nv-actions { display:flex; gap:.5rem; margin-left:auto; }
+.nv-actions { display:flex; gap:.75rem; margin-left:auto; }
+@media (min-width:768px) { .nv-actions { gap:1rem; } }
+
+.mobile-hidden { display:none; }
+@media (min-width:1024px) { .mobile-hidden { display:inline-flex; } }
 
 /* Desktop nav hidden on mobile */
 .nv-desktop-nav { display:none; gap:16px; margin-left:24px; }
@@ -32,7 +38,8 @@
 .nv-icon-btn:focus-visible { outline:2px solid var(--nv-blue-500); outline-offset:2px; }
 
 /* Hamburger bars */
-.nv-hamburger .bar { display:block; width:18px; height:2px; border-radius:2px; background:var(--nv-blue-600); }
+.nv-hamburger .bar { display:block; width:18px; height:2px; border-radius:2px; background:var(--nv-blue-500); transition:background .2s; }
+.nv-hamburger:hover .bar { background:var(--nv-blue-600); }
 .nv-hamburger .bar + .bar { margin-top:4px; }
 
 /* Cart */
@@ -60,7 +67,8 @@
   border-top-left-radius:12px;
   border-bottom-left-radius:12px;
 }
-.nv-mobile-menu nav a { display:block; padding:12px 4px; font-weight:600; color:#2563eb; text-decoration:none; }
+.nv-mobile-menu nav a { display:block; padding:12px 4px; font-weight:600; color:var(--nv-blue-500); text-decoration:none; transition:color .2s; }
+.nv-mobile-menu nav a:hover { color:var(--nv-blue-600); }
 
 /* hide pills that previously rendered empty */
 .nv-avatar { display:block; width:28px; height:28px; border-radius:999px; background: var(--nv-blue-100); overflow:hidden; }
