@@ -8,12 +8,9 @@
 }
 
 .nv-header-inner {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 12px 20px;
   display: flex;
   align-items: center;
-  gap: 20px;
+  gap: 1rem;
 }
 
 /* brand */
@@ -31,29 +28,42 @@
 }
 
 .nv-brand-name {
-  font-weight: 800;
+  color: var(--nv-brand, #2563eb);
+  font-weight: 700;
   font-size: 20px;
-  color: #2563eb; /* current brand blue used in headings */
 }
 
 /* desktop nav */
 .nv-desktop-nav {
-  margin-left: 8px;
+  margin-left: 1.5rem;
   display: none; /* hidden by default; enabled at desktop */
-  gap: 22px;
+  gap: 1rem;
+  flex: 1 1 auto;
 }
 
 .nv-desktop-nav a {
   font-size: 15px;
-  font-weight: 600;
-  color: #1f2937;
+  font-weight: 500;
+  color: var(--nv-link, #2563eb);
   text-decoration: none;
 }
 
 .nv-desktop-nav a:hover,
 .nv-desktop-nav a:focus-visible {
-  color: #2563eb;
   text-decoration: underline;
+}
+
+.nv-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-left: auto;
+}
+
+.nv-profile-link .nv-emoji {
+  font-size: 1.25rem;
+  display: inline-block;
+  line-height: 1;
 }
 
 /* mobile actions (cart/hamburger) */
