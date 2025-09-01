@@ -53,3 +53,13 @@
   --nv-accent-contrast: var(--nv-text-on-accent);
   --nv-focus: 0 0 0 3px rgba(74, 135, 255, 0.35); /* focus ring */
 }
+
+/* --- Mobile polish tokens --- */
+:root {
+  --nv-radius-md: 14px;        /* card radius */
+  --nv-radius-lg: 18px;        /* hero pills radius */
+  --nv-space-2: 8px;
+  --nv-space-3: 12px;
+  --nv-space-4: 16px;
+  --nv-space-5: 20px;
+}

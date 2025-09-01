@@ -165,3 +165,55 @@
 .flowLink:hover {
   text-decoration: underline;
 }
+
+/* Mobile-only polish */
+@media (max-width: 640px) {
+  .hero {
+    max-width: 640px;         /* prevent over-wide wraps */
+    margin: 0 auto;
+    padding: var(--nv-space-5) var(--nv-space-4) var(--nv-space-4);
+    text-align: center;
+    gap: var(--nv-space-3);
+  }
+
+  .title {
+    margin: 0 0 var(--nv-space-3);
+  }
+
+  .subtitle {
+    margin: 0 auto var(--nv-space-4);
+    max-width: 36ch;          /* comfortable line length */
+  }
+
+  .ctaRow {
+    display: grid;
+    grid-auto-flow: row;
+    gap: var(--nv-space-3);
+    margin: 0 auto var(--nv-space-4);
+    width: min(520px, 100%);
+  }
+
+  .cta {
+    width: 100%;
+    padding: 14px 18px;       /* a hair tighter */
+    border-radius: var(--nv-radius-lg);
+  }
+
+  /* Play/Learn/Earn panels spacing */
+  .featureGrid {
+    gap: var(--nv-space-4);
+    margin-top: var(--nv-space-4);
+    padding: 0 var(--nv-space-4);
+  }
+
+  .featureCard {
+    padding: var(--nv-space-4);
+    border-radius: var(--nv-radius-md);
+  }
+
+  /* Mini-quests container */
+  .miniQuests {
+    padding: 0 var(--nv-space-4) var(--nv-space-5);
+    gap: var(--nv-space-4);
+  }
+}
