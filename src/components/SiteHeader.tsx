@@ -1,102 +1,99 @@
-import { useState, useEffect, useRef } from 'react';
-import { useSession } from '@/lib/session';
-import { Link } from 'wouter';
-import './site-header.css';
+import { useState } from "react";
+import { Link } from "wouter"; // Make sure step 3 is done
+import { useSession } from "@/lib/session"; // whatever you already use
+import CartButton from "@/components/CartButton";
 
 export default function SiteHeader() {
-  const { user } = useSession(); // truthy when logged in
+  const { user } = useSession();
+  const isAuthed = !!user;
   const [open, setOpen] = useState(false);
-  const panelRef = useRef<HTMLDivElement | null>(null);
-
-  // close on escape / outside click
-  useEffect(() => {
-    function onKey(e: KeyboardEvent) {
-      if (e.key === 'Escape') setOpen(false);
-    }
-    function onClick(e: MouseEvent) {
-      if (
-        open &&
-        panelRef.current &&
-        !panelRef.current.contains(e.target as Node)
-      ) {
-        setOpen(false);
-      }
-    }
-    document.addEventListener('keydown', onKey);
-    document.addEventListener('mousedown', onClick);
-    return () => {
-      document.removeEventListener('keydown', onKey);
-      document.removeEventListener('mousedown', onClick);
-    };
-  }, [open]);
-
-  // lock body scroll when open
-  useEffect(() => {
-    const { body } = document;
-    if (!body) return;
-    const prev = body.style.overflow;
-    body.style.overflow = open ? 'hidden' : prev || '';
-    return () => {
-      body.style.overflow = prev || '';
-    };
-  }, [open]);
-
-  const navLinks = (
-    <nav className="nv-nav-links">
-      <Link href="/worlds">Worlds</Link>
-      <Link href="/zones">Zones</Link>
-      <Link href="/marketplace">Marketplace</Link>
-      <Link href="/wishlist">Wishlist</Link>
-      <Link href="/naturversity">Naturversity</Link>
-      <Link href="/naturbank">NaturBank</Link>
-      <Link href="/navatar">Navatar</Link>
-      <Link href="/passport">Passport</Link>
-      <Link href="/turian">Turian</Link>
-    </nav>
-  );
 
   return (
-    <header className="nv-header">
-      <div className="nv-header-inner">
-        <Link href="/" className="nv-brand">
-          <img
-            src="/favicon-32x32.png"
-            alt=""
-            width="24"
-            height="24"
-            className="nv-brand-icon"
-          />
-          <span className="nv-brand-text">The Naturverse</span>
-        </Link>
+    <header className="sticky top-0 z-40 bg-white/75 backdrop-blur supports-[backdrop-filter]:bg-white/60">
+      <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+        <div className="flex h-14 items-center justify-between gap-3">
+          {/* Brand */}
+          <Link href="/" className="flex items-center gap-2 shrink-0">
+            <img
+              src="/favicon-32x32.png"
+              alt=""
+              className="h-6 w-6 rounded"
+              loading="eager"
+            />
+            <span className="text-blue-600 font-extrabold tracking-tight">
+              The Naturverse
+            </span>
+          </Link>
 
-        {/* Desktop nav: only when logged-in */}
-        {user ? <div className="nv-desktop-only">{navLinks}</div> : <div />}
+          {/* Desktop nav (ONLY when authed) */}
+          {isAuthed && (
+            <nav className="hidden lg:flex items-center gap-6 text-[15px]">
+              <Link href="/worlds" className="hover:opacity-80">Worlds</Link>
+              <Link href="/zones" className="hover:opacity-80">Zones</Link>
+              <Link href="/marketplace" className="hover:opacity-80">Marketplace</Link>
+              <Link href="/wishlist" className="hover:opacity-80">Wishlist</Link>
+              <Link href="/naturversity" className="hover:opacity-80">Naturversity</Link>
+              <Link href="/naturbank" className="hover:opacity-80">NaturBank</Link>
+              <Link href="/navatar" className="hover:opacity-80">Navatar</Link>
+              <Link href="/passport" className="hover:opacity-80">Passport</Link>
+              <Link href="/turian" className="hover:opacity-80">Turian</Link>
+            </nav>
+          )}
 
-        {/* Mobile actions */}
-        <button
-          className="nv-hamburger"
-          aria-label="Menu"
-          aria-expanded={open}
-          onClick={() => setOpen(true)}
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+          {/* Actions */}
+          <div className="flex items-center gap-2">
+            <CartButton />
+
+            {/* Hamburger (mobile / tablet only) */}
+            <button
+              type="button"
+              aria-label="Open menu"
+              aria-controls="mobile-menu"
+              aria-expanded={open}
+              onClick={() => setOpen(true)}
+              className="inline-flex lg:hidden items-center justify-center h-10 w-10 rounded-md ring-1 ring-black/10"
+            >
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" strokeWidth="2">
+                <path d="M4 7h16M4 12h16M4 17h16" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* Mobile menu overlay */}
       {open && (
-        <div className="nv-menu-overlay" role="dialog" aria-modal="true">
-          <div className="nv-menu-panel" ref={panelRef}>
-            <button
-              className="nv-close"
-              aria-label="Close"
-              onClick={() => setOpen(false)}
-            >
-              ×
-            </button>
-            {navLinks}
+        <div className="fixed inset-0 z-50" id="mobile-menu">
+          <div
+            className="absolute inset-0 bg-black/30"
+            onClick={() => setOpen(false)}
+            aria-hidden="true"
+          />
+          <div className="absolute inset-x-3 top-3 rounded-2xl bg-white shadow-xl ring-1 ring-black/10">
+            <div className="flex items-center justify-between px-4 py-3">
+              <span className="text-blue-600 font-extrabold">The Naturverse</span>
+              <button
+                aria-label="Close menu"
+                onClick={() => setOpen(false)}
+                className="h-10 w-10 inline-flex items-center justify-center rounded-md ring-1 ring-black/10"
+              >
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2">
+                  <path d="M6 6l12 12M18 6l-12 12" />
+                </svg>
+              </button>
+            </div>
+
+            <nav className="px-6 pb-6 pt-2 grid gap-4 text-lg">
+              <Link href="/worlds" onClick={() => setOpen(false)}>Worlds</Link>
+              <Link href="/zones" onClick={() => setOpen(false)}>Zones</Link>
+              <Link href="/marketplace" onClick={() => setOpen(false)}>Marketplace</Link>
+              <Link href="/wishlist" onClick={() => setOpen(false)}>Wishlist</Link>
+              <Link href="/naturversity" onClick={() => setOpen(false)}>Naturversity</Link>
+              <Link href="/naturbank" onClick={() => setOpen(false)}>NaturBank</Link>
+              <Link href="/navatar" onClick={() => setOpen(false)}>Navatar</Link>
+              <Link href="/passport" onClick={() => setOpen(false)}>Passport</Link>
+              <Link href="/turian" onClick={() => setOpen(false)}>Turian</Link>
+            </nav>
           </div>
         </div>
       )}
