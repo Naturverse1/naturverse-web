@@ -11,6 +11,7 @@ export default function SiteHeader() {
   const { ready, user } = useAuth();
   const isAuthenticated = ready && !!user;
   const [cartOpen, setCartOpen] = useState(false);
+  const [, setMobileMenuOpen] = useState(false);
 
   return (
     <>
@@ -38,23 +39,39 @@ export default function SiteHeader() {
           )}
 
           <div className="nv-right">
-            {/* Small icon button; badge only when > 0 */}
             <CartButton onClick={() => setCartOpen(true)} />
             {isAuthenticated && <UserAvatar />}
           </div>
 
-          {/* Mobile-only actions remain as-is (hidden on desktop via CSS) */}
-          <div className="nv-mobile-actions">
+          {/* Mobile-only actions */}
+          <div className="nv-mobile-actions" aria-label="Mobile actions">
+            <CartButton variant="pill" onClick={() => setCartOpen(true)} />
+            {isAuthenticated && (
+              <a
+                className="nv-pill"
+                href="/profile"
+                aria-label="Open profile"
+              >
+                <img
+                  className="nv-avatar"
+                  src={
+                    user?.user_metadata?.avatar_url || '/favicon-64x64.png'
+                  }
+                  alt=""
+                />
+              </a>
+            )}
             <button
-              className="nv-icon-btn"
-              aria-label="Open cart"
-              onClick={() => setCartOpen(true)}
+              type="button"
+              className="nv-pill"
+              aria-label="Open menu"
+              onClick={() => setMobileMenuOpen(true)}
             >
-              <span className="nv-sr">Open cart</span>
-            </button>
-            <button className="nv-icon-btn" aria-label="Open menu" data-menu>
-              <span className="nv-sr">Open menu</span>
-              {'≡'}
+              <span className="nv-hamburger" aria-hidden="true">
+                <span></span>
+                <span></span>
+                <span></span>
+              </span>
             </button>
           </div>
         </div>

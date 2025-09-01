@@ -8,10 +8,14 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 
   // close on ESC
   useEffect(() => {
-    const f = (e: KeyboardEvent) => e.key === "Escape" && onClose();
-    window.addEventListener("keydown", f);
-    return () => window.removeEventListener("keydown", f);
-  }, [onClose]);
+    function onEsc(e: KeyboardEvent) {
+      if (e.key === 'Escape') onClose();
+    }
+    if (open) {
+      document.addEventListener('keydown', onEsc);
+      return () => document.removeEventListener('keydown', onEsc);
+    }
+  }, [open, onClose]);
 
   function checkout() {
     alert("Checkout is currently unavailable.");
@@ -48,20 +52,20 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 
   if (!open) return null;
   return (
-    <div className="cart-drawer">
-      <div className="backdrop" onClick={onClose} />
-      <aside className="cart-panel cart-panel--in">
+    <>
+      <div className="nv-drawer-backdrop" onClick={onClose} />
+      <aside className="nv-drawer" role="dialog" aria-label="Cart">
+        <button className="nv-drawer-close" aria-label="Close cart" onClick={onClose}>
+          ×
+        </button>
         <header className="cart__hd">
           <h3>Your cart</h3>
-          <div style={{ display: "flex", gap: 8 }}>
+          <div style={{ display: 'flex', gap: 8 }}>
             <button className="link" onClick={shareCart}>
               Quick link
             </button>
             <button className="link" onClick={shareCartShort}>
               Save &amp; share
-            </button>
-            <button onClick={onClose} aria-label="Close">
-              ✕
             </button>
           </div>
         </header>
@@ -71,7 +75,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           {items.map((i) => (
             <li key={i.id} className="cart__row">
               <img
-                src={PRODUCT_IMG[i.id] || "/img/market/placeholder.png"}
+                src={PRODUCT_IMG[i.id] || '/img/market/placeholder.png'}
                 alt=""
                 className="cart__thumb"
                 loading="lazy"
@@ -104,7 +108,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             </button>
             <a
               href="/checkout"
-              onClick={() => window.dispatchEvent(new Event("nv:checkout_start"))}
+              onClick={() => window.dispatchEvent(new Event('nv:checkout_start'))}
               className="btn primary"
             >
               Checkout
@@ -112,6 +116,6 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
           </div>
         </footer>
       </aside>
-    </div>
+    </>
   );
 }
