@@ -1,96 +1,124 @@
-/* src/components/site-header.css */
-
+/* layout */
 .nv-header {
-  position: relative;
-  z-index: 20;
-  background: var(--surface);
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #fff;
 }
-
-.nv-header__inner {
-  display: grid;
-  grid-template-columns: auto 1fr auto;
+.nv-header-inner {
+  display: flex;
   align-items: center;
-  gap: 0.75rem;
-  padding: 0.75rem 1rem;
+  gap: 12px;
+  padding: 12px 16px;
 }
 
-/* Brand with favicon */
+/* brand */
 .nv-brand {
   display: inline-flex;
   align-items: center;
-  gap: 0.5rem;
+  gap: 8px;
+  font-weight: 800;
+  color: #2d5bf5; /* existing blue */
   text-decoration: none;
 }
-.nv-brand__mark {
-  width: 24px;
-  height: 24px;
-  border-radius: 6px; /* subtle softness */
-}
-.nv-brand__text {
-  font-weight: 800;
-  color: var(--brand-700);
+.nv-brand-icon {
+  border-radius: 4px;
+  display: block;
 }
 
-/* Search sizing (consistent across breakpoints) */
-.nv-search {
-  display: flex;
-  justify-content: center;
-}
-.nv-search__input {
-  width: 100%;
-  max-width: 420px;            /* desktop clamp */
-  min-width: 0;
-  height: 40px;
-  padding: 0 0.875rem;
-  border-radius: 999px;
-  border: 1px solid var(--line-200);
-  background: var(--surface-raise);
-}
-
-/* Mobile first clamp */
-@media (max-width: 640px) {
-  .nv-header__inner {
-    grid-template-columns: auto 1fr auto;
-    gap: 0.5rem;
-    padding: 0.5rem 0.75rem;
-  }
-  .nv-brand__mark { width: 20px; height: 20px; }
-  .nv-search__input {
-    max-width: 300px;          /* smaller on phones */
-    height: 36px;
-    font-size: 0.95rem;
-  }
-}
-
-/* Desktop nav; presence controlled by TSX via session */
-.nv-nav--desktop {
+/* desktop nav (auth only) */
+.nv-desktop-only {
   display: none;
+  margin-left: 12px;
 }
 @media (min-width: 1024px) {
-  .nv-nav--desktop {
-    display: inline-flex;
-    gap: 1rem;
-    align-items: center;
+  .nv-desktop-only {
+    display: block;
   }
-  .nv-menu-btn { display: none; }   /* hide hamburger on large screens */
+  .nv-nav-links a {
+    margin-right: 18px;
+    font-weight: 600;
+    color: #2d5bf5;
+    text-decoration: none;
+  }
+  .nv-nav-links a:hover {
+    text-decoration: underline;
+  }
 }
 
-/* Hamburger */
-.nv-menu-btn {
-  appearance: none;
-  border: 0;
+/* hamburger */
+.nv-hamburger {
+  margin-left: auto;
+  width: 36px;
+  height: 28px;
+  display: inline-flex;
+  flex-direction: column;
+  justify-content: space-between;
   background: transparent;
-  padding: 0.25rem 0.5rem;
+  border: 0;
+  padding: 2px;
+  cursor: pointer;
 }
-.nv-menu-btn__lines {
-  display: inline-block;
-  width: 22px;
-  height: 16px;
-  background:
-    linear-gradient(currentColor 2px, transparent 0) 0 0/100% 2px,
-    linear-gradient(currentColor 2px, transparent 0) 0 50%/100% 2px,
-    linear-gradient(currentColor 2px, transparent 0) 0 100%/100% 2px;
-  background-repeat: no-repeat;
-  color: var(--brand-600);
+.nv-hamburger span {
+  height: 3px;
+  border-radius: 2px;
+  background: #2d5bf5;
+  display: block;
+}
+
+/* overlay */
+.nv-menu-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;               /* always on top */
+  background: rgba(0, 0, 0, 0.35); /* backdrop */
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 16px;
+}
+.nv-menu-panel {
+  width: min(560px, 92vw);
+  margin-top: 12px;
+  background: #fff;
+  border-radius: 16px;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
+  padding: 24px 20px 28px;
+}
+.nv-menu-panel .nv-nav-links {
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+.nv-menu-panel .nv-nav-links a {
+  font-size: 20px;
+  font-weight: 800;
+  color: #2d5bf5;
+  text-decoration: none;
+}
+.nv-menu-panel .nv-nav-links a:hover {
+  text-decoration: underline;
+}
+
+/* close button */
+.nv-close {
+  position: absolute;
+  top: 10px;
+  right: 14px;
+  width: 36px;
+  height: 36px;
+  border-radius: 10px;
+  border: 0;
+  background: #eef3ff;
+  color: #2d5bf5;
+  font-size: 22px;
+  cursor: pointer;
+}
+
+/* hide hamburger on wide screens where desktop nav shows */
+@media (min-width: 1024px) {
+  .nv-hamburger {
+    display: none;
+  }
 }
 
