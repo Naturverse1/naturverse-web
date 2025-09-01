@@ -712,3 +712,59 @@ main,
   .btn { padding: 9px 12px; font-size: 0.9rem; }
   .panel, .card, .nv-card, .tile { padding: 14px; }
 }
+/* ---- Hard-stop mobile sizing & spacing (iPhone widths) ---- */
+@media (max-width: 420px) {
+
+  /* Headings */
+  h1, .section-title, .page-title {
+    font-size: clamp(1.6rem, 6vw, 1.9rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-top: 0.75rem;
+    margin-bottom: 0.5rem;
+  }
+  h2 { font-size: clamp(1.25rem, 4.8vw, 1.45rem); line-height: 1.2; }
+  h3 { font-size: clamp(1.1rem, 4.2vw, 1.25rem); line-height: 1.25; }
+
+  /* Body text inside cards/panels */
+  .card, .panel, .tile, .zone-card, .market-card, .nv-card {
+    padding: 12px 14px;
+  }
+  .panel p, .card p { font-size: 1rem; line-height: 1.4; }
+
+  /* Hero area */
+  .hero, .language-hero, .welcome-hero {
+    padding: 14px 14px 18px;
+  }
+  .hero .lead, .language-hero .lead {
+    font-size: clamp(1rem, 3.9vw, 1.1rem);
+    line-height: 1.35;
+    margin-top: 6px;
+  }
+
+  /* Hero CTA buttons */
+  .hero .actions, .welcome-hero .actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;              /* allows two rows on small screens */
+    justify-content: center;
+  }
+  .hero .actions .btn, .welcome-hero .actions .btn {
+    padding: 10px 14px;
+    font-size: 1rem;
+    min-width: 44%;
+  }
+
+  /* Search bars */
+  .search, .search input, .search .input {
+    height: 44px;
+    font-size: 1rem;
+  }
+
+  /* Section blocks like Play/Learn/Earn */
+  .section { padding: 12px 14px; }
+  .section p { font-size: 1rem; line-height: 1.4; }
+
+  /* Keep page edges comfortable */
+  .container { padding-left: 12px; padding-right: 12px; }
+}
