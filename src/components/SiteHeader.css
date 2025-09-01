@@ -63,9 +63,10 @@
 
 /* mobile actions (cart/hamburger) */
 .nv-mobile-actions {
+  display: none;
   margin-left: auto;
-  display: flex;
-  gap: 10px;
+  gap: 12px;
+  align-items: center;
 }
 
 /* Icon button reset (no blue pill) */
@@ -85,12 +86,6 @@
 .nv-icon-btn:focus-visible {
   outline: 2px solid var(--nv-focus, #2563eb);
   outline-offset: 2px;
-}
-
-/* Cart tweaks */
-.nv-cart span[aria-hidden] {
-  font-size: 20px;
-  line-height: 1;
 }
 
 /* Small count badge (only rendered when > 0) */
@@ -149,6 +144,32 @@
   }
   .nv-brand-name {
     font-size: 1.5rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .nv-desktop-nav {
+    display: none;
+  }
+  .nv-mobile-actions {
+    display: flex;
+  }
+  .nv-icon-btn {
+    appearance: none;
+    width: auto;
+    height: auto;
+    background: #fff;
+    color: var(--brand-700, #2563eb);
+    border: 1px solid rgba(0, 0, 0, 0.06);
+    border-radius: 14px;
+    padding: 8px 10px;
+    line-height: 0;
+    box-shadow: 0 6px 14px rgba(37, 99, 235, 0.15);
+  }
+  .nv-icon-btn svg {
+    width: 24px;
+    height: 24px;
+    display: block;
   }
 }
 

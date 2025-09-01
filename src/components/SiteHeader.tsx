@@ -11,6 +11,7 @@ export default function SiteHeader() {
   const { ready, user } = useAuth();
   const isAuthenticated = ready && !!user;
   const [cartOpen, setCartOpen] = useState(false);
+  const [, setMobileOpen] = useState(false);
 
   return (
     <>
@@ -45,16 +46,25 @@ export default function SiteHeader() {
 
           {/* Mobile-only actions remain as-is (hidden on desktop via CSS) */}
           <div className="nv-mobile-actions">
-            <button
+            <CartButton
               className="nv-icon-btn"
               aria-label="Open cart"
               onClick={() => setCartOpen(true)}
+            />
+            <button
+              className="nv-icon-btn"
+              aria-label="Open menu"
+              onClick={() => setMobileOpen(true)}
             >
-              <span className="nv-sr">Open cart</span>
-            </button>
-            <button className="nv-icon-btn" aria-label="Open menu" data-menu>
-              <span className="nv-sr">Open menu</span>
-              {'≡'}
+              <svg viewBox="0 0 24 24" width="24" height="24" aria-hidden="true">
+                <path
+                  d="M4 6h16M4 12h16M4 18h16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                />
+              </svg>
             </button>
           </div>
         </div>
@@ -63,4 +73,3 @@ export default function SiteHeader() {
     </>
   );
 }
-
