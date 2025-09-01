@@ -1,5 +1,22 @@
 @import './tokens.css';
 
+/* ---------------------------
+   Global layout container
+   Keeps content centered with safe side padding
+--------------------------- */
+.nv-container {
+  max-width: 1200px;
+  margin-inline: auto;
+  padding-inline: 16px;
+}
+
+@media (min-width: 640px) {
+  .nv-container { padding-inline: 20px; }
+}
+@media (min-width: 1024px) {
+  .nv-container { padding-inline: 24px; }
+}
+
 /* Visually hide skip link, show on keyboard focus (a11y) */
 .skip-link {
   position: absolute;
@@ -20,7 +37,7 @@
   padding: 10px 14px;
   border-radius: 12px;
   background: #ffffff;
-  border: 2px solid var(--nv-blue-600, #2463eb);
+  border: 2px solid var(--nv-blue-600, #2465eb);
   color: var(--nv-blue-700, #2d5cff);
   z-index: 10000;
   box-shadow: 0 2px 8px rgba(17, 34, 68, 0.15);
