@@ -18,6 +18,11 @@ html, body {
   box-sizing: inherit;
 }
 
+/* Prevent any stray horizontal scroll (extra safety) */
+html, body, #root {
+  overflow-x: hidden;
+}
+
 /* Any full-width wrappers should never exceed the viewport */
 .nv-container, .nv-content, main, #root {
   inline-size: 100%;    /* logical width */
@@ -78,6 +83,34 @@ h1, h2, h3 {
 h1 { font-size: var(--nv-h1); line-height: 1.15; }
 h2 { font-size: var(--nv-h2); line-height: 1.2; }
 p  { line-height: 1.6; }
+
+/* iPhone & small screens only */
+@media (max-width: 640px) {
+  /* Saner type scaling on first paint */
+  h1 {
+    /* ~28–34px depending on width */
+    font-size: clamp(28px, 6vw, 34px);
+    line-height: 1.15;
+    letter-spacing: 0;
+  }
+
+  .nv-subtitle, p.nv-subtitle {
+    /* ~15–18px */
+    font-size: clamp(15px, 3.7vw, 18px);
+    line-height: 1.4;
+  }
+
+  /* Generic “panel/card” polish used across sections */
+  .nv-panel, .card, .featureCard {
+    border-radius: var(--nv-radius-md);
+    padding: var(--nv-space-4);
+  }
+
+  /* Soften big panels (Play/Learn/Earn) */
+  .nv-panel.nv-large {
+    padding: calc(var(--nv-space-4) + 2px) var(--nv-space-5);
+  }
+}
 
 /* A light, consistent page container used by Home.tsx via `nv-container` */
 .nv-container {
