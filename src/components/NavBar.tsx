@@ -16,6 +16,7 @@ export default function NavBar() {
   const emoji = (user?.user_metadata?.navemoji as string) ?? '🧑';
 
   return (
+    <>
     <header className={`${styles.header} nv-nav`}>
       <div className={`container ${styles.inner}`}>
         {/* Left brand (logo + wordmark) */}
@@ -54,54 +55,81 @@ export default function NavBar() {
           <NavLink to="/turian">Turian</NavLink>
         </nav>
 
-        <div style={{ marginLeft: "auto", minWidth: 280 }}>
+        <div style={{ marginLeft: 'auto', minWidth: 280 }}>
           <SearchBar />
         </div>
         <div className={styles.right} key={user?.id ?? 'anon'}>
           {ready && user && (
             <>
               <CartButton onClick={() => setCartOpen(true)} />
-              <NavLink to="/profile" aria-label="Profile" className={styles.profileBtn}>
+              <NavLink
+                to="/profile"
+                aria-label="Profile"
+                className={styles.profileBtn}
+              >
                 {emoji}
               </NavLink>
             </>
           )}
-
-          {/* Mobile hamburger (no blue background) */}
-          <button
-            className="nv-hamburger nav-toggle"
-            aria-label="Open menu"
-            onClick={() => setOpen(true)}
-          >
-            <span className="bar" />
-            <span className="bar" />
-            <span className="bar" />
-          </button>
         </div>
-      </div>
 
-      <div className={`${styles.mobile} ${open ? styles.open : ''}`} onClick={() => setOpen(false)}>
-        <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
-          {ready && user && (
-            <NavLink to="/profile" className={styles.mobileProfile}>
-              <span className={styles.mobileEmoji}>{emoji}</span>
-              <span>Profile</span>
-            </NavLink>
-          )}
-          <NavLink to="/worlds">Worlds</NavLink>
-          <NavLink to="/zones">Zones</NavLink>
-          <NavLink to="/marketplace">Marketplace</NavLink>
-          <NavLink to="/wishlist">Wishlist</NavLink>
-          <NavLink to="/naturversity">Naturversity</NavLink>
-          <NavLink to="/naturbank">NaturBank</NavLink>
-          <NavLink to="/navatar">Navatar</NavLink>
-          <NavLink to="/create/navatar">Create Navatar</NavLink>
-          <NavLink to="/passport">Passport</NavLink>
-          <NavLink to="/orders">Orders</NavLink>
-          <NavLink to="/turian">Turian</NavLink>
-        </div>
+        {ready && user && (
+          <div className={styles.mobile}>
+            <CartButton onClick={() => setCartOpen(true)} />
+            <button
+              className={`${styles.hamburger} nav-toggle`}
+              aria-label="Open menu"
+              onClick={() => setOpen(true)}
+            >
+              <span className={styles.bar} />
+              <span className={styles.bar} />
+              <span className={styles.bar} />
+            </button>
+
+            {open && (
+              <div className={styles.sheet} onClick={() => setOpen(false)}>
+                <div
+                  className={styles.sheetBody}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <NavLink to="/profile" className={styles.mobileLink}>
+                    Profile
+                  </NavLink>
+                  <NavLink to="/worlds" className={styles.mobileLink}>
+                    Worlds
+                  </NavLink>
+                  <NavLink to="/zones" className={styles.mobileLink}>
+                    Zones
+                  </NavLink>
+                  <NavLink to="/marketplace" className={styles.mobileLink}>
+                    Marketplace
+                  </NavLink>
+                  <NavLink to="/wishlist" className={styles.mobileLink}>
+                    Wishlist
+                  </NavLink>
+                  <NavLink to="/naturversity" className={styles.mobileLink}>
+                    Naturversity
+                  </NavLink>
+                  <NavLink to="/naturbank" className={styles.mobileLink}>
+                    NaturBank
+                  </NavLink>
+                  <NavLink to="/navatar" className={styles.mobileLink}>
+                    Navatar
+                  </NavLink>
+                  <NavLink to="/passport" className={styles.mobileLink}>
+                    Passport
+                  </NavLink>
+                  <NavLink to="/turian" className={styles.mobileLink}>
+                    Turian
+                  </NavLink>
+                </div>
+              </div>
+            )}
+          </div>
+        )}
       </div>
     </header>
     <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
+    </>
   );
 }
