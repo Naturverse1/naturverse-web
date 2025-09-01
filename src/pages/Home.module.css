@@ -1,46 +1,75 @@
+/* Mobile-first, then enhance upward */
+
 .page {
-  background: var(--nv-page-bg, #f5f8ff); /* light blue like other pages */
-  min-height: 100%;
-  padding: 28px 0 64px; /* a touch more top space */
+  /* placed on <main> along with nv-container */
 }
 
 .hero {
-  max-width: 1040px;
-  margin: 0 auto;
-  padding: 0 20px 16px;
   text-align: center;
+  padding-top: 8px;
+  padding-bottom: 12px;
 }
 
 .title {
-  margin: 0 0 8px;
-  font-size: clamp(28px, 3.6vw, 44px);
-  color: var(--nv-blue-700, #1f4ed8);
   font-weight: 800;
-  letter-spacing: 0.2px;
+  line-height: 1.08;
+  margin: 0 0 8px;
+  font-size: clamp(1.75rem, 5.5vw, 2.5rem);
+  color: var(--nv-blue-700, #1f4ed8);
 }
 
 .subtitle {
-  margin: 0 auto 22px;
-  max-width: 960px;
-  color: var(--nv-blue-700, #1f4ed8); /* blue (not black/grey) */
+  margin: 0 auto 16px;
+  max-width: 40ch;
+  line-height: 1.45;
+  opacity: 0.95;
+  color: var(--nv-blue-700, #1f4ed8);
 }
 
 .ctaRow {
-  display: inline-flex;
-  gap: 16px; /* space between buttons */
-  margin-top: 8px;
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  margin: 10px 0 6px;
 }
 
 .cta {
-  display: inline-block;
-  padding: 12px 18px;
-  border-radius: 14px;
-  background: var(--nv-blue-600, #2563eb);
-  color: #fff; /* readable white text */
-  font-weight: 700;
-  box-shadow: 0 6px 0 rgba(0, 0, 0, 0.12);
-  opacity: 1; /* ensure not dimmed */
-  text-decoration: none;
+  min-width: 190px;
+}
+
+/* “What’s New” panel below hero */
+.nvWhat {
+  margin: 12px auto 8px;
+  max-width: 680px;
+}
+
+/* Tools/search row under the announcement */
+.homeTools {
+  display: flex;
+  justify-content: center;
+  margin: 10px 0 0;
+}
+
+/* Section headings like “Play / Learn / Earn” */
+.sectionHeading {
+  text-align: center;
+  margin: 18px 0 10px;
+}
+
+/* --------- Up from small tablets --------- */
+@media (min-width: 640px) {
+  .title { font-size: clamp(2rem, 4vw, 2.75rem); }
+  .subtitle { max-width: 52ch; }
+  .cta { min-width: 200px; }
+  .nvWhat { margin-top: 14px; }
+}
+
+/* --------- Desktop --------- */
+@media (min-width: 1024px) {
+  .title { font-size: clamp(2.25rem, 3vw, 3rem); }
+  .subtitle { max-width: 60ch; }
 }
 
 .featureGrid {

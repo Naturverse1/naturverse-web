@@ -45,7 +45,7 @@ export default function Home() {
         )}
       </section>
 
-      <div className="nv-what">
+      <div className={styles.nvWhat}>
         <span role="img" aria-label="sparkles">
           ✨
         </span>
@@ -57,10 +57,10 @@ export default function Home() {
         </span>
       </div>
 
-      <div className="nv-home-tools">
+      <div className={styles.homeTools}>
         <SearchBox
           onFocus={() =>
-            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'k', metaKey: true }))
+            document.dispatchEvent(new KeyboardEvent('keydown', { key: 'Tab' }))
           }
         />
       </div>
