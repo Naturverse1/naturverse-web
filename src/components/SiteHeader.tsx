@@ -32,14 +32,27 @@ export default function SiteHeader() {
   }, [supabase]);
 
   return (
-    <header className={`site-header ${open ? 'open' : ''}`}>
-      <div className="container">
+    <header className={`nv-header site-header ${open ? 'open' : ''}`}>
+      <div className="container nv-header-row">
         <div className="nav-left">
             <Link to="/" className="brand" onClick={() => setOpen(false)}>
               <Img src="/favicon-32x32.png" width="28" height="28" alt="" />
               <span>The Naturverse</span>
             </Link>
-          <nav className="nav nav-links">
+            {/* Mobile menu toggle */}
+            <button
+              className="nv-menu-toggle"
+              aria-label="Open menu"
+              aria-expanded={open ? 'true' : 'false'}
+              aria-controls="nv-main-nav"
+              onClick={() => setOpen(!open)}
+            >
+              {/* simple hamburger — three bars */}
+              <span aria-hidden="true" className="nv-burger">
+                <span></span><span></span><span></span>
+              </span>
+            </button>
+          <nav id="nv-main-nav" className="nav nav-links">
             <NavLink
               to="/worlds"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
@@ -128,15 +141,6 @@ export default function SiteHeader() {
           <ProfileMini />
           <WalletConnect />
           <CartButton />
-          <button
-            className={`nv-menu-btn${open ? ' is-open' : ''}`}
-            aria-label="Open menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
         </div>
       </div>
     </header>
