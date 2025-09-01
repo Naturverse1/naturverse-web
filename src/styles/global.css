@@ -1,9 +1,14 @@
 @import './tokens.css';
 
+/* ========== Safe global reset (no scrolling locks) ========== */
 html {
+  box-sizing: border-box;
+  /* keep your existing viewport meta in index.html as-is */
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
 }
+*, *::before, *::after { box-sizing: inherit; }
+
 @media (max-width: 480px) {
   html { font-size: 15px; }
 }
@@ -12,7 +17,35 @@ body {
   margin: 0;
   color: var(--nv-text, #1f2937);
   background: var(--page-bg, #f8fbff);
-  overflow-x: hidden;
+}
+
+/* Media never pushes wider than screen */
+img, svg, video, canvas, iframe {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* Prevent accidental 100vw overflows from components,
+   but DO NOT block vertical scroll or pinch */
+main, section, header, footer {
+  overflow-x: clip;               /* stops side-scroll, preserves y-scroll */
+}
+
+/* Utility: containers never exceed viewport width */
+.nv-container, .nv-home, .nv-hero, .nv-section {
+  width: 100%;
+  max-width: 100%;
+}
+
+/* Buttons/inputs don’t overflow due to long text */
+button, input, select {
+  max-width: 100%;
+}
+
+/* OPTIONAL (leave on): helps if a nested element uses 100vw */
+:root {
+  /* your existing tokens stay */
 }
 
 h1, h2, h3 {
@@ -751,4 +784,17 @@ main,
 
   /* Keep page edges comfortable */
   .container { padding-left: 12px; padding-right: 12px; }
+}
+
+/* ---------- Mobile-specific tightening ---------- */
+@media (max-width: 640px) {
+  /* Kill any stray margins that can create horizontal overflow */
+  .nv-hero, .nv-section, .featureGrid, .nv-home-tools {
+    margin-left: 0;
+    margin-right: 0;
+    padding-left: 16px;
+    padding-right: 16px;
+    width: 100%;
+    max-width: 100%;
+  }
 }
