@@ -38,19 +38,20 @@ export default function NavBar() {
             <span className="nv-brand text-nv-blue">The Naturverse</span>
           </a>
 
-        <nav className={`${styles.links} nv-nav__links`} aria-label="Primary">
-          <NavLink to="/worlds">Worlds</NavLink>
-          <NavLink to="/zones">Zones</NavLink>
-          <NavLink to="/marketplace">Marketplace</NavLink>
-          <NavLink to="/wishlist">Wishlist</NavLink>
-          <NavLink to="/naturversity">Naturversity</NavLink>
-          <NavLink to="/naturbank">NaturBank</NavLink>
-          <NavLink to="/navatar">Navatar</NavLink>
-          <NavLink to="/create/navatar">Create Navatar</NavLink>
-          <NavLink to="/passport">Passport</NavLink>
-          <NavLink to="/orders">Orders</NavLink>
-          <NavLink to="/turian">Turian</NavLink>
-        </nav>
+        {ready && user && (
+          <nav className={`${styles.links} nv-desktop-nav`} aria-label="Primary">
+            <NavLink to="/worlds">Worlds</NavLink>
+            <NavLink to="/zones">Zones</NavLink>
+            <NavLink to="/marketplace">Marketplace</NavLink>
+            <NavLink to="/wishlist">Wishlist</NavLink>
+            <NavLink to="/naturversity">Naturversity</NavLink>
+            <NavLink to="/naturbank">NaturBank</NavLink>
+            <NavLink to="/navatar">Navatar</NavLink>
+            <NavLink to="/create/navatar">Create</NavLink>
+            <NavLink to="/passport">Passport</NavLink>
+            <NavLink to="/turian">Turian</NavLink>
+          </nav>
+        )}
 
         <div style={{ marginLeft: "auto", minWidth: 280 }}>
           <SearchBar />

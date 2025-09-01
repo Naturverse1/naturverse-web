@@ -4,17 +4,17 @@
   padding: 10px var(--nv-pad-x);
 }
 
-.nv-nav__links a {
+.nv-desktop-nav a {
   display: inline-block;
   padding: 6px 8px;
   border-radius: 8px;
 }
 
-.nv-nav__links a:hover,
-.nv-nav__links a:focus-visible {
+.nv-desktop-nav a:hover,
+.nv-desktop-nav a:focus-visible {
   background: rgba(0,0,0,.05);
 }
 
-.nv-nav__links a[aria-current="page"] {
+.nv-desktop-nav a[aria-current="page"] {
   outline: 2px solid rgba(0,0,0,.08);
 }
