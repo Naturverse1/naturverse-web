@@ -89,3 +89,42 @@
   }
 }
 
+/* base */
+.hamburger {
+  display: none;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+  border: 1px solid var(--clr-border, #e6e9ef);
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.04);
+  align-items: center;
+  justify-content: center;
+}
+
+/* always show on mobile */
+@media (max-width: 1024px) {
+  .hamburger { display: inline-flex; }
+}
+
+/* show on desktop only when authed */
+.site-header.is-authed .hamburger { display: inline-flex; }
+@media (min-width: 1025px) {
+  .site-header:not(.is-authed) .hamburger { display: none; }
+}
+
+/* icon lines */
+.hamburger__lines,
+.hamburger__lines::before,
+.hamburger__lines::after {
+  content: "";
+  display: block;
+  width: 18px;
+  height: 2px;
+  border-radius: 2px;
+  background: var(--clr-text-strong, #2a55ff);
+  position: relative;
+}
+.hamburger__lines::before { top: -6px; position: relative; }
+.hamburger__lines::after  { top:  4px; position: relative; }
+
