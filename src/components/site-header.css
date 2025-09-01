@@ -103,3 +103,111 @@
   .nv-burger { display: none; }
   .nv-sheet { display: none; }
 }
+/* --- Header layout guards ---------------------------------------------- */
+
+/* Make header elements wrap gracefully on tiny screens */
+.site-header {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  align-items: center;
+  gap: var(--space-2, 8px);
+}
+
+/* Search: keep it a sensible width everywhere */
+.site-header .site-search {
+  width: min(680px, 92vw);
+  max-width: 680px;
+}
+@media (max-width: 480px) {
+  .site-header .site-search {
+    width: min(340px, 84vw);
+  }
+}
+
+/* Desktop / mobile visibility rules */
+.site-header .nav-links {       /* worlds / zones / marketplace … */
+  display: none;                /* hidden on mobile */
+  gap: var(--space-4, 16px);
+  white-space: nowrap;
+}
+
+.site-header .hamburger {       /* cracked hamburger button */
+  display: inline-flex;         /* visible on mobile */
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border-radius: 10px;
+}
+
+/* >= 1024px we show links row and hide hamburger */
+@media (min-width: 1024px) {
+  .site-header {
+    grid-template-columns: auto 1fr auto;
+  }
+  .site-header .nav-links {
+    display: inline-flex;       /* show on desktop */
+  }
+  .site-header .hamburger {
+    display: none;              /* hide on desktop */
+  }
+  .site-header .site-search {
+    margin-inline: 16px;
+    width: min(720px, 52vw);
+  }
+}
+
+/* --- Mobile menu overlay polish ---------------------------------------- */
+
+.mobile-menu-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.35);
+  backdrop-filter: blur(2px);
+  z-index: 999;                 /* over page content, under sheet */
+}
+
+.mobile-menu-sheet {
+  position: fixed;
+  left: 0;
+  right: 0;
+  top: env(safe-area-inset-top, 0);
+  margin: 0 auto;
+  width: min(560px, 94vw);
+  background: var(--surface, #fff);
+  border-radius: 14px;
+  box-shadow: 0 14px 40px rgba(0,0,0,0.18);
+  padding: 20px 16px 16px;
+  z-index: 1000;
+}
+
+/* prevent content jumble */
+.mobile-menu-sheet ul,
+.mobile-menu-sheet nav {
+  display: grid;
+  gap: 14px;
+  text-align: center;
+}
+
+/* close button placement */
+.mobile-menu-sheet .menu-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+/* lock page scroll when menu open (class toggled by existing JS) */
+body.menu-open {
+  overflow: hidden;
+  touch-action: none;
+}
+
+/* --- Small niceties ----------------------------------------------------- */
+
+/* ensure cart / wallet badges don’t collide with search */
+.site-header .actions {
+  display: inline-flex;
+  gap: 10px;
+  align-items: center;
+}
+
