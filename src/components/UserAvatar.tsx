@@ -1,6 +1,6 @@
 import { useAuth } from '@/lib/auth-context';
 
-export default function UserAvatar() {
+export default function UserAvatar({ className = '' }: { className?: string }) {
   const { user } = useAuth();
   if (!user) return null;
 
@@ -16,7 +16,11 @@ export default function UserAvatar() {
   const initial = name.trim().charAt(0).toUpperCase() || '•';
 
   return (
-    <a href="/profile" className="nv-avatar" aria-label="Profile">
+    <a
+      href="/profile"
+      className={`${className} nv-avatar`.trim()}
+      aria-label="Profile"
+    >
       {src ? (
         <img src={src} alt="" />
       ) : (
