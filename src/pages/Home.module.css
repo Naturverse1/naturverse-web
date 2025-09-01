@@ -1,42 +1,43 @@
 /* Mobile-first, then enhance upward */
 
 .page {
-  /* placed on <main> along with nv-container */
+  /* Ensure page gets container spacing from global .nv-container */
+  width: 100%;
 }
 
 .hero {
   text-align: center;
-  padding-top: 8px;
-  padding-bottom: 12px;
+  padding: var(--space-6) 0 var(--space-5);
 }
 
 .title {
   font-weight: 800;
-  line-height: 1.08;
-  margin: 0 0 8px;
-  font-size: clamp(1.75rem, 5.5vw, 2.5rem);
+  font-size: var(--nv-h1);
+  line-height: 1.15;
+  margin: 0 0 var(--space-3);
   color: var(--nv-blue-700, #1f4ed8);
 }
 
 .subtitle {
-  margin: 0 auto 16px;
-  max-width: 40ch;
-  line-height: 1.45;
-  opacity: 0.95;
-  color: var(--nv-blue-700, #1f4ed8);
+  font-size: var(--nv-lead);
+  margin: 0 auto var(--space-5);
+  max-width: 34ch;          /* keeps it readable on phones */
+  color: var(--nv-text-muted, #6b7280);
 }
 
 .ctaRow {
   display: flex;
-  gap: 12px;
   justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  margin: 10px 0 6px;
+  align-items: stretch;
+  gap: var(--space-4);
+  margin: 0 0 var(--space-5);
 }
 
 .cta {
-  min-width: 190px;
+  min-width: 44%;
+  padding: 12px 16px;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-soft);
 }
 
 /* “What’s New” panel below hero */
@@ -70,6 +71,12 @@
 @media (min-width: 1024px) {
   .title { font-size: clamp(2.25rem, 3vw, 3rem); }
   .subtitle { max-width: 60ch; }
+}
+
+@media (max-width: 480px) {
+  .subtitle { max-width: 30ch; }
+  .ctaRow { gap: var(--space-3); }
+  .cta { flex: 1; min-width: auto; padding: 12px 14px; }
 }
 
 .featureGrid {

@@ -1,5 +1,22 @@
 /* Naturverse Theme Tokens (blue) */
 :root {
+  /* ---- Spacing scale (mobile-first) ---- */
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 20px;
+  --space-6: 24px;
+  --radius-lg: 16px;
+  --shadow-soft: 0 2px 8px rgba(17, 34, 68, 0.08);
+
+  /* ---- Type scale (mobile-first clamps) ---- */
+  --nv-h1: clamp(28px, 6vw, 44px);
+  --nv-h2: clamp(22px, 4.5vw, 32px);
+  --nv-lead: clamp(16px, 3.8vw, 20px);
+  --nv-body: 16px;
+  --nv-body-sm: 14px;
+
   /* Brand blues */
   --nv-blue-50: #f2f6ff;
   --nv-blue-100: #e6efff;
