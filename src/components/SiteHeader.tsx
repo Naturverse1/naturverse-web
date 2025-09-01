@@ -38,25 +38,29 @@ export default function SiteHeader() {
             </nav>
           )}
 
-          {/* Right side actions (mobile + desktop) */}
+          {/* Right side actions — auth gated */}
           <div className="nv-actions">
-            {isAuthenticated && <CartButton onClick={() => setCartOpen(true)} />}
-
-            {isAuthenticated && <UserAvatar />}
-
-            {/* Mobile hamburger (always visible, but only shows menu items if signed in) */}
-            <button
-              type="button"
-              className="nv-icon-btn nv-hamburger lg-hidden"
-              aria-label="Open menu"
-              aria-expanded={menuOpen}
-              aria-controls="nv-mobile-menu"
-              onClick={() => setMenuOpen(true)}
-            >
-              <span className="bar" />
-              <span className="bar" />
-              <span className="bar" />
-            </button>
+            {isAuthenticated && (
+              <>
+                <CartButton
+                  className="nv-icon-btn"
+                  onClick={() => setCartOpen(true)}
+                />
+                <UserAvatar className="nv-icon-btn" />
+                <button
+                  type="button"
+                  className="nv-icon-btn nv-hamburger lg-hidden nav-toggle"
+                  aria-label="Open menu"
+                  aria-expanded={menuOpen}
+                  aria-controls="nv-mobile-menu"
+                  onClick={() => setMenuOpen(true)}
+                >
+                  <span className="bar" />
+                  <span className="bar" />
+                  <span className="bar" />
+                </button>
+              </>
+            )}
           </div>
         </div>
 

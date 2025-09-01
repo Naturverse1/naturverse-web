@@ -8,7 +8,7 @@
 .nv-brand-icon { width:40px; height:40px; }
 .nv-brand-name { font-weight:800; color:#2563eb; }
 
-.nv-actions { margin-left:auto; display:flex; align-items:center; gap:10px; }
+.nv-actions { display:flex; gap:.5rem; margin-left:auto; }
 
 /* Desktop nav hidden on mobile */
 .nv-desktop-nav { display:none; gap:16px; margin-left:24px; }
@@ -17,23 +17,23 @@
 /* Icon button reset */
 .nv-icon-btn {
   position:relative;
+  width:44px;
+  height:44px;
+  border-radius:12px;
   display:inline-flex;
   align-items:center;
   justify-content:center;
-  width:36px;
-  height:36px;
   border:0;
   background:transparent;
+  box-shadow:none;
   padding:0;
-  border-radius:8px;
   cursor:pointer;
 }
-.nv-icon-btn:focus-visible { outline:2px solid var(--nv-focus,#2563eb); outline-offset:2px; }
+.nv-icon-btn:focus-visible { outline:2px solid var(--nv-blue-500); outline-offset:2px; }
 
 /* Hamburger bars */
-.nv-hamburger .bar {
-  display:block; width:20px; height:2px; margin:4px 0; background:#2563eb; border-radius:2px;
-}
+.nv-hamburger .bar { display:block; width:18px; height:2px; border-radius:2px; background:var(--nv-blue-600); }
+.nv-hamburger .bar + .bar { margin-top:4px; }
 
 /* Cart */
 .nv-cart span[aria-hidden] { font-size:20px; line-height:1; }
@@ -62,10 +62,15 @@
 }
 .nv-mobile-menu nav a { display:block; padding:12px 4px; font-weight:600; color:#2563eb; text-decoration:none; }
 
-/* Avatar size (mobile & desktop) */
-.nv-avatar { display:inline-flex; width:36px; height:36px; border-radius:9999px; overflow:hidden; }
+/* hide pills that previously rendered empty */
+.nv-avatar { display:block; width:28px; height:28px; border-radius:999px; background: var(--nv-blue-100); overflow:hidden; }
 .nv-avatar img { width:100%; height:100%; object-fit:cover; }
-.nv-avatar-initial { font-weight:800; font-size:14px; color:#111827; }
+.nv-avatar-initial { font-weight:800; font-size:14px; color:#111827; display:flex; align-items:center; justify-content:center; }
+
+/* desktop hover keeps icon subtle (prevents big blue box) */
+@media (hover:hover) {
+  .nv-icon-btn:hover { background:rgba(0,0,0,0.04); box-shadow:none; }
+}
 
 /* Screen-reader only utility */
 .nv-sr {

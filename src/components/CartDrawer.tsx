@@ -48,11 +48,16 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
 
   if (!open) return null;
   return (
-    <div className="cart-drawer">
+    <div
+      className="cart-drawer"
+      role="dialog"
+      aria-modal="true"
+      aria-labelledby="cart-title"
+    >
       <div className="backdrop" onClick={onClose} />
       <aside className="cart-panel cart-panel--in">
         <header className="cart__hd">
-          <h3>Your cart</h3>
+          <h2 id="cart-title">Your cart</h2>
           <div style={{ display: "flex", gap: 8 }}>
             <button className="link" onClick={shareCart}>
               Quick link
@@ -60,7 +65,7 @@ export default function CartDrawer({ open, onClose }: { open: boolean; onClose: 
             <button className="link" onClick={shareCartShort}>
               Save &amp; share
             </button>
-            <button onClick={onClose} aria-label="Close">
+            <button onClick={onClose} aria-label="Close cart">
               ✕
             </button>
           </div>
