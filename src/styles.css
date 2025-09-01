@@ -324,3 +324,11 @@ footer img {
   height: 28px !important;
   width: auto !important;
 }
+
+/* Prevent default blue focus ring box around cart and icons; keep a11y ring where we add it */
+button:focus { outline: none; }
+a:focus { outline: none; }
+
+/* Ensure the hero/heading doesn’t get unexpected link styles from header spillover */
+.hero a { text-decoration: none; }
+
