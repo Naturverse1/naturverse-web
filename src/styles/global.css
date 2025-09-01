@@ -854,3 +854,59 @@ main,
     max-width: 100%;
   }
 }
+
+/* ==== Mobile rhythm & CTAs (safe for web) ==== */
+@media (max-width: 639.98px) {
+  /* hero heading + subhead */
+  .nv-hero h1,
+  .nv-hero .title {
+    font-size: var(--nv-h1-sm);
+    line-height: var(--nv-lh-tight-sm);
+    letter-spacing: -0.01em;
+    margin-top: var(--nv-space-md);
+    margin-bottom: var(--nv-space-xs);
+    text-align: center;
+  }
+
+  .nv-hero p,
+  .nv-hero .subtitle {
+    font-size: var(--nv-body-sm);
+    line-height: var(--nv-lh-body-sm);
+    margin: 0 auto var(--nv-space-sm);
+    max-width: 36ch;
+    text-align: center;
+  }
+
+  /* primary CTAs */
+  .btn,
+  .cta,
+  .nv-hero .cta {
+    font-size: 16px;
+    line-height: 1;
+    padding: 14px 18px;     /* down from ~16–20 */
+    border-radius: 14px;
+  }
+
+  /* keep the two CTAs balanced with a small gap */
+  .nv-hero .ctaRow {
+    gap: var(--nv-space-xs);
+  }
+
+  /* dashed “how it works” container */
+  .nv-how {
+    max-width: 640px;
+    margin: var(--nv-space-md) auto;
+    padding: var(--nv-space-sm);
+  }
+  .nv-how .step {
+    padding: var(--nv-space-sm);
+    border-radius: 14px;
+  }
+
+  /* quest cards: nudge spacing so card shadow doesn't cause overflow */
+  .card,
+  .featureCard {
+    margin-left: auto;
+    margin-right: auto;
+  }
+}

@@ -63,3 +63,23 @@
   --nv-space-4: 16px;
   --nv-space-5: 20px;
 }
+
+/* ==== Mobile type & space (add near the other tokens) ==== */
+:root {
+  /* mobile font sizes */
+  --nv-h1-sm: 32px;    /* was visually ~36–40 */
+  --nv-h2-sm: 22px;
+  --nv-body-sm: 16px;
+
+  /* mobile line-height */
+  --nv-lh-tight-sm: 1.15;
+  --nv-lh-body-sm: 1.45;
+
+  /* mobile spacing (remapped so we can tighten hero) */
+  --nv-space-xxs: 8px;
+  --nv-space-xs: 12px;
+  --nv-space-sm: 16px;
+  --nv-space-md: 20px;
+}
+
+/* keep desktop/tablet as-is via min-width gates elsewhere */

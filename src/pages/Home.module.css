@@ -166,37 +166,46 @@
   text-decoration: underline;
 }
 
-/* Mobile-only polish */
-@media (max-width: 640px) {
+/* ==== Home hero layout (mobile) ==== */
+@media (max-width: 639.98px) {
+  .page.nv-container,
+  .hero {
+    align-items: center;
+    text-align: center;
+  }
+
   .hero {
     max-width: 640px;         /* prevent over-wide wraps */
     margin: 0 auto;
     padding: var(--nv-space-5) var(--nv-space-4) var(--nv-space-4);
-    text-align: center;
     gap: var(--nv-space-3);
   }
 
   .title {
-    margin: 0 0 var(--nv-space-3);
+    font-size: var(--nv-h1-sm);
+    line-height: var(--nv-lh-tight-sm);
+    margin-bottom: var(--nv-space-xs);
   }
 
   .subtitle {
-    margin: 0 auto var(--nv-space-4);
-    max-width: 36ch;          /* comfortable line length */
+    font-size: var(--nv-body-sm);
+    line-height: var(--nv-lh-body-sm);
+    max-width: 36ch;
+    margin: 0 auto var(--nv-space-sm);
   }
 
   .ctaRow {
-    display: grid;
-    grid-auto-flow: row;
-    gap: var(--nv-space-3);
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: var(--nv-space-xs);
+    width: 100%;
     margin: 0 auto var(--nv-space-4);
-    width: min(520px, 100%);
   }
 
-  .cta {
-    width: 100%;
-    padding: 14px 18px;       /* a hair tighter */
-    border-radius: var(--nv-radius-lg);
+  .ctaRow .cta {
+    flex: 1 1 44%;
+    max-width: 260px;
   }
 
   /* Play/Learn/Earn panels spacing */
