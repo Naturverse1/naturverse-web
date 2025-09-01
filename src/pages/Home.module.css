@@ -1,15 +1,15 @@
 /* Mobile-first, then enhance upward */
 
-.page {
-  /* Ensure page gets container spacing from global .nv-container */
-  width: 100%;
+/* Ensure hero & panels can’t push horizontally */
+.page, .hero, .section, .panel {
+  inline-size: 100%;
+  max-inline-size: 100%;
+  overflow-x: clip;
 }
 
 .hero {
   margin: 0 auto;
   text-align: center;
-  width: 100%;
-  max-width: 100%;
   padding: var(--space-6) 0 var(--space-5);
 }
 
@@ -30,11 +30,10 @@
 
 .ctaRow {
   display: flex;
-  flex-wrap: wrap;
+  gap: var(--space-3, 12px);
   justify-content: center;
-  gap: 12px;
-  width: 100%;
-  max-width: 100%;
+  flex-wrap: wrap;
+  inline-size: 100%;
   margin: 0 0 var(--space-5);
 }
 

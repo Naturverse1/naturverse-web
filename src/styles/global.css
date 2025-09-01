@@ -1,20 +1,43 @@
 @import './tokens.css';
 
-/* ========== Safe global reset (no scrolling locks) ========== */
+/* --- Mobile / iOS Safari hardening --- */
 html {
-  box-sizing: border-box;
-  /* keep your existing viewport meta in index.html as-is */
-  font-size: 16px;
+  /* prevent Safari’s “helpful” auto-zoom & font resizing */
   -webkit-text-size-adjust: 100%;
 }
-*, *::before, *::after { box-sizing: inherit; }
 
+html, body {
+  margin: 0;
+  padding: 0;
+  max-width: 100%;
+  overflow-x: clip; /* use clip to avoid creating a scroll bar */
+  box-sizing: border-box;
+}
+
+*, *::before, *::after {
+  box-sizing: inherit;
+}
+
+/* Any full-width wrappers should never exceed the viewport */
+.nv-container, .nv-content, main, #root {
+  inline-size: 100%;    /* logical width */
+  max-inline-size: 100%;
+}
+
+/* If any component used 100vw, make it safe on mobile */
+:where(.uses-viewport-width) {
+  inline-size: 100%; /* safer than 100vw — respects padding/borders/scrollbar */
+}
+
+/* ========== Safe global reset (no scrolling locks) ========== */
+html {
+  font-size: 16px;
+}
 @media (max-width: 480px) {
   html { font-size: 15px; }
 }
 
 body {
-  margin: 0;
   color: var(--nv-text, #1f2937);
   background: var(--page-bg, #f8fbff);
 }
@@ -33,9 +56,9 @@ main, section, header, footer {
 }
 
 /* Utility: containers never exceed viewport width */
-.nv-container, .nv-home, .nv-hero, .nv-section {
-  width: 100%;
-  max-width: 100%;
+.nv-home, .nv-hero, .nv-section {
+  inline-size: 100%;
+  max-inline-size: 100%;
 }
 
 /* Buttons/inputs don’t overflow due to long text */
