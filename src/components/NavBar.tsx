@@ -9,7 +9,7 @@ import SearchBar from './SearchBar';
 import CartButton from './CartButton';
 
 export default function NavBar() {
-  const { ready, user } = useAuth();
+  const { user } = useAuth();
   const [open, setOpen] = useState(false);
   const emoji = (user?.user_metadata?.navemoji as string) ?? '🧑';
 
@@ -38,49 +38,48 @@ export default function NavBar() {
             <span className="nv-brand text-nv-blue">The Naturverse</span>
           </a>
 
-        <nav className={`${styles.links} nv-nav__links`} aria-label="Primary">
-          <NavLink to="/worlds">Worlds</NavLink>
-          <NavLink to="/zones">Zones</NavLink>
-          <NavLink to="/marketplace">Marketplace</NavLink>
-          <NavLink to="/wishlist">Wishlist</NavLink>
-          <NavLink to="/naturversity">Naturversity</NavLink>
-          <NavLink to="/naturbank">NaturBank</NavLink>
-          <NavLink to="/navatar">Navatar</NavLink>
-          <NavLink to="/create/navatar">Create Navatar</NavLink>
-          <NavLink to="/passport">Passport</NavLink>
-          <NavLink to="/orders">Orders</NavLink>
-          <NavLink to="/turian">Turian</NavLink>
-        </nav>
+        {user && (
+          <nav className={`${styles.links} nv-desktop-nav`} aria-label="Primary">
+            <NavLink to="/worlds">Worlds</NavLink>
+            <NavLink to="/zones">Zones</NavLink>
+            <NavLink to="/marketplace">Marketplace</NavLink>
+            <NavLink to="/wishlist">Wishlist</NavLink>
+            <NavLink to="/naturversity">Naturversity</NavLink>
+            <NavLink to="/naturbank">NaturBank</NavLink>
+            <NavLink to="/navatar">Navatar</NavLink>
+            <NavLink to="/create/navatar">Create</NavLink>
+            <NavLink to="/passport">Passport</NavLink>
+            <NavLink to="/turian">Turian</NavLink>
+          </nav>
+        )}
 
         <div style={{ marginLeft: "auto", minWidth: 280 }}>
           <SearchBar />
         </div>
-        <div className={styles.right} key={user?.id ?? 'anon'}>
-          {ready && user && (
-            <>
-              <CartButton className={styles.cartBtn} />
-              <NavLink to="/profile" aria-label="Profile" className={styles.profileBtn}>
-                {emoji}
-              </NavLink>
-            </>
-          )}
+        {user && (
+          <div className={styles.right} key={user?.id ?? 'anon'}>
+            <CartButton className={styles.cartBtn} />
+            <NavLink to="/profile" aria-label="Profile" className={styles.profileBtn}>
+              {emoji}
+            </NavLink>
+          </div>
+        )}
 
-          {/* Mobile hamburger (no blue background) */}
-          <button
-            className="nv-hamburger nav-toggle"
-            aria-label="Open menu"
-            onClick={() => setOpen(true)}
-          >
-            <span className="bar" />
-            <span className="bar" />
-            <span className="bar" />
-          </button>
-        </div>
+        {/* Mobile hamburger (no blue background) */}
+        <button
+          className="nv-hamburger nav-toggle"
+          aria-label="Open menu"
+          onClick={() => setOpen(true)}
+        >
+          <span className="bar" />
+          <span className="bar" />
+          <span className="bar" />
+        </button>
       </div>
 
       <div className={`${styles.mobile} ${open ? styles.open : ''}`} onClick={() => setOpen(false)}>
         <div className={styles.sheet} onClick={(e) => e.stopPropagation()}>
-          {ready && user && (
+          {user && (
             <NavLink to="/profile" className={styles.mobileProfile}>
               <span className={styles.mobileEmoji}>{emoji}</span>
               <span>Profile</span>
@@ -93,9 +92,8 @@ export default function NavBar() {
           <NavLink to="/naturversity">Naturversity</NavLink>
           <NavLink to="/naturbank">NaturBank</NavLink>
           <NavLink to="/navatar">Navatar</NavLink>
-          <NavLink to="/create/navatar">Create Navatar</NavLink>
+          <NavLink to="/create/navatar">Create</NavLink>
           <NavLink to="/passport">Passport</NavLink>
-          <NavLink to="/orders">Orders</NavLink>
           <NavLink to="/turian">Turian</NavLink>
         </div>
       </div>
