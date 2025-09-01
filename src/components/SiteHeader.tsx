@@ -6,20 +6,25 @@ import { useAuth } from '@/lib/auth-context';
 import CartButton from './CartButton';
 import UserAvatar from './UserAvatar';
 import CartDrawer from './CartDrawer';
+import MobileNav from './MobileNav';
 
 export default function SiteHeader() {
   const { user, ready } = useAuth();
-  if (!ready || !user) return null;
-
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
-  return (
+  if (!ready) return null;
+
+  const HeaderContent = () => (
     <>
       <header className="nv-site-header" role="banner">
         <div className="nv-header-inner">
           {/* Brand */}
-          <a className="nv-brand" href="/" aria-label="The Naturverse">
+          <a
+            className="nv-brand hover:opacity-80 transition-opacity"
+            href="/"
+            aria-label="The Naturverse"
+          >
             <img className="nv-brand-icon" src="/favicon-64x64.png" alt="" />
             <span className="nv-brand-name">The Naturverse</span>
           </a>
@@ -42,13 +47,13 @@ export default function SiteHeader() {
           {/* Right side actions */}
           <div className="nv-actions">
             <CartButton
-              className="nv-icon-btn"
+              className="nv-icon-btn mobile-hidden"
               onClick={() => {
                 setCartOpen(true);
                 setMenuOpen(false);
               }}
             />
-            <UserAvatar className="nv-icon-btn" />
+            <UserAvatar className="nv-icon-btn mobile-hidden" />
             <button
               type="button"
               className="nv-icon-btn nv-hamburger lg-hidden nav-toggle"
@@ -63,41 +68,17 @@ export default function SiteHeader() {
             </button>
           </div>
         </div>
-
-        {/* Mobile overlay menu */}
-        <div
-          id="nv-mobile-menu"
-          className={`nv-mobile-menu ${menuOpen ? 'open' : ''}`}
-          role="dialog"
-          aria-modal="true"
-          onClick={() => setMenuOpen(false)}
-        >
-          <div className="sheet" onClick={(e) => e.stopPropagation()}>
-            <button
-              className="nv-icon-btn close"
-              aria-label="Close menu"
-              onClick={() => setMenuOpen(false)}
-            >
-              ×
-            </button>
-
-            <nav aria-label="Mobile">
-              <a href="/worlds">Worlds</a>
-              <a href="/zones">Zones</a>
-              <a href="/marketplace">Marketplace</a>
-              <a href="/wishlist">Wishlist</a>
-              <a href="/naturversity">Naturversity</a>
-              <a href="/naturbank">NaturBank</a>
-              <a href="/navatar">Navatar</a>
-              <a href="/passport">Passport</a>
-              <a href="/turian">Turian</a>
-            </nav>
-          </div>
-        </div>
       </header>
 
+      <MobileNav
+        open={menuOpen}
+        onClose={() => setMenuOpen(false)}
+        onCartOpen={() => setCartOpen(true)}
+      />
       <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
     </>
   );
+
+  return <>{user ? <HeaderContent /> : null}</>;
 }
 
