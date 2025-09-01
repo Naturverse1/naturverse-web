@@ -83,3 +83,19 @@
 }
 
 /* keep desktop/tablet as-is via min-width gates elsewhere */
+
+:root {
+  /* existing tokens … */
+
+  --sz-header-gap: 12px;
+  --sz-search-max: 420px;   /* desktop cap */
+  --sz-search-max-sm: 320px;/* mobile cap */
+  --ht-search: 44px;        /* search input height */
+}
+
+@media (max-width: 768px) {
+  :root {
+    --sz-header-gap: 10px;
+    --ht-search: 40px;
+  }
+}

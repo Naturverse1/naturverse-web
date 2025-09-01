@@ -904,9 +904,44 @@ main,
   }
 
   /* quest cards: nudge spacing so card shadow doesn't cause overflow */
-  .card,
+.card,
   .featureCard {
     margin-left: auto;
     margin-right: auto;
   }
+}
+
+/* Header search */
+.header-search {
+  box-sizing: border-box;
+  width: 100%;
+  max-width: var(--sz-search-max);
+  height: var(--ht-search);
+  padding-inline: 16px;
+  font-size: clamp(14px, 1.6vw, 16px);
+  border-radius: 999px;
+}
+
+/* smaller caps on narrow screens */
+@media (max-width: 768px) {
+  .header-search {
+    max-width: var(--sz-search-max-sm);
+    font-size: clamp(14px, 3.8vw, 16px);
+    height: var(--ht-search);
+  }
+}
+
+/* Keep header from stretching too tall */
+.site-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sz-header-gap);
+}
+
+/* Don’t let utility items force horizontal scroll */
+.site-header__rail {
+  display: flex;
+  align-items: center;
+  gap: var(--sz-header-gap);
+  min-width: 0;
 }
