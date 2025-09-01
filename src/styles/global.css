@@ -768,3 +768,65 @@ main,
   /* Keep page edges comfortable */
   .container { padding-left: 12px; padding-right: 12px; }
 }
+
+/* ===== Naturverse: targeted mobile sizing fixes ===== */
+
+/* Base tokens for small screens */
+@media (max-width: 430px) {
+  :root {
+    /* hero heading scale for phones */
+    --nv-hero-h1: clamp(28px, 7vw, 36px);
+    /* button text size on phones */
+    --nv-btn-font: 15px;
+    /* button padding on phones */
+    --nv-btn-pad-y: 10px;
+    --nv-btn-pad-x: 14px;
+    /* generic page horizontal padding on phones */
+    --nv-page-pad-x: 16px;
+  }
+
+  /* container padding */
+  .container {
+    padding-inline: var(--nv-page-pad-x) !important;
+  }
+
+  /* hero heading + spacing (homepage) */
+  .hero h1,
+  .page-title.h1,
+  h1.page-title {
+    font-size: var(--nv-hero-h1) !important;
+    line-height: 1.15 !important;
+    letter-spacing: -0.02em;
+    margin-top: 10px !important;
+    margin-bottom: 6px !important;
+  }
+
+  /* hero subheading text width + spacing */
+  .hero p,
+  .hero .subtitle {
+    margin-top: 6px !important;
+    margin-bottom: 10px !important;
+  }
+
+  /* button row — tighter gap so two buttons don’t look huge */
+  .hero .actions,
+  .nv-actions,
+  .button-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px !important;
+  }
+
+  /* primary/secondary buttons */
+  .btn,
+  .button,
+  button.btn,
+  a.btn {
+    font-size: var(--nv-btn-font) !important;
+    padding: var(--nv-btn-pad-y) var(--nv-btn-pad-x) !important;
+    border-radius: 12px;
+  }
+}
+
+/* Prevent horizontal wiggle on iOS if any element overflows by a pixel */
+html, body { overflow-x: hidden; }
