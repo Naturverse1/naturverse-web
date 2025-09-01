@@ -785,3 +785,19 @@ main,
   /* Keep page edges comfortable */
   .container { padding-left: 12px; padding-right: 12px; }
 }
+/* ===== Naturverse — Force hero heading center (≤430px) ===== */
+@media (max-width: 430px) {
+  /* Target any hero/welcome headline directly */
+  .hero h1,
+  .hero p,
+  .nv-hero h1,
+  .nv-hero p,
+  .welcome-section h1,
+  .welcome-section p,
+  h1.page-title,
+  .page-title + p {
+    text-align: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+}
