@@ -768,3 +768,72 @@ main,
   /* Keep page edges comfortable */
   .container { padding-left: 12px; padding-right: 12px; }
 }
+/* ===== Naturverse — Mobile polish (≤430px) ===== */
+@media (max-width: 430px) {
+  /* Center the hero/content block */
+  .hero,
+  .hero .container,
+  .hero .content,
+  .nv-hero,
+  .nv-hero .container,
+  .nv-hero .content {
+    text-align: center !important;
+    align-items: center !important;
+    justify-content: center !important;
+    margin-left: auto !important;
+    margin-right: auto !important;
+  }
+
+  /* Tame the giant H1 on phones */
+  .hero h1,
+  .nv-hero h1,
+  .page-title.h1,
+  .page-title,
+  h1.page-title {
+    font-size: clamp(1.8rem, 4.8vw, 2.25rem) !important;
+    line-height: 1.12 !important;
+    letter-spacing: -0.01em;
+    margin: 0 auto 12px auto !important;
+    max-width: 22ch; /* avoid spanning too wide */
+  }
+
+  /* Subtitle/lead paragraph under the H1 */
+  .hero p,
+  .nv-hero p,
+  .hero .subtitle,
+  .nv-hero .subtitle,
+  .lead {
+    margin-left: auto !important;
+    margin-right: auto !important;
+    max-width: 90% !important;
+  }
+
+  /* Keep the button row centered */
+  .hero .actions,
+  .nv-hero .actions,
+  .button-row,
+  .nv-actions {
+    display: flex;
+    justify-content: center !important;
+    gap: 10px;
+    flex-wrap: wrap;
+  }
+
+  /* Compact button sizing for phones */
+  .hero .actions .button,
+  .nv-actions .button,
+  .button-row .button,
+  .btn,
+  button.button,
+  a.button {
+    font-size: clamp(0.94rem, 3.6vw, 1.05rem) !important;
+    padding: 12px 16px !important;
+    border-radius: 12px !important;
+  }
+
+  /* Comfortable edge padding so layout feels balanced */
+  .container {
+    padding-left: 16px !important;
+    padding-right: 16px !important;
+  }
+}
