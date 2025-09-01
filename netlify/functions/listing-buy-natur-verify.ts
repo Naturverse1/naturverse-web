@@ -1,6 +1,15 @@
 import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
-import { ethers } from 'ethers';
+
+async function getEthersSafe() {
+  try {
+    const mod = await import('ethers');
+    return mod as any;
+  } catch (err) {
+    console.warn('[natur] ethers not available:', err);
+    return null;
+  }
+}
 
 const supa = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 const RPC = process.env.NATUR_RPC_URL!;
@@ -45,6 +54,8 @@ export const handler: Handler = async (event) => {
     const royalty = Math.round(gross * (listing.royalty_bps / 10000) * 1e6) / 1e6;
     const seller = Math.max(0, Math.round((gross - fee - royalty) * 1e6) / 1e6);
 
+    const ethers = await getEthersSafe();
+    if (!ethers) return resp(500, 'ethers not available');
     const provider = new ethers.JsonRpcProvider(RPC);
     const iface = new ethers.Interface(ERC20_ABI);
 
