@@ -1,0 +1,102 @@
+/* layout */
+.nv-site-header {
+  position: sticky;
+  top: 0;
+  z-index: 50;
+  background: #ffffff;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.nv-header-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 12px 20px;
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+
+/* brand */
+.nv-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+  text-decoration: none;
+}
+
+.nv-brand-icon {
+  width: 24px;
+  height: 24px;
+  filter: none; /* keep icon green (no tinting) */
+}
+
+.nv-brand-name {
+  font-weight: 800;
+  font-size: 20px;
+  color: #2563eb; /* current brand blue used in headings */
+}
+
+/* desktop nav */
+.nv-desktop-nav {
+  margin-left: 8px;
+  display: none; /* hidden by default; enabled at desktop */
+  gap: 22px;
+}
+
+.nv-desktop-nav a {
+  font-size: 15px;
+  font-weight: 600;
+  color: #1f2937;
+  text-decoration: none;
+}
+
+.nv-desktop-nav a:hover,
+.nv-desktop-nav a:focus-visible {
+  color: #2563eb;
+  text-decoration: underline;
+}
+
+/* mobile actions (cart/hamburger) */
+.nv-mobile-actions {
+  margin-left: auto;
+  display: flex;
+  gap: 10px;
+}
+
+/* remove blue default button styles */
+.nv-icon-btn {
+  appearance: none;
+  border: 0;
+  background: transparent;
+  padding: 6px;
+  border-radius: 8px;
+  line-height: 1;
+  font-size: 18px;
+}
+.nv-icon-btn:focus-visible {
+  outline: 2px solid #2563eb;
+  outline-offset: 2px;
+}
+
+/* responsive rules */
+@media (min-width: 1024px) {
+  .nv-desktop-nav {
+    display: inline-flex;
+  }
+  .nv-mobile-actions {
+    display: none;
+  } /* hide mobile UI on desktop */
+}
+
+/* screen-reader only utility */
+.nv-sr {
+  position: absolute !important;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
