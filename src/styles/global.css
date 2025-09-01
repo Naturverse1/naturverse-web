@@ -617,18 +617,26 @@ main,
   h1 {
     /* ~28–32px on phones, never huge */
     font-size: clamp(1.75rem, 5.2vw + 0.25rem, 2rem);
-    line-height: 1.15;
+    margin-bottom: 0.6rem; /* tighter under the big title */
+    line-height: 1.2;
     letter-spacing: 0;
   }
   h2 {
     /* ~20–24px */
     font-size: clamp(1.25rem, 3.5vw + 0.2rem, 1.5rem);
-    line-height: 1.2;
+    margin-top: 1.2rem; /* less vertical gap before */
+    margin-bottom: 0.5rem;
+    line-height: 1.25;
   }
   h3 {
     /* ~18–20px */
     font-size: clamp(1.125rem, 2.6vw + 0.2rem, 1.25rem);
-    line-height: 1.25;
+    margin-bottom: 0.4rem;
+    line-height: 1.3;
+  }
+
+  p {
+    margin-bottom: 0.8rem; /* reduce spacing under text blocks */
   }
 
   /* CTA buttons */
@@ -667,5 +675,18 @@ main,
   .container {
     padding-left: 12px;
     padding-right: 12px;
+  }
+}
+
+@media (max-width: 430px) {
+  h1 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1rem;
+    margin-top: 1rem;
+    margin-bottom: 0.4rem;
   }
 }
