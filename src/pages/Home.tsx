@@ -10,19 +10,19 @@ export default function Home() {
   const { user } = useAuth();
   const isAuthed = !!user;
 
-  return (
-    <main className={`${styles.page} nv-container`}>
-      <section className={styles.hero}>
-        <h1 className={styles.title}>Welcome to the Naturverse™</h1>
-        <p className={styles.subtitle}>
-          A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
-          kindness.
-        </p>
-        {!user && (
-          <div className={styles.ctaRow}>
-            <button
-              type="button"
-              className={styles.cta}
+    return (
+      <main className={`${styles.page} nv-content`}>
+        <section className={styles.hero}>
+          <h1 className={styles.title}>Welcome to the Naturverse™</h1>
+          <p className={styles.subtitle}>
+            A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
+            kindness.
+          </p>
+          {!user && (
+            <div className={styles.ctaRow}>
+              <button
+                type="button"
+                className={styles.cta}
               onClick={async () => {
                 const email = prompt('Enter your email to get a magic link:')?.trim();
                 if (email) {
