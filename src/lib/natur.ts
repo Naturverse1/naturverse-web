@@ -1,4 +1,5 @@
-import { Contract, parseUnits, formatUnits } from 'ethers';
+import type { Contract } from 'ethers';
+import { getEthers } from './getEthers';
 import { connectWallet } from './web3';
 
 const TOKEN = import.meta.env.VITE_NATUR_TOKEN_CONTRACT as string;
@@ -13,6 +14,7 @@ const ERC20_ABI = [
 
 export async function getNaturBalance(address: string) {
   const { provider } = await connectWallet(); // ensures chain
+  const { Contract, formatUnits } = await getEthers();
   const c = new Contract(TOKEN, ERC20_ABI, provider);
   const raw = await c.balanceOf(address);
   return { raw, formatted: formatUnits(raw, DECIMALS) };
@@ -20,6 +22,7 @@ export async function getNaturBalance(address: string) {
 
 export async function buyNavatarWithNatur(navatarId: string, amountNatur: number) {
   const { address, provider, signer } = await connectWallet();
+  const { Contract, parseUnits } = await getEthers();
   const c = new Contract(TOKEN, ERC20_ABI, signer);
   const amount = parseUnits(String(amountNatur), DECIMALS);
 
