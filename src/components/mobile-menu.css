@@ -1,0 +1,22 @@
+.overlay { position: fixed; inset: 0; z-index: var(--z-menu, 40); }
+.backdrop { position: absolute; inset: 0; background: rgba(20,22,25,.35); }
+.sheet {
+  position: absolute;
+  top: 8px; left: 8px; right: 8px;
+  background: white;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 10px 30px rgba(0,0,0,.12);
+}
+.close {
+  position: absolute; top: 10px; right: 12px;
+  background: #2563eb; color: white;
+  border: 0; border-radius: 8px; width: 32px; height: 32px;
+}
+.links {
+  display: grid; gap: 12px;
+  padding: 20px 8px 8px;
+  text-align: center;
+  font-weight: 700;
+}
+.links a { text-decoration: none; color: #1a4d9c; }
