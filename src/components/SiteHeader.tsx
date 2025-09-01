@@ -8,8 +8,9 @@ import UserAvatar from './UserAvatar';
 import CartDrawer from './CartDrawer';
 
 export default function SiteHeader() {
-  const { user } = useAuth();
-  const isAuthenticated = !!user;
+  const { user, ready } = useAuth();
+  if (!ready || !user) return null;
+
   const [menuOpen, setMenuOpen] = useState(false);
   const [cartOpen, setCartOpen] = useState(false);
 
@@ -24,7 +25,7 @@ export default function SiteHeader() {
           </a>
 
           {/* Desktop nav (auth only) */}
-          {isAuthenticated && (
+          {
             <nav className="nv-desktop-nav" aria-label="Primary">
               <a href="/worlds">Worlds</a>
               <a href="/zones">Zones</a>
@@ -36,31 +37,30 @@ export default function SiteHeader() {
               <a href="/passport">Passport</a>
               <a href="/turian">Turian</a>
             </nav>
-          )}
+          }
 
-          {/* Right side actions — auth gated */}
+          {/* Right side actions */}
           <div className="nv-actions">
-            {isAuthenticated && (
-              <>
-                <CartButton
-                  className="nv-icon-btn"
-                  onClick={() => setCartOpen(true)}
-                />
-                <UserAvatar className="nv-icon-btn" />
-                <button
-                  type="button"
-                  className="nv-icon-btn nv-hamburger lg-hidden nav-toggle"
-                  aria-label="Open menu"
-                  aria-expanded={menuOpen}
-                  aria-controls="nv-mobile-menu"
-                  onClick={() => setMenuOpen(true)}
-                >
-                  <span className="bar" />
-                  <span className="bar" />
-                  <span className="bar" />
-                </button>
-              </>
-            )}
+            <CartButton
+              className="nv-icon-btn"
+              onClick={() => {
+                setCartOpen(true);
+                setMenuOpen(false);
+              }}
+            />
+            <UserAvatar className="nv-icon-btn" />
+            <button
+              type="button"
+              className="nv-icon-btn nv-hamburger lg-hidden nav-toggle"
+              aria-label="Open menu"
+              aria-expanded={menuOpen}
+              aria-controls="nv-mobile-menu"
+              onClick={() => setMenuOpen(true)}
+            >
+              <span className="bar" />
+              <span className="bar" />
+              <span className="bar" />
+            </button>
           </div>
         </div>
 
@@ -81,24 +81,17 @@ export default function SiteHeader() {
               ×
             </button>
 
-            {isAuthenticated ? (
-              <nav aria-label="Mobile">
-                <a href="/worlds">Worlds</a>
-                <a href="/zones">Zones</a>
-                <a href="/marketplace">Marketplace</a>
-                <a href="/wishlist">Wishlist</a>
-                <a href="/naturversity">Naturversity</a>
-                <a href="/naturbank">NaturBank</a>
-                <a href="/navatar">Navatar</a>
-                <a href="/passport">Passport</a>
-                <a href="/turian">Turian</a>
-              </nav>
-            ) : (
-              <div className="nv-mobile-loggedout">
-                <a className="cta" href="/login">Sign in</a>
-                <a className="cta secondary" href="/signup">Create account</a>
-              </div>
-            )}
+            <nav aria-label="Mobile">
+              <a href="/worlds">Worlds</a>
+              <a href="/zones">Zones</a>
+              <a href="/marketplace">Marketplace</a>
+              <a href="/wishlist">Wishlist</a>
+              <a href="/naturversity">Naturversity</a>
+              <a href="/naturbank">NaturBank</a>
+              <a href="/navatar">Navatar</a>
+              <a href="/passport">Passport</a>
+              <a href="/turian">Turian</a>
+            </nav>
           </div>
         </div>
       </header>
