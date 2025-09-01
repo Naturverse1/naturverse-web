@@ -673,10 +673,24 @@ main,
 /* ===== Mobile tightening (phones & small tablets) ===== */
 @media (max-width: 768px) {
   /* Headings & text spacing */
-  h1 { font-size: 1.25rem; line-height: 1.2; margin: 0 0 0.55rem; }
-  h2 { font-size: 1.05rem; line-height: 1.25; margin: 0.9rem 0 0.45rem; }
-  h3 { font-size: 0.95rem; line-height: 1.3;  margin: 0.75rem 0 0.4rem; }
-  p  { margin: 0 0 0.8rem; }
+  h1 {
+    font-size: 1.25rem;
+    line-height: 1.2;
+    margin: 0 0 0.55rem;
+  }
+  h2 {
+    font-size: 1.05rem;
+    line-height: 1.25;
+    margin: 0.9rem 0 0.45rem;
+  }
+  h3 {
+    font-size: 0.95rem;
+    line-height: 1.3;
+    margin: 0.75rem 0 0.4rem;
+  }
+  p {
+    margin: 0 0 0.8rem;
+  }
 
   /* Buttons: scale down a touch */
   .btn {
@@ -702,69 +716,161 @@ main,
   }
 
   /* Keep container edges tidy but not cramped */
-  .container { padding: 0 12px; }
+  .container {
+    padding: 0 12px;
+  }
 }
 
 /* Ultra-small phones (iPhone SE/mini) */
 @media (max-width: 430px) {
-  h1 { font-size: 1.15rem; margin-bottom: 0.5rem; }
-  h2 { font-size: 1rem;   margin: 0.85rem 0 0.4rem; }
-  .btn { padding: 9px 12px; font-size: 0.9rem; }
-  .panel, .card, .nv-card, .tile { padding: 14px; }
+  h1 {
+    font-size: 1.15rem;
+    margin-bottom: 0.5rem;
+  }
+  h2 {
+    font-size: 1rem;
+    margin: 0.85rem 0 0.4rem;
+  }
+  .btn {
+    padding: 9px 12px;
+    font-size: 0.9rem;
+  }
+  .panel,
+  .card,
+  .nv-card,
+  .tile {
+    padding: 14px;
+  }
 }
 /* ---- Hard-stop mobile sizing & spacing (iPhone widths) ---- */
 @media (max-width: 420px) {
-
   /* Headings */
-  h1, .section-title, .page-title {
+  h1,
+  .section-title,
+  .page-title {
     font-size: clamp(1.6rem, 6vw, 1.9rem);
     line-height: 1.15;
     letter-spacing: -0.01em;
     margin-top: 0.75rem;
     margin-bottom: 0.5rem;
   }
-  h2 { font-size: clamp(1.25rem, 4.8vw, 1.45rem); line-height: 1.2; }
-  h3 { font-size: clamp(1.1rem, 4.2vw, 1.25rem); line-height: 1.25; }
+  h2 {
+    font-size: clamp(1.25rem, 4.8vw, 1.45rem);
+    line-height: 1.2;
+  }
+  h3 {
+    font-size: clamp(1.1rem, 4.2vw, 1.25rem);
+    line-height: 1.25;
+  }
 
   /* Body text inside cards/panels */
-  .card, .panel, .tile, .zone-card, .market-card, .nv-card {
+  .card,
+  .panel,
+  .tile,
+  .zone-card,
+  .market-card,
+  .nv-card {
     padding: 12px 14px;
   }
-  .panel p, .card p { font-size: 1rem; line-height: 1.4; }
+  .panel p,
+  .card p {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
 
   /* Hero area */
-  .hero, .language-hero, .welcome-hero {
+  .hero,
+  .language-hero,
+  .welcome-hero {
     padding: 14px 14px 18px;
   }
-  .hero .lead, .language-hero .lead {
+  .hero .lead,
+  .language-hero .lead {
     font-size: clamp(1rem, 3.9vw, 1.1rem);
     line-height: 1.35;
     margin-top: 6px;
   }
 
   /* Hero CTA buttons */
-  .hero .actions, .welcome-hero .actions {
+  .hero .actions,
+  .welcome-hero .actions {
     display: flex;
     gap: 10px;
-    flex-wrap: wrap;              /* allows two rows on small screens */
+    flex-wrap: wrap; /* allows two rows on small screens */
     justify-content: center;
   }
-  .hero .actions .btn, .welcome-hero .actions .btn {
+  .hero .actions .btn,
+  .welcome-hero .actions .btn {
     padding: 10px 14px;
     font-size: 1rem;
     min-width: 44%;
   }
 
   /* Search bars */
-  .search, .search input, .search .input {
+  .search,
+  .search input,
+  .search .input {
     height: 44px;
     font-size: 1rem;
   }
 
   /* Section blocks like Play/Learn/Earn */
-  .section { padding: 12px 14px; }
-  .section p { font-size: 1rem; line-height: 1.4; }
+  .section {
+    padding: 12px 14px;
+  }
+  .section p {
+    font-size: 1rem;
+    line-height: 1.4;
+  }
 
   /* Keep page edges comfortable */
-  .container { padding-left: 12px; padding-right: 12px; }
+  .container {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
+}
+
+/* ===== Naturverse: small iPhone tune-up (≤390px) ===== */
+@media (max-width: 390px) {
+  /* Headings */
+  h1,
+  .page-title,
+  .headline {
+    font-size: 1.55rem; /* ~24–25px */
+    line-height: 1.2;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h2 {
+    font-size: 1.25rem; /* ~20px */
+    line-height: 1.3;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  h3 {
+    font-size: 1.1rem; /* ~18px */
+    line-height: 1.35;
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  /* Primary buttons */
+  .btn,
+  .button,
+  button,
+  .cta,
+  .cta button {
+    font-size: 0.95rem; /* ~15px */
+    padding: 8px 12px;
+  }
+
+  /* Keep content safely inside the screen */
+  .container,
+  .page-wrapper,
+  main {
+    padding-left: 12px;
+    padding-right: 12px;
+  }
 }
