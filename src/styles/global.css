@@ -1,5 +1,13 @@
 @import './tokens.css';
 
+html, body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden; /* Prevent horizontal scroll */
+}
+
 html {
   font-size: 16px;
   -webkit-text-size-adjust: 100%;
@@ -9,10 +17,13 @@ html {
 }
 
 body {
-  margin: 0;
   color: var(--nv-text, #1f2937);
   background: var(--page-bg, #f8fbff);
-  overflow-x: hidden;
+}
+
+main, section, header, footer, div {
+  max-width: 100%;
+  box-sizing: border-box;
 }
 
 h1, h2, h3 {
