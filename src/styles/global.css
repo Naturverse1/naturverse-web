@@ -29,6 +29,9 @@ html, body, #root {
   max-inline-size: 100%;
 }
 
+/* guard against accidental horizontal overflow from header controls */
+.nv-container, .nv-header-row { overflow-x: hidden; }
+
 /* If any component used 100vw, make it safe on mobile */
 :where(.uses-viewport-width) {
   inline-size: 100%; /* safer than 100vw — respects padding/borders/scrollbar */
@@ -551,6 +554,8 @@ main,
   text-align: center;
   margin: 0 auto;
   max-width: 64rem;
+  position: relative;
+  z-index: 1;
 }
 .nv-hero h1 {
   color: var(--nv-blue-700);

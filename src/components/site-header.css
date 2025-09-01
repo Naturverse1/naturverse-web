@@ -64,7 +64,7 @@
   order: 2;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 1023px) {
   .nav-links {
     position: fixed;
     inset: 64px 12px auto 12px;
