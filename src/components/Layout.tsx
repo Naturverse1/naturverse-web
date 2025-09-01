@@ -1,12 +1,12 @@
 import { ReactNode } from 'react';
-import NavBar from './NavBar';
+import SiteHeader from './SiteHeader';
 
-type Props = { children: ReactNode; title?: ReactNode; breadcrumbs?: ReactNode };
+type Props = { children: ReactNode; title?: string; breadcrumbs?: ReactNode };
 
 export default function Layout({ title, breadcrumbs, children }: Props) {
   return (
     <>
-      <NavBar />
+      <SiteHeader />
       <main id="main" className="nv-page">
         <div className="nv-container">
           {title ? <h1 className="nv-title">{title}</h1> : null}
