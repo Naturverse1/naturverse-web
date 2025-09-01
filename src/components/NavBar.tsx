@@ -7,10 +7,12 @@ import './NavBar.css';
 import { useAuth } from '@/lib/auth-context';
 import SearchBar from './SearchBar';
 import CartButton from './CartButton';
+import CartDrawer from './CartDrawer';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
   const [open, setOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const emoji = (user?.user_metadata?.navemoji as string) ?? '🧑';
 
   return (
@@ -58,7 +60,7 @@ export default function NavBar() {
         <div className={styles.right} key={user?.id ?? 'anon'}>
           {ready && user && (
             <>
-              <CartButton className={styles.cartBtn} />
+              <CartButton onClick={() => setCartOpen(true)} />
               <NavLink to="/profile" aria-label="Profile" className={styles.profileBtn}>
                 {emoji}
               </NavLink>
@@ -100,5 +102,6 @@ export default function NavBar() {
         </div>
       </div>
     </header>
+    <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
   );
 }
