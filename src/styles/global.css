@@ -1,21 +1,44 @@
 @import './tokens.css';
 
-/* ---------------------------
-   Global layout container
-   Keeps content centered with safe side padding
---------------------------- */
-.nv-container {
-  max-width: 1200px;
-  margin-inline: auto;
-  padding-inline: 16px;
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: 100%;
+}
+@media (max-width: 480px) {
+  html { font-size: 15px; }
 }
 
-@media (min-width: 640px) {
-  .nv-container { padding-inline: 20px; }
+body {
+  margin: 0;
+  color: var(--nv-text, #1f2937);
+  background: var(--page-bg, #f8fbff);
+  overflow-x: hidden;
 }
-@media (min-width: 1024px) {
-  .nv-container { padding-inline: 24px; }
+
+h1, h2, h3 {
+  letter-spacing: -0.01em;
+  color: var(--nv-blue-700);
 }
+h1 { font-size: var(--nv-h1); line-height: 1.15; }
+h2 { font-size: var(--nv-h2); line-height: 1.2; }
+p  { line-height: 1.6; }
+
+/* A light, consistent page container used by Home.tsx via `nv-container` */
+.nv-container {
+  max-width: 1120px;
+  margin-inline: auto;
+  padding: var(--space-6) var(--space-5);
+}
+@media (max-width: 768px) {
+  .nv-container { padding: var(--space-5) var(--space-4); }
+}
+@media (max-width: 480px) {
+  .nv-container { padding: var(--space-5) var(--space-4); }
+}
+
+/* Home helpers already present in your markup */
+.nv-home-tools { margin-top: var(--space-5); }
+.nv-what       { margin: var(--space-5) 0 var(--space-3); }
 
 /* Visually hide skip link, show on keyboard focus (a11y) */
 .skip-link {
@@ -182,13 +205,7 @@ a {
   }
 }
 
-/* Base */
-html,
-body {
-  background: var(--nv-bg);
-  color: var(--nv-text);
-  overflow-x: hidden;
-}
+/* Base links */
 a {
   color: var(--nv-blue-600);
 }
@@ -200,11 +217,6 @@ hr {
 }
 
 /* Headings (no layout change) */
-h1,
-h2,
-h3 {
-  color: var(--nv-blue-700);
-}
 .section-title,
 .page-title {
   color: var(--nv-blue-700);
@@ -616,13 +628,6 @@ main,
   header .nav .links {
     flex: 1 1 100%;
   }
-  /* Prevent giant headings from forcing horizontal zoom */
-  h1 {
-    font-size: clamp(1.5rem, 6vw, 2.25rem);
-  }
-  h2 {
-    font-size: clamp(1.25rem, 4.5vw, 1.75rem);
-  }
   .card-grid {
     grid-template-columns: 1fr !important;
   }
@@ -630,24 +635,6 @@ main,
 
 /* ===== Naturverse: mobile scale + spacing (<=768px) ===== */
 @media (max-width: 768px) {
-  /* Type scale */
-  h1 {
-    /* ~28–32px on phones, never huge */
-    font-size: clamp(1.75rem, 5.2vw + 0.25rem, 2rem);
-    line-height: 1.15;
-    letter-spacing: 0;
-  }
-  h2 {
-    /* ~20–24px */
-    font-size: clamp(1.25rem, 3.5vw + 0.2rem, 1.5rem);
-    line-height: 1.2;
-  }
-  h3 {
-    /* ~18–20px */
-    font-size: clamp(1.125rem, 2.6vw + 0.2rem, 1.25rem);
-    line-height: 1.25;
-  }
-
   /* CTA buttons */
   .btn,
   button,
@@ -689,12 +676,6 @@ main,
 
 /* ===== Mobile tightening (phones & small tablets) ===== */
 @media (max-width: 768px) {
-  /* Headings & text spacing */
-  h1 { font-size: 1.25rem; line-height: 1.2; margin: 0 0 0.55rem; }
-  h2 { font-size: 1.05rem; line-height: 1.25; margin: 0.9rem 0 0.45rem; }
-  h3 { font-size: 0.95rem; line-height: 1.3;  margin: 0.75rem 0 0.4rem; }
-  p  { margin: 0 0 0.8rem; }
-
   /* Buttons: scale down a touch */
   .btn {
     padding: 10px 14px;
@@ -724,25 +705,11 @@ main,
 
 /* Ultra-small phones (iPhone SE/mini) */
 @media (max-width: 430px) {
-  h1 { font-size: 1.15rem; margin-bottom: 0.5rem; }
-  h2 { font-size: 1rem;   margin: 0.85rem 0 0.4rem; }
   .btn { padding: 9px 12px; font-size: 0.9rem; }
   .panel, .card, .nv-card, .tile { padding: 14px; }
 }
 /* ---- Hard-stop mobile sizing & spacing (iPhone widths) ---- */
 @media (max-width: 420px) {
-
-  /* Headings */
-  h1, .section-title, .page-title {
-    font-size: clamp(1.6rem, 6vw, 1.9rem);
-    line-height: 1.15;
-    letter-spacing: -0.01em;
-    margin-top: 0.75rem;
-    margin-bottom: 0.5rem;
-  }
-  h2 { font-size: clamp(1.25rem, 4.8vw, 1.45rem); line-height: 1.2; }
-  h3 { font-size: clamp(1.1rem, 4.2vw, 1.25rem); line-height: 1.25; }
-
   /* Body text inside cards/panels */
   .card, .panel, .tile, .zone-card, .market-card, .nv-card {
     padding: 12px 14px;
