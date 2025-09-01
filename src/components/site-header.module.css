@@ -1,0 +1,55 @@
+.header { position: relative; }
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding: var(--space-3) var(--space-4);
+}
+.brand {
+  display: flex;
+  align-items: center;
+  gap: var(--space-2);
+  text-decoration: none;
+}
+.brandMark { width: 28px; height: 28px; }
+.brandText { font-weight: 700; }
+
+.nav {
+  display: none;
+  gap: var(--space-4);
+  margin-left: auto;
+}
+.nav a {
+  text-decoration: none;
+  font-weight: 600;
+}
+
+@media (min-width: 960px) {
+  .nav { display: flex; }
+}
+
+.right {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.burger {
+  margin-left: auto;
+  border: 0;
+  background: none;
+  padding: 6px;
+  display: inline-flex;
+  flex-direction: column;
+  gap: 4px;
+  cursor: pointer;
+}
+.burger span {
+  width: 22px;
+  height: 2px;
+  background: var(--blue-600);
+  border-radius: 2px;
+}
+@media (min-width: 960px) {
+  .burger { display: none; }
+}
