@@ -1,6 +1,0 @@
-.container { max-width:1080px; margin:0 auto; padding:20px 16px 40px; }
-.home-hero { position:relative; padding-right:84px; }
-.hero-owl { position:absolute; right:0; top:-6px; width:56px; height:56px; }
-.hub-grid { margin-top:14px; display:grid; gap:14px; grid-template-columns: repeat(3, minmax(0, 1fr)); }
-@media (max-width: 900px){ .hub-grid{ grid-template-columns: repeat(2,1fr); } }
-@media (max-width: 560px){ .hub-grid{ grid-template-columns: 1fr; } }
