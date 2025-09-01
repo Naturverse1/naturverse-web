@@ -1,82 +1,93 @@
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import SearchBar from './SearchBar';
 import './site-header.css';
 
 export default function SiteHeader() {
-  const [open, setOpen] = useState(false);
-  const sheetRef = useRef<HTMLDivElement>(null);
+  const [menuOpen, setMenuOpen] = useState(false);
 
-  // lock body scroll when sheet is open
+  // lock body scroll when open
   useEffect(() => {
-    const { body } = document;
-    const prev = body.style.overflow;
-    if (open) body.style.overflow = 'hidden';
-    else body.style.overflow = prev || '';
-    return () => (body.style.overflow = prev || '');
-  }, [open]);
+    if (!menuOpen) return;
+    const original = document.body.style.overflow;
+    document.body.style.overflow = 'hidden';
+    return () => { document.body.style.overflow = original; };
+  }, [menuOpen]);
 
   // close on Escape
   useEffect(() => {
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
+      if (e.key === 'Escape') setMenuOpen(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
 
-  // close when clicking outside the sheet
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (!open) return;
-      if (sheetRef.current && !sheetRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, [open]);
-
   return (
-    <header className="nv-header">
-      <div className="nv-header__row">
+    <>
+      <header className="siteHeader">
         <Link to="/" className="nv-brand">
           <img className="nv-logo" src="/logo.svg" alt="" aria-hidden="true" />
           <span className="nv-brand__text">The Naturverse</span>
         </Link>
-
+        <div className="search">
+          <SearchBar />
+        </div>
         <button
-          className={`nv-burger ${open ? 'nv-burger--open' : ''}`}
+          className={`hamburger ${menuOpen ? 'hamburger--open' : ''}`}
           aria-label="Open menu"
           aria-controls="mobile-menu"
-          aria-expanded={open}
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpen((v) => !v);
-          }}
+          aria-expanded={menuOpen}
+          onClick={() => setMenuOpen((v) => !v)}
         >
           <span aria-hidden="true" />
         </button>
-      </div>
+      </header>
 
-      {/* slide-down sheet */}
-      <div
-        id="mobile-menu"
-        ref={sheetRef}
-        className={`nv-sheet ${open ? 'is-open' : ''}`}
-        role="menu"
-      >
-        <nav className="nv-sheet__nav">
-          <Link to="/worlds" role="menuitem" onClick={() => setOpen(false)}>Worlds</Link>
-          <Link to="/zones" role="menuitem" onClick={() => setOpen(false)}>Zones</Link>
-          <Link to="/marketplace" role="menuitem" onClick={() => setOpen(false)}>Marketplace</Link>
-          <Link to="/wishlist" role="menuitem" onClick={() => setOpen(false)}>Wishlist</Link>
-          <Link to="/naturversity" role="menuitem" onClick={() => setOpen(false)}>Naturversity</Link>
-          <Link to="/naturbank" role="menuitem" onClick={() => setOpen(false)}>NaturBank</Link>
-          <Link to="/navatar" role="menuitem" onClick={() => setOpen(false)}>Navatar</Link>
-          <Link to="/passport" role="menuitem" onClick={() => setOpen(false)}>Passport</Link>
-          <Link to="/turian" role="menuitem" onClick={() => setOpen(false)}>Turian</Link>
-        </nav>
-      </div>
-    </header>
+      {menuOpen && (
+        <>
+          <div className="mmenuBackdrop" onClick={() => setMenuOpen(false)} />
+          <div className="mmenuPanel" id="mobile-menu" role="menu">
+            <button
+              className="mmenuClose"
+              onClick={() => setMenuOpen(false)}
+              aria-label="Close menu"
+            >
+              ✕
+            </button>
+            <nav>
+              <Link to="/worlds" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Worlds
+              </Link>
+              <Link to="/zones" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Zones
+              </Link>
+              <Link to="/marketplace" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Marketplace
+              </Link>
+              <Link to="/wishlist" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Wishlist
+              </Link>
+              <Link to="/naturversity" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Naturversity
+              </Link>
+              <Link to="/naturbank" role="menuitem" onClick={() => setMenuOpen(false)}>
+                NaturBank
+              </Link>
+              <Link to="/navatar" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Navatar
+              </Link>
+              <Link to="/passport" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Passport
+              </Link>
+              <Link to="/turian" role="menuitem" onClick={() => setMenuOpen(false)}>
+                Turian
+              </Link>
+            </nav>
+          </div>
+        </>
+      )}
+    </>
   );
 }
+

@@ -84,11 +84,8 @@
 }
 
 @media (max-width: 640px) {
-  .ctaRow > * {
-    flex: 1 1 160px;
-    min-width: 140px;
-    max-width: 100%;
-  }
+  .ctaRow { gap: 10px; flex-wrap: wrap; }
+  .ctaRow .cta { width: 100%; max-width: 420px; }
 }
 
 .featureGrid {
