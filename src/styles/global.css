@@ -29,6 +29,9 @@
 /* Page background */
 :root {
   --page-bg: #f8fbff; /* light blue background */
+  --nv-container-max: 1120px;     /* desktop */
+  --nv-gutter-sm: 16px;           /* mobile side padding */
+  --nv-gutter-md: 24px;           /* tablets */
 }
 
 /* ---- Naturverse Navbar Brand ---- */
@@ -122,18 +125,23 @@ a {
   min-height: 100vh;
 }
 
-/* ====== Responsive container & grid reset (like 642) ====== */
-.container {
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 16px;
+.page-wrapper,
+.container,
+.container-narrow {
+  max-width: var(--nv-container-max);
+  margin-inline: auto;
+  padding-inline: var(--nv-gutter-sm);
+}
+
+@media (min-width: 768px) {
+  .page-wrapper,
+  .container,
+  .container-narrow {
+    padding-inline: var(--nv-gutter-md);
+  }
 }
 
 @media (max-width: 768px) {
-  .container {
-    padding: 0 12px;
-  }
-
   /* any generic grids/cards collapse to single column */
   .grid,
   .cards,
@@ -162,6 +170,106 @@ a {
 
   .site-footer nav li::marker {
     content: '';
+  }
+}
+
+/* Typography sizing with clamp() so mobile isn’t huge */
+h1,
+.title-xl {
+  font-size: clamp(1.75rem, 4.5vw + 0.25rem, 3rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+}
+
+h2,
+.title-lg {
+  font-size: clamp(1.25rem, 2.6vw + 0.25rem, 2rem);
+  line-height: 1.2;
+}
+
+.lead {
+  font-size: clamp(1rem, 1.2vw + 0.75rem, 1.25rem);
+  line-height: 1.5;
+}
+
+/* Hero section spacing */
+.hero,
+.home-hero {
+  padding-block: clamp(16px, 4vw, 40px);
+}
+
+.hero .actions,
+.cta-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+}
+
+@media (max-width: 390px) {
+  .hero .actions,
+  .cta-row {
+    grid-template-columns: 1fr; /* stack buttons on very small phones */
+  }
+}
+
+/* Cards & panels */
+.card,
+.panel,
+.tile {
+  padding: clamp(12px, 2.2vw, 20px);
+  border-radius: 14px;
+}
+
+.card + .card {
+  margin-top: 12px;
+}
+
+/* Mini-quests grid (1-col on mobile, 2-col on small tablets) */
+.mini-quests,
+.grid-quests,
+.mq-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 12px;
+}
+@media (min-width: 600px) {
+  .mini-quests,
+  .grid-quests,
+  .mq-grid {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+@media (min-width: 1024px) {
+  .mini-quests,
+  .grid-quests,
+  .mq-grid {
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
+
+/* “1) Create / 2) Pick / 3) Play” steps box spacing */
+.steps-box {
+  padding: clamp(12px, 2vw, 18px);
+}
+.steps-box .step {
+  margin-block: 10px;
+}
+
+/* Search bars and inputs – prevent full-width overflow on mobile */
+.search-bar,
+.input-lg {
+  height: 44px;
+  font-size: 16px; /* avoids iOS zoom */
+}
+
+/* Keep footer exactly as on main; just ensure mobile gutters */
+.site-footer {
+  padding-block: 20px;
+  padding-inline: var(--nv-gutter-sm);
+}
+@media (min-width: 768px) {
+  .site-footer {
+    padding-inline: var(--nv-gutter-md);
   }
 }
 
