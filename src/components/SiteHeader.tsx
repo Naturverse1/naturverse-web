@@ -1,143 +1,81 @@
-import { Link, NavLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { useEffect, useRef, useState } from 'react';
+import { Link } from 'react-router-dom';
 import './site-header.css';
-import Img from './Img';
-import AuthButton from './AuthButton';
-import CartButton from './CartButton';
-import SearchBar from './SearchBar';
-import { useSupabase } from '@/lib/useSupabase';
-import WalletConnect from './WalletConnect';
-import ProfileMini from './ProfileMini';
 
 export default function SiteHeader() {
-  const supabase = useSupabase();
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const sheetRef = useRef<HTMLDivElement>(null);
 
+  // lock body scroll when sheet is open
   useEffect(() => {
-    let mounted = true;
-    if (!supabase) return;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setUser(data.session?.user ?? null);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
+    const { body } = document;
+    const prev = body.style.overflow;
+    if (open) body.style.overflow = 'hidden';
+    else body.style.overflow = prev || '';
+    return () => (body.style.overflow = prev || '');
+  }, [open]);
+
+  // close on Escape
+  useEffect(() => {
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setOpen(false);
     };
-  }, [supabase]);
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  // close when clicking outside the sheet
+  useEffect(() => {
+    const onClick = (e: MouseEvent) => {
+      if (!open) return;
+      if (sheetRef.current && !sheetRef.current.contains(e.target as Node)) {
+        setOpen(false);
+      }
+    };
+    document.addEventListener('click', onClick);
+    return () => document.removeEventListener('click', onClick);
+  }, [open]);
 
   return (
-    <header className={`site-header ${open ? 'open' : ''}`}>
-      <div className="container">
-        <div className="nav-left">
-            <Link to="/" className="brand" onClick={() => setOpen(false)}>
-              <Img src="/favicon-32x32.png" width="28" height="28" alt="" />
-              <span>The Naturverse</span>
-            </Link>
-          <nav className="nav nav-links">
-            <NavLink
-              to="/worlds"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Worlds
-            </NavLink>
-            <NavLink
-              to="/zones"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Zones
-            </NavLink>
-              <NavLink
-                to="/quests"
-                className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-                onClick={() => setOpen(false)}
-              >
-                Quests
-              </NavLink>
-            <NavLink
-              to="/marketplace"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Marketplace
-            </NavLink>
-            <NavLink
-              to="/wishlist"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Wishlist
-            </NavLink>
-            <NavLink
-              to="/naturversity"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Naturversity
-            </NavLink>
-            <NavLink
-              to="/naturbank"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              NaturBank
-            </NavLink>
-            {/* Navatar is always enabled */}
-            <NavLink
-              to="/navatar"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Navatar
-            </NavLink>
-            <NavLink
-              to="/create/navatar"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Create Navatar
-            </NavLink>
-            <NavLink
-              to="/passport"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Passport
-            </NavLink>
-            <NavLink
-              to="/turian"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Turian
-            </NavLink>
-          </nav>
-        </div>
-        <div className="nav-right">
-          <div style={{ minWidth: 280 }}>
-            <SearchBar />
-          </div>
-          <AuthButton />
-          <ProfileMini />
-          <WalletConnect />
-          <CartButton />
-          <button
-            className={`nv-menu-btn${open ? ' is-open' : ''}`}
-            aria-label="Open menu"
-            onClick={() => setOpen((v) => !v)}
-          >
-            <span></span>
-            <span></span>
-            <span></span>
-          </button>
-        </div>
+    <header className="nv-header">
+      <div className="nv-header__row">
+        <Link to="/" className="nv-brand">
+          <img className="nv-logo" src="/logo.svg" alt="" aria-hidden="true" />
+          <span className="nv-brand__text">The Naturverse</span>
+        </Link>
+
+        <button
+          className={`nv-burger ${open ? 'nv-burger--open' : ''}`}
+          aria-label="Open menu"
+          aria-controls="mobile-menu"
+          aria-expanded={open}
+          onClick={(e) => {
+            e.stopPropagation();
+            setOpen((v) => !v);
+          }}
+        >
+          <span aria-hidden="true" />
+        </button>
+      </div>
+
+      {/* slide-down sheet */}
+      <div
+        id="mobile-menu"
+        ref={sheetRef}
+        className={`nv-sheet ${open ? 'is-open' : ''}`}
+        role="menu"
+      >
+        <nav className="nv-sheet__nav">
+          <Link to="/worlds" role="menuitem" onClick={() => setOpen(false)}>Worlds</Link>
+          <Link to="/zones" role="menuitem" onClick={() => setOpen(false)}>Zones</Link>
+          <Link to="/marketplace" role="menuitem" onClick={() => setOpen(false)}>Marketplace</Link>
+          <Link to="/wishlist" role="menuitem" onClick={() => setOpen(false)}>Wishlist</Link>
+          <Link to="/naturversity" role="menuitem" onClick={() => setOpen(false)}>Naturversity</Link>
+          <Link to="/naturbank" role="menuitem" onClick={() => setOpen(false)}>NaturBank</Link>
+          <Link to="/navatar" role="menuitem" onClick={() => setOpen(false)}>Navatar</Link>
+          <Link to="/passport" role="menuitem" onClick={() => setOpen(false)}>Passport</Link>
+          <Link to="/turian" role="menuitem" onClick={() => setOpen(false)}>Turian</Link>
+        </nav>
       </div>
     </header>
   );

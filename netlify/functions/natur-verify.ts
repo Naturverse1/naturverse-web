@@ -1,6 +1,15 @@
 import { Handler } from '@netlify/functions';
 import { createClient } from '@supabase/supabase-js';
-import { ethers } from 'ethers';
+
+async function getEthersSafe() {
+  try {
+    const mod = await import('ethers');
+    return mod as any;
+  } catch (err) {
+    console.warn('[natur] ethers not available:', err);
+    return null;
+  }
+}
 
 const supa = createClient(process.env.SUPABASE_URL!, process.env.SUPABASE_SERVICE_ROLE_KEY!);
 const RPC = process.env.NATUR_RPC_URL!;
@@ -17,6 +26,8 @@ export const handler: Handler = async (event) => {
     const { txHash, navatar_id, amount_natur } = JSON.parse(event.body || '{}');
     if (!txHash || !navatar_id) return resp(400, { error: 'Missing txHash/navatar_id' });
 
+    const ethers = await getEthersSafe();
+    if (!ethers) return resp(500, { error: 'ethers not available' });
     const provider = new ethers.JsonRpcProvider(RPC);
     const receipt = await provider.getTransactionReceipt(txHash);
     if (!receipt || receipt.status !== 1) return resp(400, { error: 'Transaction not confirmed' });

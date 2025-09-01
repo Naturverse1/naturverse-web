@@ -1,4 +1,16 @@
-import { Contract, parseUnits, formatUnits } from 'ethers';
+export async function getEthersSafe() {
+  try {
+    const modName = 'ethers';
+    const mod = await import(/* @vite-ignore */ modName);
+    // ethers v6 default export is undefined; grab namespace
+    const ethersNS: any = mod;
+    return ethersNS;
+  } catch (err) {
+    console.warn('[natur] ethers not available:', err);
+    return null;
+  }
+}
+
 import { connectWallet } from './web3';
 
 const TOKEN = import.meta.env.VITE_NATUR_TOKEN_CONTRACT as string;
@@ -12,16 +24,20 @@ const ERC20_ABI = [
 ];
 
 export async function getNaturBalance(address: string) {
+  const ethers = await getEthersSafe();
+  if (!ethers) throw new Error('ethers not available');
   const { provider } = await connectWallet(); // ensures chain
-  const c = new Contract(TOKEN, ERC20_ABI, provider);
+  const c = new ethers.Contract(TOKEN, ERC20_ABI, provider);
   const raw = await c.balanceOf(address);
-  return { raw, formatted: formatUnits(raw, DECIMALS) };
+  return { raw, formatted: ethers.formatUnits(raw, DECIMALS) };
 }
 
 export async function buyNavatarWithNatur(navatarId: string, amountNatur: number) {
+  const ethers = await getEthersSafe();
+  if (!ethers) throw new Error('ethers not available');
   const { address, provider, signer } = await connectWallet();
-  const c = new Contract(TOKEN, ERC20_ABI, signer);
-  const amount = parseUnits(String(amountNatur), DECIMALS);
+  const c = new ethers.Contract(TOKEN, ERC20_ABI, signer);
+  const amount = ethers.parseUnits(String(amountNatur), DECIMALS);
 
   // balance check (basic UX)
   const balRaw = await c.balanceOf(address);

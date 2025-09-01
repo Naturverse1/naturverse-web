@@ -1,4 +1,5 @@
-import { BrowserProvider, Eip1193Provider, JsonRpcSigner } from 'ethers';
+import type { BrowserProvider, Eip1193Provider, JsonRpcSigner } from 'ethers';
+import { getEthersSafe } from './natur';
 
 const CHAIN_ID = Number(import.meta.env.VITE_NATUR_CHAIN_ID || '80002');
 const CHAIN_HEX = '0x' + CHAIN_ID.toString(16);
@@ -14,7 +15,9 @@ export async function getInjected(): Promise<Eip1193Provider | null> {
 export async function connectWallet(): Promise<{ address: string; provider: BrowserProvider; signer: JsonRpcSigner }> {
   const injected = await getInjected();
   if (!injected) throw new Error('No wallet found. Please install MetaMask.');
-  const provider = new BrowserProvider(injected);
+  const ethers = await getEthersSafe();
+  if (!ethers) throw new Error('ethers not available');
+  const provider = new ethers.BrowserProvider(injected);
   const accounts = await injected.request({ method: 'eth_requestAccounts' });
   const address = accounts[0];
   const signer = await provider.getSigner();
