@@ -768,3 +768,42 @@ main,
   /* Keep page edges comfortable */
   .container { padding-left: 12px; padding-right: 12px; }
 }
+
+/* ===== Naturverse: small-phone tuning (<=390px) ===== */
+@media (max-width: 390px) {
+  /* container gutters */
+  .container { padding: 0 12px; }
+
+  /* scale the big hero heading and other Hs */
+  h1, .page-title, .section-title, .headline {
+    /* ~26–30px instead of 34–36px on small phones */
+    font-size: clamp(1.45rem, 4.8vw + 0.35rem, 1.9rem);
+    line-height: 1.15;
+    letter-spacing: -0.01em;
+    margin-top: 0.5rem;
+    margin-bottom: 0.75rem;
+  }
+  h2 { font-size: clamp(1.15rem, 3.8vw + 0.2rem, 1.35rem); line-height: 1.2; }
+  h3 { font-size: clamp(1.05rem, 3.2vw + 0.15rem, 1.2rem); line-height: 1.25; }
+
+  /* hero buttons */
+  .btn, button, .button, .nv-cta, .nv-primary {
+    font-size: 1rem;           /* down from ~1.125–1.25rem */
+    padding: 10px 14px;        /* tighter tap target */
+    border-radius: 10px;       /* keep your rounded vibe */
+  }
+
+  /* cards under “Play / Learn / Earn” */
+  .card, .panel, .tile, .zone-card, .market-card {
+    padding: 14px 16px;
+  }
+
+  /* search bar and chips */
+  input[type="search"], .nv-search, .search input {
+    height: 44px;
+    font-size: 1rem;
+  }
+
+  /* keep wide nav links hidden; hamburger only */
+  .nv-nav-links { display: none; }
+}
