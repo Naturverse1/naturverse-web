@@ -1,28 +1,9 @@
 import HubCard from '../components/HubCard';
 import HubGrid from '../components/HubGrid';
-import "./Home.css";
-import { Img } from '../components';
 
 export default function Home() {
   return (
     <main className="container">
-      {/* Clean hero (no oversized emoji) */}
-      <header className="home-hero">
-        <h1>
-          <Img
-            className="brandmark"
-            src="/favicon-32x32.png"
-            srcSet="/favicon-32x32.png 1x, /favicon-64x64.png 2x"
-            width={32}
-            height={32}
-            alt=""
-            aria-hidden="true"
-          />
-          Welcome to the Naturverse™
-        </h1>
-        <p>Pick a hub to begin your adventure.</p>
-      </header>
-
       <HubGrid>
         <HubCard to="/worlds" emoji="📚" title="Worlds" sub="Travel the 14 magical kingdoms." />
         <HubCard
