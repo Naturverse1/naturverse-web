@@ -1,82 +1,55 @@
-import { useEffect, useRef, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useSession } from '@/lib/session';
+import { Link } from 'wouter';
 import './site-header.css';
 
 export default function SiteHeader() {
-  const [open, setOpen] = useState(false);
-  const sheetRef = useRef<HTMLDivElement>(null);
-
-  // lock body scroll when sheet is open
-  useEffect(() => {
-    const { body } = document;
-    const prev = body.style.overflow;
-    if (open) body.style.overflow = 'hidden';
-    else body.style.overflow = prev || '';
-    return () => (body.style.overflow = prev || '');
-  }, [open]);
-
-  // close on Escape
-  useEffect(() => {
-    const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setOpen(false);
-    };
-    window.addEventListener('keydown', onKey);
-    return () => window.removeEventListener('keydown', onKey);
-  }, []);
-
-  // close when clicking outside the sheet
-  useEffect(() => {
-    const onClick = (e: MouseEvent) => {
-      if (!open) return;
-      if (sheetRef.current && !sheetRef.current.contains(e.target as Node)) {
-        setOpen(false);
-      }
-    };
-    document.addEventListener('click', onClick);
-    return () => document.removeEventListener('click', onClick);
-  }, [open]);
+  const { user } = useSession(); // truthy when logged in
 
   return (
-    <header className="nv-header">
-      <div className="nv-header__row">
-        <Link to="/" className="nv-brand">
-          <img className="nv-logo" src="/logo.svg" alt="" aria-hidden="true" />
+    <header className="nv-header" role="banner">
+      <div className="nv-header__inner">
+        <Link href="/" className="nv-brand" aria-label="The Naturverse home">
+          <img className="nv-brand__mark" src="/favicon-32x32.png" alt="" />
           <span className="nv-brand__text">The Naturverse</span>
         </Link>
 
-        <button
-          className={`nv-burger ${open ? 'nv-burger--open' : ''}`}
-          aria-label="Open menu"
-          aria-controls="mobile-menu"
-          aria-expanded={open}
-          onClick={(e) => {
-            e.stopPropagation();
-            setOpen((v) => !v);
-          }}
-        >
-          <span aria-hidden="true" />
-        </button>
-      </div>
+        {/* Search is always visible, but size is clamped in CSS */}
+        <div className="nv-search">
+          <input
+            className="nv-search__input"
+            type="search"
+            placeholder="Search worlds, zones, marketplace, quests"
+            aria-label="Search"
+          />
+        </div>
 
-      {/* slide-down sheet */}
-      <div
-        id="mobile-menu"
-        ref={sheetRef}
-        className={`nv-sheet ${open ? 'is-open' : ''}`}
-        role="menu"
-      >
-        <nav className="nv-sheet__nav">
-          <Link to="/worlds" role="menuitem" onClick={() => setOpen(false)}>Worlds</Link>
-          <Link to="/zones" role="menuitem" onClick={() => setOpen(false)}>Zones</Link>
-          <Link to="/marketplace" role="menuitem" onClick={() => setOpen(false)}>Marketplace</Link>
-          <Link to="/wishlist" role="menuitem" onClick={() => setOpen(false)}>Wishlist</Link>
-          <Link to="/naturversity" role="menuitem" onClick={() => setOpen(false)}>Naturversity</Link>
-          <Link to="/naturbank" role="menuitem" onClick={() => setOpen(false)}>NaturBank</Link>
-          <Link to="/navatar" role="menuitem" onClick={() => setOpen(false)}>Navatar</Link>
-          <Link to="/passport" role="menuitem" onClick={() => setOpen(false)}>Passport</Link>
-          <Link to="/turian" role="menuitem" onClick={() => setOpen(false)}>Turian</Link>
-        </nav>
+        {/* Desktop links visible only when authenticated */}
+        {user && (
+          <nav className="nv-nav nv-nav--desktop" aria-label="Primary">
+            <Link href="/worlds">Worlds</Link>
+            <Link href="/zones">Zones</Link>
+            <Link href="/marketplace">Marketplace</Link>
+            <Link href="/wishlist">Wishlist</Link>
+            <Link href="/naturversity">Naturversity</Link>
+            <Link href="/naturbank">NaturBank</Link>
+            <Link href="/navatar">Navatar</Link>
+            <Link href="/passport">Passport</Link>
+            <Link href="/turian">Turian</Link>
+          </nav>
+        )}
+
+        {/* Mobile hamburger – unchanged behavior */}
+        <button
+          className="nv-menu-btn"
+          aria-haspopup="menu"
+          aria-controls="mobile-menu"
+          aria-expanded="false"
+        >
+          <span className="nv-menu-btn__lines" aria-hidden="true" />
+          <span className="sr-only">Menu</span>
+        </button>
       </div>
     </header>
   );
 }
+

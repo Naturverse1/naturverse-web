@@ -1,105 +1,96 @@
-/* Header sizing tokens (mobile-first) */
-:root {
-  --nv-header-h: 64px;
-  --nv-sheet-radius: 16px;
-}
+/* src/components/site-header.css */
 
-/* layout */
 .nv-header {
-  position: sticky;
-  top: 0;
-  z-index: 40;
-  background: var(--page-bg, #f8fbff);
-}
-.nv-header__row {
-  height: var(--nv-header-h);
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-  padding: 8px 16px;
-  border-bottom: 1px solid rgba(34, 62, 120, .08);
-  backdrop-filter: saturate(140%) blur(6px);
+  position: relative;
+  z-index: 20;
+  background: var(--surface);
 }
 
-/* brand */
+.nv-header__inner {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+}
+
+/* Brand with favicon */
 .nv-brand {
   display: inline-flex;
   align-items: center;
+  gap: 0.5rem;
   text-decoration: none;
-  gap: 10px;
 }
-.nv-brand__text { font-weight: 800; color: var(--naturverse-blue, #2d5cff); }
+.nv-brand__mark {
+  width: 24px;
+  height: 24px;
+  border-radius: 6px; /* subtle softness */
+}
+.nv-brand__text {
+  font-weight: 800;
+  color: var(--brand-700);
+}
 
-/* "cracked" hamburger */
-.nv-burger {
-  --w: 26px;
-  --h: 20px;
-  width: var(--w);
-  height: var(--h);
-  position: relative;
+/* Search sizing (consistent across breakpoints) */
+.nv-search {
+  display: flex;
+  justify-content: center;
+}
+.nv-search__input {
+  width: 100%;
+  max-width: 420px;            /* desktop clamp */
+  min-width: 0;
+  height: 40px;
+  padding: 0 0.875rem;
+  border-radius: 999px;
+  border: 1px solid var(--line-200);
+  background: var(--surface-raise);
+}
+
+/* Mobile first clamp */
+@media (max-width: 640px) {
+  .nv-header__inner {
+    grid-template-columns: auto 1fr auto;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+  }
+  .nv-brand__mark { width: 20px; height: 20px; }
+  .nv-search__input {
+    max-width: 300px;          /* smaller on phones */
+    height: 36px;
+    font-size: 0.95rem;
+  }
+}
+
+/* Desktop nav; presence controlled by TSX via session */
+.nv-nav--desktop {
+  display: none;
+}
+@media (min-width: 1024px) {
+  .nv-nav--desktop {
+    display: inline-flex;
+    gap: 1rem;
+    align-items: center;
+  }
+  .nv-menu-btn { display: none; }   /* hide hamburger on large screens */
+}
+
+/* Hamburger */
+.nv-menu-btn {
+  appearance: none;
   border: 0;
   background: transparent;
-  padding: 0;
-  cursor: pointer;
+  padding: 0.25rem 0.5rem;
 }
-.nv-burger span,
-.nv-burger::before,
-.nv-burger::after {
-  content: '';
-  position: absolute;
-  left: 0; right: 0;
-  height: 3px;
-  background: var(--naturverse-blue, #2d5cff);
-  border-radius: 3px;
-  transition: transform .25s ease, opacity .2s ease, width .25s ease;
-}
-.nv-burger span { top: 50%; transform: translateY(-50%); width: 100%; }
-.nv-burger::before { top: 0; width: 100%; }
-.nv-burger::after  { bottom: 0; width: 100%; }
-
-/* crack effect on middle when opening (splits from center) */
-.nv-burger--open span {
-  width: 0; opacity: 0;
-}
-.nv-burger--open::before {
-  transform: translateY(9px) rotate(45deg);
-}
-.nv-burger--open::after {
-  transform: translateY(-9px) rotate(-45deg);
+.nv-menu-btn__lines {
+  display: inline-block;
+  width: 22px;
+  height: 16px;
+  background:
+    linear-gradient(currentColor 2px, transparent 0) 0 0/100% 2px,
+    linear-gradient(currentColor 2px, transparent 0) 0 50%/100% 2px,
+    linear-gradient(currentColor 2px, transparent 0) 0 100%/100% 2px;
+  background-repeat: no-repeat;
+  color: var(--brand-600);
 }
 
-/* slide-down sheet under header */
-.nv-sheet {
-  position: absolute;
-  inset: calc(var(--nv-header-h)) 8px auto 8px;
-  background: #fff;
-  border-radius: var(--nv-sheet-radius);
-  border: 1px solid rgba(34, 62, 120, .12);
-  box-shadow: 0 6px 28px rgba(17, 34, 68, .14);
-  transform-origin: top center;
-  transform: translateY(-8px) scale(.98);
-  opacity: 0;
-  pointer-events: none;
-  transition: transform .22s ease, opacity .22s ease;
-}
-.nv-sheet.is-open {
-  transform: translateY(0) scale(1);
-  opacity: 1;
-  pointer-events: auto;
-}
-.nv-sheet__nav {
-  display: grid;
-  gap: 14px;
-  padding: 16px 20px;
-  text-align: center;
-}
-.nv-sheet__nav a {
-  font-weight: 700;
-  color: var(--naturverse-blue, #2d5cff);
-  text-decoration: none;
-}
-@media (min-width: 768px) {
-  .nv-burger { display: none; }
-  .nv-sheet { display: none; }
-}
