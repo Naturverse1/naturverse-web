@@ -1,0 +1,40 @@
+.nv-wrap { max-width: 960px; margin: 0 auto; padding: 24px 16px; }
+.nv-title { text-align: center; margin: 8px 0 16px; }
+.nv-cta { display:block; margin: 0 auto 24px; padding:10px 16px; border-radius:10px; font-weight:600; }
+
+.nv-modal { position: fixed; inset: 0; background: rgba(0,0,0,.35); display:flex; align-items:center; justify-content:center; padding:16px; z-index: 1000; }
+.nv-card { width:min(980px, 100%); background:#fff; border-radius:16px; box-shadow:0 8px 40px rgba(0,0,0,.25); display:flex; flex-direction:column; max-height: 90vh; }
+.nv-card-head { display:flex; align-items:center; justify-content:space-between; padding:12px 16px; border-bottom:1px solid #eee; }
+.nv-card-title { font-weight:700; }
+.nv-close { font-size:20px; line-height:1; padding:6px 10px; border-radius:8px; }
+
+.nv-tabs { display:flex; gap:8px; padding:12px 16px; border-bottom:1px solid #eee; flex-wrap: wrap; }
+.nv-tab { padding:8px 12px; border-radius:10px; font-weight:600; background:#f4f6ff; }
+.nv-tab.is-active { box-shadow: 0 0 0 2px rgba(65,105,225,.25) inset; }
+
+.nv-pane { padding: 12px 16px; overflow:auto; }
+.nv-pane.muted { color:#666; min-height: 40vh; display:flex; align-items:center; justify-content:center; }
+
+.nv-slogan { margin: 6px 0 12px; text-align:center; font-weight:600; }
+
+.nv-grid {
+  display:grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 14px;
+  padding: 8px;
+  max-height: 60vh;           /* <= scroll only the grid, footer stays put */
+  overflow: auto;
+}
+
+.nv-card-item {
+  background:#fff; border:1px solid #e6e6e6; border-radius:14px;
+  overflow:hidden; text-align:center; transition: transform .12s, box-shadow .12s, border-color .12s;
+}
+.nv-card-item:hover { transform: translateY(-2px); box-shadow:0 6px 18px rgba(0,0,0,.08); }
+.nv-card-item.is-selected { border-color:#6b8cff; box-shadow:0 0 0 3px rgba(107,140,255,.25); }
+.nv-card-item img { width:100%; height: 200px; object-fit: cover; display:block; }
+.nv-name { padding:8px; font-weight:600; font-size: 14px; }
+
+.nv-actions { display:flex; align-items:center; gap:10px; padding: 10px 8px 16px; justify-content:center; }
+.nv-save { padding:10px 16px; border-radius:10px; font-weight:700; }
+.nv-error { color:#b00020; font-weight:600; }
