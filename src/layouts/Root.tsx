@@ -6,7 +6,7 @@ import HeadPreloads from '../components/HeadPreloads';
 import RouteProgress from '../components/RouteProgress';
 import SiteHeader from '../components/SiteHeader';
 import Footer from '../components/Footer';
-import ErrorBoundary from '../components/ErrorBoundary';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 
 export default function RootLayout() {
   return (
