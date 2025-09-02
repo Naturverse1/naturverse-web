@@ -2,6 +2,9 @@
   command = "vite build"
   publish = "dist"
 
+[functions]
+  directory = "netlify/functions"
+
 # --- Static utility pages BEFORE SPA catch-all ---
 [[redirects]]
   from = "/kill-sw"

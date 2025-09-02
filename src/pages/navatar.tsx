@@ -1,69 +1,82 @@
+'use client';
 import React, { useEffect, useState } from 'react';
-import { listAll, getOwned, getActive, setActive } from '../lib/navatar';
-import { Navatar } from '../data/navatars';
-import NavatarCard from '../components/NavatarCard';
-import ListNavatarModal from '../components/ListNavatarModal';
-import { useAuth } from '../lib/auth-context';
+import { supabase } from '@/lib/supabase-browser';
+import { listNavatars, deleteAvatar, getUserId } from '@/lib/navatar-client';
+import NavatarCreateModal from '@/components/NavatarCreateModal';
 
-export default function YourNavatarPage() {
-  const [all, setAll] = useState<Navatar[]>([]);
-  const [owned, setOwned] = useState<string[]>([]);
-  const [active, setActiveId] = useState<string | null>(null);
-  const { user } = useAuth();
-  const [listingFor, setListingFor] = useState<string | undefined>();
+export default function NavatarPage() {
+  const [items, setItems] = useState<any[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [open, setOpen] = useState(false);
+  const [uid, setUid] = useState<string | null>(null);
 
-  useEffect(() => {
-    listAll().then(setAll);
-    getOwned().then(setOwned);
-    getActive().then(setActiveId);
-  }, []);
-
-  const mine = all.filter((n) => owned.includes(n.id));
-
-  async function onUse(id: string) {
-    await setActive(id);
-    setActiveId(await getActive());
+  async function refresh() {
+    setLoading(true);
+    try {
+      const id = await getUserId();
+      setUid(id);
+      if (id) {
+        const rows = await listNavatars();
+        setItems(rows);
+      } else {
+        setItems([]);
+      }
+    } finally {
+      setLoading(false);
+    }
   }
 
+  useEffect(() => {
+    refresh();
+    const { data: sub } = supabase.auth.onAuthStateChange(() => refresh());
+    return () => sub.subscription.unsubscribe();
+  }, []);
+
   return (
-    <div style={{ padding: '24px 16px', maxWidth: 1100, margin: '0 auto' }}>
-      <h1>Your Navatar</h1>
-      {mine.length === 0 ? (
-        <p>
-          You don’t own any Navatars yet. Visit the <a href="/marketplace/navatar">Marketplace</a> to
-          get one.
-        </p>
+    <div className="mx-auto max-w-4xl px-4 py-10">
+      <h1 className="mb-2 text-center text-3xl font-extrabold">Your Navatar</h1>
+
+      {uid ? (
+        <div className="mb-6 text-center">
+          <button
+            onClick={() => setOpen(true)}
+            className="rounded-xl bg-blue-600 px-4 py-2 font-medium text-white hover:opacity-95"
+          >
+            Create Navatar
+          </button>
+        </div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 240px)', gap: 16 }}>
-          {mine.map((n) => (
-            <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <NavatarCard
-                nav={n}
-                owned={true}
-                activeId={active}
-                onGet={() => {}}
-                onUse={onUse}
-              />
-              {user && (
+        <p className="mb-8 text-center text-gray-600">Sign in to create and manage your Navatars.</p>
+      )}
+
+      {loading ? (
+        <p className="text-center text-gray-500">Loading…</p>
+      ) : items.length === 0 ? (
+        <p className="text-center text-gray-600">No Navatars yet — create your first!</p>
+      ) : (
+        <div className="grid gap-4 sm:grid-cols-2">
+          {items.map((it) => (
+            <div key={it.id} className="rounded-2xl border p-3">
+              <img src={it.image_url} alt={it.name} className="mb-3 h-48 w-full rounded-xl object-cover" />
+              <div className="flex items-center justify-between">
+                <div>
+                  <div className="font-semibold">{it.name || 'Untitled'}</div>
+                  <div className="text-xs text-gray-500">{(it.method || 'navatar').toUpperCase()}</div>
+                </div>
                 <button
-                  onClick={() => setListingFor(n.id)}
-                  style={{ padding: '6px 10px', borderRadius: 8 }}
+                  onClick={async ()=>{ await deleteAvatar(it.id); await refresh(); }}
+                  className="rounded-lg border px-3 py-1 text-sm hover:bg-gray-50"
                 >
-                  List for sale
+                  Delete
                 </button>
-              )}
+              </div>
             </div>
           ))}
         </div>
       )}
-      {listingFor && user && (
-        <ListNavatarModal
-          navatarId={listingFor}
-          sellerUserId={user.id}
-          onClose={() => setListingFor(undefined)}
-          onListed={async () => {}}
-        />
-      )}
+
+      <NavatarCreateModal open={open} onClose={()=>setOpen(false)} onCreated={refresh} />
     </div>
   );
 }
+
