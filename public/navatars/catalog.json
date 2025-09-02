@@ -1,0 +1,12 @@
+[
+  {
+    "label": "Turian Scooter",
+    "slug": "turianscooter",
+    "src": "/navatars/turianscooter.png"
+  },
+  {
+    "label": "Turian Classic",
+    "slug": "turianclassic",
+    "src": "/navatars/turianclassic.png"
+  }
+]
