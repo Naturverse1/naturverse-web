@@ -13,3 +13,46 @@
 .navatar-inline .name { font-weight:600; font-size:.9rem; }
 .navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
 .navatar-inline .action:hover { text-decoration:underline; }
+
+/* Navatar hub and pick pages */
+.navatar-hub .navatar-options {
+  display: grid;
+  gap: 1rem;
+  max-width: 420px;
+  margin-top: 1rem;
+}
+
+.navatar-hub .navatar-option {
+  padding: 1.25rem;
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  text-align: center;
+  background: #fff;
+}
+
+.navatar-pick .navatar-grid {
+  display: grid;
+  gap: 1rem;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  margin-top: 1rem;
+}
+
+.navatar-pick .navatar-option {
+  border: 1px solid #e5e7eb;
+  border-radius: 0.5rem;
+  padding: 0.5rem;
+  background: #fff;
+}
+
+.navatar-pick .navatar-option.selected {
+  outline: 2px solid #2563eb;
+}
+
+.navatar-pick .navatar-option img {
+  width: 100%;
+  height: auto;
+}
+
+.navatar-pick .save-btn {
+  margin-top: 1rem;
+}
