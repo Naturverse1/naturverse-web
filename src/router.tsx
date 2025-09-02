@@ -27,7 +27,7 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarPage from './pages/navatar';
+import NavatarPage from './pages/Navatar';
 import PassportPage from './pages/passport';
 import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';

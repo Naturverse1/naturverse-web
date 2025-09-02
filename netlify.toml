@@ -1,9 +1,7 @@
 [build]
   command = "vite build"
   publish = "dist"
-
-[functions]
-  directory = "netlify/functions"
+  functions = "netlify/functions"
 
 # --- Static utility pages BEFORE SPA catch-all ---
 [[redirects]]
@@ -34,6 +32,4 @@
 [[headers]]
   for = "/auth/callback.html"
   [headers.values]
-    Cache-Control = "no-store"
-    # Allow only what's needed; we keep it simple and local
-    Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+    Content-Security-Policy = "default-src 'self'; img-src * data: blob:; media-src * data: blob:; connect-src *; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
