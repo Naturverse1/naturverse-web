@@ -1,0 +1,56 @@
+[
+  {
+    "slug": "blu-butterfly",
+    "title": "Blu Butterfly",
+    "tags": ["butterfly", "blue"],
+    "src": "/navatars/Blu Butterfly.png"
+  },
+  {
+    "slug": "coconut-cruze",
+    "title": "Coconut Cruze",
+    "tags": ["coconut", "fun"],
+    "src": "/navatars/Coconut Cruze.png"
+  },
+  {
+    "slug": "dr-p",
+    "title": "Dr P",
+    "tags": ["giraffe", "taxi"],
+    "src": "/navatars/Dr P.png"
+  },
+  {
+    "slug": "frankie-frogs",
+    "title": "Frankie Frogs",
+    "tags": ["frogs", "green"],
+    "src": "/navatars/Frankie Frogs.png"
+  },
+  {
+    "slug": "inkie",
+    "title": "Inkie",
+    "tags": ["octopus", "blue"],
+    "src": "/navatars/Inkie.png"
+  },
+  {
+    "slug": "jen-suex",
+    "title": "Jen-Suex",
+    "tags": ["butterfly", "pink"],
+    "src": "/navatars/Jen-Suex.png"
+  },
+  {
+    "slug": "mango-mike",
+    "title": "Mango Mike",
+    "tags": ["mango", "orange"],
+    "src": "/navatars/Mango Mike.png"
+  },
+  {
+    "slug": "nikki-mt",
+    "title": "Nikki MT",
+    "tags": ["cat", "bike"],
+    "src": "/navatars/Nikki MT.png"
+  },
+  {
+    "slug": "pineapple-petey",
+    "title": "Pineapple Petey",
+    "tags": ["pineapple", "yellow"],
+    "src": "/navatars/Pineapple Petey.png"
+  }
+]
