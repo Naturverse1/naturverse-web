@@ -1,8 +1,8 @@
 'use client';
 import React, { useState } from 'react';
-import { supabase } from '@/lib/supabase-browser';
 import { createAvatarRow, uploadToStorage, getUserId } from '@/lib/navatar-client';
 import CanonPicker from '@/components/CanonPicker';
+import { canonSrc, type Canon } from '@/lib/canon';
 
 type Props = { open: boolean; onClose: () => void; onCreated: () => void; };
 type Tab = 'upload' | 'ai' | 'canon';
@@ -38,28 +38,25 @@ export default function NavatarCreateModal({ open, onClose, onCreated }: Props) 
   async function onAI(e: React.FormEvent) {
     e.preventDefault(); setErr(null); setLoading(true);
     try {
-      await ensureUser();
-      if (!prompt.trim()) throw new Error('Describe your Navatar.');
-      const res = await fetch('/.netlify/functions/navatar-generate', {
-        method:'POST', headers:{'Content-Type':'application/json'}, body: JSON.stringify({ prompt })
-      });
-      if (!res.ok) throw new Error(await res.text());
-      const { base64, mime } = await res.json();
-      const bin = atob(base64); const bytes = new Uint8Array(bin.length);
-      for (let i=0;i<bin.length;i++) bytes[i] = bin.charCodeAt(i);
-      const imageFile = new File([bytes], 'navatar.png', { type: mime || 'image/png' });
       const uid = await ensureUser();
-      const { publicUrl } = await uploadToStorage(imageFile, uid);
-      await createAvatarRow({ name: name || 'My Navatar', category, image_url: publicUrl, method: 'ai' });
+      if (!prompt.trim()) throw new Error('Describe your Navatar.');
+      const res = await fetch('/.netlify/functions/generate-navatar', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt, name, userId: uid })
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || 'Generation failed');
       onCreated(); onClose();
     } catch (e:any) { setErr(e.message || 'Generation failed'); } finally { setLoading(false); }
   }
 
-  async function onCanonPick(url: string) {
+  async function onCanonPick(c: Canon) {
     setErr(null); setLoading(true);
     try {
       await ensureUser();
-      await createAvatarRow({ name: name || 'Canon Navatar', category, image_url: url, method: 'canon' });
+      const url = canonSrc(c.file);
+      await createAvatarRow({ name: name || c.title, category, image_url: url, method: 'canon' });
       onCreated(); onClose();
     } catch (e:any) { setErr(e.message || 'Could not save'); } finally { setLoading(false); }
   }
