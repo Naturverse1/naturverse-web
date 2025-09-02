@@ -1,7 +1,5 @@
 import { NAVATARS, Navatar } from '../data/navatars';
-import { getSupabase } from './supabase-client';
-
-const supabase = getSupabase();
+import { supabase } from './supabase';
 
 const LS_OWNED = 'nv_owned_navatars';
 const LS_ACTIVE = 'nv_active_navatar';
@@ -85,4 +83,51 @@ export async function setActive(id: string) {
     }
   }
   setActiveLocal(id);
+}
+
+export type NavatarItem = {
+  name: string;
+  url: string;
+};
+
+export async function listNavatars(limit = 1000): Promise<NavatarItem[]> {
+  const { data, error } = await supabase.storage
+    .from('navatars')
+    .list('', { limit, sortBy: { column: 'name', order: 'asc' } });
+
+  if (error) {
+    console.error('listNavatars error:', error);
+    return [];
+  }
+
+  return (data ?? [])
+    .filter((f) => !f.name.startsWith('.') && !f.name.endsWith('/'))
+    .map((f) => {
+      const { data: pub } = supabase.storage.from('navatars').getPublicUrl(f.name);
+      return { name: f.name, url: pub.publicUrl };
+    });
+}
+
+export async function saveNavatarSelection(imageUrl: string) {
+  const { data: auth } = await supabase.auth.getUser();
+  const user = auth?.user;
+  if (!user) throw new Error('Not signed in');
+
+  const payload = {
+    user_id: user.id,
+    name: 'Navatar',
+    method: 'pick',
+    image_url: imageUrl,
+    is_primary: true,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('avatars')
+    .upsert(payload, { onConflict: 'user_id' });
+
+  if (error) {
+    console.error('saveNavatarSelection error:', error);
+    throw error;
+  }
 }

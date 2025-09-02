@@ -2,6 +2,10 @@
 // - Uses import.meta.glob to discover *existing* pages
 // - Only preloads when idle & on decent connections
 
+import { listNavatars } from '../lib/navatar';
+
+listNavatars().catch(() => {});
+
 type Loader = () => Promise<unknown>;
 
 const pages = import.meta.glob('../pages/**/*.tsx') as Record<string, Loader>;
