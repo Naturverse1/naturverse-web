@@ -1,74 +1,61 @@
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
-import { uploadNavatar } from '../../lib/avatars';
-import '../../styles/navatar.css';
-
-type Mode = null | 'canon' | 'upload' | 'generate';
+import { useEffect, useState } from 'react';
+import { supabase } from '../../lib/supabase';
+import { getMyLatestNavatar, NavatarRow } from '../../lib/navatar';
+import { Link, useSearchParams } from 'react-router-dom';
 
 export default function NavatarHub() {
-  const [mode, setMode] = useState<Mode>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [navatar, setNavatar] = useState<NavatarRow | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [params] = useSearchParams();
 
-  async function doUpload() {
-    if (!file) return;
-    setBusy(true);
-    try {
-      await uploadNavatar(file, name || 'avatar');
-      alert('Uploaded!');
-      setFile(null); setName('');
-    } catch (e: any) {
-      alert(e?.message || 'Upload failed');
-    } finally { setBusy(false); }
-  }
+  useEffect(() => {
+    (async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) { setLoading(false); return; }
+      try {
+        const row = await getMyLatestNavatar(user.id);
+        setNavatar(row ?? null);
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  const flash = params.get('flash');
 
   return (
-    <div className="pick-wrap">
-      <div className="breadcrumbs">
-        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
-      </div>
+    <main className="page">
+      <nav className="breadcrumbs">
+        <Link to="/">Home</Link> / <span>Navatar</span>
+      </nav>
 
-      <h1 className="page-title">Your Navatar</h1>
-      <p className="muted">No Navatar yet — pick one below.</p>
+      <h1>Your Navatar</h1>
 
-      <div className="mode-row">
-        <button className="btn" onClick={() => setMode(mode === 'canon' ? null : 'canon')}>Pick Navatar</button>
-        <button className="btn" onClick={() => setMode(mode === 'upload' ? null : 'upload')}>Upload</button>
-        <button className="btn" onClick={() => setMode(mode === 'generate' ? null : 'generate')}>Describe &amp; Generate</button>
-      </div>
+      {flash === 'saved' && <p role="status" style={{color:'#2563eb'}}>Saved!</p>}
 
-      {mode === 'canon' && (
-        <section className="create-block">
-          <p className="muted">Choose from our characters.</p>
-          <Link className="link" to="/navatar/pick">Open</Link>
+      {loading ? (
+        <p>Loading…</p>
+      ) : navatar ? (
+        <section style={{display:'grid',placeItems:'center',gap:12}}>
+          <img
+            src={navatar.image_url ?? ''}
+            alt={navatar.name ?? 'Your Navatar'}
+            style={{width:180,height:180,objectFit:'cover',borderRadius:18,boxShadow:'0 6px 18px rgba(0,0,0,.08)'}}
+          />
+          <div style={{fontWeight:600}}>{navatar.name ?? 'Navatar'}</div>
+          <Link className="btn" to="/navatar/pick">Change</Link>
         </section>
-      )}
-
-      {mode === 'upload' && (
-        <section className="create-block">
-          <div className="form">
-            <label>Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="My Navatar" />
-            <label>Image</label>
-            <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} />
-            <button className="btn" disabled={!file || busy} onClick={doUpload}>{busy ? 'Uploading…' : 'Upload'}</button>
+      ) : (
+        <>
+          <p>No Navatar yet — pick one below.</p>
+          <div style={{display:'flex',justifyContent:'center',gap:12,flexWrap:'wrap',margin:'16px 0'}}>
+            <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
+            <Link className="btn" to="/navatar?mode=upload">Upload</Link>
+            <Link className="btn" to="/navatar?mode=generate">Describe &amp; Generate</Link>
           </div>
-        </section>
+          <p>Choose from our characters. <Link to="/navatar/pick">Open</Link></p>
+        </>
       )}
-
-      {mode === 'generate' && (
-        <section className="create-block">
-          <p className="muted">Coming next.</p>
-        </section>
-      )}
-
-      {mode && (
-        <div style={{ display:'flex', justifyContent:'center', marginTop:8 }}>
-          <button className="btn-secondary" onClick={() => setMode(null)}>Close</button>
-        </div>
-      )}
-    </div>
+    </main>
   );
 }
-

@@ -86,3 +86,36 @@ export async function setActive(id: string) {
   }
   setActiveLocal(id);
 }
+
+export type NavatarRow = {
+  id: string;
+  user_id: string;
+  name: string | null;
+  image_url: string | null;
+  method: string | null;
+  created_at: string;
+};
+
+export async function getMyLatestNavatar(userId: string) {
+  if (!supabase) throw new Error('Supabase not initialized');
+  const { data, error } = await supabase
+    .from('avatars')
+    .select('id,user_id,name,image_url,method,created_at')
+    .eq('user_id', userId)
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle<NavatarRow>();
+  if (error) throw error;
+  return data;
+}
+
+export async function upsertNavatarSelection(userId: string, name: string, imageUrl: string) {
+  if (!supabase) throw new Error('Supabase not initialized');
+  const { error } = await supabase.from('avatars').insert({
+    user_id: userId,
+    name,
+    method: 'canon',
+    image_url: imageUrl,
+  });
+  if (error) throw error;
+}
