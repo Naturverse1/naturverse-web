@@ -1,0 +1,8 @@
+[
+  { "name": "Blu Butterfly", "image_url": "/navatars/blu-butterfly.jpg", "tags": ["butterfly","blue"] },
+  { "name": "Frankie Frogs", "image_url": "/navatars/frankie-frogs.jpg", "tags": ["frogs","green"] },
+  { "name": "Inkie", "image_url": "/navatars/inkie.jpg" },
+  { "name": "Mango Mike", "image_url": "/navatars/mango-mike.jpg" },
+  { "name": "Dr P", "image_url": "/navatars/dr-p.jpg" },
+  { "name": "Pineapple Petey", "image_url": "/navatars/pineapple-petey.jpg" }
+]
