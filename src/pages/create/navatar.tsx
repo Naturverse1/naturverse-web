@@ -20,7 +20,7 @@ export default function CreateNavatarPage() {
     setBusy(true);
     setImages(null);
     setChoice(null);
-    const r = await fetch('/.netlify/functions/navatar-generate', {
+    const r = await fetch('/.netlify/functions/generate-navatar', {
       method: 'POST',
       body: JSON.stringify({ prompt: prompt.trim() || 'leaf spirit mascot' }),
     });
