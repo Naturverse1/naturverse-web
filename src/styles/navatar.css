@@ -1,41 +1,91 @@
-/* Rarity frames */
-.navatar-frame { display:inline-grid; place-items:center; border-radius:50%; padding:2px; }
-.navatar-frame.starter { box-shadow: 0 0 0 2px #cfe0ff inset; }
-.navatar-frame.rare     { box-shadow: 0 0 0 2px #34d399 inset; }
-.navatar-frame.legendary{ box-shadow: 0 0 0 2px #f59e0b inset; }
-
-/* Compact inline pill */
-.navatar-inline {
-  display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
-  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
+.navatar-wrap {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 64px;
 }
 
-.navatar-inline .name { font-weight:600; font-size:.9rem; }
-.navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
-.navatar-inline .action:hover { text-decoration:underline; }
-
-/* Hub */
-.navatar-wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
-.navatar-title { font-size: clamp(24px, 3.5vw, 40px); color: #2b58ff; font-weight: 800; margin: 12px 0 8px; }
-.navatar-breadcrumbs { color: #6b7280; margin-bottom: 16px; }
-.navatar-cards { display: grid; grid-template-columns: repeat(3, minmax(220px,1fr)); gap: 16px; }
-.navatar-card { background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.06); padding: 18px; transition: transform .12s ease; }
-.navatar-card:hover { transform: translateY(-2px); }
-.navatar-card h3 { margin: 6px 0 8px; color: #2b58ff; }
-
-/* Pick page */
-.pick-wrap { max-width: 1100px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1fr 280px; gap: 24px; }
-.pick-title { font-size: clamp(22px, 3vw, 34px); color: #2b58ff; font-weight: 800; margin: 4px 0 12px; }
-.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; height: 70vh; overflow: auto; padding-right: 6px; }
-.pick-card { background: #fff; border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.07); border: 2px solid transparent; }
-.pick-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; display: block; }
-.pick-card.selected { border-color: #2b58ff; box-shadow: 0 0 0 4px rgba(43,88,255,.15); }
-.pick-side { position: sticky; top: 24px; align-self: start; }
-.pick-save { width: 100%; padding: 12px 16px; border: 0; border-radius: 10px; background: #2b58ff; color: #fff; font-weight: 700; }
-.pick-save[disabled] { opacity: .5; }
-
-@media (max-width: 860px) {
-  .pick-wrap { grid-template-columns: 1fr; }
-  .pick-side { position: static; }
-  .navatar-cards { grid-template-columns: 1fr; }
+.breadcrumbs {
+  margin-bottom: 8px;
+  font-size: 14px;
+  color: #3366ff;
 }
+.breadcrumbs a { color: #3366ff; text-decoration: none; }
+.breadcrumbs span { margin: 0 6px; color: #6b7280; }
+
+.page-title {
+  margin: 6px 0 18px;
+  font-size: 32px;
+  color: #2f5bff;
+  line-height: 1.1;
+}
+
+.hub-cards {
+  display: grid;
+  gap: 16px;
+}
+@media (min-width: 720px) {
+  .hub-cards { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+.hub-card {
+  padding: 20px;
+  border-radius: 14px;
+  background: #f7f8ff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.05);
+}
+.hub-card h2 { margin: 0 0 6px; color: #2f5bff; }
+.hub-card p { margin: 0 0 10px; color: #6b7280; }
+.hub-link { color: #2f5bff; font-weight: 600; }
+.hub-disabled { opacity: .6; }
+
+.pick-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+}
+@media (min-width: 520px) {
+  .pick-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+}
+@media (min-width: 900px) {
+  .pick-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+}
+
+.pick-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  border-radius: 14px;
+  padding: 12px;
+  background: white;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+  border: 3px solid transparent;
+  cursor: pointer;
+}
+.pick-card img {
+  width: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: cover;
+  border-radius: 10px;
+  background: #f1f4ff;
+}
+.pick-card.selected { border-color: #2f5bff; }
+.pick-label { color: #374151; font-weight: 600; font-size: 14px; }
+
+.pick-actions {
+  margin-top: 18px;
+  display: flex;
+  justify-content: center;
+}
+.save-btn {
+  background: #ccd7ff;
+  color: #243bff;
+  font-weight: 700;
+  border: 0;
+  border-radius: 12px;
+  padding: 10px 16px;
+}
+.save-btn:disabled { opacity: .6; }
+
+.muted { color: #6b7280; }
+
+.error-text { margin-top: 10px; color: #b91c1c; }
