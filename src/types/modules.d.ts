@@ -20,3 +20,7 @@ declare module '*.webp' {
 }
 
 declare module 'nprogress';
+declare module '*.json' {
+  const value: any;
+  export default value;
+}
