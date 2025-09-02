@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "prebuild": "node scripts/build-navatar-catalog.cjs",
+    "prebuild": "node scripts/make-navatar-catalog.cjs",
     "build": "vite build",
     "preview": "vite preview",
     "clean": "rimraf dist || rm -rf dist"

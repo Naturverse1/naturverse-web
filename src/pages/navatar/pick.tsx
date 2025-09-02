@@ -1,20 +1,29 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { NavatarItem, saveNavatarSelection } from '../../lib/supabase/navatars';
+import { saveNavatarSelection } from '../../lib/navatar-supabase';
 import '../../styles/navatar.css';
 
-export default function NavatarPick() {
-  const [items, setItems] = useState<NavatarItem[]>([]);
-  const [selected, setSelected] = useState<NavatarItem | null>(null);
+type Item = { slug: string; label: string; src: string };
+
+export default function PickNavatar() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [selected, setSelected] = useState<Item | null>(null);
   const [saving, setSaving] = useState(false);
-  const [ok, setOk] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const [ok, setOk] = useState(false);
 
   useEffect(() => {
-    fetch('/navatar-catalog.json')
-      .then(r => r.json())
-      .then(j => setItems(j.items || []))
-      .catch(() => setItems([]));
+    let mounted = true;
+    (async () => {
+      try {
+        const r = await fetch('/navatar-catalog.json', { cache: 'no-store' });
+        const j = await r.json();
+        if (mounted) setItems(Array.isArray(j?.items) ? j.items : []);
+      } catch {
+        if (mounted) setItems([]);
+      }
+    })();
+    return () => { mounted = false; };
   }, []);
 
   async function onSave() {
@@ -33,37 +42,47 @@ export default function NavatarPick() {
   }
 
   return (
-    <div className="pick-wrap">
-      <div>
-        <div className="navatar-breadcrumbs">
-          <Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> / Pick
-        </div>
-        <h1 className="pick-title">Pick Navatar</h1>
+    <div className="navatar-wrap">
+      <nav className="breadcrumbs">
+        <Link to="/">Home</Link> <span>/</span> <Link to="/navatar">Navatar</Link> <span>/</span> <span>Pick</span>
+      </nav>
 
-        <div className="pick-grid" role="list" aria-label="Navatar catalog">
-          {items.map(it => (
+      <h1 className="page-title">Pick Navatar</h1>
+
+      {items.length === 0 ? (
+        <p className="empty">No characters found in <code>/public/navatars</code>.</p>
+      ) : (
+        <div className="pick-layout">
+          <div className="pick-grid" role="list" aria-label="Navatar catalog">
+            {items.map(it => (
+              <button
+                key={it.slug}
+                className={`pick-card${selected?.slug === it.slug ? ' selected' : ''}`}
+                type="button"
+                onClick={() => setSelected(it)}
+                aria-pressed={selected?.slug === it.slug}
+                title={it.label}
+              >
+                <img src={it.src} alt={it.label} loading="lazy" />
+                <span className="label">{it.label}</span>
+              </button>
+            ))}
+          </div>
+
+          <div className="actions">
+            {!!err && <div className="notice err">{err}</div>}
+            {ok && <div className="notice ok">Saved! Return to <Link to="/navatar">Navatar</Link>.</div>}
             <button
-              key={it.slug}
               type="button"
-              className={`pick-card ${selected?.slug === it.slug ? 'selected' : ''}`}
-              onClick={() => setSelected(it)}
+              className="primary"
+              disabled={!selected || saving}
+              onClick={onSave}
             >
-              <img src={it.src} alt={it.label} loading="lazy" />
-              <div style={{marginTop:8, fontWeight:700}}>{it.label}</div>
+              {saving ? 'Saving…' : selected ? `Save “${selected.label}”` : 'Pick one to save'}
             </button>
-          ))}
-          {items.length === 0 && <div>No characters found in /public/navatars.</div>}
+          </div>
         </div>
-      </div>
-
-      <aside className="pick-side">
-        <button className="pick-save" onClick={onSave} disabled={!selected || saving}>
-          {saving ? 'Saving…' : selected ? `Save “${selected.label}”` : 'Pick one to save'}
-        </button>
-        {ok && <div style={{color:'#16a34a', marginTop:10}}>Saved!</div>}
-        {err && <div style={{color:'#dc2626', marginTop:10}}>{err}</div>}
-      </aside>
+      )}
     </div>
   );
 }
-
