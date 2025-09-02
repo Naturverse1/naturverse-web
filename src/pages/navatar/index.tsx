@@ -1,47 +1,33 @@
-import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
-import { getMyNavatar } from '../../lib/supabase/navatars';
-import '../../styles/navatar.css';
+import { Link } from "react-router-dom";
+import "../../styles/navatar.css";
 
 export default function NavatarHub() {
-  const [mine, setMine] = useState<any>(null);
-
-  useEffect(() => {
-    getMyNavatar().then(setMine).catch(() => setMine(null));
-  }, []);
-
   return (
-    <div className="navatar-wrap">
-      <div className="navatar-breadcrumbs">Home / Navatar</div>
-      <h1 className="navatar-title">Your Navatar</h1>
+    <div className="nv-container">
+      <nav className="nv-crumbs">
+        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
+      </nav>
 
-      {mine ? (
-        <div style={{display:'flex', gap:16, alignItems:'center', margin:'8px 0 24px'}}>
-          <img src={mine.src} alt={mine.label} style={{width:96, height:96, borderRadius:12, objectFit:'cover'}} />
-          <div>
-            <div style={{fontWeight:700}}>{mine.label}</div>
-            <div><Link to="/navatar/pick">Change</Link></div>
-          </div>
-        </div>
-      ) : (
-        <div style={{margin:'6px 0 24px'}}>No Navatar yet — pick one below.</div>
-      )}
+      <h1 className="nv-title">Your Navatar</h1>
+      <p className="nv-sub">No Navatar yet — pick one below.</p>
 
-      <div className="navatar-cards">
-        <div className="navatar-card">
+      <div className="nv-cards">
+        <div className="nv-card">
           <h3>Pick Navatar</h3>
           <p>Choose from our characters.</p>
-          <Link to="/navatar/pick">Open</Link>
+          <Link to="/navatar/pick" className="nv-link">Open</Link>
         </div>
-        <div className="navatar-card">
+
+        <div className="nv-card disabled">
           <h3>Upload</h3>
           <p>Coming next.</p>
-          <Link to="/navatar/upload">View</Link>
+          <span className="nv-link" aria-disabled>View</span>
         </div>
-        <div className="navatar-card">
+
+        <div className="nv-card disabled">
           <h3>Describe &amp; Generate</h3>
           <p>Coming next.</p>
-          <Link to="/navatar/generate">View</Link>
+          <span className="nv-link" aria-disabled>View</span>
         </div>
       </div>
     </div>

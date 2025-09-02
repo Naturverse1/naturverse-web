@@ -29,8 +29,6 @@ import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
 import NavatarHub from './pages/navatar';
 import NavatarPick from './pages/navatar/pick';
-import NavatarUpload from './pages/navatar/upload';
-import NavatarGenerate from './pages/navatar/generate';
 import PassportPage from './pages/passport';
 import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';
@@ -104,8 +102,6 @@ export const router = createBrowserRouter([
       { path: 'about', element: <About /> },
       { path: 'navatar', element: <NavatarHub /> },
       { path: 'navatar/pick', element: <NavatarPick /> },
-      { path: 'navatar/upload', element: <NavatarUpload /> },
-      { path: 'navatar/generate', element: <NavatarGenerate /> },
       { path: 'progress', element: <ProgressPage /> },
       { path: 'passport', element: <PassportPage /> },
       { path: 'orders', element: <OrdersPage /> },
