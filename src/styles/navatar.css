@@ -1,41 +1,45 @@
-/* Rarity frames */
-.navatar-frame { display:inline-grid; place-items:center; border-radius:50%; padding:2px; }
-.navatar-frame.starter { box-shadow: 0 0 0 2px #cfe0ff inset; }
-.navatar-frame.rare     { box-shadow: 0 0 0 2px #34d399 inset; }
-.navatar-frame.legendary{ box-shadow: 0 0 0 2px #f59e0b inset; }
+/* src/styles/navatar.css */
+.pick-wrap { max-width: 1120px; margin: 0 auto; padding: 16px; }
+.breadcrumbs { color: #2563eb; display:flex; gap:8px; align-items:center; margin: 4px 0 8px; font-weight:600; }
+.breadcrumbs a { color:#2563eb; text-decoration:none; }
+.page-title { color:#1d4ed8; font-size: clamp(24px, 3.2vw, 40px); margin: 6px 0 16px; }
 
-/* Compact inline pill */
-.navatar-inline {
-  display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
-  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
+.muted { color:#4b5563; }
+.link { color:#1d4ed8; text-decoration: underline; }
+
+.mode-row { display:flex; justify-content:center; gap:12px; flex-wrap:wrap; margin: 12px 0 20px; }
+.btn, .btn-secondary {
+  border-radius: 10px; padding: 10px 16px; background:#e8f0ff; color:#1d4ed8; border:1px solid #c7d7ff;
 }
+.btn:hover { filter: brightness(0.98); }
+.btn-secondary { background: #f3f4f6; color:#111827; border-color:#e5e7eb; }
 
-.navatar-inline .name { font-weight:600; font-size:.9rem; }
-.navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
-.navatar-inline .action:hover { text-decoration:underline; }
+.create-block { max-width: 980px; margin: 0 auto; }
 
-/* Hub */
-.navatar-wrap { max-width: 1100px; margin: 0 auto; padding: 24px; }
-.navatar-title { font-size: clamp(24px, 3.5vw, 40px); color: #2b58ff; font-weight: 800; margin: 12px 0 8px; }
-.navatar-breadcrumbs { color: #6b7280; margin-bottom: 16px; }
-.navatar-cards { display: grid; grid-template-columns: repeat(3, minmax(220px,1fr)); gap: 16px; }
-.navatar-card { background: #fff; border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,.06); padding: 18px; transition: transform .12s ease; }
-.navatar-card:hover { transform: translateY(-2px); }
-.navatar-card h3 { margin: 6px 0 8px; color: #2b58ff; }
+.pick-layout { display:grid; grid-template-columns: 1fr; gap:16px; }
+@media (min-width: 900px) { .pick-layout { grid-template-columns: 1fr 260px; } }
 
-/* Pick page */
-.pick-wrap { max-width: 1100px; margin: 0 auto; padding: 24px; display: grid; grid-template-columns: 1fr 280px; gap: 24px; }
-.pick-title { font-size: clamp(22px, 3vw, 34px); color: #2b58ff; font-weight: 800; margin: 4px 0 12px; }
-.pick-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)); gap: 14px; height: 70vh; overflow: auto; padding-right: 6px; }
-.pick-card { background: #fff; border-radius: 14px; padding: 10px; box-shadow: 0 8px 24px rgba(0,0,0,.07); border: 2px solid transparent; }
-.pick-card img { width: 100%; height: 180px; object-fit: cover; border-radius: 10px; display: block; }
-.pick-card.selected { border-color: #2b58ff; box-shadow: 0 0 0 4px rgba(43,88,255,.15); }
-.pick-side { position: sticky; top: 24px; align-self: start; }
-.pick-save { width: 100%; padding: 12px 16px; border: 0; border-radius: 10px; background: #2b58ff; color: #fff; font-weight: 700; }
-.pick-save[disabled] { opacity: .5; }
-
-@media (max-width: 860px) {
-  .pick-wrap { grid-template-columns: 1fr; }
-  .pick-side { position: static; }
-  .navatar-cards { grid-template-columns: 1fr; }
+.pick-grid {
+  display:grid;
+  grid-template-columns: repeat(2, minmax(120px, 1fr));
+  gap: 14px;
 }
+@media (min-width: 560px) { .pick-grid { grid-template-columns: repeat(3, minmax(140px, 1fr)); } }
+@media (min-width: 900px) { .pick-grid { grid-template-columns: repeat(4, minmax(160px, 1fr)); } }
+
+.pick-card {
+  display:flex; flex-direction:column; align-items:center; gap:8px;
+  border-radius:14px; border:2px solid transparent; padding:10px; background:#fff;
+  box-shadow: 0 1px 4px rgba(0,0,0,.06);
+}
+.pick-card img { width:100%; aspect-ratio: 1 / 1; object-fit: cover; border-radius: 12px; background:#f3f4f6; }
+.pick-card.selected { border-color:#3b82f6; box-shadow: 0 0 0 3px rgba(59,130,246,.15); }
+.pick-name { font-weight:600; color:#1f2937; text-align:center; }
+
+.pick-side { display:flex; flex-direction:column; gap:10px; align-items:flex-start; }
+.save-btn {
+  width: 100%; max-width: 240px; padding:12px 16px; border-radius:12px;
+  background:#e5edff; color:#1d4ed8; border:1px solid #c7d7ff;
+}
+.error { color:#b91c1c; }
+

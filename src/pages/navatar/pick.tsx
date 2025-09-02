@@ -1,32 +1,31 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { NavatarItem, saveNavatarSelection } from '../../lib/supabase/navatars';
+import catalog from '../../data/navatar-catalog.json';
+import { saveNavatarSelection } from '../../lib/avatars';
 import '../../styles/navatar.css';
 
-export default function NavatarPick() {
-  const [items, setItems] = useState<NavatarItem[]>([]);
-  const [selected, setSelected] = useState<NavatarItem | null>(null);
+type Item = { id: string; title: string; slug: string; src: string };
+
+export default function PickNavatar() {
+  const [items, setItems] = useState<Item[]>([]);
+  const [selected, setSelected] = useState<Item | null>(null);
   const [saving, setSaving] = useState(false);
-  const [ok, setOk] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    fetch('/navatar-catalog.json')
-      .then(r => r.json())
-      .then(j => setItems(j.items || []))
-      .catch(() => setItems([]));
+    setItems((catalog as Item[]) || []);
   }, []);
 
   async function onSave() {
     if (!selected) return;
     setSaving(true);
-    setErr(null);
-    setOk(false);
+    setError(null);
     try {
-      await saveNavatarSelection(selected.label, selected.src);
-      setOk(true);
+      await saveNavatarSelection(selected.title, selected.src);
+      alert('Saved!'); // lightweight success
     } catch (e: any) {
-      setErr(e?.message || 'Error saving Navatar');
+      setError(e?.message || 'Error saving Navatar');
+      alert(error || 'Error saving Navatar');
     } finally {
       setSaving(false);
     }
@@ -34,35 +33,39 @@ export default function NavatarPick() {
 
   return (
     <div className="pick-wrap">
-      <div>
-        <div className="navatar-breadcrumbs">
-          <Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> / Pick
-        </div>
-        <h1 className="pick-title">Pick Navatar</h1>
+      <div className="breadcrumbs">
+        <Link to="/">Home</Link> <span>/</span> <Link to="/navatar">Navatar</Link> <span>/</span> <span>Pick</span>
+      </div>
 
+      <h1 className="page-title">Pick Navatar</h1>
+
+      {items.length === 0 && (
+        <p className="muted">No characters found in <code>/public/navatars</code>.</p>
+      )}
+
+      <div className="pick-layout">
         <div className="pick-grid" role="list" aria-label="Navatar catalog">
           {items.map(it => (
             <button
-              key={it.slug}
+              key={it.id}
               type="button"
-              className={`pick-card ${selected?.slug === it.slug ? 'selected' : ''}`}
+              className={`pick-card ${selected?.id === it.id ? 'selected' : ''}`}
               onClick={() => setSelected(it)}
+              title={it.title}
             >
-              <img src={it.src} alt={it.label} loading="lazy" />
-              <div style={{marginTop:8, fontWeight:700}}>{it.label}</div>
+              <img loading="lazy" src={it.src} alt={it.title} />
+              <div className="pick-name">{it.title}</div>
             </button>
           ))}
-          {items.length === 0 && <div>No characters found in /public/navatars.</div>}
+        </div>
+
+        <div className="pick-side">
+          <button className="save-btn" disabled={!selected || saving} onClick={onSave}>
+            {selected ? (saving ? 'Saving…' : `Save “${selected.title}”`) : 'Pick one to save'}
+          </button>
+          {error && <div className="error">{error}</div>}
         </div>
       </div>
-
-      <aside className="pick-side">
-        <button className="pick-save" onClick={onSave} disabled={!selected || saving}>
-          {saving ? 'Saving…' : selected ? `Save “${selected.label}”` : 'Pick one to save'}
-        </button>
-        {ok && <div style={{color:'#16a34a', marginTop:10}}>Saved!</div>}
-        {err && <div style={{color:'#dc2626', marginTop:10}}>{err}</div>}
-      </aside>
     </div>
   );
 }
