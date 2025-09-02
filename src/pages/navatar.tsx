@@ -1,249 +1,188 @@
-import { useEffect, useMemo, useState } from "react";
-import { supa, publicUrl } from "../lib/supa";
-import { NAVATAR_CATALOG } from "../data/navatarCatalog";
+import React, { useEffect, useState } from 'react';
+import { supabase, publicAvatarUrl } from '../lib/supabase';
+import canon from '../data/navatar-canon.json';
+import '../styles/navatar.css';
 
-type AvatarRow = {
-  id: string;
-  user_id: string|null;
-  name: string|null;
-  method: "upload"|"ai"|"canon";
-  image_url: string;
-};
+type CanonEntry = { title: string; tags: string[]; filename: string };
+type AvatarRow = { id: string; name: string | null; method: string; path: string; url: string };
 
-type Mode = "upload" | "generate" | "canon" | null;
+class Boundary extends React.Component<any, { error?: Error }> {
+  state = { error: undefined };
+  static getDerivedStateFromError(error: Error) { return { error }; }
+  render() {
+    if (this.state.error) return <div style={{padding:32}}>
+      <h2>Something went wrong</h2>
+      <pre>{this.state.error.message}</pre>
+    </div>;
+    return this.props.children;
+  }
+}
 
-export default function NavatarPage() {
-  const [session, setSession] = useState<any>(null);
+function NavatarHub() {
+  const [userId, setUserId] = useState<string | null>(null);
   const [avatars, setAvatars] = useState<AvatarRow[]>([]);
   const [open, setOpen] = useState(false);
-  const [mode, setMode] = useState<Mode>(null);
-
-  // upload state
-  const [file, setFile] = useState<File|null>(null);
-  // generate state
-  const [name, setName] = useState("");
-  const [prompt, setPrompt] = useState("");
+  const [tab, setTab] = useState<'upload'|'generate'|'canon'>('upload');
+  const [file, setFile] = useState<File | null>(null);
+  const [prompt, setPrompt] = useState('');
+  const [name, setName] = useState('');
+  const [canonPick, setCanonPick] = useState<CanonEntry | null>(null);
+  const [err, setErr] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
-  const [err, setErr] = useState<string|null>(null);
-  // canon state
-  const [canonKey, setCanonKey] = useState<string|null>(null);
 
   useEffect(() => {
-    supa.auth.getSession().then(({ data }) => setSession(data.session));
+    supabase.auth.getUser().then(({ data }) => setUserId(data.user?.id || null));
     load();
   }, []);
 
   async function load() {
-    const { data } = await supa.from("avatars").select("*").order("created_at", { ascending: false });
+    const { data } = await supabase.from('avatars').select('*').order('created_at', { ascending: false });
     setAvatars(data || []);
   }
 
   async function remove(id: string) {
-    await supa.from("avatars").delete().eq("id", id);
+    await supabase.from('avatars').delete().eq('id', id);
     await load();
   }
 
-  function resetModal() {
-    setMode(null);
-    setFile(null);
-    setName("");
-    setPrompt("");
-    setCanonKey(null);
-    setErr(null);
+  function reset() {
+    setFile(null); setPrompt(''); setName(''); setCanonPick(null); setErr(null); setTab('upload');
   }
 
-  // --- Actions ---
-  async function onSaveUpload() {
+  async function handleUpload() {
     if (!file) return;
     setBusy(true); setErr(null);
     try {
-      const path = `uploads/${session?.user?.id ?? "anon"}/${crypto.randomUUID()}-${file.name}`;
-      const { error } = await supa.storage.from("avatars").upload(path, file, { upsert: false });
-      if (error) throw error;
-
-      const url = publicUrl(path);
-      const { error: insErr } = await supa.from("avatars").insert({
-        user_id: session?.user?.id ?? null,
-        name: name || file.name.replace(/\.[^/.]+$/, ""),
-        method: "upload",
-        image_url: url
-      });
-      if (insErr) throw insErr;
-
+      await saveUpload(file, name);
       await load();
-      setOpen(false); resetModal();
-    } catch (e: any) {
-      setErr(e?.message || "Upload failed");
-    } finally {
-      setBusy(false);
-    }
+      setOpen(false); reset();
+    } catch (e:any) {
+      setErr(e.message || 'Upload failed');
+    } finally { setBusy(false); }
   }
 
-  async function onSaveCanon() {
-    if (!canonKey) return;
-    setBusy(true); setErr(null);
-    try {
-      const c = NAVATAR_CATALOG.find(c => c.key === canonKey)!;
-      const { error } = await supa.from("avatars").insert({
-        user_id: session?.user?.id ?? null,
-        name: name || c.title,
-        method: "canon",
-        image_url: c.image_url // direct URL in /public
-      });
-      if (error) throw error;
-      await load();
-      setOpen(false); resetModal();
-    } catch (e: any) {
-      setErr(e?.message || "Save failed");
-    } finally {
-      setBusy(false);
-    }
-  }
-
-  async function onGenerate() {
+  async function handleGenerate() {
     if (!prompt.trim()) return;
     setBusy(true); setErr(null);
     try {
-      const res = await fetch("/.netlify/functions/generate-navatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          user_id: session?.user?.id ?? null,
-          name: name || "AI avatar",
-          prompt
-        })
-      });
-      const data = await res.json();
-      if (!res.ok) throw new Error(data?.error || "Failed to generate");
+      const b64 = await callGenerate(prompt);
+      await saveGenerated(b64, name);
       await load();
-      setOpen(false); resetModal();
-    } catch (e: any) {
-      setErr(e?.message || "Failed to generate");
-    } finally {
-      setBusy(false);
-    }
+      setOpen(false); reset();
+    } catch (e:any) {
+      setErr(e.message || 'Failed to generate');
+    } finally { setBusy(false); }
   }
 
-  // --- UI helpers ---
-  const catalog = useMemo(() => NAVATAR_CATALOG, []);
-  const canGenerate = !err || !/403/.test(err); // button remains but message shows
+  async function handleCanon() {
+    if (!canonPick) return;
+    setBusy(true); setErr(null);
+    try {
+      await insertAvatarRow({ name, method: 'canon', path: canonPick.filename, url: `/navatars/${canonPick.filename}` });
+      await load();
+      setOpen(false); reset();
+    } catch (e:any) {
+      setErr(e.message || 'Save failed');
+    } finally { setBusy(false); }
+  }
+
+  async function callGenerate(prompt: string) {
+    const res = await fetch('/.netlify/functions/create-navatar', {
+      method: 'POST',
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ prompt }),
+    });
+    const text = await res.text();
+    let data: any;
+    try { data = JSON.parse(text); } catch { throw new Error('Bad JSON from server'); }
+    if (!res.ok || !data?.ok) throw new Error(data?.error || 'Failed to generate');
+    return data.b64 as string;
+  }
+
+  async function saveUpload(file: File, name?: string) {
+    const ext = file.name.split('.').pop() || 'png';
+    const path = `user-${userId}/${crypto.randomUUID()}.${ext}`;
+    const { error: upErr } = await supabase.storage.from('avatars').upload(path, file, {
+      upsert: false, contentType: file.type || 'image/png'
+    });
+    if (upErr) throw upErr;
+    const url = publicAvatarUrl(path);
+    await insertAvatarRow({ name, method: 'upload', path, url });
+  }
+
+  async function saveGenerated(b64: string, name?: string) {
+    const blob = await (await fetch(`data:image/png;base64,${b64}`)).blob();
+    const file = new File([blob], 'ai.png', { type: 'image/png' });
+    return saveUpload(file, name);
+  }
+
+  async function insertAvatarRow(row: { name?: string; method: string; path: string; url: string; }) {
+    const { error } = await supabase.from('avatars').insert({
+      user_id: userId, name: row.name || null, method: row.method, path: row.path, url: row.url
+    });
+    if (error) throw error;
+  }
 
   return (
-    <div className="container">
-      <h1 className="title">Your Navatar</h1>
-      <button className="btn" onClick={() => { setOpen(true); setMode(null); }}>Create Navatar</button>
-
-      {/* Current avatar list (simple: most recent at top) */}
-      <div className="current">
+    <div style={{padding:24}}>
+      <h1>Your Navatars</h1>
+      <button onClick={() => { setOpen(true); reset(); }}>Create Navatar</button>
+      <div className="nav-list">
         {avatars.map(a => (
-          <div key={a.id} className="card">
-            {/* If some rows still have a storage path, resolve to public url */}
-            <img src={/^https?:/.test(a.image_url) ? a.image_url : publicUrl(a.image_url)} alt={a.name ?? "avatar"} />
-            <div className="name">{a.name ?? a.method.toUpperCase()}</div>
-            <div className="method">{a.method.toUpperCase()}</div>
-            <button className="btn danger" onClick={() => remove(a.id)}>Delete</button>
+          <div key={a.id} className="nav-item">
+            <img src={a.url} alt={a.name || a.method} style={{width:120,height:120,objectFit:'cover'}} />
+            <div>{a.name || a.method}</div>
+            <button onClick={() => remove(a.id)}>Delete</button>
           </div>
         ))}
       </div>
 
-      {/* Modal */}
       {open && (
-        <>
-          <div className="backdrop" onClick={() => { setOpen(false); resetModal(); }} />
-          <div className="modal" role="dialog" aria-modal="true">
-            <div className="modal-head">
-              <h2>Create Navatar</h2>
-              <button className="icon" onClick={() => { setOpen(false); resetModal(); }}>✕</button>
+        <div className="nav-modal">
+          <div className="nav-card">
+            <div className="nav-tabs">
+              <button onClick={() => setTab('upload')} className={tab==='upload'? 'active' : ''}>Upload</button>
+              <button onClick={() => setTab('generate')} className={tab==='generate'? 'active' : ''}>Describe & Generate</button>
+              <button onClick={() => setTab('canon')} className={tab==='canon'? 'active' : ''}>Pick Canon</button>
             </div>
-
-            {/* Mode tabs (exclusive) */}
-            <div className="modes">
-              <button className={`tab ${mode === "upload" ? "active" : ""}`} onClick={() => setMode("upload")}>Upload</button>
-              <button className={`tab ${mode === "generate" ? "active" : ""}`} onClick={() => setMode("generate")}>Describe & Generate</button>
-              <button className={`tab ${mode === "canon" ? "active" : ""}`} onClick={() => setMode("canon")}>Pick Canon</button>
-            </div>
-
-            <input
-              className="input"
-              placeholder="Name (optional)"
-              value={name}
-              onChange={e => setName(e.target.value)}
-            />
-
-            {mode === "upload" && (
-              <div className="panel">
-                <input type="file" accept="image/*"
-                       onChange={e => setFile(e.target.files?.[0] ?? null)} />
-                {file && <img className="preview" src={URL.createObjectURL(file)} alt="preview" />}
-                <button className="btn primary" disabled={!file || busy} onClick={onSaveUpload}>
-                  {busy ? "Saving…" : "Save"}
-                </button>
-              </div>
-            )}
-
-            {mode === "generate" && (
-              <div className="panel">
-                <textarea className="textarea" placeholder="Describe your Navatar…" value={prompt}
-                          onChange={e => setPrompt(e.target.value)} />
-                <button className="btn primary" disabled={!prompt || busy || !canGenerate} onClick={onGenerate}>
-                  {busy ? "Generating…" : "Generate"}
-                </button>
-                {!!err && <p className="error">{err}</p>}
-              </div>
-            )}
-
-            {mode === "canon" && (
-              <div className="panel">
-                <div className="grid">
-                  {catalog.map(c => (
-                    <button key={c.key}
-                            className={`canon ${canonKey === c.key ? "selected" : ""}`}
-                            onClick={() => setCanonKey(c.key)}>
-                      <img src={c.image_url} alt={c.title} />
-                      <div className="label">{c.title}</div>
-                    </button>
-                  ))}
+            <div className="nav-body">
+              <input value={name} onChange={e=>setName(e.target.value)} placeholder="Name (optional)" />
+              {tab === 'upload' && (
+                <div className="panel">
+                  <input type="file" accept="image/*" onChange={e=>setFile(e.target.files?.[0]||null)} />
+                  {file && <img src={URL.createObjectURL(file)} alt="preview" style={{maxWidth:'200px'}} />}
+                  <button disabled={!file || busy} onClick={handleUpload}>{busy?'Saving...':'Save'}</button>
                 </div>
-                <button className="btn primary" disabled={!canonKey || busy} onClick={onSaveCanon}>
-                  {busy ? "Saving…" : "Save"}
-                </button>
-              </div>
-            )}
+              )}
+              {tab === 'generate' && (
+                <div className="panel">
+                  <textarea value={prompt} onChange={e=>setPrompt(e.target.value)} placeholder="Describe your Navatar" />
+                  <button disabled={!prompt || busy} onClick={handleGenerate}>{busy?'Generating...':'Generate'}</button>
+                  {err && <p className="error">{err}</p>}
+                </div>
+              )}
+              {tab === 'canon' && (
+                <div className="panel">
+                  <div className="canon-grid">
+                    {(canon as CanonEntry[]).map(c => (
+                      <button key={c.filename} className={canonPick?.filename===c.filename? 'selected':''} onClick={() => setCanonPick(c)}>
+                        <img src={`/navatars/${c.filename}`} alt={c.title} />
+                        <div>{c.title}</div>
+                      </button>
+                    ))}
+                  </div>
+                  <button disabled={!canonPick || busy} onClick={handleCanon}>{busy?'Saving...':'Save'}</button>
+                </div>
+              )}
+              {err && tab !== 'generate' && <p className="error">{err}</p>}
+            </div>
           </div>
-        </>
+        </div>
       )}
-
-      {/* styles */}
-      <style jsx>{`
-        .container { max-width: 980px; margin: 0 auto; padding: 24px; }
-        .title { text-align: center; margin-bottom: 12px; }
-        .btn { padding: 10px 16px; border-radius: 10px; background:#2b6bff; color:#fff; border:0; }
-        .btn.danger { background:#e24; }
-        .current { display:grid; gap:24px; grid-template-columns: 1fr; margin-top: 24px; }
-        .card { display:flex; flex-direction:column; align-items:center; gap:8px; }
-        .card img { width: 360px; max-width: 100%; border-radius: 14px; display:block; }
-        .modal { position: fixed; top:50%; left:50%; transform: translate(-50%, -50%); width: min(980px, 95vw);
-                 background:#fff; border-radius: 16px; box-shadow: 0 20px 80px rgba(0,0,0,.25); padding: 16px; z-index: 60; }
-        .backdrop { position: fixed; inset:0; background: rgba(0,0,0,.45); z-index: 50; }
-        .modal-head { display:flex; justify-content:space-between; align-items:center; }
-        .icon { border:0; background:#eee; border-radius: 8px; padding: 6px 10px; }
-        .modes { display:flex; gap:12px; justify-content:center; margin: 12px 0; }
-        .tab { background:#79b; color:#fff; border:0; border-radius:10px; padding:10px 12px; opacity: .6; }
-        .tab.active { opacity: 1; box-shadow: 0 4px 0 #6aa; }
-        .input, .textarea { width:100%; padding:10px 12px; border-radius:10px; border:1px solid #d0d5e0; margin:8px 0; }
-        .textarea { min-height: 90px; resize: vertical; }
-        .panel { display:flex; flex-direction:column; gap:12px; align-items:center; }
-        .preview { width: 320px; max-width: 100%; border-radius: 12px; }
-        .grid { display:grid; gap:18px; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); width:100%; }
-        .canon { background:#eaf1ff; border:2px solid transparent; border-radius: 16px; padding:8px; }
-        .canon.selected { border-color:#2b6bff; }
-        .canon img { width:100%; border-radius: 12px; display:block; }
-        .label { text-align:center; padding:8px 0 2px; font-weight:600; }
-        .error { color:#b00; margin:0; }
-        @media (min-width: 860px) {
-          .current { grid-template-columns: repeat(2, 1fr); }
-        }
-      `}</style>
     </div>
   );
+}
+
+export default function NavatarPage() {
+  return <Boundary><NavatarHub /></Boundary>;
 }

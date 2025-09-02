@@ -13,3 +13,9 @@
 .navatar-inline .name { font-weight:600; font-size:.9rem; }
 .navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
 .navatar-inline .action:hover { text-decoration:underline; }
+
+.nav-modal { position: fixed; inset: 0; background: rgba(0,0,0,.4); display:flex; align-items:center; justify-content:center; }
+.nav-card  { width: min(980px, 92vw); max-height: 86vh; overflow: hidden; background:#fff; border-radius:14px; }
+.nav-body  { padding:16px; overflow: auto; max-height: calc(86vh - 64px); }
+.nav-tabs  { display:flex; gap:8px; padding:16px; border-bottom:1px solid #eee; }
+.canon-grid{ display:grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap:16px; }
