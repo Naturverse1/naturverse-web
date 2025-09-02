@@ -1,5 +1,14 @@
-import { NAVATARS, Navatar } from '../data/navatars';
+import catalog from '../data/navatar-catalog.json';
+import { NAVATARS, Navatar as FullNavatar } from '../data/navatars';
 import { getSupabase } from './supabase-client';
+
+export type Navatar = { slug: string; label: string; src: string };
+export type NavatarCatalog = { generatedAt: string; items: Navatar[] };
+
+export function getCatalog(): NavatarCatalog {
+  // The build script keeps this fresh.
+  return catalog as NavatarCatalog;
+}
 
 const supabase = getSupabase();
 
@@ -26,7 +35,7 @@ export function setActiveLocal(id: string) {
   localStorage.setItem(LS_ACTIVE, id);
 }
 
-export async function listAll(): Promise<Navatar[]> {
+export async function listAll(): Promise<FullNavatar[]> {
   return NAVATARS;
 }
 
