@@ -1,14 +1,14 @@
 'use client';
 import React, { useMemo, useState } from 'react';
-import { CANON_LIST, canonSrc, type Canon } from '@/lib/canon';
+import CANONS, { type Canon } from '@/data/navatarCanons';
 
 export default function CanonPicker({ onPick }: { onPick: (c: Canon) => void }) {
   const [q, setQ] = useState('');
   const items = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return CANON_LIST;
-    return CANON_LIST.filter(i =>
-      i.title.toLowerCase().includes(s) || i.subtitle.toLowerCase().includes(s)
+    if (!s) return CANONS;
+    return CANONS.filter(i =>
+      i.title.toLowerCase().includes(s) || i.tags.some(t => t.includes(s))
     );
   }, [q]);
 
@@ -23,14 +23,13 @@ export default function CanonPicker({ onPick }: { onPick: (c: Canon) => void }) 
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
         {items.map((c) => (
           <button
-            key={c.key}
+            key={c.id}
             onClick={() => onPick(c)}
             className="group flex items-center gap-3 rounded-2xl border p-3 text-left hover:shadow-sm"
           >
-            <img src={canonSrc(c.file)} className="h-12 w-12 rounded-xl" alt={c.title} />
+            <img src={c.url} className="h-12 w-12 rounded-xl" alt={c.title} />
             <div className="min-w-0">
               <div className="truncate font-medium">{c.title}</div>
-              <div className="truncate text-xs text-gray-500">{c.subtitle}</div>
             </div>
           </button>
         ))}

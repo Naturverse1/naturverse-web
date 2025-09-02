@@ -13,3 +13,6 @@
 .navatar-inline .name { font-weight:600; font-size:.9rem; }
 .navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
 .navatar-inline .action:hover { text-decoration:underline; }
+.create-block { max-width: 980px; margin: 0 auto; }
+.btn { padding: 10px 16px; border-radius: 10px; }
+.btn-secondary { padding: 8px 12px; border-radius: 10px; opacity: .9; }
