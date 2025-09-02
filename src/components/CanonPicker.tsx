@@ -1,14 +1,14 @@
 'use client';
 import React, { useMemo, useState } from 'react';
-import { CANON_NAVATARS } from '@/lib/canon';
+import { CANON_LIST, canonSrc, type Canon } from '@/lib/canon';
 
-export default function CanonPicker({ onPick }: { onPick: (url: string) => void }) {
+export default function CanonPicker({ onPick }: { onPick: (c: Canon) => void }) {
   const [q, setQ] = useState('');
   const items = useMemo(() => {
     const s = q.trim().toLowerCase();
-    if (!s) return CANON_NAVATARS;
-    return CANON_NAVATARS.filter(i =>
-      i.label.toLowerCase().includes(s) || (i.tags || []).some(t => t.toLowerCase().includes(s))
+    if (!s) return CANON_LIST;
+    return CANON_LIST.filter(i =>
+      i.title.toLowerCase().includes(s) || i.subtitle.toLowerCase().includes(s)
     );
   }, [q]);
 
@@ -24,15 +24,13 @@ export default function CanonPicker({ onPick }: { onPick: (url: string) => void 
         {items.map((c) => (
           <button
             key={c.key}
-            onClick={() => onPick(c.url)}
+            onClick={() => onPick(c)}
             className="group flex items-center gap-3 rounded-2xl border p-3 text-left hover:shadow-sm"
           >
-            <img src={c.url} className="h-12 w-12 rounded-xl" alt={c.label} />
+            <img src={canonSrc(c.file)} className="h-12 w-12 rounded-xl" alt={c.title} />
             <div className="min-w-0">
-              <div className="truncate font-medium">{c.label}</div>
-              {c.tags?.length ? (
-                <div className="truncate text-xs text-gray-500">{c.tags.join(' · ')}</div>
-              ) : null}
+              <div className="truncate font-medium">{c.title}</div>
+              <div className="truncate text-xs text-gray-500">{c.subtitle}</div>
             </div>
           </button>
         ))}
