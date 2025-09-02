@@ -1,9 +1,12 @@
+"use client";
+
 import React, { useEffect, useState } from 'react';
 import { listAll, getOwned, getActive, setActive } from '../lib/navatar';
 import { Navatar } from '../data/navatars';
 import NavatarCard from '../components/NavatarCard';
 import ListNavatarModal from '../components/ListNavatarModal';
 import { useAuth } from '../lib/auth-context';
+import { ErrorBoundary } from '@/components/ErrorBoundary';
 
 export default function YourNavatarPage() {
   const [all, setAll] = useState<Navatar[]>([]);
@@ -26,44 +29,46 @@ export default function YourNavatarPage() {
   }
 
   return (
-    <div style={{ padding: '24px 16px', maxWidth: 1100, margin: '0 auto' }}>
-      <h1>Your Navatar</h1>
-      {mine.length === 0 ? (
-        <p>
-          You don’t own any Navatars yet. Visit the <a href="/marketplace/navatar">Marketplace</a> to
-          get one.
-        </p>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 240px)', gap: 16 }}>
-          {mine.map((n) => (
-            <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <NavatarCard
-                nav={n}
-                owned={true}
-                activeId={active}
-                onGet={() => {}}
-                onUse={onUse}
-              />
-              {user && (
-                <button
-                  onClick={() => setListingFor(n.id)}
-                  style={{ padding: '6px 10px', borderRadius: 8 }}
-                >
-                  List for sale
-                </button>
-              )}
-            </div>
-          ))}
-        </div>
-      )}
-      {listingFor && user && (
-        <ListNavatarModal
-          navatarId={listingFor}
-          sellerUserId={user.id}
-          onClose={() => setListingFor(undefined)}
-          onListed={async () => {}}
-        />
-      )}
-    </div>
+    <ErrorBoundary>
+      <div style={{ padding: '24px 16px', maxWidth: 1100, margin: '0 auto' }}>
+        <h1>Your Navatar</h1>
+        {mine.length === 0 ? (
+          <p>
+            You don’t own any Navatars yet. Visit the <a href="/marketplace/navatar">Marketplace</a> to
+            get one.
+          </p>
+        ) : (
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 240px)', gap: 16 }}>
+            {mine.map((n) => (
+              <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+                <NavatarCard
+                  nav={n}
+                  owned={true}
+                  activeId={active}
+                  onGet={() => {}}
+                  onUse={onUse}
+                />
+                {user && (
+                  <button
+                    onClick={() => setListingFor(n.id)}
+                    style={{ padding: '6px 10px', borderRadius: 8 }}
+                  >
+                    List for sale
+                  </button>
+                )}
+              </div>
+            ))}
+          </div>
+        )}
+        {listingFor && user && (
+          <ListNavatarModal
+            navatarId={listingFor}
+            sellerUserId={user.id}
+            onClose={() => setListingFor(undefined)}
+            onListed={async () => {}}
+          />
+        )}
+      </div>
+    </ErrorBoundary>
   );
 }

@@ -1,41 +1,27 @@
-import * as React from "react";
-import "./error.css";
+import React from 'react';
 
-type Props = { children: React.ReactNode };
-type State = { error: Error | null };
-
-export default class ErrorBoundary extends React.Component<Props, State> {
-  state: State = { error: null };
-
-  static getDerivedStateFromError(error: Error) {
-    return { error };
+export class ErrorBoundary extends React.Component<{ children: React.ReactNode }, { hasError: boolean; msg?: string }> {
+  constructor(props: any) {
+    super(props);
+    this.state = { hasError: false };
   }
-
-  componentDidCatch(error: Error, info: React.ErrorInfo) {
-    // Optional: hook up to telemetry later
-    console.error("App error:", error, info);
+  static getDerivedStateFromError(err: any) {
+    return { hasError: true, msg: err?.message || 'Something went wrong' };
   }
-
-  reset = () => {
-    this.setState({ error: null });
-    // Try a soft reload to recover route state
-    location.reload();
-  };
-
+  componentDidCatch(err: any, info: any) {
+    console.error('ErrorBoundary:', err, info);
+  }
   render() {
-    if (this.state.error) {
+    if (this.state.hasError) {
       return (
-        <main className="nv-err" role="alert" aria-live="assertive">
-          <h1>Something went wrong</h1>
-          <p>We hit an unexpected error. Try reloading the page.</p>
-          <pre className="nv-err__msg">{this.state.error.message}</pre>
-          <div className="nv-err__actions">
-            <button onClick={this.reset}>Reload</button>
-            <a className="btn" href="/">Go home</a>
-          </div>
-        </main>
+        <div className="mx-auto max-w-2xl p-6">
+          <h2 className="text-xl font-semibold mb-2">We hit a snag</h2>
+          <p className="text-neutral-600">{this.state.msg}</p>
+        </div>
       );
     }
-    return this.props.children;
+    return this.props.children as any;
   }
 }
+
+export default ErrorBoundary;
