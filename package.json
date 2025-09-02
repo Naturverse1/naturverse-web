@@ -10,6 +10,8 @@
     "clean": "rimraf dist || rm -rf dist"
   },
   "dependencies": {
+    "openai": "^4.56.0",
+    "tslib": "^2.6.3",
     "@vercel/og": "^0.8.2",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
