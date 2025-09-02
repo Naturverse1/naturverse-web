@@ -4,3 +4,5 @@ dist
 .DS_Store
 .env
 .env.*
+# Generated at build — don't commit
+public/navatar-catalog.json
