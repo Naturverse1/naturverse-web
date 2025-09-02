@@ -1,88 +1,64 @@
-import { NAVATARS, Navatar } from '../data/navatars';
-import { getSupabase } from './supabase-client';
+import { createClient } from '@supabase/supabase-js';
 
-const supabase = getSupabase();
+export const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+);
 
-const LS_OWNED = 'nv_owned_navatars';
-const LS_ACTIVE = 'nv_active_navatar';
-
-function readOwnedLocal(): string[] {
-  try {
-    return JSON.parse(localStorage.getItem(LS_OWNED) || '[]');
-  } catch {
-    return [];
-  }
+export async function listAvatars(userId: string) {
+  return supabase.from('avatars').select('*').eq('user_id', userId).order('created_at', { ascending:false });
 }
 
-function writeOwnedLocal(ids: string[]) {
-  localStorage.setItem(LS_OWNED, JSON.stringify([...new Set(ids)]));
+export async function uploadAvatarImage(userId: string, file: File) {
+  const ext = file.name.split('.').pop() || 'png';
+  const path = `avatars/${userId}/${crypto.randomUUID()}.${ext}`;
+  const { error } = await supabase.storage.from('avatars').upload(path, file, { upsert: false });
+  if (error) throw error;
+  const { data } = supabase.storage.from('avatars').getPublicUrl(path);
+  return data.publicUrl;
 }
 
-export function getActiveLocal(): string | null {
-  return localStorage.getItem(LS_ACTIVE);
+export async function createAvatar(row: {
+  user_id: string; name: string; category: string; method: 'upload'|'ai'|'canon'; image_url: string; traits?: any
+}) {
+  return supabase.from('avatars').insert(row).select().single();
 }
 
-export function setActiveLocal(id: string) {
-  localStorage.setItem(LS_ACTIVE, id);
+export async function setPrimaryAvatar(userId: string, avatarId: string, imageUrl: string) {
+  const reset = supabase.from('avatars').update({ is_primary:false }).eq('user_id', userId);
+  const setOne = supabase.from('avatars').update({ is_primary:true }).eq('id', avatarId);
+  const updUser = supabase.from('users').update({ primary_avatar_id: avatarId, avatar_url: imageUrl }).eq('id', userId);
+  const [r1, r2, r3] = await Promise.all([reset, setOne, updUser]);
+  return r1.error || r2.error || r3.error ? { error: r1.error || r2.error || r3.error } : { data: true };
 }
 
-export async function listAll(): Promise<Navatar[]> {
-  return NAVATARS;
+export async function deleteAvatar(userId: string, avatarId: string) {
+  return supabase.from('avatars').delete().eq('id', avatarId).eq('user_id', userId);
 }
 
-export async function getOwned(): Promise<string[]> {
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      const { data, error } = await supabase
-        .from('owned_navatars')
-        .select('navatar_id')
-        .eq('user_id', user.user.id);
-      if (!error && data) return data.map((r) => r.navatar_id as string);
-    }
-  }
-  return readOwnedLocal();
-}
-
-export async function own(id: string): Promise<void> {
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      await supabase
-        .from('owned_navatars')
-        .insert({ user_id: user.user.id, navatar_id: id, source: 'claim' })
-        .select()
-        .single();
-      return;
-    }
-  }
-  const current = readOwnedLocal();
-  current.push(id);
-  writeOwnedLocal(current);
+export async function generateImageFromPrompt(prompt: string): Promise<string> {
+  if (!process.env.OPENAI_API_KEY) throw new Error('no_openai_key');
+  // Use OpenAI Images API (1 image). You already have serverless runtime on Netlify.
+  const res = await fetch('https://api.openai.com/v1/images/generations', {
+    method: 'POST',
+    headers: { 'Authorization': `Bearer ${process.env.OPENAI_API_KEY}`, 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      model: 'gpt-image-1',
+      prompt,
+      size: '1024x1024',
+      n: 1,
+      // white bg, centered, Naturverse style
+      style: 'natural'
+    })
+  });
+  if (!res.ok) throw new Error(await res.text());
+  const j = await res.json();
+  return j.data?.[0]?.b64_json ?? '';
 }
 
 export async function getActive(): Promise<string | null> {
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      const { data } = await supabase
-        .from('profiles')
-        .select('navatar_id')
-        .eq('id', user.user.id)
-        .single();
-      return (data?.navatar_id as string) || null;
-    }
-  }
-  return getActiveLocal();
-}
-
-export async function setActive(id: string) {
-  if (supabase) {
-    const { data: user } = await supabase.auth.getUser();
-    if (user?.user) {
-      await supabase.from('profiles').update({ navatar_id: id }).eq('id', user.user.id);
-      return;
-    }
-  }
-  setActiveLocal(id);
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase.from('avatars').select('id').eq('user_id', user.id).eq('is_primary', true).single();
+  return (data as any)?.id ?? null;
 }
