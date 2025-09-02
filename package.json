@@ -4,11 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
     "prebuild": "node scripts/build-navatar-catalog.cjs",
     "build": "vite build",
-    "preview": "vite preview",
-    "clean": "rimraf dist || rm -rf dist"
+    "dev": "vite"
   },
   "dependencies": {
     "@vercel/og": "^0.8.2",
