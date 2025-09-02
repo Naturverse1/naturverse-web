@@ -1,0 +1,13 @@
+[
+  { "name": "Blu Butterfly", "slug": "blu-butterfly", "category": "canon", "file": "Blu Butterfly.png", "tags": ["butterfly","blue","calm"] },
+  { "name": "Coconut Cruze", "slug": "coconut-cruze", "category": "canon", "file": "Coconut Cruze.png", "tags": ["coconut","island","fun"] },
+  { "name": "Dr P", "slug": "dr-p", "category": "canon", "file": "Dr P.png", "tags": ["doctor","panda","smart"] },
+  { "name": "Frankie Frogs", "slug": "frankie-frogs", "category": "canon", "file": "Frankie Frogs.png", "tags": ["frog","green"] },
+  { "name": "Inkie", "slug": "inkie", "category": "canon", "file": "Inkie.png", "tags": ["ink","squid"] },
+  { "name": "Jen-Suex", "slug": "jen-suex", "category": "canon", "file": "Jen-Suex.png", "tags": ["hero"] },
+  { "name": "Mango Mike", "slug": "mango-mike", "category": "canon", "file": "Mango Mike.png", "tags": ["mango","thai"] },
+  { "name": "Nikki MT", "slug": "nikki-mt", "category": "canon", "file": "Nikki MT.png", "tags": ["mountain"] },
+  { "name": "Pineapple Petey", "slug": "pineapple-petey", "category": "canon", "file": "Pineapple Petey.png", "tags": ["pineapple"] },
+  { "name": "Teeyor", "slug": "teeyor", "category": "canon", "file": "Teeyor.png", "tags": ["tiger"] },
+  { "name": "Hank", "slug": "hank", "category": "canon", "file": "hank.png", "tags": ["dino"] }
+]
