@@ -1,4 +1,4 @@
-import { getSupabase } from '@/lib/supabase-client';
+import { getSupabase, supabase } from './supabaseClient';
 
 function sanitizeFilename(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9\.\-_]/g, '_');
@@ -25,6 +25,10 @@ export async function getPublicUrl(path: string) {
   if (!supabase) return '';
   const { data } = supabase.storage.from('avatars').getPublicUrl(path);
   return data.publicUrl;
+}
+
+export function publicUrlFromPath(bucket: string, path: string) {
+  return supabase.storage.from(bucket).getPublicUrl(path).data.publicUrl
 }
 
 // Generic helper for other buckets (navatars, products)
