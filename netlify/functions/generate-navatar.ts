@@ -1,79 +1,77 @@
-import type { Handler } from '@netlify/functions'
-import OpenAI from 'openai'
-import { createClient } from '@supabase/supabase-js'
+import type { Handler } from "@netlify/functions";
+import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
 
-const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY })
-const supabase = createClient(
-  process.env.SUPABASE_URL!,
-  process.env.SUPABASE_SERVICE_ROLE_KEY! // server-side only
-)
+const SUPABASE_URL = process.env.SUPABASE_URL!;
+const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
+const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
 
-function json(status: number, body: any) {
-  return {
-    statusCode: status,
-    headers: { 'content-type': 'application/json' },
-    body: JSON.stringify(body),
-  }
-}
+const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod !== 'POST') return json(405, { error: 'Method not allowed' })
-
   try {
-    const { name = 'avatar', prompt = '' } = JSON.parse(event.body || '{}')
-
-    if (!prompt.trim()) return json(400, { error: 'Missing prompt' })
-
-    // Create image with OpenAI (NO response_format param)
-    const img = await openai.images.generate({
-      model: 'gpt-image-1',
-      prompt,
-      size: '1024x1024',
-    })
-
-    const b64 = img.data?.[0]?.b64_json
-    if (!b64) return json(502, { error: 'Image generation failed' })
-
-    const bytes = Buffer.from(b64, 'base64')
-
-    // Upload to Supabase storage (avatars bucket)
-    const fileName = `${Date.now()}-${name.replace(/\W+/g, '-').toLowerCase()}.png`
-    const path = `ai/${fileName}`
-
-    const { error: upErr } = await supabase.storage.from('avatars').upload(path, bytes, {
-      contentType: 'image/png',
-      upsert: false,
-    })
-    if (upErr) return json(502, { error: `Upload failed: ${upErr.message}` })
-
-    const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path)
-    const publicUrl = pub?.publicUrl
-    if (!publicUrl) return json(500, { error: 'Could not resolve public URL' })
-
-    // Insert DB row
-    const { data: avatar, error: dbErr } = await supabase
-      .from('avatars')
-      .insert({
-        name,
-        method: 'ai',
-        image_url: publicUrl,
-        appearance_data: { source: 'ai', path },
-      })
-      .select()
-      .single()
-
-    if (dbErr) return json(502, { error: `DB insert failed: ${dbErr.message}` })
-
-    return json(200, { ok: true, avatar })
-  } catch (e: any) {
-    // Handle common OpenAI 403 (org not verified)
-    const msg = String(e?.message || e)
-    if (/gpt-image-1/i.test(msg) || /403/.test(msg)) {
-      return json(403, {
-        error:
-          '403: Your OpenAI org must be verified to use gpt-image-1. Visit OpenAI org settings to verify (propagation can take ~15 min).',
-      })
+    if (event.httpMethod !== "POST") {
+      return { statusCode: 405, body: "Method Not Allowed" };
     }
-    return json(500, { error: `Unexpected: ${msg}` })
+
+    const { user_id, name, prompt } = JSON.parse(event.body || "{}") as {
+      user_id?: string;
+      name?: string;
+      prompt: string;
+    };
+
+    if (!prompt) {
+      return { statusCode: 400, body: JSON.stringify({ error: "Missing prompt" }) };
+    }
+
+    // Generate image (no response_format param – it 400s on the latest SDK)
+    const img = await openai.images.generate({
+      model: "gpt-image-1",
+      prompt,
+      size: "1024x1024"
+    });
+
+    const b64 = img.data?.[0]?.b64_json;
+    if (!b64) {
+      return { statusCode: 502, body: JSON.stringify({ error: "No image returned" }) };
+    }
+
+    const buffer = Buffer.from(b64, "base64");
+    const fileName = `ai/${user_id ?? "anon"}/${crypto.randomUUID()}.png`;
+
+    const { error: upErr } = await supabase
+      .storage
+      .from("avatars")
+      .upload(fileName, buffer, { contentType: "image/png", upsert: false });
+
+    if (upErr) {
+      return { statusCode: 500, body: JSON.stringify({ error: `Upload failed: ${upErr.message}` }) };
+    }
+
+    const { data: pub } = supabase.storage.from("avatars").getPublicUrl(fileName);
+    const image_url = pub.publicUrl;
+
+    const { error: insErr, data: row } = await supabase
+      .from("avatars")
+      .insert({
+        user_id: user_id ?? null,
+        name: name || "AI avatar",
+        method: "ai",
+        image_url
+      })
+      .select("*")
+      .single();
+
+    if (insErr) {
+      return { statusCode: 500, body: JSON.stringify({ error: `DB insert failed: ${insErr.message}` }) };
+    }
+
+    return { statusCode: 200, body: JSON.stringify({ avatar: row }) };
+  } catch (e: any) {
+    // Pass through OpenAI 403/permissions clearly
+    const msg = e?.response?.data?.error?.message || e?.message || "Unknown error";
+    const code = e?.status || e?.response?.status || 500;
+    return { statusCode: code, body: JSON.stringify({ error: msg }) };
   }
-}
+};
