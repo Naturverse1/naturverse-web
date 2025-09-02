@@ -1,0 +1,24 @@
+.nv-wrap { padding: 16px 20px 32px; max-width: 1100px; margin: 0 auto; }
+h1 { margin: 8px 0 16px; }
+
+.nv-current { display:flex; gap:12px; align-items:center; margin-bottom:16px; }
+.nv-current img { width:72px; height:72px; object-fit:cover; border-radius:10px; }
+.nv-current-meta { display:flex; flex-direction:column; }
+.nv-name { font-weight:700; }
+
+.nv-cards { display:grid; grid-template-columns: repeat(auto-fill,minmax(220px,1fr)); gap:14px; }
+.nv-card { display:block; padding:14px; border:1px solid #e5e7eb; border-radius:14px; background:#fff; text-decoration:none; color:inherit; }
+.nv-card.is-muted { opacity:.6; cursor:not-allowed; }
+
+.nv-grid-wrap { border:1px solid #e5e7eb; border-radius:12px; padding:10px; min-height:260px; max-height:70vh; overflow:auto; }
+.nv-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(140px,1fr)); gap:12px; }
+.nv-card img { width:100%; height:160px; object-fit:cover; border-radius:8px; background:#fff; }
+.nv-card.is-picked { border:2px solid #2563eb; box-shadow:0 0 0 3px rgba(37,99,235,.12); }
+.nv-card-name { font-size:12px; text-align:center; margin-top:6px; }
+
+.nv-actions { display:flex; justify-content:center; margin-top:12px; }
+.nv-save { background:#2563eb; color:#fff; border:none; padding:10px 16px; border-radius:12px; font-weight:700; }
+.nv-save:disabled { opacity:.6; }
+
+.nv-error { color:#b91c1c; margin:10px 0; text-align:center; }
+
