@@ -86,3 +86,18 @@ export async function setActive(id: string) {
   }
   setActiveLocal(id);
 }
+
+export async function generateImageFromPrompt(prompt: string): Promise<string> {
+  const res = await fetch('/.netlify/functions/generate_navatar', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ prompt }),
+  });
+  if (!res.ok) {
+    const j = await res.json().catch(() => ({}));
+    throw new Error(j?.error || `generate_failed_${res.status}`);
+  }
+  const { b64 } = await res.json();
+  if (!b64) throw new Error('no_image_returned');
+  return `data:image/png;base64,${b64}`;
+}
