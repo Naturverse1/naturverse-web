@@ -86,3 +86,35 @@ export async function setActive(id: string) {
   }
   setActiveLocal(id);
 }
+
+export type CanonPick = { name: string; src: string };
+
+export async function saveCanonNavatar(pick: CanonPick) {
+  if (!supabase) throw new Error('Supabase not initialized');
+  const { data: auth } = await supabase.auth.getUser();
+  const user = auth?.user;
+  if (!user) throw new Error('Not signed in');
+
+  const row: any = {
+    user_id: user.id,
+    name: pick.name,
+    type: 'CANON',
+    image_url: pick.src,
+    url: pick.src,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error: upsertErr } = await supabase
+    .from('avatars')
+    .upsert(row, { onConflict: 'user_id' });
+
+  if (upsertErr && /column .* does not exist/i.test(upsertErr.message)) {
+    const { error: insertErr } = await supabase
+      .from('avatars')
+      .insert([{ user_id: user.id, name: pick.name, type: 'CANON', url: pick.src }]);
+    if (insertErr) throw insertErr;
+    return;
+  }
+
+  if (upsertErr) throw upsertErr;
+}
