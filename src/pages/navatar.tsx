@@ -1,67 +1,72 @@
 import React, { useEffect, useState } from 'react';
-import { listAll, getOwned, getActive, setActive } from '../lib/navatar';
-import { Navatar } from '../data/navatars';
-import NavatarCard from '../components/NavatarCard';
-import ListNavatarModal from '../components/ListNavatarModal';
-import { useAuth } from '../lib/auth-context';
+import { useAuth } from '@/lib/auth-context';
+import { getNavatars, Navatar } from '@/lib/navatar';
+import NavatarCard from '@/components/navatar/NavatarCard';
+import NavatarForm from '@/components/navatar/NavatarForm';
 
-export default function YourNavatarPage() {
-  const [all, setAll] = useState<Navatar[]>([]);
-  const [owned, setOwned] = useState<string[]>([]);
-  const [active, setActiveId] = useState<string | null>(null);
+export default function NavatarPage() {
   const { user } = useAuth();
-  const [listingFor, setListingFor] = useState<string | undefined>();
+  const [avatars, setAvatars] = useState<Navatar[]>([]);
+  const [creating, setCreating] = useState(false);
+  const [editing, setEditing] = useState<Navatar | null>(null);
 
   useEffect(() => {
-    listAll().then(setAll);
-    getOwned().then(setOwned);
-    getActive().then(setActiveId);
-  }, []);
+    if (user) {
+      getNavatars(user.id).then(setAvatars);
+    }
+  }, [user]);
 
-  const mine = all.filter((n) => owned.includes(n.id));
+  const refresh = () => {
+    if (user) getNavatars(user.id).then(setAvatars);
+  };
 
-  async function onUse(id: string) {
-    await setActive(id);
-    setActiveId(await getActive());
+  if (!user) {
+    return (
+      <div className="p-8 text-center">
+        <p>
+          Please <a href="/login" className="text-blue-600">Create account / Log in</a>.
+        </p>
+      </div>
+    );
   }
 
   return (
-    <div style={{ padding: '24px 16px', maxWidth: 1100, margin: '0 auto' }}>
-      <h1>Your Navatar</h1>
-      {mine.length === 0 ? (
-        <p>
-          You don’t own any Navatars yet. Visit the <a href="/marketplace/navatar">Marketplace</a> to
-          get one.
-        </p>
+    <div className="p-4 max-w-5xl mx-auto">
+      <div className="flex items-center justify-between mb-4">
+        <h1 className="text-2xl font-bold">My Navatars</h1>
+        <button
+          className="px-4 py-2 rounded bg-blue-600 text-white"
+          onClick={() => setCreating(true)}
+        >
+          Create Navatar
+        </button>
+      </div>
+      {avatars.length === 0 ? (
+        <div className="rounded-xl border bg-white p-4 text-center">No navatars yet.</div>
       ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, 240px)', gap: 16 }}>
-          {mine.map((n) => (
-            <div key={n.id} style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
-              <NavatarCard
-                nav={n}
-                owned={true}
-                activeId={active}
-                onGet={() => {}}
-                onUse={onUse}
-              />
-              {user && (
-                <button
-                  onClick={() => setListingFor(n.id)}
-                  style={{ padding: '6px 10px', borderRadius: 8 }}
-                >
-                  List for sale
-                </button>
-              )}
-            </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          {avatars.map((av) => (
+            <NavatarCard key={av.id} avatar={av} onEdit={(a) => setEditing(a)} refresh={refresh} />
           ))}
         </div>
       )}
-      {listingFor && user && (
-        <ListNavatarModal
-          navatarId={listingFor}
-          sellerUserId={user.id}
-          onClose={() => setListingFor(undefined)}
-          onListed={async () => {}}
+      {creating && (
+        <NavatarForm
+          onClose={() => setCreating(false)}
+          onSaved={() => {
+            setCreating(false);
+            refresh();
+          }}
+        />
+      )}
+      {editing && (
+        <NavatarForm
+          initial={editing}
+          onClose={() => setEditing(null)}
+          onSaved={() => {
+            setEditing(null);
+            refresh();
+          }}
         />
       )}
     </div>
