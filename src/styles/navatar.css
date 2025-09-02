@@ -1,15 +1,23 @@
-/* Rarity frames */
-.navatar-frame { display:inline-grid; place-items:center; border-radius:50%; padding:2px; }
-.navatar-frame.starter { box-shadow: 0 0 0 2px #cfe0ff inset; }
-.navatar-frame.rare     { box-shadow: 0 0 0 2px #34d399 inset; }
-.navatar-frame.legendary{ box-shadow: 0 0 0 2px #f59e0b inset; }
+.navatar-wrap { max-width: 1100px; margin: 0 auto; padding: 20px; }
 
-/* Compact inline pill */
-.navatar-inline {
-  display:inline-flex; gap:8px; align-items:center; padding:6px 10px;
-  border:1px solid #e5e7eb; border-radius:999px; background:#fff;
-}
+.navatar-list { display: grid; grid-template-columns: repeat(auto-fill,minmax(260px,1fr)); gap: 18px; }
+.navatar-card { background: #f6f7fb; border-radius: 14px; padding: 10px 12px; }
+.navatar-card img { width: 100%; border-radius: 12px; display: block; }
 
-.navatar-inline .name { font-weight:600; font-size:.9rem; }
-.navatar-inline .action { font-size:.85rem; color:#2563eb; cursor:pointer; }
-.navatar-inline .action:hover { text-decoration:underline; }
+.navatar-toolbar { text-align: center; margin: 8px 0 18px; }
+.navatar-primary { font-weight: 700; font-size: 18px; padding: 10px 16px; }
+
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.45); display: flex; align-items: center; justify-content: center; z-index: 1000; }
+.modal { width: min(980px,95vw); max-height: 90vh; overflow: auto; background: #fff; border-radius: 16px; padding: 16px; position: relative; }
+
+.tabs { display: flex; gap: 10px; align-items: center; position: sticky; top: 0; background: #fff; padding-bottom: 8px; z-index: 1; }
+.tabs .tab { padding: 10px 14px; border-radius: 10px; background: #e7efff; font-weight: 700; }
+.tabs .tab.active { background: #1b64ff; color: #fff; }
+.tabs .close { margin-left: auto; padding: 10px 14px; }
+
+.canon-grid { display: grid; grid-template-columns: repeat(auto-fill,minmax(180px,1fr)); gap: 16px; overflow: auto; max-height: 60vh; padding-top: 10px; }
+.canon-card { background: #f4f6ff; border-radius: 12px; padding: 8px; display: flex; flex-direction: column; gap: 8px; }
+.canon-card img { height: 220px; width: 100%; object-fit: cover; border-radius: 8px; }
+
+.preview-img { width: 320px; border-radius: 12px; display: block; margin: 12px 0; }
+.hint { font-size: 12px; color: #6b7280; }

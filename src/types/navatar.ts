@@ -1,12 +1,10 @@
-export type NavatarBase = "Animal" | "Fruit" | "Insect" | "Spirit";
-
-export type Navatar = {
-  id: string;             // nano id (timestamp-based string)
-  name: string;
-  base: NavatarBase;
-  species: string;        // e.g., “Red Panda”, “Mango”, …
-  backstory: string;
-  powers: string[];       // short list of powers/traits
-  imageDataUrl?: string;  // optional uploaded photo (data URL)
-  createdAt: number;      // epoch ms
-};
+export type NavatarMethod = "upload" | "canon" | "ai";
+export interface NavatarRow {
+  id: string;
+  user_id: string;
+  name: string | null;
+  method: NavatarMethod;
+  storage_path: string | null;
+  canon_key: string | null;
+  created_at: string;
+}
