@@ -10,23 +10,23 @@
 # --- Static utility pages BEFORE SPA catch-all ---
 [[redirects]]
   from = "/kill-sw"
-  to = "/kill-sw.html"
+  to   = "/kill-sw.html"
   status = 200
-  force = true
+  force  = true
 
 [[redirects]]
   from = "/auth/callback"
-  to = "/auth/callback.html"
+  to   = "/auth/callback.html"
   status = 200
-  force = true
+  force  = true
 
 # SPA fallback last
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to   = "/index.html"
   status = 200
 
-# Make sure our two tiny utility pages can run inline JS/CSS safely
+# Headers for the two utility pages
 [[headers]]
   for = "/kill-sw.html"
   [headers.values]
@@ -37,9 +37,8 @@
   for = "/auth/callback.html"
   [headers.values]
     Cache-Control = "no-store"
-    # Allow only what's needed; we keep it simple and local
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
 
-[[functions]]
-  name = "generate-navatar"
+# (Optional) per-function override — use a child table, not [[functions]]
+[functions."generate-navatar"]
   timeout = 26
