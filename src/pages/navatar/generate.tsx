@@ -1,35 +1,38 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSupabase } from '../../lib/supabase';
 import { useSession } from '../../lib/session';
 import '../../styles/navatar.css';
 
 export default function NavatarGenerate() {
   const navigate = useNavigate();
   const user = useSession();
-  const supabase = getSupabase();
-  const [imageUrl, setImageUrl] = useState('');
-  const [title, setTitle] = useState('');
+
+  const [prompt, setPrompt] = useState('');
+  const [sourceImageUrl, setSourceImageUrl] = useState('');
+  const [maskImageUrl, setMaskImageUrl] = useState('');
+  const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
 
-  async function handleGenerateDone() {
-    if (!user?.id) return alert('Please sign in');
-    if (!imageUrl) return;
-    setSaving(true);
+  async function handleGenerate() {
     try {
-      const { error } = await supabase
-        .from('avatars')
-        .upsert(
-          {
-            user_id: user.id,
-            name: title || 'Navatar',
-            category: 'ai',
-            method: 'generate',
-            image_url: imageUrl,
-          },
-          { onConflict: 'user_id', ignoreDuplicates: false }
-        );
-      if (error) throw error;
+      if (!user?.id) return alert('Please sign in');
+      if (!prompt && !sourceImageUrl) return alert('Enter a prompt or source image');
+
+      setSaving(true);
+      const res = await fetch('/.netlify/functions/generateNavatar', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({
+          userId: user.id,
+          prompt,
+          name: displayName,
+          sourceImageUrl: sourceImageUrl || undefined,
+          maskImageUrl: maskImageUrl || undefined,
+        }),
+      });
+      const json = await res.json();
+      if (!res.ok) throw new Error(json?.error || 'Generate failed');
+
       navigate('/navatar?refresh=1');
     } catch (e: any) {
       alert(e.message || String(e));
@@ -39,7 +42,7 @@ export default function NavatarGenerate() {
   }
 
   return (
-    <div className="container">
+    <div className="container wide">
       <nav className="nv-breadcrumbs brand-blue">
         <Link to="/">Home</Link>
         <span className="sep">/</span>
@@ -47,15 +50,45 @@ export default function NavatarGenerate() {
         <span className="sep">/</span>
         <span>Describe &amp; Generate</span>
       </nav>
+
       <h1>Describe &amp; Generate</h1>
-      <p>Enter an image URL and name to save your generated Navatar.</p>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400 }}>
-        <input type="text" placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
-        <input type="text" placeholder="Name (optional)" value={title} onChange={e => setTitle(e.target.value)} />
-        <button className="primary" onClick={handleGenerateDone} disabled={!imageUrl || saving}>
-          {saving ? 'Saving…' : 'Save'}
+
+      <div className="formStack">
+        <textarea
+          className="input fill"
+          rows={4}
+          placeholder="Describe your Navatar (e.g., 'friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style')"
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
+        />
+        <input
+          className="input fill"
+          placeholder="(Optional) Source Image URL for edits/merge"
+          value={sourceImageUrl}
+          onChange={(e) => setSourceImageUrl(e.target.value)}
+        />
+        <input
+          className="input fill"
+          placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
+          value={maskImageUrl}
+          onChange={(e) => setMaskImageUrl(e.target.value)}
+        />
+        <input
+          className="input fill"
+          placeholder="Name (optional)"
+          value={displayName}
+          onChange={(e) => setDisplayName(e.target.value)}
+        />
+        <button className="primary block" onClick={handleGenerate} disabled={saving}>
+          {saving ? 'Creating…' : 'Save'}
         </button>
       </div>
+
+      <p className="hint">
+        Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration /
+        character sheet” for that Navatar vibe.
+      </p>
     </div>
   );
 }
+

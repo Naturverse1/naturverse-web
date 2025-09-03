@@ -60,7 +60,7 @@ export default function NavatarUpload() {
   }
 
   return (
-    <div className="container">
+    <div className="container wide">
       <nav className="nv-breadcrumbs brand-blue">
         <Link to="/">Home</Link><span className="sep">/</span>
         <Link to="/navatar">Navatar</Link><span className="sep">/</span>
@@ -69,10 +69,10 @@ export default function NavatarUpload() {
 
       <h1>Upload Navatar</h1>
 
-      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 640 }}>
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <input type="text" placeholder="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <button className="primary" onClick={handleUpload} disabled={saving || !file}>
+      <div className="formStack">
+        <input className="input fill" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <input className="input fill" type="text" placeholder="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        <button className="primary block" onClick={handleUpload} disabled={saving || !file}>
           {saving ? 'Saving…' : 'Upload'}
         </button>
       </div>
