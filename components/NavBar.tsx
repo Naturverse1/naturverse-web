@@ -19,7 +19,7 @@ export default function NavBar() {
           <Link className="nv-link" href="/worlds">Worlds</Link>
           <Link className="nv-link" href="/zones">Zones</Link>
           <Link className="nv-link" href="/marketplace">Marketplace</Link>
-          <Link className="nv-link" href="/wishlist">Wishlist</Link>
+          <Link className="nv-link" href="/marketplace/wishlist">Wishlist</Link>
           <Link className="nv-link" href="/naturversity">Naturversity</Link>
           <Link className="nv-link" href="/naturbank">NaturBank</Link>
           {/* Navatar is always enabled */}

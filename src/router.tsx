@@ -10,6 +10,7 @@ import ZonesExplorer from './pages/ZonesExplorer';
 import ZoneDetail from './pages/zones/[slug]';
 import MarketplacePage from './pages/marketplace';
 import ProductPage from './pages/marketplace/[sku]';
+import WishlistPage from './pages/marketplace/Wishlist';
 import CartLoad from './pages/cart-load';
 import QuestsList from './pages/quests';
 import NewQuest from './pages/quests/new';
@@ -71,6 +72,7 @@ export const router = createBrowserRouter([
       { path: 'play/:quest', element: <PlayQuest /> },
 
       { path: 'marketplace', element: <MarketplacePage /> },
+      { path: 'marketplace/wishlist', element: <WishlistPage /> },
       { path: 'marketplace/:sku', element: <ProductPage /> },
       { path: 'checkout', element: <CheckoutPage /> },
       { path: 'success', element: <SuccessPage /> },
