@@ -10,6 +10,9 @@ const IMAGES_BUCKET = process.env.IMAGES_BUCKET || 'avatars';
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
+// force portrait so UI looks consistent with Pick cards
+const PORTRAIT = '1024x1536';
+
 // small helper
 const asBuf = async (url: string) => {
   const r = await fetch(url);
@@ -63,7 +66,7 @@ export const handler: Handler = async (event) => {
         prompt: prompt ?? '',
         image,
         ...(mask ? { mask } : {}),
-        size: '1024x1024',
+        size: PORTRAIT,
       });
 
       b64 = edit.data?.[0]?.b64_json;
@@ -71,7 +74,7 @@ export const handler: Handler = async (event) => {
       const gen = await openai.images.generate({
         model: 'gpt-image-1',
         prompt: prompt ?? '',
-        size: '1024x1024',
+        size: PORTRAIT,
       });
       b64 = gen.data?.[0]?.b64_json;
     }
@@ -119,7 +122,7 @@ export const handler: Handler = async (event) => {
       );
     if (dbErr) return json(500, { error: `DB error: ${dbErr.message}` });
 
-    return json(200, { image_url });
+    return json(200, { image_url, width: 1024, height: 1536 });
   } catch (e: any) {
     // pass through useful details when possible
     const status =
