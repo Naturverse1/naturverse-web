@@ -1,8 +1,9 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { getSupabase } from '../../lib/supabase';
 import { useSession } from '../../lib/session';
-import '../../styles/navatar.css';
+import './Navatar.css';
 
 export default function NavatarUpload() {
   const navigate = useNavigate();
@@ -44,6 +45,7 @@ export default function NavatarUpload() {
             name: displayName || 'Navatar',
             category: 'upload',
             method: 'upload',
+            status: 'ready',
             image_url,
           },
           { onConflict: 'user_id', ignoreDuplicates: false }
@@ -60,19 +62,14 @@ export default function NavatarUpload() {
   }
 
   return (
-    <div className="container wide">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link><span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link><span className="sep">/</span>
-        <span>Upload</span>
-      </nav>
-
+    <div className="nv-Page">
+      <Breadcrumbs items={[{ href: '/', label: 'Home' }, { href: '/navatar', label: 'Navatar' }, { label: 'Upload' }]} />
       <h1>Upload Navatar</h1>
 
-      <div className="formStack">
-        <input className="input fill" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <input className="input fill" type="text" placeholder="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <button className="primary block" onClick={handleUpload} disabled={saving || !file}>
+      <div className="nv-Card" style={{ display: 'flex', flexDirection: 'column', gap: 12 }}>
+        <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} />
+        <input type="text" placeholder="Name (optional)" value={displayName} onChange={e => setDisplayName(e.target.value)} />
+        <button className="nv-PrimaryBtn" onClick={handleUpload} disabled={saving || !file}>
           {saving ? 'Saving…' : 'Upload'}
         </button>
       </div>

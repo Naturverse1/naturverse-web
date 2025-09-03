@@ -4,8 +4,8 @@ export type AvatarRow = {
   id?: string;
   user_id: string;
   name: string;
-  category: 'canon' | 'upload' | 'ai';
-  method: 'pick' | 'upload' | 'generate';
+  category: 'canon' | 'upload' | 'generate';
+  method: 'system' | 'upload' | 'generate' | 'ai';
   image_url: string;
   updated_at?: string;
 };

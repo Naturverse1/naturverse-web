@@ -4,7 +4,7 @@ export type NewAvatar = {
   name: string;
   category?: string | null;
   image_url: string;
-  method: 'upload' | 'ai' | 'canon';
+  method: 'upload' | 'ai' | 'system' | 'generate';
   appearance_data?: any;
 };
 

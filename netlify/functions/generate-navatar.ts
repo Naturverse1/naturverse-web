@@ -33,6 +33,7 @@ type Payload = {
   name?: string;
   sourceImageUrl?: string;
   maskImageUrl?: string;
+  size?: string;
 };
 
 export const handler: Handler = async (event) => {
@@ -44,36 +45,47 @@ export const handler: Handler = async (event) => {
     const body = (event.body ?? '').trim();
     if (!body) return json(400, { error: 'Missing JSON body' });
 
-    const { prompt, userId, name, sourceImageUrl, maskImageUrl } =
-      JSON.parse(body) as Payload;
+    const payload = JSON.parse(body) as Payload;
+    const { prompt, userId, name, sourceImageUrl, maskImageUrl } = payload;
 
     if (!prompt && !sourceImageUrl) {
       return json(400, { error: 'Provide prompt or sourceImageUrl' });
     }
 
+    const SIZE =
+      payload.size === 'auto' ? 'auto' : (payload.size ?? '1024x1536');
+
     // ---- 1) Generate/Edit via OpenAI (no deprecated response_format) ----
     let b64: string | undefined;
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 28_000); // guard against 504s
 
-    if (sourceImageUrl) {
-      const image = await asBuf(sourceImageUrl);
-      const mask = maskImageUrl ? await asBuf(maskImageUrl) : undefined;
+    try {
+      if (sourceImageUrl) {
+        const image = await asBuf(sourceImageUrl);
+        const mask = maskImageUrl ? await asBuf(maskImageUrl) : undefined;
 
-      const edit = await openai.images.edits({
-        model: 'gpt-image-1',
-        prompt: prompt ?? '',
-        image,
-        ...(mask ? { mask } : {}),
-        size: '1024x1024',
-      });
+        const edit = await openai.images.edits({
+          model: 'gpt-image-1',
+          prompt: prompt ?? '',
+          image,
+          ...(mask ? { mask } : {}),
+          size: SIZE,
+          signal: controller.signal,
+        });
 
-      b64 = edit.data?.[0]?.b64_json;
-    } else {
-      const gen = await openai.images.generate({
-        model: 'gpt-image-1',
-        prompt: prompt ?? '',
-        size: '1024x1024',
-      });
-      b64 = gen.data?.[0]?.b64_json;
+        b64 = edit.data?.[0]?.b64_json;
+      } else {
+        const gen = await openai.images.generate({
+          model: 'gpt-image-1',
+          prompt: prompt ?? '',
+          size: SIZE,
+          signal: controller.signal,
+        });
+        b64 = gen.data?.[0]?.b64_json;
+      }
+    } finally {
+      clearTimeout(timer);
     }
 
     if (!b64) return json(502, { error: 'No image returned from OpenAI' });
@@ -113,6 +125,7 @@ export const handler: Handler = async (event) => {
           name: display,
           category: 'generate',
           method: 'generate',
+          status: 'ready',
           image_url,
         },
         { onConflict: 'user_id' }
