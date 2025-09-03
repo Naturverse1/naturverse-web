@@ -10,63 +10,57 @@ export default function NavatarGenerate() {
   const [srcUrl, setSrcUrl] = useState('');
   const [maskUrl, setMaskUrl] = useState('');
   const [name, setName] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [busy, setBusy] = useState(false);
+  const [err, setErr] = useState('');
 
-  async function handleSave() {
-    if (!prompt && !srcUrl) {
-      alert('Enter a prompt or a source image URL');
-      return;
-    }
-    setSaving(true);
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr('');
+    setBusy(true);
+
     try {
-      const r = await fetch('/.netlify/functions/generate-navatar', {
+      const res = await fetch('/.netlify/functions/generate-navatar', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          prompt,
-          userId: user?.id,
-          name,
+          prompt: prompt.trim(),
+          userId: user?.id || null,
+          name: name || null,
+          size: '1024x1024',
           sourceImageUrl: srcUrl || undefined,
           maskImageUrl: maskUrl || undefined,
         }),
       });
 
-      const text = await r.text(); // robust: read text first
-      let data: any = {};
-      try { data = text ? JSON.parse(text) : {}; } catch {
-        // backend guaranteed JSON; this guards against upstream HTML errors
-        throw new Error(text || 'Server returned non-JSON response');
+      if (!res.ok) {
+        const text = await res.text();
+        setErr(text || `HTTP ${res.status}`);
+        return;
       }
 
-      if (!r.ok) {
-        throw new Error(data?.error || 'Create failed');
-      }
-
+      await res.json();
       navigate('/navatar?refresh=1');
     } catch (e: any) {
-      alert(e?.message || String(e));
+      setErr(e?.message || 'Network error');
     } finally {
-      setSaving(false);
+      setBusy(false);
     }
   }
 
   return (
     <div className="container">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link><span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link><span className="sep">/</span>
-        <span>Describe &amp; Generate</span>
+      <nav className="crumbs">
+        <Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> / <span>Describe &amp; Generate</span>
       </nav>
 
-      <h1>Describe &amp; Generate</h1>
+      <h1 className="h1">Describe &amp; Generate</h1>
 
-      <div style={{display:'flex', flexDirection:'column', gap:12, maxWidth:720, margin:'0 auto'}}>
+      <form className="card card-center" onSubmit={onSubmit}>
         <textarea
-          placeholder="Describe your Navatar (e.g., ‘friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style’)
-"          value={prompt}
+          placeholder="Describe your Navatar (e.g., 'friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style')"
+          value={prompt}
           onChange={e => setPrompt(e.target.value)}
           rows={4}
-          style={{width:'100%'}}
         />
         <input
           type="url"
@@ -86,16 +80,14 @@ export default function NavatarGenerate() {
           value={name}
           onChange={e => setName(e.target.value)}
         />
-
-        <button className="primary" disabled={saving} onClick={handleSave}>
-          {saving ? 'Creating…' : 'Save'}
+        <button className="btn btn-primary" disabled={busy}>
+          {busy ? 'Creating...' : 'Save'}
         </button>
-
+        {err && <p className="error">{err}</p>}
         <p className="hint">
           Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration / character sheet” for that Navatar vibe.
         </p>
-      </div>
+      </form>
     </div>
   );
 }
-
