@@ -8,34 +8,46 @@ export default function NavatarGenerate() {
   const user = useSession();
 
   const [prompt, setPrompt] = useState('');
-  const [sourceImageUrl, setSourceImageUrl] = useState('');
-  const [maskImageUrl, setMaskImageUrl] = useState('');
+  const [srcUrl, setSrcUrl] = useState('');
+  const [maskUrl, setMaskUrl] = useState('');
   const [displayName, setDisplayName] = useState('');
   const [saving, setSaving] = useState(false);
 
-  async function handleGenerate() {
+  async function onSave() {
+    if (saving) return;
+    setSaving(true);
     try {
-      if (!user?.id) return alert('Please sign in');
-      if (!prompt && !sourceImageUrl) return alert('Enter a prompt or source image');
+      if (!user?.id && !prompt && !srcUrl) {
+        alert('Please sign in or provide a prompt / image.');
+        return;
+      }
 
-      setSaving(true);
-      const res = await fetch('/.netlify/functions/generateNavatar', {
+      const res = await fetch('/.netlify/functions/generate-navatar', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          userId: user.id,
           prompt,
-          name: displayName,
-          sourceImageUrl: sourceImageUrl || undefined,
-          maskImageUrl: maskImageUrl || undefined,
+          user_id: user?.id,
+          name: displayName || undefined,
+          sourceImageUrl: srcUrl || undefined,
+          maskImageUrl: maskUrl || undefined,
         }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Generate failed');
+
+      let payload: any = null;
+      const txt = await res.text();
+      try { payload = txt ? JSON.parse(txt) : null; } catch { /* noop */ }
+
+      if (!res.ok) {
+        throw new Error(payload?.error || 'Create failed');
+      }
+
+      const image_url = payload?.image_url;
+      if (!image_url) throw new Error('No image_url returned.');
 
       navigate('/navatar?refresh=1');
     } catch (e: any) {
-      alert(e.message || String(e));
+      alert(e.message || 'Create failed');
     } finally {
       setSaving(false);
     }
@@ -53,7 +65,7 @@ export default function NavatarGenerate() {
 
       <h1>Describe &amp; Generate</h1>
 
-      <div className="formStack">
+      <div className="formStack nv-form">
         <textarea
           className="input fill"
           rows={4}
@@ -64,14 +76,14 @@ export default function NavatarGenerate() {
         <input
           className="input fill"
           placeholder="(Optional) Source Image URL for edits/merge"
-          value={sourceImageUrl}
-          onChange={(e) => setSourceImageUrl(e.target.value)}
+          value={srcUrl}
+          onChange={(e) => setSrcUrl(e.target.value)}
         />
         <input
           className="input fill"
           placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
-          value={maskImageUrl}
-          onChange={(e) => setMaskImageUrl(e.target.value)}
+          value={maskUrl}
+          onChange={(e) => setMaskUrl(e.target.value)}
         />
         <input
           className="input fill"
@@ -79,7 +91,7 @@ export default function NavatarGenerate() {
           value={displayName}
           onChange={(e) => setDisplayName(e.target.value)}
         />
-        <button className="primary block" onClick={handleGenerate} disabled={saving}>
+        <button className="primary block" onClick={onSave} disabled={saving}>
           {saving ? 'Creating…' : 'Save'}
         </button>
       </div>

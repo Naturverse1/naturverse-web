@@ -21,3 +21,11 @@ button.block { width: 100%; }
 
 /* tiny helper */
 .hint { margin-top: 10px; opacity: 0.8; font-size: 14px; }
+
+/* ensure form elements span available width but stay reasonable */
+.nv-form input,
+.nv-form textarea,
+.nv-form button {
+  width: 100%;
+  max-width: 780px;
+}
