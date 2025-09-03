@@ -1,12 +1,12 @@
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { getSupabase } from '../../lib/supabase-client';
+import { getSupabase } from '../../lib/supabase';
 import { useSession } from '../../lib/session';
 import '../../styles/navatar.css';
 
 export default function NavatarGenerate() {
   const navigate = useNavigate();
-  const { user } = useSession();
+  const user = useSession();
   const supabase = getSupabase();
   const [imageUrl, setImageUrl] = useState('');
   const [title, setTitle] = useState('');
@@ -22,7 +22,7 @@ export default function NavatarGenerate() {
         .upsert(
           {
             user_id: user.id,
-            name: title || 'avatar',
+            name: title || 'Navatar',
             category: 'ai',
             method: 'generate',
             image_url: imageUrl,
@@ -49,9 +49,9 @@ export default function NavatarGenerate() {
       </nav>
       <h1>Describe &amp; Generate</h1>
       <p>Enter an image URL and name to save your generated Navatar.</p>
-      <div style={{display:'flex', flexDirection:'column', gap:12, maxWidth:400}}>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 12, maxWidth: 400 }}>
         <input type="text" placeholder="Image URL" value={imageUrl} onChange={e => setImageUrl(e.target.value)} />
-        <input type="text" placeholder="Name" value={title} onChange={e => setTitle(e.target.value)} />
+        <input type="text" placeholder="Name (optional)" value={title} onChange={e => setTitle(e.target.value)} />
         <button className="primary" onClick={handleGenerateDone} disabled={!imageUrl || saving}>
           {saving ? 'Saving…' : 'Save'}
         </button>

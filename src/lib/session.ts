@@ -3,7 +3,7 @@ import { useAuth } from "@/auth/AuthContext";
 
 export function useSession() {
   const { user } = useAuth();
-  return { user };
+  return user;
 }
 
 export async function getUserId(): Promise<string | null> {
