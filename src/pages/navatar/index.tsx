@@ -1,23 +1,34 @@
 import { useEffect, useState } from 'react';
+import { Link, useSearchParams } from 'react-router-dom';
 import { getMyAvatar } from '../../lib/avatars';
-import { Link } from 'react-router-dom';
 
 export default function NavatarHub() {
   const [loading, setLoading] = useState(true);
   const [mine, setMine] = useState<any>(null);
+  const [searchParams] = useSearchParams();
 
+  async function loadMyNavatar() {
+    setLoading(true);
+    try {
+      setMine(await getMyAvatar());
+    } finally {
+      setLoading(false);
+    }
+  }
+  useEffect(() => { loadMyNavatar(); }, []);
   useEffect(() => {
-    (async () => {
-      try { setMine(await getMyAvatar()); }
-      finally { setLoading(false); }
-    })();
-  }, []);
+    if (searchParams.get('refresh')) loadMyNavatar();
+  }, [searchParams]);
 
   if (loading) return <div className="container"><h1>Your Navatar</h1><p>Loading…</p></div>;
 
   return (
     <div className="container">
-      <nav className="crumbs">Home / Navatar</nav>
+      <nav className="nv-breadcrumbs brand-blue">
+        <Link to="/">Home</Link>
+        <span className="sep">/</span>
+        <span>Navatar</span>
+      </nav>
       <h1>Your Navatar</h1>
 
       {mine ? (

@@ -4,8 +4,8 @@ export type AvatarRow = {
   id?: string;
   user_id: string;
   name: string;
-  category: 'canon' | 'upload' | 'generate';
-  method: 'pick' | 'upload' | 'ai';
+  category: 'canon' | 'upload' | 'ai';
+  method: 'pick' | 'upload' | 'generate';
   image_url: string;
   updated_at?: string;
 };
@@ -32,9 +32,8 @@ export async function upsertMyAvatar(payload: Omit<AvatarRow, 'id'|'updated_at'|
     .from('avatars')
     .upsert({
       user_id: user.id,
-      ...payload,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' });
+      ...payload
+    }, { onConflict: 'user_id', ignoreDuplicates: false });
 
   if (error) throw error;
 }

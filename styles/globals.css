@@ -255,6 +255,13 @@ footer,
   color: #1a4d9c !important;
 }
 
+/* Brand blue for breadcrumbs links and separators */
+.nv-breadcrumbs.brand-blue a,
+.nv-breadcrumbs.brand-blue span,
+.nv-breadcrumbs.brand-blue .sep {
+  color: #1e64ff !important;
+}
+
 /* Ensure links keep their current hover/active colors */
 a {
   color: #1a4d9c;
