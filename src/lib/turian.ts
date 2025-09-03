@@ -1,4 +1,4 @@
-import { isDemo } from "@/config/ai";
+import { isDemo } from "@/lib/ai";
 
 // --- Demo script ----
 type Msg = { role: "user" | "assistant" | "system"; content: string };
@@ -28,7 +28,7 @@ function pickDemoReply(text: string): string {
 }
 
 export async function turianReply(messages: Msg[]): Promise<Msg> {
-  if (isDemo) {
+  if (isDemo()) {
     const lastUser = [...messages].reverse().find(m => m.role === "user");
     const answer = pickDemoReply(lastUser?.content || "");
     return { role: "assistant", content: answer };

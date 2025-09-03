@@ -22,6 +22,7 @@ import SearchProvider from './search/SearchProvider';
 import CheckoutBanner from './components/CheckoutBanner';
 import ToastHost from '@/components/ToastHost';
 import CartShareLoader from '@/components/CartShareLoader';
+import TurianWidget from './components/TurianWidget';
 
 export default function App() {
   const [path, setPath] = useState(
@@ -72,6 +73,7 @@ export default function App() {
             </React.Suspense>
           </main>
         </div>
+        <TurianWidget />
       </SearchProvider>
   );
 }
