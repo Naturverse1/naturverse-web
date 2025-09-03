@@ -43,7 +43,11 @@ export default function NavatarCreateModal({ open, onClose, onCreated }: Props) 
       const res = await fetch('/.netlify/functions/generate-navatar', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt, name, userId: uid })
+        body: JSON.stringify({
+          user_id: uid,
+          name: name || undefined,
+          prompt,
+        }),
       });
       const json = await res.json();
       if (!res.ok) throw new Error(json?.error || 'Generation failed');
