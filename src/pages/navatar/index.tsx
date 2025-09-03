@@ -34,7 +34,14 @@ export default function NavatarHub() {
       {mine ? (
         <>
           <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:12}}>
-            <img src={mine.image_url} alt={mine.name} style={{width:320, height:320, objectFit:'cover', borderRadius:24}}/>
+            <div className="navatar-hero mx-auto w-full max-w-[560px] px-4">
+              <img
+                src={mine.image_url}
+                alt={mine.name}
+                className="block w-full aspect-square rounded-2xl object-cover"
+                loading="eager"
+              />
+            </div>
             <div style={{fontWeight:700, fontSize:24}}>{mine.name}</div>
             <div style={{display:'flex', gap:12, marginTop:6, flexWrap:'wrap', justifyContent:'center'}}>
               <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
