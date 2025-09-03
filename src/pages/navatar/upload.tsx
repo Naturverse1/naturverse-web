@@ -31,7 +31,6 @@ export default function NavatarUpload() {
         });
       if (upErr) throw upErr;
 
-      // always read the public URL like this
       const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
       const image_url = pub.publicUrl;
       if (!image_url) throw new Error('Public URL missing');
@@ -60,7 +59,7 @@ export default function NavatarUpload() {
   }
 
   return (
-    <div className="container wide">
+    <div className="container">
       <nav className="nv-breadcrumbs brand-blue">
         <Link to="/">Home</Link><span className="sep">/</span>
         <Link to="/navatar">Navatar</Link><span className="sep">/</span>
@@ -69,10 +68,10 @@ export default function NavatarUpload() {
 
       <h1>Upload Navatar</h1>
 
-      <div className="formStack">
-        <input className="input fill" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <input className="input fill" type="text" placeholder="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
-        <button className="primary block" onClick={handleUpload} disabled={saving || !file}>
+      <div className="nv-form">
+        <input className="nv-input" type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <input className="nv-input" type="text" placeholder="Name (optional)" value={displayName} onChange={(e) => setDisplayName(e.target.value)} />
+        <button className="primary" onClick={handleUpload} disabled={saving || !file}>
           {saving ? 'Saving…' : 'Upload'}
         </button>
       </div>
