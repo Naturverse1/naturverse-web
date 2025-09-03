@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { getMyAvatar } from '../../lib/avatars';
 import { Link } from 'react-router-dom';
+import '../../styles/breadcrumbs.css';
+import '../navatar.css';
 
 export default function NavatarHub() {
   const [loading, setLoading] = useState(true);
@@ -17,7 +19,7 @@ export default function NavatarHub() {
 
   return (
     <div className="container">
-      <nav className="crumbs">Home / Navatar</nav>
+      <nav className="breadcrumbs"><Link to="/">Home</Link> / Navatar</nav>
       <h1>Your Navatar</h1>
 
       {mine ? (
@@ -25,7 +27,7 @@ export default function NavatarHub() {
           <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:12}}>
             <img src={mine.image_url} alt={mine.name} style={{width:320, height:320, objectFit:'cover', borderRadius:24}}/>
             <div style={{fontWeight:700, fontSize:24}}>{mine.name}</div>
-            <div style={{display:'flex', gap:12, marginTop:6, flexWrap:'wrap', justifyContent:'center'}}>
+            <div className="hub-actions">
               <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
               <Link className="btn" to="/navatar/upload">Upload</Link>
               <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
@@ -35,7 +37,7 @@ export default function NavatarHub() {
       ) : (
         <>
           <p>No Navatar yet — pick one below.</p>
-          <div style={{display:'flex', justifyContent:'center', gap:16, flexWrap:'wrap'}}>
+          <div className="hub-actions">
             <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
             <Link className="btn" to="/navatar/upload">Upload</Link>
             <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
