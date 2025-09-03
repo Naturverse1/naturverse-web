@@ -9,7 +9,7 @@ const PAGES = [
   '/zones',
   '/marketplace',
   '/cart',
-  '/wishlist',
+  '/marketplace/wishlist',
   '/marketplace/checkout',
   '/naturversity',
   '/naturbank',

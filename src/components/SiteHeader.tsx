@@ -30,7 +30,6 @@ export default function SiteHeader() {
               <a href="/worlds">Worlds</a>
               <a href="/zones">Zones</a>
               <a href="/marketplace">Marketplace</a>
-              <a href="/wishlist">Wishlist</a>
               <a href="/naturversity">Naturversity</a>
               <a href="/naturbank">NaturBank</a>
               <a href="/navatar">Navatar</a>
@@ -85,7 +84,6 @@ export default function SiteHeader() {
               <a href="/worlds">Worlds</a>
               <a href="/zones">Zones</a>
               <a href="/marketplace">Marketplace</a>
-              <a href="/wishlist">Wishlist</a>
               <a href="/naturversity">Naturversity</a>
               <a href="/naturbank">NaturBank</a>
               <a href="/navatar">Navatar</a>
