@@ -39,6 +39,4 @@
     Cache-Control = "no-store"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
 
-# (Optional) per-function override — use a child table, not [[functions]]
-[functions."generate-navatar"]
-  timeout = 26
+
