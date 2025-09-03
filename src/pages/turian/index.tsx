@@ -1,7 +1,8 @@
 import * as React from "react";
 import { turianReply } from "@/lib/turian";
-import { isDemo, AI_MODE } from "@/config/ai";
+import { isDemo, AI_MODE } from "@/lib/ai";
 import { Link } from "react-router-dom";
+import "../../styles/turian.css";
 
 type Msg = { role: "user" | "assistant" | "system"; content: string };
 
@@ -37,46 +38,31 @@ export default function TurianPage() {
 
   return (
     <div className="container" style={{ maxWidth: 820, margin: "0 auto" }}>
-      <nav style={{ color: "#88a", margin: "8px 0 4px" }}>
+      <nav className="crumbs">
         <Link to="/">Home</Link> / <span>Turian</span>
       </nav>
-      <h1 style={{ color: "#1f50ff", fontSize: "2.25rem", margin: "8px 0 16px" }}>
-        Turian the Durian
-      </h1>
-      <p style={{ marginBottom: 12, color: "#667" }}>
-        {isDemo
-          ? "Offline demo — no external calls or costs."
-          : "Live AI mode — replies use your AI provider and may incur costs."}
-        {" "}
-        <span style={{ fontSize: 12, opacity: 0.7 }}>Mode: {AI_MODE}</span>
-      </p>
+      <h1 className="h1">Turian the Durian</h1>
 
-      <div
-        className="card"
-        style={{
-          background: "#fff",
-          borderRadius: 14,
-          boxShadow: "0 8px 30px rgba(0,0,0,.06)",
-          padding: 16,
-        }}
-      >
-        <div
-          style={{
-            height: 360,
-            overflow: "auto",
-            border: "1px solid #eef2f7",
-            borderRadius: 12,
-            padding: 12,
-            marginBottom: 12,
-            background: "#f9fbff",
-          }}
-        >
+      <div className="chat-card">
+        <div className="status">
+          {isDemo()
+            ? "Offline demo — no external calls or costs."
+            : "Live AI mode — replies use your AI provider and may incur costs."}{" "}
+          <em>Mode: {AI_MODE}</em>
+        </div>
+
+        <div className="chat-log">
           {msgs.map((m, i) => (
             <div
               key={i}
               style={{
                 margin: "6px 0",
-                textAlign: m.role === "assistant" ? "left" : m.role === "user" ? "right" : "center",
+                textAlign:
+                  m.role === "assistant"
+                    ? "left"
+                    : m.role === "user"
+                    ? "right"
+                    : "center",
                 opacity: m.role === "system" ? 0.7 : 1,
               }}
             >
@@ -102,30 +88,15 @@ export default function TurianPage() {
           ))}
         </div>
 
-        <form onSubmit={send} style={{ display: "flex", gap: 8 }}>
+        <form onSubmit={send} className="chat-entry">
           <input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask Turian about Worlds, Zones, or Navatar…"
-            style={{
-              flex: 1,
-              padding: "12px 14px",
-              borderRadius: 12,
-              border: "1px solid #dfe7f2",
-            }}
           />
           <button
-            className="btn"
+            className="btn-primary"
             disabled={busy || !input.trim()}
-            style={{
-              background: "#1f50ff",
-              color: "#fff",
-              border: 0,
-              borderRadius: 12,
-              padding: "12px 16px",
-              fontWeight: 700,
-              minWidth: 100,
-            }}
           >
             {busy ? "Thinking…" : "Send"}
           </button>
