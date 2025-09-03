@@ -1,45 +1,40 @@
-import { supabase } from './supabase';
+import { supabase } from './supabaseClient';
 
-export async function saveNavatarSelection(name: string, image_url: string) {
-  const { data: { user }, error: authErr } = await supabase.auth.getUser();
-  if (authErr || !user) throw new Error('Not signed in');
+export type AvatarRow = {
+  id?: string;
+  user_id: string;
+  name: string;
+  category: 'canon' | 'upload' | 'generate';
+  method: 'pick' | 'upload' | 'ai';
+  image_url: string;
+  updated_at?: string;
+};
 
-  // upsert one “primary” per user
-  const { error } = await supabase.from('avatars').upsert({
-    user_id: user.id,
-    name,
-    method: 'canon',
-    category: 'canon',
-    image_url
-  }, { onConflict: 'user_id' });
+export async function getMyAvatar() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data, error } = await supabase
+    .from('avatars')
+    .select('*')
+    .eq('user_id', user.id)
+    .maybeSingle();
+
+  if (error) throw error;
+  return data as AvatarRow | null;
+}
+
+export async function upsertMyAvatar(payload: Omit<AvatarRow, 'id'|'updated_at'|'user_id'>) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error('Please sign in');
+
+  const { error } = await supabase
+    .from('avatars')
+    .upsert({
+      user_id: user.id,
+      ...payload,
+      updated_at: new Date().toISOString()
+    }, { onConflict: 'user_id' });
 
   if (error) throw error;
 }
-
-export async function uploadNavatar(file: File, name = 'avatar') {
-  const { data: { user }, error: authErr } = await supabase.auth.getUser();
-  if (authErr || !user) throw new Error('Not signed in');
-
-  const path = `${user.id}/${crypto.randomUUID()}-${file.name}`;
-  const up = await supabase.storage.from('avatars').upload(path, file, {
-    cacheControl: '3600', upsert: false
-  });
-  if (up.error) throw up.error;
-
-  // Always persist a public URL so UI shows the image reliably
-  const { data: pub } = supabase.storage.from('avatars').getPublicUrl(path);
-  const image_url = pub?.publicUrl;
-  if (!image_url) throw new Error('Public URL not available');
-
-  const ins = await supabase.from('avatars').upsert({
-    user_id: user.id,
-    name,
-    method: 'upload',
-    category: 'upload',
-    image_url
-  }, { onConflict: 'user_id' });
-
-  if (ins.error) throw ins.error;
-  return image_url;
-}
-
