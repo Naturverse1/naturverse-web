@@ -4,3 +4,20 @@
 .navatar-card img { width:100%; height:100%; object-fit:contain; display:block; }
 .title { font-weight:700; margin-top:8px; }
 .primary { padding:10px 16px; border-radius:12px; }
+
+/* wider container for creation flows */
+.container.wide {
+  max-width: 980px;
+}
+
+/* simple vertical form layout */
+.formStack { display: flex; flex-direction: column; gap: 12px; }
+
+/* inputs full width within container */
+.input.fill { width: 100%; }
+
+/* big call-to-action spans container width */
+button.block { width: 100%; }
+
+/* tiny helper */
+.hint { margin-top: 10px; opacity: 0.8; font-size: 14px; }
