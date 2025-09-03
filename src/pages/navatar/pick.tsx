@@ -1,49 +1,71 @@
 import { useEffect, useState } from 'react';
-import CANONS from '../../data/navatarCanons';
-import { upsertMyAvatar } from '../../lib/avatars';
+import CANONS, { Canon } from '../../data/navatarCanons';
+import { supabase } from '@/lib/supabaseClient';
+import { Link } from 'react-router-dom';
 import '../../styles/navatar.css';
 
+async function savePickedCanon(picked: { title: string; url: string }) {
+  const {
+    data: { session },
+    error: sessErr,
+  } = await supabase.auth.getSession();
+  if (sessErr || !session?.user?.id) {
+    alert('Please sign in');
+    return;
+  }
+
+  const userId = session.user.id;
+
+  const payload = {
+    user_id: userId,
+    name: picked.title,
+    category: 'canon',
+    method: 'pick',
+    image_url: picked.url,
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from('avatars')
+    .upsert(payload, { onConflict: 'user_id' });
+
+  if (error) {
+    alert(error.message);
+    return;
+  }
+
+  alert('Saved!');
+  window.location.href = '/navatar';
+}
+
 export default function PickNavatarPage() {
-  const [selected, setSelected] = useState<string | null>(null);
+  const [selected, setSelected] = useState<Canon | null>(null);
   const [saving, setSaving] = useState(false);
   const canon = CANONS;
 
+  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
+
   async function handleSave() {
     if (!selected) return;
-    const item = canon.find(c => c.id === selected)!;
     setSaving(true);
-    try {
-      await upsertMyAvatar({
-        name: item.title,
-        category: 'canon',
-        method: 'pick',
-        image_url: item.url
-      });
-      alert('Saved!');
-      window.location.assign('/navatar');
-    } catch (e: any) {
-      alert(e?.message ?? 'Could not save. Please try again.');
-    } finally {
-      setSaving(false);
-    }
+    await savePickedCanon(selected);
+    setSaving(false);
   }
-
-  useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
     <div className="container">
-      <nav className="crumbs">Home / Navatar / Pick</nav>
+      <nav className="crumbs"><Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> / Pick</nav>
       <h1>Pick Navatar</h1>
 
       <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px,1fr))', gap:20}}>
         {canon.map(item => (
           <button
             key={item.id}
-            onClick={() => setSelected(item.id)}
-            className={`card ${selected===item.id ? 'isSelected': ''}`}
+            onClick={() => setSelected(item)}
+            className={`navatar-card ${selected?.id === item.id ? 'isSelected': ''}`}
             style={{textAlign:'left'}}
           >
-            <img src={item.url} alt={item.title} className="thumb"/>
+            <img src={item.url} alt={item.title} />
             <div className="title">{item.title}</div>
           </button>
         ))}

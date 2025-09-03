@@ -1,5 +1,5 @@
-.card { background:#fff; border-radius:16px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); border:2px solid transparent; }
-.card.isSelected { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25); }
-.thumb { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; }
-.title { font-weight:700; margin-top:8px; }
+.navatar-card { border-radius:16px; padding:8px; background:#fff; box-shadow:0 2px 8px rgba(0,0,0,.06); border:2px solid transparent; }
+.navatar-card.isSelected { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25); }
+.navatar-card img { display:block; width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; }
+.navatar-card .title { font-weight:700; margin-top:8px; }
 .primary { padding:10px 16px; border-radius:12px; }
