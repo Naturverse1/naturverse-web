@@ -1,152 +1,119 @@
-import type { Handler } from '@netlify/functions';
-import OpenAI from 'openai';
-import { createClient } from '@supabase/supabase-js';
+import type { Handler } from "@netlify/functions";
+import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
 
-// ── ENV
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-const IMAGES_BUCKET = process.env.IMAGES_BUCKET || 'avatars';
+const IMAGES_BUCKET = process.env.IMAGES_BUCKET || "avatars";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
-const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-// fetch a remote image into a Buffer (for edits)
-async function fetchAsBuffer(url: string) {
+// add a longer client-side timeout so OpenAI calls don’t hang forever
+const openai = new OpenAI({ apiKey: OPENAI_API_KEY, timeout: 25000 });
+
+async function withRetry<T>(fn: () => Promise<T>): Promise<T> {
+  try {
+    return await fn();
+  } catch (e) {
+    // quick single retry for transient timeouts
+    await new Promise((r) => setTimeout(r, 800));
+    return await fn();
+  }
+}
+
+const json = (code: number, body: unknown) => ({
+  statusCode: code,
+  headers: {
+    "content-type": "application/json",
+    "access-control-allow-origin": "*",
+  },
+  body: typeof body === "string" ? body : JSON.stringify(body),
+});
+
+type Payload = {
+  prompt?: string;
+  userId?: string;
+  name?: string;
+  size?: "1024x1024" | "1024x1536" | "1536x1024" | "auto";
+  sourceImageUrl?: string;
+  maskImageUrl?: string;
+};
+
+const asBuf = async (url: string) => {
   const r = await fetch(url);
   if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
-  const ab = await r.arrayBuffer();
-  return Buffer.from(ab);
-}
+  return Buffer.from(await r.arrayBuffer());
+};
 
 export const handler: Handler = async (event) => {
   try {
-    if (event.httpMethod !== 'POST') {
-      return { statusCode: 405, body: 'Method Not Allowed' };
-    }
+    if (event.httpMethod !== "POST") return json(405, { error: "Method not allowed" });
+    const body = (event.body ?? "").trim();
+    if (!body) return json(400, { error: "Missing JSON body" });
 
-    const {
-      prompt,
-      user_id,
-      name,
-      sourceImageUrl,
-      maskImageUrl,
-    } = JSON.parse(event.body || '{}') as {
-      prompt?: string;
-      user_id?: string;
-      name?: string;
-      sourceImageUrl?: string;
-      maskImageUrl?: string;
-    };
+    const { prompt, userId, name, size: rawSize, sourceImageUrl, maskImageUrl } =
+      JSON.parse(body) as Payload;
 
-    if (!prompt && !sourceImageUrl) {
-      return {
-        statusCode: 400,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Provide prompt or sourceImageUrl' }),
-      };
-    }
+    if (!prompt && !sourceImageUrl) return json(400, { error: "Provide prompt or sourceImageUrl" });
 
-    // ── 1) Generate or edit with OpenAI (do NOT pass response_format)
-    let b64: string;
+    const allowed = new Set(["1024x1024", "1024x1536", "1536x1024", "auto"]);
+    const size = allowed.has(rawSize || "") ? rawSize : "1024x1024";
+
+    // ---- OpenAI call with one retry ----
+    let b64: string | undefined;
 
     if (sourceImageUrl) {
-      const image = await fetchAsBuffer(sourceImageUrl);
-      const mask = maskImageUrl ? await fetchAsBuffer(maskImageUrl) : undefined;
+      const image = await asBuf(sourceImageUrl);
+      const mask = maskImageUrl ? await asBuf(maskImageUrl) : undefined;
 
-      const edited = await openai.images.edits({
-        model: 'gpt-image-1',
-        prompt: prompt || 'edit image',
-        image,
-        ...(mask ? { mask } : {}),
-        size: '1024x1024',
-      });
-
-      b64 = edited.data[0].b64_json!;
+      const edit = await withRetry(() =>
+        openai.images.edits({
+          model: "gpt-image-1",
+          prompt: prompt ?? "",
+          image,
+          ...(mask ? { mask } : {}),
+          size,
+        })
+      );
+      b64 = (edit as any)?.data?.[0]?.b64_json;
     } else {
-      const gen = await openai.images.generate({
-        model: 'gpt-image-1',
-        prompt: prompt!,
-        size: '1024x1024',
-      });
-      b64 = gen.data[0].b64_json!;
+      const gen = await withRetry(() =>
+        openai.images.generate({ model: "gpt-image-1", prompt: prompt ?? "", size })
+      );
+      b64 = (gen as any)?.data?.[0]?.b64_json;
     }
 
-    if (!b64) {
-      return {
-        statusCode: 502,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Image generation returned empty data' }),
-      };
-    }
+    if (!b64) return json(502, { error: "No image data returned from OpenAI" });
 
-    // ── 2) Upload to Supabase Storage (ensure .png extension)
-    const buffer = Buffer.from(b64, 'base64');
-    const filename = `ai/${user_id || 'anon'}/${Date.now()}.png`;
+    const buffer = Buffer.from(b64, "base64");
+    const path = `ai/${userId || "anon"}/${Date.now()}.png`;
+
     const { error: upErr } = await supabase.storage
       .from(IMAGES_BUCKET)
-      .upload(filename, buffer, { contentType: 'image/png', upsert: true });
+      .upload(path, buffer, {
+        contentType: "image/png",
+        cacheControl: "public, max-age=31536000",
+        upsert: true,
+      });
+    if (upErr) return json(500, { error: `Upload failed: ${upErr.message}` });
 
-    if (upErr) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: `Upload failed: ${upErr.message}` }),
-      };
-    }
+    const { data: pub } = supabase.storage.from(IMAGES_BUCKET).getPublicUrl(path);
+    const image_url = pub?.publicUrl;
+    if (!image_url) return json(500, { error: "Could not resolve public URL" });
 
-    // public URL (bucket needs public read; you already enabled this)
-    const pub = supabase.storage.from(IMAGES_BUCKET).getPublicUrl(filename);
-    const image_url = pub.data.publicUrl;
-
-    if (!image_url) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Could not resolve public URL' }),
-      };
-    }
-
-    // ── 3) Upsert DB row
+    const display = name?.trim() || "Navatar";
     const { error: dbErr } = await supabase
-      .from('avatars')
+      .from("avatars")
       .upsert(
-        {
-          user_id: user_id || null,
-          name: name || 'AI avatar',
-          method: 'ai',
-          category: 'generate',
-          image_url,
-        },
-        { onConflict: 'user_id' }
+        { user_id: userId ?? null, name: display, category: "generate", method: "generate", image_url },
+        { onConflict: "user_id" }
       );
+    if (dbErr) return json(500, { error: `DB upsert failed: ${dbErr.message}` });
 
-    if (dbErr) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: `DB upsert failed: ${dbErr.message}` }),
-      };
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ image_url }),
-    };
+    return json(200, { image_url });
   } catch (e: any) {
-    const code = e?.status || 500;
-    const msg =
-      e?.response?.data?.error?.message ||
-      e?.message ||
-      'Unknown server error';
-    return {
-      statusCode: code,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ error: msg }),
-    };
+    const msg = e?.message || e?.response?.data?.error?.message || "Server error";
+    return json(504, { error: msg }); // surface real reason to the UI
   }
 };
-
-export default handler;
-
