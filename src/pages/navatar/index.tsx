@@ -45,7 +45,7 @@ export default function NavatarHub() {
                 borderRadius: 24,
               }}
             />
-            <div style={{fontWeight:700, fontSize:24}}>{mine.name}</div>
+            <div style={{ fontWeight: 700, fontSize: 24 }}>{mine.name || 'Navatar'}</div>
             <div style={{display:'flex', gap:12, marginTop:6, flexWrap:'wrap', justifyContent:'center'}}>
               <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
               <Link className="btn" to="/navatar/upload">Upload</Link>
