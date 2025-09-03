@@ -6,88 +6,95 @@ import '../../styles/navatar.css';
 export default function NavatarGenerate() {
   const navigate = useNavigate();
   const user = useSession();
-
   const [prompt, setPrompt] = useState('');
-  const [sourceImageUrl, setSourceImageUrl] = useState('');
-  const [maskImageUrl, setMaskImageUrl] = useState('');
-  const [displayName, setDisplayName] = useState('');
+  const [srcUrl, setSrcUrl] = useState('');
+  const [maskUrl, setMaskUrl] = useState('');
+  const [name, setName] = useState('');
   const [saving, setSaving] = useState(false);
 
-  async function handleGenerate() {
+  async function handleSave() {
+    if (!prompt && !srcUrl) {
+      alert('Enter a prompt or a source image URL');
+      return;
+    }
+    setSaving(true);
     try {
-      if (!user?.id) return alert('Please sign in');
-      if (!prompt && !sourceImageUrl) return alert('Enter a prompt or source image');
-
-      setSaving(true);
-      const res = await fetch('/.netlify/functions/generateNavatar', {
+      const r = await fetch('/.netlify/functions/generate-navatar', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
         body: JSON.stringify({
-          userId: user.id,
           prompt,
-          name: displayName,
-          sourceImageUrl: sourceImageUrl || undefined,
-          maskImageUrl: maskImageUrl || undefined,
+          userId: user?.id,
+          name,
+          sourceImageUrl: srcUrl || undefined,
+          maskImageUrl: maskUrl || undefined,
         }),
       });
-      const json = await res.json();
-      if (!res.ok) throw new Error(json?.error || 'Generate failed');
+
+      const text = await r.text(); // robust: read text first
+      let data: any = {};
+      try { data = text ? JSON.parse(text) : {}; } catch {
+        // backend guaranteed JSON; this guards against upstream HTML errors
+        throw new Error(text || 'Server returned non-JSON response');
+      }
+
+      if (!r.ok) {
+        throw new Error(data?.error || 'Create failed');
+      }
 
       navigate('/navatar?refresh=1');
     } catch (e: any) {
-      alert(e.message || String(e));
+      alert(e?.message || String(e));
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="container wide">
+    <div className="container">
       <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link>
-        <span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link>
-        <span className="sep">/</span>
+        <Link to="/">Home</Link><span className="sep">/</span>
+        <Link to="/navatar">Navatar</Link><span className="sep">/</span>
         <span>Describe &amp; Generate</span>
       </nav>
 
       <h1>Describe &amp; Generate</h1>
 
-      <div className="formStack">
+      <div style={{display:'flex', flexDirection:'column', gap:12, maxWidth:720, margin:'0 auto'}}>
         <textarea
-          className="input fill"
+          placeholder="Describe your Navatar (e.g., ‘friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style’)
+"          value={prompt}
+          onChange={e => setPrompt(e.target.value)}
           rows={4}
-          placeholder="Describe your Navatar (e.g., 'friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style')"
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
+          style={{width:'100%'}}
         />
         <input
-          className="input fill"
+          type="url"
           placeholder="(Optional) Source Image URL for edits/merge"
-          value={sourceImageUrl}
-          onChange={(e) => setSourceImageUrl(e.target.value)}
+          value={srcUrl}
+          onChange={e => setSrcUrl(e.target.value)}
         />
         <input
-          className="input fill"
+          type="url"
           placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
-          value={maskImageUrl}
-          onChange={(e) => setMaskImageUrl(e.target.value)}
+          value={maskUrl}
+          onChange={e => setMaskUrl(e.target.value)}
         />
         <input
-          className="input fill"
+          type="text"
           placeholder="Name (optional)"
-          value={displayName}
-          onChange={(e) => setDisplayName(e.target.value)}
+          value={name}
+          onChange={e => setName(e.target.value)}
         />
-        <button className="primary block" onClick={handleGenerate} disabled={saving}>
+
+        <button className="primary" disabled={saving} onClick={handleSave}>
           {saving ? 'Creating…' : 'Save'}
         </button>
-      </div>
 
-      <p className="hint">
-        Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration /
-        character sheet” for that Navatar vibe.
-      </p>
+        <p className="hint">
+          Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration / character sheet” for that Navatar vibe.
+        </p>
+      </div>
     </div>
   );
 }

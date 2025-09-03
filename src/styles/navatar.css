@@ -19,5 +19,31 @@
 /* big call-to-action spans container width */
 button.block { width: 100%; }
 
-/* tiny helper */
-.hint { margin-top: 10px; opacity: 0.8; font-size: 14px; }
+/* modern input styles */
+.container textarea,
+.container input[type="text"],
+.container input[type="url"] {
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #d8e0f0;
+  border-radius: 10px;
+  font-size: 16px;
+}
+
+/* disabled button state */
+.container .primary[disabled] {
+  opacity: .6;
+  cursor: default;
+}
+
+/* hint box */
+.hint {
+  margin-top: 10px;
+  font-size: 14px;
+  border: 1px dashed #c7d3ee;
+  border-radius: 10px;
+  padding: 12px;
+  color: #3b4d7a;
+  background: #f7faff;
+}
+
