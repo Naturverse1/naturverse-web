@@ -15,6 +15,7 @@ import './styles/mega-features.css';
 import './index.css';
 import './styles/theme.css';
 import './styles/cart.css';
+import './styles/brand.css';
 import { applyTheme, getTheme } from './lib/theme';
 import ToastProvider from './components/Toast';
 import { supabase } from '@/lib/supabase-client';

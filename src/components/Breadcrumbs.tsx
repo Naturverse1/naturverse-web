@@ -55,7 +55,7 @@ export function Breadcrumbs(props: { items?: Crumb[] }) {
   if (items.length <= 1) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="nv-breadcrumbs brand-blue">
+    <nav aria-label="breadcrumb" className="nv-breadcrumbs brand-blue">
       <ol>
         {items.map((c, i) => {
           const isLast = i === items.length - 1;

@@ -1,0 +1,79 @@
+/* Brand tokens — edit here once to tweak your blue */
+:root {
+  --nv-primary-50:  #eff6ff;
+  --nv-primary-100: #dbeafe;
+  --nv-primary-200: #bfdbfe;
+  --nv-primary-300: #93c5fd;
+  --nv-primary-400: #60a5fa;
+  --nv-primary-500: #3b82f6; /* main */
+  --nv-primary-600: #2563eb; /* hover */
+  --nv-primary-700: #1d4ed8;
+  --nv-primary-800: #1e40af;
+  --nv-primary-900: #1e3a8a;
+
+  --nv-primary: var(--nv-primary-600);
+  --nv-primary-contrast: #ffffff;
+
+  /* Optional secondary/neutral hooks to expand later */
+  --nv-neutral: #1f2937;
+}
+
+/* Base layer: make common elements use the brand automatically */
+@layer base {
+  /* Links */
+  a {
+    color: var(--nv-primary);
+  }
+  a:hover { color: var(--nv-primary-700); }
+  a:focus-visible { outline: 2px solid var(--nv-primary-400); outline-offset: 2px; }
+
+  /* Breadcrumbs (handles simple markup and many libs) */
+  nav[aria-label="breadcrumb"] a,
+  .breadcrumb a {
+    color: var(--nv-primary);
+  }
+  nav[aria-label="breadcrumb"] a:hover,
+  .breadcrumb a:hover {
+    color: var(--nv-primary-700);
+  }
+
+  /* Tailwind/Daisy-style buttons (safe no-ops if class not present) */
+  .btn-primary,
+  .btn.brand,
+  .btn[data-variant="primary"] {
+    background-color: var(--nv-primary) !important;
+    border-color: var(--nv-primary) !important;
+    color: var(--nv-primary-contrast) !important;
+  }
+  .btn-primary:hover,
+  .btn.brand:hover,
+  .btn[data-variant="primary"]:hover {
+    background-color: var(--nv-primary-700) !important;
+    border-color: var(--nv-primary-700) !important;
+  }
+
+  /* Accent color for inputs/checkboxes (native) */
+  :root { accent-color: var(--nv-primary); }
+}
+
+/* Utility layer: brand helpers even if not using Tailwind color names */
+@layer utilities {
+  .bg-brand      { background-color: var(--nv-primary); }
+  .bg-brand-600  { background-color: var(--nv-primary-600); }
+  .text-brand    { color: var(--nv-primary); }
+  .border-brand  { border-color: var(--nv-primary); }
+}
+
+/* Turian FAB + chat bubble — class names are from the new widget PR */
+.nv-fab { 
+  background: var(--nv-primary); 
+  color: var(--nv-primary-contrast);
+}
+.nv-fab:hover { background: var(--nv-primary-700); }
+
+/* If your chat frame has a header bar, tint it */
+.nv-chat header,
+.turian-chat header {
+  background: var(--nv-primary);
+  color: var(--nv-primary-contrast);
+}
