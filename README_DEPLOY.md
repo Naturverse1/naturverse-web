@@ -9,6 +9,8 @@ This guide helps you deploy Naturverse with Netlify and Supabase.
    - `VITE_SUPABASE_URL`
    - `VITE_SUPABASE_ANON_KEY`
    - `SUPABASE_SERVICE_ROLE_KEY` (for serverless functions)
+   - `OPENAI_API_KEY`
+   - `IMAGES_BUCKET` (optional, defaults to `avatars`)
 3. Deploy. Ensure these values are set before triggering a build.
 
 ## Supabase
