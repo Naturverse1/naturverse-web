@@ -1,100 +1,108 @@
-import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { useSession } from '../../lib/session';
-import '../../styles/navatar.css';
+import * as React from "react";
+import { Link } from "react-router-dom";
+import { useSession } from "../../lib/session";
+import "../../styles/navatar.css";
 
 export default function NavatarGenerate() {
-  const navigate = useNavigate();
   const user = useSession();
-  const [prompt, setPrompt] = useState('');
-  const [srcUrl, setSrcUrl] = useState('');
-  const [maskUrl, setMaskUrl] = useState('');
-  const [name, setName] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [prompt, setPrompt] = React.useState("");
+  const [srcUrl, setSrcUrl] = React.useState("");
+  const [maskUrl, setMaskUrl] = React.useState("");
+  const [name, setName] = React.useState("");
+  const [busy, setBusy] = React.useState(false);
+  const [err, setErr] = React.useState("");
 
-  async function handleSave() {
-    if (!prompt && !srcUrl) {
-      alert('Enter a prompt or a source image URL');
-      return;
-    }
-    setSaving(true);
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    setErr("");
+    setBusy(true);
+
     try {
-      const r = await fetch('/.netlify/functions/generate-navatar', {
-        method: 'POST',
-        headers: { 'content-type': 'application/json' },
+      const res = await fetch("/.netlify/functions/generate-navatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          prompt,
-          userId: user?.id,
-          name,
+          prompt: prompt.trim(),
+          userId: user?.id || null,
+          name: name || null,
+          size: "1024x1024",
           sourceImageUrl: srcUrl || undefined,
           maskImageUrl: maskUrl || undefined,
         }),
       });
 
-      const text = await r.text(); // robust: read text first
-      let data: any = {};
-      try { data = text ? JSON.parse(text) : {}; } catch {
-        // backend guaranteed JSON; this guards against upstream HTML errors
-        throw new Error(text || 'Server returned non-JSON response');
+      if (!res.ok) {
+        const t = await res.text();
+        setErr(t || `HTTP ${res.status}`);
+        return;
       }
 
-      if (!r.ok) {
-        throw new Error(data?.error || 'Create failed');
-      }
-
-      navigate('/navatar?refresh=1');
+      // on success, refresh the Navatar page
+      location.assign("/navatar?refresh=1");
     } catch (e: any) {
-      alert(e?.message || String(e));
+      setErr(e?.message || "Network error");
     } finally {
-      setSaving(false);
+      setBusy(false);
     }
   }
 
   return (
     <div className="container">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link><span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link><span className="sep">/</span>
+      <nav className="crumbs">
+        <Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> /{" "}
         <span>Describe &amp; Generate</span>
       </nav>
+      <h1 className="h1">Describe &amp; Generate</h1>
 
-      <h1>Describe &amp; Generate</h1>
-
-      <div style={{display:'flex', flexDirection:'column', gap:12, maxWidth:720, margin:'0 auto'}}>
+      <form className="card-center" onSubmit={onSubmit}>
         <textarea
-          placeholder="Describe your Navatar (e.g., ‘friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style’)
-"          value={prompt}
-          onChange={e => setPrompt(e.target.value)}
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
           rows={4}
-          style={{width:'100%'}}
+          placeholder={`Describe your Navatar (e.g., "friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style")`}
+          style={{ width: "100%", marginBottom: 12 }}
         />
         <input
-          type="url"
-          placeholder="(Optional) Source Image URL for edits/merge"
           value={srcUrl}
-          onChange={e => setSrcUrl(e.target.value)}
+          onChange={(e) => setSrcUrl(e.target.value)}
+          placeholder="(Optional) Source Image URL for edits/merge"
+          style={{ width: "100%", marginBottom: 8 }}
         />
         <input
-          type="url"
-          placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
           value={maskUrl}
-          onChange={e => setMaskUrl(e.target.value)}
+          onChange={(e) => setMaskUrl(e.target.value)}
+          placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
+          style={{ width: "100%", marginBottom: 8 }}
         />
         <input
-          type="text"
-          placeholder="Name (optional)"
           value={name}
-          onChange={e => setName(e.target.value)}
+          onChange={(e) => setName(e.target.value)}
+          placeholder="Name (optional)"
+          style={{ width: "100%", marginBottom: 12 }}
         />
 
-        <button className="primary" disabled={saving} onClick={handleSave}>
-          {saving ? 'Creating…' : 'Save'}
+        <button className="btn-primary" disabled={busy}>
+          {busy ? "Creating..." : "Save"}
         </button>
+        {err && (
+          <p className="error" style={{ whiteSpace: "pre-wrap" }}>
+            {err}
+          </p>
+        )}
 
-        <p className="hint">
-          Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration / character sheet” for that Navatar vibe.
+        <p
+          style={{
+            marginTop: 12,
+            color: "#6b7280",
+            border: "1px dashed #e5e7eb",
+            padding: 12,
+            borderRadius: 8,
+          }}
+        >
+          Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook /
+          illustration / character sheet” for that Navatar vibe.
         </p>
-      </div>
+      </form>
     </div>
   );
 }
