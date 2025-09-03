@@ -2,6 +2,7 @@ import type { Handler } from '@netlify/functions';
 import OpenAI from 'openai';
 import { createClient } from '@supabase/supabase-js';
 
+// ── ENV
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
@@ -10,129 +11,142 @@ const IMAGES_BUCKET = process.env.IMAGES_BUCKET || 'avatars';
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-// small helper
-const asBuf = async (url: string) => {
+// fetch a remote image into a Buffer (for edits)
+async function fetchAsBuffer(url: string) {
   const r = await fetch(url);
-  if (!r.ok) throw new Error(`Fetch failed ${r.status}`);
+  if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
   const ab = await r.arrayBuffer();
   return Buffer.from(ab);
-};
-
-const json = (code: number, body: unknown) => ({
-  statusCode: code,
-  headers: {
-    'content-type': 'application/json',
-    'access-control-allow-origin': '*',
-  },
-  body: JSON.stringify(body),
-});
-
-type Payload = {
-  prompt?: string;
-  userId?: string;
-  name?: string;
-  sourceImageUrl?: string;
-  maskImageUrl?: string;
-};
+}
 
 export const handler: Handler = async (event) => {
   try {
     if (event.httpMethod !== 'POST') {
-      return json(405, { error: 'Method not allowed' });
+      return { statusCode: 405, body: 'Method Not Allowed' };
     }
 
-    const body = (event.body ?? '').trim();
-    if (!body) return json(400, { error: 'Missing JSON body' });
-
-    const { prompt, userId, name, sourceImageUrl, maskImageUrl } =
-      JSON.parse(body) as Payload;
+    const {
+      prompt,
+      user_id,
+      name,
+      sourceImageUrl,
+      maskImageUrl,
+    } = JSON.parse(event.body || '{}') as {
+      prompt?: string;
+      user_id?: string;
+      name?: string;
+      sourceImageUrl?: string;
+      maskImageUrl?: string;
+    };
 
     if (!prompt && !sourceImageUrl) {
-      return json(400, { error: 'Provide prompt or sourceImageUrl' });
+      return {
+        statusCode: 400,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ error: 'Provide prompt or sourceImageUrl' }),
+      };
     }
 
-    // ---- 1) Generate/Edit via OpenAI (no deprecated response_format) ----
-    let b64: string | undefined;
+    // ── 1) Generate or edit with OpenAI (do NOT pass response_format)
+    let b64: string;
 
     if (sourceImageUrl) {
-      const image = await asBuf(sourceImageUrl);
-      const mask = maskImageUrl ? await asBuf(maskImageUrl) : undefined;
+      const image = await fetchAsBuffer(sourceImageUrl);
+      const mask = maskImageUrl ? await fetchAsBuffer(maskImageUrl) : undefined;
 
-      const edit = await openai.images.edits({
+      const edited = await openai.images.edits({
         model: 'gpt-image-1',
-        prompt: prompt ?? '',
+        prompt: prompt || 'edit image',
         image,
         ...(mask ? { mask } : {}),
         size: '1024x1024',
       });
 
-      b64 = edit.data?.[0]?.b64_json;
+      b64 = edited.data[0].b64_json!;
     } else {
       const gen = await openai.images.generate({
         model: 'gpt-image-1',
-        prompt: prompt ?? '',
+        prompt: prompt!,
         size: '1024x1024',
       });
-      b64 = gen.data?.[0]?.b64_json;
+      b64 = gen.data[0].b64_json!;
     }
 
-    if (!b64) return json(502, { error: 'No image returned from OpenAI' });
+    if (!b64) {
+      return {
+        statusCode: 502,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ error: 'Image generation returned empty data' }),
+      };
+    }
 
-    // ---- 2) Upload to Supabase Storage ----
+    // ── 2) Upload to Supabase Storage (ensure .png extension)
     const buffer = Buffer.from(b64, 'base64');
-    const folder = `ai/${userId || 'anon'}`; // no leading slash
-    const filename = `${Date.now()}.png`;
-    const path = `${folder}/${filename}`;
-
-    const { error: upErr } = await supabase
-      .storage
+    const filename = `ai/${user_id || 'anon'}/${Date.now()}.png`;
+    const { error: upErr } = await supabase.storage
       .from(IMAGES_BUCKET)
-      .upload(path, buffer, {
-        contentType: 'image/png',
-        cacheControl: 'public, max-age=31536000',
-        upsert: true,
-      });
-    if (upErr) return json(500, { error: `Upload failed: ${upErr.message}` });
+      .upload(filename, buffer, { contentType: 'image/png', upsert: true });
 
-    // public URL (v2 SDK)
-    const { data: pub } = supabase
-      .storage
-      .from(IMAGES_BUCKET)
-      .getPublicUrl(path);
+    if (upErr) {
+      return {
+        statusCode: 500,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ error: `Upload failed: ${upErr.message}` }),
+      };
+    }
 
-    const image_url = pub?.publicUrl;
-    if (!image_url) return json(500, { error: 'Could not resolve public URL' });
+    // public URL (bucket needs public read; you already enabled this)
+    const pub = supabase.storage.from(IMAGES_BUCKET).getPublicUrl(filename);
+    const image_url = pub.data.publicUrl;
 
-    // ---- 3) Upsert DB row ----
-    const display = name?.trim() || 'Navatar';
+    if (!image_url) {
+      return {
+        statusCode: 500,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ error: 'Could not resolve public URL' }),
+      };
+    }
+
+    // ── 3) Upsert DB row
     const { error: dbErr } = await supabase
       .from('avatars')
       .upsert(
         {
-          user_id: userId ?? null,
-          name: display,
+          user_id: user_id || null,
+          name: name || 'AI avatar',
+          method: 'ai',
           category: 'generate',
-          method: 'generate',
           image_url,
         },
         { onConflict: 'user_id' }
       );
-    if (dbErr) return json(500, { error: `DB error: ${dbErr.message}` });
 
-    return json(200, { image_url });
+    if (dbErr) {
+      return {
+        statusCode: 500,
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ error: `DB upsert failed: ${dbErr.message}` }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ image_url }),
+    };
   } catch (e: any) {
-    // pass through useful details when possible
-    const status =
-      e?.status ||
-      e?.response?.status ||
-      500;
-
-    const message =
-      e?.message ||
+    const code = e?.status || 500;
+    const msg =
       e?.response?.data?.error?.message ||
-      'Server error';
-
-    return json(status, { error: message });
+      e?.message ||
+      'Unknown server error';
+    return {
+      statusCode: code,
+      headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ error: msg }),
+    };
   }
 };
+
+export default handler;
 
