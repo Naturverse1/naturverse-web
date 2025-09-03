@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import catalog from '../../data/navatar-catalog.json';
 import { saveNavatarSelection } from '../../lib/avatars';
 import '../../styles/navatar.css';
@@ -7,6 +7,7 @@ import '../../styles/navatar.css';
 type Item = { id: string; title: string; slug: string; src: string };
 
 export default function PickNavatar() {
+  const navigate = useNavigate();
   const [items, setItems] = useState<Item[]>([]);
   const [selected, setSelected] = useState<Item | null>(null);
   const [saving, setSaving] = useState(false);
@@ -22,10 +23,12 @@ export default function PickNavatar() {
     setError(null);
     try {
       await saveNavatarSelection(selected.title, selected.src);
-      alert('Saved!'); // lightweight success
+      alert('Saved!');
+      navigate('/navatar');
     } catch (e: any) {
-      setError(e?.message || 'Error saving Navatar');
-      alert(error || 'Error saving Navatar');
+      const msg = e?.message || 'Error saving Navatar';
+      setError(msg);
+      alert(msg);
     } finally {
       setSaving(false);
     }

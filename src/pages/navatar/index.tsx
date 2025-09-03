@@ -1,15 +1,32 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { uploadNavatar } from '../../lib/avatars';
+import { useSupabase } from '../../lib/useSupabase';
 import '../../styles/navatar.css';
 
+type AvatarRow = { name: string; image_url: string };
 type Mode = null | 'canon' | 'upload' | 'generate';
 
 export default function NavatarHub() {
+  const supabase = useSupabase();
   const [mode, setMode] = useState<Mode>(null);
+  const [current, setCurrent] = useState<AvatarRow | null>(null);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState('');
   const [busy, setBusy] = useState(false);
+
+  useEffect(() => { loadCurrent(); }, []);
+
+  async function loadCurrent() {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) { setCurrent(null); return; }
+    const { data, error } = await supabase
+      .from('avatars')
+      .select('name,image_url')
+      .eq('user_id', user.id)
+      .single();
+    if (!error && data) setCurrent(data as AvatarRow);
+  }
 
   async function doUpload() {
     if (!file) return;
@@ -18,6 +35,8 @@ export default function NavatarHub() {
       await uploadNavatar(file, name || 'avatar');
       alert('Uploaded!');
       setFile(null); setName('');
+      await loadCurrent();
+      setMode(null);
     } catch (e: any) {
       alert(e?.message || 'Upload failed');
     } finally { setBusy(false); }
@@ -30,7 +49,14 @@ export default function NavatarHub() {
       </div>
 
       <h1 className="page-title">Your Navatar</h1>
-      <p className="muted">No Navatar yet — pick one below.</p>
+      {current ? (
+        <section style={{ textAlign: 'center', marginBottom: 24 }}>
+          <img src={current.image_url} alt={current.name} className="navatar-hero" />
+          <h3>{current.name}</h3>
+        </section>
+      ) : (
+        <p className="muted">No Navatar yet — pick one below.</p>
+      )}
 
       <div className="mode-row">
         <button className="btn" onClick={() => setMode(mode === 'canon' ? null : 'canon')}>Pick Navatar</button>
