@@ -38,10 +38,10 @@ export default function NavatarHub() {
               src={mine.image_url}
               alt={mine.name}
               style={{
-                maxWidth: '100%',
+                width: 'min(420px, 90vw)',
                 height: 'auto',
-                maxHeight: '70vh',
-                objectFit: 'contain',
+                aspectRatio: '3 / 4',
+                objectFit: 'cover',
                 borderRadius: 24,
               }}
             />
