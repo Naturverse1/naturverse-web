@@ -1,6 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useSearchParams } from 'react-router-dom';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import { getMyAvatar } from '../../lib/avatars';
+import './Navatar.css';
 
 export default function NavatarHub() {
   const [loading, setLoading] = useState(true);
@@ -20,42 +22,38 @@ export default function NavatarHub() {
     if (searchParams.get('refresh')) loadMyNavatar();
   }, [searchParams]);
 
-  if (loading) return <div className="container"><h1>Your Navatar</h1><p>Loading…</p></div>;
+  if (loading)
+    return (
+      <div className="nv-Page">
+        <h1>Your Navatar</h1>
+        <p>Loading…</p>
+      </div>
+    );
 
   return (
-    <div className="container">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link>
-        <span className="sep">/</span>
-        <span>Navatar</span>
-      </nav>
+    <div className="nv-Page">
+      <Breadcrumbs items={[{ href: '/', label: 'Home' }, { label: 'Navatar' }]} />
       <h1>Your Navatar</h1>
 
       {mine ? (
-        <>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: 12 }}>
-            <img
-              src={mine.image_url}
-              alt={mine.name || 'Navatar'}
-              style={{ width: 320, height: 480, objectFit: 'cover', borderRadius: 24 }}
-            />
-            <div style={{ fontWeight: 700, fontSize: 24 }}>{mine.name || 'Navatar'}</div>
-            <div style={{ display: 'flex', gap: 12, marginTop: 6, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
-              <Link className="btn" to="/navatar/upload">Upload</Link>
-              <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
-            </div>
+        <div className="nv-Card" style={{ textAlign: 'center' }}>
+          <img className="nv-Img" src={mine.image_url} alt={mine.name || 'Navatar'} />
+          <div style={{ fontWeight: 700, fontSize: 24, marginTop: 12 }}>{mine.name || 'Navatar'}</div>
+          <div style={{ display: 'flex', gap: 12, marginTop: 16, flexWrap: 'wrap', justifyContent: 'center' }}>
+            <Link className="nv-PrimaryBtn" to="/navatar/pick">Pick Navatar</Link>
+            <Link className="nv-PrimaryBtn" to="/navatar/upload">Upload</Link>
+            <Link className="nv-PrimaryBtn" to="/navatar/generate">Describe &amp; Generate</Link>
           </div>
-        </>
+        </div>
       ) : (
-        <>
+        <div className="nv-Card" style={{ textAlign: 'center' }}>
           <p>No Navatar yet — pick one below.</p>
-          <div style={{ display: 'flex', justifyContent: 'center', gap: 16, flexWrap: 'wrap' }}>
-            <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
-            <Link className="btn" to="/navatar/upload">Upload</Link>
-            <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
+          <div style={{ display: 'flex', justifyContent: 'center', gap: 12, flexWrap: 'wrap' }}>
+            <Link className="nv-PrimaryBtn" to="/navatar/pick">Pick Navatar</Link>
+            <Link className="nv-PrimaryBtn" to="/navatar/upload">Upload</Link>
+            <Link className="nv-PrimaryBtn" to="/navatar/generate">Describe &amp; Generate</Link>
           </div>
-        </>
+        </div>
       )}
     </div>
   );

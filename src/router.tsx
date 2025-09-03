@@ -30,7 +30,7 @@ import BankLearn from './pages/naturbank/Learn';
 import NavatarHub from './pages/navatar';
 import NavatarPick from './pages/navatar/pick';
 import NavatarUpload from './pages/navatar/upload';
-import NavatarGenerate from './pages/navatar/generate';
+import NavatarGenerate from './pages/navatar/Generate';
 import PassportPage from './pages/passport';
 import ProgressPage from './pages/progress';
 import LoginPage from './pages/Login';

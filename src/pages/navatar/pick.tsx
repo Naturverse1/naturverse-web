@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../../components/Breadcrumbs';
 import CANONS from '../../data/navatarCanons';
 import { getSupabase } from '../../lib/supabase';
 import { useSession } from '../../lib/session';
-import '../../styles/navatar.css';
+import './Navatar.css';
 
 export default function PickNavatarPage() {
   const [selected, setSelected] = useState<string | null>(null);
@@ -25,7 +26,8 @@ export default function PickNavatarPage() {
           user_id: user.id,
           name: pickedCanon.title,
           category: 'canon',
-          method: 'pick',
+          method: 'system',
+          status: 'ready',
           image_url: pickedCanon.url,
         },
         { onConflict: 'user_id', ignoreDuplicates: false }
@@ -48,36 +50,34 @@ export default function PickNavatarPage() {
   useEffect(() => { window.scrollTo({ top: 0 }); }, []);
 
   return (
-    <div className="container">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link>
-        <span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link>
-        <span className="sep">/</span>
-        <span>Pick</span>
-      </nav>
+    <div className="nv-Page">
+      <Breadcrumbs items={[{ href: '/', label: 'Home' }, { href: '/navatar', label: 'Navatar' }, { label: 'Pick' }]} />
       <h1>Pick Navatar</h1>
 
-      <div style={{display:'grid', gridTemplateColumns:'repeat(auto-fill, minmax(200px,1fr))', gap:20}}>
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(200px,1fr))', gap: 20 }}>
         {canon.map(item => (
           <button
             key={item.id}
             onClick={() => setSelected(item.id)}
-            className={`card ${selected===item.id ? 'isSelected': ''}`}
-            style={{textAlign:'left'}}
+            className={`nv-Card ${selected === item.id ? 'isSelected' : ''}`}
+            style={{ textAlign: 'left' }}
           >
-            <div className="navatar-card">
-              <img src={item.url} alt={item.title} />
-            </div>
-            <div className="title">{item.title}</div>
+            {item.url ? (
+              <img className="nv-Img" src={item.url} alt={item.title} onError={e => (e.currentTarget.src = '/navatars/seedling.svg')} />
+            ) : (
+              <div className="nv-Img" style={{ background: '#f1f2f5' }} />
+            )}
+            <div style={{ fontWeight: 700, marginTop: 8 }}>{item.title}</div>
           </button>
         ))}
       </div>
 
-      <div style={{display:'flex', justifyContent:'flex-end', marginTop:16}}>
-        <button className="primary"
+      <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: 16 }}>
+        <button
+          className="nv-PrimaryBtn"
           disabled={!selected || saving}
-          onClick={handleSave}>
+          onClick={handleSave}
+        >
           {saving ? 'Saving…' : 'Pick one to save'}
         </button>
       </div>
