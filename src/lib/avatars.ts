@@ -10,7 +10,8 @@ export async function saveNavatarSelection(name: string, image_url: string) {
     name,
     method: 'canon',
     category: 'canon',
-    image_url
+    image_url,
+    updated_at: new Date().toISOString()
   }, { onConflict: 'user_id' });
 
   if (error) throw error;
@@ -36,7 +37,8 @@ export async function uploadNavatar(file: File, name = 'avatar') {
     name,
     method: 'upload',
     category: 'upload',
-    image_url
+    image_url,
+    updated_at: new Date().toISOString()
   }, { onConflict: 'user_id' });
 
   if (ins.error) throw ins.error;
