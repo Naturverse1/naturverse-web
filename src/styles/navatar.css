@@ -1,5 +1,6 @@
 .card { background:#fff; border-radius:16px; padding:12px; box-shadow:0 1px 4px rgba(0,0,0,.08); border:2px solid transparent; }
 .card.isSelected { border-color:#3b82f6; box-shadow:0 0 0 3px rgba(59,130,246,.25); }
-.thumb { width:100%; aspect-ratio:1/1; object-fit:cover; border-radius:12px; }
+.navatar-card { aspect-ratio:1/1; border-radius:16px; overflow:hidden; background:#fff; }
+.navatar-card img { width:100%; height:100%; object-fit:contain; display:block; }
 .title { font-weight:700; margin-top:8px; }
 .primary { padding:10px 16px; border-radius:12px; }
