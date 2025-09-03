@@ -1,100 +1,62 @@
 import { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import { useSession } from '../../lib/session';
 import '../../styles/navatar.css';
 
 export default function NavatarGenerate() {
-  const navigate = useNavigate();
   const user = useSession();
-  const [prompt, setPrompt] = useState('');
-  const [srcUrl, setSrcUrl] = useState('');
-  const [maskUrl, setMaskUrl] = useState('');
-  const [name, setName] = useState('');
-  const [saving, setSaving] = useState(false);
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
-  async function handleSave() {
-    if (!prompt && !srcUrl) {
-      alert('Enter a prompt or a source image URL');
-      return;
-    }
-    setSaving(true);
+  async function onSubmit(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    setError('');
+    setSuccess('');
+    setIsSubmitting(true);
+
+    const fd = new FormData(e.currentTarget);
     try {
       const r = await fetch('/.netlify/functions/generate-navatar', {
         method: 'POST',
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({
-          prompt,
-          userId: user?.id,
-          name,
-          sourceImageUrl: srcUrl || undefined,
-          maskImageUrl: maskUrl || undefined,
-        }),
+        body: fd,
       });
 
-      const text = await r.text(); // robust: read text first
+      const text = await r.text();
       let data: any = {};
-      try { data = text ? JSON.parse(text) : {}; } catch {
-        // backend guaranteed JSON; this guards against upstream HTML errors
-        throw new Error(text || 'Server returned non-JSON response');
-      }
+      try { data = JSON.parse(text); } catch {}
 
       if (!r.ok) {
-        throw new Error(data?.error || 'Create failed');
+        throw new Error(data?.error || `HTTP ${r.status}`);
       }
 
-      navigate('/navatar?refresh=1');
-    } catch (e: any) {
-      alert(e?.message || String(e));
+      const url = data.image_url as string;
+      // TODO: show preview / link
+      setSuccess('Created!');
+    } catch (err: any) {
+      setError(err.message || 'Create failed');
     } finally {
-      setSaving(false);
+      setIsSubmitting(false);
     }
   }
 
   return (
-    <div className="container">
-      <nav className="nv-breadcrumbs brand-blue">
-        <Link to="/">Home</Link><span className="sep">/</span>
-        <Link to="/navatar">Navatar</Link><span className="sep">/</span>
-        <span>Describe &amp; Generate</span>
-      </nav>
-
-      <h1>Describe &amp; Generate</h1>
-
-      <div style={{display:'flex', flexDirection:'column', gap:12, maxWidth:720, margin:'0 auto'}}>
-        <textarea
-          placeholder="Describe your Navatar (e.g., ‘friendly water-buffalo spirit, gold robe, jungle temple, sunny morning, storybook style’)
-"          value={prompt}
-          onChange={e => setPrompt(e.target.value)}
-          rows={4}
-          style={{width:'100%'}}
-        />
-        <input
-          type="url"
-          placeholder="(Optional) Source Image URL for edits/merge"
-          value={srcUrl}
-          onChange={e => setSrcUrl(e.target.value)}
-        />
-        <input
-          type="url"
-          placeholder="(Optional) Mask Image URL (transparent areas → replaced)"
-          value={maskUrl}
-          onChange={e => setMaskUrl(e.target.value)}
-        />
-        <input
-          type="text"
-          placeholder="Name (optional)"
-          value={name}
-          onChange={e => setName(e.target.value)}
-        />
-
-        <button className="primary" disabled={saving} onClick={handleSave}>
-          {saving ? 'Creating…' : 'Save'}
-        </button>
-
-        <p className="hint">
-          Tips: Keep faces centered, ask for full-body vs portrait, and mention “storybook / illustration / character sheet” for that Navatar vibe.
-        </p>
+    <div className="nav-page">
+      <div className="breadcrumbs">
+        <Link to="/">Home</Link> / <Link to="/navatar">Navatar</Link> / Describe &amp; Generate
       </div>
+      <h1 className="nav-title">Describe &amp; Generate</h1>
+      <form className="nav-card" onSubmit={onSubmit} encType="multipart/form-data">
+        <textarea name="prompt" placeholder="Describe your Navatar" rows={4} />
+        <input type="file" name="source" />
+        <input type="file" name="mask" />
+        <input type="text" name="name" placeholder="Name (optional)" />
+        <input type="hidden" name="userId" value={user?.id ?? ''} />
+        <button className="nav-btn" type="submit" disabled={isSubmitting}>
+          {isSubmitting ? 'Creating...' : 'Save'}
+        </button>
+        {error && <div className="nav-error">{error}</div>}
+      </form>
     </div>
   );
 }
