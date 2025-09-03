@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { Link } from 'react-router-dom';
 import { PRODUCTS } from "../data/products";
 import { addToCart } from "../lib/cart";
 import RecentCarousel from "@/components/RecentCarousel";
@@ -15,8 +16,16 @@ export default function Marketplace() {
     : "Shop marketplace";
 
   return (
-    <main>
-      <h1>Marketplace</h1>
+    <main className="container py-8">
+      <h1 className="h1 mb-4">Marketplace</h1>
+
+      <div className="flex flex-wrap gap-3 mb-6">
+        <Link className="btn btn-outline" to="/marketplace/wishlist">Wishlist</Link>
+        <Link className="btn btn-outline" to="/marketplace/nft">NFT</Link>
+        <Link className="btn btn-outline" to="/marketplace/saved">Saved</Link>
+        <Link className="btn btn-outline" to="/marketplace/specials">Specials</Link>
+      </div>
+
       <a className="btn primary" href="#items" onClick={() => convert("market_cta", variant, { click: true })}>
         {ctaText}
       </a>

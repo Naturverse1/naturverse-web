@@ -10,8 +10,8 @@ const pages = import.meta.glob('../pages/**/*.tsx') as Record<string, Loader>;
 const CANDIDATES = [
   '../pages/Worlds.tsx',
   '../pages/Zones.tsx',
-  '../pages/Marketplace.tsx',
-  '../pages/Wishlist.tsx',
+  '../pages/marketplace.tsx',
+  '../pages/marketplace/Wishlist.tsx',
   '../pages/Naturversity.tsx',
   '../pages/NaturBank.tsx',
   '../pages/navatar.tsx',
