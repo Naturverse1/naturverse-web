@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import CANONS from '../../data/navatarCanons';
-import { getSupabase } from '../../lib/supabase-client';
+import { getSupabase } from '../../lib/supabase';
 import { useSession } from '../../lib/session';
 import '../../styles/navatar.css';
 
@@ -10,7 +10,7 @@ export default function PickNavatarPage() {
   const [saving, setSaving] = useState(false);
   const canon = CANONS;
   const navigate = useNavigate();
-  const { user } = useSession();
+  const user = useSession();
   const supabase = getSupabase();
 
   async function savePickedCanon(pickedCanon: { title: string; url: string }) {
