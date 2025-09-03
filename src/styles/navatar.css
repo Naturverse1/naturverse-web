@@ -21,3 +21,38 @@ button.block { width: 100%; }
 
 /* tiny helper */
 .hint { margin-top: 10px; opacity: 0.8; font-size: 14px; }
+
+.nv-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  width: 100%;
+  max-width: 860px;        /* looks nice on desktop */
+  margin: 0 auto;          /* center */
+}
+
+.nv-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #d8d8d8;
+  font-size: 16px;
+}
+
+.nv-form .primary {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+}
+
+.nv-tip {
+  max-width: 860px;
+  margin: 10px auto 0;
+  border: 2px dashed #e6ecff;
+  padding: 10px;
+  color: #5a6;
+}
+
+/* Make the upload form match */
+.upload-form { composes: nv-form; }   /* if you use CSS Modules, copy rules; otherwise add className="nv-form" in upload.tsx */
