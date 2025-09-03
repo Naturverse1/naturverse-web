@@ -5,7 +5,7 @@ export default async () => {
   // TODO: expand this list or generate from content
   const urls = [
     '/', '/worlds', '/zones', '/marketplace',
-    '/wishlist', '/naturversity', '/naturbank', '/navatar', '/passport'
+    '/marketplace/wishlist', '/naturversity', '/naturbank', '/navatar', '/passport'
   ];
 
   const body =

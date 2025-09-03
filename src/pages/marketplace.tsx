@@ -1,4 +1,5 @@
 import { useEffect, useMemo } from "react";
+import { Link } from "react-router-dom";
 import { PRODUCTS } from "../data/products";
 import { addToCart } from "../lib/cart";
 import RecentCarousel from "@/components/RecentCarousel";
@@ -20,6 +21,9 @@ export default function Marketplace() {
       <a className="btn primary" href="#items" onClick={() => convert("market_cta", variant, { click: true })}>
         {ctaText}
       </a>
+      <Link className="btn" to="/marketplace/wishlist">
+        Wishlist
+      </Link>
       <section className="grid" id="items">
         {PRODUCTS.map((p) => {
           const s = getStock(p.id);

@@ -23,6 +23,12 @@
   status = 200
   force  = true
 
+[[redirects]]
+  from = "/wishlist"
+  to   = "/marketplace/wishlist"
+  status = 301
+  force  = true
+
 # SPA fallback last
 [[redirects]]
   from = "/*"
