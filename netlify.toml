@@ -4,6 +4,8 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
+  timeout = 26
 
 # --- Static utility pages BEFORE SPA catch-all ---
 [[redirects]]
@@ -37,3 +39,7 @@
     Cache-Control = "no-store"
     # Allow only what's needed; we keep it simple and local
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
+
+[[functions]]
+  name = "generate-navatar"
+  timeout = 26
