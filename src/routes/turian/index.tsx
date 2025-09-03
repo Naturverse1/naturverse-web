@@ -1,1 +1,1 @@
-export { default } from '../../pages/Turian';
+export { default } from '../../pages/turian';

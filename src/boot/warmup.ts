@@ -16,7 +16,7 @@ const CANDIDATES = [
   '../pages/NaturBank.tsx',
   '../pages/navatar.tsx',
   '../pages/Passport.tsx',
-  '../pages/Turian.tsx',
+  '../pages/turian/index.tsx',
   '../pages/Cart.tsx',
 ];
 
