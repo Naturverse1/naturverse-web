@@ -40,13 +40,13 @@ export default function TurianWidget() {
       <button
         aria-label="Open Turian chat"
         onClick={() => setOpen(true)}
-        className="turian-fab"
+        className="turian-fab nv-fab"
       >
         💬
       </button>
 
       {open && (
-        <div className="turian-sheet" role="dialog" aria-modal="true">
+        <div className="turian-sheet turian-chat" role="dialog" aria-modal="true">
           <div className="turian-card">
             <header className="turian-header">
               <strong>Turian (demo)</strong>
