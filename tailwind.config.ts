@@ -1,30 +1,34 @@
 import type { Config } from 'tailwindcss';
 
-export default {
+const config: Config = {
   content: [
     './index.html',
     './app/**/*.{ts,tsx,js,jsx}',
     './components/**/*.{ts,tsx,js,jsx}',
-    './src/**/*.{ts,tsx,js,jsx}',
+    './src/**/*.{ts,tsx,js,jsx,vue}',
   ],
   theme: {
     extend: {
       colors: {
-        primary: {
-          50:  'var(--nv-primary-50)',
-          100: 'var(--nv-primary-100)',
-          200: 'var(--nv-primary-200)',
-          300: 'var(--nv-primary-300)',
-          400: 'var(--nv-primary-400)',
-          500: 'var(--nv-primary-500)',
-          600: 'var(--nv-primary-600)',
-          700: 'var(--nv-primary-700)',
-          800: 'var(--nv-primary-800)',
-          900: 'var(--nv-primary-900)',
-          DEFAULT: 'var(--nv-primary)',
+        brand: {
+          50:  '#eef2ff',
+          100: '#e0e7ff',
+          200: '#c7d2fe',
+          300: '#a5b4fc',
+          400: '#818cf8',
+          500: '#6366f1',
+          600: '#2563eb',
+          700: '#1d4ed8',
         },
       },
     },
   },
+  safelist: [
+    'text-brand-600','hover:text-brand-700',
+    'bg-brand-600','hover:bg-brand-700',
+    'border-brand-600'
+  ],
   plugins: [],
-} satisfies Config;
+};
+
+export default config;

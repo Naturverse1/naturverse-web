@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { SITE_URL } from './lib/site';
 import "../styles/globals.css";
 import "../styles/nav.css";
-import "../src/styles/brand.css";
+import '@/styles/brand.css';
 
 // ensure absolute URLs in SEO metadata
 export const metadata: Metadata = {

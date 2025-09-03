@@ -5,7 +5,7 @@ import { Img } from '../components';
 
 export default function Home() {
   return (
-    <main className="container">
+    <main className="home container">
       {/* Clean hero (no oversized emoji) */}
       <header className="home-hero">
         <h1>
