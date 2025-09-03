@@ -1,74 +1,47 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { getMyAvatar } from '../../lib/avatars';
 import { Link } from 'react-router-dom';
-import { uploadNavatar } from '../../lib/avatars';
-import '../../styles/navatar.css';
-
-type Mode = null | 'canon' | 'upload' | 'generate';
 
 export default function NavatarHub() {
-  const [mode, setMode] = useState<Mode>(null);
-  const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState('');
-  const [busy, setBusy] = useState(false);
+  const [loading, setLoading] = useState(true);
+  const [mine, setMine] = useState<any>(null);
 
-  async function doUpload() {
-    if (!file) return;
-    setBusy(true);
-    try {
-      await uploadNavatar(file, name || 'avatar');
-      alert('Uploaded!');
-      setFile(null); setName('');
-    } catch (e: any) {
-      alert(e?.message || 'Upload failed');
-    } finally { setBusy(false); }
-  }
+  useEffect(() => {
+    (async () => {
+      try { setMine(await getMyAvatar()); }
+      finally { setLoading(false); }
+    })();
+  }, []);
+
+  if (loading) return <div className="container"><h1>Your Navatar</h1><p>Loading…</p></div>;
 
   return (
-    <div className="pick-wrap">
-      <div className="breadcrumbs">
-        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
-      </div>
+    <div className="container">
+      <nav className="crumbs">Home / Navatar</nav>
+      <h1>Your Navatar</h1>
 
-      <h1 className="page-title">Your Navatar</h1>
-      <p className="muted">No Navatar yet — pick one below.</p>
-
-      <div className="mode-row">
-        <button className="btn" onClick={() => setMode(mode === 'canon' ? null : 'canon')}>Pick Navatar</button>
-        <button className="btn" onClick={() => setMode(mode === 'upload' ? null : 'upload')}>Upload</button>
-        <button className="btn" onClick={() => setMode(mode === 'generate' ? null : 'generate')}>Describe &amp; Generate</button>
-      </div>
-
-      {mode === 'canon' && (
-        <section className="create-block">
-          <p className="muted">Choose from our characters.</p>
-          <Link className="link" to="/navatar/pick">Open</Link>
-        </section>
-      )}
-
-      {mode === 'upload' && (
-        <section className="create-block">
-          <div className="form">
-            <label>Name</label>
-            <input value={name} onChange={e => setName(e.target.value)} placeholder="My Navatar" />
-            <label>Image</label>
-            <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] || null)} />
-            <button className="btn" disabled={!file || busy} onClick={doUpload}>{busy ? 'Uploading…' : 'Upload'}</button>
+      {mine ? (
+        <>
+          <div style={{display:'flex', flexDirection:'column', alignItems:'center', gap:12}}>
+            <img src={mine.image_url} alt={mine.name} style={{width:320, height:320, objectFit:'cover', borderRadius:24}}/>
+            <div style={{fontWeight:700, fontSize:24}}>{mine.name}</div>
+            <div style={{display:'flex', gap:12, marginTop:6, flexWrap:'wrap', justifyContent:'center'}}>
+              <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
+              <Link className="btn" to="/navatar/upload">Upload</Link>
+              <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
+            </div>
           </div>
-        </section>
-      )}
-
-      {mode === 'generate' && (
-        <section className="create-block">
-          <p className="muted">Coming next.</p>
-        </section>
-      )}
-
-      {mode && (
-        <div style={{ display:'flex', justifyContent:'center', marginTop:8 }}>
-          <button className="btn-secondary" onClick={() => setMode(null)}>Close</button>
-        </div>
+        </>
+      ) : (
+        <>
+          <p>No Navatar yet — pick one below.</p>
+          <div style={{display:'flex', justifyContent:'center', gap:16, flexWrap:'wrap'}}>
+            <Link className="btn" to="/navatar/pick">Pick Navatar</Link>
+            <Link className="btn" to="/navatar/upload">Upload</Link>
+            <Link className="btn" to="/navatar/generate">Describe &amp; Generate</Link>
+          </div>
+        </>
       )}
     </div>
   );
 }
-
