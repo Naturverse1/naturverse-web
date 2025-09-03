@@ -117,7 +117,7 @@ export default function Market() {
       case 'epic':
         return 'bg-magic text-white';
       case 'legendary':
-        return 'bg-sunny text-black';
+        return 'bg-sunny text-strong';
       default:
         return 'bg-gray-500 text-white';
     }

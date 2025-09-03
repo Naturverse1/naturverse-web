@@ -1,7 +1,8 @@
 import * as React from "react";
 import { turianReply } from "@/lib/turian";
 import { isDemo, AI_MODE } from "@/lib/ai";
-import { Link } from "react-router-dom";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import Button from "../../components/Button";
 import "../../styles/turian.css";
 
 type Msg = { role: "user" | "assistant" | "system"; content: string };
@@ -37,18 +38,17 @@ export default function TurianPage() {
   }
 
   return (
-    <main className="turian container" style={{ maxWidth: 820, margin: "0 auto" }}>
-      <nav aria-label="breadcrumb" className="crumbs">
-        <Link to="/">Home</Link> / <span>Turian</span>
-      </nav>
-      <h1 className="h1">Turian the Durian</h1>
+    <main className="turian container max-w-[820px] mx-auto">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Turian" }]} />
+      <h1 className="text-4xl font-extrabold text-strong">Turian the Durian</h1>
 
-      <p className="tip">
+      <p className="mt-2 text-sm brand-muted">
         Tip: In demo mode I use built-in answers. Switch to live later by setting
-        <code> VITE_AI_MODE=live</code> and deploying.
+        <code className="mx-1 rounded bg-primary-50 px-2 py-0.5 text-primary-700">VITE_AI_MODE=live</code>
+        and deploying.
       </p>
 
-      <div className="chat chat-card">
+      <section className="brand-chat mt-6 rounded-2xl border border-primary-100 bg-white p-4 shadow-sm">
         <div className="status">
           {isDemo()
             ? "Offline demo — no external calls or costs."
@@ -80,10 +80,10 @@ export default function TurianPage() {
                     m.role === "assistant"
                       ? "#ffffff"
                       : m.role === "user"
-                      ? "#1f50ff"
+                      ? "var(--brand-primary-600)"
                       : "transparent",
-                  color: m.role === "user" ? "#fff" : "#222",
-                  border: m.role === "assistant" ? "1px solid #e8eef7" : "none",
+                  color: m.role === "user" ? "#fff" : "var(--text-base)",
+                  border: m.role === "assistant" ? "1px solid var(--brand-primary-100)" : "none",
                   maxWidth: 560,
                 }}
               >
@@ -99,15 +99,12 @@ export default function TurianPage() {
             onChange={(e) => setInput(e.target.value)}
             placeholder="Ask Turian about Worlds, Zones, or Navatar…"
           />
-          <button
-            className="btn-primary"
-            disabled={busy || !input.trim()}
-          >
+          <Button disabled={busy || !input.trim()}>
             {busy ? "Thinking…" : "Send"}
-          </button>
+          </Button>
         </form>
         {err && <p style={{ color: "#d00", marginTop: 8 }}>{err}</p>}
-      </div>
+      </section>
     </main>
   );
 }

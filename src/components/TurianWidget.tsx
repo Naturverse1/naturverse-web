@@ -1,5 +1,7 @@
 import * as React from "react";
 import { isDemo } from "../lib/ai";
+import ChatFab from "./ChatFab";
+import Button from "./Button";
 
 type Msg = { who: "bot" | "you"; text: string };
 
@@ -37,13 +39,9 @@ export default function TurianWidget() {
 
   return (
     <>
-      <button
-        aria-label="Open Turian chat"
-        onClick={() => setOpen(true)}
-        className="fab-btn turian-fab nv-fab"
-      >
+      <ChatFab aria-label="Open Turian chat" onClick={() => setOpen(true)}>
         💬
-      </button>
+      </ChatFab>
 
       {open && (
         <div className="turian-sheet turian-chat" role="dialog" aria-modal="true">
@@ -67,7 +65,7 @@ export default function TurianWidget() {
                 onChange={(e) => setText(e.target.value)}
                 placeholder="Ask Turian about Worlds, Zones, or Navatar…"
               />
-              <button className="btn-primary">Send</button>
+              <Button type="submit" disabled={!text.trim()}>Send</Button>
             </form>
           </div>
         </div>

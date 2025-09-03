@@ -202,7 +202,7 @@ export default function Zone() {
       case 'easy':
         return 'bg-nature text-white';
       case 'medium':
-        return 'bg-sunny text-black';
+        return 'bg-sunny text-strong';
       case 'hard':
         return 'bg-coral text-white';
       default:

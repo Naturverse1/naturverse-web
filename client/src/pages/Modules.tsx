@@ -107,7 +107,7 @@ export default function Modules() {
       case 'beginner':
         return 'bg-nature text-white';
       case 'intermediate':
-        return 'bg-sunny text-black';
+        return 'bg-sunny text-strong';
       case 'advanced':
         return 'bg-coral text-white';
       default:
@@ -226,7 +226,7 @@ export default function Modules() {
                       module.isCompleted
                         ? 'bg-nature text-white'
                         : module.progress > 0
-                          ? 'bg-sunny hover:bg-yellow-500 text-black'
+                          ? 'bg-sunny hover:bg-yellow-500 text-strong'
                           : 'bg-turquoise hover:bg-teal-600 text-white'
                     }`}
                     data-testid={`button-module-${module.id}`}
