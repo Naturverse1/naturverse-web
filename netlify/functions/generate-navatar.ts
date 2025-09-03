@@ -1,152 +1,179 @@
-import type { Handler } from '@netlify/functions';
-import OpenAI from 'openai';
-import { createClient } from '@supabase/supabase-js';
+import type { Handler } from "@netlify/functions";
+import OpenAI from "openai";
+import { createClient } from "@supabase/supabase-js";
 
-// ── ENV
 const SUPABASE_URL = process.env.SUPABASE_URL!;
 const SUPABASE_SERVICE_ROLE_KEY = process.env.SUPABASE_SERVICE_ROLE_KEY!;
 const OPENAI_API_KEY = process.env.OPENAI_API_KEY!;
-const IMAGES_BUCKET = process.env.IMAGES_BUCKET || 'avatars';
+const IMAGES_BUCKET = process.env.IMAGES_BUCKET || "avatars";
 
 const supabase = createClient(SUPABASE_URL, SUPABASE_SERVICE_ROLE_KEY);
 const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
 
-// fetch a remote image into a Buffer (for edits)
-async function fetchAsBuffer(url: string) {
-  const r = await fetch(url);
-  if (!r.ok) throw new Error(`Fetch failed: ${r.status} ${r.statusText}`);
-  const ab = await r.arrayBuffer();
-  return Buffer.from(ab);
-}
+// simple in-memory idempotency window (per function instance)
+const recentKeys = new Map<string, number>();
+const IDEMPOTENCY_WINDOW_MS = 20_000;
+
+const json = (code: number, body: unknown) => ({
+  statusCode: code,
+  headers: {
+    "content-type": "application/json",
+    "access-control-allow-origin": "*",
+  },
+  body: typeof body === "string" ? body : JSON.stringify(body),
+});
+
+const sleep = (ms: number) => new Promise((r) => setTimeout(r, ms));
+
+type Payload = {
+  prompt?: string;
+  userId?: string;
+  name?: string;
+  // keep server authoritative: we will force a safe size/quality
+  size?: string;
+  sourceImageUrl?: string;
+  maskImageUrl?: string;
+  // optional idempotency key from client; we also build one if missing
+  idempotencyKey?: string;
+};
 
 export const handler: Handler = async (event) => {
   try {
-    if (event.httpMethod !== 'POST') {
-      return { statusCode: 405, body: 'Method Not Allowed' };
+    if (event.httpMethod !== "POST") {
+      return json(405, { error: "Method Not Allowed" });
     }
+    if (!OPENAI_API_KEY) return json(500, { error: "Missing OPENAI_API_KEY" });
+
+    const raw = (event.body ?? "").trim();
+    if (!raw) return json(400, { error: "Missing JSON body" });
 
     const {
       prompt,
-      user_id,
+      userId,
       name,
       sourceImageUrl,
       maskImageUrl,
-    } = JSON.parse(event.body || '{}') as {
-      prompt?: string;
-      user_id?: string;
-      name?: string;
-      sourceImageUrl?: string;
-      maskImageUrl?: string;
+      idempotencyKey: clientKey,
+    } = JSON.parse(raw) as Payload;
+
+    // ---- quick input guards (cheap!)
+    const p = (prompt ?? "").trim();
+    if (!p && !sourceImageUrl) return json(400, { error: "Provide prompt or sourceImageUrl" });
+    if (p.length > 500) return json(400, { error: "Prompt too long (max ~500 chars for dev)" });
+
+    // prevent accidental double submits within a short window
+    const key = clientKey || `${userId || "anon"}::${p}::${sourceImageUrl || ""}`;
+    const now = Date.now();
+    const last = recentKeys.get(key);
+    if (last && now - last < IDEMPOTENCY_WINDOW_MS) {
+      return json(429, { error: "Duplicate submit detected. Please wait a moment." });
+    }
+    recentKeys.set(key, now);
+
+    // Garbage-collect old keys occasionally
+    if (recentKeys.size > 100) {
+      const cutoff = now - IDEMPOTENCY_WINDOW_MS;
+      for (const [k, t] of recentKeys) if (t < cutoff) recentKeys.delete(k);
+    }
+
+    // ---- OpenAI call with a soft timeout (~45s) to avoid Netlify 504 + billing surprises
+    const CONTEXT_TIMEOUT_MS = 45_000;
+
+    // We keep cost stable: one image, standard quality, fixed size.
+    const CALL = async () => {
+      if (sourceImageUrl) {
+        // fetch remote images right before the call (no re-fetch loops)
+        const imgRes = await fetch(sourceImageUrl);
+        if (!imgRes.ok) throw new Error(`Fetch source failed: ${imgRes.status}`);
+        const image = Buffer.from(await imgRes.arrayBuffer());
+
+        let mask: Buffer | undefined;
+        if (maskImageUrl) {
+          const maskRes = await fetch(maskImageUrl);
+          if (!maskRes.ok) throw new Error(`Fetch mask failed: ${maskRes.status}`);
+          mask = Buffer.from(await maskRes.arrayBuffer());
+        }
+
+        const edit = await openai.images.edits({
+          model: "gpt-image-1",
+          prompt: p || "",
+          image,
+          ...(mask ? { mask } : {}),
+          size: "1024x1024",
+          // safety: always 1 result, standard quality
+          n: 1,
+        });
+        return edit.data?.[0]?.b64_json;
+      } else {
+        const gen = await openai.images.generate({
+          model: "gpt-image-1",
+          prompt: p || "",
+          size: "1024x1024",
+          n: 1,
+        });
+        return gen.data?.[0]?.b64_json;
+      }
     };
 
-    if (!prompt && !sourceImageUrl) {
-      return {
-        statusCode: 400,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Provide prompt or sourceImageUrl' }),
-      };
-    }
+    const b64 = await Promise.race([
+      CALL(),
+      (async () => {
+        await sleep(CONTEXT_TIMEOUT_MS);
+        throw new Error("Timeout while generating image");
+      })(),
+    ]);
 
-    // ── 1) Generate or edit with OpenAI (do NOT pass response_format)
-    let b64: string;
+    if (!b64) return json(502, { error: "No image data returned from OpenAI" });
 
-    if (sourceImageUrl) {
-      const image = await fetchAsBuffer(sourceImageUrl);
-      const mask = maskImageUrl ? await fetchAsBuffer(maskImageUrl) : undefined;
+    // ---- Upload to Supabase
+    const buffer = Buffer.from(b64, "base64");
+    const folder = `ai/${userId || "anon"}`;
+    const filename = `${Date.now()}.png`;
+    const path = `${folder}/${filename}`;
 
-      const edited = await openai.images.edits({
-        model: 'gpt-image-1',
-        prompt: prompt || 'edit image',
-        image,
-        ...(mask ? { mask } : {}),
-        size: '1024x1024',
-      });
-
-      b64 = edited.data[0].b64_json!;
-    } else {
-      const gen = await openai.images.generate({
-        model: 'gpt-image-1',
-        prompt: prompt!,
-        size: '1024x1024',
-      });
-      b64 = gen.data[0].b64_json!;
-    }
-
-    if (!b64) {
-      return {
-        statusCode: 502,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Image generation returned empty data' }),
-      };
-    }
-
-    // ── 2) Upload to Supabase Storage (ensure .png extension)
-    const buffer = Buffer.from(b64, 'base64');
-    const filename = `ai/${user_id || 'anon'}/${Date.now()}.png`;
     const { error: upErr } = await supabase.storage
       .from(IMAGES_BUCKET)
-      .upload(filename, buffer, { contentType: 'image/png', upsert: true });
+      .upload(path, buffer, {
+        contentType: "image/png",
+        cacheControl: "public, max-age=31536000",
+        upsert: true,
+      });
+    if (upErr) return json(500, { error: `Upload failed: ${upErr.message}` });
 
-    if (upErr) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: `Upload failed: ${upErr.message}` }),
-      };
-    }
+    const { data: pub } = supabase.storage.from(IMAGES_BUCKET).getPublicUrl(path);
+    const image_url = pub?.publicUrl;
+    if (!image_url) return json(500, { error: "Could not resolve public URL" });
 
-    // public URL (bucket needs public read; you already enabled this)
-    const pub = supabase.storage.from(IMAGES_BUCKET).getPublicUrl(filename);
-    const image_url = pub.data.publicUrl;
-
-    if (!image_url) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: 'Could not resolve public URL' }),
-      };
-    }
-
-    // ── 3) Upsert DB row
+    // ---- DB upsert (method must be 'generate' to satisfy your CHECK)
+    const display = (name || "Navatar").trim();
     const { error: dbErr } = await supabase
-      .from('avatars')
+      .from("avatars")
       .upsert(
         {
-          user_id: user_id || null,
-          name: name || 'AI avatar',
-          method: 'ai',
-          category: 'generate',
+          user_id: userId ?? null,
+          name: display,
+          category: "generate",
+          method: "generate",
           image_url,
         },
-        { onConflict: 'user_id' }
+        { onConflict: "user_id" }
       );
+    if (dbErr) return json(500, { error: `DB upsert failed: ${dbErr.message}` });
 
-    if (dbErr) {
-      return {
-        statusCode: 500,
-        headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ error: `DB upsert failed: ${dbErr.message}` }),
-      };
-    }
-
-    return {
-      statusCode: 200,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ image_url }),
-    };
+    return json(200, { image_url });
   } catch (e: any) {
-    const code = e?.status || 500;
-    const msg =
-      e?.response?.data?.error?.message ||
-      e?.message ||
-      'Unknown server error';
-    return {
-      statusCode: code,
-      headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ error: msg }),
-    };
+    // Map common OpenAI errors to clear messages
+    const msg: string = e?.message || "";
+    if (/Billing hard limit/i.test(msg)) {
+      return json(402, {
+        error:
+          "OpenAI billing hard limit reached. Add credit or enable auto-recharge, then try again.",
+      });
+    }
+    if (/Timeout while generating image/i.test(msg)) {
+      return json(504, { error: "Image generation timed out. Please try again." });
+    }
+    // fall back
+    return json(e?.status || 500, { error: msg || "Server error" });
   }
 };
-
-export default handler;
-
