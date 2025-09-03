@@ -37,13 +37,18 @@ export default function TurianPage() {
   }
 
   return (
-    <div className="container" style={{ maxWidth: 820, margin: "0 auto" }}>
-      <nav className="crumbs">
+    <main className="turian container" style={{ maxWidth: 820, margin: "0 auto" }}>
+      <nav aria-label="breadcrumb" className="crumbs">
         <Link to="/">Home</Link> / <span>Turian</span>
       </nav>
       <h1 className="h1">Turian the Durian</h1>
 
-      <div className="chat-card">
+      <p className="tip">
+        Tip: In demo mode I use built-in answers. Switch to live later by setting
+        <code> VITE_AI_MODE=live</code> and deploying.
+      </p>
+
+      <div className="chat chat-card">
         <div className="status">
           {isDemo()
             ? "Offline demo — no external calls or costs."
@@ -103,11 +108,6 @@ export default function TurianPage() {
         </form>
         {err && <p style={{ color: "#d00", marginTop: 8 }}>{err}</p>}
       </div>
-
-      <p style={{ marginTop: 12, color: "#778" }}>
-        Tip: In demo mode I use built-in answers. Switch to live later by setting
-        <code> VITE_AI_MODE=live</code> and deploying.
-      </p>
-    </div>
+    </main>
   );
 }

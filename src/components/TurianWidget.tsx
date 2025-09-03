@@ -40,7 +40,7 @@ export default function TurianWidget() {
       <button
         aria-label="Open Turian chat"
         onClick={() => setOpen(true)}
-        className="turian-fab nv-fab"
+        className="fab-btn turian-fab nv-fab"
       >
         💬
       </button>
