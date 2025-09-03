@@ -3,8 +3,11 @@
   publish = "dist"
 
 [functions]
-  directory = "netlify/functions"
+  directory    = "netlify/functions"
   node_bundler = "esbuild"
+
+# Function-specific config
+[functions."generate-navatar"]
   timeout = 26
 
 # --- Static utility pages BEFORE SPA catch-all ---
@@ -38,5 +41,3 @@
   [headers.values]
     Cache-Control = "no-store"
     Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'"
-
-
