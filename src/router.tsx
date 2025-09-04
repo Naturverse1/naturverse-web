@@ -17,9 +17,12 @@ import Community from './pages/zones/Community';
 import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
 import MarketplacePage from './pages/marketplace';
+import MarketplaceWishlistPage from './pages/marketplace/wishlist';
+import MarketplaceNFTPage from './pages/marketplace/nft';
+import MarketplaceMintPage from './pages/marketplace/mint';
+import MarketplaceSpecialsPage from './pages/marketplace/specials';
 import ProductPage from './pages/marketplace/[slug]';
 import CartPage from './pages/cart';
-import WishlistPage from './pages/wishlist';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -78,11 +81,14 @@ export const router = createBrowserRouter([
         path: 'marketplace',
         children: [
           { index: true, element: <MarketplacePage /> },
+          { path: 'wishlist', element: <MarketplaceWishlistPage /> },
+          { path: 'nft', element: <MarketplaceNFTPage /> },
+          { path: 'mint', element: <MarketplaceMintPage /> },
+          { path: 'specials', element: <MarketplaceSpecialsPage /> },
           { path: ':slug', element: <ProductPage /> },
         ],
       },
       { path: 'cart', element: <CartPage /> },
-      { path: 'wishlist', element: <WishlistPage /> },
       {
         path: 'naturversity',
         element: <NaturversityLayout />,

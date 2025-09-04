@@ -11,7 +11,7 @@ const CANDIDATES = [
   '../pages/Worlds.tsx',
   '../pages/Zones.tsx',
   '../pages/Marketplace.tsx',
-  '../pages/Wishlist.tsx',
+  '../pages/marketplace/wishlist.tsx',
   '../pages/Naturversity.tsx',
   '../pages/NaturBank.tsx',
   '../pages/Navatar.tsx',

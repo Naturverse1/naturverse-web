@@ -13,13 +13,12 @@ export default function NavBar() {
   return (
     <header className="nv-nav">
       <div className="nv-nav-inner">
-        <Link className="nv-brand" href="/">Naturverse</Link>
+          <Link className="nv-brand" href="/">The Naturverse</Link>
 
         <nav className="nv-links">
           <Link className="nv-link" href="/worlds">Worlds</Link>
           <Link className="nv-link" href="/zones">Zones</Link>
-          <Link className="nv-link" href="/marketplace">Marketplace</Link>
-          <Link className="nv-link" href="/wishlist">Wishlist</Link>
+            <Link className="nv-link" href="/marketplace">Marketplace</Link>
           <Link className="nv-link" href="/naturversity">Naturversity</Link>
           <Link className="nv-link" href="/naturbank">NaturBank</Link>
           {/* Navatar is always enabled */}

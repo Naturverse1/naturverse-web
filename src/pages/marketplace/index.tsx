@@ -1,7 +1,7 @@
 import Breadcrumbs from "../../components/Breadcrumbs";
 import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
-import { Link } from "react-router-dom";
+import { Link, NavLink } from "react-router-dom";
 import "../../styles/_cards.css";
 import "../../styles/marketplace.css";
 
@@ -11,11 +11,38 @@ const PRODUCTS = [
   { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 ];
 
-export default function MarketplacePage(){
+function MarketplaceTabs() {
+  const tabs = [
+    { to: "/marketplace", label: "All", exact: true },
+    { to: "/marketplace/wishlist", label: "Wishlist" },
+    { to: "/marketplace/nft", label: "NFT" },
+    { to: "/marketplace/mint", label: "Mint" },
+    { to: "/marketplace/specials", label: "Seasonal specials" },
+  ];
+  return (
+    <div className="tabs tabs--marketplace">
+      {tabs.map((t) => (
+        <NavLink
+          key={t.to}
+          to={t.to}
+          end={t.exact}
+          className={({ isActive }) =>
+            "tablink" + (isActive ? " tablink--active" : "")
+          }
+        >
+          {t.label}
+        </NavLink>
+      ))}
+    </div>
+  );
+}
+
+export default function MarketplaceIndexPage() {
   return (
     <main id="main" data-page="marketplace" className="nvrs-section marketplace nv-secondary-scope">
       <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
       <h1 className="page-title">Marketplace</h1>
+      <MarketplaceTabs />
       <div className="mp-grid nv-card-grid">
         {PRODUCTS.map(p => (
           <article key={p.id} className="mp-card nv-card">
