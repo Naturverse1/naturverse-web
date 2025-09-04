@@ -1,31 +1,17 @@
 import { Link, NavLink } from 'react-router-dom';
-import { useEffect, useState } from 'react';
-import type { User } from '@supabase/supabase-js';
+import { useState } from 'react';
 import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
-import { supabase } from '@/lib/supabase-client';
 import { SITE } from '@/lib/site';
+import { useAuth } from '@/lib/auth-context';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
-  const [user, setUser] = useState<User | null>(null);
+  const { user } = useAuth();
 
-  useEffect(() => {
-    let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
-      if (!mounted) return;
-      setUser(data.session?.user ?? null);
-    });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setUser(session?.user ?? null);
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
+  if (!user) return null;
 
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
