@@ -13,8 +13,8 @@ export default function Home() {
   return (
     <main className={`${styles.page} nv-container`}>
       <section className={styles.hero}>
-        <h1 className={styles.title}>Welcome to the Naturverse™</h1>
-        <p className={styles.subtitle}>
+        <h1 className={`${styles.title} text-5xl font-extrabold text-strong`}>Welcome to the Naturverse™</h1>
+        <p className={`${styles.subtitle} mt-2 text-xl text-muted`}>
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
           kindness.
         </p>

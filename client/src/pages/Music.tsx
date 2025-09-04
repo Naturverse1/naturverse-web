@@ -68,7 +68,7 @@ export default function Music() {
       case 'play':
         return 'bg-turquoise text-white';
       case 'learn':
-        return 'bg-sunny text-black';
+        return 'bg-sunny text-strong';
       default:
         return 'bg-gray-500 text-white';
     }

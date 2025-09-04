@@ -234,10 +234,3 @@
   border: none !important;
 }
 
-/* ---------- Don’t let imported “seeder” templates override us ---------- */
-.navatar-page [style*="color:#000"],
-.naturbank-page [style*="color:#000"],
-.zones-page2   [style*="color:#000"],
-.world-page    [style*="color:#000"] {
-  color: var(--naturverse-blue) !important;
-}

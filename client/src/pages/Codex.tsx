@@ -110,7 +110,7 @@ export default function Codex() {
       case 'quiz':
         return 'bg-turquoise text-white';
       case 'music':
-        return 'bg-sunny text-black';
+        return 'bg-sunny text-strong';
       case 'achievement':
         return 'bg-coral text-white';
       default:

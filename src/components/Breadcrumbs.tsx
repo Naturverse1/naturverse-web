@@ -1,5 +1,5 @@
 import { Link, useLocation } from "react-router-dom";
-import * as React from "react";
+import React, { useMemo } from "react";
 
 type Crumb = { label: string; href?: string };
 
@@ -27,19 +27,15 @@ const LABELS: Record<string, string> = {
   stories: "Stories",
 };
 
-export function Breadcrumbs(props: { items?: Crumb[] }) {
+export function Breadcrumbs({ items }: { items?: Crumb[] }) {
   const location = useLocation();
 
-  // Allow explicit items to override auto mode when needed
-  const items: Crumb[] = React.useMemo(() => {
-    if (props.items?.length) return props.items;
+  const computed: Crumb[] = useMemo(() => {
+    if (items?.length) return items;
 
     const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
-    const acc: Crumb[] = [];
+    const acc: Crumb[] = [{ label: "Home", href: "/" }];
     let path = "";
-
-    // Always include Home
-    acc.push({ label: "Home", href: "/" });
 
     parts.forEach((seg, i) => {
       if (!seg) return;
@@ -50,24 +46,28 @@ export function Breadcrumbs(props: { items?: Crumb[] }) {
     });
 
     return acc;
-  }, [location.pathname, props.items]);
+  }, [location.pathname, items]);
 
-  if (items.length <= 1) return null;
+  if (computed.length <= 1) return null;
 
   return (
-    <nav aria-label="breadcrumb" className="nv-breadcrumbs brand-blue">
-      <ol>
-        {items.map((c, i) => {
-          const isLast = i === items.length - 1;
-          return (
-            <li key={`${c.label}-${i}`} aria-current={isLast ? "page" : undefined}>
-              {c.href && !isLast ? <Link to={c.href}>{c.label}</Link> : <span>{c.label}</span>}
-              {!isLast && <span className="sep"> / </span>}
-            </li>
-          );
-        })}
+    <nav aria-label="breadcrumb" className="mb-4">
+      <ol className="flex flex-wrap gap-2 text-sm text-muted">
+        {computed.map((it, i) => (
+          <li key={i} className="flex items-center gap-2">
+            {it.href ? (
+              <Link to={it.href} className="hover:underline">
+                {it.label}
+              </Link>
+            ) : (
+              <span className="text-strong">{it.label}</span>
+            )}
+            {i < computed.length - 1 && <span className="text-muted">/</span>}
+          </li>
+        ))}
       </ol>
     </nav>
   );
 }
+
 export default Breadcrumbs;

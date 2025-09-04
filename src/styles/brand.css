@@ -1,41 +1,64 @@
-/* Brand tokens */
 :root{
-  --brand-50:#eef2ff;
-  --brand-100:#e0e7ff;
-  --brand-200:#c7d2fe;
-  --brand-300:#a5b4fc;
-  --brand-400:#818cf8;
-  --brand-500:#6366f1;
-  --brand-600:#2563eb; /* primary */
-  --brand-700:#1d4ed8; /* primary-hover */
+  --brand-primary-50:  #eef2ff;
+  --brand-primary-100: #e0e7ff;
+  --brand-primary-200: #c7d2fe;
+  --brand-primary-300: #a5b4fc;
+  --brand-primary-400: #818cf8;
+  --brand-primary-500: #6366f1; /* main */
+  --brand-primary-600: #4f46e5;
+  --brand-primary-700: #4338ca;
+  --brand-primary-800: #3730a3;
+  --brand-primary-900: #312e81;
+
+  --text-strong: #0b1635;      /* deep navy for headings */
+  --text-base:   #0f1e46;      /* default body */
+  --text-muted:  #51607d;      /* captions / hints */
+
+  --ring-brand:  var(--brand-primary-500);
 }
 
-/* Breadcrumbs: any component with an aria-label of breadcrumb */
-[aria-label="breadcrumb"] a,
-.breadcrumb a{
-  color: var(--brand-600);
-  text-decoration: none;
-}
-[aria-label="breadcrumb"] a:hover,
-.breadcrumb a:hover{
-  color: var(--brand-700);
+/* Global defaults */
+html, body{
+  color: var(--text-base);
 }
 
-/* Generic brand link helper (use where a link might miss Tailwind utilities) */
-a.brand-link{ color: var(--brand-600); }
-a.brand-link:hover{ color: var(--brand-700); }
+a{
+  color: var(--brand-primary-600);
+}
+a:hover{
+  color: var(--brand-primary-700);
+}
 
-/* Turian page polish */
-.turian .tip,
-.turian .meta{ color: var(--brand-600); }
-.turian .chat input::placeholder{ color: var(--brand-600); opacity:.9; }
-.turian .chat button{ background: var(--brand-600); }
-.turian .chat button:hover{ background: var(--brand-700); }
+/* Buttons that don't already use Tailwind bg utilities */
+.btn, button.brand, [data-variant="brand"]{
+  background: var(--brand-primary-600);
+  color: white;
+  border-radius: .6rem;
+  box-shadow: 0 6px 0 0 color-mix(in srgb, var(--brand-primary-900) 35%, transparent);
+}
+.btn:hover, button.brand:hover, [data-variant="brand"]:hover{
+  background: var(--brand-primary-700);
+}
 
-/* Home cards & misc links that aren’t using Tailwind utilities */
-.home .card a{ color: var(--brand-600); }
-.home .card a:hover{ color: var(--brand-700); }
+/* Breadcrumbs */
+nav[aria-label="breadcrumb"] a{
+  color: var(--brand-primary-600);
+}
+nav[aria-label="breadcrumb"] a:hover{
+  color: var(--brand-primary-700);
+}
 
-/* Floating chat button */
-.fab-btn{ background: var(--brand-600); }
-.fab-btn:hover{ background: var(--brand-700); }
+/* Chat FAB & chat shell */
+.brand-fab{
+  background: var(--brand-primary-600);
+  color:#fff;
+}
+.brand-fab:hover{ background: var(--brand-primary-700); }
+.brand-chat h1, .brand-chat h2{ color: var(--text-strong); }
+.brand-chat .hint, .brand-muted{ color: var(--text-muted); }
+
+/* Inputs ring */
+:focus-visible{
+  outline-color: var(--ring-brand);
+}
+
