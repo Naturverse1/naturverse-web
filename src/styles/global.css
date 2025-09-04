@@ -444,3 +444,27 @@ main,
   cursor: not-allowed;
   opacity: 0.8;
 }
+
+/* Disable interaction site-wide when signed-out (but keep it visible) */
+.inert-when-signed-out {
+  pointer-events: none;
+  user-select: none;
+  touch-action: none;
+  filter: none;
+  opacity: 1;
+}
+
+/* The sign-in callout itself must still be interactive */
+.auth-gate-callout,
+.auth-gate-callout * {
+  pointer-events: auto;
+  user-select: auto;
+  touch-action: auto;
+}
+
+/* Optional: gently hint the site is "locked" without dimming too much */
+.inert-when-signed-out .card,
+.inert-when-signed-out a,
+.inert-when-signed-out button {
+  cursor: not-allowed !important;
+}

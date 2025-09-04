@@ -74,6 +74,8 @@ const NavBar: React.FC = () => {
     return false;
   };
 
+  if (!user) return null;
+
   return (
     <nav className="sticky top-0 z-50 nav-magical shadow-2xl">
       <div className="container mx-auto px-4 lg:px-8 py-4">

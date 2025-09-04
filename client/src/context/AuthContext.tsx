@@ -107,6 +107,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
+    window.location.assign('/');
     return { error };
   };
 
