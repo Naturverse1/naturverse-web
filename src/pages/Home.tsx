@@ -3,6 +3,7 @@ import { Link } from 'react-router-dom';
 import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function Home() {
   const { user } = useAuth();
@@ -11,7 +12,7 @@ export default function Home() {
   return (
     <main className={`${styles.page} ${!user ? 'guest-locked' : ''}`}>
       <section className={styles.hero}>
-        <h1 className={styles.title}>Welcome to the Naturverse™</h1>
+        <h1 className={styles.title}>Welcome to {BRAND_NAME}</h1>
         <p className={styles.subtitle}>
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
           kindness.

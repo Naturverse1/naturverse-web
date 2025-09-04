@@ -4,8 +4,8 @@ import './site-header.css';
 import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
-import { SITE } from '@/lib/site';
 import { useAuth } from '@/lib/auth-context';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -18,8 +18,8 @@ export default function SiteHeader() {
       <div className="container">
         <div className="nav-left">
           <Link to="/" className="brand" onClick={() => setOpen(false)}>
-            <Img src="/favicon-32x32.png" width="28" height="28" alt={SITE.shortName} />
-            <span>{SITE.name}</span>
+            <Img src="/favicon-32x32.png" width="28" height="28" alt={BRAND_NAME} />
+            <span>{BRAND_NAME}</span>
           </Link>
           <nav className="nav nav-links">
             <NavLink
@@ -42,13 +42,6 @@ export default function SiteHeader() {
               onClick={() => setOpen(false)}
             >
               Marketplace
-            </NavLink>
-            <NavLink
-              to="/wishlist"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Wishlist
             </NavLink>
             <NavLink
               to="/naturversity"

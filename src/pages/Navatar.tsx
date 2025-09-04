@@ -8,6 +8,7 @@ import Meta from "../components/Meta";
 import Breadcrumbs from "../components/Breadcrumbs";
 import PageHead from "../components/PageHead";
 import ShareNavatar from "../components/ShareNavatar";
+import { BRAND_NAME } from "../lib/brand";
 
 const BASES: NavatarBase[] = ["Animal", "Fruit", "Insect", "Spirit"];
 
@@ -69,8 +70,14 @@ export default function NavatarPage() {
 
   return (
     <div className="nvrs-section navatar page-wrap nv-secondary-scope nav-page">
-      <PageHead title="Naturverse — Navatar Creator" description="Design your character and save cards." />
-      <Meta title="Navatar Creator — Naturverse" description="Design your character and save cards." />
+      <PageHead
+        title={`${BRAND_NAME} — Navatar Creator`}
+        description="Design your character and save cards."
+      />
+      <Meta
+        title={`Navatar Creator — ${BRAND_NAME}`}
+        description="Design your character and save cards."
+      />
       <Breadcrumbs items={[{ href:"/", label:"Home" }, { label:"Navatar" }]} />
       <main id="main" data-page="navatar" className="page container navatar-page">
         <h1>Navatar Creator</h1>

@@ -2,6 +2,7 @@ import HubCard from '../components/HubCard';
 import HubGrid from '../components/HubGrid';
 import "./Home.css";
 import { Img } from '../components';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function Home() {
   return (
@@ -18,7 +19,7 @@ export default function Home() {
             alt=""
             aria-hidden="true"
           />
-          Welcome to the Naturverse™
+          Welcome to {BRAND_NAME}
         </h1>
         <p>Pick a hub to begin your adventure.</p>
       </header>

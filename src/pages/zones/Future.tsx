@@ -1,5 +1,6 @@
 import React from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import { BRAND_NAME } from "@/lib/brand";
 
 export default function FutureZone() {
   return (
@@ -9,14 +10,14 @@ export default function FutureZone() {
 
         <h1>🔮 Future Zone</h1>
       <p className="muted">
-        A sneak peek at what's coming to the Naturverse. These features are in active design.
+        A sneak peek at what's coming to {BRAND_NAME}. These features are in active design.
       </p>
 
       <div className="cards">
         <a className="card" href="#" aria-disabled="true">
           <div className="tag soon">Coming Soon</div>
           <h2>AR / VR</h2>
-          <p>Immersive augmented & virtual reality adventures inside the Naturverse.</p>
+          <p>Immersive augmented & virtual reality adventures inside {BRAND_NAME}.</p>
         </a>
 
         <a className="card" href="#" aria-disabled="true">
