@@ -1,5 +1,6 @@
 import React from 'react';
 import Img from './Img';
+import { BRAND_NAME } from '@/lib/brand';
 
 export type CardData = {
   id: string;
@@ -56,7 +57,7 @@ export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
         </dl>
       </div>
 
-      <div className="nv-card__footer">Naturverse • Character Card</div>
+      <div className="nv-card__footer">{BRAND_NAME} • Character Card</div>
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import React from "react";
 import SafeImg from "./SafeImg";
+import { BRAND_NAME } from "@/lib/brand";
 
 const isActive = (href: string) => typeof window !== "undefined" && window.location.pathname === href;
 
@@ -8,8 +9,8 @@ export default function Nav() {
     <>
       <a href="#main-content" className="visually-hidden-focusable">Skip to content</a>
         <nav className="topnav container">
-          <a href="/" aria-label="Naturverse Home" className={`toplink brand ${isActive("/") ? "active" : ""}`}>
-            <SafeImg src="/favicon-32x32.png" alt="Naturverse" width={24} height={24} />
+          <a href="/" aria-label={`${BRAND_NAME} Home`} className={`toplink brand ${isActive("/") ? "active" : ""}`}>
+            <SafeImg src="/favicon-32x32.png" alt={BRAND_NAME} width={24} height={24} />
           </a>
           <div className="links">
             <a href="/worlds" className={`toplink ${isActive("/worlds") ? "active" : ""}`}>Worlds</a>

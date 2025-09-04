@@ -2,6 +2,7 @@ import { useAuth } from '@/lib/auth-context';
 import { Link, useNavigate } from 'react-router-dom';
 import { signInWithGoogle } from '@/lib/auth';
 import styles from '@/styles/home.module.css';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function Home() {
   const { user } = useAuth();
@@ -19,7 +20,7 @@ export default function Home() {
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
-        <h1 className={styles.title}>Welcome to the Naturverse™</h1>
+        <h1 className={styles.title}>Welcome to {BRAND_NAME}</h1>
         <p className={styles.tagline}>
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and kindness.
         </p>

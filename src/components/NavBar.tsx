@@ -4,6 +4,7 @@ import { Link } from 'react-router-dom';
 import { useState } from 'react';
 import styles from './NavBar.module.css';
 import { useAuth } from '@/lib/auth-context';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
@@ -17,13 +18,13 @@ export default function NavBar() {
         <a
           href="/"
           className="flex items-center gap-2"
-          aria-label="Naturverse home"
+          aria-label={`${BRAND_NAME} home`}
         >
           <picture>
             <source srcSet="/favicon.svg" type="image/svg+xml" />
             <img
               src="/favicon-64x64.png"
-              alt="Naturverse"
+              alt={BRAND_NAME}
               className="nv-logo"
               width={40}
               height={40}
@@ -32,14 +33,13 @@ export default function NavBar() {
             />
           </picture>
 
-          <span className="nv-brand text-nv-blue">Naturverse</span>
+          <span className="nv-brand text-nv-blue">{BRAND_NAME}</span>
         </a>
 
         <nav className={styles.links} aria-label="Primary">
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>
@@ -83,7 +83,6 @@ export default function NavBar() {
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>

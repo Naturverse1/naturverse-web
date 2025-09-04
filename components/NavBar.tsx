@@ -2,6 +2,7 @@
 import Link from 'next/link';
 import ProfileHead from '@/components/ProfileHead';
 import { useAuth } from '@/lib/auth-context';
+import { BRAND_NAME } from '@/lib/brand';
 
 export default function NavBar() {
   const { ready, user } = useAuth();
@@ -13,13 +14,12 @@ export default function NavBar() {
   return (
     <header className="nv-nav">
       <div className="nv-nav-inner">
-        <Link className="nv-brand" href="/">Naturverse</Link>
+        <Link className="nv-brand" href="/">{BRAND_NAME}</Link>
 
         <nav className="nv-links">
           <Link className="nv-link" href="/worlds">Worlds</Link>
           <Link className="nv-link" href="/zones">Zones</Link>
           <Link className="nv-link" href="/marketplace">Marketplace</Link>
-          <Link className="nv-link" href="/wishlist">Wishlist</Link>
           <Link className="nv-link" href="/naturversity">Naturversity</Link>
           <Link className="nv-link" href="/naturbank">NaturBank</Link>
           {/* Navatar is always enabled */}

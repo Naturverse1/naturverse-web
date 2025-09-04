@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import Breadcrumbs from "../../../components/Breadcrumbs";
 import { autoGrantOncePerDay } from "@/lib/rewards";
 import { useToast } from "@/components/Toast";
+import { BRAND_NAME } from "@/lib/brand";
 import "../../../styles/zone-widgets.css";
 
   export default function Music() {
@@ -241,7 +242,7 @@ function StepSequencer() {
 /* ---------- Karaoke ---------- */
 type KLine = { t: number; text: string };
 const LYRICS: KLine[] = [
-  { t: 0, text: "Welcome to the Naturverse," },
+  { t: 0, text: `Welcome to the ${BRAND_NAME},` },
   { t: 2, text: "where winds and rivers rhyme." },
   { t: 4, text: "Pick a world and start your quest," },
   { t: 6, text: "one beat at a time." },
