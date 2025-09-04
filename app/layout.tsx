@@ -1,11 +1,16 @@
 import type { Metadata } from 'next';
-import { SITE_URL } from './lib/site';
+import { SITE } from '@/lib/site';
 import "../styles/globals.css";
 import "../styles/nav.css";
 
 // ensure absolute URLs in SEO metadata
 export const metadata: Metadata = {
-  metadataBase: new URL(SITE_URL),
+  metadataBase: new URL(SITE.url),
+  title: {
+    default: SITE.name,
+    template: SITE.titleTemplate,
+  },
+  description: SITE.description,
 };
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

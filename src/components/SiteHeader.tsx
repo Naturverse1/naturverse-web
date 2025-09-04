@@ -6,6 +6,7 @@ import Img from './Img';
 import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
 import { supabase } from '@/lib/supabase-client';
+import { SITE } from '@/lib/site';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -31,8 +32,8 @@ export default function SiteHeader() {
       <div className="container">
         <div className="nav-left">
           <Link to="/" className="brand" onClick={() => setOpen(false)}>
-            <Img src="/favicon-32x32.png" width="28" height="28" alt="Naturverse" />
-            <span>Naturverse</span>
+            <Img src="/favicon-32x32.png" width="28" height="28" alt={SITE.shortName} />
+            <span>{SITE.name}</span>
           </Link>
           <nav className="nav nav-links">
             <NavLink

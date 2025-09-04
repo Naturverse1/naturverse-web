@@ -1,25 +1,22 @@
+import { SITE } from './site';
+
 export const siteUrl =
-  import.meta.env.NEXT_PUBLIC_SITE_URL || 'https://thenaturverse.com';
+  import.meta.env.NEXT_PUBLIC_SITE_URL || SITE.url;
 
 export const organizationLd = {
   '@context': 'https://schema.org',
   '@type': 'Organization',
-  name: 'Naturverse',
+  name: SITE.name,
   url: siteUrl,
   logo: `${siteUrl}/favicons/android-chrome-192x192.png`,
-  sameAs: [
-    'https://x.com/naturverse',
-    'https://instagram.com/naturverse',
-    'https://youtube.com/@naturverse',
-    'https://discord.gg',
-  ],
+  sameAs: Object.values(SITE.socials),
 };
 
 export const websiteLd = {
   '@context': 'https://schema.org',
   '@type': 'WebSite',
   url: siteUrl,
-  name: 'Naturverse',
+  name: SITE.name,
 };
 
 export const breadcrumbs = (

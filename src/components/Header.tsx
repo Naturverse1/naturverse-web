@@ -1,6 +1,7 @@
 import { Link } from 'react-router-dom'
 import styles from './Header.module.css'
 import { useAuth } from '../hooks/useAuth'
+import { SITE } from '@/lib/site'
 
 export default function Header() {
   const { user, loading } = useAuth()
@@ -8,7 +9,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <Link to="/">🌿 Naturverse</Link>
+        <Link to="/">🌿 {SITE.name}</Link>
       </div>
 
       {!loading && user && (
