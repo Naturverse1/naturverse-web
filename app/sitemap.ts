@@ -1,5 +1,4 @@
-import type { MetadataRoute } from 'next';
-import { SITE_URL } from './lib/site';
+import { SITE } from '@/lib/site';
 
 export const dynamic = 'force-static';
 
@@ -18,11 +17,11 @@ const PAGES = [
   '/turian',
 ];
 
-export default function sitemap(): MetadataRoute.Sitemap {
+export default function sitemap() {
   const now = new Date();
 
   return PAGES.map((path, i) => ({
-    url: `${SITE_URL}${path}`,
+    url: `${SITE.url}${path}`,
     lastModified: now,
     changeFrequency: path === '/' ? 'weekly' : 'monthly',
     priority: path === '/' ? 1 : 0.7 - i * 0.01,
