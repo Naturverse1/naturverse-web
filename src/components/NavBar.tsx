@@ -14,16 +14,16 @@ export default function NavBar() {
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
         {/* Left brand (logo + wordmark) */}
-        <a
-          href="/"
-          className="flex items-center gap-2"
-          aria-label="Naturverse home"
-        >
+          <a
+            href="/"
+            className="flex items-center gap-2"
+            aria-label="The Naturverse home"
+          >
           <picture>
             <source srcSet="/favicon.svg" type="image/svg+xml" />
             <img
               src="/favicon-64x64.png"
-              alt="Naturverse"
+              alt="The Naturverse"
               className="nv-logo"
               width={40}
               height={40}
@@ -32,14 +32,13 @@ export default function NavBar() {
             />
           </picture>
 
-          <span className="nv-brand text-nv-blue">Naturverse</span>
+            <span className="nv-brand text-nv-blue">The Naturverse</span>
         </a>
 
         <nav className={styles.links} aria-label="Primary">
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>
@@ -83,7 +82,6 @@ export default function NavBar() {
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>

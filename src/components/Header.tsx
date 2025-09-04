@@ -9,7 +9,7 @@ export default function Header() {
   return (
     <header className={styles.header}>
       <div className={styles.brand}>
-        <Link to="/">🌿 {SITE.name}</Link>
+        <Link to="/">The Naturverse</Link>
       </div>
 
       {!loading && user && (
@@ -17,7 +17,6 @@ export default function Header() {
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>
