@@ -54,6 +54,7 @@ export function AuthProvider({
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
     if (error) alert(error.message);
+    window.location.assign('/');
   };
 
   // Stay in sync after first paint

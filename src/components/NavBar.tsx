@@ -10,6 +10,8 @@ export default function NavBar() {
   const [open, setOpen] = useState(false);
   const emoji = (user?.user_metadata?.navemoji as string) ?? '🧑';
 
+  if (!user) return null;
+
   return (
     <header className={styles.header}>
       <div className={`container ${styles.inner}`}>
