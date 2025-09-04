@@ -6,6 +6,7 @@ import { AuthProvider } from './lib/auth-context';
 import './styles.css';
 import './styles/shop.css';
 import './styles/edu.css';
+import './styles/tabs.css';
 import './main.css';
 import './styles/nvcard.css';
 import './app.css';

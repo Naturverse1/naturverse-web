@@ -1,6 +1,6 @@
-import { useCart } from "../lib/cart";
+import { useCart } from "../../lib/cart";
 import { Link } from "react-router-dom";
-import Breadcrumbs from "../components/Breadcrumbs";
+import MarketplaceTabs from '@/components/MarketplaceTabs';
 import styles from "./Wishlist.module.css";
 
 const LOOKUP: Record<string,{name:string; image:string; href:string}> = {
@@ -13,10 +13,8 @@ export default function WishlistPage() {
   const { saved, toggleSave } = useCart();
   const ids = Object.keys(saved).filter((k) => saved[k]);
   return (
-    <main id="main" data-page="wishlist" className="nvrs-section wishlist page">
-      <Breadcrumbs
-        items={[{ label: "Home", href: "/" }, { label: "Wishlist" }]}
-      />
+    <main id="main" data-page="wishlist" className="container">
+      <MarketplaceTabs />
       <h1>Wishlist</h1>
       {ids.length === 0 ? (
         <p>No saved items yet.</p>

@@ -1,0 +1,20 @@
+/* neutral pill */
+.btn.btn-tab {
+  padding: .45rem .9rem;
+  border: 1px solid var(--brand-blue-200, #cfe2ff);
+  border-radius: .75rem;
+  background: var(--surface, #fff);
+  text-decoration: none;
+  font-weight: 600;
+}
+/* active pill in brand blue */
+.btn-tab-active {
+  background: var(--brand-blue-50, #e9f2ff);
+  border-color: var(--brand-blue-400, #5a8df5);
+  color: var(--brand-blue-700, #2156d1);
+}
+.link.brand-blue {
+  color: var(--brand-blue-700, #2156d1);
+  text-decoration: none;
+}
+.link.brand-blue:hover { text-decoration: underline; }

@@ -39,7 +39,6 @@ export default function NavBar() {
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>
@@ -83,7 +82,6 @@ export default function NavBar() {
           <Link to="/worlds">Worlds</Link>
           <Link to="/zones">Zones</Link>
           <Link to="/marketplace">Marketplace</Link>
-          <Link to="/wishlist">Wishlist</Link>
           <Link to="/naturversity">Naturversity</Link>
           <Link to="/naturbank">NaturBank</Link>
           <Link to="/navatar">Navatar</Link>

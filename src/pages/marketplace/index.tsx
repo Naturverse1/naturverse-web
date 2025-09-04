@@ -1,9 +1,9 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
 import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
 import { Link } from "react-router-dom";
 import "../../styles/_cards.css";
 import "../../styles/marketplace.css";
+import MarketplaceTabs from '@/components/MarketplaceTabs';
 
 const PRODUCTS = [
   { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", href:"/marketplace/turian-plush" },
@@ -11,10 +11,10 @@ const PRODUCTS = [
   { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 ];
 
-export default function MarketplacePage(){
+export default function MarketplacePage() {
   return (
-    <main id="main" data-page="marketplace" className="nvrs-section marketplace nv-secondary-scope">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
+    <main id="main" data-page="marketplace" className="container">
+      <MarketplaceTabs />
       <h1 className="page-title">Marketplace</h1>
       <div className="mp-grid nv-card-grid">
         {PRODUCTS.map(p => (
