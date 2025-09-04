@@ -198,6 +198,15 @@ textarea {
   background: var(--nv-surface);
 }
 
+/* Prevent any interaction while signed-out, but keep auth buttons active */
+.guest-locked { position: relative; }
+.guest-locked * { pointer-events: none !important; }
+.guest-locked .auth-buttons,
+.guest-locked .auth-buttons * { pointer-events: auto !important; }
+
+/* Optional: subtle visual cue (remove if you don’t want it) */
+/* .guest-locked { filter: grayscale(0); } */
+
 /* Language grid */
 .lang-grid {
   display: grid;

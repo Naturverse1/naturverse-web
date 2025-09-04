@@ -9,7 +9,7 @@ export default function Home() {
   const isAuthed = !!user;
 
   return (
-    <main className={styles.page}>
+    <main className={`${styles.page} ${!user ? 'guest-locked' : ''}`}>
       <section className={styles.hero}>
         <h1 className={styles.title}>Welcome to the Naturverse™</h1>
         <p className={styles.subtitle}>
@@ -17,7 +17,7 @@ export default function Home() {
           kindness.
         </p>
         {!user && (
-          <div className={styles.ctaRow}>
+          <div className={`${styles.ctaRow} auth-buttons`}>
             <button
               type="button"
               className={styles.cta}
