@@ -4,6 +4,13 @@
 
 [functions]
   directory = "netlify/functions"
+  node_bundler = "esbuild"
+
+# API redirect
+[[redirects]]
+  from = "/api/chat"
+  to = "/.netlify/functions/chat"
+  status = 200
 
 # SPA routing
 [[redirects]]
