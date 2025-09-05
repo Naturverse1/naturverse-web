@@ -13,6 +13,8 @@ export default function SiteHeader() {
 
   if (!user) return null;
 
+  if (!user) return null;
+
   return (
     <header className={`site-header ${open ? 'open' : ''}`}>
       <div className="container">
