@@ -1,0 +1,26 @@
+.turian-fab {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 10000;
+  border: 2px solid var(--nv-blue-300); background: #fff; border-radius: 999px;
+  width: 56px; height: 56px; box-shadow: 0 4px 12px rgba(0,0,0,.08);
+}
+.turian-fab:hover { transform: translateY(-1px); }
+
+.turian-drawer {
+  position: fixed; right: 1rem; bottom: 1rem; z-index: 10001;
+  width: min(420px, 92vw); height: min(65vh, 640px);
+  border: 2px solid var(--nv-blue-200); border-radius: 16px;
+  background: #fff; display: none; flex-direction: column; overflow: hidden;
+  box-shadow: 0 12px 24px rgba(0,0,0,.12);
+}
+.turian-drawer.open { display: flex; }
+.turian-drawer header {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .75rem 1rem; border-bottom: 1px dashed var(--nv-blue-200);
+}
+.turian-drawer .msgs { padding: .75rem; gap: .5rem; display: flex; flex-direction: column; overflow: auto; }
+.turian-drawer .msg { padding: .5rem .75rem; border-radius: 12px; line-height: 1.35; }
+.turian-drawer .msg.user { align-self: flex-end; background: #eef3ff; border: 1px solid var(--nv-blue-200); }
+.turian-drawer .msg.assistant { align-self: flex-start; background: #fafafa; border: 1px solid #eee; }
+.turian-drawer .composer { display: flex; gap: .5rem; padding: .75rem; border-top: 1px dashed var(--nv-blue-200); }
+.turian-drawer input { flex: 1; padding: .6rem .8rem; border: 1px solid var(--nv-blue-200); border-radius: 10px; }
+.turian-drawer button { padding: .55rem .9rem; border-radius: 10px; border: 2px solid var(--nv-blue-300); background: #fff; }
