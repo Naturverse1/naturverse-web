@@ -3,7 +3,7 @@ import { WORLDS } from "../../data/worlds";
 
 export default function WorldsIndex() {
   return (
-    <main id="main" className="nvrs-section worlds nv-page page-worlds">
+      <main id="main" data-turian="worlds" className="nvrs-section worlds nv-page page-worlds">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Worlds" }]} />
       <h1>Worlds</h1>
       <section className="nv-grid">

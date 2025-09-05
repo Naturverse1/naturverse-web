@@ -6,7 +6,7 @@ import { setTitle } from "../../pages/_meta";
 export default function Zones() {
   setTitle("Zones");
     return (
-      <div className="zones-page">
+        <div className="zones-page" id="zones" data-turian="zones">
         <Breadcrumbs />
         <h1>Zones</h1>
         <div className="cards grid-gap">

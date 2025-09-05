@@ -52,7 +52,7 @@ export default function LanguagesIndex() {
           { label: "Languages" },
         ]}
       />
-      <main style={{ maxWidth: 980, margin: "24px auto", padding: "0 16px" }}>
+        <main id="languages" data-turian="languages" style={{ maxWidth: 980, margin: "24px auto", padding: "0 16px" }}>
         <h1>Languages</h1>
         <p>Phrasebooks for each kingdom.</p>
 
