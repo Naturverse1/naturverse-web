@@ -10,6 +10,7 @@ import './main.css';
 import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
+import './styles/navatar.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
@@ -25,16 +26,16 @@ async function bootstrap() {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
-        <AuthProvider initialSession={initialSession}>
-          <SkipLink />
-          <ToastProvider>
-            <OfflineBanner />
-            <BaseAuthProvider>
-              <App />
-            </BaseAuthProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </React.StrictMode>,
+      <AuthProvider initialSession={initialSession}>
+        <SkipLink />
+        <ToastProvider>
+          <OfflineBanner />
+          <BaseAuthProvider>
+            <App />
+          </BaseAuthProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </React.StrictMode>,
   );
 }
 
