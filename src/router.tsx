@@ -35,7 +35,8 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarPage from './pages/Navatar';
+import NavatarHome from './routes/navatar';
+import NavatarCreate from './routes/navatar/create';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -113,7 +114,8 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-        { path: 'navatar', element: <NavatarPage /> },
+      { path: 'navatar', element: <NavatarHome /> },
+      { path: 'navatar/create', element: <NavatarCreate /> },
         { path: 'passport', element: <PassportPage /> },
         { path: 'auth/callback', element: <AuthCallback /> },
         { path: 'login', element: <LoginPage /> },

@@ -1,23 +1,58 @@
-import { useState } from "react";
-const types = ["Animal","Fruit","Insect","Spirit"] as const;
-export default function Navatar() {
-  const [sel,setSel] = useState<typeof types[number] | null>("Animal");
-    return (
-      <section className="space-y-4 navatar-page">
-      <h2 className="text-2xl font-bold">Navatar Creator</h2>
-      <p className="text-gray-600">Choose a base type and generate a backstory later.</p>
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        {types.map(t=>(
-          <button key={t}
-            onClick={()=>setSel(t)}
-            className={"rounded border p-4 text-left " + (sel===t?"ring-2 ring-green-500":"")}>
-            <div className="font-semibold">{t}</div>
-            <div className="text-sm text-gray-600">Select</div>
-          </button>
-        ))}
+import { useEffect, useState } from "react";
+import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
+import { Link } from "react-router-dom";
+
+export default function NavatarHome() {
+  const [rows, setRows] = useState<NavatarRow[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        setLoading(true);
+        setRows(await listMyNavatars());
+      } catch (e: any) {
+        setErr(e.message ?? "Failed to load");
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, []);
+
+  return (
+    <div className="Page">
+      <nav className="Breadcrumbs">
+        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
+      </nav>
+
+      <h1>Navatar</h1>
+      <p>Create a character, customize details, and save your Navatar card.</p>
+
+      <div className="ctaRow">
+        <Link className="Button" to="/navatar/create">Create</Link>
       </div>
-      <div className="text-sm">Selected: <strong>{sel ?? "None"}</strong></div>
-      <button className="rounded border px-3 py-1 opacity-60 cursor-not-allowed">Save Navatar (stub)</button>
-    </section>
+
+      <h2>My Navatars</h2>
+      {loading && <p>Loading…</p>}
+      {err && <p className="Error">{err}</p>}
+      <div className="CardGrid">
+        {rows.map(r => {
+          const url = navatarImageUrl(r.image_path);
+          return (
+            <div key={r.id} className="NavatarCard">
+              <div className="NavatarTitle">{r.name ?? r.base_type}</div>
+              <div className="NavatarImg">
+                {url ? <img src={url} alt={r.name ?? r.base_type} /> : <div className="NoPhoto">No photo</div>}
+              </div>
+              <div className="NavatarMeta">
+                <span>{r.base_type}</span> • <time>{new Date(r.created_at).toLocaleDateString()}</time>
+              </div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
   );
 }
+
