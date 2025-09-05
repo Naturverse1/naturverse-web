@@ -1,0 +1,10 @@
+/* src/components/assistant.module.css */
+/* …existing rules… */
+.float {
+  /* …existing… */
+  z-index: 2147483000; /* ensure above any sheets/footers */
+}
+.drawer {
+  /* …existing… */
+  z-index: 2147483001;
+}
