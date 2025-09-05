@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState } from "react";
 import { assistantMap } from "@/data/assistantMap";
-import { supabase } from "@/lib/supabase-client";
+import { logEvent } from "@/lib/analytics";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -48,16 +48,6 @@ function getIntentPath(message: string): string | null {
     }
   }
   return null;
-}
-
-async function logEvent(from: string, to: string, text: string) {
-  try {
-    await supabase
-      .from("analytics")
-      .insert([{ event: "bot_navigate", from_page: from, to_page: to, text }]);
-  } catch (e) {
-    console.warn("logEvent failed", e);
-  }
 }
 
 export default function TurianAssistant({
@@ -117,22 +107,33 @@ export default function TurianAssistant({
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
 
-      const path = getIntentPath(text);
-      if (path) {
-        logEvent(window.location.pathname, path, text);
-        setMessages((m) => [
-          ...m,
-          {
-            role: "assistant",
-            content: `On it! Taking you to ${path}…`,
-          },
-        ]);
-        setOpen(false);
-        setTimeout(() => {
-          window.location.href = path;
-        }, 150);
-        return;
-      }
+    await logEvent({
+      event: "bot_message",
+      from_page: location.pathname,
+      text,
+    });
+
+    const path = getIntentPath(text);
+    if (path) {
+      await logEvent({
+        event: "bot_navigate",
+        from_page: location.pathname,
+        to_page: path,
+        text,
+      });
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          content: `On it! Taking you to ${path}…`,
+        },
+      ]);
+      setOpen(false);
+      setTimeout(() => {
+        window.location.href = path;
+      }, 150);
+      return;
+    }
 
     setBusy(true);
 
@@ -180,7 +181,10 @@ export default function TurianAssistant({
       {/* Floating button (bottom-right) */}
       <button
         aria-label="Ask Turian"
-        onClick={() => setOpen(true)}
+        onClick={async () => {
+          await logEvent({ event: "bot_open", from_page: location.pathname });
+          setOpen(true);
+        }}
         style={{
           position: "fixed",
           right: 16,
@@ -252,7 +256,13 @@ export default function TurianAssistant({
             <div style={{ flex: 1 }} />
             <button
               aria-label="Close"
-              onClick={() => setOpen(false)}
+              onClick={async () => {
+                await logEvent({
+                  event: "bot_close",
+                  from_page: location.pathname,
+                });
+                setOpen(false);
+              }}
               style={{
                 background: "rgba(255,255,255,0.2)",
                 color: "#fff",

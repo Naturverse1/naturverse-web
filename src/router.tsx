@@ -49,6 +49,8 @@ import About from './pages/About';
 import NotFound from './pages/NotFound';
 import RootLayout from './layouts/Root';
 import ZonesLayout from './layouts/Zones';
+import AnalyticsPage from './pages/analytics';
+import ProtectedRoute from './components/ProtectedRoute';
 
 export const router = createBrowserRouter([
   {
@@ -117,6 +119,7 @@ export const router = createBrowserRouter([
         { path: 'login', element: <LoginPage /> },
         { path: 'turian', element: <Turian /> },
         { path: 'profile', element: <ProfilePage /> },
+        { path: 'analytics', element: <ProtectedRoute component={AnalyticsPage} /> },
         { path: '404', element: <NotFound /> },
         { path: '*', element: <NotFound /> },
     ],
