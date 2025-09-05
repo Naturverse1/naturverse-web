@@ -98,7 +98,7 @@ export default function ProfilePage() {
 
   return (
     <div className="nvrs-section profile">
-      <main className="container profile-page">
+        <main className="container profile-page" id="profile" data-turian="profile">
         <Breadcrumbs />
         <h1>Profile</h1>
         <form

@@ -1,307 +1,262 @@
-"use client";
+import React, {useEffect, useMemo, useRef, useState} from "react";
+import {createPortal} from "react-dom";
+import {createClient} from "@supabase/supabase-js";
 
-import { useEffect, useMemo, useRef, useState } from "react";
-
-/** Brand tokens (adjust if your blue is different) */
-const BRAND_BLUE = "#2563EB"; // Naturverse blue
-const RADIUS = 14;
-
-type TurianAssistantProps = {
-  /** When provided, this wins. If false, the widget won't render at all. */
-  isAuthed?: boolean;
+// --- tiny router helpers (no react-router dependency needed) ---
+const goTo = (path: string) => {
+  if (location.pathname === path) {
+    return true; // already here
+  }
+  location.assign(path);
+  return false;
+};
+const scrollToAnchor = (key: string) => {
+  // Try [data-turian="<key>"] then id="<key>"
+  const el = document.querySelector<HTMLElement>(`[data-turian="${key}"]`) ??
+             document.getElementById(key);
+  if (el) {
+    el.scrollIntoView({behavior: "smooth", block: "start"});
+    return true;
+  }
+  return false;
 };
 
-type ChatMsg = { role: "user" | "assistant"; content: string };
+// Map common nouns to routes/anchors
+const NAV_MAP: Record<string, {path?: string; anchor?: string}> = {
+  languages: {path: "/naturversity/languages", anchor: "languages"},
+  learn:     {path: "/naturversity", anchor: "learn"},
+  courses:   {path: "/naturversity/courses", anchor: "courses"},
+  worlds:    {path: "/worlds", anchor: "worlds"},
+  zones:     {path: "/zones", anchor: "zones"},
+  marketplace: {path: "/marketplace", anchor: "shop"},
+  shop: {path: "/marketplace", anchor: "shop"},
+  cart: {path: "/cart", anchor: "cart"},
+  profile: {path: "/profile", anchor: "profile"},
+};
 
-function getZone(pathname: string) {
-  // tiny helper so we can answer differently later (Home, Worlds, Zones, etc.)
-  const p = (pathname || "/").toLowerCase();
-  if (p.startsWith("/marketplace")) return "Marketplace";
-  if (p.startsWith("/naturversity")) return "Naturversity";
-  if (p.startsWith("/navatar")) return "Navatar";
-  if (p === "/" || p.startsWith("/home")) return "Home";
-  return "Site";
-}
+type ChatMsg = {role: "user" | "assistant" | "system"; content: string};
+type Action =
+  | {type: "navigate"; path: string}
+  | {type: "scroll"; anchor: string}
+  | {type: "none"};
 
-/** Dumb check: if a Supabase auth cookie exists, we treat as signed-in */
-function isSignedIn() {
+const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL!;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_ANON_KEY!;
+const supabase = createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+// route/DOM context we send to the model
+const buildRouteContext = () => {
+  const anchors = Array.from(document.querySelectorAll<HTMLElement>("[data-turian]"))
+    .map((el) => el.getAttribute("data-turian"))
+    .filter(Boolean) as string[];
+  return {
+    path: location.pathname,
+    title: document.title,
+    anchors: Array.from(new Set(anchors)), // unique list of available sections
+  };
+};
+
+// parse an action JSON fenced block from model, e.g. ```action{"type":"scroll","anchor":"cart"}```
+const extractAction = (text: string): Action => {
+  const m = text.match(/```action\s*([\s\S]*?)```/i);
+  if (!m) return {type: "none"};
   try {
-    const hasCookie = document.cookie
-      .split("; ")
-      .some((c) => c.startsWith("sb-") && c.includes("auth"));
-    const hasStorage = Object.keys(localStorage).some(
-      (k) => k.startsWith("sb-") && k.endsWith("-auth-token"),
-    );
-    return hasCookie || hasStorage;
-  } catch {
-    return false;
-  }
-}
-
-export default function TurianAssistant({
-  isAuthed,
-}: TurianAssistantProps) {
-  const [open, setOpen] = useState(false);
-  const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
-  const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const areaRef = useRef<HTMLDivElement>(null);
-
-  const zone = useMemo(() => getZone(window.location.pathname), []);
-
-  useEffect(() => {
-    // starter tip so the box isn't empty
-    if (messages.length === 0) {
-      setMessages([
-        { role: "assistant", content: `Try: "Where is languages?"` },
-      ]);
+    const obj = JSON.parse(m[1].trim());
+    if (obj?.type === "navigate" && typeof obj.path === "string") {
+      return {type: "navigate", path: obj.path};
     }
-  }, []); // eslint-disable-line
+    if (obj?.type === "scroll" && typeof obj.anchor === "string") {
+      return {type: "scroll", anchor: obj.anchor};
+    }
+  } catch {}
+  return {type: "none"};
+};
 
+// quick local intent for “where is …”
+const quickIntent = (q: string): Action => {
+  const norm = q.toLowerCase().replace(/[?.!]/g, "").trim();
+  const m = norm.match(/(?:where\s+is|open|go\s+to)\s+(.+)$/);
+  if (!m) return {type: "none"};
+  const key = m[1].trim();
+  const target = NAV_MAP[key] || NAV_MAP[key.replace(/\s+/g, "")];
+  if (!target) return {type: "none"};
+  if (target.path && location.pathname !== target.path) {
+    return {type: "navigate", path: target.path};
+  }
+  if (target.anchor) return {type: "scroll", anchor: target.anchor};
+  return {type: "none"};
+};
+
+export default function TurianAssistant() {
+  const [open, setOpen] = useState(false);
+  const [session, setSession] = useState<null | object>(null);
+  const [input, setInput] = useState("");
+  const [msgs, setMsgs] = useState<ChatMsg[]>([
+    {role: "assistant", content: 'Try: "Where is languages?"'}
+  ]);
+  const drawerRef = useRef<HTMLDivElement>(null);
+
+  // auth state
   useEffect(() => {
-    // keep scroll pinned to bottom on new content
-    const el = areaRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, open]);
+    supabase.auth.getSession().then(({data}) => setSession(data.session ?? null));
+    const {data: sub} = supabase.auth.onAuthStateChange((_event, s) => {
+      setSession(s ?? null);
+    });
+    return () => sub?.subscription.unsubscribe();
+  }, []);
 
-  const derived = useMemo(() => {
-    if (typeof isAuthed === "boolean") return isAuthed;
-    return isSignedIn();
-  }, [isAuthed]);
+  // keep body scroll normal (no zoom trap)
+  useEffect(() => {
+    if (!open) return;
+    const prev = document.body.style.overscrollBehaviorY;
+    document.body.style.overscrollBehaviorY = "contain";
+    return () => { document.body.style.overscrollBehaviorY = prev; };
+  }, [open]);
 
-  if (!derived) return null;
+  // anchor to <body> so layout transforms never clip it
+  const portalTarget = useMemo(() => {
+    const div = document.createElement("div");
+    document.body.appendChild(div);
+    return div;
+  }, []);
+  useEffect(() => () => { portalTarget.remove(); }, [portalTarget]);
 
-  async function send() {
+  const post = async () => {
     const text = input.trim();
-    if (!text || busy) return;
+    if (!text) return;
 
-    // If logged out, show CTA and keep drawer open
-    if (!isSignedIn()) {
-      setMessages((m) => [
+    // Always render the user bubble
+    setMsgs((m) => [...m, {role: "user", content: text}]);
+    setInput("");
+
+    // Quick local intent (navigate/scroll) for “where is …”
+    const qi = quickIntent(text);
+    if (qi.type === "navigate") {
+      const willScrollHere = goTo(qi.path);
+      // if we just navigated away, stop here—fresh page load will handle anchor if user repeats
+      if (!willScrollHere) return;
+    }
+    if (qi.type === "scroll") {
+      scrollToAnchor(qi.anchor);
+    }
+
+    // If not authed, nudge only
+    if (!session) {
+      setMsgs((m) => [
         ...m,
-        { role: "user", content: text },
-        {
-          role: "assistant",
-          content:
-            "Please create an account or continue with Google to get started!",
-        },
+        {role: "assistant", content: "Please create an account or continue with Google to get started!"}
       ]);
-      setInput("");
       return;
     }
 
-    setBusy(true);
-    setMessages((m) => [...m, { role: "user", content: text }]);
-    setInput("");
+    // Build route context for the model
+    const ctx = buildRouteContext();
 
     try {
-      const res = await fetch("/.netlify/functions/chat", {
+      const r = await fetch("/.netlify/functions/chat", {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          zone,
-          messages: [
-            // give the function a tiny bit of context
-            { role: "system", content: `You are Turian in ${zone}.` },
-            ...messages,
-            { role: "user", content: text },
-          ],
-        }),
+        headers: {"Content-Type": "application/json"},
+        body: JSON.stringify({messages: [...msgs, {role: "user", content: text}], route: ctx}),
       });
+      if (!r.ok) throw new Error(`HTTP ${r.status}`);
+      const data = await r.json() as {reply: string};
+      const reply = data.reply ?? "";
+      setMsgs((m) => [...m, {role: "assistant", content: reply}]);
 
-      if (!res.ok) throw new Error(await res.text());
-      const json = (await res.json()) as { reply?: string };
-      setMessages((m) => [
-        ...m,
-        { role: "assistant", content: json.reply || "Okay!" },
-      ]);
-    } catch (e) {
-      setMessages((m) => [
-        ...m,
-        { role: "assistant", content: "Something went wrong. Try again." },
-      ]);
-    } finally {
-      setBusy(false);
+      // If the model returned an action block, perform it
+      const act = extractAction(reply);
+      if (act.type === "navigate") {
+        const here = goTo(act.path);
+        if (!here) return;
+      }
+      if (act.type === "scroll") {
+        scrollToAnchor(act.anchor);
+      }
+    } catch (err) {
+      setMsgs((m) => [...m, {role: "assistant", content: "Hmm, I couldn’t reach chat right now. Try again."}]);
+      console.error(err);
     }
-    // IMPORTANT: we do NOT auto-close; the X is always visible
-  }
+  };
 
-  function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
-    }
-  }
+  // UI
+  const button =
+    <button
+      aria-label="Open Turian assistant"
+      onClick={() => setOpen(true)}
+      style={{
+        position: "fixed", right: 16, bottom: 16, zIndex: 2147483000,
+        width: 64, height: 64, borderRadius: 18, border: "none",
+        background: "var(--brand-blue, #2f6cff)", boxShadow: "0 6px 18px rgba(0,0,0,.18)",
+        padding: 0, cursor: "pointer"
+      }}>
+      <img src="/favicon-64x64.png" alt="" width={40} height={40} style={{borderRadius: 12, background: "#fff"}} />
+    </button>;
 
-  return (
-    <>
-      {/* Floating button (bottom-right) */}
-      <button
-        aria-label="Ask Turian"
-        onClick={() => setOpen(true)}
-        style={{
-          position: "fixed",
-          right: 16,
-          bottom: 16,
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: "#ffffff",
-          border: `2px solid ${BRAND_BLUE}`,
-          boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-          display: open ? "none" : "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 0,
-          cursor: "pointer",
-          zIndex: 90_000,
-        }}
-      >
-        {/* Turian head from /public */}
-        <img
-          src="/favicon-64x64.png"
-          alt="Turian"
-          width={32}
-          height={32}
-          style={{ display: "block" }}
+  const drawer = (
+    <div
+      role="dialog" aria-label="Ask Turian"
+      ref={drawerRef}
+      style={{
+        position: "fixed", right: 12, bottom: 12, zIndex: 2147483646,
+        width: "min(92vw, 560px)",
+        maxHeight: "70vh",
+        display: "flex", flexDirection: "column",
+        background: "#fff", borderRadius: 16, boxShadow: "0 24px 64px rgba(0,0,0,.22)",
+      }}>
+      <div style={{
+        display: "flex", alignItems: "center", gap: 10,
+        padding: "12px 14px", borderTopLeftRadius: 16, borderTopRightRadius: 16,
+        background: "var(--brand-blue, #2f6cff)", color: "#fff"
+      }}>
+        <img src="/favicon-64x64.png" alt="" width={22} height={22} style={{borderRadius: 6, background: "#fff"}}/>
+        <strong>Ask Turian</strong>
+        <button
+          onClick={() => setOpen(false)}
+          aria-label="Close"
+          style={{marginLeft: "auto", width: 28, height: 28, borderRadius: 8, border: "none", background: "rgba(255,255,255,.25)", color: "#fff"}}>
+          ×
+        </button>
+      </div>
+
+      <div style={{padding: 12, overflow: "auto"}}>
+        {msgs.map((m, i) => (
+          <div key={i} style={{
+            display: "flex", justifyContent: m.role === "user" ? "flex-end" : "flex-start", margin: "8px 0"
+          }}>
+            <div style={{
+              maxWidth: "85%", padding: "10px 12px", borderRadius: 12,
+              background: m.role === "user" ? "var(--brand-blue, #2f6cff)" : "#f2f4ff",
+              color: m.role === "user" ? "#fff" : "#111"
+            }}>
+              {m.content}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      <div style={{display: "flex", gap: 8, padding: 12, borderTop: "1px solid #eee"}}>
+        <input
+          value={input}
+          onChange={(e) => setInput(e.target.value)}
+          onKeyDown={(e) => (e.key === "Enter" ? post() : undefined)}
+          placeholder="Ask Turian…"
+          style={{flex: 1, padding: "12px 12px", borderRadius: 10, border: "1px solid #d9ddee", outline: "none"}}
         />
-      </button>
+        <button onClick={post} style={{
+          padding: "0 16px", borderRadius: 10, border: "none",
+          background: "var(--brand-blue, #2f6cff)", color: "#fff", height: 44
+        }}>
+          Send
+        </button>
+      </div>
+    </div>
+  );
 
-      {/* Drawer */}
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Ask Turian"
-          style={{
-            position: "fixed",
-            right: 12,
-            bottom: 12,
-            width: "min(420px, 92vw)",
-            maxHeight: "72vh", // mobile-safe
-            background: "#fff",
-            border: "1px solid rgba(0,0,0,0.08)",
-            borderRadius: RADIUS,
-            boxShadow: "0 18px 40px rgba(0,0,0,0.22)",
-            zIndex: 90_001,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              background: BRAND_BLUE,
-              color: "#fff",
-              padding: "10px 12px",
-            }}
-          >
-            <img
-              src="/favicon-64x64.png"
-              alt="Turian"
-              width={20}
-              height={20}
-              style={{ borderRadius: 6, background: "#fff" }}
-            />
-            <strong style={{ fontWeight: 700 }}>Ask Turian</strong>
-            <div style={{ flex: 1 }} />
-            <button
-              aria-label="Close"
-              onClick={() => setOpen(false)}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: "4px 8px",
-                cursor: "pointer",
-                fontWeight: 700,
-              }}
-            >
-              X
-            </button>
-          </div>
-
-          {/* Messages */}
-          <div
-            ref={areaRef}
-            style={{
-              padding: 12,
-              overflow: "auto",
-              gap: 8,
-              display: "flex",
-              flexDirection: "column",
-              background: "#F8FAFC",
-            }}
-          >
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                  background: m.role === "user" ? BRAND_BLUE : "#fff",
-                  color: m.role === "user" ? "#fff" : "#111827",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  borderRadius: 12,
-                  padding: "8px 10px",
-                  maxWidth: "90%",
-                  whiteSpace: "pre-wrap",
-                }}
-              >
-                {m.content}
-              </div>
-            ))}
-          </div>
-
-          {/* Input row */}
-          <div
-            style={{
-              padding: 12,
-              borderTop: "1px solid rgba(0,0,0,0.08)",
-              display: "flex",
-              gap: 8,
-              background: "#fff",
-            }}
-          >
-            <input
-              aria-label="Ask Turian"
-              placeholder="Ask Turian…"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onKey}
-              disabled={busy}
-              style={{
-                flex: 1,
-                fontSize: 16,
-                padding: "10px 12px",
-                borderRadius: 10,
-                border: "1px solid rgba(0,0,0,0.12)",
-                outline: "none",
-              }}
-            />
-            <button
-              onClick={send}
-              disabled={busy || !input.trim()}
-              style={{
-                background: BRAND_BLUE,
-                color: "#fff",
-                border: "none",
-                borderRadius: 10,
-                padding: "10px 14px",
-                fontWeight: 700,
-                cursor: busy ? "default" : "pointer",
-                opacity: busy || !input.trim() ? 0.6 : 1,
-              }}
-            >
-              Send
-            </button>
-          </div>
-        </div>
-      )}
-    </>
+  return createPortal(
+    <>
+      {!open && button}
+      {open && drawer}
+    </>,
+    portalTarget
   );
 }
-

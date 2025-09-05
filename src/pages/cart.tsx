@@ -4,7 +4,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 export default function CartPage() {
   const { items, inc, dec, remove, subtotal } = useCart();
   return (
-    <main data-page="cart" className="nvrs-section cart cart-page">
+      <main data-page="cart" id="cart" data-turian="cart" className="nvrs-section cart cart-page">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
       <h1>Cart</h1>
       {items.length === 0 ? (

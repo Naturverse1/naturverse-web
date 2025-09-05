@@ -26,7 +26,7 @@ export default function Courses() {
           { label: "Courses" },
         ]}
       />
-      <main id="main" className="page">
+        <main id="main" data-turian="courses" className="page">
         <h1>📚 Courses</h1>
         <div className="edu-toolbar">
           <input className="input" placeholder="Search courses…" value={q} onChange={e=>setQ(e.target.value)} />

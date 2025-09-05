@@ -13,7 +13,7 @@ const PRODUCTS = [
 
 export default function MarketplaceShop() {
   return (
-    <main className="container">
+      <main className="container" id="shop" data-turian="shop">
       <div className="mk-head">
         <div className="mk-breadcrumbs">
           <Link to="/">Home</Link> / <span>Marketplace</span>

@@ -8,7 +8,7 @@ export default function NaturversityPage() {
   return (
     <div className="page-wrap">
       <Breadcrumbs />
-      <main className="page">
+        <main className="page" id="learn" data-turian="learn">
         <h1>Naturversity</h1>
         <p>Teachers, partners, and courses.</p>
 
