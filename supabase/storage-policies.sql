@@ -1,36 +1,56 @@
--- Storage buckets: avatars, navatars (create from Studio if not present)
--- RLS policies so users can read public files and write their own
+-- Storage bucket policies for avatar images stored under avatars/navatars/<uid>/...
 
--- Public read for these buckets
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('avatars','avatars', true)
-ON CONFLICT (id) DO NOTHING;
+-- Ensure bucket exists
+insert into storage.buckets (id, name, public)
+values ('avatars','avatars', true)
+on conflict (id) do nothing;
 
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('navatars','navatars', true)
-ON CONFLICT (id) DO NOTHING;
-
--- Policies (idempotent)
--- Delete existing with same names if present
+-- Remove any existing policies with the same names
 DO $$
 BEGIN
-  DELETE FROM storage.policies WHERE name IN
-    ('avatars-public-read','avatars-owner-write','navatars-public-read','navatars-owner-write');
+  DELETE FROM storage.policies
+  WHERE name in (
+    'storage_upload_navats',
+    'storage_read_navats',
+    'storage_modify_own_navats',
+    'storage_delete_own_navats'
+  );
 EXCEPTION WHEN OTHERS THEN NULL;
 END$$;
 
--- Public read
-INSERT INTO storage.policies (name, bucket_id, definition, action)
-VALUES
-('avatars-public-read','avatars', '(bucket_id = ''avatars'')', 'SELECT'),
-('navatars-public-read','navatars', '(bucket_id = ''navatars'')', 'SELECT');
+-- Allow authenticated users to upload into avatars/navatars/<their-uid>/...
+create policy "storage_upload_navats"
+on storage.objects for insert
+  to authenticated
+  with check (
+    bucket_id = 'avatars'
+    and (storage.foldername(name))[1] = 'navatars'
+    and auth.uid() = uuid((storage.foldername(name))[2])
+  );
 
--- Owner write (folder per user: userId/*)
-INSERT INTO storage.policies (name, bucket_id, definition, action)
-VALUES
-('avatars-owner-write','avatars',
- 'auth.role() = ''authenticated'' AND (storage.foldername(name))[1] = auth.uid()::text',
- 'INSERT'),
-('navatars-owner-write','navatars',
- 'auth.role() = ''authenticated'' AND (storage.foldername(name))[1] = auth.uid()::text',
- 'INSERT');
+-- Read: let everyone read images (flip to authenticated if needed)
+create policy "storage_read_navats"
+on storage.objects for select
+  to anon
+  using (bucket_id = 'avatars');
+
+-- Update own files
+create policy "storage_modify_own_navats"
+on storage.objects for update
+  using (
+    bucket_id = 'avatars'
+    and auth.uid() = uuid((storage.foldername(name))[2])
+  )
+  with check (
+    bucket_id = 'avatars'
+    and auth.uid() = uuid((storage.foldername(name))[2])
+  );
+
+-- Delete own files
+create policy "storage_delete_own_navats"
+on storage.objects for delete
+  to authenticated
+  using (
+    bucket_id = 'avatars'
+    and auth.uid() = uuid((storage.foldername(name))[2])
+  );
