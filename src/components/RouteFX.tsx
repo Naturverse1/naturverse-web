@@ -47,17 +47,17 @@ export default function RouteFX(): null {
       window.dispatchEvent(new Event("naturverse:navigation"));
     }
 
-    history.pushState = function (...args) {
-      const ret = origPush.apply(this, args as any);
-      fireNavEvent();
-      return ret;
-    } as any;
+      history.pushState = function (this: any, ...args: any[]) {
+        const ret = origPush.apply(this, args as any);
+        fireNavEvent();
+        return ret;
+      } as any;
 
-    history.replaceState = function (...args) {
-      const ret = origReplace.apply(this, args as any);
-      fireNavEvent();
-      return ret;
-    } as any;
+      history.replaceState = function (this: any, ...args: any[]) {
+        const ret = origReplace.apply(this, args as any);
+        fireNavEvent();
+        return ret;
+      } as any;
 
     const onPop = () => fireNavEvent();
     const onNV = () => runEffects();

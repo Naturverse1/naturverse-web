@@ -1,0 +1,82 @@
+/* Floating button */
+.tv-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  width: 48px;
+  height: 48px;
+  border-radius: 999px;
+  border: 2px solid var(--nv-blue-300, #5b8cff);
+  background: white;
+  color: var(--nv-blue-600, #2a5bff);
+  box-shadow: 0 4px 12px rgba(0,0,0,.12);
+  z-index: 1000;
+}
+
+/* Drawer container */
+.tv-chat {
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 1000;
+}
+
+.tv-chat.open { pointer-events: auto; }
+
+.tv-chat-box {
+  position: fixed;
+  right: .75rem;
+  bottom: 4.5rem; /* above the FAB */
+  width: min(92vw, 360px);
+  max-height: min(60vh, 420px);
+  background: #fff;
+  border: 2px solid var(--nv-blue-200, #9cb7ff);
+  border-radius: 12px;
+  padding: .75rem;
+  box-shadow: 0 8px 24px rgba(0,0,0,.16);
+  overflow: hidden;
+}
+
+/* Always-visible close button (mobile friendly) */
+.tv-close {
+  position: absolute;
+  right: .35rem;
+  top: .15rem;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 0;
+  background: var(--nv-blue-600, #2a5bff);
+  color: #fff;
+  font-size: 18px;
+  line-height: 28px;
+}
+
+/* Messages */
+.tv-messages {
+  overflow: auto;
+  padding-right: .25rem;
+  max-height: 300px;
+  margin: .5rem 0 .25rem 0;
+}
+.tv-msg { margin: .25rem 0; }
+.tv-msg.user { color: var(--nv-blue-700, #1849ff); }
+.tv-msg.assistant { color: #111; }
+.tv-hint { color: var(--nv-blue-600, #2a5bff); margin: .25rem 0; }
+
+/* Form */
+.tv-form { display: flex; gap: .5rem; }
+.tv-input {
+  flex: 1;
+  border: 2px solid var(--nv-blue-300, #5b8cff);
+  border-radius: 10px;
+  padding: .5rem .6rem;
+  outline: none;
+}
+.tv-send {
+  border: 0;
+  border-radius: 10px;
+  padding: 0 .75rem;
+  background: var(--nv-blue-600, #2a5bff);
+  color: white;
+}

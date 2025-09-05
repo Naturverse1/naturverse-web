@@ -1,7 +1,7 @@
-import { createClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
 
 export async function saveProfile(
-  supabase: ReturnType<typeof createClient>,
+  supabase: SupabaseClient,
   user: { id: string; email?: string },
   displayName: string,
   file?: File
