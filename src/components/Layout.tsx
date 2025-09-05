@@ -1,5 +1,9 @@
 import { ReactNode } from 'react';
 import NavBar from './NavBar';
+import dynamic from 'next/dynamic';
+
+// Load client component only on client to avoid any SSR hiccups
+const TurianAssistant = dynamic(() => import('./TurianAssistant'), { ssr: false });
 
 type Props = { children: ReactNode; title?: ReactNode; breadcrumbs?: ReactNode };
 
@@ -14,6 +18,7 @@ export default function Layout({ title, breadcrumbs, children }: Props) {
           {children}
         </div>
       </main>
+      <TurianAssistant />
     </>
   );
 }
