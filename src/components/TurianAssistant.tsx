@@ -3,6 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import { assistantMap } from "@/data/assistantMap";
 import { logEvent } from "@/lib/analytics";
+import { findRoute } from "@/lib/navIntents";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -40,24 +41,14 @@ function isSignedIn() {
   }
 }
 
-function getIntentPath(message: string): string | null {
-  const lower = message.toLowerCase();
-  for (const [key, { path, synonyms }] of Object.entries(assistantMap)) {
-    if (lower.includes(key) || synonyms.some((s) => lower.includes(s))) {
-      return path;
-    }
-  }
-  return null;
-}
-
 export default function TurianAssistant({
   isAuthed,
 }: TurianAssistantProps) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
-  const [busy, setBusy] = useState(false);
+  const [thinking, setThinking] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const areaRef = useRef<HTMLDivElement>(null);
+  const listRef = useRef<HTMLDivElement | null>(null);
 
   const zone = useMemo(() => getZone(window.location.pathname), []);
 
@@ -67,16 +58,23 @@ export default function TurianAssistant({
       const keys = Object.keys(assistantMap);
       const randomKey = keys[Math.floor(Math.random() * keys.length)];
       setMessages([
-        { role: "assistant", content: `Try: "Where is ${randomKey}?"` },
+        { role: "assistant", content: `Try: \"Where is ${randomKey}?\"` },
       ]);
     }
   }, []); // eslint-disable-line
 
   useEffect(() => {
-    // keep scroll pinned to bottom on new content
-    const el = areaRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
-  }, [messages, open]);
+    if (listRef.current) {
+      try {
+        listRef.current.scrollTo({
+          top: listRef.current.scrollHeight,
+          behavior: "smooth" as ScrollBehavior,
+        });
+      } catch {
+        listRef.current.scrollTop = listRef.current.scrollHeight;
+      }
+    }
+  }, [messages]);
 
   const derived = useMemo(() => {
     if (typeof isAuthed === "boolean") return isAuthed;
@@ -85,11 +83,41 @@ export default function TurianAssistant({
 
   if (!derived) return null;
 
-  async function send() {
-    const text = input.trim();
-    if (!text || busy) return;
+  function openBot() {
+    setOpen(true);
+    void logEvent({ event: "bot_open", from_page: location.pathname });
+  }
+  function closeBot() {
+    setOpen(false);
+    void logEvent({ event: "bot_close", from_page: location.pathname });
+  }
 
-    // If logged out, show CTA and keep drawer open
+  async function onSend() {
+    const text = input.trim();
+    if (!text || thinking) return;
+
+    await logEvent({
+      event: "bot_message",
+      from_page: location.pathname,
+      text,
+    });
+
+    const target = findRoute(text);
+    if (target) {
+      await logEvent({
+        event: "bot_navigate",
+        from_page: location.pathname,
+        to_page: target,
+        text,
+      });
+      setMessages((m) => [
+        ...m,
+        { role: "assistant", content: `Taking you to ${target}…` },
+      ]);
+      location.assign(target);
+      return;
+    }
+
     if (!isSignedIn()) {
       setMessages((m) => [
         ...m,
@@ -107,44 +135,14 @@ export default function TurianAssistant({
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
 
-    await logEvent({
-      event: "bot_message",
-      from_page: location.pathname,
-      text,
-    });
-
-    const path = getIntentPath(text);
-    if (path) {
-      await logEvent({
-        event: "bot_navigate",
-        from_page: location.pathname,
-        to_page: path,
-        text,
-      });
-      setMessages((m) => [
-        ...m,
-        {
-          role: "assistant",
-          content: `On it! Taking you to ${path}…`,
-        },
-      ]);
-      setOpen(false);
-      setTimeout(() => {
-        window.location.href = path;
-      }, 150);
-      return;
-    }
-
-    setBusy(true);
-
     try {
+      setThinking(true);
       const res = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           zone,
           messages: [
-            // give the function a tiny bit of context
             { role: "system", content: `You are Turian in ${zone}.` },
             ...messages,
             { role: "user", content: text },
@@ -164,15 +162,14 @@ export default function TurianAssistant({
         { role: "assistant", content: "Something went wrong. Try again." },
       ]);
     } finally {
-      setBusy(false);
+      setThinking(false);
     }
-    // IMPORTANT: we do NOT auto-close; the X is always visible
   }
 
   function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
-      send();
+      void onSend();
     }
   }
 
@@ -181,10 +178,7 @@ export default function TurianAssistant({
       {/* Floating button (bottom-right) */}
       <button
         aria-label="Ask Turian"
-        onClick={async () => {
-          await logEvent({ event: "bot_open", from_page: location.pathname });
-          setOpen(true);
-        }}
+        onClick={open ? closeBot : openBot}
         style={{
           position: "fixed",
           right: 16,
@@ -256,13 +250,7 @@ export default function TurianAssistant({
             <div style={{ flex: 1 }} />
             <button
               aria-label="Close"
-              onClick={async () => {
-                await logEvent({
-                  event: "bot_close",
-                  from_page: location.pathname,
-                });
-                setOpen(false);
-              }}
+              onClick={closeBot}
               style={{
                 background: "rgba(255,255,255,0.2)",
                 color: "#fff",
@@ -279,14 +267,17 @@ export default function TurianAssistant({
 
           {/* Messages */}
           <div
-            ref={areaRef}
+            ref={listRef}
+            className="nv-assistant-messages"
             style={{
               padding: 12,
-              overflow: "auto",
+              overflowY: "auto",
               gap: 8,
               display: "flex",
               flexDirection: "column",
               background: "#F8FAFC",
+              maxHeight: 360,
+              paddingRight: 8,
             }}
           >
             {messages.map((m, i) => (
@@ -324,7 +315,7 @@ export default function TurianAssistant({
               value={input}
               onChange={(e) => setInput(e.target.value)}
               onKeyDown={onKey}
-              disabled={busy}
+              disabled={thinking}
               style={{
                 flex: 1,
                 fontSize: 16,
@@ -335,8 +326,8 @@ export default function TurianAssistant({
               }}
             />
             <button
-              onClick={send}
-              disabled={busy || !input.trim()}
+              onClick={onSend}
+              disabled={thinking || !input.trim()}
               style={{
                 background: BRAND_BLUE,
                 color: "#fff",
@@ -344,8 +335,8 @@ export default function TurianAssistant({
                 borderRadius: 10,
                 padding: "10px 14px",
                 fontWeight: 700,
-                cursor: busy ? "default" : "pointer",
-                opacity: busy || !input.trim() ? 0.6 : 1,
+                cursor: thinking ? "default" : "pointer",
+                opacity: thinking || !input.trim() ? 0.6 : 1,
               }}
             >
               Send
