@@ -1,3 +1,36 @@
+/* Marketplace tab styles */
+.mk-head {
+  margin: 0 0 1rem 0;
+}
+.mk-breadcrumbs {
+  margin: 0 0 .75rem 0;
+  color: var(--nv-blue-500);
+}
+.mk-breadcrumbs a { color: inherit; }
+
+.mk-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .75rem;
+  justify-content: center;      /* centered on mobile */
+  margin: .5rem 0 1.25rem;
+}
+
+.mk-tab {
+  display: inline-block;
+  padding: .6rem .9rem;
+  border: 2px solid var(--nv-blue-200);
+  border-radius: .9rem;
+  text-decoration: none;
+  color: var(--nv-blue-700);
+  background: white;
+}
+
+.mk-tab.is-active {
+  border-color: var(--nv-blue-400);
+  box-shadow: 0 0 0 2px rgba(60,100,255,.06) inset;
+}
+
 /* Marketplace button consistency */
 .marketplace button,
 .marketplace .save-btn,

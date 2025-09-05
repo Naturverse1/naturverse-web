@@ -1,7 +1,7 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
+import { Link } from "react-router-dom";
+import MarketTabs from "../../components/MarketTabs";
 import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
-import { Link } from "react-router-dom";
 import "../../styles/_cards.css";
 import "../../styles/marketplace.css";
 
@@ -11,11 +11,18 @@ const PRODUCTS = [
   { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", href:"/marketplace/stickers" },
 ];
 
-export default function MarketplacePage(){
+export default function MarketplaceShop() {
   return (
-    <main id="main" data-page="marketplace" className="nvrs-section marketplace nv-secondary-scope">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace" }]} />
-      <h1 className="page-title">Marketplace</h1>
+    <main className="container">
+      <div className="mk-head">
+        <div className="mk-breadcrumbs">
+          <Link to="/">Home</Link> / <span>Marketplace</span>
+        </div>
+        <h1>Marketplace</h1>
+      </div>
+
+      <MarketTabs />
+
       <div className="mp-grid nv-card-grid">
         {PRODUCTS.map(p => (
           <article key={p.id} className="mp-card nv-card">

@@ -44,13 +44,6 @@ export default function SiteHeader() {
               Marketplace
             </NavLink>
             <NavLink
-              to="/wishlist"
-              className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
-              onClick={() => setOpen(false)}
-            >
-              Wishlist
-            </NavLink>
-            <NavLink
               to="/naturversity"
               className={({ isActive }) => (isActive ? 'nav-link active' : 'nav-link')}
               onClick={() => setOpen(false)}
