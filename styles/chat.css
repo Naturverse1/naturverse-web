@@ -1,0 +1,124 @@
+:root {
+  --nv-blue: #2563eb; /* brand-blue */
+  --nv-blue-700: #1d4ed8;
+  --nv-ring: rgba(37, 99, 235, 0.3);
+  --nv-bg: #ffffff;
+  --nv-text: #0f172a;
+}
+
+.turian-btn {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  border: none;
+  border-radius: 9999px;
+  background: var(--nv-bg);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.15);
+  padding: 10px;
+  cursor: pointer;
+}
+
+.turian-btn:focus-visible {
+  outline: 2px solid var(--nv-blue);
+  outline-offset: 2px;
+}
+
+.turian-drawer {
+  position: fixed;
+  right: 1rem;
+  bottom: 5.25rem; /* floats above button */
+  z-index: 60;
+  width: min(420px, 92vw);
+  max-height: min(70vh, 560px);
+  background: var(--nv-bg);
+  color: var(--nv-text);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.turian-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 14px;
+  background: var(--nv-bg);
+  border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.turian-close {
+  appearance: none;
+  border: none;
+  background: var(--nv-blue);
+  color: #fff;
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  font-size: 18px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.turian-body {
+  padding: 12px 14px;
+  overflow: auto;
+  gap: 8px;
+  display: flex;
+  flex-direction: column;
+}
+
+.turian-tip {
+  opacity: 0.75;
+  font-style: italic;
+}
+
+.turian-msg.user { font-weight: 600; }
+.turian-msg.assistant { }
+
+.turian-inputrow {
+  display: flex;
+  gap: 8px;
+  padding: 12px;
+  border-top: 1px solid rgba(15, 23, 42, 0.08);
+  background: var(--nv-bg);
+}
+
+.turian-inputrow input {
+  flex: 1;
+  border-radius: 12px;
+  border: 1px solid rgba(15, 23, 42, 0.15);
+  padding: 10px 12px;
+  font-size: 16px;
+}
+
+.turian-inputrow input:focus {
+  outline: none;
+  box-shadow: 0 0 0 4px var(--nv-ring);
+  border-color: var(--nv-blue);
+}
+
+.turian-send {
+  background: var(--nv-blue);
+  color: #fff;
+  border: none;
+  border-radius: 12px;
+  padding: 10px 14px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.turian-send:disabled { opacity: 0.6; }
+
+@media (max-width: 480px) {
+  .turian-drawer {
+    right: 0.5rem;
+    left: 0.5rem;
+    width: auto;
+    bottom: 4.75rem;
+    max-height: 62vh; /* prevents “blowing up” */
+  }
+}
+
