@@ -1,5 +1,5 @@
 import React from 'react';
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, Navigate } from 'react-router-dom';
 
 import Home from './pages/Home';
 import WorldsIndex from './routes/worlds';
@@ -16,10 +16,12 @@ import Observations from './pages/zones/Observations';
 import Community from './pages/zones/Community';
 import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
-import MarketplacePage from './pages/marketplace';
+import MarketplaceShop from './pages/marketplace';
+import MarketplaceNFT from './pages/marketplace/nft';
+import MarketplaceSpecials from './pages/marketplace/specials';
+import MarketplaceWishlist from './pages/marketplace/wishlist';
 import ProductPage from './pages/marketplace/[slug]';
 import CartPage from './pages/cart';
-import WishlistPage from './pages/wishlist';
 import Naturversity from './pages/Naturversity';
 import Teachers from './pages/naturversity/Teachers';
 import Partners from './pages/naturversity/Partners';
@@ -77,12 +79,15 @@ export const router = createBrowserRouter([
       {
         path: 'marketplace',
         children: [
-          { index: true, element: <MarketplacePage /> },
+          { index: true, element: <MarketplaceShop /> },
+          { path: 'nft', element: <MarketplaceNFT /> },
+          { path: 'specials', element: <MarketplaceSpecials /> },
+          { path: 'wishlist', element: <MarketplaceWishlist /> },
           { path: ':slug', element: <ProductPage /> },
         ],
       },
       { path: 'cart', element: <CartPage /> },
-      { path: 'wishlist', element: <WishlistPage /> },
+      { path: 'wishlist', element: <Navigate to="/marketplace/wishlist" replace /> },
       {
         path: 'naturversity',
         element: <NaturversityLayout />,
