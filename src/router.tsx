@@ -16,7 +16,10 @@ import Observations from './pages/zones/Observations';
 import Community from './pages/zones/Community';
 import Culture from './pages/zones/Culture';
 import FutureZone from './pages/zones/Future';
-import MarketplacePage from './pages/marketplace';
+import MarketplaceIndex from './pages/marketplace/Index';
+import MarketplaceNft from './pages/marketplace/Nft';
+import MarketplaceSpecials from './pages/marketplace/Specials';
+import MarketplaceWishlist from './pages/marketplace/Wishlist';
 import ProductPage from './pages/marketplace/[slug]';
 import CartPage from './pages/cart';
 import WishlistPage from './pages/wishlist';
@@ -77,7 +80,10 @@ export const router = createBrowserRouter([
       {
         path: 'marketplace',
         children: [
-          { index: true, element: <MarketplacePage /> },
+          { index: true, element: <MarketplaceIndex /> },
+          { path: 'nft', element: <MarketplaceNft /> },
+          { path: 'specials', element: <MarketplaceSpecials /> },
+          { path: 'wishlist', element: <MarketplaceWishlist /> },
           { path: ':slug', element: <ProductPage /> },
         ],
       },
