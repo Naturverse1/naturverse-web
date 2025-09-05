@@ -1,44 +1,21 @@
-import React from "react";
-import type { Navatar } from "../types/navatar";
+import type { Navatar } from '../lib/navatar';
 
-type Props = { navatar: Navatar };
-
-export default function NavatarCard({ navatar }: Props) {
+export default function NavatarCard({ n }: { n: Navatar }) {
   return (
-    <article id="navatar-card" className="nv-card navatar-card character-card">
-      <header className="cc-head">
-        <span className="cc-name">{navatar.name || navatar.species}</span>
-        <span className="cc-meta">
-          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
-        </span>
-      </header>
-
-      <div className="imageWrap">
-        {navatar.imageDataUrl ? (
-          <img
-            src={navatar.imageDataUrl}
-            alt={navatar.name || navatar.species}
-            loading="lazy"
-          />
+    <div className="navatar-card">
+      <div className="img">
+        {n.photo_url ? (
+          <img src={n.photo_url} alt={n.name || n.type} />
         ) : (
-          <div className="card__placeholder" aria-label="No photo">No photo</div>
+          <div className="no-photo">No photo</div>
         )}
       </div>
-
-      <dl className="cc-fields">
-        <div>
-          <dt>Species</dt>
-          <dd>{navatar.species}</dd>
-        </div>
-        <div>
-          <dt>Powers</dt>
-          <dd>{navatar.powers.join(" · ")}</dd>
-        </div>
-        <div>
-          <dt>Backstory</dt>
-          <dd>{navatar.backstory}</dd>
-        </div>
-      </dl>
-    </article>
+      <div className="meta">
+        <div className="name">{n.name || n.type}</div>
+        <div className="sub">{n.type} • {new Date(n.created_at).toLocaleDateString()}</div>
+        <p className="backstory">{n.backstory}</p>
+      </div>
+    </div>
   );
 }
+
