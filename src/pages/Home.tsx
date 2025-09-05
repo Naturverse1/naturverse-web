@@ -1,12 +1,11 @@
 import styles from './Home.module.css';
 import { Link } from 'react-router-dom';
-import { signInWithGoogle, sendMagicLink } from '@/lib/auth';
 import { useAuth } from '@/lib/auth-context';
 import ClickableCard from '@/components/ClickableCard';
 
 export default function Home() {
-  const { user } = useAuth();
-  const isAuthed = !!user;
+  const { user, signInWithGoogle, signInWithMagicLink: createAccount } = useAuth();
+  const isAuthenticated = !!user;
 
   return (
     <main className={`${styles.page} ${!user ? 'guest-locked' : ''}`}>
@@ -16,25 +15,12 @@ export default function Home() {
           A playful world of kingdoms, characters, and quests that teach wellness, creativity, and
           kindness.
         </p>
-        {!user && (
+        {!isAuthenticated && (
           <div className={`${styles.ctaRow} auth-buttons`}>
-            <button
-              type="button"
-              className={styles.cta}
-              onClick={async () => {
-                const email = prompt('Enter your email to get a magic link:')?.trim();
-                if (email) await sendMagicLink(email);
-              }}
-            >
+            <button type="button" className={styles.cta} onClick={createAccount}>
               Create account
             </button>
-            <button
-              type="button"
-              className={styles.cta}
-              onClick={async () => {
-                await signInWithGoogle();
-              }}
-            >
+            <button type="button" className={styles.cta} onClick={signInWithGoogle}>
               Continue with Google
             </button>
           </div>
@@ -45,7 +31,7 @@ export default function Home() {
       <section className={styles.featureGrid}>
         <ClickableCard
           to="/zones"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Open Zones"
           className={styles.featureCard}
         >
@@ -56,7 +42,7 @@ export default function Home() {
         </ClickableCard>
         <ClickableCard
           to="/naturversity"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Open Naturversity"
           className={styles.featureCard}
         >
@@ -67,7 +53,7 @@ export default function Home() {
         </ClickableCard>
         <ClickableCard
           to="/naturbank"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Open NaturBank"
           className={styles.featureCard}
         >
@@ -84,14 +70,14 @@ export default function Home() {
       <section className={styles.flowWrap}>
         <ClickableCard
           to="/navatar"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Create your Navatar"
           className={styles.flowStep}
         >
           <div className={styles.flowHead}>1) Create</div>
           <div className={styles.flowBody}>
             Create a free account ·{' '}
-            {isAuthed ? (
+            {isAuthenticated ? (
               <Link to="/navatar">create your Navatar</Link>
             ) : (
               <span>create your Navatar</span>
@@ -100,13 +86,13 @@ export default function Home() {
         </ClickableCard>
         <ClickableCard
           to="/zones"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Pick a hub"
           className={styles.flowStep}
         >
           <div className={styles.flowHead}>2) Pick a hub</div>
           <div className={styles.flowBody}>
-            {isAuthed ? (
+            {isAuthenticated ? (
               <>
                 <Link to="/worlds" className={styles.flowLink}>
                   Worlds
@@ -133,7 +119,7 @@ export default function Home() {
         </ClickableCard>
         <ClickableCard
           to="/passport"
-          enabled={isAuthed}
+          enabled={isAuthenticated}
           ariaLabel="Play Learn Earn"
           className={styles.flowStep}
         >
