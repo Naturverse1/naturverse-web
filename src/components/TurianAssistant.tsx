@@ -38,6 +38,52 @@ function isSignedIn() {
   }
 }
 
+// --- Navigation helpers ----------------------------------------------------
+
+function normalize(str: string) {
+  return str.trim().toLowerCase();
+}
+
+const ROUTE_ALIASES: Record<string, { path?: string; hash?: string }> = {
+  language: { hash: "#languages" },
+  languages: { hash: "#languages" },
+};
+
+function extractTarget(message: string) {
+  const norm = normalize(message);
+  for (const [alias, target] of Object.entries(ROUTE_ALIASES)) {
+    if (norm.includes(alias)) return target;
+  }
+  return null;
+}
+
+function scrollToHash(hash: string) {
+  const id = hash.replace("#", "");
+  const el = document.getElementById(id);
+  if (el) el.scrollIntoView({ behavior: "smooth", block: "start" });
+}
+
+async function maybeNavigateFrom(message: string) {
+  const target = extractTarget(message);
+  if (!target) return false;
+
+  const currentPath = window.location.pathname;
+  const nextPath = target.path ?? currentPath;
+  const url = nextPath + (target.hash ?? "");
+
+  if (nextPath !== currentPath) {
+    window.location.assign(url);
+    return true;
+  }
+
+  if (target.hash) {
+    scrollToHash(target.hash);
+    return true;
+  }
+
+  return !!target.path;
+}
+
 export default function TurianAssistant({
   isAuthed,
 }: TurianAssistantProps) {
@@ -71,29 +117,35 @@ export default function TurianAssistant({
 
   if (!derived) return null;
 
-  async function send() {
+  const onSend = async () => {
     const text = input.trim();
     if (!text || busy) return;
 
-    // If logged out, show CTA and keep drawer open
+    setMessages((prev) => [...prev, { role: "user", content: text }]);
+    setInput("");
+
     if (!isSignedIn()) {
-      setMessages((m) => [
-        ...m,
-        { role: "user", content: text },
+      setMessages((prev) => [
+        ...prev,
         {
           role: "assistant",
           content:
             "Please create an account or continue with Google to get started!",
         },
       ]);
-      setInput("");
+      return;
+    }
+
+    const navigated = await maybeNavigateFrom(text);
+    if (navigated) {
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "On it! Taking you there…" },
+      ]);
       return;
     }
 
     setBusy(true);
-    setMessages((m) => [...m, { role: "user", content: text }]);
-    setInput("");
-
     try {
       const res = await fetch("/.netlify/functions/chat", {
         method: "POST",
@@ -101,7 +153,6 @@ export default function TurianAssistant({
         body: JSON.stringify({
           zone,
           messages: [
-            // give the function a tiny bit of context
             { role: "system", content: `You are Turian in ${zone}.` },
             ...messages,
             { role: "user", content: text },
@@ -111,25 +162,24 @@ export default function TurianAssistant({
 
       if (!res.ok) throw new Error(await res.text());
       const json = (await res.json()) as { reply?: string };
-      setMessages((m) => [
-        ...m,
+      setMessages((prev) => [
+        ...prev,
         { role: "assistant", content: json.reply || "Okay!" },
       ]);
     } catch (e) {
-      setMessages((m) => [
-        ...m,
+      setMessages((prev) => [
+        ...prev,
         { role: "assistant", content: "Something went wrong. Try again." },
       ]);
     } finally {
       setBusy(false);
     }
-    // IMPORTANT: we do NOT auto-close; the X is always visible
-  }
+  };
 
   function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Enter") {
       e.preventDefault();
-      send();
+      onSend();
     }
   }
 
@@ -283,7 +333,7 @@ export default function TurianAssistant({
               }}
             />
             <button
-              onClick={send}
+              onClick={onSend}
               disabled={busy || !input.trim()}
               style={{
                 background: BRAND_BLUE,
