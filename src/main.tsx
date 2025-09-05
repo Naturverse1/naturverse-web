@@ -10,6 +10,7 @@ import './main.css';
 import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
+import './styles/navatar.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';

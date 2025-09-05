@@ -1,23 +1,44 @@
-import { useState } from "react";
-const types = ["Animal","Fruit","Insect","Spirit"] as const;
-export default function Navatar() {
-  const [sel,setSel] = useState<typeof types[number] | null>("Animal");
-    return (
-      <section className="space-y-4 navatar-page">
-      <h2 className="text-2xl font-bold">Navatar Creator</h2>
-      <p className="text-gray-600">Choose a base type and generate a backstory later.</p>
-      <div className="grid gap-3 sm:grid-cols-2 md:grid-cols-4">
-        {types.map(t=>(
-          <button key={t}
-            onClick={()=>setSel(t)}
-            className={"rounded border p-4 text-left " + (sel===t?"ring-2 ring-green-500":"")}>
-            <div className="font-semibold">{t}</div>
-            <div className="text-sm text-gray-600">Select</div>
-          </button>
+import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { listMyNavatars, NavatarRow } from '../../lib/navatar';
+import { useSession } from '../../lib/useSession';
+
+export default function NavatarHome() {
+  const { user } = useSession();
+  const [items, setItems] = useState<NavatarRow[]>([]);
+  const [err, setErr] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    listMyNavatars(user.id).then(setItems).catch(e => setErr(e.message));
+  }, [user]);
+
+  return (
+    <div className="page">
+      <div className="crumbs">Home / Navatar</div>
+      <h1>Navatar</h1>
+      <p>Create a character, customize details, and save your Navatar card.</p>
+      <div style={{ marginBottom: 16 }}>
+        <Link className="btn" to="/navatar/create">Create</Link>
+      </div>
+
+      <h2>My Navatars</h2>
+      {err && <p className="error">{err}</p>}
+      <div className="grid">
+        {items.map(n => (
+          <div key={n.id} className="card">
+            <div className="card-body">
+              <div className="card-title">{n.name ?? n.base_type}</div>
+              {n.image_url ? (
+                <img src={n.image_url} alt={n.name ?? 'Navatar'} />
+              ) : (
+                <div className="img-empty">No photo</div>
+              )}
+              <div className="meta">• {new Date(n.created_at).toLocaleDateString()}</div>
+            </div>
+          </div>
         ))}
       </div>
-      <div className="text-sm">Selected: <strong>{sel ?? "None"}</strong></div>
-      <button className="rounded border px-3 py-1 opacity-60 cursor-not-allowed">Save Navatar (stub)</button>
-    </section>
+    </div>
   );
 }
