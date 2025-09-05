@@ -1,10 +1,10 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
-const RADIUS = 14;
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
@@ -29,7 +29,8 @@ export default function TurianAssistant() {
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
-  const areaRef = useRef<HTMLDivElement>(null);
+  const scrollRef = useRef<HTMLDivElement | null>(null);
+  const endRef = useRef<HTMLDivElement | null>(null);
 
   const zone = useMemo(() => getZone(window.location.pathname), []);
 
@@ -43,47 +44,60 @@ export default function TurianAssistant() {
   }, []); // eslint-disable-line
 
   useEffect(() => {
-    // keep scroll pinned to bottom on new content
-    const el = areaRef.current;
-    if (el) el.scrollTop = el.scrollHeight;
+    // keep the latest reply in view
+    endRef.current?.scrollIntoView({ behavior: "smooth", block: "end" });
   }, [messages, open]);
 
-  async function send() {
+  useEffect(() => {
+    const mq = window.matchMedia("(max-width: 640px)");
+    if (open && mq.matches) {
+      const prev = document.body.style.overflow;
+      document.body.style.overflow = "hidden";
+      return () => {
+        document.body.style.overflow = prev;
+      };
+    }
+  }, [open]);
+
+  async function handleSend(e: React.FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+
     const text = input.trim();
     if (!text || busy) return;
 
-    // If logged out, show CTA and keep drawer open
-    if (!isSignedIn()) {
-      setMessages((m) => [
-        ...m,
-        { role: "user", content: text },
-        {
-          role: "assistant",
-          content:
-            "Please create an account or continue with Google to get started!",
-        },
-      ]);
-      setInput("");
-      return;
-    }
+    setInput("");
+
+    const signed = isSignedIn();
+    const initialNudgeNeeded = !signed && messages.length === 1;
+    const payload = [
+      { role: "system", content: `You are Turian in ${zone}.` },
+      ...messages,
+      { role: "user", content: text },
+    ];
+
+    setMessages((m) => {
+      const base = [...m, { role: "user", content: text }];
+      return initialNudgeNeeded
+        ? [
+            ...base,
+            {
+              role: "assistant",
+              content:
+                "Please create an account or continue with Google to get started!",
+            },
+          ]
+        : base;
+    });
+
+    if (initialNudgeNeeded) return;
 
     setBusy(true);
-    setMessages((m) => [...m, { role: "user", content: text }]);
-    setInput("");
 
     try {
       const res = await fetch("/.netlify/functions/chat", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          zone,
-          messages: [
-            // give the function a tiny bit of context
-            { role: "system", content: `You are Turian in ${zone}.` },
-            ...messages,
-            { role: "user", content: text },
-          ],
-        }),
+        body: JSON.stringify({ zone, messages: payload }),
       });
 
       if (!res.ok) throw new Error(await res.text());
@@ -103,181 +117,75 @@ export default function TurianAssistant() {
     // IMPORTANT: we do NOT auto-close; the X is always visible
   }
 
-  function onKey(e: React.KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Enter") {
-      e.preventDefault();
-      send();
-    }
-  }
-
   return (
     <>
       {/* Floating button (bottom-right) */}
       <button
-        aria-label="Ask Turian"
+        className="ta-fab"
         onClick={() => setOpen(true)}
-        style={{
-          position: "fixed",
-          right: 16,
-          bottom: 16,
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: "#ffffff",
-          border: `2px solid ${BRAND_BLUE}`,
-          boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-          display: open ? "none" : "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 0,
-          cursor: "pointer",
-          zIndex: 90_000,
-        }}
+        aria-label="Open Turian"
       >
-        {/* Turian head from /public */}
-        <img
-          src="/favicon-64x64.png"
-          alt="Turian"
-          width={32}
-          height={32}
-          style={{ display: "block" }}
-        />
+        <img src="/favicon-64x64.png" alt="" />
       </button>
-
-      {/* Drawer */}
-      {open && (
-        <div
-          role="dialog"
-          aria-label="Ask Turian"
-          style={{
-            position: "fixed",
-            right: 12,
-            bottom: 12,
-            width: "min(420px, 92vw)",
-            maxHeight: "72vh", // mobile-safe
-            background: "#fff",
-            border: "1px solid rgba(0,0,0,0.08)",
-            borderRadius: RADIUS,
-            boxShadow: "0 18px 40px rgba(0,0,0,0.22)",
-            zIndex: 90_001,
-            display: "flex",
-            flexDirection: "column",
-            overflow: "hidden",
-          }}
-        >
-          {/* Header */}
-          <div
-            style={{
-              display: "flex",
-              alignItems: "center",
-              gap: 10,
-              background: BRAND_BLUE,
-              color: "#fff",
-              padding: "10px 12px",
-            }}
-          >
-            <img
-              src="/favicon-64x64.png"
-              alt="Turian"
-              width={20}
-              height={20}
-              style={{ borderRadius: 6, background: "#fff" }}
-            />
-            <strong style={{ fontWeight: 700 }}>Ask Turian</strong>
-            <div style={{ flex: 1 }} />
-            <button
-              aria-label="Close"
-              onClick={() => setOpen(false)}
-              style={{
-                background: "rgba(255,255,255,0.2)",
-                color: "#fff",
-                border: "none",
-                borderRadius: 8,
-                padding: "4px 8px",
-                cursor: "pointer",
-                fontWeight: 700,
-              }}
-            >
-              X
-            </button>
-          </div>
-
-          {/* Messages */}
-          <div
-            ref={areaRef}
-            style={{
-              padding: 12,
-              overflow: "auto",
-              gap: 8,
-              display: "flex",
-              flexDirection: "column",
-              background: "#F8FAFC",
-            }}
-          >
-            {messages.map((m, i) => (
-              <div
-                key={i}
-                style={{
-                  alignSelf: m.role === "user" ? "flex-end" : "flex-start",
-                  background: m.role === "user" ? BRAND_BLUE : "#fff",
-                  color: m.role === "user" ? "#fff" : "#111827",
-                  border: "1px solid rgba(0,0,0,0.06)",
-                  borderRadius: 12,
-                  padding: "8px 10px",
-                  maxWidth: "90%",
-                  whiteSpace: "pre-wrap",
-                }}
-              >
-                {m.content}
-              </div>
-            ))}
-          </div>
-
-          {/* Input row */}
-          <div
-            style={{
-              padding: 12,
-              borderTop: "1px solid rgba(0,0,0,0.08)",
-              display: "flex",
-              gap: 8,
-              background: "#fff",
-            }}
-          >
-            <input
+      {open
+        ? createPortal(
+            <div
+              className={`turian-assistant ${open ? "open" : ""}`}
+              role="dialog"
               aria-label="Ask Turian"
-              placeholder="Ask Turian…"
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              onKeyDown={onKey}
-              disabled={busy}
-              style={{
-                flex: 1,
-                fontSize: 16,
-                padding: "10px 12px",
-                borderRadius: 10,
-                border: "1px solid rgba(0,0,0,0.12)",
-                outline: "none",
-              }}
-            />
-            <button
-              onClick={send}
-              disabled={busy || !input.trim()}
-              style={{
-                background: BRAND_BLUE,
-                color: "#fff",
-                border: "none",
-                borderRadius: 10,
-                padding: "10px 14px",
-                fontWeight: 700,
-                cursor: busy ? "default" : "pointer",
-                opacity: busy || !input.trim() ? 0.6 : 1,
-              }}
             >
-              Send
-            </button>
-          </div>
-        </div>
-      )}
+              <header className="ta-header">
+                <img
+                  src="/favicon-64x64.png"
+                  alt=""
+                  className="ta-avatar"
+                />
+                <strong>Ask Turian</strong>
+                <button
+                  className="ta-close"
+                  onClick={() => setOpen(false)}
+                  aria-label="Close"
+                >
+                  ×
+                </button>
+              </header>
+              <div className="ta-body" ref={scrollRef}>
+                {messages.map((m, i) => (
+                  <div
+                    key={i}
+                    style={{
+                      alignSelf: m.role === "user" ? "flex-end" : "flex-start",
+                      background: m.role === "user" ? BRAND_BLUE : "#fff",
+                      color: m.role === "user" ? "#fff" : "#111827",
+                      border: "1px solid rgba(0,0,0,0.06)",
+                      borderRadius: 12,
+                      padding: "8px 10px",
+                      maxWidth: "90%",
+                      whiteSpace: "pre-wrap",
+                    }}
+                  >
+                    {m.content}
+                  </div>
+                ))}
+                <div ref={endRef} />
+              </div>
+              <form className="ta-input" onSubmit={handleSend}>
+                <input
+                  aria-label="Ask Turian"
+                  placeholder="Ask Turian…"
+                  value={input}
+                  onChange={(e) => setInput(e.target.value)}
+                  disabled={busy}
+                />
+                <button type="submit" disabled={busy || !input.trim()}
+                >
+                  Send
+                </button>
+              </form>
+            </div>,
+            document.body
+          )
+        : null}
     </>
   );
 }
