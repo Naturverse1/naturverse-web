@@ -6,6 +6,11 @@ import { useEffect, useMemo, useRef, useState } from "react";
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
 const RADIUS = 14;
 
+type TurianAssistantProps = {
+  /** When provided, this wins. If false, the widget won't render at all. */
+  isAuthed?: boolean;
+};
+
 type ChatMsg = { role: "user" | "assistant"; content: string };
 
 function getZone(pathname: string) {
@@ -20,11 +25,22 @@ function getZone(pathname: string) {
 
 /** Dumb check: if a Supabase auth cookie exists, we treat as signed-in */
 function isSignedIn() {
-  // Supabase sets "sb-" cookies; keep it simple and robust
-  return document.cookie.includes("sb-") || document.cookie.includes("supabase");
+  try {
+    const hasCookie = document.cookie
+      .split("; ")
+      .some((c) => c.startsWith("sb-") && c.includes("auth"));
+    const hasStorage = Object.keys(localStorage).some(
+      (k) => k.startsWith("sb-") && k.endsWith("-auth-token"),
+    );
+    return hasCookie || hasStorage;
+  } catch {
+    return false;
+  }
 }
 
-export default function TurianAssistant() {
+export default function TurianAssistant({
+  isAuthed,
+}: TurianAssistantProps) {
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [busy, setBusy] = useState(false);
@@ -47,6 +63,13 @@ export default function TurianAssistant() {
     const el = areaRef.current;
     if (el) el.scrollTop = el.scrollHeight;
   }, [messages, open]);
+
+  const derived = useMemo(() => {
+    if (typeof isAuthed === "boolean") return isAuthed;
+    return isSignedIn();
+  }, [isAuthed]);
+
+  if (!derived) return null;
 
   async function send() {
     const text = input.trim();
