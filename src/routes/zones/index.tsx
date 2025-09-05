@@ -10,12 +10,15 @@ export default function Zones() {
         <Breadcrumbs />
         <h1>Zones</h1>
         <div className="cards grid-gap">
-        {ZONES.map((z) => (
-          <a key={z.href} className="card" href={z.href}>
-            <h2>{z.title}</h2>
-            <p>{z.blurb}</p>
-          </a>
-        ))}
+        {ZONES.map((z) => {
+          const id = z.href.split("/").pop();
+          return (
+            <a key={z.href} className="card" href={z.href}>
+              <h2 id={id}>{z.title}</h2>
+              <p>{z.blurb}</p>
+            </a>
+          );
+        })}
       </div>
     </div>
   );
