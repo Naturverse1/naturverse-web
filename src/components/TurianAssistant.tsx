@@ -1,7 +1,8 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
-import { maybeNavigateFrom } from "@/lib/assistant/maybeNavigateFrom";
+import { assistantMap } from "@/data/assistantMap";
+import { supabase } from "@/lib/supabase-client";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -39,6 +40,26 @@ function isSignedIn() {
   }
 }
 
+function getIntentPath(message: string): string | null {
+  const lower = message.toLowerCase();
+  for (const [key, { path, synonyms }] of Object.entries(assistantMap)) {
+    if (lower.includes(key) || synonyms.some((s) => lower.includes(s))) {
+      return path;
+    }
+  }
+  return null;
+}
+
+async function logEvent(from: string, to: string, text: string) {
+  try {
+    await supabase
+      .from("analytics")
+      .insert([{ event: "bot_navigate", from_page: from, to_page: to, text }]);
+  } catch (e) {
+    console.warn("logEvent failed", e);
+  }
+}
+
 export default function TurianAssistant({
   isAuthed,
 }: TurianAssistantProps) {
@@ -53,8 +74,10 @@ export default function TurianAssistant({
   useEffect(() => {
     // starter tip so the box isn't empty
     if (messages.length === 0) {
+      const keys = Object.keys(assistantMap);
+      const randomKey = keys[Math.floor(Math.random() * keys.length)];
       setMessages([
-        { role: "assistant", content: `Try: "Where is languages?"` },
+        { role: "assistant", content: `Try: "Where is ${randomKey}?"` },
       ]);
     }
   }, []); // eslint-disable-line
@@ -94,21 +117,22 @@ export default function TurianAssistant({
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
 
-    const href = maybeNavigateFrom(text);
-    if (href) {
-      setMessages((m) => [
-        ...m,
-        {
-          role: "assistant",
-          content: `On it! Taking you to ${href.replace("/", "")}…`,
-        },
-      ]);
-      setOpen(false);
-      setTimeout(() => {
-        window.location.href = href;
-      }, 150);
-      return;
-    }
+      const path = getIntentPath(text);
+      if (path) {
+        logEvent(window.location.pathname, path, text);
+        setMessages((m) => [
+          ...m,
+          {
+            role: "assistant",
+            content: `On it! Taking you to ${path}…`,
+          },
+        ]);
+        setOpen(false);
+        setTimeout(() => {
+          window.location.href = path;
+        }, 150);
+        return;
+      }
 
     setBusy(true);
 
