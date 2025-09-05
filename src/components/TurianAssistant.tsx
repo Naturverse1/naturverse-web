@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -47,6 +48,93 @@ export default function TurianAssistant({
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const areaRef = useRef<HTMLDivElement>(null);
 
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  /** Map simple phrases -> routes or in-page anchors */
+  const ROUTE_ALIASES: Record<string, { path?: string; hash?: string }> = {
+    home: { path: "/" },
+    start: { path: "/" },
+    languages: { path: "/languages" },
+    language: { path: "/languages" },
+    zones: { path: "/zones" },
+    zone: { path: "/zones" },
+    music: { path: "/zones", hash: "#music" },
+    wellness: { path: "/zones", hash: "#wellness" },
+    arcade: { path: "/zones", hash: "#arcade" },
+    "creator lab": { path: "/zones", hash: "#creator-lab" },
+    stories: { path: "/zones", hash: "#stories" },
+    shop: { path: "/shop" },
+    cart: { path: "/cart" },
+    marketplace: { path: "/shop" },
+  };
+
+  function normalize(s: string) {
+    return s.toLowerCase().replace(/[?.!]/g, "").trim();
+  }
+
+  function extractTarget(
+    message: string,
+  ): { path?: string; hash?: string } | null {
+    const m = normalize(message);
+
+    // common patterns
+    const patterns = [
+      /^where (is|are) (.+)$/,
+      /^go to (.+)$/,
+      /^open (.+)$/,
+      /^take me to (.+)$/,
+      /^navigate to (.+)$/,
+      /^show (me )?(.+)$/,
+    ];
+    let noun = "";
+
+    for (const p of patterns) {
+      const match = m.match(p);
+      if (match) {
+        noun = (match[2] ?? match[1] ?? "").trim();
+        break;
+      }
+    }
+    if (!noun) noun = m; // allow raw single words like "languages"
+
+    // try direct match first
+    if (ROUTE_ALIASES[noun]) return ROUTE_ALIASES[noun];
+
+    // try fuzzy startsWith match (e.g., "where is languag…")
+    const hit = Object.keys(ROUTE_ALIASES).find((k) => noun.startsWith(k));
+    return hit ? ROUTE_ALIASES[hit] : null;
+  }
+
+  /** Smooth-scroll helper for in-page anchors that exist after navigation */
+  function scrollToHash(hash: string) {
+    const id = hash.replace("#", "");
+    const el = document.getElementById(id);
+    if (el) {
+      el.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+  }
+
+  // call this after we post a user message
+  async function maybeNavigateFrom(message: string) {
+    const target = extractTarget(message);
+    if (!target) return false;
+
+    const wantsPath = target.path && location.pathname !== target.path;
+    if (wantsPath) {
+      // navigate first; scrolling will happen after route mounts
+      navigate(target.path + (target.hash ?? ""), { replace: false });
+      return true;
+    }
+
+    if (target.hash) {
+      scrollToHash(target.hash);
+      return true;
+    }
+
+    return !!target.path;
+  }
+
   const zone = useMemo(() => getZone(window.location.pathname), []);
 
   useEffect(() => {
@@ -90,9 +178,19 @@ export default function TurianAssistant({
       return;
     }
 
-    setBusy(true);
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
+
+    const navigated = await maybeNavigateFrom(text);
+    if (navigated) {
+      setMessages((m) => [
+        ...m,
+        { role: "assistant", content: "On it! Taking you there…" },
+      ]);
+      return;
+    }
+
+    setBusy(true);
 
     try {
       const res = await fetch("/.netlify/functions/chat", {
