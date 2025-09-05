@@ -1,0 +1,89 @@
+.turian-fab {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9999;
+  border: 2px solid var(--nv-blue-300);
+  background: white;
+  border-radius: 999px;
+  width: 52px;
+  height: 52px;
+  display: grid;
+  place-items: center;
+  box-shadow: 0 6px 20px rgba(0,0,0,0.08);
+}
+
+.turian-fab img {
+  width: 28px;
+  height: 28px;
+}
+
+.turian-drawer {
+  position: fixed;
+  inset: auto 0 0 0;
+  height: min(70vh, 560px);
+  background: #fff;
+  border-top: 2px solid var(--nv-blue-200);
+  box-shadow: 0 -10px 30px rgba(0,0,0,0.08);
+  z-index: 9998;
+  display: flex;
+  flex-direction: column;
+}
+
+.turian-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  border-bottom: 1px dashed var(--nv-blue-200);
+}
+
+.turian-title {
+  display: flex;
+  align-items: center;
+  gap: .5rem;
+  font-weight: 700;
+  color: var(--nv-blue-700);
+}
+
+.turian-body {
+  padding: .75rem 1rem;
+  overflow: auto;
+  display: flex;
+  flex-direction: column;
+  gap: .5rem;
+}
+
+.turian-msg {
+  max-width: 80%;
+  padding: .5rem .75rem;
+  border-radius: .75rem;
+  border: 1px solid var(--nv-blue-200);
+}
+
+.turian-msg.me { margin-left: auto; }
+.turian-msg.ai { background: #f7faff; }
+
+.turian-input {
+  display: flex;
+  gap: .5rem;
+  padding: .75rem 1rem;
+  border-top: 1px dashed var(--nv-blue-200);
+}
+
+.turian-input input {
+  flex: 1;
+  padding: .65rem .75rem;
+  border: 1px solid var(--nv-blue-300);
+  border-radius: .5rem;
+}
+
+.turian-input button {
+  padding: .65rem .9rem;
+  border-radius: .5rem;
+  border: 1px solid var(--nv-blue-400);
+  background: var(--nv-blue-50);
+  color: var(--nv-blue-700);
+  font-weight: 600;
+}
