@@ -1,0 +1,72 @@
+import { useEffect, useState } from 'react';
+import ChatDrawer from './ChatDrawer';
+import styles from './assistant.module.css';
+import { sendChat, type ChatMsg } from '../lib/chat';
+
+function detectZone(pathname: string): 'home'|'naturversity'|'marketplace'|'navatar' {
+  if (pathname.startsWith('/naturversity')) return 'naturversity';
+  if (pathname.startsWith('/marketplace')) return 'marketplace';
+  if (pathname.startsWith('/navatar')) return 'navatar';
+  return 'home';
+}
+
+export default function TurianAssistant() {
+  const [open, setOpen] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [zone, setZone] = useState<'home'|'naturversity'|'marketplace'|'navatar'>('home');
+  const [messages, setMessages] = useState<ChatMsg[]>([]);
+
+  useEffect(() => {
+    try {
+      const path = typeof window !== 'undefined' ? window.location.pathname : '/';
+      setZone(detectZone(path));
+    } catch {
+      setZone('home');
+    }
+  }, []);
+
+  async function handleSend(text: string) {
+    const next = [...messages, { role: 'user', content: text }];
+    setMessages(next);
+    setSending(true);
+    try {
+      const reply = await sendChat(next, zone);
+      setMessages([...next, { role: 'assistant', content: reply }]);
+      if (typeof window !== 'undefined' && window.matchMedia('(max-width: 640px)').matches) {
+        setTimeout(() => setOpen(false), 600);
+      }
+    } catch {
+      setMessages([...next, { role: 'assistant', content: 'Sorry—something went wrong. Try again.' }]);
+    } finally {
+      setSending(false);
+    }
+  }
+
+  useEffect(() => {
+    const onEsc = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false); };
+    window.addEventListener('keydown', onEsc);
+    return () => window.removeEventListener('keydown', onEsc);
+  }, []);
+
+  return (
+    <>
+      <button
+        className={styles.float}
+        aria-label="Open Turian assistant"
+        onClick={() => setOpen(true)}
+      >
+        {/* Re-use existing asset instead of adding binary */}
+        <img src="/turian_media_logo_transparent.png" alt="Turian" className={styles.icon} />
+      </button>
+
+      <ChatDrawer
+        open={open}
+        onClose={() => setOpen(false)}
+        messages={messages}
+        onSend={handleSend}
+        sending={sending}
+      />
+    </>
+  );
+}
+
