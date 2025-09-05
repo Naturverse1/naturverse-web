@@ -1,24 +1,33 @@
-// minimal ESM handler (no SDK) – uses OPENAI_API_KEY env
-export default async (req: Request) => {
-  if (req.method !== "POST") return new Response("Method Not Allowed", { status: 405 });
+import type { Handler } from '@netlify/functions';
+
+type Msg = { role:'user'|'assistant'; content:string };
+
+const canned = {
+  home:    'Welcome to The Naturverse! Try Worlds, Zones, or Marketplace from the top nav.',
+  marketplace:
+          'Marketplace: Shop (featured items), NFT/Mint, Specials, and Wishlist tabs.',
+  naturversity:
+          'Naturversity has Languages, Courses, Quizzes, and Music hubs.',
+  navatar: 'Navatar: Create, Pick Your Navatar, or Upload/Edit.',
+};
+
+const handler: Handler = async (event) => {
   try {
-    const { message } = await req.json();
-    const body = {
-      model: "gpt-4o-mini",
-      input: [
-        { role: "system", content: "You are Turian, a friendly kid-safe nature guide. Keep replies <=80 words." },
-        { role: "user", content: String(message ?? "") }
-      ]
-    };
-    const r = await fetch("https://api.openai.com/v1/responses", {
-      method: "POST",
-      headers: { "Content-Type": "application/json", "Authorization": `Bearer ${process.env.OPENAI_API_KEY}` },
-      body: JSON.stringify(body)
-    });
-    const j = await r.json();
-    const reply = j.output_text ?? "Hello from Turian!";
-    return new Response(JSON.stringify({ reply }), { headers: { "Content-Type": "application/json" } });
-  } catch (e:any) {
-    return new Response(JSON.stringify({ reply:"Turian is resting. Try again soon." }), { headers: { "Content-Type":"application/json" }, status: 200 });
+    if (!event.body) return { statusCode: 400, body: 'missing body' };
+    const { zone, messages } = JSON.parse(event.body) as { zone?: string; messages?: Msg[] };
+
+    const last = (messages ?? []).slice(-1)[0]?.content?.toLowerCase() || '';
+    let reply = canned[(zone as keyof typeof canned) || 'home'];
+
+    if (last.includes('language')) reply = 'Languages is in Naturversity → Languages.';
+    if (last.includes('course'))   reply = 'Courses are in Naturversity → Courses.';
+    if (last.includes('shop'))     reply = 'Open Marketplace → Shop tab.';
+    if (last.includes('wishlist')) reply = 'Wishlist is a tab inside Marketplace.';
+
+    return { statusCode: 200, body: JSON.stringify({ reply }) };
+  } catch {
+    return { statusCode: 200, body: JSON.stringify({ reply: 'Sorry—something went wrong. Try again.' }) };
   }
-}
+};
+
+export { handler };
