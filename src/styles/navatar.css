@@ -1,0 +1,25 @@
+.creator {
+  display: grid;
+  grid-template-columns: 1fr 380px;
+  gap: 20px;
+}
+@media (max-width: 900px) {
+  .creator { grid-template-columns: 1fr; }
+}
+
+.panel, .preview.card { background:#fff; border-radius:16px; padding:16px; }
+input, textarea { font-size:16px; }
+.chip-row { display:flex; gap:8px; flex-wrap:wrap; }
+.chip { border-radius:20px; padding:8px 12px; border:1px solid #cdd7ff; background:#eef3ff; }
+.chip.active { background:#4f77ff; color:#fff; }
+
+.preview .frame { width:100%; aspect-ratio: 3 / 4; border-radius:12px; background:#fafafa; overflow:hidden; }
+.preview img { width:100%; height:100%; object-fit:contain; display:block; }
+.img-empty { display:grid; place-items:center; width:100%; height:100%; color:#7a8; }
+
+.grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(220px,1fr)); gap:16px; }
+.card img { width:100%; height:auto; display:block; border-radius:12px; }
+.error { color:#c00; }
+.notice { color:#246; }
+.btn { background:#4f77ff; color:#fff; padding:10px 16px; border-radius:12px; border:none; }
+.btn.secondary { background:#e9eefc; color:#174; }
