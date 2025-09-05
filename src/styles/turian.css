@@ -388,3 +388,65 @@
 [data-page="turian"] .chatCard h3 {
   color: var(--naturverse-blue) !important;
 }
+
+/* === Turian assistant floating UI === */
+.ta-fab{
+  position:fixed; right:16px; bottom:16px;
+  width:56px; height:56px; border-radius:12px;
+  background:#2D6EE8;
+  display:grid; place-items:center;
+  box-shadow:0 6px 18px rgba(0,0,0,.15);
+  z-index:2147483000;
+  border:0;
+}
+.ta-fab img{ width:36px; height:36px; border-radius:8px; }
+
+.turian-assistant{
+  position:fixed; right:16px;
+  bottom: calc(16px + env(safe-area-inset-bottom));
+  width: min(420px, calc(100vw - 32px));
+  max-height: min(65vh, 560px);
+  display:flex; flex-direction:column;
+  background:#fff; color:#111;
+  border-radius:16px; box-shadow:0 16px 48px rgba(0,0,0,.18);
+  overflow:hidden; z-index:2147483640;
+  border:1px solid #E5ECFF;
+}
+
+.ta-header{
+  display:grid; grid-template-columns:auto 1fr auto;
+  gap:10px; align-items:center;
+  background:#2D6EE8; color:#fff; padding:10px 12px;
+}
+.ta-avatar{ width:22px; height:22px; border-radius:6px; }
+
+.ta-close{
+  background:rgba(255,255,255,.15); color:#fff; border:0;
+  width:28px; height:28px; border-radius:8px; font-size:18px; line-height:1;
+}
+
+.ta-body{
+  flex:1; padding:12px; overflow-y:auto;
+  overscroll-behavior:contain; -webkit-overflow-scrolling:touch;
+  background:#F8FAFF;
+}
+
+.ta-input{
+  display:flex; gap:8px; padding:12px; background:#fff; border-top:1px solid #E5ECFF;
+}
+.ta-input input{
+  flex:1; padding:10px 12px; border-radius:10px; border:1px solid #D6E2FF; outline:none;
+}
+.ta-input button{
+  padding:10px 14px; border-radius:10px; border:0; background:#2D6EE8; color:#fff; font-weight:600;
+}
+
+@media (max-width: 640px){
+  .turian-assistant{
+    right:8px; left:8px; width:auto;
+    bottom: calc(8px + env(safe-area-inset-bottom));
+    max-height: 70vh;
+    border-radius:14px;
+  }
+  .ta-fab{ right:8px; bottom:8px; width:52px; height:52px; }
+}
