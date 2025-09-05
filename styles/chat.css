@@ -1,0 +1,67 @@
+:root {
+  --nv-blue: #2563eb;
+  --nv-ring: rgba(37, 99, 235, 0.3);
+  --nv-bg: #ffffff;
+  --nv-text: #0f172a;
+}
+
+.turian-btn {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 60;
+  border: none;
+  border-radius: 9999px;
+  background: var(--nv-bg);
+  box-shadow: 0 8px 20px rgba(2, 6, 23, 0.15);
+  padding: 10px;
+  cursor: pointer;
+}
+
+.turian-drawer {
+  position: fixed;
+  right: 1rem;
+  bottom: 5.25rem;
+  z-index: 60;
+  width: min(420px, 92vw);
+  max-height: min(70vh, 560px);
+  background: var(--nv-bg);
+  color: var(--nv-text);
+  border-radius: 16px;
+  box-shadow: 0 20px 40px rgba(2, 6, 23, 0.25);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.turian-header {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 12px 14px; border-bottom: 1px solid rgba(15,23,42,.08);
+}
+
+.turian-close {
+  border: 0; background: var(--nv-blue); color: #fff;
+  width: 28px; height: 28px; border-radius: 8px; font-size: 18px; line-height: 1;
+}
+
+.turian-body { padding: 12px 14px; overflow: auto; display: flex; flex-direction: column; gap: 8px; }
+.turian-tip { opacity: .75; font-style: italic; }
+.turian-msg.user { font-weight: 600; }
+
+.turian-inputrow {
+  display: flex; gap: 8px; padding: 12px; border-top: 1px solid rgba(15,23,42,.08);
+}
+.turian-inputrow input {
+  flex: 1; border-radius: 12px; border: 1px solid rgba(15,23,42,.15); padding: 10px 12px; font-size: 16px;
+}
+.turian-inputrow input:focus { outline: none; box-shadow: 0 0 0 4px var(--nv-ring); border-color: var(--nv-blue); }
+.turian-send { background: var(--nv-blue); color: #fff; border: 0; border-radius: 12px; padding: 10px 14px; font-weight: 700; }
+.turian-send:disabled { opacity: .6; }
+
+@media (max-width: 480px) {
+  .turian-drawer {
+    right: .5rem; left: .5rem; bottom: 4.75rem;
+    width: auto; max-height: 62vh;
+  }
+}
+
