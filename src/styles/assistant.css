@@ -1,0 +1,41 @@
+.turian-drawer {
+  position: fixed;
+  right: 1rem;
+  bottom: 5rem;
+  width: min(90vw, 360px);
+  max-height: 80vh;
+  background: #fff;
+  border: 2px solid var(--nv-blue-300);
+  border-radius: 0.5rem;
+  z-index: 10000;
+  padding: 0.5rem;
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
+}
+
+.turian-close {
+  background: none;
+  border: none;
+  align-self: flex-end;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.turian-messages {
+  flex: 1;
+  overflow-y: auto;
+  margin-bottom: 0.5rem;
+}
+
+.turian-form input {
+  width: 100%;
+  border: 1px solid var(--nv-blue-300);
+  border-radius: 0.25rem;
+  padding: 0.25rem 0.5rem;
+}
+
+@media (max-width: 420px) {
+  .turian-fab { right: auto; left: 1rem; }
+  .turian-drawer { right: auto; left: 1rem; }
+}

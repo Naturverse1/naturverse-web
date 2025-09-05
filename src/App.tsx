@@ -10,6 +10,7 @@ import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
 import './init/runtime-logger'; // lightweight global error hooks
+import TurianAssistant from './components/ai/TurianAssistant';
 
 export default function App() {
   useEffect(() => {
