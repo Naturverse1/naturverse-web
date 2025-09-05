@@ -4,6 +4,12 @@
   --naturverse-blue: #2e6bff;
 }
 
+/* make mobile input sizing feel consistent */
+input,
+button {
+  font: inherit;
+}
+
 /* ================================
    NaturBank — color + layout fix
    Scope: any root with .naturbank-page OR [data-page="naturbank"]

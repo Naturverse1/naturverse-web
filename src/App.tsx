@@ -5,6 +5,7 @@ import { organizationLd, websiteLd } from './lib/jsonld';
 import { CartProvider } from './lib/cart';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
+import TurianAssistant from './components/TurianAssistant';
 import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
@@ -33,6 +34,7 @@ export default function App() {
           </div>
         </main>
         <ToasterListener />
+        <TurianAssistant />
       </>
     </CartProvider>
   );
