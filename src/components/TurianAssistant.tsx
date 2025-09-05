@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { maybeNavigateFrom } from "@/lib/assistant/maybeNavigateFrom";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -90,9 +91,26 @@ export default function TurianAssistant({
       return;
     }
 
-    setBusy(true);
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
+
+    const href = maybeNavigateFrom(text);
+    if (href) {
+      setMessages((m) => [
+        ...m,
+        {
+          role: "assistant",
+          content: `On it! Taking you to ${href.replace("/", "")}…`,
+        },
+      ]);
+      setOpen(false);
+      setTimeout(() => {
+        window.location.href = href;
+      }, 150);
+      return;
+    }
+
+    setBusy(true);
 
     try {
       const res = await fetch("/.netlify/functions/chat", {
