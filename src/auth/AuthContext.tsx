@@ -29,9 +29,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(data.session?.user ?? null);
       setLoading(false);
 
-      if (data.session?.user) {
-        await upsertProfile(data.session.user.id, data.session.user.email);
-      }
+        if (data.session?.user) {
+          await upsertProfile(data.session.user.id, data.session.user.email ?? null);
+        }
     })();
 
     const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
@@ -39,9 +39,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       setUser(s?.user ?? null);
       setLoading(false);
 
-      if (s?.user) {
-        upsertProfile(s.user.id, s.user.email);
-      }
+        if (s?.user) {
+          upsertProfile(s.user.id, s.user.email ?? null);
+        }
     });
 
     return () => {

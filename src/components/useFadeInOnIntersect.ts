@@ -13,17 +13,17 @@ export function useFadeInOnIntersect<T extends HTMLElement>() {
     // Observe visibility
     const io = new IntersectionObserver(
       entries => entries.forEach(e => {
-        if (e.isIntersecting) {
-          // If it's an <img>, wait for load; else reveal immediately
-          if ((el as HTMLImageElement).tagName === "IMG") {
-            const img = el as HTMLImageElement;
-            if (img.complete) tryShow();
-            else img.addEventListener("load", tryShow, { once: true });
-          } else {
-            tryShow();
+          if (e.isIntersecting) {
+            // If it's an <img>, wait for load; else reveal immediately
+            if (el.tagName === "IMG") {
+              const img = el as unknown as HTMLImageElement;
+              if (img.complete) tryShow();
+              else img.addEventListener("load", tryShow, { once: true });
+            } else {
+              tryShow();
+            }
+            io.disconnect();
           }
-          io.disconnect();
-        }
       }),
       { rootMargin: "64px" } // start a bit before it scrolls in
     );

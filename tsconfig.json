@@ -16,5 +16,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["app", "components", "lib", "scripts", "src"]
+  "include": ["src", "scripts", "netlify/functions/chat.ts"]
 }
