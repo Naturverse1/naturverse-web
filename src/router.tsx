@@ -38,7 +38,7 @@ import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
 import ProfilePage from './pages/profile';
-import AuthCallback from './pages/AuthCallback';
+import AuthCallback from './pages/auth/Callback';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import Contact from './pages/Contact';
