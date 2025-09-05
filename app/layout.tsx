@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { SITE } from '@/lib/site';
 import "../styles/globals.css";
 import "../styles/nav.css";
-import TurianAssistant from "@/components/TurianAssistant";
+import TurianAssistantWrapper from "./TurianAssistantWrapper";
 
 // ensure absolute URLs in SEO metadata
 export const metadata: Metadata = {
@@ -19,7 +19,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
     <html lang="en">
       <body>
         {children}
-        <TurianAssistant />
+        <TurianAssistantWrapper />
       </body>
     </html>
   );
