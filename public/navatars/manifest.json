@@ -1,0 +1,6 @@
+{
+  "items": [
+    { "id": "leaf", "name": "Leaf Spirit", "image": "/navatars/leaf.png", "category": "Spirit" },
+    { "id": "frankie", "name": "Frankie Frog", "image": "/navatars/frog.png", "category": "Animal" }
+  ]
+}

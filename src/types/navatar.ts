@@ -1,12 +1,16 @@
-export type NavatarBase = "Animal" | "Fruit" | "Insect" | "Spirit";
-
 export type Navatar = {
-  id: string;             // nano id (timestamp-based string)
+  id: string;
+  name?: string;
+  imageUrl?: string;      // data URL or public URL
+  species?: string;
+  base?: string;          // Animal | Fruit | Insect | Spirit
+  backstory?: string;
+  createdAt: number;
+};
+
+export type Preset = {
+  id: string;
   name: string;
-  base: NavatarBase;
-  species: string;        // e.g., “Red Panda”, “Mango”, …
-  backstory: string;
-  powers: string[];       // short list of powers/traits
-  imageDataUrl?: string;  // optional uploaded photo (data URL)
-  createdAt: number;      // epoch ms
+  image: string;          // e.g. /navatars/leaf.png
+  category?: string;
 };
