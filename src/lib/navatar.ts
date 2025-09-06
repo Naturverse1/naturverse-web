@@ -1,4 +1,6 @@
 import { supabase } from "./supabase-client";
+import { createClient } from "@supabase/supabase-js";
+import { loadActiveNavatar } from "./localNavatar";
 import type { CharacterCard } from "./types";
 
 export type NavatarRow = {
@@ -77,54 +79,60 @@ export async function getSessionUser() {
   return user;
 }
 
-export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
-  const user = await getSessionUser();
+export async function fetchMyCharacterCard(
+  sb = createClient(
+    import.meta.env.VITE_SUPABASE_URL!,
+    import.meta.env.VITE_SUPABASE_ANON_KEY!
+  )
+): Promise<CharacterCard | null> {
+  const {
+    data: { user },
+  } = await sb.auth.getUser();
   if (!user) return null;
-  const { data, error } = await supabase
+
+  const avatarId = loadActiveNavatar();
+  if (!avatarId) return null;
+
+  const { data, error } = await sb
     .from("character_cards")
     .select("*")
     .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
+    .eq("avatar_id", avatarId)
     .limit(1)
     .maybeSingle();
-  if (error && (error as any).code !== "PGRST116") throw error;
+
+  if (error) throw error;
   return (data as CharacterCard) ?? null;
 }
 
-export async function getActiveNavatar(userId: string) {
-  return supabase
-    .from("avatars")
-    .select("id, name, image_url")
-    .eq("user_id", userId)
-    .eq("is_active", true)
-    .single();
-}
+export async function saveMyCharacterCard(
+  input: Omit<CharacterCard, "id" | "user_id" | "created_at" | "updated_at">,
+  sb = createClient(
+    import.meta.env.VITE_SUPABASE_URL!,
+    import.meta.env.VITE_SUPABASE_ANON_KEY!
+  )
+) {
+  const {
+    data: { user },
+  } = await sb.auth.getUser();
+  if (!user) throw new Error("Not signed in");
 
-export async function upsertCharacterCard(payload: {
-  user_id: string;
-  avatar_id: string;
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory?: string;
-  powers?: string[];
-  traits?: string[];
-}) {
-  return supabase
+  const avatarId = loadActiveNavatar();
+  if (!avatarId) throw new Error("Please pick or upload a Navatar first.");
+
+  const payload = {
+    ...input,
+    user_id: user.id,
+    avatar_id: avatarId,
+  };
+
+  const { data, error } = await sb
     .from("character_cards")
-    .upsert(
-      { ...payload, updated_at: new Date().toISOString() },
-      { onConflict: "user_id,avatar_id" }
-    )
+    .upsert(payload, { onConflict: "user_id,avatar_id" })
     .select()
     .single();
-}
 
-export async function getCardForAvatar(avatarId: string) {
-  return supabase
-    .from("character_cards")
-    .select("*")
-    .eq("avatar_id", avatarId)
-    .single();
+  if (error) throw error;
+  return data as CharacterCard;
 }
 
