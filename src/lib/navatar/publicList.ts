@@ -1,4 +1,4 @@
-export type PublicNavatar = { name: string; src: string };
+export type PublicNavatar = { id: string; name: string; src: string };
 
 function labelFromFilename(f: string) {
   const base = f.replace(/\.[a-z0-9]+$/i, "");
@@ -12,10 +12,16 @@ export async function loadPublicNavatars(): Promise<PublicNavatar[]> {
     const res = await fetch("/navatars/manifest.json", { cache: "no-store" });
     if (res.ok) {
       const files: string[] = await res.json();
-      return files.map((f) => ({ name: labelFromFilename(f), src: `/navatars/${f}` }));
+      return files.map((f) => {
+        const id = f.replace(/\.[a-z0-9]+$/i, "");
+        return { id, name: labelFromFilename(f), src: `/navatars/${f}` };
+      });
     }
   } catch {}
   const fallback = ["turian.png", "koala.png", "bald-eagle.png", "pixie.png", "tiger.png"];
-  return fallback.map((f) => ({ name: labelFromFilename(f), src: `/navatars/${f}` }));
+  return fallback.map((f) => {
+    const id = f.replace(/\.[a-z0-9]+$/i, "");
+    return { id, name: labelFromFilename(f), src: `/navatars/${f}` };
+  });
 }
 

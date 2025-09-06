@@ -2,14 +2,15 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { fetchMyCharacterCard } from "../../lib/navatar";
+import { loadActive as loadActiveNav } from "../../lib/localStorage";
+import { loadActive as loadActiveId, saveActive as saveActiveId } from "../../lib/localNavatar";
+import { fetchMyCharacterCard, getMyLatestAvatar } from "../../lib/navatar";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const activeNavatar = useMemo(() => loadActiveNav<any>(), []);
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
@@ -25,6 +26,16 @@ export default function MyNavatarPage() {
     return () => {
       alive = false;
     };
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      const current = loadActiveId();
+      if (!current) {
+        const latest = await getMyLatestAvatar();
+        if (latest?.id) saveActiveId(latest.id);
+      }
+    })();
   }, []);
 
   return (
