@@ -128,3 +128,22 @@ export async function getCardForAvatar(avatarId: string) {
     .single();
 }
 
+
+export async function getActiveNavatarWithCard(userId: string) {
+  const { data: active } = await supabase
+    .from("avatars")
+    .select("*")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .maybeSingle();
+
+  if (!active) return { avatar: null, card: null };
+
+  const { data: card } = await supabase
+    .from("character_cards")
+    .select("*")
+    .eq("avatar_id", active.id)
+    .maybeSingle();
+
+  return { avatar: active, card: (card as unknown as CharacterCard) ?? null };
+}
