@@ -1,19 +1,10 @@
-export type Navatar = {
-  name: string;
-  species: string;
-  base: string;
-  emoji?: string;
-  photo?: string;
-};
+import type { Navatar } from "./types";
 
 const K = "naturverse.navatar.current.v1";
 
 export function getCurrent(): Navatar | null {
-  try {
-    return JSON.parse(localStorage.getItem(K) || "null");
-  } catch {
-    return null;
-  }
+  try { return JSON.parse(localStorage.getItem(K) || "null"); }
+  catch { return null; }
 }
 
 export function setCurrent(n: Navatar | null) {

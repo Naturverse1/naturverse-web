@@ -27,12 +27,13 @@ const LABELS: Record<string, string> = {
   stories: "Stories",
 };
 
-export function Breadcrumbs(props: { items?: Crumb[] }) {
+export function Breadcrumbs(props: { items?: Crumb[]; className?: string }) {
+  const { items: itemsProp, className } = props;
   const location = useLocation();
 
   // Allow explicit items to override auto mode when needed
   const items: Crumb[] = React.useMemo(() => {
-    if (props.items?.length) return props.items;
+    if (itemsProp?.length) return itemsProp;
 
     const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
     const acc: Crumb[] = [];
@@ -50,17 +51,24 @@ export function Breadcrumbs(props: { items?: Crumb[] }) {
     });
 
     return acc;
-  }, [location.pathname, props.items]);
+  }, [location.pathname, itemsProp]);
 
   if (items.length <= 1) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="nv-breadcrumbs">
+    <nav
+      aria-label="Breadcrumb"
+      className={["nv-breadcrumbs", className].filter(Boolean).join(" ")}
+    >
       <ol>
         {items.map((c, i) => {
           const isLast = i === items.length - 1;
           return (
-            <li key={`${c.label}-${i}`} aria-current={isLast ? "page" : undefined}>
+            <li
+              key={`${c.label}-${i}`}
+              aria-current={isLast ? "page" : undefined}
+              className="crumb"
+            >
               {c.href && !isLast ? <Link to={c.href}>{c.label}</Link> : <span>{c.label}</span>}
               {!isLast && <span className="sep"> / </span>}
             </li>
