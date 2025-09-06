@@ -41,6 +41,7 @@ import NavatarUpload from './pages/navatar/upload';
 import NavatarGenerate from './pages/navatar/generate';
 import NavatarMint from './pages/navatar/mint';
 import NavatarMarketplace from './pages/navatar/marketplace';
+import NavatarCardPage from './pages/navatar/card';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -127,6 +128,7 @@ export const router = createBrowserRouter([
           { path: 'generate', element: <NavatarGenerate /> },
           { path: 'mint', element: <NavatarMint /> },
           { path: 'marketplace', element: <NavatarMarketplace /> },
+          { path: 'card', element: <NavatarCardPage /> },
         ],
       },
         { path: 'passport', element: <PassportPage /> },
