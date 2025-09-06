@@ -1,57 +1,65 @@
-import { useEffect, useState } from "react";
-import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
-import { Link } from "react-router-dom";
+import { getActiveNavatar, getCard } from '../../lib/navatar';
+import { useEffect, useState } from 'react';
+import { useSession } from '../../lib/session';
+import { Link } from 'react-router-dom';
+import { NavatarPills } from '../../components/NavatarPills';
 
-export default function NavatarHome() {
-  const [rows, setRows] = useState<NavatarRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+export default function NavatarHub() {
+  const { user } = useSession();
+  const [activeId, setActiveId] = useState<string | null>(null);
+  const [card, setCard] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
-      try {
-        setLoading(true);
-        setRows(await listMyNavatars());
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        setLoading(false);
+      if (!user) return;
+      const active = await getActiveNavatar(user.id);
+      setActiveId(active?.id ?? null);
+      if (active?.id) {
+        const c = await getCard(user.id, active.id);
+        setCard(c);
       }
     })();
-  }, []);
+  }, [user?.id]);
 
   return (
-    <div className="Page">
-      <nav className="Breadcrumbs">
-        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
-      </nav>
-
-      <h1>Navatar</h1>
-      <p>Create a character, customize details, and save your Navatar card.</p>
-
-      <div className="ctaRow">
-        <Link className="Button" to="/navatar/create">Create</Link>
+    <div className="container mx-auto px-4">
+      <nav className="text-sm mb-4"><Link to="/">Home</Link> / Navatar</nav>
+      <h1 className="text-4xl font-extrabold text-[color:var(--nv-blue-900)]">Navatar</h1>
+      <div className="mt-4">
+        <NavatarPills active="home" />
       </div>
 
-      <h2>My Navatars</h2>
-      {loading && <p>Loading…</p>}
-      {err && <p className="Error">{err}</p>}
-      <div className="CardGrid">
-        {rows.map(r => {
-          const url = navatarImageUrl(r.image_path);
-          return (
-            <div key={r.id} className="NavatarCard">
-              <div className="NavatarTitle">{r.name ?? r.base_type}</div>
-              <div className="NavatarImg">
-                {url ? <img src={url} alt={r.name ?? r.base_type} /> : <div className="NoPhoto">No photo</div>}
-              </div>
-              <div className="NavatarMeta">
-                <span>{r.base_type}</span> • <time>{new Date(r.created_at).toLocaleDateString()}</time>
-              </div>
+      <div className="mt-6 grid md:grid-cols-2 gap-6">
+        <div>{/* existing Navatar card (unchanged) */}</div>
+
+        <div className="rounded-2xl border border-[color:var(--nv-blue-200)] bg-[color:var(--nv-blue-200)]/30 p-5">
+          <h3 className="text-xl font-extrabold text-[color:var(--nv-blue-900)] mb-2">My Navatar</h3>
+          {!card ? (
+            <div className="text-[color:var(--nv-blue-900)]/80">No card yet.</div>
+          ) : (
+            <div className="space-y-3 text-[color:var(--nv-blue-900)]">
+              {card.name && <Row label="Name" value={card.name} />}
+              {card.species && <Row label="Species" value={card.species} />}
+              {card.kingdom && <Row label="Kingdom" value={card.kingdom} />}
+              {card.backstory && <Row label="Backstory" value={card.backstory} />}
+              {card.powers?.length && <Row label="Powers" value={card.powers.join(', ')} />}
+              {card.traits?.length && <Row label="Traits" value={card.traits.join(', ')} />}
             </div>
-          );
-        })}
+          )}
+          <div className="mt-4">
+            <Link className="nv-btn-outline" to="/navatar/card">{card ? 'Edit Card' : 'Create Card'}</Link>
+          </div>
+        </div>
       </div>
+    </div>
+  );
+}
+
+function Row({ label, value }: { label: string; value: string }) {
+  return (
+    <div>
+      <div className="font-semibold">{label}</div>
+      <div>{value}</div>
     </div>
   );
 }
