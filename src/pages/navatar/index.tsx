@@ -1,30 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { fetchMyCharacterCard } from "../../lib/navatar";
-import type { CharacterCard } from "../../lib/types";
-import { Link } from "react-router-dom";
+import CharacterCard from "../../components/CharacterCard";
+import NavatarImage from "../../components/NavatarImage";
+import { getActiveNavatarWithCard, navatarImageUrl } from "../../lib/navatar";
+import { supabase } from "../../lib/supabase-client";
+import type { CharacterCard as Card } from "../../lib/types";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
-  const [card, setCard] = useState<CharacterCard | null>(null);
+  const [navatar, setNavatar] = useState<any>(null);
+  const [card, setCard] = useState<Card | null>(null);
+  const navigate = useNavigate();
 
   useEffect(() => {
-    let alive = true;
     (async () => {
-      try {
-        const c = await fetchMyCharacterCard();
-        if (alive) setCard(c);
-      } catch {
-        // ignore
-      }
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+      const { navatar, card } = await getActiveNavatarWithCard(supabase, user.id);
+      setNavatar(navatar);
+      setCard(card);
     })();
-    return () => {
-      alive = false;
-    };
   }, []);
 
   return (
@@ -32,66 +31,21 @@ export default function MyNavatarPage() {
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center page-title">My Navatar</h1>
       <NavatarTabs />
-      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
-        <section>
-          <div className="nv-panel">
-            <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
-          </div>
+      <div className="navatar-hub" style={{ marginTop: 8 }}>
+        <section className="nv-panel">
+          <NavatarImage
+            src={navatarImageUrl(navatar?.image_path ?? null)}
+            alt={navatar?.name ?? "Navatar"}
+            mode="contain"
+          />
         </section>
 
-        <aside className="nv-panel">
-          <div className="nv-title">Character Card</div>
-
-          {!card ? (
-            <p>
-              No card yet. <Link to="/navatar/card">Create Card</Link>
-            </p>
-          ) : (
-            <dl className="nv-list">
-              {card.name && (
-                <>
-                  <dt>Name</dt>
-                  <dd>{card.name}</dd>
-                </>
-              )}
-              {card.species && (
-                <>
-                  <dt>Species</dt>
-                  <dd>{card.species}</dd>
-                </>
-              )}
-              {card.kingdom && (
-                <>
-                  <dt>Kingdom</dt>
-                  <dd>{card.kingdom}</dd>
-                </>
-              )}
-              {card.backstory && (
-                <>
-                  <dt>Backstory</dt>
-                  <dd>{card.backstory}</dd>
-                </>
-              )}
-              {card.powers && card.powers.length > 0 && (
-                <>
-                  <dt>Powers</dt>
-                  <dd>{card.powers.map(p => `— ${p}`).join("\n")}</dd>
-                </>
-              )}
-              {card.traits && card.traits.length > 0 && (
-                <>
-                  <dt>Traits</dt>
-                  <dd>{card.traits.map(t => `— ${t}`).join("\n")}</dd>
-                </>
-              )}
-            </dl>
-          )}
-
-          <div style={{ marginTop: 12 }}>
-            <Link to="/navatar/card" className="btn">
-              Edit Card
-            </Link>
-          </div>
+        <aside>
+          <CharacterCard
+            card={card ?? undefined}
+            color="blue"
+            onEdit={() => navigate("/navatar/card")}
+          />
         </aside>
       </div>
     </main>

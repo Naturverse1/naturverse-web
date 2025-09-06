@@ -155,3 +155,55 @@
   }
 }
 
+/* Character Card colors */
+.nv-card {
+  border-radius: 16px;
+  padding: 16px;
+}
+.nv-card-blue {
+  background: var(--nv-blue-50);
+  color: var(--nv-blue-900);
+}
+.nv-card-gray {
+  background: #f5f7fb;
+  color: #111827;
+}
+
+/* Navatar image framing */
+.nv-img-wrap {
+  width: 100%;
+  aspect-ratio: 3/4;
+  border-radius: 20px;
+  overflow: hidden;
+}
+.nv-img-wrap img {
+  width: 100%;
+  height: 100%;
+  object-position: center;
+  display: block;
+}
+.nv-img-wrap.contain img {
+  object-fit: contain;
+  background: #fff;
+}
+.nv-img-wrap.cover img {
+  object-fit: cover;
+}
+.nv-img-ph {
+  width: 100%;
+  height: 100%;
+  background: #eef3ff;
+}
+
+/* Hub responsive layout */
+.navatar-hub {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 20px;
+}
+@media (min-width: 960px) {
+  .navatar-hub {
+    grid-template-columns: 1fr 1fr;
+  }
+}
+

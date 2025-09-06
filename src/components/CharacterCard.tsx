@@ -1,62 +1,63 @@
-import React from 'react';
-import Img from './Img';
-
-export type CardData = {
-  id: string;
-  name: string;
-  realm: string;
-  species: string;
-  emoji: string;
-  color: string;
-  power: string;
-  motto: string;
-  avatarDataUrl?: string; // optional base64 image
-};
-
-export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
-  const { name, realm, species, emoji, color, power, motto, avatarDataUrl } = data;
-
+export default function CharacterCard({
+  card,
+  color = 'blue',
+  onEdit,
+}:{
+  card?: any;
+  color?: 'blue' | 'gray';
+  onEdit?: () => void;
+}) {
   return (
-    <div
-      className="nv-card"
-      style={{
-        border: `2px solid ${color || 'var(--nv-border)'}`,
-        boxShadow: '0 6px 20px rgba(0,0,0,.08)',
-      }}
-    >
-      <div className="nv-card__header" style={{ background: color || 'var(--nv-blue-50)' }}>
-        <div className="nv-card__emoji" aria-hidden>
-          {emoji || '🌱'}
-        </div>
-        <div className="nv-card__title">
-          <div className="nv-card__name">{name || 'Navatar'}</div>
-          <div className="nv-card__sub">
-            {species || 'Species'} · {realm || 'Realm'}
-          </div>
-        </div>
-      </div>
-
-      <div className="nv-card__body">
-        <div className="nv-card__avatar">
-          {avatarDataUrl ? (
-            <Img src={avatarDataUrl} alt={`${name} avatar`} />
-          ) : (
-            <div className="nv-card__avatar--placeholder">Add image</div>
+    <div className={`nv-card ${color === 'blue' ? 'nv-card-blue' : 'nv-card-gray'}`}>
+      {card ? (
+        <dl className="nv-list">
+          {card.name && (
+            <>
+              <dt>Name</dt>
+              <dd>{card.name}</dd>
+            </>
           )}
-        </div>
-        <dl className="nv-card__facts">
-          <div>
-            <dt>Power</dt>
-            <dd>{power || '—'}</dd>
-          </div>
-          <div>
-            <dt>Motto</dt>
-            <dd>{motto || '—'}</dd>
-          </div>
+          {card.species && (
+            <>
+              <dt>Species</dt>
+              <dd>{card.species}</dd>
+            </>
+          )}
+          {card.kingdom && (
+            <>
+              <dt>Kingdom</dt>
+              <dd>{card.kingdom}</dd>
+            </>
+          )}
+          {card.backstory && (
+            <>
+              <dt>Backstory</dt>
+              <dd>{card.backstory}</dd>
+            </>
+          )}
+          {card.powers && card.powers.length > 0 && (
+            <>
+              <dt>Powers</dt>
+              <dd>{card.powers.map((p: string) => `— ${p}`).join('\n')}</dd>
+            </>
+          )}
+          {card.traits && card.traits.length > 0 && (
+            <>
+              <dt>Traits</dt>
+              <dd>{card.traits.map((t: string) => `— ${t}`).join('\n')}</dd>
+            </>
+          )}
         </dl>
-      </div>
-
-      <div className="nv-card__footer">Naturverse • Character Card</div>
+      ) : (
+        <p>No card yet.</p>
+      )}
+      {onEdit && (
+        <div style={{ marginTop: 12, textAlign: 'center' }}>
+          <button className="btn" onClick={onEdit}>
+            {card ? 'Edit Card' : 'Create Card'}
+          </button>
+        </div>
+      )}
     </div>
   );
-};
+}

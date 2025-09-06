@@ -34,7 +34,7 @@ export default function PickNavatarPage() {
             aria-label={`Pick ${it.name}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <NavatarCard src={it.src} title={it.name} mode="cover" />
           </button>
         ))}
       </div>

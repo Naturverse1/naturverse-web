@@ -2,12 +2,12 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
+import { fetchMyCharacterCard, getActiveNavatarId } from "../../lib/navatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 export default function NavatarCardPage() {
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
@@ -54,32 +54,51 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       if (!user) throw new Error("Please sign in");
 
-      const { data: active } = await getActiveNavatar(user.id);
-      if (!active) {
+      const navatarId =
+        localStorage.getItem("active_navatar_id") ||
+        (await getActiveNavatarId(supabase, user.id));
+
+      if (!navatarId) {
         alert("Please create or select a Navatar first.");
         return;
       }
 
-      const { error } = await upsertCharacterCard({
+      const payload = {
         user_id: user.id,
-        avatar_id: active.id,
+        navatar_id: navatarId,
         name,
         species,
         kingdom,
         backstory,
-        powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : [],
-        traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : [],
-      });
+        powers: powers ? powers.split(",").map((s) => s.trim()) : null,
+        traits: traits ? traits.split(",").map((s) => s.trim()) : null,
+      } as {
+        user_id: string;
+        navatar_id: string;
+        name?: string | null;
+        species?: string | null;
+        kingdom?: string | null;
+        backstory?: string | null;
+        powers?: string[] | null;
+        traits?: string[] | null;
+      };
+
+      const { error } = await supabase
+        .from("character_cards")
+        .upsert(payload, { onConflict: "navatar_id" });
+
       if (error) {
         console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
+        alert("Could not save your card. Please try again.");
         return;
       }
 
-      nav("/navatar/mint");
+      navigate("/navatar/mint");
     } catch (e: any) {
       console.error(e);
       setErr(e.message ?? "Save failed");
