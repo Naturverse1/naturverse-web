@@ -3,6 +3,7 @@ import { Link, useLocation } from "react-router-dom";
 
 const TABS = [
   { to: "/navatar", label: "My Navatar" },
+  { to: "/navatar/card", label: "Card" },
   { to: "/navatar/pick", label: "Pick" },
   { to: "/navatar/upload", label: "Upload" },
   { to: "/navatar/generate", label: "Generate" },
