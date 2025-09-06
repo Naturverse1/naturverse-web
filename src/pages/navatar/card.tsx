@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
+import NavatarPills from "../../components/NavatarPills";
 import { loadPrimaryNavatarId, loadCard, saveCard } from "../../lib/navatarCard";
 import "../../styles/navatar.css";
 
@@ -81,42 +81,45 @@ export default function NavatarCardPage() {
   return (
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-      <h1 className="center">Character Card</h1>
-      <NavatarTabs />
-      <form onSubmit={onSave} style={{ maxWidth: 720, margin: "16px auto", display: "grid", gap: 12 }}>
+      <h1 className="center" style={{ color: "var(--nv-blue-900)" }}>Character Card</h1>
+      <NavatarPills active="card" color="blue" />
+      <form
+        onSubmit={onSave}
+        style={{ maxWidth: 720, margin: "16px auto", display: "grid", gap: 12, color: "var(--nv-blue-900)" }}
+      >
         <label>
           Name
-          <input value={form.name} onChange={onChange("name")} />
+          <input className="nv-input" value={form.name} onChange={onChange("name")} />
         </label>
 
         <label>
           Species / Type
-          <input value={form.species} onChange={onChange("species")} />
+          <input className="nv-input" value={form.species} onChange={onChange("species")} />
         </label>
 
         <label>
           Kingdom
-          <input value={form.kingdom} onChange={onChange("kingdom")} />
+          <input className="nv-input" value={form.kingdom} onChange={onChange("kingdom")} />
         </label>
 
         <label>
           Backstory
-          <textarea rows={6} value={form.backstory} onChange={onChange("backstory")} />
+          <textarea className="nv-input" rows={6} value={form.backstory} onChange={onChange("backstory")} />
         </label>
 
         <label>
           Powers (comma separated)
-          <input value={form.powers} onChange={onChange("powers")} />
+          <input className="nv-input" value={form.powers} onChange={onChange("powers")} />
         </label>
 
         <label>
           Traits (comma separated)
-          <input value={form.traits} onChange={onChange("traits")} />
+          <input className="nv-input" value={form.traits} onChange={onChange("traits")} />
         </label>
 
         <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-          <Link to="/navatar" className="pill">Back to My Navatar</Link>
-          <button className="pill pill--active" type="submit" disabled={saving}>
+          <Link to="/navatar" className="nv-btn-outline">Back to My Navatar</Link>
+          <button className="nv-btn" type="submit" disabled={saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

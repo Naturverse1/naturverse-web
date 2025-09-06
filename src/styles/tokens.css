@@ -3,14 +3,14 @@
   /* Brand blues */
   --nv-blue-50: #f2f6ff;
   --nv-blue-100: #e6efff;
-  --nv-blue-200: #cfe2ff;
+  --nv-blue-200: #dfe6ff;
   --nv-blue-300: #a9caff;
-  --nv-blue-400: #7eacff;
+  --nv-blue-400: #9bb0ff;
   --nv-blue-500: #3b82f6; /* primary */
   --nv-blue-600: #2463EB; /* existing brand blue (keep in sync) */
-  --nv-blue-700: #2D5CFF; /* active/focus ring */
-  --nv-blue-800: #1e479e;
-  --nv-blue-900: #173878;
+  --nv-blue-700: #3454ff; /* active/focus ring */
+  --nv-blue-800: #1e40ff;
+  --nv-blue-900: #0b3cff;
 
   /* Gradients (for primary buttons/chips) */
   --nv-grad-start: #2f6ceb;
