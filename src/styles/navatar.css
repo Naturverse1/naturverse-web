@@ -41,14 +41,16 @@
 .nav-card__img {
   width: 100%;
   aspect-ratio: 3 / 4;     /* consistent portrait shape */
-  border-radius: 14px;
+  border-radius: 16px;
   overflow: hidden;
   background: #eef3ff;
 }
 .nav-card__img img {
   width: 100%;
   height: 100%;
-  object-fit: contain;     /* never crop uploads or picks */
+  object-fit: cover;
+  object-position: center top; /* show heads */
+  border-radius: 16px;
   display: block;
 }
 .nav-card__placeholder {
@@ -71,6 +73,16 @@
   gap: 16px;
   grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
   align-items: start;
+}
+
+/* grid tiles only */
+.nv-pick-tile img {
+  width: 100%;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  object-fit: contain;         /* show whole image */
+  background: #f7f7fb;         /* soft backdrop */
+  border-radius: 12px;
 }
 
 /* Keep existing colors; enforce blue titles/links for the new page */

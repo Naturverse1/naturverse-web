@@ -1,5 +1,13 @@
 import { supabase } from "./supabase-client";
-import type { CharacterCard } from "./types";
+
+export type CharacterCard = {
+  name?: string | null;
+  species?: string | null;
+  kingdom?: string | null;
+  backstory?: string | null;
+  powers?: string[];
+  traits?: string[];
+};
 
 export type NavatarRow = {
   id: string;
@@ -77,54 +85,49 @@ export async function getSessionUser() {
   return user;
 }
 
-export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
-  const user = await getSessionUser();
-  if (!user) return null;
+export async function upsertMyCharacterCard(
+  activeAvatarId: string,
+  card: CharacterCard
+) {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user) throw new Error("not-auth");
+  if (!activeAvatarId) throw new Error("no-active-navatar");
+
+  const payload = {
+    user_id: user.id,
+    avatar_id: activeAvatarId,
+    name: card.name ?? null,
+    species: card.species ?? null,
+    kingdom: card.kingdom ?? null,
+    backstory: card.backstory ?? null,
+    powers: card.powers ?? [],
+    traits: card.traits ?? [],
+    updated_at: new Date().toISOString(),
+  };
+
+  const { error } = await supabase
+    .from("character_cards")
+    .upsert(payload, { onConflict: "user_id,avatar_id" });
+  if (error) throw error;
+}
+
+export async function fetchMyCharacterCard(
+  activeAvatarId: string
+): Promise<CharacterCard | null> {
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+  if (!user || !activeAvatarId) return null;
+
   const { data, error } = await supabase
     .from("character_cards")
-    .select("*")
-    .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
-    .limit(1)
+    .select("name,species,kingdom,backstory,powers,traits")
+    .match({ user_id: user.id, avatar_id: activeAvatarId })
     .maybeSingle();
-  if (error && (error as any).code !== "PGRST116") throw error;
-  return (data as CharacterCard) ?? null;
-}
 
-export async function getActiveNavatar(userId: string) {
-  return supabase
-    .from("avatars")
-    .select("id, name, image_url")
-    .eq("user_id", userId)
-    .eq("is_active", true)
-    .single();
-}
-
-export async function upsertCharacterCard(payload: {
-  user_id: string;
-  avatar_id: string;
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory?: string;
-  powers?: string[];
-  traits?: string[];
-}) {
-  return supabase
-    .from("character_cards")
-    .upsert(
-      { ...payload, updated_at: new Date().toISOString() },
-      { onConflict: "user_id,avatar_id" }
-    )
-    .select()
-    .single();
-}
-
-export async function getCardForAvatar(avatarId: string) {
-  return supabase
-    .from("character_cards")
-    .select("*")
-    .eq("avatar_id", avatarId)
-    .single();
+  if (error) throw error;
+  return data as CharacterCard | null;
 }
 

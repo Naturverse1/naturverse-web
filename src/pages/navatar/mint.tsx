@@ -4,8 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadActive } from "../../lib/localStorage";
-import { getActiveNavatar, getCardForAvatar } from "../../lib/navatar";
-import { supabase } from "../../lib/supabase-client";
+import { fetchMyCharacterCard } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
@@ -13,21 +12,29 @@ export default function MintNavatarPage() {
   const [card, setCard] = useState<any>(null);
 
   useEffect(() => {
+    let alive = true;
+    if (!activeNavatar?.id) {
+      setCard(null);
+      return;
+    }
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: act } = await getActiveNavatar(user.id);
-      if (!act) return;
-      const { data: c } = await getCardForAvatar(act.id);
-      setCard(c);
+      try {
+        const c = await fetchMyCharacterCard(activeNavatar.id);
+        if (alive) setCard(c);
+      } catch {
+        // ignore
+      }
     })();
-  }, []);
+    return () => {
+      alive = false;
+    };
+  }, [activeNavatar?.id]);
 
   return (
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
       <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs />
+      <NavatarTabs color="blue" />
       <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
