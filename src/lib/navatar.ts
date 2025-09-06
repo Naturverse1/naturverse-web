@@ -1,69 +1,79 @@
 import { supabase } from "./supabase-client";
 
 export type NavatarRow = {
-  id: string;
   user_id: string;
   name: string | null;
-  base_type: string;          // 'Animal' | 'Fruit' | 'Insect' | 'Spirit'
-  backstory: string | null;
-  image_path: string | null;  // storage key inside the 'avatars' bucket
-  created_at: string;
-  updated_at: string;
+  image_path: string | null;
+  url?: string | null;
 };
 
-export function navatarImageUrl(image_path: string | null) {
-  if (!image_path) return null;
-  // bucket is 'avatars'
-  const { data } = supabase.storage.from("avatars").getPublicUrl(image_path);
-  return data?.publicUrl ?? null;
-}
+export type Card = {
+  name?: string | null;
+  species?: string | null;
+  kingdom?: string | null;
+  backstory?: string | null;
+  powers?: string[] | null;
+  traits?: string[] | null;
+};
 
-export async function listMyNavatars() {
-  const { data: { user }, error: uErr } = await supabase.auth.getUser();
-  if (uErr || !user) throw new Error("Not signed in");
-  const { data, error } = await supabase
-    .from("avatars")
+export async function getMyNavatar() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+
+  const { data } = await supabase
+    .from("navatars")
     .select("*")
     .eq("user_id", user.id)
-    .order("created_at", { ascending: false });
-  if (error) throw error;
-  return (data ?? []) as NavatarRow[];
-}
-
-export async function saveNavatar(opts: {
-  name?: string;
-  base_type: "Animal" | "Fruit" | "Insect" | "Spirit";
-  backstory?: string;
-  file?: File | null;
-}) {
-  const { data: { user }, error: uErr } = await supabase.auth.getUser();
-  if (uErr || !user) throw new Error("Not signed in");
-
-  let image_path: string | null = null;
-
-  if (opts.file) {
-    // create a deterministic file path
-    const ext = opts.file.name.split(".").pop() || "png";
-    const fileName = `${crypto.randomUUID()}.${ext}`;
-    image_path = `navatars/${user.id}/${fileName}`;
-    const { error: upErr } = await supabase
-      .storage.from("avatars")
-      .upload(image_path, opts.file, { upsert: false });
-    if (upErr) throw upErr;
-  }
-
-  const { data, error } = await supabase
-    .from("avatars")
-    .insert([{ 
-      name: opts.name ?? null,
-      base_type: opts.base_type,
-      backstory: opts.backstory ?? null,
-      image_path,
-    }])
-    .select()
     .single();
 
-  if (error) throw error;
-  return data as NavatarRow;
+  if (!data?.image_path) return data as NavatarRow | null;
+
+  const { data: signed } = await supabase
+    .storage.from("avatars")
+    .createSignedUrl(data.image_path.replace(/^avatars\//, ""), 3600);
+  return { ...(data as NavatarRow), url: signed?.signedUrl };
 }
 
+export async function setMyNavatar(file: File, name?: string) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("not signed in");
+
+  const ext = file.name.split(".").pop() || "png";
+  const objectPath = `${user.id}/${Date.now()}.${ext}`;
+
+  const up = await supabase.storage.from("avatars").upload(objectPath, file, {
+    cacheControl: "3600",
+    upsert: true,
+    contentType: file.type,
+  });
+  if (up.error) throw up.error;
+
+  await supabase
+    .from("navatars")
+    .upsert(
+      { user_id: user.id, name: name || null, image_path: `avatars/${objectPath}` },
+      { onConflict: "user_id" }
+    );
+
+  return getMyNavatar();
+}
+
+export async function saveCard(card: Card) {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) throw new Error("not signed in");
+
+  return supabase
+    .from("navatar_cards")
+    .upsert({ user_id: user.id, ...card }, { onConflict: "user_id" });
+}
+
+export async function loadCard() {
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return null;
+  const { data } = await supabase
+    .from("navatar_cards")
+    .select("*")
+    .eq("user_id", user.id)
+    .single();
+  return (data as Card) || null;
+}
