@@ -1,122 +1,128 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { useEffect, useMemo, useState } from "react";
+import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { loadPrimaryNavatarId, loadCard, saveCard } from "../../lib/navatarCard";
+import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
-type Form = {
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory: string;
-  powers: string;
-  traits: string;
-};
-
 export default function NavatarCardPage() {
-  const [navatarId, setNavatarId] = useState<string | null>(null);
-  const [form, setForm] = useState<Form>({
-    name: "",
-    species: "",
-    kingdom: "",
-    backstory: "",
-    powers: "",
-    traits: "",
-  });
+  const nav = useNavigate();
+  const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
+  const [err, setErr] = useState<string | null>(null);
+
+  const [name, setName] = useState("");
+  const [species, setSpecies] = useState("");
+  const [kingdom, setKingdom] = useState("");
+  const [backstory, setBackstory] = useState("");
+  const [powers, setPowers] = useState("");
+  const [traits, setTraits] = useState("");
 
   useEffect(() => {
+    let alive = true;
     (async () => {
-      const id = await loadPrimaryNavatarId();
-      setNavatarId(id);
-      if (!id) return;
-      const card = await loadCard(id);
-      if (card) {
-        setForm({
-          name: card.name ?? "",
-          species: card.species ?? "",
-          kingdom: card.kingdom ?? "",
-          backstory: card.backstory ?? "",
-          powers: (card.powers ?? []).join(", "),
-          traits: (card.traits ?? []).join(", "),
-        });
+      try {
+        const card = await fetchMyCharacterCard();
+        if (card && alive) {
+          setName(card.name ?? "");
+          setSpecies(card.species ?? "");
+          setKingdom(card.kingdom ?? "");
+          setBackstory(card.backstory ?? "");
+          setPowers((card.powers ?? []).join(", "));
+          setTraits((card.traits ?? []).join(", "));
+        }
+      } catch (e: any) {
+        setErr(e.message ?? "Failed to load");
+      } finally {
+        if (alive) setLoading(false);
       }
     })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
-  const onChange = (k: keyof Form) => (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) =>
-    setForm(f => ({ ...f, [k]: e.target.value }));
+  const canSave = useMemo(
+    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
+    [name, species, kingdom, backstory, powers, traits]
+  );
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!navatarId) {
-      alert("Please create or select a Navatar first.");
-      return;
-    }
+    if (!canSave) return;
     setSaving(true);
+    setErr(null);
     try {
-      await saveCard({
-        navatar_id: navatarId,
-        name: form.name || null,
-        species: form.species || null,
-        kingdom: form.kingdom || null,
-        backstory: form.backstory || null,
-        powers: form.powers
-          ? form.powers.split(",").map(s => s.trim()).filter(Boolean)
-          : [],
-        traits: form.traits
-          ? form.traits.split(",").map(s => s.trim()).filter(Boolean)
-          : [],
+      await upsertCharacterCard({
+        name: name || undefined,
+        species: species || undefined,
+        kingdom: kingdom || undefined,
+        backstory: backstory || undefined,
+        powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : undefined,
+        traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : undefined,
       });
-      alert("Saved ✓");
-    } catch (err: any) {
-      console.error(err);
-      alert(err.message ?? "Error saving card");
+      nav("/navatar");
+    } catch (e: any) {
+      setErr(e.message ?? "Save failed");
     } finally {
       setSaving(false);
     }
   }
 
+  if (loading) {
+    return (
+      <main className="container page-pad">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
+        <h1 className="center page-title">Character Card</h1>
+        <NavatarTabs sub />
+        <p>Loading…</p>
+      </main>
+    );
+  }
+
   return (
-    <main className="container">
+    <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-      <h1 className="center">Character Card</h1>
-      <NavatarTabs />
-      <form onSubmit={onSave} style={{ maxWidth: 720, margin: "16px auto", display: "grid", gap: 12 }}>
+      <h1 className="center page-title">Character Card</h1>
+      <NavatarTabs sub />
+      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
+        {err && <p className="Error">{err}</p>}
+
         <label>
           Name
-          <input value={form.name} onChange={onChange("name")} />
+          <input value={name} onChange={e => setName(e.target.value)} />
         </label>
 
         <label>
           Species / Type
-          <input value={form.species} onChange={onChange("species")} />
+          <input value={species} onChange={e => setSpecies(e.target.value)} />
         </label>
 
         <label>
           Kingdom
-          <input value={form.kingdom} onChange={onChange("kingdom")} />
+          <input value={kingdom} onChange={e => setKingdom(e.target.value)} />
         </label>
 
         <label>
           Backstory
-          <textarea rows={6} value={form.backstory} onChange={onChange("backstory")} />
+          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
         </label>
 
         <label>
           Powers (comma separated)
-          <input value={form.powers} onChange={onChange("powers")} />
+          <input value={powers} onChange={e => setPowers(e.target.value)} />
         </label>
 
         <label>
           Traits (comma separated)
-          <input value={form.traits} onChange={onChange("traits")} />
+          <input value={traits} onChange={e => setTraits(e.target.value)} />
         </label>
 
-        <div style={{ display: "flex", gap: 8, marginTop: 8 }}>
-          <Link to="/navatar" className="pill">Back to My Navatar</Link>
-          <button className="pill pill--active" type="submit" disabled={saving}>
+        <div className="row gap" style={{ marginTop: 8 }}>
+          <Link to="/navatar" className="pill">
+            Back to My Navatar
+          </Link>
+          <button className="pill pill--active" disabled={!canSave || saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>
@@ -124,3 +130,4 @@ export default function NavatarCardPage() {
     </main>
   );
 }
+

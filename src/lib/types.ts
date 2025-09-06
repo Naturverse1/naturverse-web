@@ -114,3 +114,17 @@ export type CatalogSection = {
 export type WishlistItem = CatalogItem & {
   wishedAt: Date;
 };
+
+export type CharacterCard = {
+  id: string;
+  user_id: string;
+  navatar_id: string | null;
+  name: string | null;
+  species: string | null;
+  kingdom: string | null;
+  backstory: string | null;
+  powers: string[] | null;
+  traits: string[] | null;
+  created_at: string;
+  updated_at: string;
+};
