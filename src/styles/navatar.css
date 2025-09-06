@@ -61,3 +61,59 @@ textarea { min-height: 96px; resize: vertical; }
 .NavatarMeta { padding:0 12px 12px; color:#64748b; font-size:12px; text-align:center; }
 .Error { color:#dc2626; }
 .muted { color:#64748b; font-weight:400; }
+
+/* Navatar tabs */
+.navatar-tabs{
+  display:flex;
+  justify-content:center;
+  gap:12px;
+  flex-wrap:nowrap;
+  overflow-x:auto;
+  -webkit-overflow-scrolling:touch;
+  padding:8px 8px 6px;
+}
+.navatar-tabs::-webkit-scrollbar{ display:none; }
+
+.pill{
+  border:1px solid #cfe0ff;
+  background:#f5f9ff;
+  color:#2457ff;
+  border-radius:999px;
+  padding:10px 14px;
+  font-weight:600;
+  white-space:nowrap;
+}
+.pill--active{
+  background:#2f5bff;
+  color:#fff;
+  border-color:#2f5bff;
+  box-shadow:0 3px 0 0 #cfd7ff;
+}
+
+/* Unified card sizing */
+.navatar-card{
+  width:min(420px, 88vw);
+  margin:16px auto;
+  background:#fff;
+  border:1px solid #e6e6e6;
+  border-radius:16px;
+  padding:12px;
+}
+.navatar-card .img{
+  width:100%;
+  aspect-ratio:3/4;
+  border-radius:12px;
+  background:#f1f5f9;
+  overflow:hidden;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+}
+.navatar-card .img img{
+  width:100%;
+  height:100%;
+  object-fit:contain;
+  display:block;
+}
+
+.center{text-align:center}

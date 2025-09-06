@@ -1,20 +1,31 @@
+import { useMemo } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { getActive } from "../../lib/navatar/storage";
+import { loadActive } from "../../lib/localStorage";
 
-export default function MyNavatar() {
-  const active = getActive();
+export default function MyNavatarPage() {
+  const active = useMemo(() => loadActive<any>(), []);
   return (
-    <div className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { label: "Navatar" }]} />
+    <main className="container">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center">My Navatar</h1>
-      <NavatarTabs />
-      <div className="center">
-        <NavatarCard n={active} />
-        {!active && <p>No Navatar yet — Pick, Upload, or Generate above.</p>}
-      </div>
-      <style>{`.center{text-align:center}`}</style>
-    </div>
+      <NavatarTabs active="home" />
+
+      {active?.imageDataUrl ? (
+        <div className="navatar-card">
+          <div className="img">
+            <img src={active.imageDataUrl} alt={active.name || "My Navatar"} />
+          </div>
+          <p className="center" style={{ fontWeight: 700, marginTop: 8 }}>
+            {active.name || "Turian"}
+          </p>
+        </div>
+      ) : (
+        <p className="center" style={{ marginTop: 16 }}>
+          No Navatar yet — <a href="/navatar/pick">Pick</a>, <a href="/navatar/upload">Upload</a>, or <a href="/navatar/generate">Generate</a>.
+        </p>
+      )}
+    </main>
   );
 }
+
