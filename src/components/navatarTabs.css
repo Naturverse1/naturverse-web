@@ -1,0 +1,11 @@
+.nv-tabs{
+  display:flex;flex-wrap:wrap;gap:10px;justify-content:center;
+  margin:12px auto 20px;max-width:980px
+}
+.nv-pill{
+  display:inline-block;padding:10px 14px;border-radius:999px;
+  border:2px solid #c7d2fe;background:#eef2ff;color:#1e3a8a;
+  text-decoration:none;font-weight:600;box-shadow:0 3px 0 #d1d5db;
+}
+.nv-pill.is-active{background:#2563eb;color:#fff;border-color:#2563eb}
+@media (max-width:640px){ .nv-pill{padding:8px 12px} }

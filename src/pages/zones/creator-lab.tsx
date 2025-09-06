@@ -1,5 +1,5 @@
 import { Link } from "react-router-dom";
-import { Breadcrumbs } from "../../components/Breadcrumbs";
+import Breadcrumbs from "../../components/Breadcrumbs";
 import NvCard from "../../components/NvCard";
 import { setTitle } from "../_meta";
 
