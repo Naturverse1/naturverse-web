@@ -91,47 +91,40 @@ export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
   return (data as CharacterCard) ?? null;
 }
 
-type UpsertCardInput = {
-  name?: string;
-  species?: string;
-  kingdom?: string;
+export async function getActiveNavatar(userId: string) {
+  return supabase
+    .from("avatars")
+    .select("id, name, image_url")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .single();
+}
+
+export async function upsertCharacterCard(payload: {
+  user_id: string;
+  avatar_id: string;
+  name: string;
+  species: string;
+  kingdom: string;
   backstory?: string;
   powers?: string[];
   traits?: string[];
-  navatar_id?: string | null;
-};
+}) {
+  return supabase
+    .from("character_cards")
+    .upsert(
+      { ...payload, updated_at: new Date().toISOString() },
+      { onConflict: "user_id,avatar_id" }
+    )
+    .select()
+    .single();
+}
 
-export async function upsertCharacterCard(input: UpsertCardInput) {
-  const user = await getSessionUser();
-  if (!user) throw new Error("Please sign in");
-  const existing = await fetchMyCharacterCard();
-
-  const payload = {
-    user_id: user.id,
-    navatar_id: input.navatar_id ?? (existing?.navatar_id ?? null),
-    name: input.name ?? existing?.name ?? null,
-    species: input.species ?? existing?.species ?? null,
-    kingdom: input.kingdom ?? existing?.kingdom ?? null,
-    backstory: input.backstory ?? existing?.backstory ?? null,
-    powers: input.powers ?? existing?.powers ?? null,
-    traits: input.traits ?? existing?.traits ?? null,
-  };
-
-  if (existing) {
-    const { error } = await supabase
-      .from("character_cards")
-      .update(payload)
-      .eq("id", existing.id);
-    if (error) throw error;
-    return existing.id;
-  } else {
-    const { data, error } = await supabase
-      .from("character_cards")
-      .insert(payload)
-      .select("id")
-      .single();
-    if (error) throw error;
-    return data.id as string;
-  }
+export async function getCardForAvatar(avatarId: string) {
+  return supabase
+    .from("character_cards")
+    .select("*")
+    .eq("avatar_id", avatarId)
+    .single();
 }
 

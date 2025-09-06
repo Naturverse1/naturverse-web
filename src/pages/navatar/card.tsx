@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
+import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
+import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 export default function NavatarCardPage() {
@@ -53,16 +54,34 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      await upsertCharacterCard({
-        name: name || undefined,
-        species: species || undefined,
-        kingdom: kingdom || undefined,
-        backstory: backstory || undefined,
-        powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : undefined,
-        traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : undefined,
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) throw new Error("Please sign in");
+
+      const { data: active } = await getActiveNavatar(user.id);
+      if (!active) {
+        alert("Please create or select a Navatar first.");
+        return;
+      }
+
+      const { error } = await upsertCharacterCard({
+        user_id: user.id,
+        avatar_id: active.id,
+        name,
+        species,
+        kingdom,
+        backstory,
+        powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : [],
+        traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : [],
       });
-      nav("/navatar");
+      if (error) {
+        console.error(error);
+        setErr("Could not save your Character Card. Please try again.");
+        return;
+      }
+
+      nav("/navatar/mint");
     } catch (e: any) {
+      console.error(e);
       setErr(e.message ?? "Save failed");
     } finally {
       setSaving(false);

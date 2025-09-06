@@ -32,60 +32,68 @@ export default function MyNavatarPage() {
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center page-title">My Navatar</h1>
       <NavatarTabs />
-
-      <div style={{ marginTop: 8 }}>
-        <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
-      </div>
-
-      <section className="panel" style={{ marginTop: 16 }}>
-        <h3 className="panel-title">Character Card</h3>
-        {!card ? (
-          <p>
-            No card yet. <Link to="/navatar/card" className="link">Create Card</Link>
-          </p>
-        ) : (
-          <div className="cc-summary">
-            {card.name && (
-              <div>
-                <strong>Name:</strong> {card.name}
-              </div>
-            )}
-            {card.species && (
-              <div>
-                <strong>Species:</strong> {card.species}
-              </div>
-            )}
-            {card.kingdom && (
-              <div>
-                <strong>Kingdom:</strong> {card.kingdom}
-              </div>
-            )}
-            {card.backstory && (
-              <div className="mt-sm">
-                <strong>Backstory</strong>
-                <div>{card.backstory}</div>
-              </div>
-            )}
-            {card.powers && card.powers.length > 0 && (
-              <div className="mt-sm">
-                <strong>Powers</strong>
-                <div>— {card.powers.join(", ")}</div>
-              </div>
-            )}
-            {card.traits && card.traits.length > 0 && (
-              <div className="mt-sm">
-                <strong>Traits</strong>
-                <div>— {card.traits.join(", ")}</div>
-              </div>
-            )}
-            <div className="mt-md">
-              <Link to="/navatar/card" className="pill">
-                Edit Card
-              </Link>
-            </div>
+      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
+        <section>
+          <div className="nv-panel">
+            <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
           </div>
-        )}
-      </section>
+        </section>
+
+        <aside className="nv-panel">
+          <div className="nv-title">Character Card</div>
+
+          {!card ? (
+            <p>
+              No card yet. <Link to="/navatar/card">Create Card</Link>
+            </p>
+          ) : (
+            <dl className="nv-list">
+              {card.name && (
+                <>
+                  <dt>Name</dt>
+                  <dd>{card.name}</dd>
+                </>
+              )}
+              {card.species && (
+                <>
+                  <dt>Species</dt>
+                  <dd>{card.species}</dd>
+                </>
+              )}
+              {card.kingdom && (
+                <>
+                  <dt>Kingdom</dt>
+                  <dd>{card.kingdom}</dd>
+                </>
+              )}
+              {card.backstory && (
+                <>
+                  <dt>Backstory</dt>
+                  <dd>{card.backstory}</dd>
+                </>
+              )}
+              {card.powers && card.powers.length > 0 && (
+                <>
+                  <dt>Powers</dt>
+                  <dd>{card.powers.map(p => `— ${p}`).join("\n")}</dd>
+                </>
+              )}
+              {card.traits && card.traits.length > 0 && (
+                <>
+                  <dt>Traits</dt>
+                  <dd>{card.traits.map(t => `— ${t}`).join("\n")}</dd>
+                </>
+              )}
+            </dl>
+          )}
+
+          <div style={{ marginTop: 12 }}>
+            <Link to="/navatar/card" className="btn">
+              Edit Card
+            </Link>
+          </div>
+        </aside>
+      </div>
     </main>
   );
 }
