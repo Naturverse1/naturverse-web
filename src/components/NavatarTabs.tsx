@@ -1,28 +1,28 @@
-import { Link } from "react-router-dom";
+import React from "react";
+import { Link, useLocation } from "react-router-dom";
 
-type Tab = "home" | "pick" | "upload" | "generate" | "mint" | "market";
+const TABS = [
+  { to: "/navatar", label: "My Navatar" },
+  { to: "/navatar/pick", label: "Pick" },
+  { to: "/navatar/upload", label: "Upload" },
+  { to: "/navatar/generate", label: "Generate" },
+  { to: "/navatar/mint", label: "NFT / Mint" },
+  { to: "/marketplace", label: "Marketplace" },
+];
 
-export default function NavatarTabs({ active }: { active: Tab }) {
-  const pill = (to: string, label: string, key: Tab) => (
-    <Link
-      key={key}
-      to={to}
-      className={`pill ${active === key ? "pill--active" : ""}`}
-      aria-current={active === key ? "page" : undefined}
-    >
-      {label}
-    </Link>
-  );
-
+export default function NavatarTabs() {
+  const { pathname } = useLocation();
   return (
-    <nav className="navatar-tabs" role="tablist" aria-label="Navatar sections">
-      {pill("/navatar", "My Navatar", "home")}
-      {pill("/navatar/pick", "Pick", "pick")}
-      {pill("/navatar/upload", "Upload", "upload")}
-      {pill("/navatar/generate", "Generate", "generate")}
-      {pill("/navatar/mint", "NFT / Mint", "mint")}
-      {pill("/navatar/marketplace", "Marketplace", "market")}
+    <nav className="nav-tabs" aria-label="Navatar actions">
+      {TABS.map(t => {
+        const active =
+          t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
+        return (
+          <Link key={t.to} to={t.to} className={`pill ${active ? "pill--active" : ""}`}>
+            {t.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }
-
