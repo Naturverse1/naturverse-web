@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "items": [
+    {
+      "id": "turian-eagles-1",
+      "name": "Turian — Jersey",
+      "category": "animal",
+      "image": "/navatars/animal/eagles_turian.png",
+      "tags": ["sports", "green"]
+    },
+    {
+      "id": "fruit-smile-1",
+      "name": "Happy Mango",
+      "category": "fruit",
+      "image": "/navatars/fruit/happy_mango.png",
+      "tags": ["starter"]
+    }
+  ]
+}
