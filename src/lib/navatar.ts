@@ -1,5 +1,5 @@
 import { supabase } from "./supabase-client";
-import type { CharacterCard } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type NavatarRow = {
   id: string;
@@ -11,6 +11,43 @@ export type NavatarRow = {
   created_at: string;
   updated_at: string;
 };
+
+export type ActiveNavatar = {
+  id: string;
+  slug?: string | null;
+  title?: string | null;
+  image_url?: string | null;
+};
+
+const LS_KEY = "active_navatar";
+const UUID_RE =
+  /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+
+export function loadActive(): ActiveNavatar | null {
+  try {
+    const raw = localStorage.getItem(LS_KEY);
+    if (!raw) return null;
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
+
+export function saveActiveFromRow(row: {
+  id: string;
+  slug?: string | null;
+  name?: string | null;
+  title?: string | null;
+  image_url?: string | null;
+}) {
+  const active: ActiveNavatar = {
+    id: row.id,
+    slug: row.slug ?? null,
+    title: row.title ?? row.name ?? null,
+    image_url: row.image_url ?? null,
+  };
+  localStorage.setItem(LS_KEY, JSON.stringify(active));
+}
 
 export function navatarImageUrl(image_path: string | null) {
   if (!image_path) return null;
@@ -68,27 +105,38 @@ export async function saveNavatar(opts: {
   return data as NavatarRow;
 }
 
-export async function getSessionUser() {
+export type CharacterCard = {
+  name?: string | null;
+  species?: string | null;
+  kingdom?: string | null;
+  backstory?: string | null;
+  powers?: string[];
+  traits?: string[];
+};
+
+export async function fetchMyCharacterCard(
+  client: SupabaseClient
+): Promise<CharacterCard | null> {
   const {
     data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) throw error;
-  return user;
-}
-
-export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
-  const user = await getSessionUser();
+  } = await client.auth.getUser();
   if (!user) return null;
-  const { data, error } = await supabase
+
+  const active = loadActive();
+  if (!active?.id) return null;
+
+  let avatar_id = active.id;
+  if (!UUID_RE.test(avatar_id)) return null;
+
+  const { data, error } = await client
     .from("character_cards")
     .select("*")
     .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
-    .limit(1)
+    .eq("avatar_id", avatar_id)
     .maybeSingle();
-  if (error && (error as any).code !== "PGRST116") throw error;
-  return (data as CharacterCard) ?? null;
+
+  if (error) throw error;
+  return (data as any) ?? null;
 }
 
 export async function getActiveNavatar(userId: string) {
@@ -100,24 +148,52 @@ export async function getActiveNavatar(userId: string) {
     .single();
 }
 
-export async function upsertCharacterCard(payload: {
-  user_id: string;
-  avatar_id: string;
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory?: string;
-  powers?: string[];
-  traits?: string[];
-}) {
-  return supabase
+export async function upsertCharacterCard(
+  client: SupabaseClient,
+  fields: CharacterCard
+) {
+  const {
+    data: { user },
+  } = await client.auth.getUser();
+  if (!user) throw new Error("Not signed in");
+
+  const active = loadActive();
+  if (!active?.id) throw new Error("Please pick a Navatar first.");
+
+  let avatar_id = active.id;
+  if (!UUID_RE.test(avatar_id)) {
+    let q = client.from("avatars").select("id").limit(1);
+    if (active.slug) {
+      q = q.eq("slug", active.slug);
+    } else if (active.title) {
+      q = q.eq("name", active.title);
+    }
+    const { data: found, error: findErr } = await q.maybeSingle();
+    if (findErr) throw findErr;
+    if (!found?.id) throw new Error("Active Navatar is not valid.");
+    avatar_id = found.id;
+    localStorage.setItem(
+      LS_KEY,
+      JSON.stringify({ ...active, id: avatar_id })
+    );
+  }
+
+  const payload = {
+    user_id: user.id,
+    avatar_id,
+    name: fields.name?.trim() || null,
+    species: fields.species?.trim() || null,
+    kingdom: fields.kingdom?.trim() || null,
+    backstory: fields.backstory?.trim() || null,
+    powers: (fields.powers ?? []).map(p => p.trim()).filter(Boolean),
+    traits: (fields.traits ?? []).map(t => t.trim()).filter(Boolean),
+  };
+
+  const { error } = await client
     .from("character_cards")
-    .upsert(
-      { ...payload, updated_at: new Date().toISOString() },
-      { onConflict: "user_id,avatar_id" }
-    )
-    .select()
-    .single();
+    .upsert(payload, { onConflict: "user_id,avatar_id" });
+
+  if (error) throw error;
 }
 
 export async function getCardForAvatar(avatarId: string) {
