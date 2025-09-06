@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
+import { BlueBreadcrumbs } from "../../components/BlueBreadcrumbs";
+import { PageShell } from "../../components/PageShell";
+import { NavatarTabs } from "../../components/NavatarTabs";
+import { NavatarCard } from "../../components/NavatarCard";
 import { saveActive } from "../../lib/localStorage";
 import "../../styles/navatar.css";
 
@@ -39,12 +40,12 @@ export default function GenerateNavatarPage() {
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
+    <PageShell>
+      <BlueBreadcrumbs
+        items={[{ label: "Home", to: "/" }, { label: "Navatar", to: "/navatar" }, { label: "Describe & Generate", to: "/navatar/generate" }]}
       />
-      <h1 className="center">Describe &amp; Generate</h1>
-      <NavatarTabs />
+      <h1 className="nv-heading">Describe &amp; Generate</h1>
+      <NavatarTabs active="generate" />
       <form
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
@@ -64,14 +65,14 @@ export default function GenerateNavatarPage() {
           onChange={(e) => setName(e.target.value)}
         />
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <button className="pill pill--active" type="submit" style={{ marginTop: 8 }}>
+        <button className="nv-button" type="submit" style={{ marginTop: 8 }}>
           Save
         </button>
       </form>
-      <p className="center" style={{ opacity: 0.8 }}>
+      <p className="nv-muted" style={{ textAlign: "center" }}>
         AI art & edit coming soon.
       </p>
-    </main>
+    </PageShell>
   );
 }
 
