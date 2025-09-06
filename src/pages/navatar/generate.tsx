@@ -44,7 +44,7 @@ export default function GenerateNavatarPage() {
         items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
       />
       <h1 className="center">Describe &amp; Generate</h1>
-      <NavatarTabs />
+      <NavatarTabs color="blue" />
       <form
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}

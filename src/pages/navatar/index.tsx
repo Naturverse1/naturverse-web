@@ -3,8 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadActive } from "../../lib/localStorage";
-import { fetchMyCharacterCard } from "../../lib/navatar";
-import type { CharacterCard } from "../../lib/types";
+import { fetchMyCharacterCard, type CharacterCard } from "../../lib/navatar";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
@@ -14,9 +13,13 @@ export default function MyNavatarPage() {
 
   useEffect(() => {
     let alive = true;
+    if (!activeNavatar?.id) {
+      setCard(null);
+      return;
+    }
     (async () => {
       try {
-        const c = await fetchMyCharacterCard();
+        const c = await fetchMyCharacterCard(activeNavatar.id);
         if (alive) setCard(c);
       } catch {
         // ignore
@@ -25,13 +28,13 @@ export default function MyNavatarPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [activeNavatar?.id]);
 
   return (
     <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center page-title">My Navatar</h1>
-      <NavatarTabs />
+      <NavatarTabs color="blue" />
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">

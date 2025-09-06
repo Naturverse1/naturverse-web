@@ -11,7 +11,13 @@ const TABS = [
   { to: "/navatar/marketplace", label: "Marketplace" },
 ];
 
-export default function NavatarTabs({ sub = false }: { sub?: boolean }) {
+export default function NavatarTabs({
+  sub = false,
+  color = "blue",
+}: {
+  sub?: boolean;
+  color?: "blue" | "gray";
+}) {
   const { pathname } = useLocation();
   return (
     <nav className={`nav-tabs${sub ? " nav-tabs--sub" : ""}`} aria-label="Navatar actions">
@@ -19,7 +25,13 @@ export default function NavatarTabs({ sub = false }: { sub?: boolean }) {
         const active =
           t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
         return (
-          <Link key={t.to} to={t.to} className={`pill ${active ? "pill--active" : ""}`}>
+          <Link
+            key={t.to}
+            to={t.to}
+            className={`pill ${active ? "pill--active" : ""} ${
+              color === "gray" ? "pill--gray" : ""
+            }`}
+          >
             {t.label}
           </Link>
         );

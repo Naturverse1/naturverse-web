@@ -24,7 +24,7 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
+      <NavatarTabs color="blue" />
       <div className="nav-grid">
         {items.map((it) => (
           <button
@@ -34,7 +34,7 @@ export default function PickNavatarPage() {
             aria-label={`Pick ${it.name}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <NavatarCard src={it.src} title={it.name} className="nv-pick-tile" />
           </button>
         ))}
       </div>
