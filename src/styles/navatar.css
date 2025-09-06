@@ -72,3 +72,35 @@
   grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
   align-items: start;
 }
+
+/* layout for My Navatar + Character Card preview */
+.nav-stack {
+  display: grid;
+  gap: 24px;
+}
+@media (min-width: 768px) {
+  .nav-stack {
+    grid-template-columns: 1fr 1fr;
+    align-items: start;
+  }
+}
+
+.char-card {
+  border: 1px solid #cfe0ff;
+  background: #f6f9ff;
+  border-radius: 16px;
+  padding: 24px;
+  color: #1e40af;
+}
+.char-card h3 {
+  margin-top: 0;
+  color: #1e40af;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.char-card__dl div {
+  margin-bottom: 8px;
+}
+.char-card .pre {
+  white-space: pre-wrap;
+}
