@@ -1,13 +1,14 @@
-import { FormEvent, useMemo, useState } from "react";
-import { saveNavatar, navatarImageUrl } from "../../lib/navatar";
-import { Link, useNavigate } from "react-router-dom";
+import { FormEvent, useMemo, useState } from 'react';
+import { saveNavatar } from '../../lib/navatar';
+import { Link, useNavigate } from 'react-router-dom';
+import '../../styles/navatar.css';
 
 const defaultBackstory =
   "Born in the animal realm, this Animal learned to help explorers by trading smiles for smiles. Their quest: protect habitats and cheer on friends across the 14 kingdoms.";
 
-export default function NavatarCreate() {
-  const [baseType, setBaseType] = useState<"Animal"|"Fruit"|"Insect"|"Spirit">("Animal");
-  const [name, setName] = useState("");
+export default function Create() {
+  const [baseType, setBaseType] = useState<'Animal'|'Fruit'|'Insect'|'Spirit'>('Animal');
+  const [name, setName] = useState('');
   const [backstory, setBackstory] = useState(defaultBackstory);
   const [file, setFile] = useState<File | null>(null);
   const [saving, setSaving] = useState(false);
@@ -20,19 +21,18 @@ export default function NavatarCreate() {
     e.preventDefault();
     try {
       setSaving(true);
-      const row = await saveNavatar({ name, base_type: baseType, backstory, file });
-      // Success -> go back to list
-      nav("/navatar");
+      await saveNavatar({ name, base_type: baseType, backstory, file });
+      nav('/navatar');
     } catch (e: any) {
-      setError(e.message ?? "Could not save Navatar.");
+      setError(e.message ?? 'Could not save Navatar.');
     } finally {
       setSaving(false);
     }
   }
 
   return (
-    <div className="Page">
-      <nav className="Breadcrumbs">
+    <main className="nv-wrap">
+      <nav className="nv-breadcrumb nv-bc-blue">
         <Link to="/">Home</Link> <span>/</span>
         <Link to="/navatar">Navatar</Link> <span>/</span>
         <span>Create</span>
@@ -45,11 +45,11 @@ export default function NavatarCreate() {
         <section className="FormCard">
           <h3>1) Pick a Base</h3>
           <div className="ChipRow">
-            {(["Animal","Fruit","Insect","Spirit"] as const).map(t => (
+            {(['Animal','Fruit','Insect','Spirit'] as const).map(t => (
               <button
                 key={t}
                 type="button"
-                className={`Chip ${baseType === t ? "active": ""}`}
+                className={`Chip ${baseType === t ? 'active': ''}`}
                 onClick={() => setBaseType(t)}
               >{t}</button>
             ))}
@@ -72,7 +72,7 @@ export default function NavatarCreate() {
 
           {error && <p className="Error">{error}</p>}
           <div className="Row">
-            <button className="Button primary" disabled={saving}>{saving ? "Saving…" : "Save Navatar"}</button>
+            <button className="Button primary" disabled={saving}>{saving ? 'Saving…' : 'Save Navatar'}</button>
           </div>
         </section>
 
@@ -93,7 +93,7 @@ export default function NavatarCreate() {
           </div>
         </aside>
       </form>
-    </div>
+    </main>
   );
 }
 
