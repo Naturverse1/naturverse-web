@@ -6,13 +6,16 @@ import { loadActive } from "../../lib/localStorage";
 import { fetchMyCharacterCard } from "../../lib/navatar";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
+import useAuthUser from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
   const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const { user, ready } = useAuthUser();
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
+    if (!user) return;
     let alive = true;
     (async () => {
       try {
@@ -25,7 +28,10 @@ export default function MyNavatarPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [user]);
+
+  if (!ready) return <div style={{ padding: 16 }}>Loading…</div>;
+  if (!user) return <div style={{ padding: 16 }}>Please sign in.</div>;
 
   return (
     <main className="container page-pad">

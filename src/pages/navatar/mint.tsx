@@ -5,23 +5,26 @@ import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadActive } from "../../lib/localStorage";
 import { getActiveNavatar, getCardForAvatar } from "../../lib/navatar";
-import { supabase } from "../../lib/supabase-client";
+import useAuthUser from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
   const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const { user, ready } = useAuthUser();
   const [card, setCard] = useState<any>(null);
 
   useEffect(() => {
+    if (!user) return;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
       const { data: act } = await getActiveNavatar(user.id);
       if (!act) return;
       const { data: c } = await getCardForAvatar(act.id);
       setCard(c);
     })();
-  }, []);
+  }, [user]);
+
+  if (!ready) return <div style={{ padding: 16 }}>Loading…</div>;
+  if (!user) return <div style={{ padding: 16 }}>Please sign in.</div>;
 
   return (
     <main className="container">

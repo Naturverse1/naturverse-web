@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
-import { supabase } from "../../lib/supabase-client";
+import useAuthUser from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function NavatarCardPage() {
   const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
+  const { user, ready } = useAuthUser();
+  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
 
@@ -20,7 +21,9 @@ export default function NavatarCardPage() {
   const [traits, setTraits] = useState("");
 
   useEffect(() => {
+    if (!user) return;
     let alive = true;
+    setLoading(true);
     (async () => {
       try {
         const card = await fetchMyCharacterCard();
@@ -41,7 +44,7 @@ export default function NavatarCardPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [user]);
 
   const canSave = useMemo(
     () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
@@ -54,7 +57,6 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Please sign in");
 
       const { data: active } = await getActiveNavatar(user.id);
@@ -88,15 +90,12 @@ export default function NavatarCardPage() {
     }
   }
 
-  if (loading) {
-    return (
-      <main className="container page-pad">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-        <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
-        <p>Loading…</p>
-      </main>
-    );
+  if (!ready || loading) {
+    return <div style={{ padding: 16 }}>Loading…</div>;
+  }
+
+  if (!user) {
+    return <div style={{ padding: 16 }}>Please sign in.</div>;
   }
 
   return (

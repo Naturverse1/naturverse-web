@@ -1,33 +1,29 @@
-import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-client';
+import { useEffect, useState } from "react";
+import type { User } from "@supabase/supabase-js";
+import { supabase } from "./supabase-client";
 
-export function useAuthUser() {
-  const [user, setUser] = useState<null | { id: string; email?: string | null }>(null);
-  const [loading, setLoading] = useState(true);
+type AuthState = { user: User | null; ready: boolean };
+
+export default function useAuthUser(): AuthState {
+  const [state, setState] = useState<AuthState>({ user: null, ready: false });
 
   useEffect(() => {
-    let active = true;
+    let ignore = false;
 
     (async () => {
-      const { data } = await supabase.auth.getUser();
-      if (!active) return;
-      setUser(data.user ? { id: data.user.id, email: data.user.email } : null);
-      setLoading(false);
+      const { data: { session } } = await supabase.auth.getSession();
+      if (!ignore) setState({ user: session?.user ?? null, ready: true });
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange(async () => {
-      setLoading(true);
-      const { data } = await supabase.auth.getUser();
-      if (!active) return;
-      setUser(data.user ? { id: data.user.id, email: data.user.email } : null);
-      setLoading(false);
+    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+      setState({ user: session?.user ?? null, ready: true });
     });
 
     return () => {
-      active = false;
-      sub?.subscription?.unsubscribe();
+      ignore = true;
+      sub.subscription.unsubscribe();
     };
   }, []);
 
-  return { user, loading };
+  return state;
 }
