@@ -67,3 +67,33 @@ export async function saveNavatar(opts: {
   return data as NavatarRow;
 }
 
+
+export type CharacterCard = {
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
+  powers?: string[];
+  traits?: string[];
+};
+
+export async function getActiveNavatar(userId: string) {
+  return supabase
+    .from('avatars')
+    .select('id, name, image_path, card')
+    .eq('user_id', userId)
+    .eq('is_active', true)
+    .maybeSingle();
+}
+
+export async function updateActiveNavatarCard(userId: string, card: CharacterCard) {
+  const { data: active, error: findErr } = await getActiveNavatar(userId);
+  if (findErr) return { error: findErr };
+  if (!active) return { error: new Error('NO_ACTIVE_NAVATAR') };
+
+  return supabase
+    .from('avatars')
+    .update({ card })
+    .eq('id', active.id)
+    .eq('user_id', userId);
+}
