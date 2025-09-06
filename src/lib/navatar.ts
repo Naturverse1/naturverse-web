@@ -1,4 +1,5 @@
 import { supabase } from "./supabase-client";
+import type { CharacterCard } from "./types";
 
 export type NavatarRow = {
   id: string;
@@ -65,5 +66,72 @@ export async function saveNavatar(opts: {
 
   if (error) throw error;
   return data as NavatarRow;
+}
+
+export async function getSessionUser() {
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error) throw error;
+  return user;
+}
+
+export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
+  const user = await getSessionUser();
+  if (!user) return null;
+  const { data, error } = await supabase
+    .from("character_cards")
+    .select("*")
+    .eq("user_id", user.id)
+    .order("updated_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error && (error as any).code !== "PGRST116") throw error;
+  return (data as CharacterCard) ?? null;
+}
+
+type UpsertCardInput = {
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
+  powers?: string[];
+  traits?: string[];
+  navatar_id?: string | null;
+};
+
+export async function upsertCharacterCard(input: UpsertCardInput) {
+  const user = await getSessionUser();
+  if (!user) throw new Error("Please sign in");
+  const existing = await fetchMyCharacterCard();
+
+  const payload = {
+    user_id: user.id,
+    navatar_id: input.navatar_id ?? (existing?.navatar_id ?? null),
+    name: input.name ?? existing?.name ?? null,
+    species: input.species ?? existing?.species ?? null,
+    kingdom: input.kingdom ?? existing?.kingdom ?? null,
+    backstory: input.backstory ?? existing?.backstory ?? null,
+    powers: input.powers ?? existing?.powers ?? null,
+    traits: input.traits ?? existing?.traits ?? null,
+  };
+
+  if (existing) {
+    const { error } = await supabase
+      .from("character_cards")
+      .update(payload)
+      .eq("id", existing.id);
+    if (error) throw error;
+    return existing.id;
+  } else {
+    const { data, error } = await supabase
+      .from("character_cards")
+      .insert(payload)
+      .select("id")
+      .single();
+    if (error) throw error;
+    return data.id as string;
+  }
 }
 
