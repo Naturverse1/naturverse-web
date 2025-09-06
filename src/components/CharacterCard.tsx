@@ -1,62 +1,41 @@
-import React from 'react';
-import Img from './Img';
+import React from "react";
+import type { CharacterCard } from "../lib/types";
 
-export type CardData = {
-  id: string;
-  name: string;
-  realm: string;
-  species: string;
-  emoji: string;
-  color: string;
-  power: string;
-  motto: string;
-  avatarDataUrl?: string; // optional base64 image
-};
-
-export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
-  const { name, realm, species, emoji, color, power, motto, avatarDataUrl } = data;
-
+export default function CharacterCardView({ card }: { card?: CharacterCard | null }) {
   return (
-    <div
-      className="nv-card"
-      style={{
-        border: `2px solid ${color || 'var(--nv-border)'}`,
-        boxShadow: '0 6px 20px rgba(0,0,0,.08)',
-      }}
-    >
-      <div className="nv-card__header" style={{ background: color || 'var(--nv-blue-50)' }}>
-        <div className="nv-card__emoji" aria-hidden>
-          {emoji || '🌱'}
-        </div>
-        <div className="nv-card__title">
-          <div className="nv-card__name">{name || 'Navatar'}</div>
-          <div className="nv-card__sub">
-            {species || 'Species'} · {realm || 'Realm'}
-          </div>
-        </div>
-      </div>
+    <div className="nv-card">
+      <h3 className="nv-card-title">Character Card</h3>
 
-      <div className="nv-card__body">
-        <div className="nv-card__avatar">
-          {avatarDataUrl ? (
-            <Img src={avatarDataUrl} alt={`${name} avatar`} />
-          ) : (
-            <div className="nv-card__avatar--placeholder">Add image</div>
+      {card ? (
+        <div className="nv-card-body">
+          <p><b>Name:</b> {card.name}</p>
+          <p><b>Species:</b> {card.species}</p>
+          <p><b>Kingdom:</b> {card.kingdom}</p>
+
+          {!!card.backstory && (
+            <>
+              <p><b>Backstory</b></p>
+              <p>{card.backstory}</p>
+            </>
+          )}
+
+          {!!card.powers?.length && (
+            <>
+              <p><b>Powers</b></p>
+              <ul>{card.powers.map((p, i) => <li key={i}>— {p}</li>)}</ul>
+            </>
+          )}
+
+          {!!card.traits?.length && (
+            <>
+              <p><b>Traits</b></p>
+              <ul>{card.traits.map((t, i) => <li key={i}>— {t}</li>)}</ul>
+            </>
           )}
         </div>
-        <dl className="nv-card__facts">
-          <div>
-            <dt>Power</dt>
-            <dd>{power || '—'}</dd>
-          </div>
-          <div>
-            <dt>Motto</dt>
-            <dd>{motto || '—'}</dd>
-          </div>
-        </dl>
-      </div>
-
-      <div className="nv-card__footer">Naturverse • Character Card</div>
+      ) : (
+        <div className="nv-card-empty">No card yet.</div>
+      )}
     </div>
   );
-};
+}

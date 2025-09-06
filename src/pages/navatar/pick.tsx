@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
+import NavatarImage from "../../components/NavatarImage";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
 import { saveActive } from "../../lib/localStorage";
 import "../../styles/navatar.css";
@@ -34,7 +34,12 @@ export default function PickNavatarPage() {
             aria-label={`Pick ${it.name}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <figure className="nav-card">
+              <NavatarImage src={it.src} alt={it.name} maxHeight={260} />
+              <figcaption className="nav-card__cap">
+                <strong>{it.name}</strong>
+              </figcaption>
+            </figure>
           </button>
         ))}
       </div>
