@@ -35,8 +35,10 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarHome from './routes/navatar';
-import NavatarCreate from './routes/navatar/create';
+import Hub from './pages/Navatar/Hub';
+import Create from './pages/Navatar/Create';
+import Pick from './pages/Navatar/Pick';
+import Upload from './pages/Navatar/Upload';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -114,16 +116,23 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-      { path: 'navatar', element: <NavatarHome /> },
-      { path: 'navatar/create', element: <NavatarCreate /> },
-        { path: 'passport', element: <PassportPage /> },
-        { path: 'auth/callback', element: <AuthCallback /> },
-        { path: 'login', element: <LoginPage /> },
-        { path: 'turian', element: <Turian /> },
-        { path: 'profile', element: <ProfilePage /> },
-        { path: 'analytics', element: <ProtectedRoute component={AnalyticsPage} /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <NotFound /> },
+      {
+        path: 'navatar',
+        element: <Hub />,
+        children: [
+          { path: 'create', element: <Create /> },
+          { path: 'pick', element: <Pick /> },
+          { path: 'upload', element: <Upload /> },
+        ],
+      },
+      { path: 'passport', element: <PassportPage /> },
+      { path: 'auth/callback', element: <AuthCallback /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'turian', element: <Turian /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'analytics', element: <ProtectedRoute component={AnalyticsPage} /> },
+      { path: '404', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);
