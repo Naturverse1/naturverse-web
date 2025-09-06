@@ -1,5 +1,6 @@
 import { supabase } from "./supabase-client";
 import type { CharacterCard } from "./types";
+import type { SupabaseClient } from "@supabase/supabase-js";
 
 export type NavatarRow = {
   id: string;
@@ -126,5 +127,49 @@ export async function getCardForAvatar(avatarId: string) {
     .select("*")
     .eq("avatar_id", avatarId)
     .single();
+}
+
+// --- Active Navatar helpers ---
+
+export async function getActiveNavatarId(
+  supabase: SupabaseClient,
+  userId: string
+) {
+  const { data, error } = await supabase
+    .from("avatars")
+    .select("id")
+    .eq("user_id", userId)
+    .eq("is_active", true)
+    .single();
+
+  if (error) return null;
+  return data?.id ?? null;
+}
+
+export async function setActiveNavatar(
+  supabase: SupabaseClient,
+  userId: string,
+  navatarId: string
+) {
+  await supabase.from("avatars").update({ is_active: false }).eq("user_id", userId);
+  await supabase.from("avatars").update({ is_active: true }).eq("id", navatarId);
+  localStorage.setItem("active_navatar_id", navatarId);
+}
+
+export async function getActiveNavatarWithCard(
+  supabase: SupabaseClient,
+  userId: string
+) {
+  const id =
+    localStorage.getItem("active_navatar_id") ||
+    (await getActiveNavatarId(supabase, userId));
+  if (!id) return { navatar: null, card: null };
+
+  const [{ data: navatar }, { data: card }] = await Promise.all([
+    supabase.from("avatars").select("*").eq("id", id).single(),
+    supabase.from("character_cards").select("*").eq("navatar_id", id).maybeSingle(),
+  ]);
+
+  return { navatar, card };
 }
 
