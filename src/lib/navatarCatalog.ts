@@ -1,4 +1,4 @@
-import type { NavatarBase } from "../types/navatar";
+type NavatarBase = "Animal" | "Fruit" | "Insect" | "Spirit";
 
 export const SPECIES: Record<NavatarBase, string[]> = {
   Animal: [

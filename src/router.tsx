@@ -35,8 +35,12 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarHome from './routes/navatar';
-import NavatarCreate from './routes/navatar/create';
+import NavatarHub from './pages/navatar';
+import MyNavatar from './pages/navatar/MyNavatar';
+import Pick from './pages/navatar/Pick';
+import Upload from './pages/navatar/Upload';
+import Generate from './pages/navatar/Generate';
+import Mint from './pages/navatar/Mint';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -114,8 +118,17 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-      { path: 'navatar', element: <NavatarHome /> },
-      { path: 'navatar/create', element: <NavatarCreate /> },
+      {
+        path: 'navatar',
+        element: <NavatarHub />,
+        children: [
+          { index: true, element: <MyNavatar /> },
+          { path: 'pick', element: <Pick /> },
+          { path: 'upload', element: <Upload /> },
+          { path: 'generate', element: <Generate /> },
+          { path: 'mint', element: <Mint /> },
+        ],
+      },
         { path: 'passport', element: <PassportPage /> },
         { path: 'auth/callback', element: <AuthCallback /> },
         { path: 'login', element: <LoginPage /> },

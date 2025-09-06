@@ -14,9 +14,9 @@ export default function NavatarCard({ navatar }: Props) {
       </header>
 
       <div className="imageWrap">
-        {navatar.imageDataUrl ? (
+        {navatar.imageUrl ? (
           <img
-            src={navatar.imageDataUrl}
+            src={navatar.imageUrl}
             alt={navatar.name || navatar.species}
             loading="lazy"
           />
@@ -29,10 +29,6 @@ export default function NavatarCard({ navatar }: Props) {
         <div>
           <dt>Species</dt>
           <dd>{navatar.species}</dd>
-        </div>
-        <div>
-          <dt>Powers</dt>
-          <dd>{navatar.powers.join(" · ")}</dd>
         </div>
         <div>
           <dt>Backstory</dt>
