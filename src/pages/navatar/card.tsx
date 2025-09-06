@@ -2,7 +2,11 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
+import {
+  getActiveNavatarId,
+  getCharacterCard,
+  upsertCharacterCard,
+} from "../../lib/navatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
@@ -23,10 +27,12 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const card = await fetchMyCharacterCard();
+        const id = await getActiveNavatarId(supabase);
+        if (!id) return;
+        const card = await getCharacterCard(supabase, id);
         if (card && alive) {
           setName(card.name ?? "");
-          setSpecies(card.species ?? "");
+          setSpecies(card.base_type ?? "");
           setKingdom(card.kingdom ?? "");
           setBackstory(card.backstory ?? "");
           setPowers((card.powers ?? []).join(", "));
@@ -54,32 +60,23 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Please sign in");
-
-      const { data: active } = await getActiveNavatar(user.id);
-      if (!active) {
-        alert("Please create or select a Navatar first.");
+      const id = await getActiveNavatarId(supabase);
+      if (!id) {
+        alert("Pick or upload a Navatar first");
         return;
       }
 
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id: active.id,
+      await upsertCharacterCard(supabase, {
+        avatar_id: id,
         name,
-        species,
+        base_type: species,
         kingdom,
         backstory,
         powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : [],
         traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : [],
       });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
 
-      nav("/navatar/mint");
+      nav("/navatar");
     } catch (e: any) {
       console.error(e);
       setErr(e.message ?? "Save failed");
