@@ -15,6 +15,7 @@
 @import "./styles/nv-images.css";
 @import "./styles/marketplace.css";
 @import "./styles/home.css";
+@import "./styles/navatar.css";
 @import "./styles/theme.css";
 @import "../app/styles/global-sections.css";
 :root { --ink:#0b2545; --muted:#6c7676; --card:#f6f7fb; --ring:#dbe2ef; --radius:14px; --naturverse-blue: var(--nv-blue-700); }
