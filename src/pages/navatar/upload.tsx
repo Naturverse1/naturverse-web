@@ -1,13 +1,26 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
+import NavatarCard from "../../components/NavatarCard";
 import { saveActive } from "../../lib/localStorage";
+import "../../styles/navatar.css";
 
 export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
+  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const nav = useNavigate();
+
+  useEffect(() => {
+    if (!file) {
+      setPreviewUrl(undefined);
+      return;
+    }
+    const url = URL.createObjectURL(file);
+    setPreviewUrl(url);
+    return () => URL.revokeObjectURL(url);
+  }, [file]);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -26,11 +39,15 @@ export default function UploadNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
       <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs active="upload" />
-      <form onSubmit={onSave} className="center" style={{ maxWidth: 480, margin: "16px auto" }}>
+      <NavatarTabs />
+      <form
+        onSubmit={onSave}
+        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
+      >
+        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
         <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <input
-          style={{ display: "block", width: "100%", margin: "8px 0" }}
+          style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}

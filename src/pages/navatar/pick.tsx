@@ -2,8 +2,10 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
+import NavatarCard from "../../components/NavatarCard";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
 import { saveActive } from "../../lib/localStorage";
+import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
   const [items, setItems] = useState<PublicNavatar[]>([]);
@@ -22,25 +24,20 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs active="pick" />
-      <div className="grid grid-cards">
+      <NavatarTabs />
+      <div className="nav-grid">
         {items.map((it) => (
           <button
             key={it.src}
-            className="navatar-card"
+            className="linklike"
             onClick={() => choose(it.src, it.name)}
             aria-label={`Pick ${it.name}`}
+            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <div className="img">
-              <img src={it.src} alt={it.name} />
-            </div>
-            <p className="center" style={{ fontWeight: 700, marginTop: 8 }}>
-              {it.name}
-            </p>
+            <NavatarCard src={it.src} title={it.name} />
           </button>
         ))}
       </div>
-      <style>{`.grid-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:16px}`}</style>
     </main>
   );
 }

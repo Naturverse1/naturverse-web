@@ -32,3 +32,6 @@
     margin-top: 0;
   }
 }
+
+.breadcrumbs a { color: #1e4ed8; font-weight: 600; }
+.breadcrumbs { color: #6882d9; }

@@ -19,8 +19,13 @@
 }
 
 /* Breadcrumbs and small labels */
-.nv-breadcrumbs,
-.nv-breadcrumbs a,
+.nv-breadcrumbs {
+  color: #6882d9;
+}
+.nv-breadcrumbs a {
+  color: #1e4ed8;
+  font-weight: 600;
+}
 .badge,
 .chip,
 .tag {
