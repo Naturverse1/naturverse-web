@@ -1,44 +1,34 @@
-import React from "react";
-import type { Navatar } from "../types/navatar";
+import type { ActiveNavatar } from "../lib/navatar/storage";
 
-type Props = { navatar: Navatar };
-
-export default function NavatarCard({ navatar }: Props) {
+export default function NavatarCard({ n }: { n: ActiveNavatar | null }) {
+  if (!n) return null;
   return (
-    <article id="navatar-card" className="nv-card navatar-card character-card">
-      <header className="cc-head">
-        <span className="cc-name">{navatar.name || navatar.species}</span>
-        <span className="cc-meta">
-          {navatar.base} • {new Date(navatar.createdAt).toLocaleDateString()}
-        </span>
-      </header>
-
-      <div className="imageWrap">
-        {navatar.imageDataUrl ? (
-          <img
-            src={navatar.imageDataUrl}
-            alt={navatar.name || navatar.species}
-            loading="lazy"
-          />
-        ) : (
-          <div className="card__placeholder" aria-label="No photo">No photo</div>
-        )}
-      </div>
-
-      <dl className="cc-fields">
-        <div>
-          <dt>Species</dt>
-          <dd>{navatar.species}</dd>
-        </div>
-        <div>
-          <dt>Powers</dt>
-          <dd>{navatar.powers.join(" · ")}</dd>
-        </div>
-        <div>
-          <dt>Backstory</dt>
-          <dd>{navatar.backstory}</dd>
-        </div>
-      </dl>
-    </article>
+    <div className="navatar-card">
+      <img src={n.imageUrl} alt={n.name} />
+      <div className="name">{n.name}</div>
+      <style>{`
+        .navatar-card {
+          display: inline-block;
+          border: 1px solid #e3e8ff;
+          border-radius: 14px;
+          padding: 10px;
+          background: #fff;
+        }
+        .navatar-card img {
+          width: 180px;
+          aspect-ratio: 3/4;
+          object-fit: cover;
+          border-radius: 10px;
+          background: #f3f6ff;
+          display: block;
+        }
+        .navatar-card .name {
+          margin-top: 8px;
+          font-weight: 700;
+          color: #1f4bff;
+          text-align: center;
+        }
+      `}</style>
+    </div>
   );
 }
