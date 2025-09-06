@@ -61,3 +61,50 @@ textarea { min-height: 96px; resize: vertical; }
 .NavatarMeta { padding:0 12px 12px; color:#64748b; font-size:12px; text-align:center; }
 .Error { color:#dc2626; }
 .muted { color:#64748b; font-weight:400; }
+
+/* --- New Navatar Hub styles --- */
+/* layout */
+.nv-wrap { padding: 1rem; }
+.nv-center { max-width: 1024px; margin: 0 auto; }
+
+/* theme: blue */
+.nv-title { text-align:center; color:#2563eb; font-size:2rem; margin:.2rem 0 .6rem; }
+.nv-h2 { color:#1e40af; font-size:1.25rem; margin:.25rem 0 .6rem; }
+.nv-muted { color:#64748b; }
+
+/* breadcrumbs */
+.nv-breadcrumb { font-size:.95rem; margin: .25rem 0 .5rem; }
+.nv-breadcrumb a { text-decoration:underline; }
+.nv-bc-blue a { color:#2563eb; }
+.nv-breadcrumb span { color:#94a3b8; }
+
+/* header + pills */
+.nv-header { padding-bottom:.5rem; border-bottom:1px solid #eef2ff; margin-bottom:.5rem; }
+.nv-pill-row { display:flex; gap:.5rem; justify-content:center; flex-wrap:wrap; }
+.nv-pill {
+  padding:.5rem .9rem; border:1px solid #dbeafe; border-radius:999px;
+  background:#fff; color:#1e40af; font-weight:700; text-decoration:none; white-space:nowrap;
+}
+.nv-pill:focus { outline:2px solid #93c5fd; outline-offset:2px; }
+
+/* grid cards */
+.nv-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; }
+.nv-grid-big { grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); }
+.nv-card { border:1px solid #e5e7eb; border-radius:12px; overflow:hidden; background:#fff; }
+.nv-img { width:100%; height:auto; display:block; }
+.nv-ph { height:160px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; color:#9ca3af; }
+.nv-card-meta { padding:.5rem .6rem; }
+.nv-card-title { font-weight:700; color:#111827; }
+.nv-card-sub { font-size:.85rem; color:#64748b; }
+
+/* forms */
+.nv-form { display:grid; gap:.5rem; max-width:720px; }
+.nv-input { width:100%; padding:.6rem .7rem; border:1px solid #e5e7eb; border-radius:10px; }
+.nv-btn-blue { padding:.6rem .9rem; border-radius:10px; background:#2563eb; color:#fff; border:0; font-weight:700; }
+
+/* mobile */
+@media (max-width: 640px) {
+  .nv-wrap { padding:.75rem; }
+  .nv-title { font-size:1.7rem; }
+  .nv-grid { grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap:10px; }
+}
