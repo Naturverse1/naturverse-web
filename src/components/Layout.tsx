@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import NavBar from './NavBar';
+import TurianAssistant from './ai/TurianAssistant';
 
 type Props = { children: ReactNode; title?: ReactNode; breadcrumbs?: ReactNode };
 
@@ -14,6 +15,7 @@ export default function Layout({ title, breadcrumbs, children }: Props) {
           {children}
         </div>
       </main>
+      <TurianAssistant />
     </>
   );
 }
