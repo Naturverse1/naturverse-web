@@ -118,7 +118,7 @@ export type WishlistItem = CatalogItem & {
 export type CharacterCard = {
   id: string;
   user_id: string;
-  navatar_id: string | null;
+  avatar_id: string | null;
   name: string | null;
   species: string | null;
   kingdom: string | null;

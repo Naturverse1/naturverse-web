@@ -1,44 +1,40 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveActive } from "../../lib/localStorage";
+import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
+import { setActiveNavatar } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
+  const [items, setItems] = useState<NavatarRow[]>([]);
   const nav = useNavigate();
 
   useEffect(() => {
-    loadPublicNavatars().then(setItems);
+    listMyNavatars().then(setItems).catch(() => {});
   }, []);
-
-  function choose(src: string, name: string) {
-    saveActive({ id: Date.now(), name, imageDataUrl: src, createdAt: Date.now() });
-    nav("/navatar");
-  }
 
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
       <div className="nav-grid">
-        {items.map((it) => (
+        {items.map((avatar) => (
           <button
-            key={it.src}
+            key={avatar.id}
             className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
+            onClick={() => {
+              setActiveNavatar(avatar.id);
+              nav("/navatar");
+            }}
+            aria-label={`Pick ${avatar.name ?? avatar.base_type}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <NavatarCard
+              src={navatarImageUrl(avatar.image_path)}
+              title={avatar.name ?? avatar.base_type}
+            />
           </button>
         ))}
       </div>
     </main>
   );
 }
-
