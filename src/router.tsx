@@ -35,8 +35,10 @@ import BankWallet from './pages/naturbank/Wallet';
 import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
-import NavatarHome from './routes/navatar';
-import NavatarCreate from './routes/navatar/create';
+import NavatarHub from './pages/Navatar/Hub';
+import NavatarCreate from './pages/Navatar/Create';
+import NavatarPick from './pages/Navatar/Pick';
+import NavatarUpload from './pages/Navatar/Upload';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -114,16 +116,23 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
-      { path: 'navatar', element: <NavatarHome /> },
-      { path: 'navatar/create', element: <NavatarCreate /> },
-        { path: 'passport', element: <PassportPage /> },
-        { path: 'auth/callback', element: <AuthCallback /> },
-        { path: 'login', element: <LoginPage /> },
-        { path: 'turian', element: <Turian /> },
-        { path: 'profile', element: <ProfilePage /> },
-        { path: 'analytics', element: <ProtectedRoute component={AnalyticsPage} /> },
-        { path: '404', element: <NotFound /> },
-        { path: '*', element: <NotFound /> },
+      {
+        path: 'navatar',
+        element: <NavatarHub />,
+        children: [
+          { path: 'create', element: <NavatarCreate /> },
+          { path: 'pick', element: <NavatarPick /> },
+          { path: 'upload', element: <NavatarUpload /> },
+        ],
+      },
+      { path: 'passport', element: <PassportPage /> },
+      { path: 'auth/callback', element: <AuthCallback /> },
+      { path: 'login', element: <LoginPage /> },
+      { path: 'turian', element: <Turian /> },
+      { path: 'profile', element: <ProfilePage /> },
+      { path: 'analytics', element: <ProtectedRoute component={AnalyticsPage} /> },
+      { path: '404', element: <NotFound /> },
+      { path: '*', element: <NotFound /> },
     ],
   },
 ]);
