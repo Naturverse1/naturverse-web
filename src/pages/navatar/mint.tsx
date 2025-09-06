@@ -1,25 +1,23 @@
-import { useMemo } from "react";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import "../../styles/navatar.css";
+import { Link } from "react-router-dom";
+import { BlueBreadcrumbs } from "../../components/BlueBreadcrumbs";
+import { PageShell } from "../../components/PageShell";
+import { NavatarTabs } from "../../components/NavatarTabs";
 
-export default function MintNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
+export default function NavatarMintStub() {
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs />
-      <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
-        Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
-      </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+    <PageShell>
+      <BlueBreadcrumbs items={[
+        { label:"Home", to:"/" },
+        { label:"Navatar", to:"/navatar" },
+        { label:"NFT / Mint", to:"/navatar/mint" },
+      ]}/>
+      <h1 className="nv-heading">Mint your Navatar</h1>
+      <NavatarTabs active="mint" />
+      <div className="nv-card nv-center" style={{ maxWidth: 720 }}>
+        <p className="nv-lead">NFT minting is coming soon.</p>
+        <p className="nv-muted">In the meantime, you can browse merch in the shop.</p>
+        <Link className="nv-button" to="/marketplace">Go to Marketplace</Link>
       </div>
-    </main>
+    </PageShell>
   );
 }
-

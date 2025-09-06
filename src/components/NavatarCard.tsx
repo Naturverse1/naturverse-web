@@ -1,25 +1,9 @@
-import React from "react";
-
-type Props = {
-  src?: string | null;
-  title?: string;
-  subtitle?: string;
-  className?: string;
-};
-
-export default function NavatarCard({ src, title = "My Navatar", subtitle, className }: Props) {
+export function NavatarCard({ src, title }: { src?: string; title?: string }) {
   return (
-    <figure className={`nav-card ${className ?? ""}`}>
-      <div className="nav-card__img" aria-label={title}>
-        {src ? (
-          <img src={src} alt={title} />
-        ) : (
-          <div className="nav-card__placeholder">No photo</div>
-        )}
-      </div>
-      <figcaption className="nav-card__cap">
-        <strong>{title}</strong>
-        {subtitle ? <span> · {subtitle}</span> : null}
+    <figure className="nv-card nv-character">
+      {src ? <img src={src} alt={title || "My Navatar"} /> : <div className="nv-empty">No photo</div>}
+      <figcaption style={{ textAlign:"center", fontWeight:700, color:"#1e46ff", padding:"10px 4px" }}>
+        {title ?? "My Navatar"}
       </figcaption>
     </figure>
   );

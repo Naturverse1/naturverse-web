@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
+import { BlueBreadcrumbs } from "../../components/BlueBreadcrumbs";
+import { PageShell } from "../../components/PageShell";
+import { NavatarTabs } from "../../components/NavatarTabs";
+import { NavatarCard } from "../../components/NavatarCard";
 import { saveActive } from "../../lib/localStorage";
 import "../../styles/navatar.css";
 
@@ -36,10 +37,10 @@ export default function UploadNavatarPage() {
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
-      <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
+    <PageShell>
+      <BlueBreadcrumbs items={[{ label: "Home", to: "/" }, { label: "Navatar", to: "/navatar" }, { label: "Upload", to: "/navatar/upload" }]} />
+      <h1 className="nv-heading">Upload a Navatar</h1>
+      <NavatarTabs active="upload" />
       <form
         onSubmit={onSave}
         style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
@@ -52,11 +53,11 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
+        <button className="nv-button" type="submit">
           Save
         </button>
       </form>
-    </main>
+    </PageShell>
   );
 }
 

@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
+import { BlueBreadcrumbs } from "../../components/BlueBreadcrumbs";
+import { PageShell } from "../../components/PageShell";
+import { NavatarTabs } from "../../components/NavatarTabs";
+import { NavatarCard } from "../../components/NavatarCard";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
 import { saveActive } from "../../lib/localStorage";
 import "../../styles/navatar.css";
@@ -21,11 +22,11 @@ export default function PickNavatarPage() {
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
+    <PageShell>
+      <BlueBreadcrumbs items={[{ label: "Home", to: "/" }, { label: "Navatar", to: "/navatar" }, { label: "Pick", to: "/navatar/pick" }]} />
+      <h1 className="nv-heading">Pick Navatar</h1>
+      <NavatarTabs active="pick" />
+      <div className="nv-grid">
         {items.map((it) => (
           <button
             key={it.src}
@@ -38,7 +39,7 @@ export default function PickNavatarPage() {
           </button>
         ))}
       </div>
-    </main>
+    </PageShell>
   );
 }
 
