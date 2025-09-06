@@ -113,3 +113,40 @@
 .nvrs-section.navatar .ccard li { line-height: 1.35; }
 .nvrs-section.navatar .ccard .label { font-weight: 700; }
 .nvrs-section.navatar .ccard .card__placeholder { color: #aaa; }
+
+/* --- Navatar Card blue form controls ------------------------------------- */
+.nv-input{
+  color: var(--nv-blue-900);
+  border: 1px solid var(--nv-blue-200);
+  background: #fff;
+  border-radius: 12px;
+  padding: .8rem 1rem;
+}
+.nv-input::placeholder{ color: var(--nv-blue-400); }
+.nv-input:focus{
+  outline: none;
+  border-color: var(--nv-blue-700);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--nv-blue-700) 20%, transparent);
+}
+
+.nv-btn{
+  background: var(--nv-blue-800);
+  color:#fff;
+  padding:.8rem 1.1rem;
+  border-radius:14px;
+  font-weight:700;
+}
+.nv-btn:hover{ background: var(--nv-blue-900); }
+
+.nv-btn-outline{
+  background:#fff;
+  color: var(--nv-blue-800);
+  border:1px solid var(--nv-blue-200);
+  padding:.8rem 1.1rem;
+  border-radius:14px;
+  font-weight:700;
+}
+.nv-btn-outline:hover{
+  border-color: var(--nv-blue-700);
+  color: var(--nv-blue-900);
+}
