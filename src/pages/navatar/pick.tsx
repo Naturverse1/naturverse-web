@@ -1,10 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
+import { NavTabs } from "../../components/navatar/Tabs";
+import NavatarFrame from "../../components/navatar/NavatarFrame";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveActive } from "../../lib/localStorage";
+import { setMyNavatar } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
@@ -15,8 +15,11 @@ export default function PickNavatarPage() {
     loadPublicNavatars().then(setItems);
   }, []);
 
-  function choose(src: string, name: string) {
-    saveActive({ id: Date.now(), name, imageDataUrl: src, createdAt: Date.now() });
+  async function choose(src: string, name: string) {
+    const res = await fetch(src);
+    const blob = await res.blob();
+    const file = new File([blob], "navatar.png", { type: blob.type });
+    await setMyNavatar(file, name);
     nav("/navatar");
   }
 
@@ -24,21 +27,12 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
+      <NavTabs active="pick" />
       <div className="nav-grid">
         {items.map((it) => (
-          <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
-          >
-            <NavatarCard src={it.src} title={it.name} />
-          </button>
+          <NavatarFrame key={it.src} src={it.src} title={it.name} onClick={() => choose(it.src, it.name)} />
         ))}
       </div>
     </main>
   );
 }
-

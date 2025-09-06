@@ -1,15 +1,16 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { saveActive } from "../../lib/localStorage";
+import { NavTabs } from "../../components/navatar/Tabs";
+import NavatarFrame from "../../components/navatar/NavatarFrame";
+import { setMyNavatar } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
 export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const fileRef = useRef<HTMLInputElement>(null);
   const nav = useNavigate();
 
   useEffect(() => {
@@ -22,41 +23,42 @@ export default function UploadNavatarPage() {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!file) return;
-    const dataUrl = await new Promise<string>((res) => {
-      const r = new FileReader();
-      r.onload = () => res(String(r.result));
-      r.readAsDataURL(file);
-    });
-    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, createdAt: Date.now() });
-    alert("Uploaded ✓");
-    nav("/navatar");
-  }
-
   return (
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
       <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
-      <form
-        onSubmit={onSave}
-        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
-      >
-        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+      <NavTabs active="upload" />
+      <div style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}>
+        <NavatarFrame src={previewUrl} title="My Navatar" onClick={() => fileRef.current?.click()} />
+        <input
+          ref={fileRef}
+          type="file"
+          accept="image/*"
+          hidden
+          onChange={async (e) => {
+            const f = e.target.files?.[0];
+            if (!f) return;
+            setFile(f);
+          }}
+        />
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
+        <button
+          className="pill pill--active"
+          onClick={async () => {
+            if (!file) return;
+            await setMyNavatar(file, name);
+            alert("Uploaded \u2713");
+            nav("/navatar");
+          }}
+        >
           Save
         </button>
-      </form>
+      </div>
     </main>
   );
 }
-

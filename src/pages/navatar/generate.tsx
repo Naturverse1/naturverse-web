@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { saveActive } from "../../lib/localStorage";
+import { NavTabs } from "../../components/navatar/Tabs";
+import NavatarFrame from "../../components/navatar/NavatarFrame";
+import { setMyNavatar } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -25,16 +25,9 @@ export default function GenerateNavatarPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    let dataUrl = "";
-    if (file) {
-      dataUrl = await new Promise<string>((res) => {
-        const r = new FileReader();
-        r.onload = () => res(String(r.result));
-        r.readAsDataURL(file);
-      });
-    }
-    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, prompt, createdAt: Date.now() });
-    alert("Saved ✓");
+    if (!file) return;
+    await setMyNavatar(file, name);
+    alert("Saved \u2713");
     nav("/navatar");
   }
 
@@ -44,12 +37,12 @@ export default function GenerateNavatarPage() {
         items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
       />
       <h1 className="center">Describe &amp; Generate</h1>
-      <NavatarTabs />
+      <NavTabs active="gen" />
       <form
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        <NavatarCard src={draftUrl} title={name || "My Navatar"} />
+        <NavatarFrame src={draftUrl} title={name || "My Navatar"} />
         <textarea
           rows={4}
           placeholder="Describe your Navatar (e.g., friendly water-buffalo spirit)…"
@@ -69,9 +62,8 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        AI art & edit coming soon.
+        AI art &amp; edit coming soon.
       </p>
     </main>
   );
 }
-
