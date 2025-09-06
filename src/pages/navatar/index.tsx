@@ -3,6 +3,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadActive } from "../../lib/localStorage";
+import { CharacterCardPreview } from "./pieces/CharacterCardPreview";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
@@ -11,11 +12,17 @@ export default function MyNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center">My Navatar</h1>
-      <NavatarTabs />
+      <NavatarTabs active="my" variant="home" />
 
-      <div style={{ marginTop: 8 }}>
-        <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
-      </div>
+      <section className="nv-two-col" style={{ marginTop: 8 }}>
+        <NavatarCard
+          className="navatar-card"
+          src={activeNavatar?.imageDataUrl}
+          title={activeNavatar?.name || "Turian"}
+        />
+
+        <CharacterCardPreview navatarId={activeNavatar?.id} />
+      </section>
     </main>
   );
 }

@@ -24,7 +24,7 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
+      <NavatarTabs active="pick" variant="sub" />
       <div className="nav-grid">
         {items.map((it) => (
           <button

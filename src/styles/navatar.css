@@ -1,11 +1,30 @@
-/* --- Pills: always horizontal & centered, wrap if needed --- */
-.nav-tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;       /* stays horizontal; wraps when space runs out */
-  margin: 10px auto 18px;
+:root {
+  --brand-blue: #2d5bff;
+ }
+
+/* Tabs: 3 across wrap + hide on subpages (mobile) */
+.nv-tabs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  justify-items: center;
+  margin-bottom: 16px;
+}
+@media (min-width: 860px) {
+  .nv-tabs {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+  }
+}
+.nv-tabs--sub {
+  display: none;
+}
+@media (min-width: 860px) {
+  .nv-tabs--sub {
+    display: flex;
+  }
 }
 
 .pill {
@@ -16,39 +35,39 @@
   border-radius: 999px;
   border: 1px solid #cfe0ff;
   background: #f6f9ff;
-  color: #1e4ed8;
+  color: var(--brand-blue);
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 2px 0 rgba(0,0,0,.08);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
 }
 .pill--active {
-  background: #1e4ed8;
+  background: var(--brand-blue);
   color: #fff;
-  border-color: #1e4ed8;
+  border-color: var(--brand-blue);
 }
 
-/* --- Card: single source of truth for size & fit --- */
+/* Unified card sizing */
 .nav-card {
-  --nav-card-w: 260px;    /* change this once to resize everywhere */
-  width: min(var(--nav-card-w), 88vw);
+  width: 360px;
+  aspect-ratio: 3 / 4;
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid #e8eefc;
-  border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(30,78,216,.06);
+  border-radius: 18px;
+  box-shadow: 0 6px 16px rgba(30, 78, 216, 0.06);
 }
-
 .nav-card__img {
   width: 100%;
-  aspect-ratio: 3 / 4;     /* consistent portrait shape */
-  border-radius: 14px;
+  height: 100%;
+  aspect-ratio: 3 / 4;
+  border-radius: 18px;
   overflow: hidden;
   background: #eef3ff;
 }
 .nav-card__img img {
   width: 100%;
   height: 100%;
-  object-fit: contain;     /* never crop uploads or picks */
+  object-fit: cover;
   display: block;
 }
 .nav-card__placeholder {
@@ -62,13 +81,42 @@
 .nav-card__cap {
   padding: 8px 10px 10px;
   text-align: center;
-  color: #1e40af;
+  color: var(--brand-blue);
+}
+@media (max-width: 640px) {
+  .nav-card {
+    width: 100%;
+    max-width: 420px;
+  }
+}
+
+/* Two-column on desktop, single column on mobile */
+.nv-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+@media (max-width: 900px) {
+  .nv-two-col {
+    grid-template-columns: 1fr;
+  }
 }
 
 /* grid used by Pick page */
 .nav-grid {
   display: grid;
   gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
+  grid-template-columns: repeat(auto-fill, minmax(min(360px, 46vw), 1fr));
   align-items: start;
+}
+
+/* Blue everywhere (titles, labels, pills) */
+h1,
+h2,
+h3,
+.card-title,
+.nv-tabs .pill,
+.breadcrumb a {
+  color: var(--brand-blue);
 }

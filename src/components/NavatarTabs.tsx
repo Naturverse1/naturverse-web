@@ -1,28 +1,39 @@
 import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link } from "react-router-dom";
 
-const TABS = [
-  { to: "/navatar", label: "My Navatar" },
-  { to: "/navatar/pick", label: "Pick" },
-  { to: "/navatar/upload", label: "Upload" },
-  { to: "/navatar/generate", label: "Generate" },
-  { to: "/navatar/mint", label: "NFT / Mint" },
-  { to: "/navatar/marketplace", label: "Marketplace" },
+type TabKey =
+  | "my"
+  | "pick"
+  | "upload"
+  | "generate"
+  | "mint"
+  | "marketplace";
+
+const TABS: { to: string; label: string; key: TabKey }[] = [
+  { to: "/navatar", label: "My Navatar", key: "my" },
+  { to: "/navatar/pick", label: "Pick", key: "pick" },
+  { to: "/navatar/upload", label: "Upload", key: "upload" },
+  { to: "/navatar/generate", label: "Generate", key: "generate" },
+  { to: "/navatar/mint", label: "NFT / Mint", key: "mint" },
+  { to: "/navatar/marketplace", label: "Marketplace", key: "marketplace" },
 ];
 
-export default function NavatarTabs() {
-  const { pathname } = useLocation();
+interface Props {
+  active: TabKey;
+  variant?: "home" | "sub";
+}
+
+export default function NavatarTabs({ active, variant = "home" }: Props) {
   return (
-    <nav className="nav-tabs" aria-label="Navatar actions">
-      {TABS.map(t => {
-        const active =
-          t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
-        return (
-          <Link key={t.to} to={t.to} className={`pill ${active ? "pill--active" : ""}`}>
-            {t.label}
-          </Link>
-        );
-      })}
+    <nav
+      className={["nv-tabs", variant === "sub" ? "nv-tabs--sub" : ""].join(" ")}
+      aria-label="Navatar tabs"
+    >
+      {TABS.map((t) => (
+        <Link key={t.to} to={t.to} className={`pill ${active === t.key ? "pill--active" : ""}`}>
+          {t.label}
+        </Link>
+      ))}
     </nav>
   );
 }
