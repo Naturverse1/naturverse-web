@@ -2,21 +2,24 @@ import { useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { fetchMyCharacterCard } from "../../lib/navatar";
-import type { CharacterCard } from "../../lib/types";
+import {
+  loadActive,
+  fetchMyCharacterCard,
+  type CharacterCard,
+} from "../../lib/navatar";
+import { supabase } from "../../lib/supabase-client";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const activeNavatar = useMemo(() => loadActive(), []);
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
     let alive = true;
     (async () => {
       try {
-        const c = await fetchMyCharacterCard();
+        const c = await fetchMyCharacterCard(supabase);
         if (alive) setCard(c);
       } catch {
         // ignore
@@ -35,7 +38,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">
-            <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
+            <NavatarCard src={activeNavatar?.image_url} title={activeNavatar?.title || "Turian"} />
           </div>
         </section>
 

@@ -3,23 +3,22 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { getActiveNavatar, getCardForAvatar } from "../../lib/navatar";
+import { loadActive, fetchMyCharacterCard, type CharacterCard } from "../../lib/navatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
-  const [card, setCard] = useState<any>(null);
+  const activeNavatar = useMemo(() => loadActive(), []);
+  const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: act } = await getActiveNavatar(user.id);
-      if (!act) return;
-      const { data: c } = await getCardForAvatar(act.id);
-      setCard(c);
+      try {
+        const c = await fetchMyCharacterCard(supabase);
+        setCard(c);
+      } catch {
+        // ignore
+      }
     })();
   }, []);
 
@@ -32,7 +31,7 @@ export default function MintNavatarPage() {
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
       <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "My Navatar"} />
+        <NavatarCard src={activeNavatar?.image_url} title={activeNavatar?.title || "My Navatar"} />
         <a className="pill" href="/marketplace">Go to Marketplace</a>
       </div>
 

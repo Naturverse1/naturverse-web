@@ -1,8 +1,14 @@
 import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
+import type { SupabaseClient } from "@supabase/supabase-js";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
+import {
+  loadActive,
+  fetchMyCharacterCard,
+  upsertCharacterCard,
+  type CharacterCard,
+} from "../../lib/navatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
@@ -23,7 +29,7 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const card = await fetchMyCharacterCard();
+        const card = await fetchMyCharacterCard(supabase as SupabaseClient);
         if (card && alive) {
           setName(card.name ?? "");
           setSpecies(card.species ?? "");
@@ -48,36 +54,26 @@ export default function NavatarCardPage() {
     [name, species, kingdom, backstory, powers, traits]
   );
 
+  const active = loadActive();
+
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     if (!canSave) return;
+    if (!active?.id) {
+      alert("Please pick or upload a Navatar first.");
+      return;
+    }
     setSaving(true);
     setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) throw new Error("Please sign in");
-
-      const { data: active } = await getActiveNavatar(user.id);
-      if (!active) {
-        alert("Please create or select a Navatar first.");
-        return;
-      }
-
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id: active.id,
+      await upsertCharacterCard(supabase as SupabaseClient, {
         name,
         species,
         kingdom,
         backstory,
-        powers: powers ? powers.split(",").map(s => s.trim()).filter(Boolean) : [],
-        traits: traits ? traits.split(",").map(s => s.trim()).filter(Boolean) : [],
-      });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
+        powers: parseComma(powers),
+        traits: parseComma(traits),
+      } as CharacterCard);
 
       nav("/navatar/mint");
     } catch (e: any) {
@@ -86,6 +82,13 @@ export default function NavatarCardPage() {
     } finally {
       setSaving(false);
     }
+  }
+
+  function parseComma(s?: string | null) {
+    return (s ?? "")
+      .split(",")
+      .map(x => x.trim())
+      .filter(Boolean);
   }
 
   if (loading) {
