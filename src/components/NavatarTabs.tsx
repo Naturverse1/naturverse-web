@@ -7,7 +7,7 @@ const TABS = [
   { to: "/navatar/upload", label: "Upload" },
   { to: "/navatar/generate", label: "Generate" },
   { to: "/navatar/mint", label: "NFT / Mint" },
-  { to: "/marketplace", label: "Marketplace" },
+  { to: "/navatar/marketplace", label: "Marketplace" },
 ];
 
 export default function NavatarTabs() {
