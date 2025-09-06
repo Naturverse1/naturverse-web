@@ -8,12 +8,13 @@ const TABS = [
   { to: "/navatar/generate", label: "Generate" },
   { to: "/navatar/mint", label: "NFT / Mint" },
   { to: "/navatar/marketplace", label: "Marketplace" },
+  { to: "/navatar/card", label: "Card" },
 ];
 
 export default function NavatarTabs() {
   const { pathname } = useLocation();
   return (
-    <nav className="nav-tabs" aria-label="Navatar actions">
+    <nav className="nav-pills" aria-label="Navatar actions">
       {TABS.map(t => {
         const active =
           t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
