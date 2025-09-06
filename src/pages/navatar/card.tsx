@@ -2,7 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, getActiveNavatar, upsertCharacterCard } from "../../lib/navatar";
+import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
+import { loadActive } from "../../lib/localNavatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
@@ -57,15 +58,15 @@ export default function NavatarCardPage() {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) throw new Error("Please sign in");
 
-      const { data: active } = await getActiveNavatar(user.id);
-      if (!active) {
-        alert("Please create or select a Navatar first.");
+      const avatarId = loadActive();
+      if (!avatarId) {
+        alert("Please pick or upload a Navatar first.");
         return;
       }
 
       const { error } = await upsertCharacterCard({
         user_id: user.id,
-        avatar_id: active.id,
+        avatar_id: avatarId,
         name,
         species,
         kingdom,
@@ -93,7 +94,7 @@ export default function NavatarCardPage() {
       <main className="container page-pad">
         <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
         <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
+        <NavatarTabs />
         <p>Loading…</p>
       </main>
     );
@@ -103,7 +104,7 @@ export default function NavatarCardPage() {
     <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
       <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
+      <NavatarTabs />
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
 

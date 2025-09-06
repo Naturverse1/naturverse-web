@@ -4,7 +4,8 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveActive } from "../../lib/localStorage";
+import { saveActive as saveActiveId } from "../../lib/localNavatar";
+import { saveActive as saveActiveNav } from "../../lib/localStorage";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
@@ -15,8 +16,14 @@ export default function PickNavatarPage() {
     loadPublicNavatars().then(setItems);
   }, []);
 
-  function choose(src: string, name: string) {
-    saveActive({ id: Date.now(), name, imageDataUrl: src, createdAt: Date.now() });
+  function choose(navatar: PublicNavatar) {
+    saveActiveId(navatar.id);
+    saveActiveNav({
+      id: navatar.id,
+      name: navatar.name,
+      imageDataUrl: navatar.src,
+      createdAt: Date.now(),
+    });
     nav("/navatar");
   }
 
@@ -26,11 +33,11 @@ export default function PickNavatarPage() {
       <h1 className="center">Pick Navatar</h1>
       <NavatarTabs />
       <div className="nav-grid">
-        {items.map((it) => (
+        {items.map(it => (
           <button
-            key={it.src}
+            key={it.id}
             className="linklike"
-            onClick={() => choose(it.src, it.name)}
+            onClick={() => choose(it)}
             aria-label={`Pick ${it.name}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >

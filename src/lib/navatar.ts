@@ -31,6 +31,20 @@ export async function listMyNavatars() {
   return (data ?? []) as NavatarRow[];
 }
 
+export async function getMyLatestAvatar(): Promise<{ id: string } | null> {
+  const { data: { user }, error: uErr } = await supabase.auth.getUser();
+  if (uErr || !user) return null;
+  const { data, error } = await supabase
+    .from("avatars")
+    .select("id")
+    .eq("user_id", user.id)
+    .order("created_at", { ascending: false })
+    .limit(1)
+    .maybeSingle();
+  if (error && (error as any).code !== "PGRST116") throw error;
+  return (data as { id: string }) ?? null;
+}
+
 export async function saveNavatar(opts: {
   name?: string;
   base_type: "Animal" | "Fruit" | "Insect" | "Spirit";
