@@ -1,62 +1,31 @@
-import React from 'react';
-import Img from './Img';
+import { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
+import { getCharacterCard } from '../lib/navatar';
+import { supabase } from '../lib/supabase-client';
 
-export type CardData = {
-  id: string;
-  name: string;
-  realm: string;
-  species: string;
-  emoji: string;
-  color: string;
-  power: string;
-  motto: string;
-  avatarDataUrl?: string; // optional base64 image
-};
+export default function CharacterCard({ avatarId, color = 'blue' }: { avatarId: string; color?: 'blue' | 'gray' }) {
+  const [card, setCard] = useState<any>(null);
 
-export const CharacterCard: React.FC<{ data: CardData }> = ({ data }) => {
-  const { name, realm, species, emoji, color, power, motto, avatarDataUrl } = data;
+  useEffect(() => {
+    getCharacterCard(supabase, avatarId).then(setCard);
+  }, [avatarId]);
 
   return (
-    <div
-      className="nv-card"
-      style={{
-        border: `2px solid ${color || 'var(--nv-border)'}`,
-        boxShadow: '0 6px 20px rgba(0,0,0,.08)',
-      }}
-    >
-      <div className="nv-card__header" style={{ background: color || 'var(--nv-blue-50)' }}>
-        <div className="nv-card__emoji" aria-hidden>
-          {emoji || '🌱'}
-        </div>
-        <div className="nv-card__title">
-          <div className="nv-card__name">{name || 'Navatar'}</div>
-          <div className="nv-card__sub">
-            {species || 'Species'} · {realm || 'Realm'}
-          </div>
-        </div>
-      </div>
-
-      <div className="nv-card__body">
-        <div className="nv-card__avatar">
-          {avatarDataUrl ? (
-            <Img src={avatarDataUrl} alt={`${name} avatar`} />
-          ) : (
-            <div className="nv-card__avatar--placeholder">Add image</div>
-          )}
-        </div>
-        <dl className="nv-card__facts">
-          <div>
-            <dt>Power</dt>
-            <dd>{power || '—'}</dd>
-          </div>
-          <div>
-            <dt>Motto</dt>
-            <dd>{motto || '—'}</dd>
-          </div>
+    <section className={`card-shell ${color}`}>
+      <h3>Character Card</h3>
+      {card ? (
+        <dl className="kv">
+          <dt>Name</dt><dd>{card.name}</dd>
+          <dt>Species</dt><dd>{card.base_type}</dd>
+          <dt>Kingdom</dt><dd>{card.kingdom}</dd>
+          <dt>Backstory</dt><dd>{card.backstory}</dd>
+          <dt>Powers</dt><dd>{(card.powers ?? []).map((p: string) => `— ${p}`).join('\n')}</dd>
+          <dt>Traits</dt><dd>{(card.traits ?? []).map((t: string) => `— ${t}`).join('\n')}</dd>
         </dl>
-      </div>
-
-      <div className="nv-card__footer">Naturverse • Character Card</div>
-    </div>
+      ) : (
+        <p>No card yet.</p>
+      )}
+      <Link to="/navatar/card" className="btn-secondary">Edit Card</Link>
+    </section>
   );
-};
+}

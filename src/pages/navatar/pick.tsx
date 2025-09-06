@@ -3,20 +3,25 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveActive } from "../../lib/localStorage";
+import {
+  listMyNavatars,
+  navatarImageUrl,
+  setActiveNavatarId,
+  type NavatarRow,
+} from "../../lib/navatar";
+import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
+  const [items, setItems] = useState<NavatarRow[]>([]);
   const nav = useNavigate();
 
   useEffect(() => {
-    loadPublicNavatars().then(setItems);
+    listMyNavatars().then(setItems).catch(() => setItems([]));
   }, []);
 
-  function choose(src: string, name: string) {
-    saveActive({ id: Date.now(), name, imageDataUrl: src, createdAt: Date.now() });
+  async function choose(id: string) {
+    await setActiveNavatarId(supabase, id);
     nav("/navatar");
   }
 
@@ -28,13 +33,13 @@ export default function PickNavatarPage() {
       <div className="nav-grid">
         {items.map((it) => (
           <button
-            key={it.src}
+            key={it.id}
             className="linklike"
-            onClick={() => choose(it.src, it.name)}
+            onClick={() => choose(it.id)}
             aria-label={`Pick ${it.name}`}
             style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <NavatarCard src={navatarImageUrl(it.image_path)} title={it.name || "Navatar"} />
           </button>
         ))}
       </div>
