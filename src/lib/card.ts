@@ -1,6 +1,8 @@
 import { supabase } from "./supabase-client";
 
-export type NavatarCard = {
+export type CharacterCard = {
+  id?: string;
+  user_id?: string;
   navatar_id: string;
   name?: string | null;
   species?: string | null;
@@ -11,12 +13,17 @@ export type NavatarCard = {
   updated_at?: string;
 };
 
+export function splitList(s?: string) {
+  if (!s) return [];
+  return s.split(",").map(x => x.trim()).filter(Boolean);
+}
+
 export async function loadPrimaryNavatarId(): Promise<string | null> {
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from("navatars")
+    .from("avatars")
     .select("id")
     .eq("user_id", user.id)
     .eq("is_primary", true)
@@ -26,22 +33,23 @@ export async function loadPrimaryNavatarId(): Promise<string | null> {
   return data?.id ?? null;
 }
 
-export async function loadCard(navatar_id: string): Promise<NavatarCard | null> {
+export async function getCard(navatarId: string): Promise<CharacterCard | null> {
   const { data, error } = await supabase
-    .from("navatar_cards")
+    .from("character_cards")
     .select("*")
-    .eq("navatar_id", navatar_id)
+    .eq("navatar_id", navatarId)
     .maybeSingle();
-  if (error) throw error;
+  if (error && (error as any).code !== "PGRST116") throw error;
   return data ?? null;
 }
 
-export async function saveCard(input: NavatarCard) {
+export async function upsertCard(userId: string, input: CharacterCard) {
+  const payload = { ...input, user_id: userId };
   const { data, error } = await supabase
-    .from("navatar_cards")
-    .upsert(input, { onConflict: "navatar_id" })
-    .select("*")
+    .from("character_cards")
+    .upsert(payload, { onConflict: "user_id,navatar_id" })
+    .select()
     .single();
   if (error) throw error;
-  return data as NavatarCard;
+  return data as CharacterCard;
 }

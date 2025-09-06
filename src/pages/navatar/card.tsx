@@ -1,8 +1,9 @@
 import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { loadPrimaryNavatarId, loadCard, saveCard } from "../../lib/navatarCard";
+import { loadPrimaryNavatarId, getCard, upsertCard, splitList } from "../../lib/card";
+import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 type Form = {
@@ -15,6 +16,7 @@ type Form = {
 };
 
 export default function NavatarCardPage() {
+  const navigate = useNavigate();
   const [navatarId, setNavatarId] = useState<string | null>(null);
   const [form, setForm] = useState<Form>({
     name: "",
@@ -31,16 +33,20 @@ export default function NavatarCardPage() {
       const id = await loadPrimaryNavatarId();
       setNavatarId(id);
       if (!id) return;
-      const card = await loadCard(id);
-      if (card) {
-        setForm({
-          name: card.name ?? "",
-          species: card.species ?? "",
-          kingdom: card.kingdom ?? "",
-          backstory: card.backstory ?? "",
-          powers: (card.powers ?? []).join(", "),
-          traits: (card.traits ?? []).join(", "),
-        });
+      try {
+        const card = await getCard(id);
+        if (card) {
+          setForm({
+            name: card.name ?? "",
+            species: card.species ?? "",
+            kingdom: card.kingdom ?? "",
+            backstory: card.backstory ?? "",
+            powers: (card.powers ?? []).join(", "),
+            traits: (card.traits ?? []).join(", "),
+          });
+        }
+      } catch (err) {
+        console.warn(err);
       }
     })();
   }, []);
@@ -54,22 +60,23 @@ export default function NavatarCardPage() {
       alert("Please create or select a Navatar first.");
       return;
     }
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) {
+      alert("Not signed in");
+      return;
+    }
     setSaving(true);
     try {
-      await saveCard({
+      await upsertCard(user.id, {
         navatar_id: navatarId,
         name: form.name || null,
         species: form.species || null,
         kingdom: form.kingdom || null,
         backstory: form.backstory || null,
-        powers: form.powers
-          ? form.powers.split(",").map(s => s.trim()).filter(Boolean)
-          : [],
-        traits: form.traits
-          ? form.traits.split(",").map(s => s.trim()).filter(Boolean)
-          : [],
+        powers: splitList(form.powers),
+        traits: splitList(form.traits),
       });
-      alert("Saved ✓");
+      navigate("/navatar/mint");
     } catch (err: any) {
       console.error(err);
       alert(err.message ?? "Error saving card");
