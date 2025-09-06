@@ -11,7 +11,7 @@ export default function MintNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
       <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs />
+      <NavatarTabs active="mint" variant="sub" />
       <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>

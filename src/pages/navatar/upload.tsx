@@ -39,7 +39,7 @@ export default function UploadNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
       <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
+      <NavatarTabs active="upload" variant="sub" />
       <form
         onSubmit={onSave}
         style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
