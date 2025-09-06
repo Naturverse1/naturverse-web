@@ -1,63 +1,45 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { setActive } from "../../lib/navatar/storage";
-import { uploadAvatarImage, saveAvatarRow } from "../../lib/navatar/useSupabase";
-import { useNavigate } from "react-router-dom";
+import { saveActive } from "../../lib/localStorage";
 
-export default function NavatarUpload() {
+export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const nav = useNavigate();
 
-  async function onSave() {
+  async function onSave(e: React.FormEvent) {
+    e.preventDefault();
     if (!file) return;
-    const userId = "anon"; // replace with real auth id when available
-    const publicUrl = await uploadAvatarImage(userId, file);
-    setActive({
-      id: crypto.randomUUID(),
-      name,
-      imageUrl: publicUrl,
-      createdAt: Date.now(),
+    const dataUrl = await new Promise<string>((res) => {
+      const r = new FileReader();
+      r.onload = () => res(String(r.result));
+      r.readAsDataURL(file);
     });
-    await saveAvatarRow({ user_id: userId, name, image_url: publicUrl, meta: {} });
+    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, createdAt: Date.now() });
+    alert("Uploaded ✓");
     nav("/navatar");
   }
 
   return (
-    <div className="container">
-      <Breadcrumbs
-        items={[
-          { href: "/", label: "Home" },
-          { href: "/navatar", label: "Navatar" },
-          { label: "Upload" },
-        ]}
-      />
+    <main className="container">
+      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
       <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
-
-      <div className="form">
+      <NavatarTabs active="upload" />
+      <form onSubmit={onSave} className="center" style={{ maxWidth: 480, margin: "16px auto" }}>
+        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
         <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-        />
-        <input
+          style={{ display: "block", width: "100%", margin: "8px 0" }}
           placeholder="Name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button onClick={onSave} disabled={!file}>
+        <button className="pill pill--active" type="submit">
           Save
         </button>
-      </div>
-
-      <style>{`
-        .center{text-align:center}
-        .form{max-width:520px;margin:16px auto;display:grid;gap:10px}
-        input{border:1px solid #c9d6ff;border-radius:10px;padding:10px}
-        button{background:#1f4bff;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:700}
-      `}</style>
-    </div>
+      </form>
+    </main>
   );
 }
+

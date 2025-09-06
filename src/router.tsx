@@ -39,6 +39,8 @@ import NavatarIndex from './pages/navatar';
 import NavatarPick from './pages/navatar/pick';
 import NavatarUpload from './pages/navatar/upload';
 import NavatarGenerate from './pages/navatar/generate';
+import NavatarMint from './pages/navatar/mint';
+import NavatarMarketplace from './pages/navatar/marketplace';
 import PassportPage from './pages/passport';
 import LoginPage from './pages/Login';
 import Turian from './routes/turian';
@@ -123,6 +125,8 @@ export const router = createBrowserRouter([
           { path: 'pick', element: <NavatarPick /> },
           { path: 'upload', element: <NavatarUpload /> },
           { path: 'generate', element: <NavatarGenerate /> },
+          { path: 'mint', element: <NavatarMint /> },
+          { path: 'marketplace', element: <NavatarMarketplace /> },
         ],
       },
         { path: 'passport', element: <PassportPage /> },

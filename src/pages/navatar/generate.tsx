@@ -1,64 +1,60 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { setActive } from "../../lib/navatar/storage";
-import { uploadAvatarImage, saveAvatarRow } from "../../lib/navatar/useSupabase";
-import { useNavigate } from "react-router-dom";
+import { saveActive } from "../../lib/localStorage";
 
-export default function NavatarGenerate() {
+export default function GenerateNavatarPage() {
+  const [prompt, setPrompt] = useState("");
   const [file, setFile] = useState<File | null>(null);
-  const [desc, setDesc] = useState("");
+  const [name, setName] = useState("");
   const nav = useNavigate();
 
-  async function onSave() {
-    if (!file) return; // for now, require a file
-    const userId = "anon";
-    const publicUrl = await uploadAvatarImage(userId, file);
-    setActive({
-      id: crypto.randomUUID(),
-      name: desc || "Generated",
-      imageUrl: publicUrl,
-      createdAt: Date.now(),
-    });
-    await saveAvatarRow({ user_id: userId, name: desc, image_url: publicUrl, meta: { from: "generate" } });
+  async function onSave(e: React.FormEvent) {
+    e.preventDefault();
+    let dataUrl = "";
+    if (file) {
+      dataUrl = await new Promise<string>((res) => {
+        const r = new FileReader();
+        r.onload = () => res(String(r.result));
+        r.readAsDataURL(file);
+      });
+    }
+    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, prompt, createdAt: Date.now() });
+    alert("Saved ✓");
     nav("/navatar");
   }
 
   return (
-    <div className="container">
+    <main className="container">
       <Breadcrumbs
-        items={[
-          { href: "/", label: "Home" },
-          { href: "/navatar", label: "Navatar" },
-          { label: "Generate" },
-        ]}
+        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
       />
-      <h1 className="center">Generate a Navatar</h1>
-      <NavatarTabs />
-
-      <div className="form">
+      <h1 className="center">Describe &amp; Generate</h1>
+      <NavatarTabs active="generate" />
+      <form onSubmit={onSave} className="center" style={{ maxWidth: 520, margin: "16px auto" }}>
         <textarea
-          placeholder="Describe your Navatar"
-          value={desc}
-          onChange={(e) => setDesc(e.target.value)}
+          rows={4}
+          placeholder="Describe your Navatar (e.g., friendly water-buffalo spirit)…"
+          style={{ width: "100%" }}
+          value={prompt}
+          onChange={(e) => setPrompt(e.target.value)}
         />
         <input
-          type="file"
-          accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          style={{ display: "block", width: "100%", margin: "8px 0" }}
+          placeholder="Name (optional)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
         />
-        <button onClick={onSave} disabled={!file}>
+        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <button className="pill pill--active" type="submit" style={{ marginTop: 8 }}>
           Save
         </button>
-      </div>
-
-      <style>{`
-        .center{text-align:center}
-        .form{max-width:520px;margin:16px auto;display:grid;gap:10px}
-        textarea{border:1px solid #c9d6ff;border-radius:10px;padding:10px}
-        input{border:1px solid #c9d6ff;border-radius:10px;padding:10px}
-        button{background:#1f4bff;color:#fff;border:none;border-radius:10px;padding:12px;font-weight:700}
-      `}</style>
-    </div>
+      </form>
+      <p className="center" style={{ opacity: 0.8 }}>
+        AI art & edit coming soon.
+      </p>
+    </main>
   );
 }
+
