@@ -1,10 +1,67 @@
+:root {
+  --nv-blue: #1e40af;
+  --nv-blue-ink: #1d4ed8;
+  --nav-card-w: clamp(260px, 32vw, 340px);
+}
+
+/* --- Shared card frame --- */
+.nv-card {
+  width: var(--nav-card-w);
+  aspect-ratio: 3 / 4;
+  border-radius: 16px;
+  background: #f1f5ff;
+  box-shadow: 0 8px 24px rgba(30, 64, 175, 0.08);
+  overflow: hidden;
+  margin-inline: auto;
+}
+.nv-card img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.nv-card-title {
+  padding: 6px 8px;
+  text-align: center;
+  font-weight: 600;
+  background: #eef3ff;
+}
+
+.nv-card-title,
+.nv-heading,
+.nv-label {
+  color: var(--nv-blue-ink);
+}
+
+.nv-card-body {
+  padding: 8px 12px;
+}
+
+.nv-two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+
+@media (max-width: 640px) {
+  .nv-two-col {
+    display: block;
+  }
+  .nv-two-col > * {
+    margin-inline: auto;
+  }
+  .nv-hide-mobile {
+    display: none;
+  }
+}
+
 /* --- Pills: always horizontal & centered, wrap if needed --- */
 .nav-tabs {
   display: flex;
   justify-content: center;
   align-items: center;
   gap: 10px;
-  flex-wrap: wrap;       /* stays horizontal; wraps when space runs out */
+  flex-wrap: wrap;
   margin: 10px auto 18px;
 }
 
@@ -19,7 +76,7 @@
   color: #1e4ed8;
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 2px 0 rgba(0,0,0,.08);
+  box-shadow: 0 2px 0 rgba(0, 0, 0, 0.08);
 }
 .pill--active {
   background: #1e4ed8;
@@ -27,20 +84,20 @@
   border-color: #1e4ed8;
 }
 
-/* --- Card: single source of truth for size & fit --- */
+/* --- Legacy card styles (used elsewhere) --- */
 .nav-card {
-  --nav-card-w: 260px;    /* change this once to resize everywhere */
+  --nav-card-w: 260px;
   width: min(var(--nav-card-w), 88vw);
   margin: 0 auto;
   background: #ffffff;
   border: 1px solid #e8eefc;
   border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(30,78,216,.06);
+  box-shadow: 0 6px 16px rgba(30, 78, 216, 0.06);
 }
 
 .nav-card__img {
   width: 100%;
-  aspect-ratio: 3 / 4;     /* consistent portrait shape */
+  aspect-ratio: 3 / 4;
   border-radius: 14px;
   overflow: hidden;
   background: #eef3ff;
@@ -48,7 +105,7 @@
 .nav-card__img img {
   width: 100%;
   height: 100%;
-  object-fit: contain;     /* never crop uploads or picks */
+  object-fit: contain;
   display: block;
 }
 .nav-card__placeholder {
@@ -72,3 +129,4 @@
   grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
   align-items: start;
 }
+
