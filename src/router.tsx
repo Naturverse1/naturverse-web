@@ -36,6 +36,7 @@ import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
 import NavatarIndex from './pages/navatar';
+import NavatarCard from './pages/navatar/card';
 import NavatarPick from './pages/navatar/pick';
 import NavatarUpload from './pages/navatar/upload';
 import NavatarGenerate from './pages/navatar/generate';
@@ -122,6 +123,7 @@ export const router = createBrowserRouter([
         path: 'navatar',
         children: [
           { index: true, element: <NavatarIndex /> },
+          { path: 'card', element: <NavatarCard /> },
           { path: 'pick', element: <NavatarPick /> },
           { path: 'upload', element: <NavatarUpload /> },
           { path: 'generate', element: <NavatarGenerate /> },
