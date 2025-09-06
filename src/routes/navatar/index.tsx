@@ -1,56 +1,93 @@
 import { useEffect, useState } from "react";
-import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
-import { Link } from "react-router-dom";
+import HubPills from "../../components/HubPills";
+import {
+  getMyNavatar,
+  listMyNavatars,
+  setPrimaryNavatar,
+  loadCard,
+} from "../../lib/navatar";
+import "../../styles/navatar.css";
 
 export default function NavatarHome() {
-  const [rows, setRows] = useState<NavatarRow[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [err, setErr] = useState<string | null>(null);
+  const [primary, setPrimary] = useState<any>(null);
+  const [list, setList] = useState<any[]>([]);
+  const [card, setCard] = useState<any>(null);
 
   useEffect(() => {
     (async () => {
-      try {
-        setLoading(true);
-        setRows(await listMyNavatars());
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        setLoading(false);
-      }
+      const [p, all] = await Promise.all([getMyNavatar(), listMyNavatars()]);
+      setPrimary(p);
+      setList(all);
+      if (p) setCard(await loadCard(p.id));
     })();
   }, []);
 
+  const onPickPrimary = async (id: string) => {
+    const p = await setPrimaryNavatar(id);
+    setPrimary(p);
+    setCard(await loadCard(p.id));
+    setList(await listMyNavatars());
+  };
+
   return (
-    <div className="Page">
-      <nav className="Breadcrumbs">
-        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
-      </nav>
+    <div className="container">
+      {/* pills: visible on hub, hidden on sub-routes via CSS media + prop */}
+      <HubPills isHub />
 
-      <h1>Navatar</h1>
-      <p>Create a character, customize details, and save your Navatar card.</p>
+      <h1>My Navatar</h1>
 
-      <div className="ctaRow">
-        <Link className="Button" to="/navatar/create">Create</Link>
-      </div>
+      <div className="two-col">
+        <div>
+          <div className="navatar-frame">
+            {primary?.url ? (
+              <img
+                src={primary.url}
+                alt={primary.name ?? "My Navatar"}
+                loading="lazy"
+              />
+            ) : (
+              <div className="placeholder center">No photo</div>
+            )}
+          </div>
 
-      <h2>My Navatars</h2>
-      {loading && <p>Loading…</p>}
-      {err && <p className="Error">{err}</p>}
-      <div className="CardGrid">
-        {rows.map(r => {
-          const url = navatarImageUrl(r.image_path);
-          return (
-            <div key={r.id} className="NavatarCard">
-              <div className="NavatarTitle">{r.name ?? r.base_type}</div>
-              <div className="NavatarImg">
-                {url ? <img src={url} alt={r.name ?? r.base_type} /> : <div className="NoPhoto">No photo</div>}
+          {list.length > 1 && (
+            <>
+              <h4 style={{ marginTop: 16 }}>My Gallery</h4>
+              <div className="gallery">
+                {list.map((n) => (
+                  <button
+                    key={n.id}
+                    className={`thumb ${n.is_primary ? "is-primary" : ""}`}
+                    onClick={() => onPickPrimary(n.id)}
+                    aria-label={`Set ${n.name ?? "Navatar"} as primary`}
+                  >
+                    <img src={n.url} alt={n.name ?? "Navatar"} loading="lazy" />
+                  </button>
+                ))}
               </div>
-              <div className="NavatarMeta">
-                <span>{r.base_type}</span> • <time>{new Date(r.created_at).toLocaleDateString()}</time>
-              </div>
-            </div>
-          );
-        })}
+            </>
+          )}
+        </div>
+
+        <div className="card-panel">
+          <h3 style={{ textAlign: "center" }}>My Navatar</h3>
+          <hr />
+          <p>
+            <strong>Backstory</strong>
+            <br />
+            {card?.backstory ?? "No backstory yet."}
+          </p>
+          <p>
+            <strong>Powers</strong>
+            <br />
+            {(card?.powers ?? ["—"]).join(", ")}
+          </p>
+          <p>
+            <strong>Traits</strong>
+            <br />
+            {(card?.traits ?? ["—"]).join(", ")}
+          </p>
+        </div>
       </div>
     </div>
   );
