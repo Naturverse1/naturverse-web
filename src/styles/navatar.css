@@ -61,3 +61,29 @@ textarea { min-height: 96px; resize: vertical; }
 .NavatarMeta { padding:0 12px 12px; color:#64748b; font-size:12px; text-align:center; }
 .Error { color:#dc2626; }
 .muted { color:#64748b; font-weight:400; }
+
+.nv-wrap { padding: 1rem; }
+.nv-breadcrumb { display:flex; gap:.5rem; color:#64748b; font-size:.9rem; }
+.nv-h1 { font-size:2rem; margin:.5rem 0 1rem; }
+.nv-h2 { font-size:1.25rem; margin:1rem 0 .5rem; }
+.nv-muted { color:#6b7280; }
+
+.nv-tabs { display:flex; gap:.5rem; margin-bottom: .75rem; flex-wrap: wrap; }
+.nv-tab { padding:.5rem .8rem; border:1px solid #e5e7eb; border-radius:10px; background:#fff; text-decoration:none; }
+.nv-active { background:#eef2ff; border-color:#c7d2fe; }
+
+.nv-section { margin-top: 1rem; }
+.nv-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap:12px; }
+.nv-card { border:1px solid #e5e7eb; border-radius:12px; background:#fff; overflow:hidden; display:flex; flex-direction:column; }
+.nv-card img { width:100%; display:block; }
+.nv-card-meta { padding:.5rem .6rem; }
+.nv-card-title { font-weight:600; }
+.nv-card-sub { font-size:.85rem; color:#6b7280; }
+.nv-ph { height:160px; background:#f3f4f6; display:flex; align-items:center; justify-content:center; color:#9ca3af; }
+
+.nv-filter { display:flex; gap:.5rem; margin:.5rem 0 .75rem; flex-wrap: wrap; }
+.nv-chip { border:1px solid #e5e7eb; background:#fff; padding:.35rem .6rem; border-radius:999px; }
+.nv-chip-active { background:#eef2ff; border-color:#c7d2fe; }
+
+.nv-btn { margin:.5rem; padding:.45rem .7rem; border:1px solid #e5e7eb; border-radius:8px; background:#fff; cursor:not-allowed; }
+
