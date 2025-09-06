@@ -118,3 +118,40 @@
 .page-pad {
   padding-bottom: 5rem;
 }
+
+/* Reuse across Navatar home, Card page, Mint preview */
+.nv-panel {
+  background: var(--nv-blue-50, #eef3ff);
+  border: 1px solid var(--nv-blue-200, #cfe0ff);
+  box-shadow: 0 6px 22px rgba(16, 51, 255, 0.06);
+  border-radius: 16px;
+  padding: 18px;
+}
+
+.nv-panel h3,
+.nv-panel .nv-title {
+  color: var(--nv-blue-800, #1e40af);
+  margin: 0 0 10px 0;
+  font-weight: 800;
+}
+
+.nv-list dt {
+  font-weight: 800;
+  color: var(--nv-blue-800, #1e40af);
+}
+.nv-list dd {
+  margin: 0 0 8px 0;
+}
+
+/* Hub layout: side-by-side desktop, stacked mobile */
+.nv-hub-grid {
+  display: grid;
+  gap: 22px;
+}
+@media (min-width: 960px) {
+  .nv-hub-grid {
+    grid-template-columns: 1fr 420px;
+    align-items: start;
+  }
+}
+
