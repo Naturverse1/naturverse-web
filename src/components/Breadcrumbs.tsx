@@ -1,73 +1,39 @@
+import React from "react";
 import { Link, useLocation } from "react-router-dom";
-import * as React from "react";
+import "./../styles/navatar.css";
 
-type Crumb = { label: string; href?: string };
+type Crumb = { href?: string; label: string };
 
-const LABELS: Record<string, string> = {
-  "": "Home",
-  worlds: "Worlds",
-  naturversity: "Naturversity",
-  languages: "Languages",
-  zones: "Zones",
-  marketplace: "Marketplace",
-  naturbank: "NaturBank",
-  navatar: "Navatar",
-  passport: "Passport",
-  turian: "Turian",
-  profile: "Profile",
-  "arcade": "Arcade",
-  "music": "Music",
-  "wellness": "Wellness",
-  "creator-lab": "Creator Lab",
-  community: "Community",
-  culture: "Culture",
-  future: "Future",
-  observations: "Observations",
-  quizzes: "Quizzes",
-  stories: "Stories",
-};
-
-export function Breadcrumbs(props: { items?: Crumb[] }) {
+export function Breadcrumbs({ items }: { items?: Crumb[] }) {
   const location = useLocation();
-
-  // Allow explicit items to override auto mode when needed
-  const items: Crumb[] = React.useMemo(() => {
-    if (props.items?.length) return props.items;
-
-    const parts = location.pathname.replace(/^\/+|\/+$/g, "").split("/");
-    const acc: Crumb[] = [];
-    let path = "";
-
-    // Always include Home
-    acc.push({ label: "Home", href: "/" });
-
+  const crumbs = React.useMemo(() => {
+    if (items?.length) return items;
+    const parts = location.pathname.replace(/^\/+/,'').split('/');
+    const acc: Crumb[] = [{ href: '/', label: 'Home' }];
+    let path = '';
     parts.forEach((seg, i) => {
       if (!seg) return;
       path += `/${seg}`;
-      const label = LABELS[seg.toLowerCase()] ?? seg.replace(/-/g, " ");
       const isLast = i === parts.length - 1;
-      acc.push({ label, href: isLast ? undefined : path });
+      acc.push({ label: seg.replace(/-/g, ' '), href: isLast ? undefined : path });
     });
-
     return acc;
-  }, [location.pathname, props.items]);
+  }, [items, location.pathname]);
 
-  if (items.length <= 1) return null;
+  if (crumbs.length <= 1) return null;
 
   return (
-    <nav aria-label="Breadcrumb" className="nv-breadcrumbs">
+    <nav aria-label="Breadcrumb" className="nv-bc">
       <ol>
-        {items.map((c, i) => {
-          const isLast = i === items.length - 1;
-          return (
-            <li key={`${c.label}-${i}`} aria-current={isLast ? "page" : undefined}>
-              {c.href && !isLast ? <Link to={c.href}>{c.label}</Link> : <span>{c.label}</span>}
-              {!isLast && <span className="sep"> / </span>}
-            </li>
-          );
-        })}
+        {crumbs.map((c, i) => (
+          <li key={i}>
+            {c.href ? <Link to={c.href}>{c.label}</Link> : <span>{c.label}</span>}
+            {i < crumbs.length - 1 && <span className="sep">/</span>}
+          </li>
+        ))}
       </ol>
     </nav>
   );
 }
+
 export default Breadcrumbs;
