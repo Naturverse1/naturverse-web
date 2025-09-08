@@ -1,26 +1,29 @@
 import React from "react";
 import { Link, useLocation } from "react-router-dom";
 
-const TABS = [
+const items = [
   { to: "/navatar", label: "My Navatar" },
   { to: "/navatar/card", label: "Card" },
   { to: "/navatar/pick", label: "Pick" },
   { to: "/navatar/upload", label: "Upload" },
   { to: "/navatar/generate", label: "Generate" },
   { to: "/navatar/mint", label: "NFT / Mint" },
-  { to: "/navatar/marketplace", label: "Marketplace" },
+  { to: "/marketplace", label: "Marketplace" },
 ];
 
-export default function NavatarTabs({ sub = false }: { sub?: boolean }) {
+export default function NavatarTabs() {
   const { pathname } = useLocation();
   return (
-    <nav className={`nav-tabs${sub ? " nav-tabs--sub" : ""}`} aria-label="Navatar actions">
-      {TABS.map(t => {
-        const active =
-          t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
+    <nav className="nv-tabs">
+      {items.map((it) => {
+        const active = pathname === it.to;
         return (
-          <Link key={t.to} to={t.to} className={`pill ${active ? "pill--active" : ""}`}>
-            {t.label}
+          <Link
+            key={it.to}
+            to={it.to}
+            className={`pill ${active ? "pill--active" : ""}`}
+          >
+            {it.label}
           </Link>
         );
       })}

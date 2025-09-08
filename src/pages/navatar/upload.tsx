@@ -1,63 +1,56 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import React, { useState } from "react";
 import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { uploadNavatar } from "../../lib/navatar";
 
 export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
-  const nav = useNavigate();
+  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
+  async function onSubmit(e: React.FormEvent) {
+    e.preventDefault();
     if (!file) {
-      setPreviewUrl(undefined);
+      alert("Choose an image first.");
       return;
     }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
-
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!file) return;
+    setBusy(true);
     try {
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      alert("Uploaded ✓");
-      nav("/navatar");
-    } catch {
-      alert("Upload failed");
+      await uploadNavatar(file, name.trim() || undefined);
+      alert("Uploaded and set as active!");
+    } catch (err: any) {
+      alert(err.message || "Upload failed");
+    } finally {
+      setBusy(false);
     }
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
-      <h1 className="center">Upload a Navatar</h1>
+    <main className="container page-pad">
+      <h1 className="center page-title">Upload</h1>
       <NavatarTabs />
-      <form
-        onSubmit={onSave}
-        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
-      >
-        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+
+      <form className="form" style={{ maxWidth: 680 }} onSubmit={onSubmit}>
         <input
-          style={{ display: "block", width: "100%" }}
-          placeholder="Name (optional)"
+          type="file"
+          accept="image/*"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+        />
+
+        <label className="label" style={{ marginTop: 12 }}>
+          Name (optional)
+        </label>
+        <input
+          className="input"
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
-          Save
-        </button>
+
+        <div style={{ marginTop: 16 }}>
+          <button className="btn" disabled={busy}>
+            {busy ? "Saving..." : "Save"}
+          </button>
+        </div>
       </form>
     </main>
   );
 }
-

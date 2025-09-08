@@ -1,42 +1,40 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import React, { useEffect, useState } from "react";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { loadActiveId, fetchMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
+import { supabase } from "../../lib/supabase";
 
-export default function NavatarCardPage() {
-  const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("");
-  const [kingdom, setKingdom] = useState("");
-  const [backstory, setBackstory] = useState("");
-  const [powers, setPowers] = useState("");
-  const [traits, setTraits] = useState("");
+export default function CharacterCardPage() {
+  const [avatarId, setAvatarId] = useState<string | null>(null);
+  const [form, setForm] = useState({
+    name: "",
+    species: "",
+    kingdom: "",
+    backstory: "",
+    powers: "",
+    traits: "",
+  });
+  const [busy, setBusy] = useState(false);
+  const [signedIn, setSignedIn] = useState<boolean>(true);
 
   useEffect(() => {
     let alive = true;
     (async () => {
-      try {
-        const card = await fetchMyCharacterCard();
-        if (card && alive) {
-          setName(card.name ?? "");
-          setSpecies(card.species ?? "");
-          setKingdom(card.kingdom ?? "");
-          setBackstory(card.backstory ?? "");
-          setPowers((card.powers ?? []).join(", "));
-          setTraits((card.traits ?? []).join(", "));
-        }
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        if (alive) setLoading(false);
+      const { data } = await supabase.auth.getUser();
+      if (!data.user && alive) setSignedIn(false);
+
+      const id = loadActiveId();
+      setAvatarId(id);
+
+      const existing = await fetchMyCharacterCard();
+      if (existing && alive) {
+        setForm({
+          name: existing.name || "",
+          species: existing.species || "",
+          kingdom: existing.kingdom || "",
+          backstory: existing.backstory || "",
+          powers: (existing.powers || []).join(", "),
+          traits: (existing.traits || []).join(", "),
+        });
       }
     })();
     return () => {
@@ -44,123 +42,100 @@ export default function NavatarCardPage() {
     };
   }, []);
 
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
-
-  async function onSave(e: React.FormEvent) {
+  async function onSubmit(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
-    setSaving(true);
-    setErr(null);
+    if (!avatarId) {
+      alert("Please pick or upload a Navatar first.");
+      return;
+    }
+    setBusy(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Please sign in.");
-        return;
-      }
-
-      const avatar_id = getActiveNavatarId();
-      if (!avatar_id) {
-        alert("Please create or select a Navatar first.");
-        return;
-      }
-
-      const powersArr = (powers || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const traitsArr = (traits || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id,
-        name,
-        species,
-        kingdom,
-        backstory,
-        powers: powersArr,
-        traits: traitsArr,
+      await saveCharacterCard({
+        avatar_id: avatarId,
+        name: form.name.trim() || null,
+        species: form.species.trim() || null,
+        kingdom: form.kingdom.trim() || null,
+        backstory: form.backstory.trim() || null,
+        powers: form.powers
+          ? form.powers.split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
+        traits: form.traits
+          ? form.traits.split(",").map((s) => s.trim()).filter(Boolean)
+          : [],
       });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
-
-      nav("/navatar/mint");
-    } catch (e: any) {
-      console.error(e);
-      setErr(e.message ?? "Save failed");
+      alert("Saved!");
+    } catch (err: any) {
+      alert(err.message || "Save failed");
     } finally {
-      setSaving(false);
+      setBusy(false);
     }
   }
 
-  if (loading) {
+  if (!signedIn) {
     return (
       <main className="container page-pad">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
         <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
-        <p>Loading…</p>
+        <NavatarTabs />
+        <p>Please sign in</p>
       </main>
     );
   }
 
   return (
     <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
       <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
-      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
-        {err && <p className="Error">{err}</p>}
+      <NavatarTabs />
 
-        <label>
-          Name
-          <input value={name} onChange={e => setName(e.target.value)} />
-        </label>
+      <form className="form" style={{ maxWidth: 680 }} onSubmit={onSubmit}>
+        <label className="label">Name</label>
+        <input
+          className="input"
+          value={form.name}
+          onChange={(e) => setForm((f) => ({ ...f, name: e.target.value }))}
+        />
 
-        <label>
-          Species / Type
-          <input value={species} onChange={e => setSpecies(e.target.value)} />
-        </label>
+        <label className="label">Species / Type</label>
+        <input
+          className="input"
+          value={form.species}
+          onChange={(e) => setForm((f) => ({ ...f, species: e.target.value }))}
+        />
 
-        <label>
-          Kingdom
-          <input value={kingdom} onChange={e => setKingdom(e.target.value)} />
-        </label>
+        <label className="label">Kingdom</label>
+        <input
+          className="input"
+          value={form.kingdom}
+          onChange={(e) => setForm((f) => ({ ...f, kingdom: e.target.value }))}
+        />
 
-        <label>
-          Backstory
-          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
-        </label>
+        <label className="label">Backstory</label>
+        <textarea
+          className="textarea"
+          rows={4}
+          value={form.backstory}
+          onChange={(e) => setForm((f) => ({ ...f, backstory: e.target.value }))}
+        />
 
-        <label>
-          Powers (comma separated)
-          <input value={powers} onChange={e => setPowers(e.target.value)} />
-        </label>
+        <label className="label">Powers (comma separated)</label>
+        <input
+          className="input"
+          value={form.powers}
+          onChange={(e) => setForm((f) => ({ ...f, powers: e.target.value }))}
+        />
 
-        <label>
-          Traits (comma separated)
-          <input value={traits} onChange={e => setTraits(e.target.value)} />
-        </label>
+        <label className="label">Traits (comma separated)</label>
+        <input
+          className="input"
+          value={form.traits}
+          onChange={(e) => setForm((f) => ({ ...f, traits: e.target.value }))}
+        />
 
-        <div className="row gap" style={{ marginTop: 8 }}>
-          <Link to="/navatar" className="pill">
-            Back to My Navatar
-          </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
-            {saving ? "Saving…" : "Save"}
+        <div style={{ marginTop: 16 }}>
+          <button className="btn" disabled={busy}>
+            {busy ? "Saving..." : "Save"}
           </button>
         </div>
       </form>
     </main>
   );
 }
-
