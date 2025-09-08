@@ -1,24 +1,29 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { getActiveNavatar, getCardForAvatar } from "../../lib/navatar";
+import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
+import { getActiveNavatarId } from "../../lib/localNavatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const [navatar, setNavatar] = useState<any | null>(null);
   const [card, setCard] = useState<any>(null);
 
   useEffect(() => {
+    const activeId = getActiveNavatarId();
+    if (!activeId) return;
+
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-      const { data: act } = await getActiveNavatar(user.id);
-      if (!act) return;
-      const { data: c } = await getCardForAvatar(act.id);
+      const { data } = await supabase
+        .from("avatars")
+        .select("id,name,image_path")
+        .eq("id", activeId)
+        .maybeSingle();
+      setNavatar(data);
+      const { data: c } = await getCardForAvatar(activeId);
       setCard(c);
     })();
   }, []);
@@ -32,7 +37,7 @@ export default function MintNavatarPage() {
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
       <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "My Navatar"} />
+        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
         <a className="pill" href="/marketplace">Go to Marketplace</a>
       </div>
 

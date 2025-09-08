@@ -1,20 +1,34 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { loadActive } from "../../lib/localStorage";
-import { fetchMyCharacterCard } from "../../lib/navatar";
+import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
+import { getActiveNavatarId } from "../../lib/localNavatar";
+import { supabase } from "../../lib/supabase-client";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const activeNavatar = useMemo(() => loadActive<any>(), []);
+  const [navatar, setNavatar] = useState<any | null>(null);
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
+    const activeId = getActiveNavatarId();
+    if (!activeId) return;
+
     let alive = true;
     (async () => {
+      try {
+        const { data } = await supabase
+          .from("avatars")
+          .select("id,name,image_path")
+          .eq("id", activeId)
+          .maybeSingle();
+        if (alive) setNavatar(data);
+      } catch {
+        // ignore
+      }
       try {
         const c = await fetchMyCharacterCard();
         if (alive) setCard(c);
@@ -35,7 +49,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">
-            <NavatarCard src={activeNavatar?.imageDataUrl} title={activeNavatar?.name || "Turian"} />
+            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
           </div>
         </section>
 

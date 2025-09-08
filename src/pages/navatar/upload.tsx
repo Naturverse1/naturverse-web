@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { saveActive } from "../../lib/localStorage";
+import { saveNavatar } from "../../lib/navatar";
+import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
 export default function UploadNavatarPage() {
@@ -25,14 +26,14 @@ export default function UploadNavatarPage() {
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     if (!file) return;
-    const dataUrl = await new Promise<string>((res) => {
-      const r = new FileReader();
-      r.onload = () => res(String(r.result));
-      r.readAsDataURL(file);
-    });
-    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, createdAt: Date.now() });
-    alert("Uploaded ✓");
-    nav("/navatar");
+    try {
+      const row = await saveNavatar({ name, base_type: "Animal", file });
+      setActiveNavatarId(row.id);
+      alert("Uploaded ✓");
+      nav("/navatar");
+    } catch {
+      alert("Upload failed");
+    }
   }
 
   return (
