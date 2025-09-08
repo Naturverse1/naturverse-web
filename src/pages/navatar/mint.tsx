@@ -1,68 +1,61 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import React, { useEffect, useState } from "react";
 import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { fetchActiveNavatar, fetchMyCharacterCard } from "../../lib/navatar";
 
-export default function MintNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<any>(null);
+export default function MintPage() {
+  const [avatar, setAvatar] = useState<any | null>(null);
+  const [card, setCard] = useState<any | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
+    let alive = true;
     (async () => {
-      const { data } = await supabase
-        .from("avatars")
-        .select("id,name,image_path")
-        .eq("id", activeId)
-        .maybeSingle();
-      setNavatar(data);
-      const { data: c } = await getCardForAvatar(activeId);
+      const a = await fetchActiveNavatar();
+      const c = await fetchMyCharacterCard();
+      if (!alive) return;
+      setAvatar(a);
       setCard(c);
     })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
+    <main className="container page-pad">
+      <h1 className="center page-title">NFT / Mint</h1>
       <NavatarTabs />
-      <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
-        Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
-      </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
-      </div>
 
-      {card ? (
-        <aside className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <dl className="nv-list">
-            <dt>Name</dt><dd>{card.name}</dd>
-            <dt>Species</dt><dd>{card.species}</dd>
-            <dt>Kingdom</dt><dd>{card.kingdom}</dd>
-            <dt>Backstory</dt><dd>{card.backstory || "—"}</dd>
-            <dt>Powers</dt><dd>{card.powers?.map((p: string) => `— ${p}`).join("\n") || "—"}</dd>
-            <dt>Traits</dt><dd>{card.traits?.map((t: string) => `— ${t}`).join("\n") || "—"}</dd>
-          </dl>
-          <div style={{ marginTop: 12, textAlign: "center" }}>
-            <Link to="/navatar/card" className="btn">Edit Card</Link>
+      <p className="center" style={{ opacity: 0.8 }}>
+        Coming soon: mint your Navatar on-chain. In the meantime, make merch with
+        your Navatar on the Marketplace.
+      </p>
+
+      {avatar && (
+        <figure className="nav-card" style={{ margin: "16px auto" }}>
+          <div className="nav-card__img" aria-label="Navatar">
+            <img src={avatar.image_url || ""} alt={avatar.name || "Navatar"} />
           </div>
-        </aside>
-      ) : (
-        <div className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <p>No card yet. <Link to="/navatar/card">Create Card</Link></p>
-        </div>
+          <figcaption className="nav-card__cap">
+            <strong>{avatar.name || "My Navatar"}</strong>
+          </figcaption>
+        </figure>
       )}
+
+      <div className="nv-panel" style={{ margin: "16px auto", maxWidth: 640 }}>
+        <div className="nv-title">Character Card</div>
+        {!card ? (
+          <p>No card yet. <a href="/navatar/card">Create Card</a></p>
+        ) : (
+          <dl className="nv-list">
+            {card.name && (<><dt>Name</dt><dd>{card.name}</dd></>)}
+            {card.species && (<><dt>Species</dt><dd>{card.species}</dd></>)}
+            {card.kingdom && (<><dt>Kingdom</dt><dd>{card.kingdom}</dd></>)}
+            {card.backstory && (<><dt>Backstory</dt><dd>{card.backstory}</dd></>)}
+            {card.powers?.length ? (<><dt>Powers</dt><dd>{card.powers.join(", ")}</dd></>) : null}
+            {card.traits?.length ? (<><dt>Traits</dt><dd>{card.traits.join(", ")}</dd></>) : null}
+          </dl>
+        )}
+      </div>
     </main>
   );
 }
-
