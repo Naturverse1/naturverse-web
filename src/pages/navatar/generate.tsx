@@ -3,7 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { saveActive } from "../../lib/localStorage";
+import { saveNavatar } from "../../lib/navatar";
+import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -25,17 +26,15 @@ export default function GenerateNavatarPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    let dataUrl = "";
-    if (file) {
-      dataUrl = await new Promise<string>((res) => {
-        const r = new FileReader();
-        r.onload = () => res(String(r.result));
-        r.readAsDataURL(file);
-      });
+    if (!file) return;
+    try {
+      const row = await saveNavatar({ name, base_type: "Animal", backstory: prompt, file });
+      setActiveNavatarId(row.id);
+      alert("Saved ✓");
+      nav("/navatar");
+    } catch {
+      alert("Save failed");
     }
-    saveActive({ id: Date.now(), name, imageDataUrl: dataUrl, prompt, createdAt: Date.now() });
-    alert("Saved ✓");
-    nav("/navatar");
   }
 
   return (

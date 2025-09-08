@@ -4,7 +4,8 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveActive } from "../../lib/localStorage";
+import { saveNavatar } from "../../lib/navatar";
+import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
@@ -15,9 +16,17 @@ export default function PickNavatarPage() {
     loadPublicNavatars().then(setItems);
   }, []);
 
-  function choose(src: string, name: string) {
-    saveActive({ id: Date.now(), name, imageDataUrl: src, createdAt: Date.now() });
-    nav("/navatar");
+  async function choose(src: string, name: string) {
+    try {
+      const res = await fetch(src);
+      const blob = await res.blob();
+      const file = new File([blob], "navatar.png", { type: blob.type });
+      const row = await saveNavatar({ name, base_type: "Animal", file });
+      setActiveNavatarId(row.id);
+      nav("/navatar");
+    } catch {
+      alert("Could not save Navatar.");
+    }
   }
 
   return (

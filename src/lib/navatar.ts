@@ -1,5 +1,6 @@
 import { supabase } from "./supabase-client";
 import type { CharacterCard } from "./types";
+import { getActiveNavatarId } from "./localNavatar";
 
 export type NavatarRow = {
   id: string;
@@ -68,36 +69,18 @@ export async function saveNavatar(opts: {
   return data as NavatarRow;
 }
 
-export async function getSessionUser() {
-  const {
-    data: { user },
-    error,
-  } = await supabase.auth.getUser();
-  if (error) throw error;
-  return user;
-}
-
 export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
-  const user = await getSessionUser();
-  if (!user) return null;
+  const { data: { user } } = await supabase.auth.getUser();
+  const activeId = getActiveNavatarId();
+  if (!user || !activeId) return null;
   const { data, error } = await supabase
     .from("character_cards")
     .select("*")
     .eq("user_id", user.id)
-    .order("updated_at", { ascending: false })
-    .limit(1)
+    .eq("avatar_id", activeId)
     .maybeSingle();
   if (error && (error as any).code !== "PGRST116") throw error;
   return (data as CharacterCard) ?? null;
-}
-
-export async function getActiveNavatar(userId: string) {
-  return supabase
-    .from("avatars")
-    .select("id, name, image_url")
-    .eq("user_id", userId)
-    .eq("is_active", true)
-    .single();
 }
 
 export async function upsertCharacterCard(payload: {
