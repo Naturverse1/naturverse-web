@@ -1,53 +1,44 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import Breadcrumbs from '../../components/navatar/Breadcrumbs';
+import NavTabs from '../../components/navatar/NavTabs';
+import { useNavatar } from '../../lib/navatar-context';
 
-export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
-  const nav = useNavigate();
+// IMPORTANT: images live under /public/navatars
+const NAVATAR_IMAGES = import.meta.glob('/public/navatars/*.{png,jpg,jpeg,webp}', { eager: true, as: 'url' });
 
-  useEffect(() => {
-    loadPublicNavatars().then(setItems);
-  }, []);
+type Item = { title: string; url: string };
 
-  async function choose(src: string, name: string) {
-    try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      nav("/navatar");
-    } catch {
-      alert("Could not save Navatar.");
-    }
-  }
+const data: Item[] = Object.entries(NAVATAR_IMAGES).map(([path, url]) => {
+  const file = path.split('/').pop()!;
+  const title = file.replace(/\.[^.]+$/, '');
+  // public URL path for <img src>, remove /public
+  const publicUrl = `/navatars/${file}`;
+  return { title, url: publicUrl };
+}).sort((a, b) => a.title.localeCompare(b.title));
+
+export default function Pick() {
+  const { setActiveFromPick } = useNavatar();
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
-        {items.map((it) => (
+    <div className="max-w-screen-md mx-auto px-4">
+      <Breadcrumbs trail={[{ to: '/navatar', label: 'Navatar' }, { label: 'Pick' }]} />
+      <h1 className="text-4xl font-bold text-blue-700 mb-2">Pick Navatar</h1>
+      <NavTabs />
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mt-4">
+        {data.map(item => (
           <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
+            key={item.url}
+            className="rounded-2xl border bg-white shadow hover:shadow-md transition p-2"
+            onClick={async () => {
+              await setActiveFromPick(item.title, item.url);
+              alert('Selected!');
+            }}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <img src={item.url} alt={item.title} className="w-full h-auto rounded-lg" />
+            <div className="text-center font-semibold text-blue-800 mt-1">{item.title}</div>
           </button>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
 

@@ -1,113 +1,57 @@
-import { useEffect, useState } from "react";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import type { CharacterCard } from "../../lib/types";
-import { Link } from "react-router-dom";
-import "../../styles/navatar.css";
+import Breadcrumbs from '../../components/navatar/Breadcrumbs';
+import NavTabs from '../../components/navatar/NavTabs';
+import { useNavatar } from '../../lib/navatar-context';
+import { Link } from 'react-router-dom';
 
-export default function MyNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<CharacterCard | null>(null);
-
-  useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
-    let alive = true;
-    (async () => {
-      try {
-        const { data } = await supabase
-          .from("avatars")
-          .select("id,name,image_path")
-          .eq("id", activeId)
-          .maybeSingle();
-        if (alive) setNavatar(data);
-      } catch {
-        // ignore
-      }
-      try {
-        const c = await fetchMyCharacterCard();
-        if (alive) setCard(c);
-      } catch {
-        // ignore
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
+export default function MyNavatar() {
+  const { active, card } = useNavatar();
 
   return (
-    <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
-      <h1 className="center page-title">My Navatar</h1>
-      <NavatarTabs />
-      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
-        <section>
-          <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
+    <div className="max-w-screen-md mx-auto px-4">
+      <Breadcrumbs trail={[{ label: 'Navatar' }]} />
+      <h1 className="text-4xl font-bold text-blue-700 mb-2">My Navatar</h1>
+      <NavTabs />
+
+      {!active ? (
+        <div className="mt-6 rounded-2xl border bg-white p-4 shadow">
+          <div className="text-blue-800">No Navatar yet.</div>
+          <div className="mt-2 flex gap-2">
+            <Link to="/navatar/pick" className="px-4 py-2 bg-blue-600 text-white rounded-full">Pick</Link>
+            <Link to="/navatar/upload" className="px-4 py-2 bg-white text-blue-700 border rounded-full">Upload</Link>
           </div>
-        </section>
-
-        <aside className="nv-panel">
-          <div className="nv-title">Character Card</div>
-
-          {!card ? (
-            <p>
-              No card yet. <Link to="/navatar/card">Create Card</Link>
-            </p>
-          ) : (
-            <dl className="nv-list">
-              {card.name && (
-                <>
-                  <dt>Name</dt>
-                  <dd>{card.name}</dd>
-                </>
-              )}
-              {card.species && (
-                <>
-                  <dt>Species</dt>
-                  <dd>{card.species}</dd>
-                </>
-              )}
-              {card.kingdom && (
-                <>
-                  <dt>Kingdom</dt>
-                  <dd>{card.kingdom}</dd>
-                </>
-              )}
-              {card.backstory && (
-                <>
-                  <dt>Backstory</dt>
-                  <dd>{card.backstory}</dd>
-                </>
-              )}
-              {card.powers && card.powers.length > 0 && (
-                <>
-                  <dt>Powers</dt>
-                  <dd>{card.powers.map(p => `— ${p}`).join("\n")}</dd>
-                </>
-              )}
-              {card.traits && card.traits.length > 0 && (
-                <>
-                  <dt>Traits</dt>
-                  <dd>{card.traits.map(t => `— ${t}`).join("\n")}</dd>
-                </>
-              )}
-            </dl>
-          )}
-
-          <div style={{ marginTop: 12 }}>
-            <Link to="/navatar/card" className="btn">
-              Edit Card
-            </Link>
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+          <div className="rounded-2xl border bg-white p-2 shadow">
+            <img src={active.image_url} alt={active.title} className="w-full rounded-xl" />
+            <div className="text-center font-semibold text-blue-800 mt-2">{active.title}</div>
           </div>
-        </aside>
-      </div>
-    </main>
+
+          <div className="rounded-2xl border bg-white p-4 shadow">
+            <div className="text-xl font-semibold text-blue-800 mb-2">Character Card</div>
+            {!card ? (
+              <div className="text-blue-700">
+                No card yet. <Link to="/navatar/card" className="underline">Create Card</Link>
+              </div>
+            ) : (
+              <div className="text-blue-900 space-y-1">
+                <div><span className="font-semibold">Name</span><div>{card.name}</div></div>
+                <div><span className="font-semibold">Species</span><div>{card.species}</div></div>
+                <div><span className="font-semibold">Kingdom</span><div>{card.kingdom}</div></div>
+                <div><span className="font-semibold">Backstory</span><div>{card.backstory}</div></div>
+                {!!card.powers?.length && (
+                  <div><span className="font-semibold">Powers</span><div>— {card.powers.join(', ')}</div></div>
+                )}
+                {!!card.traits?.length && (
+                  <div><span className="font-semibold">Traits</span><div>— {card.traits.join(', ')}</div></div>
+                )}
+                <Link to="/navatar/card" className="inline-block mt-2 px-4 py-2 rounded-full bg-blue-600 text-white">Edit Card</Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
+    </div>
   );
 }
+

@@ -1,68 +1,40 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import Breadcrumbs from '../../components/navatar/Breadcrumbs';
+import NavTabs from '../../components/navatar/NavTabs';
+import { useNavatar } from '../../lib/navatar-context';
+import { Link } from 'react-router-dom';
 
-export default function MintNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<any>(null);
-
-  useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
-    (async () => {
-      const { data } = await supabase
-        .from("avatars")
-        .select("id,name,image_path")
-        .eq("id", activeId)
-        .maybeSingle();
-      setNavatar(data);
-      const { data: c } = await getCardForAvatar(activeId);
-      setCard(c);
-    })();
-  }, []);
+export default function NFTMint() {
+  const { active, card } = useNavatar();
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs />
-      <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
+    <div className="max-w-screen-md mx-auto px-4">
+      <Breadcrumbs trail={[{ to: '/navatar', label: 'Navatar' }, { label: 'NFT / Mint' }]} />
+      <h1 className="text-4xl font-bold text-blue-700 mb-2">NFT / Mint</h1>
+      <NavTabs />
+      <p className="text-blue-900 mb-4">
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
-      </div>
 
-      {card ? (
-        <aside className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <dl className="nv-list">
-            <dt>Name</dt><dd>{card.name}</dd>
-            <dt>Species</dt><dd>{card.species}</dd>
-            <dt>Kingdom</dt><dd>{card.kingdom}</dd>
-            <dt>Backstory</dt><dd>{card.backstory || "—"}</dd>
-            <dt>Powers</dt><dd>{card.powers?.map((p: string) => `— ${p}`).join("\n") || "—"}</dd>
-            <dt>Traits</dt><dd>{card.traits?.map((t: string) => `— ${t}`).join("\n") || "—"}</dd>
-          </dl>
-          <div style={{ marginTop: 12, textAlign: "center" }}>
-            <Link to="/navatar/card" className="btn">Edit Card</Link>
-          </div>
-        </aside>
+      {!active ? (
+        <div className="text-blue-800">Pick or upload a Navatar first.</div>
       ) : (
-        <div className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <p>No card yet. <Link to="/navatar/card">Create Card</Link></p>
+        <div className="rounded-2xl border bg-white p-4 shadow max-w-sm">
+          <img src={active.image_url} alt={active.title} className="w-full rounded-xl" />
+          <div className="text-center font-semibold text-blue-800 mt-2">{active.title}</div>
+          {card && (
+            <div className="text-blue-900 text-sm mt-3 space-y-1">
+              <div><b>Name</b> {card.name}</div>
+              <div><b>Species</b> {card.species}</div>
+              <div><b>Kingdom</b> {card.kingdom}</div>
+            </div>
+          )}
         </div>
       )}
-    </main>
+
+      <div className="mt-6">
+        <Link to="/navatar/marketplace" className="px-4 py-2 rounded-full bg-white text-blue-700 border">Go to Marketplace</Link>
+      </div>
+    </div>
   );
 }
 
