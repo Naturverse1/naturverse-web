@@ -1,4 +1,4 @@
-const NV_ACTIVE_KEY = 'nv.activeNavatarId';
+const NV_ACTIVE_KEY = 'naturverse.active_navatar_id';
 
 export function setActiveNavatarId(id: string) {
   try { localStorage.setItem(NV_ACTIVE_KEY, id); } catch {}

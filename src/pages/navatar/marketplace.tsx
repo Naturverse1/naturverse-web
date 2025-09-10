@@ -1,19 +1,23 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
+import React from "react";
+import NavatarCard from "../../components/NavatarCard";
 import "../../styles/navatar.css";
 
-export default function NavatarMarketplacePage() {
+const placeholders = Array.from({ length: 8 }).map((_, i) => ({
+  id: i,
+  title: "Coming soon",
+}));
+
+export default function NavatarMarketplaceStub() {
   return (
-    <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Marketplace" }]}
-      />
-      <h1 className="center">Marketplace</h1>
-      <NavatarTabs />
-      <div className="center" style={{ maxWidth: 560, margin: "16px auto" }}>
-        <p>Mockups for tees, plushies, stickers and more are coming soon.</p>
-        <p>You’ll be able to place your Navatar on products here, then purchase on the Marketplace.</p>
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+    <main className="container page-pad">
+      <h1 className="center page-title">Marketplace (Coming Soon)</h1>
+      <p className="center">Mockups and merch generator preview will appear here.</p>
+      <div className="nv-grid">
+        {placeholders.map((p) => (
+          <div key={p.id} className="nv-pick" aria-hidden>
+            <NavatarCard title={p.title} />
+          </div>
+        ))}
       </div>
     </main>
   );

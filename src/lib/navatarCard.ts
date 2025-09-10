@@ -16,7 +16,7 @@ export async function loadPrimaryNavatarId(): Promise<string | null> {
   if (!user) return null;
 
   const { data, error } = await supabase
-    .from("navatars")
+    .from("avatars")
     .select("id")
     .eq("user_id", user.id)
     .eq("is_primary", true)

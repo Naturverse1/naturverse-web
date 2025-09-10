@@ -1,62 +1,59 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
+import React, { useState } from "react";
+import { supabase } from "../../lib/supabase-client";
+import { uploadAvatarFile } from "../../lib/navatar";
 import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
-export default function UploadNavatarPage() {
+export default function NavatarUploadPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
-  const nav = useNavigate();
+  const [preview, setPreview] = useState<string | undefined>(undefined);
+  const [busy, setBusy] = useState(false);
 
-  useEffect(() => {
-    if (!file) {
-      setPreviewUrl(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+  const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const f = e.target.files?.[0] || null;
+    setFile(f);
+    if (f) setPreview(URL.createObjectURL(f));
+  };
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!file) return;
+  const onSave = async () => {
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+    if (!user) return alert("Please sign in");
+    if (!file) return alert("Choose a file first");
+    setBusy(true);
     try {
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      alert("Uploaded ✓");
-      nav("/navatar");
-    } catch {
-      alert("Upload failed");
+      const row = await uploadAvatarFile(file, user.id, name.trim());
+      alert("Upload complete");
+      setPreview(row.image_url || undefined);
+      setName(row.name ?? "");
+    } catch (e: any) {
+      alert(e?.message || "Upload failed");
+    } finally {
+      setBusy(false);
     }
-  }
+  };
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
-      <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
-      <form
-        onSubmit={onSave}
-        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
-      >
-        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <input
-          style={{ display: "block", width: "100%" }}
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button className="pill pill--active" type="submit">
-          Save
-        </button>
-      </form>
+    <main className="container page-pad">
+      <h1 className="center page-title">Upload Navatar</h1>
+
+      <section className="nv-upload">
+        <NavatarCard src={preview} title={name || "My Navatar"} />
+        <div className="nv-upload__form">
+          <input type="file" accept="image/*" onChange={onChange} />
+          <input
+            type="text"
+            placeholder="Name (optional)"
+            value={name}
+            onChange={(e) => setName(e.target.value)}
+          />
+          <button onClick={onSave} disabled={busy}>
+            {busy ? "Saving..." : "Save"}
+          </button>
+        </div>
+      </section>
     </main>
   );
 }

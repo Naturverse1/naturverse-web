@@ -1,49 +1,51 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
+import React, { useEffect, useState } from "react";
+import { getCatalogAvatars, setActiveFromId } from "../../lib/navatar";
 import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
-export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
-  const nav = useNavigate();
+type Row = {
+  id: string;
+  name: string | null;
+  image_url: string | null;
+};
+
+export default function NavatarPickPage() {
+  const [rows, setRows] = useState<Row[]>([]);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
-    loadPublicNavatars().then(setItems);
+    (async () => {
+      const data = await getCatalogAvatars(60);
+      setRows(data as Row[]);
+    })();
   }, []);
 
-  async function choose(src: string, name: string) {
+  const doPick = async (id: string) => {
+    setBusy(true);
     try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      nav("/navatar");
-    } catch {
-      alert("Could not save Navatar.");
+      await setActiveFromId(id);
+      alert("Picked!");
+    } catch (e: any) {
+      alert(e?.message || "Pick failed");
+    } finally {
+      setBusy(false);
     }
-  }
+  };
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
-        {items.map((it) => (
+    <main className="container page-pad">
+      <h1 className="center page-title">Pick Navatar</h1>
+
+      <div className="nv-grid">
+        {rows.map((r) => (
           <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
+            key={r.id}
+            className="nv-pick"
+            onClick={() => doPick(r.id)}
+            disabled={busy}
+            aria-label={`Pick ${r.name ?? "Navatar"}`}
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <NavatarCard src={r.image_url || undefined} title={r.name || "Unnamed"} />
           </button>
         ))}
       </div>

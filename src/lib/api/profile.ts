@@ -13,7 +13,7 @@ export async function getCurrentUser() {
 export async function getMyProfile() {
   const user = await getCurrentUser()
   if (!user) return null
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('profiles')
     .select('*')
     .eq('id', user.id)
@@ -26,7 +26,7 @@ export async function upsertMyProfile(patch: ProfileUpdate | ProfileInsert) {
   const user = await getCurrentUser()
   if (!user) throw new Error('No auth user')
   const row: ProfileInsert = { id: user.id, ...patch }
-  const { data, error } = await supabase
+  const { data, error } = await (supabase as any)
     .from('profiles')
     .upsert(row)
     .select()

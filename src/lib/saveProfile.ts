@@ -20,7 +20,7 @@ export async function saveProfile(
     avatar_url = publicUrl?.publicUrl ?? null;
   }
 
-  const { error: upsertErr } = await supabase
+  const { error: upsertErr } = await (supabase as any)
     .from('profiles')
     .upsert(
       {

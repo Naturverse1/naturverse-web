@@ -1,67 +1,46 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
+import React from "react";
+import { loadActive } from "../../lib/navatar";
+import { supabase } from "../../lib/supabase-client";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
 
-export default function MintNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<any>(null);
+export default function MintPage() {
+  const [img, setImg] = React.useState<string | undefined>(undefined);
+  const [name, setName] = React.useState<string>("");
 
-  useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
+  React.useEffect(() => {
     (async () => {
+      const id = loadActive();
+      if (!id) return;
       const { data } = await supabase
         .from("avatars")
-        .select("id,name,image_path")
-        .eq("id", activeId)
-        .maybeSingle();
-      setNavatar(data);
-      const { data: c } = await getCardForAvatar(activeId);
-      setCard(c);
+        .select("name,image_url")
+        .eq("id", id)
+        .single();
+      if (data) {
+        setImg(data.image_url || undefined);
+        setName(data.name || "");
+      }
     })();
   }, []);
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
+    <main className="container page-pad">
+      <h1 className="center page-title">NFT / Mint</h1>
       <NavatarTabs />
-      <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
-        Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
-      </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+      <section className="nv-panel center" style={{ marginTop: 16 }}>
+        <NavatarCard src={img} title={name || "My Navatar"} />
+      </section>
+
+      <div className="center" style={{ marginTop: 12 }}>
+        <a className="btn" href="/navatar/marketplace">Go to Marketplace</a>
       </div>
 
-      {card ? (
-        <aside className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <dl className="nv-list">
-            <dt>Name</dt><dd>{card.name}</dd>
-            <dt>Species</dt><dd>{card.species}</dd>
-            <dt>Kingdom</dt><dd>{card.kingdom}</dd>
-            <dt>Backstory</dt><dd>{card.backstory || "—"}</dd>
-            <dt>Powers</dt><dd>{card.powers?.map((p: string) => `— ${p}`).join("\n") || "—"}</dd>
-            <dt>Traits</dt><dd>{card.traits?.map((t: string) => `— ${t}`).join("\n") || "—"}</dd>
-          </dl>
-          <div style={{ marginTop: 12, textAlign: "center" }}>
-            <Link to="/navatar/card" className="btn">Edit Card</Link>
-          </div>
-        </aside>
-      ) : (
-        <div className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <p>No card yet. <Link to="/navatar/card">Create Card</Link></p>
-        </div>
-      )}
+      <aside className="nv-panel" style={{ marginTop: 20 }}>
+        <h3>Character Card</h3>
+        <p>No card yet. <a href="/navatar/card">Create Card</a></p>
+      </aside>
     </main>
   );
 }

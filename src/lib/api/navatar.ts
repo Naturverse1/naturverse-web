@@ -1,15 +1,15 @@
 import { supabase } from '../db'
 import type { Database } from '../../types/db'
 
-type Navatar = Database['natur']['Tables']['navatars']['Row']
-type NavatarInsert = Database['natur']['Tables']['navatars']['Insert']
-type NavatarUpdate = Database['natur']['Tables']['navatars']['Update']
+type Navatar = Database['natur']['Tables']['avatars']['Row']
+type NavatarInsert = Database['natur']['Tables']['avatars']['Insert']
+type NavatarUpdate = Database['natur']['Tables']['avatars']['Update']
 
 export async function listMyNavatars() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
-  const { data, error } = await supabase
-    .from('navatars')
+  const { data, error } = await (supabase as any)
+    .from('avatars')
     .select('*')
     .eq('user_id', user.id)
     .order('created_at', { ascending: false })
@@ -18,8 +18,8 @@ export async function listMyNavatars() {
 }
 
 export async function createNavatar(input: NavatarInsert) {
-  const { data, error } = await supabase
-    .from('navatars')
+  const { data, error } = await (supabase as any)
+    .from('avatars')
     .insert(input)
     .select()
     .single()
@@ -28,8 +28,8 @@ export async function createNavatar(input: NavatarInsert) {
 }
 
 export async function updateNavatar(id: string, patch: NavatarUpdate) {
-  const { data, error } = await supabase
-    .from('navatars')
+  const { data, error } = await (supabase as any)
+    .from('avatars')
     .update(patch)
     .eq('id', id)
     .select()
