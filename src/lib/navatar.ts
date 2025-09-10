@@ -1,6 +1,6 @@
 import { supabase } from "./supabase-client";
 import type { CharacterCard } from "./types";
-import { getActiveNavatarId } from "./localNavatar";
+import { getActiveNavatarId, setActiveNavatarId as saveActiveId } from "./localNavatar";
 
 export type NavatarRow = {
   id: string;
@@ -12,6 +12,10 @@ export type NavatarRow = {
   created_at: string;
   updated_at: string;
 };
+
+export function setActiveNavatarId(id: string) {
+  saveActiveId(id);
+}
 
 export function navatarImageUrl(image_path: string | null) {
   if (!image_path) return null;

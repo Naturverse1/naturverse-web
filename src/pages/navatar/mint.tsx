@@ -36,9 +36,9 @@ export default function MintNavatarPage() {
       <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+      <div style={{ display: "grid", justifyItems: "center", gap: 12, margin: "16px auto" }}>
+        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} className="nav-card--fixed" />
+        <a className="pill" href="/navatar/marketplace">Go to Marketplace</a>
       </div>
 
       {card ? (
