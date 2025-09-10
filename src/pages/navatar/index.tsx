@@ -49,7 +49,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
+            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} className="nav-card--fixed" />
           </div>
         </section>
 

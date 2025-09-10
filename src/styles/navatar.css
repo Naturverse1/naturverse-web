@@ -28,50 +28,18 @@
 }
 
 /* --- Card: single source of truth for size & fit --- */
-.nav-card {
-  --nav-card-w: 260px;    /* change this once to resize everywhere */
-  width: min(var(--nav-card-w), 88vw);
-  margin: 0 auto;
-  background: #ffffff;
-  border: 1px solid #e8eefc;
-  border-radius: 16px;
-  box-shadow: 0 6px 16px rgba(30,78,216,.06);
-}
+.nav-card { width: 100%; max-width: 360px; margin: 0 auto; }
+.nav-card--fixed { width: 300px; }
 
-.nav-card__img {
-  width: 100%;
-  aspect-ratio: 3 / 4;     /* consistent portrait shape */
-  border-radius: 14px;
-  overflow: hidden;
-  background: #eef3ff;
-}
-.nav-card__img img {
-  width: 100%;
-  height: 100%;
-  object-fit: contain;     /* never crop uploads or picks */
-  display: block;
-}
-.nav-card__placeholder {
-  width: 100%;
-  height: 100%;
-  display: grid;
-  place-items: center;
-  color: #8aa2e6;
-  font-weight: 600;
-}
-.nav-card__cap {
-  padding: 8px 10px 10px;
-  text-align: center;
-  color: #1e40af;
-}
+.nav-card__img { width:100%; aspect-ratio: 3/4; background:#f4f6f8; display:grid; place-items:center; overflow:hidden; border-radius:14px; }
+.nav-card__img img { width:100%; height:100%; object-fit: cover; }
+.nav-card__placeholder { height: 400px; width: 300px; background:#f4f6f8; border-radius: 14px; }
+
+.nav-card--button { background: transparent; border: 0; padding: 0; cursor: pointer; }
+.nav-card__cap { text-align:center; padding:8px 0; }
 
 /* grid used by Pick page */
-.nav-grid {
-  display: grid;
-  gap: 16px;
-  grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
-  align-items: start;
-}
+.nv-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 16px; align-items:start; }
 
 /* Keep existing colors; enforce blue titles/links for the new page */
 .page-title,
