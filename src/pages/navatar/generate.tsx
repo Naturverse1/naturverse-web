@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
+import { saveActiveNavatar } from "../../lib/navatar";
+import { saveNavatar, navatarImageUrl } from "../../lib/supabase";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -29,7 +29,7 @@ export default function GenerateNavatarPage() {
     if (!file) return;
     try {
       const row = await saveNavatar({ name, base_type: "Animal", backstory: prompt, file });
-      setActiveNavatarId(row.id);
+      saveActiveNavatar({ name: row.name || name || "Navatar", src: navatarImageUrl(row.image_path) || "" });
       alert("Saved ✓");
       nav("/navatar");
     } catch {

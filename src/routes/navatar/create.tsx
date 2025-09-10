@@ -1,5 +1,6 @@
 import { FormEvent, useMemo, useState } from "react";
-import { saveNavatar, navatarImageUrl } from "../../lib/navatar";
+import { saveNavatar, navatarImageUrl } from "../../lib/supabase";
+import { saveActiveNavatar } from "../../lib/navatar";
 import { Link, useNavigate } from "react-router-dom";
 
 const defaultBackstory =
@@ -21,7 +22,7 @@ export default function NavatarCreate() {
     try {
       setSaving(true);
       const row = await saveNavatar({ name, base_type: baseType, backstory, file });
-      // Success -> go back to list
+      saveActiveNavatar({ name: row.name || name || baseType, src: navatarImageUrl(row.image_path) || "" });
       nav("/navatar");
     } catch (e: any) {
       setError(e.message ?? "Could not save Navatar.");

@@ -1,34 +1,20 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
+import { loadActiveNavatar } from "../../lib/navatar";
+import { fetchMyCharacterCard } from "../../lib/supabase";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
+  const activeNavatar = useMemo(() => loadActiveNavatar(), []);
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
     let alive = true;
     (async () => {
-      try {
-        const { data } = await supabase
-          .from("avatars")
-          .select("id,name,image_path")
-          .eq("id", activeId)
-          .maybeSingle();
-        if (alive) setNavatar(data);
-      } catch {
-        // ignore
-      }
       try {
         const c = await fetchMyCharacterCard();
         if (alive) setCard(c);
@@ -46,19 +32,15 @@ export default function MyNavatarPage() {
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       <h1 className="center page-title">My Navatar</h1>
       <NavatarTabs />
-      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
-        <section>
-          <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
-          </div>
+      <div className="nv-hub-grid" style={{ marginTop: 12 }}>
+        <section className="nv-panel">
+          <NavatarCard src={activeNavatar?.src || null} title={activeNavatar?.name || ""} />
         </section>
-
         <aside className="nv-panel">
           <div className="nv-title">Character Card</div>
-
           {!card ? (
             <p>
-              No card yet. <Link to="/navatar/card">Create Card</Link>
+              No card yet. <Link to="/navatar/card" className="link">Create Card</Link>
             </p>
           ) : (
             <dl className="nv-list">
@@ -89,18 +71,17 @@ export default function MyNavatarPage() {
               {card.powers && card.powers.length > 0 && (
                 <>
                   <dt>Powers</dt>
-                  <dd>{card.powers.map(p => `— ${p}`).join("\n")}</dd>
+                  <dd>{card.powers.map((p) => `— ${p}`).join("\n")}</dd>
                 </>
               )}
               {card.traits && card.traits.length > 0 && (
                 <>
                   <dt>Traits</dt>
-                  <dd>{card.traits.map(t => `— ${t}`).join("\n")}</dd>
+                  <dd>{card.traits.map((t) => `— ${t}`).join("\n")}</dd>
                 </>
               )}
             </dl>
           )}
-
           <div style={{ marginTop: 12 }}>
             <Link to="/navatar/card" className="btn">
               Edit Card
