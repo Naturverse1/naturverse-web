@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
+import Breadcrumbs from "../../components/navatar/Breadcrumbs";
+import NavTabs from "../../components/navatar/NavTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { saveNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
@@ -38,15 +38,13 @@ export default function GenerateNavatarPage() {
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
-      />
-      <h1 className="center">Describe &amp; Generate</h1>
-      <NavatarTabs />
+    <div className="max-w-screen-md mx-auto px-4">
+      <Breadcrumbs trail={[{ to: '/navatar', label: 'Navatar' }, { label: 'Describe & Generate' }]} />
+      <h1 className="text-4xl font-bold text-blue-700 mb-2">Describe &amp; Generate</h1>
+      <NavTabs />
       <form
         onSubmit={onSave}
-        style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
+        style={{ maxWidth: 520, margin: '16px auto', display: 'grid', justifyItems: 'center', gap: 12 }}
       >
         <NavatarCard src={draftUrl} title={name || "My Navatar"} />
         <textarea
@@ -70,7 +68,7 @@ export default function GenerateNavatarPage() {
       <p className="center" style={{ opacity: 0.8 }}>
         AI art & edit coming soon.
       </p>
-    </main>
+    </div>
   );
 }
 
