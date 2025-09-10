@@ -2,20 +2,24 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import "../../styles/navatar.css";
 
-export default function NavatarMarketplacePage() {
+export default function NavatarMarketplaceStub() {
   return (
-    <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Marketplace" }]}
-      />
-      <h1 className="center">Marketplace</h1>
+    <main className="container page-pad">
+      <Breadcrumbs items={[
+        { href: "/", label: "Home" },
+        { href: "/navatar", label: "Navatar" },
+        { href: "/navatar/marketplace", label: "Marketplace" },
+      ]} />
+      <h1 className="center page-title">Marketplace (Coming Soon)</h1>
       <NavatarTabs />
-      <div className="center" style={{ maxWidth: 560, margin: "16px auto" }}>
-        <p>Mockups for tees, plushies, stickers and more are coming soon.</p>
-        <p>You’ll be able to place your Navatar on products here, then purchase on the Marketplace.</p>
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
-      </div>
+      <section className="nav-grid" style={{ marginTop: 12 }}>
+        {[1,2,3,4].map((i) => (
+          <div key={i} className="nav-card">
+            <div className="nav-card__img" />
+            <div className="nav-card__cap"><strong>Coming soon</strong></div>
+          </div>
+        ))}
+      </section>
     </main>
   );
 }
-

@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
+import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/supabase";
 import { Link } from "react-router-dom";
 
 export default function NavatarHome() {
