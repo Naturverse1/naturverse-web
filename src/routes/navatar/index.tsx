@@ -38,15 +38,15 @@ export default function NavatarHome() {
       {err && <p className="Error">{err}</p>}
       <div className="CardGrid">
         {rows.map(r => {
-          const url = navatarImageUrl(r.image_path);
+          const url = navatarImageUrl(r.image_url);
           return (
             <div key={r.id} className="NavatarCard">
               <div className="NavatarTitle">{r.name ?? r.base_type}</div>
               <div className="NavatarImg">
-                {url ? <img src={url} alt={r.name ?? r.base_type} /> : <div className="NoPhoto">No photo</div>}
+                {url ? <img src={url} alt={(r.name ?? r.base_type) || ""} /> : <div className="NoPhoto">No photo</div>}
               </div>
               <div className="NavatarMeta">
-                <span>{r.base_type}</span> • <time>{new Date(r.created_at).toLocaleDateString()}</time>
+                <span>{r.base_type}</span> • {r.created_at ? <time>{new Date(r.created_at).toLocaleDateString()}</time> : null}
               </div>
             </div>
           );

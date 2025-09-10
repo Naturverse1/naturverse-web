@@ -22,7 +22,7 @@ export type Database = {
         };
         Update: Partial<Database['natur']['Tables']['profiles']['Insert']>;
       };
-      navatars: {
+      avatars: {
         Row: {
           id: string;
           user_id: string;
@@ -34,10 +34,10 @@ export type Database = {
           updated_at: string;
         };
         Insert: Omit<
-          Database['natur']['Tables']['navatars']['Row'],
+          Database['natur']['Tables']['avatars']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['natur']['Tables']['navatars']['Insert']>;
+        Update: Partial<Database['natur']['Tables']['avatars']['Insert']>;
       };
       passport_stamps: {
         Row: { id: number; user_id: string; kingdom: string; stamped_at: string };

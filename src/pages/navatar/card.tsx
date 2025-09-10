@@ -107,7 +107,7 @@ export default function NavatarCardPage() {
       <main className="container page-pad">
         <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
         <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
+        <NavatarTabs />
         <p>Loading…</p>
       </main>
     );
@@ -117,7 +117,7 @@ export default function NavatarCardPage() {
     <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
       <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
+      <NavatarTabs />
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
 

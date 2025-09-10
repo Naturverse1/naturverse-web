@@ -2,8 +2,7 @@ import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
+import { fetchMyCharacterCard, navatarImageUrl, loadActive } from "../../lib/navatar";
 import { supabase } from "../../lib/supabase-client";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
@@ -14,7 +13,7 @@ export default function MyNavatarPage() {
   const [card, setCard] = useState<CharacterCard | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
+    const activeId = loadActive();
     if (!activeId) return;
 
     let alive = true;
@@ -22,7 +21,7 @@ export default function MyNavatarPage() {
       try {
         const { data } = await supabase
           .from("avatars")
-          .select("id,name,image_path")
+          .select("id,name,image_url")
           .eq("id", activeId)
           .maybeSingle();
         if (alive) setNavatar(data);
@@ -49,7 +48,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
+            <NavatarCard src={navatarImageUrl(navatar?.image_url)} title={navatar?.name || "Turian"} />
           </div>
         </section>
 

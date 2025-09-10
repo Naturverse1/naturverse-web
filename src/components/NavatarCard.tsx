@@ -7,18 +7,14 @@ type Props = {
   className?: string;
 };
 
-export default function NavatarCard({ src, title = "My Navatar", subtitle, className }: Props) {
+export default function NavatarCard({ src, title, subtitle, className }: Props) {
   return (
     <figure className={`nav-card ${className ?? ""}`}>
-      <div className="nav-card__img" aria-label={title}>
-        {src ? (
-          <img src={src} alt={title} />
-        ) : (
-          <div className="nav-card__placeholder">No photo</div>
-        )}
+      <div className="nav-card__img" aria-label={title || "Navatar"}>
+        {src ? <img src={src} alt={title} /> : <div className="nav-card__placeholder" />}
       </div>
       <figcaption className="nav-card__cap">
-        <strong>{title}</strong>
+        <strong>{title || "Unnamed"}</strong>
         {subtitle ? <span> · {subtitle}</span> : null}
       </figcaption>
     </figure>
