@@ -1,113 +1,68 @@
-import { useEffect, useState } from "react";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import type { CharacterCard } from "../../lib/types";
-import { Link } from "react-router-dom";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/supabaseClient';
+import { useSession } from '@/state/session';
+import { NavPills } from './_shared/NavPills';
+import { CardFrame } from './_shared/CardFrame';
 
-export default function MyNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<CharacterCard | null>(null);
+type View = { image_url: string | null; name: string | null };
+
+export default function MyNavatar() {
+  const { user } = useSession();
+  const [view, setView] = useState<View | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
-    let alive = true;
     (async () => {
-      try {
-        const { data } = await supabase
-          .from("avatars")
-          .select("id,name,image_path")
-          .eq("id", activeId)
-          .maybeSingle();
-        if (alive) setNavatar(data);
-      } catch {
-        // ignore
-      }
-      try {
-        const c = await fetchMyCharacterCard();
-        if (alive) setCard(c);
-      } catch {
-        // ignore
-      }
+      if (!user) return;
+      const { data: avatar } = await supabase
+        .from('avatars')
+        .select('image_url')
+        .eq('user_id', user.id)
+        .eq('is_primary', true)
+        .maybeSingle();
+
+      const { data: card } = await supabase
+        .from('character_cards')
+        .select('name')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      setView({ image_url: avatar?.image_url ?? null, name: card?.name ?? null });
     })();
-    return () => {
-      alive = false;
-    };
-  }, []);
+  }, [user]);
 
   return (
-    <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
-      <h1 className="center page-title">My Navatar</h1>
-      <NavatarTabs />
-      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
-        <section>
-          <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
-          </div>
+    <main className="container">
+      <ol className="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>/ Navatar</li>
+      </ol>
+      <h1>My Navatar</h1>
+      <NavPills active="My Navatar" />
+      {view?.image_url ? (
+        <section className="centerCol">
+          <CardFrame>
+            <img src={view.image_url} alt="" />
+          </CardFrame>
+          <div className="caption">{view.name ?? extractName(view.image_url)}</div>
         </section>
-
-        <aside className="nv-panel">
-          <div className="nv-title">Character Card</div>
-
-          {!card ? (
-            <p>
-              No card yet. <Link to="/navatar/card">Create Card</Link>
-            </p>
-          ) : (
-            <dl className="nv-list">
-              {card.name && (
-                <>
-                  <dt>Name</dt>
-                  <dd>{card.name}</dd>
-                </>
-              )}
-              {card.species && (
-                <>
-                  <dt>Species</dt>
-                  <dd>{card.species}</dd>
-                </>
-              )}
-              {card.kingdom && (
-                <>
-                  <dt>Kingdom</dt>
-                  <dd>{card.kingdom}</dd>
-                </>
-              )}
-              {card.backstory && (
-                <>
-                  <dt>Backstory</dt>
-                  <dd>{card.backstory}</dd>
-                </>
-              )}
-              {card.powers && card.powers.length > 0 && (
-                <>
-                  <dt>Powers</dt>
-                  <dd>{card.powers.map(p => `— ${p}`).join("\n")}</dd>
-                </>
-              )}
-              {card.traits && card.traits.length > 0 && (
-                <>
-                  <dt>Traits</dt>
-                  <dd>{card.traits.map(t => `— ${t}`).join("\n")}</dd>
-                </>
-              )}
-            </dl>
-          )}
-
-          <div style={{ marginTop: 12 }}>
-            <Link to="/navatar/card" className="btn">
-              Edit Card
-            </Link>
-          </div>
-        </aside>
-      </div>
+      ) : (
+        <p>
+          No Navatar yet. <a href="/navatar/pick">Pick</a> or <a href="/navatar/upload">Upload</a>
+        </p>
+      )}
     </main>
+  );
+}
+
+function extractName(path: string) {
+  return (
+    path
+      .split('/')
+      .pop()
+      ?.replace(/\.[a-z]+$/i, '') ?? 'Unnamed'
   );
 }

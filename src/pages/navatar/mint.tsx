@@ -1,68 +1,56 @@
-import { useEffect, useState } from "react";
-import { Link } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/supabaseClient';
+import { NavPills } from './_shared/NavPills';
+import { CardFrame } from './_shared/CardFrame';
 
-export default function MintNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<any>(null);
+export default function Mint() {
+  const [img, setImg] = useState<string | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
     (async () => {
+      const session = (await supabase.auth.getUser()).data.user;
+      if (!session) return;
       const { data } = await supabase
-        .from("avatars")
-        .select("id,name,image_path")
-        .eq("id", activeId)
+        .from('avatars')
+        .select('image_url')
+        .eq('user_id', session.id)
+        .eq('is_primary', true)
         .maybeSingle();
-      setNavatar(data);
-      const { data: c } = await getCardForAvatar(activeId);
-      setCard(c);
+      setImg(data?.image_url ?? null);
     })();
   }, []);
 
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs />
-      <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
-        Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
+      <ol className="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>/ Navatar</li>
+        <li>/ NFT / Mint</li>
+      </ol>
+      <h1>NFT / Mint</h1>
+      <NavPills active="NFT / Mint" />
+      <p className="lede">
+        Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on
+        the Marketplace.
       </p>
-      <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
-      </div>
-
-      {card ? (
-        <aside className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <dl className="nv-list">
-            <dt>Name</dt><dd>{card.name}</dd>
-            <dt>Species</dt><dd>{card.species}</dd>
-            <dt>Kingdom</dt><dd>{card.kingdom}</dd>
-            <dt>Backstory</dt><dd>{card.backstory || "—"}</dd>
-            <dt>Powers</dt><dd>{card.powers?.map((p: string) => `— ${p}`).join("\n") || "—"}</dd>
-            <dt>Traits</dt><dd>{card.traits?.map((t: string) => `— ${t}`).join("\n") || "—"}</dd>
-          </dl>
-          <div style={{ marginTop: 12, textAlign: "center" }}>
-            <Link to="/navatar/card" className="btn">Edit Card</Link>
-          </div>
-        </aside>
-      ) : (
-        <div className="nv-panel" style={{ maxWidth: 480, margin: "20px auto 0" }}>
-          <div className="nv-title">Character Card</div>
-          <p>No card yet. <Link to="/navatar/card">Create Card</Link></p>
-        </div>
+      {img && (
+        <section className="centerCol">
+          <CardFrame>
+            <img src={img} alt="" />
+          </CardFrame>
+          <div className="caption">{extractName(img)}</div>
+        </section>
       )}
     </main>
   );
 }
-
+function extractName(path: string) {
+  return (
+    path
+      .split('/')
+      .pop()
+      ?.replace(/\.[a-z]+$/i, '') ?? 'Unnamed'
+  );
+}

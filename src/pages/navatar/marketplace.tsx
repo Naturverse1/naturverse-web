@@ -1,21 +1,27 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import "../../styles/navatar.css";
+import { NavPills } from './_shared/NavPills';
+import { CardFrame } from './_shared/CardFrame';
 
-export default function NavatarMarketplacePage() {
+export default function MarketplaceStub() {
   return (
     <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Marketplace" }]}
-      />
-      <h1 className="center">Marketplace</h1>
-      <NavatarTabs />
-      <div className="center" style={{ maxWidth: 560, margin: "16px auto" }}>
-        <p>Mockups for tees, plushies, stickers and more are coming soon.</p>
-        <p>You’ll be able to place your Navatar on products here, then purchase on the Marketplace.</p>
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+      <ol className="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>/ Navatar</li>
+        <li>/ Marketplace</li>
+      </ol>
+      <h1>Marketplace (Coming Soon)</h1>
+      <NavPills active="Marketplace" />
+      <div className="grid center">
+        <CardFrame>
+          <div className="placeholder" />
+        </CardFrame>
+        <CardFrame>
+          <div className="placeholder" />
+        </CardFrame>
       </div>
+      <p className="muted center">Mockups and merch generator preview will appear here.</p>
     </main>
   );
 }
-
