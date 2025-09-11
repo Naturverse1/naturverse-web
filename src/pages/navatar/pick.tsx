@@ -1,53 +1,51 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { listPublicAvatars, pickAvatar, AvatarRow } from "@/lib/navatarApi";
 
-export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
-  const nav = useNavigate();
+export default function PickNavatar() {
+  const [items, setItems] = useState<AvatarRow[]>([]);
+  const [busy, setBusy] = useState<string | null>(null);
 
   useEffect(() => {
-    loadPublicNavatars().then(setItems);
+    listPublicAvatars().then(setItems).catch(e => alert(`Load failed: ${e.message}`));
   }, []);
 
-  async function choose(src: string, name: string) {
+  async function onPick(a: AvatarRow) {
     try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      nav("/navatar");
-    } catch {
-      alert("Could not save Navatar.");
+      setBusy(a.id);
+      await pickAvatar(a);
+      alert("Picked!"); // optional toast
+      location.assign("/navatar"); // return to My Navatar
+    } catch (e: any) {
+      alert(`Pick failed: ${e.message}`);
+    } finally {
+      setBusy(null);
     }
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
-        {items.map((it) => (
+    <div className="container mx-auto px-4 pb-24">
+      <div className="text-sm text-blue-600 mb-2"><a href="/">Home</a> / <a href="/navatar">Navatar</a></div>
+      <h1 className="text-3xl font-bold text-blue-700 mb-6">Pick Navatar</h1>
+
+      <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+        {items.map((a) => (
           <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
+            key={a.id}
+            onClick={() => onPick(a)}
+            disabled={!!busy}
+            className="rounded-xl bg-white shadow hover:shadow-lg transition p-3 text-left"
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <img
+              src={a.thumbnail_url || a.image_url || ""}
+              alt={a.name || "Navatar"}
+              className="w-full h-[300px] object-cover rounded-lg bg-gray-50"
+              loading="lazy"
+            />
+            <div className="text-center mt-2 font-semibold">{a.name || "Unnamed"}</div>
+            {busy === a.id && <div className="text-center text-sm text-gray-500">Saving…</div>}
           </button>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
-
