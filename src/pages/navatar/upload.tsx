@@ -1,15 +1,14 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import NavatarTabs from '../../components/NavatarTabs';
+import NavatarCard from '../../components/NavatarCard';
+import { saveNavatar } from '../../lib/navatar';
+import { setActiveNavatarId } from '../../lib/localNavatar';
 
 export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState("");
+  const [name, setName] = useState('');
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const nav = useNavigate();
 
@@ -27,28 +26,44 @@ export default function UploadNavatarPage() {
     e.preventDefault();
     if (!file) return;
     try {
-      const row = await saveNavatar({ name, base_type: "Animal", file });
+      const row = await saveNavatar({ name, base_type: 'Animal', file });
       setActiveNavatarId(row.id);
-      alert("Uploaded ✓");
-      nav("/navatar");
+      alert('Uploaded ✓');
+      nav('/navatar');
     } catch {
-      alert("Upload failed");
+      alert('Upload failed');
     }
   }
 
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
+      <Breadcrumbs
+        items={[
+          { href: '/', label: 'Home' },
+          { href: '/navatar', label: 'Navatar' },
+          { label: 'Upload' },
+        ]}
+      />
       <h1 className="center">Upload a Navatar</h1>
       <NavatarTabs />
       <form
         onSubmit={onSave}
-        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
+        style={{
+          display: 'grid',
+          justifyItems: 'center',
+          gap: 12,
+          maxWidth: 480,
+          margin: '16px auto',
+        }}
       >
-        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
+        <NavatarCard src={previewUrl} title={name || 'My Navatar'} />
         <input
-          style={{ display: "block", width: "100%" }}
+          type="file"
+          accept="image/*"
+          onChange={(e) => setFile(e.target.files?.[0] || null)}
+        />
+        <input
+          style={{ display: 'block', width: '100%' }}
           placeholder="Name (optional)"
           value={name}
           onChange={(e) => setName(e.target.value)}
@@ -60,4 +75,3 @@ export default function UploadNavatarPage() {
     </main>
   );
 }
-

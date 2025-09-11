@@ -1,53 +1,62 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { listNavatarImageUrls } from '@/lib/navatarFiles';
+import { supabase } from '@/supabaseClient';
+import { useSession } from '@/state/session';
+import { NavPills } from './_shared/NavPills';
+import { CardFrame } from './_shared/CardFrame';
 
-export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
-  const nav = useNavigate();
+export default function PickNavatar() {
+  const [images, setImages] = useState<string[]>([]);
+  const { user } = useSession();
 
-  useEffect(() => {
-    loadPublicNavatars().then(setItems);
-  }, []);
+  useEffect(() => setImages(listNavatarImageUrls()), []);
 
-  async function choose(src: string, name: string) {
-    try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      nav("/navatar");
-    } catch {
-      alert("Could not save Navatar.");
-    }
+  async function setActive(imageUrl: string) {
+    if (!user) return alert('Please sign in.');
+    // upsert into avatars table as user's active choice, one row per (user,image_path)
+    const image_path = imageUrl; // public served path like /navatars/...
+    const { data, error } = await supabase
+      .from('avatars')
+      .upsert(
+        { user_id: user.id, image_path, image_url: image_path, is_primary: true },
+        { onConflict: 'user_id,image_path' },
+      )
+      .select()
+      .single();
+
+    if (error) return alert(`Pick failed: ${error.message}`);
+
+    // make this the current primary for the user (unset others)
+    await supabase
+      .from('avatars')
+      .update({ is_primary: false })
+      .eq('user_id', user.id)
+      .neq('id', data.id);
+
+    await supabase.from('avatars').update({ is_primary: true }).eq('id', data.id);
+
+    window.location.href = '/navatar'; // back to main
   }
 
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
-        {items.map((it) => (
-          <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
-          >
-            <NavatarCard src={it.src} title={it.name} />
+      <ol className="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>/ Navatar</li>
+      </ol>
+      <h1>Pick Navatar</h1>
+      <NavPills active="Pick" />
+      <div className="grid">
+        {images.map((src) => (
+          <button key={src} className="pickCard" onClick={() => setActive(src)}>
+            <CardFrame>
+              <img src={src} alt="" />
+            </CardFrame>
           </button>
         ))}
       </div>
     </main>
   );
 }
-

@@ -1,166 +1,129 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { supabase } from '@/supabaseClient';
+import { useSession } from '@/state/session';
+import { NavPills } from './_shared/NavPills';
 
-export default function NavatarCardPage() {
-  const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
+type Card = {
+  id?: string;
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
+  powers?: string[] | null;
+  traits?: string[] | null;
+};
+
+export default function CharacterCard() {
+  const { user } = useSession();
+  const [card, setCard] = useState<Card>({});
   const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("");
-  const [kingdom, setKingdom] = useState("");
-  const [backstory, setBackstory] = useState("");
-  const [powers, setPowers] = useState("");
-  const [traits, setTraits] = useState("");
 
   useEffect(() => {
-    let alive = true;
     (async () => {
-      try {
-        const card = await fetchMyCharacterCard();
-        if (card && alive) {
-          setName(card.name ?? "");
-          setSpecies(card.species ?? "");
-          setKingdom(card.kingdom ?? "");
-          setBackstory(card.backstory ?? "");
-          setPowers((card.powers ?? []).join(", "));
-          setTraits((card.traits ?? []).join(", "));
-        }
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        if (alive) setLoading(false);
-      }
+      if (!user) return;
+      // fetch latest card for this user
+      const { data } = await supabase
+        .from('character_cards')
+        .select('*')
+        .eq('user_id', user.id)
+        .order('updated_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+      if (data) setCard(data as Card);
     })();
-    return () => {
-      alive = false;
-    };
-  }, []);
-
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
+  }, [user]);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
+    if (!user) return alert('Please sign in.');
+
     setSaving(true);
-    setErr(null);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Please sign in.");
-        return;
-      }
+    const payload = {
+      ...card,
+      user_id: user.id,
+      // link to current primary avatar
+      avatar_id: await getPrimaryAvatarId(user.id),
+    };
 
-      const avatar_id = getActiveNavatarId();
-      if (!avatar_id) {
-        alert("Please create or select a Navatar first.");
-        return;
-      }
+    const { data, error } = await supabase
+      .from('character_cards')
+      .upsert(payload, { onConflict: 'user_id,avatar_id' })
+      .select()
+      .single();
 
-      const powersArr = (powers || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const traitsArr = (traits || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id,
-        name,
-        species,
-        kingdom,
-        backstory,
-        powers: powersArr,
-        traits: traitsArr,
-      });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
-
-      nav("/navatar/mint");
-    } catch (e: any) {
-      console.error(e);
-      setErr(e.message ?? "Save failed");
-    } finally {
-      setSaving(false);
-    }
-  }
-
-  if (loading) {
-    return (
-      <main className="container page-pad">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-        <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
-        <p>Loading…</p>
-      </main>
-    );
+    setSaving(false);
+    if (error) return alert(`Save failed: ${error.message}`);
+    setCard(data);
+    alert('Saved!');
+    // reflect on main pages immediately
+    window.location.href = '/navatar';
   }
 
   return (
-    <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-      <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
-      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
-        {err && <p className="Error">{err}</p>}
-
-        <label>
-          Name
-          <input value={name} onChange={e => setName(e.target.value)} />
-        </label>
-
-        <label>
-          Species / Type
-          <input value={species} onChange={e => setSpecies(e.target.value)} />
-        </label>
-
-        <label>
-          Kingdom
-          <input value={kingdom} onChange={e => setKingdom(e.target.value)} />
-        </label>
-
-        <label>
-          Backstory
-          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
-        </label>
-
-        <label>
-          Powers (comma separated)
-          <input value={powers} onChange={e => setPowers(e.target.value)} />
-        </label>
-
-        <label>
-          Traits (comma separated)
-          <input value={traits} onChange={e => setTraits(e.target.value)} />
-        </label>
-
-        <div className="row gap" style={{ marginTop: 8 }}>
-          <Link to="/navatar" className="pill">
-            Back to My Navatar
-          </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
-            {saving ? "Saving…" : "Save"}
-          </button>
+    <main className="container">
+      <ol className="breadcrumb">
+        <li>
+          <a href="/">Home</a>
+        </li>
+        <li>/ Navatar</li>
+        <li>/ Card</li>
+      </ol>
+      <h1>Character Card</h1>
+      <NavPills active="Card" />
+      <form className="cardForm" onSubmit={onSave}>
+        <input
+          value={card.name ?? ''}
+          onChange={(e) => setCard((c) => ({ ...c, name: e.target.value }))}
+          placeholder="Name"
+        />
+        <input
+          value={card.species ?? ''}
+          onChange={(e) => setCard((c) => ({ ...c, species: e.target.value }))}
+          placeholder="Species / Type"
+        />
+        <div className="row2">
+          <input
+            value={card.kingdom ?? ''}
+            onChange={(e) => setCard((c) => ({ ...c, kingdom: e.target.value }))}
+            placeholder="Kingdom"
+          />
+          <textarea
+            value={card.backstory ?? ''}
+            onChange={(e) => setCard((c) => ({ ...c, backstory: e.target.value }))}
+            placeholder="Backstory"
+          />
         </div>
+        <input
+          value={(card.powers ?? []).join(', ')}
+          onChange={(e) => setCard((c) => ({ ...c, powers: splitCsv(e.target.value) }))}
+          placeholder="Powers (comma separated)"
+        />
+        <input
+          value={(card.traits ?? []).join(', ')}
+          onChange={(e) => setCard((c) => ({ ...c, traits: splitCsv(e.target.value) }))}
+          placeholder="Traits (comma separated)"
+        />
+        <button className="btn" disabled={saving}>
+          {saving ? 'Saving…' : 'Save'}
+        </button>
       </form>
     </main>
   );
 }
 
+function splitCsv(s: string) {
+  return s
+    .split(',')
+    .map((x) => x.trim())
+    .filter(Boolean);
+}
+
+async function getPrimaryAvatarId(user_id: string): Promise<string | null> {
+  const { data } = await supabase
+    .from('avatars')
+    .select('id')
+    .eq('user_id', user_id)
+    .eq('is_primary', true)
+    .maybeSingle();
+  return data?.id ?? null;
+}
