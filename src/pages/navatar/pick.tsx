@@ -1,53 +1,43 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { listMyAvatars, pickActiveAvatar } from '../../lib/navatar';
+import { useAuth } from '../../lib/auth-context';
+import { useNavigate } from 'react-router-dom';
+import NavatarBreadcrumbs from '../../components/NavatarBreadcrumbs';
+import '../../styles/navatar.css';
 
-export default function PickNavatarPage() {
-  const [items, setItems] = useState<PublicNavatar[]>([]);
+export default function PickNavatar() {
+  const { user } = useAuth();
+  const [rows, setRows] = useState<any[]>([]);
   const nav = useNavigate();
 
   useEffect(() => {
-    loadPublicNavatars().then(setItems);
-  }, []);
+    if (!user) return;
+    listMyAvatars(user.id).then(setRows).catch(console.error);
+  }, [user]);
 
-  async function choose(src: string, name: string) {
-    try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      nav("/navatar");
-    } catch {
-      alert("Could not save Navatar.");
-    }
-  }
+  if (!user) return <div className="navatar-shell"><p>Please sign in.</p></div>;
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
-      <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
-      <div className="nav-grid">
-        {items.map((it) => (
+    <div className="navatar-shell">
+      <NavatarBreadcrumbs />
+      <h1>Pick Navatar</h1>
+      <div className="grid">
+        {rows.map((a) => (
           <button
-            key={it.src}
-            className="linklike"
-            onClick={() => choose(it.src, it.name)}
-            aria-label={`Pick ${it.name}`}
-            style={{ background: "none", border: 0, padding: 0, textAlign: "inherit" }}
+            key={a.id}
+            className="card-300"
+            onClick={async () => {
+              await pickActiveAvatar(user.id, a.id);
+              nav('/navatar');
+            }}
+            style={{ cursor: 'pointer', border: a.is_primary ? '3px solid #2563eb' : '3px solid transparent' }}
+            title="Pick this Navatar"
           >
-            <NavatarCard src={it.src} title={it.name} />
+            <img src={a.thumbnail_url || a.image_url || ''} alt={a.name || 'Navatar'} />
+            <div className="center" style={{ padding: 8, fontWeight: 700 }}>{a.name || 'Unnamed'}</div>
           </button>
         ))}
       </div>
-    </main>
+    </div>
   );
 }
-

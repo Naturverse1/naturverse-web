@@ -1,63 +1,36 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import "../../styles/navatar.css";
+import { FormEvent, useState } from 'react';
+import { useAuth } from '../../lib/auth-context';
+import NavatarBreadcrumbs from '../../components/NavatarBreadcrumbs';
+import '../../styles/navatar.css';
+import { uploadAndInsertAvatar } from '../../lib/navatar';
 
-export default function UploadNavatarPage() {
+export default function UploadNavatar() {
+  const { user } = useAuth();
   const [file, setFile] = useState<File | null>(null);
-  const [name, setName] = useState("");
-  const [previewUrl, setPreviewUrl] = useState<string | undefined>();
-  const nav = useNavigate();
+  const [name, setName] = useState('');
 
-  useEffect(() => {
-    if (!file) {
-      setPreviewUrl(undefined);
-      return;
-    }
-    const url = URL.createObjectURL(file);
-    setPreviewUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+  if (!user) return <div className="navatar-shell"><p>Please sign in.</p></div>;
 
-  async function onSave(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!file) return;
-    try {
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
-      alert("Uploaded ✓");
-      nav("/navatar");
-    } catch {
-      alert("Upload failed");
-    }
+    if (!file) { alert('Choose an image first'); return; }
+    await uploadAndInsertAvatar(user!.id, file, name);
+    alert('Uploaded!');
   }
 
   return (
-    <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Upload" }]} />
-      <h1 className="center">Upload a Navatar</h1>
-      <NavatarTabs />
-      <form
-        onSubmit={onSave}
-        style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
-      >
-        <NavatarCard src={previewUrl} title={name || "My Navatar"} />
-        <input type="file" accept="image/*" onChange={(e) => setFile(e.target.files?.[0] || null)} />
-        <input
-          style={{ display: "block", width: "100%" }}
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-        />
-        <button className="pill pill--active" type="submit">
-          Save
-        </button>
+    <div className="navatar-shell">
+      <NavatarBreadcrumbs />
+      <h1>Upload Navatar</h1>
+
+      <form className="center" onSubmit={onSubmit}>
+        <input type="text" placeholder="Name (optional)" value={name} onChange={e => setName(e.target.value)} />
+        <br />
+        <input type="file" accept="image/*" onChange={e => setFile(e.target.files?.[0] ?? null)} />
+        <br />
+        <button className="pill" type="submit">Save</button>
       </form>
-    </main>
+      <p className="center">AI art & edit coming soon.</p>
+    </div>
   );
 }
-

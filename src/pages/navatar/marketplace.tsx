@@ -1,21 +1,32 @@
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import "../../styles/navatar.css";
+import { useEffect, useState } from 'react';
+import { useAuth } from '../../lib/auth-context';
+import { getMyActiveAvatar } from '../../lib/navatar';
+import NavatarBreadcrumbs from '../../components/NavatarBreadcrumbs';
+import '../../styles/navatar.css';
 
-export default function NavatarMarketplacePage() {
+export default function MarketplaceStub() {
+  const { user } = useAuth();
+  const [avatar, setAvatar] = useState<any>(null);
+
+  useEffect(() => { if (user) getMyActiveAvatar(user.id).then(setAvatar); }, [user]);
+
   return (
-    <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Marketplace" }]}
-      />
-      <h1 className="center">Marketplace</h1>
-      <NavatarTabs />
-      <div className="center" style={{ maxWidth: 560, margin: "16px auto" }}>
-        <p>Mockups for tees, plushies, stickers and more are coming soon.</p>
-        <p>You’ll be able to place your Navatar on products here, then purchase on the Marketplace.</p>
-        <a className="pill" href="/marketplace">Go to Marketplace</a>
+    <div className="navatar-shell">
+      <NavatarBreadcrumbs />
+      <h1>Marketplace (Coming Soon)</h1>
+      <p className="center">Mockups and merch generator preview will appear here.</p>
+
+      <div className="grid" style={{ marginTop: 18 }}>
+        <div className="card-300" style={{ height: 420, background: '#f5f7ff' }}>
+          {/* placeholder */}
+        </div>
+        {avatar && (
+          <div className="card-300 center">
+            <img src={avatar.image_url || ''} alt={avatar.name || 'Navatar'} />
+            <div style={{ padding: 8, fontWeight: 700 }}>{avatar.name}</div>
+          </div>
+        )}
       </div>
-    </main>
+    </div>
   );
 }
-
