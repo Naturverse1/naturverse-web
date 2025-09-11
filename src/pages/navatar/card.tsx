@@ -1,18 +1,7 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { FormEvent, useEffect, useState } from "react";
+import { getMyCharacterCard, saveCharacterCard } from "@/lib/navatarApi";
 
-export default function NavatarCardPage() {
-  const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
+export default function CharacterCardPage() {
   const [name, setName] = useState("");
   const [species, setSpecies] = useState("");
   const [kingdom, setKingdom] = useState("");
@@ -21,146 +10,59 @@ export default function NavatarCardPage() {
   const [traits, setTraits] = useState("");
 
   useEffect(() => {
-    let alive = true;
     (async () => {
-      try {
-        const card = await fetchMyCharacterCard();
-        if (card && alive) {
-          setName(card.name ?? "");
-          setSpecies(card.species ?? "");
-          setKingdom(card.kingdom ?? "");
-          setBackstory(card.backstory ?? "");
-          setPowers((card.powers ?? []).join(", "));
-          setTraits((card.traits ?? []).join(", "));
-        }
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        if (alive) setLoading(false);
+      const c = await getMyCharacterCard();
+      if (c) {
+        setName(c.name ?? "");
+        setSpecies(c.species ?? "");
+        setKingdom(c.kingdom ?? "");
+        setBackstory(c.backstory ?? "");
+        setPowers((c.powers ?? []).join(', '));
+        setTraits((c.traits ?? []).join(', '));
       }
     })();
-    return () => {
-      alive = false;
-    };
   }, []);
 
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
-
-  async function onSave(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
-    setSaving(true);
-    setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Please sign in.");
-        return;
-      }
-
-      const avatar_id = getActiveNavatarId();
-      if (!avatar_id) {
-        alert("Please create or select a Navatar first.");
-        return;
-      }
-
-      const powersArr = (powers || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const traitsArr = (traits || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id,
+      await saveCharacterCard({
         name,
         species,
         kingdom,
         backstory,
-        powers: powersArr,
-        traits: traitsArr,
+        powers: powers ? powers.split(',').map(s => s.trim()).filter(Boolean) : null,
+        traits: traits ? traits.split(',').map(s => s.trim()).filter(Boolean) : null
       });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
-
-      nav("/navatar/mint");
+      alert("Saved!");
+      location.assign("/navatar");
     } catch (e: any) {
-      console.error(e);
-      setErr(e.message ?? "Save failed");
-    } finally {
-      setSaving(false);
+      alert(`Save failed: ${e.message}`);
     }
   }
 
-  if (loading) {
-    return (
-      <main className="container page-pad">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-        <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
-        <p>Loading…</p>
-      </main>
-    );
-  }
-
   return (
-    <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-      <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
-      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
-        {err && <p className="Error">{err}</p>}
+    <div className="container mx-auto px-4 pb-24">
+      <div className="text-sm text-blue-600 mb-2"><a href="/">Home</a> / <a href="/navatar">Navatar</a> / Card</div>
+      <h1 className="text-3xl font-bold text-blue-700 mb-4">Character Card</h1>
 
-        <label>
-          Name
-          <input value={name} onChange={e => setName(e.target.value)} />
-        </label>
-
-        <label>
-          Species / Type
-          <input value={species} onChange={e => setSpecies(e.target.value)} />
-        </label>
-
-        <label>
-          Kingdom
-          <input value={kingdom} onChange={e => setKingdom(e.target.value)} />
-        </label>
-
-        <label>
-          Backstory
-          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
-        </label>
-
-        <label>
-          Powers (comma separated)
-          <input value={powers} onChange={e => setPowers(e.target.value)} />
-        </label>
-
-        <label>
-          Traits (comma separated)
-          <input value={traits} onChange={e => setTraits(e.target.value)} />
-        </label>
-
-        <div className="row gap" style={{ marginTop: 8 }}>
-          <Link to="/navatar" className="pill">
-            Back to My Navatar
-          </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
-            {saving ? "Saving…" : "Save"}
-          </button>
+      <form onSubmit={onSubmit} className="max-w-xl rounded-2xl bg-white shadow p-4 space-y-4">
+        <input value={name} onChange={e=>setName(e.target.value)} placeholder="Name"
+          className="w-full border rounded px-3 py-2" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+          <input value={species} onChange={e=>setSpecies(e.target.value)} placeholder="Species / Type"
+            className="w-full border rounded px-3 py-2" />
+          <input value={kingdom} onChange={e=>setKingdom(e.target.value)} placeholder="Kingdom"
+            className="w-full border rounded px-3 py-2" />
         </div>
+        <textarea value={backstory} onChange={e=>setBackstory(e.target.value)} placeholder="Backstory"
+          rows={4} className="w-full border rounded px-3 py-2" />
+        <input value={powers} onChange={e=>setPowers(e.target.value)} placeholder="Powers (comma separated)"
+          className="w-full border rounded px-3 py-2" />
+        <input value={traits} onChange={e=>setTraits(e.target.value)} placeholder="Traits (comma separated)"
+          className="w-full border rounded px-3 py-2" />
+        <button type="submit" className="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700">Save</button>
       </form>
-    </main>
+    </div>
   );
 }
-
