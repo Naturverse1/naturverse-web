@@ -1,166 +1,66 @@
-import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
-import "../../styles/navatar.css";
+import { FormEvent, useEffect, useState } from 'react';
+import { useAuth } from '../../lib/auth-context';
+import NavatarBreadcrumbs from '../../components/NavatarBreadcrumbs';
+import '../../styles/navatar.css';
+import { getMyActiveAvatar, upsertCharacterCard } from '../../lib/navatar';
 
-export default function NavatarCardPage() {
-  const nav = useNavigate();
-  const [loading, setLoading] = useState(true);
-  const [saving, setSaving] = useState(false);
-  const [err, setErr] = useState<string | null>(null);
-
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("");
-  const [kingdom, setKingdom] = useState("");
-  const [backstory, setBackstory] = useState("");
-  const [powers, setPowers] = useState("");
-  const [traits, setTraits] = useState("");
+export default function CharacterCardPage() {
+  const { user } = useAuth();
+  const [avatarId, setAvatarId] = useState<string | null>(null);
+  const [form, setForm] = useState({ name: '', species: '', kingdom: '', backstory: '', powers: '', traits: '' });
 
   useEffect(() => {
-    let alive = true;
-    (async () => {
-      try {
-        const card = await fetchMyCharacterCard();
-        if (card && alive) {
-          setName(card.name ?? "");
-          setSpecies(card.species ?? "");
-          setKingdom(card.kingdom ?? "");
-          setBackstory(card.backstory ?? "");
-          setPowers((card.powers ?? []).join(", "));
-          setTraits((card.traits ?? []).join(", "));
-        }
-      } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        if (alive) setLoading(false);
-      }
-    })();
-    return () => {
-      alive = false;
-    };
-  }, []);
+    if (!user) return;
+    getMyActiveAvatar(user!.id).then(a => setAvatarId(a?.id ?? null));
+  }, [user]);
 
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
+  if (!user) return <div className="navatar-shell"><p>Please sign in.</p></div>;
 
-  async function onSave(e: React.FormEvent) {
+  async function onSubmit(e: FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
-    setSaving(true);
-    setErr(null);
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Please sign in.");
-        return;
-      }
+    if (!avatarId) { alert('Please pick or upload a Navatar first.'); return; }
 
-      const avatar_id = getActiveNavatarId();
-      if (!avatar_id) {
-        alert("Please create or select a Navatar first.");
-        return;
-      }
+    await upsertCharacterCard({
+      user_id: user!.id,
+      avatar_id: avatarId,
+      name: form.name || null,
+      species: form.species || null,
+      kingdom: form.kingdom || null,
+      backstory: form.backstory || null,
+      powers: form.powers ? form.powers.split(',').map(s => s.trim()).filter(Boolean) : [],
+      traits: form.traits ? form.traits.split(',').map(s => s.trim()).filter(Boolean) : []
+    } as any);
 
-      const powersArr = (powers || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const traitsArr = (traits || "")
-        .split(",")
-        .map(s => s.trim())
-        .filter(Boolean);
-
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id,
-        name,
-        species,
-        kingdom,
-        backstory,
-        powers: powersArr,
-        traits: traitsArr,
-      });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
-
-      nav("/navatar/mint");
-    } catch (e: any) {
-      console.error(e);
-      setErr(e.message ?? "Save failed");
-    } finally {
-      setSaving(false);
-    }
+    alert('Saved!');
   }
 
-  if (loading) {
-    return (
-      <main className="container page-pad">
-        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-        <h1 className="center page-title">Character Card</h1>
-        <NavatarTabs sub />
-        <p>Loading…</p>
-      </main>
-    );
+  function bind(k: keyof typeof form) {
+    return {
+      value: form[k],
+      onChange: (e: any) => setForm((f) => ({ ...f, [k]: e.target.value }))
+    };
   }
 
   return (
-    <main className="container page-pad">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
-      <h1 className="center page-title">Character Card</h1>
-      <NavatarTabs sub />
-      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
-        {err && <p className="Error">{err}</p>}
+    <div className="navatar-shell">
+      <NavatarBreadcrumbs />
+      <h1>Character Card</h1>
 
-        <label>
-          Name
-          <input value={name} onChange={e => setName(e.target.value)} />
-        </label>
-
-        <label>
-          Species / Type
-          <input value={species} onChange={e => setSpecies(e.target.value)} />
-        </label>
-
-        <label>
-          Kingdom
-          <input value={kingdom} onChange={e => setKingdom(e.target.value)} />
-        </label>
-
-        <label>
-          Backstory
-          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
-        </label>
-
-        <label>
-          Powers (comma separated)
-          <input value={powers} onChange={e => setPowers(e.target.value)} />
-        </label>
-
-        <label>
-          Traits (comma separated)
-          <input value={traits} onChange={e => setTraits(e.target.value)} />
-        </label>
-
-        <div className="row gap" style={{ marginTop: 8 }}>
-          <Link to="/navatar" className="pill">
-            Back to My Navatar
-          </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
-            {saving ? "Saving…" : "Save"}
-          </button>
-        </div>
+      <form className="center" onSubmit={onSubmit}>
+        <input placeholder="Name" {...bind('name')} />
+        <br />
+        <input placeholder="Species / Type" {...bind('species')} />
+        <br />
+        <input placeholder="Kingdom" {...bind('kingdom')} />
+        <br />
+        <textarea placeholder="Backstory" {...bind('backstory')} />
+        <br />
+        <input placeholder="Powers (comma separated)" {...bind('powers')} />
+        <br />
+        <input placeholder="Traits (comma separated)" {...bind('traits')} />
+        <br />
+        <button className="pill" type="submit">Save</button>
       </form>
-    </main>
+    </div>
   );
 }
-
