@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { saveNavatar } from "../../lib/navatar";
+import { uploadAvatar } from "../../shared/avatars";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
 
@@ -27,12 +27,12 @@ export default function UploadNavatarPage() {
     e.preventDefault();
     if (!file) return;
     try {
-      const row = await saveNavatar({ name, base_type: "Animal", file });
+      const row = await uploadAvatar(file, name);
       setActiveNavatarId(row.id);
-      alert("Uploaded ✓");
+      alert("Uploaded!");
       nav("/navatar");
-    } catch {
-      alert("Upload failed");
+    } catch (e: any) {
+      alert(`Upload failed: ${e.message}`);
     }
   }
 
