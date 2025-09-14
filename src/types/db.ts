@@ -1,5 +1,5 @@
 export type Database = {
-  natur: {
+  public: {
     Tables: {
       profiles: {
         Row: {
@@ -20,9 +20,9 @@ export type Database = {
           kid_safe?: boolean | null;
           theme?: string | null;
         };
-        Update: Partial<Database['natur']['Tables']['profiles']['Insert']>;
+        Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
       };
-      navatars: {
+      avatars: {
         Row: {
           id: string;
           user_id: string;
@@ -34,10 +34,10 @@ export type Database = {
           updated_at: string;
         };
         Insert: Omit<
-          Database['natur']['Tables']['navatars']['Row'],
+          Database['public']['Tables']['avatars']['Row'],
           'id' | 'created_at' | 'updated_at'
         >;
-        Update: Partial<Database['natur']['Tables']['navatars']['Insert']>;
+        Update: Partial<Database['public']['Tables']['avatars']['Insert']>;
       };
       passport_stamps: {
         Row: { id: number; user_id: string; kingdom: string; stamped_at: string };

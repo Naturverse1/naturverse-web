@@ -2,9 +2,8 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { fetchMyCharacterCard, upsertCharacterCard } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
+import { getMyAvatar, getCharacterCard, saveCharacterCard } from "../../lib/avatars";
+import { useAuthUser } from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function NavatarCardPage() {
@@ -12,7 +11,9 @@ export default function NavatarCardPage() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
+  const { user } = useAuthUser();
 
+  const [avatar, setAvatar] = useState<any | null>(null);
   const [name, setName] = useState("");
   const [species, setSpecies] = useState("");
   const [kingdom, setKingdom] = useState("");
@@ -21,17 +22,22 @@ export default function NavatarCardPage() {
   const [traits, setTraits] = useState("");
 
   useEffect(() => {
+    if (!user) return;
     let alive = true;
     (async () => {
       try {
-        const card = await fetchMyCharacterCard();
-        if (card && alive) {
-          setName(card.name ?? "");
-          setSpecies(card.species ?? "");
-          setKingdom(card.kingdom ?? "");
-          setBackstory(card.backstory ?? "");
-          setPowers((card.powers ?? []).join(", "));
-          setTraits((card.traits ?? []).join(", "));
+        const { data: a } = await getMyAvatar(user.id);
+        if (alive) setAvatar(a || null);
+        if (a?.id) {
+          const { data: c } = await getCharacterCard(a.id);
+          if (c && alive) {
+            setName(c.name ?? "");
+            setSpecies(c.species ?? "");
+            setKingdom(c.kingdom ?? "");
+            setBackstory(c.backstory ?? "");
+            setPowers((c.powers ?? []).join(", "));
+            setTraits((c.traits ?? []).join(", "));
+          }
         }
       } catch (e: any) {
         setErr(e.message ?? "Failed to load");
@@ -42,7 +48,7 @@ export default function NavatarCardPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [user?.id]);
 
   const canSave = useMemo(
     () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
@@ -55,15 +61,8 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) {
-        alert("Please sign in.");
-        return;
-      }
-
-      const avatar_id = getActiveNavatarId();
-      if (!avatar_id) {
-        alert("Please create or select a Navatar first.");
+      if (!user || !avatar?.id) {
+        alert("Pick a Navatar first.");
         return;
       }
 
@@ -77,9 +76,9 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      const { error } = await upsertCharacterCard({
-        user_id: user.id,
-        avatar_id,
+      const { error } = await saveCharacterCard({
+        userId: user.id,
+        avatarId: avatar.id,
         name,
         species,
         kingdom,

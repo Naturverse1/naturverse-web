@@ -2,36 +2,28 @@ import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { fetchMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
+import { getMyAvatar, getCharacterCard } from "../../lib/avatars";
+import { useAuthUser } from "../../lib/useAuthUser";
 import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
+  const [avatar, setAvatar] = useState<any | null>(null);
   const [card, setCard] = useState<CharacterCard | null>(null);
+  const { user } = useAuthUser();
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
+    if (!user) return;
     let alive = true;
     (async () => {
       try {
-        const { data } = await supabase
-          .from("avatars")
-          .select("id,name,image_path")
-          .eq("id", activeId)
-          .maybeSingle();
-        if (alive) setNavatar(data);
-      } catch {
-        // ignore
-      }
-      try {
-        const c = await fetchMyCharacterCard();
-        if (alive) setCard(c);
+        const { data: my } = await getMyAvatar(user.id);
+        if (alive) setAvatar(my);
+        if (my?.id) {
+          const { data: c } = await getCharacterCard(my.id);
+          if (alive) setCard(c || null);
+        }
       } catch {
         // ignore
       }
@@ -39,7 +31,7 @@ export default function MyNavatarPage() {
     return () => {
       alive = false;
     };
-  }, []);
+  }, [user?.id]);
 
   return (
     <main className="container page-pad">
@@ -49,7 +41,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid" style={{ marginTop: 8 }}>
         <section>
           <div className="nv-panel">
-            <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "Turian"} />
+            <NavatarCard src={avatar?.image_url || undefined} title={avatar?.name || "Turian"} />
           </div>
         </section>
 

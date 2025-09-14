@@ -1,7 +1,7 @@
 import { supabase } from '../db'
 import type { Database } from '../../types/db'
 
-type Stamp = Database['natur']['Tables']['passport_stamps']['Row']
+type Stamp = Database['public']['Tables']['passport_stamps']['Row']
 
 export async function listMyStamps() {
   const { data: { user } } = await supabase.auth.getUser()

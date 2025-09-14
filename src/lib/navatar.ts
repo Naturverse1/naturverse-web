@@ -1,6 +1,4 @@
 import { supabase } from "./supabase-client";
-import type { CharacterCard } from "./types";
-import { getActiveNavatarId } from "./localNavatar";
 
 export type NavatarRow = {
   id: string;
@@ -69,45 +67,5 @@ export async function saveNavatar(opts: {
   return data as NavatarRow;
 }
 
-export async function fetchMyCharacterCard(): Promise<CharacterCard | null> {
-  const { data: { user } } = await supabase.auth.getUser();
-  const activeId = getActiveNavatarId();
-  if (!user || !activeId) return null;
-  const { data, error } = await supabase
-    .from("character_cards")
-    .select("*")
-    .eq("user_id", user.id)
-    .eq("avatar_id", activeId)
-    .maybeSingle();
-  if (error && (error as any).code !== "PGRST116") throw error;
-  return (data as CharacterCard) ?? null;
-}
-
-export async function upsertCharacterCard(payload: {
-  user_id: string;
-  avatar_id: string;
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory?: string;
-  powers?: string[];
-  traits?: string[];
-}) {
-  return supabase
-    .from("character_cards")
-    .upsert(
-      { ...payload, updated_at: new Date().toISOString() },
-      { onConflict: "user_id,avatar_id" }
-    )
-    .select()
-    .single();
-}
-
-export async function getCardForAvatar(avatarId: string) {
-  return supabase
-    .from("character_cards")
-    .select("*")
-    .eq("avatar_id", avatarId)
-    .single();
-}
+export { getCharacterCard as getCardForAvatar } from "./avatars";
 
