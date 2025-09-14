@@ -4,13 +4,14 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { loadPublicNavatars, PublicNavatar } from "../../lib/navatar/publicList";
-import { saveNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
+import { upsertMyAvatar } from "../../lib/avatars";
+import { useAuthUser } from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
   const [items, setItems] = useState<PublicNavatar[]>([]);
   const nav = useNavigate();
+  const { user } = useAuthUser();
 
   useEffect(() => {
     loadPublicNavatars().then(setItems);
@@ -18,11 +19,11 @@ export default function PickNavatarPage() {
 
   async function choose(src: string, name: string) {
     try {
-      const res = await fetch(src);
-      const blob = await res.blob();
-      const file = new File([blob], "navatar.png", { type: blob.type });
-      const row = await saveNavatar({ name, base_type: "Animal", file });
-      setActiveNavatarId(row.id);
+      if (!user) {
+        alert("Please sign in.");
+        return;
+      }
+      await upsertMyAvatar(user.id, { image_url: src, name });
       nav("/navatar");
     } catch {
       alert("Could not save Navatar.");

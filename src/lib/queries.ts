@@ -24,20 +24,20 @@ export async function updateProfile(userId: string, updates: Record<string, unkn
 }
 
 // --------------------
-// Navatars
+// Avatars
 // --------------------
-export async function createNavatar(navatar: Record<string, unknown>) {
+export async function createAvatar(navatar: Record<string, unknown>) {
   const { data, error } = await supabase
-    .from('navatars')
+    .from('avatars')
     .insert(navatar)
     .select();
   if (error) throw error;
   return data;
 }
 
-export async function getNavatarsByUser(userId: string) {
+export async function getAvatarsByUser(userId: string) {
   const { data, error } = await supabase
-    .from('navatars')
+    .from('avatars')
     .select('*')
     .eq('user_id', userId);
   if (error) throw error;

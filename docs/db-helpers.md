@@ -1,7 +1,7 @@
 # DB query helpers
 
 - Profiles: `getProfile`, `updateProfile`
-- Navatars: `createNavatar`, `getNavatarsByUser`
+- Avatars: `createAvatar`, `getAvatarsByUser`
 - Stamps: `awardStamp`, `getStamps`
 - XP: `addXp`, `getXpTotal`, `getXpHistory`
 - Badges: `awardBadge`, `getBadges`

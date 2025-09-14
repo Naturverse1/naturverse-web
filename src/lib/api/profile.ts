@@ -1,9 +1,9 @@
 import { supabase } from '../db'
 import type { Database } from '../../types/db'
 
-type Profile = Database['natur']['Tables']['profiles']['Row']
-type ProfileInsert = Database['natur']['Tables']['profiles']['Insert']
-type ProfileUpdate = Database['natur']['Tables']['profiles']['Update']
+type Profile = Database['public']['Tables']['profiles']['Row']
+type ProfileInsert = Database['public']['Tables']['profiles']['Insert']
+type ProfileUpdate = Database['public']['Tables']['profiles']['Update']
 
 export async function getCurrentUser() {
   const { data } = await supabase.auth.getUser()
