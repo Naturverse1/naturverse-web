@@ -1,58 +1,62 @@
-import { useEffect, useState } from "react";
-import { listMyNavatars, navatarImageUrl, NavatarRow } from "../../lib/navatar";
-import { Link } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { getMyAvatar, Avatar } from '../../lib/supabaseAvatar';
 
-export default function NavatarHome() {
-  const [rows, setRows] = useState<NavatarRow[]>([]);
-  const [loading, setLoading] = useState(true);
+export default function MyNavatar() {
+  const [data, setData] = useState<Avatar | null>(null);
   const [err, setErr] = useState<string | null>(null);
 
   useEffect(() => {
     (async () => {
       try {
-        setLoading(true);
-        setRows(await listMyNavatars());
+        setData(await getMyAvatar());
       } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
-      } finally {
-        setLoading(false);
+        setErr(e.message ?? String(e));
       }
     })();
   }, []);
 
+  const img = data?.image_url ?? '';
+  const card = (data?.appearance_data && data.appearance_data._type === 'card')
+    ? data.appearance_data
+    : null;
+
   return (
-    <div className="Page">
-      <nav className="Breadcrumbs">
-        <Link to="/">Home</Link> <span>/</span> <span>Navatar</span>
-      </nav>
+    <main className="container">
+      <h1 className="page">My Navatar</h1>
 
-      <h1>Navatar</h1>
-      <p>Create a character, customize details, and save your Navatar card.</p>
-
-      <div className="ctaRow">
-        <Link className="Button" to="/navatar/create">Create</Link>
+      <div className="actions">
+        <a className="pill" href="/navatar/card">Card</a>
+        <a className="pill" href="/navatar/pick">Pick</a>
+        <a className="pill" href="/navatar/upload">Upload</a>
+        <a className="pill" href="/navatar/mint">NFT / Mint</a>
+        <a className="pill" href="/navatar/marketplace">Marketplace</a>
       </div>
 
-      <h2>My Navatars</h2>
-      {loading && <p>Loading…</p>}
-      {err && <p className="Error">{err}</p>}
-      <div className="CardGrid">
-        {rows.map(r => {
-          const url = navatarImageUrl(r.image_path);
-          return (
-            <div key={r.id} className="NavatarCard">
-              <div className="NavatarTitle">{r.name ?? r.base_type}</div>
-              <div className="NavatarImg">
-                {url ? <img src={url} alt={r.name ?? r.base_type} /> : <div className="NoPhoto">No photo</div>}
-              </div>
-              <div className="NavatarMeta">
-                <span>{r.base_type}</span> • <time>{new Date(r.created_at).toLocaleDateString()}</time>
-              </div>
-            </div>
-          );
-        })}
+      {err && <p className="error">{err}</p>}
+
+      <div className="split">
+        <div className="card big">
+          {img ? <img src={img} alt={data?.name ?? 'My Navatar'} /> : <div className="empty">No photo</div>}
+          <div className="label">{data?.name ?? '—'}</div>
+        </div>
+
+        <div className="panel">
+          <h3>Character Card</h3>
+          {card ? (
+            <ul className="meta">
+              <li><b>Name</b> {card.name ?? '—'}</li>
+              <li><b>Species</b> {card.species ?? '—'}</li>
+              <li><b>Kingdom</b> {card.kingdom ?? '—'}</li>
+              <li><b>Backstory</b> {card.backstory ?? '—'}</li>
+              <li><b>Powers</b> {(card.powers ?? []).join(', ') || '—'}</li>
+              <li><b>Traits</b> {(card.traits ?? []).join(', ') || '—'}</li>
+            </ul>
+          ) : (
+            <p>No card yet. <a href="/navatar/card">Create Card</a></p>
+          )}
+          <a className="btn" href="/navatar/card">Edit Card</a>
+        </div>
       </div>
-    </div>
+    </main>
   );
 }
-
