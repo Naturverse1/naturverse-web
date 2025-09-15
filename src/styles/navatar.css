@@ -1,26 +1,4 @@
-/* --- Pills: always horizontal & centered, wrap if needed --- */
-.nav-tabs {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 10px;
-  flex-wrap: wrap;       /* stays horizontal; wraps when space runs out */
-  margin: 10px auto 18px;
-}
-
-/* Hide pills on mobile; show on Navatar home */
-@media (max-width: 768px) {
-  .nav-pills {
-    display: none;
-  }
-
-  body.page-navatar-home .nav-pills {
-    display: flex;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-}
-
+/* --- Pills shared across Navatar pages --- */
 .pill {
   display: inline-flex;
   align-items: center;
@@ -92,19 +70,6 @@
 .link,
 .btn {
   color: var(--nv-blue-600);
-}
-
-/* Sub-page pill bar: hidden on mobile, visible ≥ md */
-.nav-tabs--sub {
-  display: none;
-}
-@media (min-width: 768px) {
-  .nav-tabs--sub {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 0.5rem;
-    margin-bottom: 1rem;
-  }
 }
 
 /* Form spacing */

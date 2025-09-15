@@ -1,4 +1,5 @@
 import React from "react";
+import AvatarPlaceholder from './AvatarPlaceholder';
 
 type Props = {
   src?: string | null;
@@ -14,7 +15,7 @@ export default function NavatarCard({ src, title = "My Navatar", subtitle, class
         {src ? (
           <img src={src} alt={title} />
         ) : (
-          <div className="nav-card__placeholder">No photo</div>
+          <AvatarPlaceholder title={title} />
         )}
       </div>
       <figcaption className="nav-card__cap">

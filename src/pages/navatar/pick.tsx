@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { listNavatars, pickNavatar } from "../../lib/navatar";
+import BackToMyNavatar from "../../components/BackToMyNavatar";
+import { pickNavatar } from "../../lib/navatar";
+import { listNavatarImages } from "../../shared/storage";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
@@ -14,7 +15,7 @@ export default function PickNavatarPage() {
   const { user } = useAuthUser();
 
   useEffect(() => {
-    listNavatars().then(setItems).catch(() => setItems([]));
+    listNavatarImages().then(setItems).catch(() => setItems([]));
   }, []);
 
   async function choose(item: { path: string; name: string }) {
@@ -35,7 +36,7 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
+      <BackToMyNavatar />
       <div className="nav-grid">
         {items.map(it => (
           <button

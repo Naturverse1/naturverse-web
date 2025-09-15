@@ -1,25 +1,31 @@
-import React from "react";
-import { Link, useLocation } from "react-router-dom";
+import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+import styles from './NavatarTabs.module.css';
 
-const TABS = [
-  { to: "/navatar", label: "My Navatar" },
-  { to: "/navatar/card", label: "Card" },
-  { to: "/navatar/pick", label: "Pick" },
-  { to: "/navatar/upload", label: "Upload" },
-  { to: "/navatar/generate", label: "Generate" },
-  { to: "/navatar/mint", label: "NFT / Mint" },
-  { to: "/navatar/marketplace", label: "Marketplace" },
-];
-
-export default function NavatarTabs({ sub = false }: { sub?: boolean }) {
+export default function NavatarTabs() {
   const { pathname } = useLocation();
+  const base = '/navatar';
+
+  const tabs = [
+    { to: `${base}`, label: 'My Navatar', match: (p:string) => p === base || p === `${base}/` },
+    { to: `${base}/card`, label: 'Card' },
+    { to: `${base}/pick`, label: 'Pick' },
+    { to: `${base}/upload`, label: 'Upload' },
+    { to: `${base}/generate`, label: 'Generate' },
+    { to: `${base}/mint`, label: 'NFT / Mint' },
+    { to: `${base}/marketplace`, label: 'Marketplace' },
+  ];
+
   return (
-    <nav className={`nav-tabs nav-pills${sub ? " nav-tabs--sub" : ""}`} aria-label="Navatar actions">
-      {TABS.map(t => {
-        const active =
-          t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);
+    <nav className={styles.tabs}>
+      {tabs.map(t => {
+        const active = t.match ? t.match(pathname) : pathname.startsWith(t.to);
         return (
-          <Link key={t.to} to={t.to} className={`pill ${active ? "pill--active" : ""}`}>
+          <Link
+            key={t.to}
+            to={t.to}
+            className={`${styles.pill} ${active ? styles.active : ''}`}
+          >
             {t.label}
           </Link>
         );
