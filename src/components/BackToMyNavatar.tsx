@@ -3,8 +3,8 @@ import { Link } from 'react-router-dom';
 
 export default function BackToMyNavatar() {
   return (
-    <div style={{ margin: '8px 0 16px' }}>
-      <Link to="/navatar" style={{ fontWeight: 700, color: '#1f3db3', textDecoration: 'none' }}>
+    <div className="mt-2">
+      <Link to="/navatar" className="text-sm text-blue-500 hover:underline">
         ← Back to My Navatar
       </Link>
     </div>

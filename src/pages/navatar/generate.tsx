@@ -6,6 +6,7 @@ import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
+import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -14,6 +15,7 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const nav = useNavigate();
+  const toast = useToast();
 
   useEffect(() => {
     if (!file) {
@@ -31,23 +33,23 @@ export default function GenerateNavatarPage() {
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
-      alert("Saved ✓");
+      toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
     } catch {
-      alert("Save failed");
+      toast({ text: "Save failed", kind: "err" });
     }
   }
 
   return (
-    <main className="container">
+    <main className="page-pad mx-auto max-w-4xl p-4">
       <div className="bcRow">
         <Breadcrumbs
           items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
         />
       </div>
-      <h1 className="pageTitle">Describe &amp; Generate</h1>
-      <NavatarTabs context="subpage" />
+      <h1 className="pageTitle mt-6 mb-12">Describe &amp; Generate</h1>
       <BackToMyNavatar />
+      <NavatarTabs context="subpage" />
       <form
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}

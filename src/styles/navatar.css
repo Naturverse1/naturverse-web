@@ -1,12 +1,11 @@
 /* Heading spacing */
 .pageTitle {
-  margin-bottom: 6px;
   text-align: center;
 }
 
 .bcRow {
   margin: 0 auto 6px;
-  max-width: 980px;
+  max-width: 56rem;
   padding: 0 16px;
 }
 
@@ -16,6 +15,8 @@
   align-items: center;
   justify-content: center;
   padding: 8px 14px;
+  min-height: 40px;
+  line-height: 1.2;
   border-radius: 999px;
   border: 1px solid #cfe0ff;
   background: #f6f9ff;
@@ -28,6 +29,8 @@
   background: #1e4ed8;
   color: #fff;
   border-color: #1e4ed8;
+  font-weight: 700;
+  pointer-events: none;
 }
 
 /* --- Card: single source of truth for size & fit --- */
@@ -71,7 +74,7 @@
 /* grid used by Pick page */
 .nav-grid {
   display: grid;
-  gap: 16px;
+  gap: 24px;
   grid-template-columns: repeat(auto-fill, minmax(min(200px, 46vw), 1fr));
   align-items: start;
 }
@@ -112,11 +115,11 @@
 
 /* Reuse across Navatar home, Card page, Mint preview */
 .nv-panel {
-  background: var(--nv-blue-50, #eef3ff);
-  border: 1px solid var(--nv-blue-200, #cfe0ff);
-  box-shadow: 0 6px 22px rgba(16, 51, 255, 0.06);
+  background: #fff;
+  border: 1px solid #f3f4f6;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   border-radius: 16px;
-  padding: 18px;
+  padding: 16px;
 }
 
 .nv-panel h3,
@@ -137,7 +140,7 @@
 /* Hub layout: side-by-side desktop, stacked mobile */
 .nv-hub-grid {
   display: grid;
-  gap: 22px;
+  gap: 24px;
 }
 @media (min-width: 960px) {
   .nv-hub-grid {
