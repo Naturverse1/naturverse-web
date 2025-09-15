@@ -36,7 +36,7 @@ import BankToken from './pages/naturbank/Token';
 import BankNFTs from './pages/naturbank/NFTs';
 import BankLearn from './pages/naturbank/Learn';
 import NavatarIndex from './pages/navatar';
-import NavatarPick from './pages/navatar/pick';
+import NavatarPick from './routes/navatar/pick';
 import NavatarUpload from './pages/navatar/upload';
 import NavatarGenerate from './pages/navatar/generate';
 import NavatarMint from './pages/navatar/mint';
