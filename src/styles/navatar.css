@@ -8,6 +8,13 @@
   margin: 10px auto 18px;
 }
 
+/* Hide pills on small screens */
+@media (max-width: 767px) {
+  .nav-tabs {
+    display: none;
+  }
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
