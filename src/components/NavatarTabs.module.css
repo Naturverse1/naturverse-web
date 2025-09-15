@@ -1,0 +1,26 @@
+/* Show on desktop/tablet, hide on phones */
+.tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin: 8px 0 20px;
+}
+
+.pill {
+  display: inline-block;
+  padding: 10px 16px;
+  border-radius: 999px;
+  background: #eef3ff;
+  color: #1f3db3;
+  font-weight: 600;
+  text-decoration: none;
+  border: 1px solid #d9e3ff;
+}
+
+.pill:hover { background: #e6eeff; }
+.active { background: #2f54eb; color: #fff; }
+
+/* mobile: hide */
+@media (max-width: 768px) {
+  .tabs { display: none; }
+}
