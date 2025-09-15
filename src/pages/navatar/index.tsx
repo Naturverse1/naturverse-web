@@ -31,6 +31,13 @@ export default function MyNavatarPage() {
     };
   }, [user?.id]);
 
+  useEffect(() => {
+    document.body.classList.add('page-navatar-home');
+    return () => {
+      document.body.classList.remove('page-navatar-home');
+    };
+  }, []);
+
   return (
     <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />

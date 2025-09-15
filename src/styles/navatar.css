@@ -8,6 +8,19 @@
   margin: 10px auto 18px;
 }
 
+/* Hide pills on mobile; show on Navatar home */
+@media (max-width: 768px) {
+  .nav-pills {
+    display: none;
+  }
+
+  body.page-navatar-home .nav-pills {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
 .pill {
   display: inline-flex;
   align-items: center;
