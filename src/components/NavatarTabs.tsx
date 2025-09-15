@@ -11,10 +11,12 @@ const TABS = [
   { to: "/navatar/marketplace", label: "Marketplace" },
 ];
 
-export default function NavatarTabs({ sub = false }: { sub?: boolean }) {
+export default function NavatarTabs() {
   const { pathname } = useLocation();
+  if (pathname !== "/navatar") return null;
+
   return (
-    <nav className={`nav-tabs${sub ? " nav-tabs--sub" : ""}`} aria-label="Navatar actions">
+    <nav className="nav-tabs" aria-label="Navatar actions">
       {TABS.map(t => {
         const active =
           t.to === "/navatar" ? pathname === "/navatar" : pathname.startsWith(t.to);

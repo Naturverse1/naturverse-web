@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
 import { listNavatars, pickNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
@@ -35,7 +34,6 @@ export default function PickNavatarPage() {
     <main className="container">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Pick" }]} />
       <h1 className="center">Pick Navatar</h1>
-      <NavatarTabs />
       <div className="nav-grid">
         {items.map(it => (
           <button
