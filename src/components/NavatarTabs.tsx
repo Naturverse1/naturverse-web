@@ -1,35 +1,42 @@
 import React from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link } from 'react-router-dom';
 import styles from './NavatarTabs.module.css';
 
-export default function NavatarTabs() {
-  const { pathname } = useLocation();
-  const base = '/navatar';
+type TabKey = 'my' | 'card' | 'pick' | 'upload' | 'generate' | 'mint' | 'marketplace';
 
+export function NavatarTabs({
+  active,
+  context = 'subpage',
+}: {
+  active: TabKey;
+  context?: 'hub' | 'subpage';
+}) {
+  const mobileClass = context === 'hub' ? styles.showOnMobile : styles.hideOnMobile;
+
+  const base = '/navatar';
   const tabs = [
-    { to: `${base}`, label: 'My Navatar', match: (p:string) => p === base || p === `${base}/` },
-    { to: `${base}/card`, label: 'Card' },
-    { to: `${base}/pick`, label: 'Pick' },
-    { to: `${base}/upload`, label: 'Upload' },
-    { to: `${base}/generate`, label: 'Generate' },
-    { to: `${base}/mint`, label: 'NFT / Mint' },
-    { to: `${base}/marketplace`, label: 'Marketplace' },
-  ];
+    { key: 'my', to: `${base}`, label: 'My Navatar' },
+    { key: 'card', to: `${base}/card`, label: 'Card' },
+    { key: 'pick', to: `${base}/pick`, label: 'Pick' },
+    { key: 'upload', to: `${base}/upload`, label: 'Upload' },
+    { key: 'generate', to: `${base}/generate`, label: 'Generate' },
+    { key: 'mint', to: `${base}/mint`, label: 'NFT / Mint' },
+    { key: 'marketplace', to: `${base}/marketplace`, label: 'Marketplace' },
+  ] as const;
 
   return (
-    <nav className={styles.tabs}>
-      {tabs.map(t => {
-        const active = t.match ? t.match(pathname) : pathname.startsWith(t.to);
-        return (
-          <Link
-            key={t.to}
-            to={t.to}
-            className={`${styles.pill} ${active ? styles.active : ''}`}
-          >
-            {t.label}
-          </Link>
-        );
-      })}
+    <nav className={`${styles.tabs} ${mobileClass}`}>
+      {tabs.map(t => (
+        <Link
+          key={t.key}
+          to={t.to}
+          className={`${styles.pill} ${active === t.key ? styles.active : ''}`}
+        >
+          {t.label}
+        </Link>
+      ))}
     </nav>
   );
 }
+
+export default NavatarTabs;

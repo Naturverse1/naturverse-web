@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
+import { NavatarTabs } from "../../components/NavatarTabs";
 import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
@@ -107,6 +108,7 @@ export default function NavatarCardPage() {
     <main className="container page-pad">
       <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
       <h1 className="center page-title">Character Card</h1>
+      <NavatarTabs active="card" context="subpage" />
       <BackToMyNavatar />
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
