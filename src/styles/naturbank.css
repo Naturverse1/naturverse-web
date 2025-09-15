@@ -22,8 +22,8 @@
 .naturbank-page .txn-head { font-weight: 700; color:#445; font-size: 13px; }
 .naturbank-page .txn-row { background:#fff; padding:10px 12px; border-radius:10px; border:1px solid #e6ecf8; }
 .naturbank-page .pill { display:inline-block; padding:4px 10px; border-radius:999px; font-size:12px; }
-.naturbank-page .pill.green { background:#e6fffb; color:#006d75; }
-.naturbank-page .pill.gray  { background:#f5f5f5; color:#555; }
+.naturbank-page .pill.blue { background:#e6f4ff; color:#1d39c4; }
+.naturbank-page .pill.red  { background:#fff1f0; color:#cf1322; }
 
 @media (max-width: 640px) {
   .naturbank-page .txn-head { display: none; }
