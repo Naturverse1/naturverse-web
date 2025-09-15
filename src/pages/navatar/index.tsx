@@ -2,9 +2,9 @@ import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { getMyAvatar, getCharacterCard } from "../../lib/avatars";
+import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
+import type { CharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
-import type { CharacterCard } from "../../lib/types";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
@@ -18,12 +18,10 @@ export default function MyNavatarPage() {
     let alive = true;
     (async () => {
       try {
-        const { data: my } = await getMyAvatar(user.id);
+        const my = await getMyAvatar();
         if (alive) setAvatar(my);
-        if (my?.id) {
-          const { data: c } = await getCharacterCard(my.id);
-          if (alive) setCard(c || null);
-        }
+        const c = await getMyCharacterCard();
+        if (alive) setCard(c);
       } catch {
         // ignore
       }
