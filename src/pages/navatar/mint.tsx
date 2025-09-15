@@ -3,7 +3,7 @@ import { Link } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
-import { NavatarTabs } from "../../components/NavatarTabs";
+import NavatarTabs from "../../components/NavatarTabs";
 import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
 import { getActiveNavatarId } from "../../lib/localNavatar";
 import { supabase } from "../../lib/supabase-client";
@@ -31,9 +31,11 @@ export default function MintNavatarPage() {
 
   return (
     <main className="container">
-      <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
-      <h1 className="center">NFT / Mint</h1>
-      <NavatarTabs active="mint" context="subpage" />
+      <div className="bcRow">
+        <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
+      </div>
+      <h1 className="pageTitle">NFT / Mint</h1>
+      <NavatarTabs context="subpage" />
       <BackToMyNavatar />
       <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.

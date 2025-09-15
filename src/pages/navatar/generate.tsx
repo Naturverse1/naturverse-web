@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
-import { NavatarTabs } from "../../components/NavatarTabs";
+import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import "../../styles/navatar.css";
@@ -40,11 +40,13 @@ export default function GenerateNavatarPage() {
 
   return (
     <main className="container">
-      <Breadcrumbs
-        items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
-      />
-      <h1 className="center">Describe &amp; Generate</h1>
-      <NavatarTabs active="generate" context="subpage" />
+      <div className="bcRow">
+        <Breadcrumbs
+          items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
+        />
+      </div>
+      <h1 className="pageTitle">Describe &amp; Generate</h1>
+      <NavatarTabs context="subpage" />
       <BackToMyNavatar />
       <form
         onSubmit={onSave}
