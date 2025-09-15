@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getCharacterCard, saveCharacterCard } from "../../lib/avatars";
+import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import "../../styles/navatar.css";
 
@@ -26,18 +26,16 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const { data: a } = await getMyAvatar(user.id);
+        const a = await getMyAvatar();
         if (alive) setAvatar(a || null);
-        if (a?.id) {
-          const { data: c } = await getCharacterCard(a.id);
-          if (c && alive) {
-            setName(c.name ?? "");
-            setSpecies(c.species ?? "");
-            setKingdom(c.kingdom ?? "");
-            setBackstory(c.backstory ?? "");
-            setPowers((c.powers ?? []).join(", "));
-            setTraits((c.traits ?? []).join(", "));
-          }
+        const c = await getMyCharacterCard();
+        if (c && alive) {
+          setName(c.name ?? "");
+          setSpecies(c.species ?? "");
+          setKingdom(c.kingdom ?? "");
+          setBackstory(c.backstory ?? "");
+          setPowers((c.powers ?? []).join(", "));
+          setTraits((c.traits ?? []).join(", "));
         }
       } catch (e: any) {
         setErr(e.message ?? "Failed to load");
@@ -76,9 +74,7 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      const { error } = await saveCharacterCard({
-        userId: user.id,
-        avatarId: avatar.id,
+      await saveCharacterCard({
         name,
         species,
         kingdom,
@@ -86,13 +82,8 @@ export default function NavatarCardPage() {
         powers: powersArr,
         traits: traitsArr,
       });
-      if (error) {
-        console.error(error);
-        setErr("Could not save your Character Card. Please try again.");
-        return;
-      }
 
-      nav("/navatar/mint");
+      nav("/navatar");
     } catch (e: any) {
       console.error(e);
       setErr(e.message ?? "Save failed");

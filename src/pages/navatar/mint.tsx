@@ -23,7 +23,7 @@ export default function MintNavatarPage() {
         .eq("id", activeId)
         .maybeSingle();
       setNavatar(data);
-      const { data: c } = await getCardForAvatar(activeId);
+      const c = await getCardForAvatar(activeId);
       setCard(c);
     })();
   }, []);
