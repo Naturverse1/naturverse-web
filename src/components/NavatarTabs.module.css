@@ -1,9 +1,9 @@
-/* Show on desktop/tablet, hide on phones */
 .tabs {
   display: flex;
   flex-wrap: wrap;
   gap: 12px;
   margin: 8px 0 20px;
+  align-items: center;
 }
 
 .pill {
@@ -20,7 +20,17 @@
 .pill:hover { background: #e6eeff; }
 .active { background: #2f54eb; color: #fff; }
 
-/* mobile: hide */
-@media (max-width: 768px) {
-  .tabs { display: none; }
+.hideOnMobile,
+.showOnMobile {
+  display: flex;
+}
+
+/* Mobile behavior */
+@media (max-width: 640px) {
+  .hideOnMobile {
+    display: none;
+  }
+  .showOnMobile {
+    display: flex;
+  }
 }
