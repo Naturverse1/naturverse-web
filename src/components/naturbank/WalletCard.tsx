@@ -1,16 +1,17 @@
 import React, { useState } from 'react';
-import { NaturWallet } from '../../shared/naturbank/types';
+import type { Wallet } from '../../lib/naturbank';
 
 type Props = {
-  wallet: NaturWallet;
-  onSave: (next: NaturWallet) => void;
-  onGrant: () => void;
-  onSpend: () => void;
+  wallet: Wallet;
+  onSave: (fields: { label: string; address: string }) => void;
+  onGrant: (note?: string) => void;
+  onSpend: (note?: string) => void;
 };
 
 export default function WalletCard({ wallet, onSave, onGrant, onSpend }: Props) {
   const [label, setLabel] = useState(wallet.label);
-  const [addr, setAddr] = useState(wallet.address);
+  const [addr, setAddr] = useState(wallet.address ?? '');
+  const [note, setNote] = useState('');
 
   return (
     <section className="card">
@@ -22,13 +23,40 @@ export default function WalletCard({ wallet, onSave, onGrant, onSpend }: Props) 
         </div>
         <div className="col">
           <label className="lbl">Address</label>
-          <input className="inp" placeholder="0x… or email handle" value={addr} onChange={e => setAddr(e.target.value)} />
+          <input
+            className="inp"
+            placeholder="0x… or email handle"
+            value={addr}
+            onChange={e => setAddr(e.target.value)}
+          />
         </div>
       </div>
-      <div className="row gap">
+      <div className="row gap wallet-actions">
+        <input
+          className="inp"
+          placeholder="Note (optional)"
+          value={note}
+          onChange={e => setNote(e.target.value)}
+        />
         <button className="btn" onClick={() => onSave({ label, address: addr })}>Save</button>
-        <button className="btn btn-primary" onClick={onGrant}>Grant +25 NATUR</button>
-        <button className="btn btn-danger" onClick={onSpend}>Spend −10 NATUR</button>
+        <button
+          className="btn btn-primary"
+          onClick={() => {
+            onGrant(note);
+            setNote('');
+          }}
+        >
+          Grant +25 NATUR
+        </button>
+        <button
+          className="btn btn-danger"
+          onClick={() => {
+            onSpend(note);
+            setNote('');
+          }}
+        >
+          Spend −10 NATUR
+        </button>
       </div>
       <p className="hint">Local demo mode.</p>
     </section>

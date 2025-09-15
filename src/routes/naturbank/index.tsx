@@ -1,33 +1,53 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import WalletCard from '../../components/naturbank/WalletCard';
 import BalanceCard from '../../components/naturbank/BalanceCard';
 import TransactionsCard from '../../components/naturbank/TransactionsCard';
-import { NaturBankState, NaturTxn } from '../../shared/naturbank/types';
-import { applyTxn, loadState, saveState } from '../../shared/naturbank/storage';
-
-function uuid() {
-  return crypto?.randomUUID?.() ?? Math.random().toString(36).slice(2);
-}
+import {
+  getOrCreateWallet,
+  listTxns,
+  grant,
+  spend,
+  saveWalletMeta,
+  type Wallet,
+  type Txn,
+} from '../../lib/naturbank';
+import { useAuthUser } from '../../lib/useAuthUser';
 
 export default function NaturBankPage() {
-  const [state, setState] = useState<NaturBankState>(() => loadState());
+  const { user } = useAuthUser();
+  const [wallet, setWallet] = useState<Wallet | null>(null);
+  const [txns, setTxns] = useState<Txn[]>([]);
 
-  // actions
-  const saveWallet = (next: NaturBankState['wallet']) => {
-    const updated = { ...state, wallet: next };
-    setState(updated); saveState(updated);
+  const refresh = async () => {
+    if (!user) return;
+    const w = await getOrCreateWallet(user.id);
+    setWallet(w);
+    setTxns(await listTxns(w.id, user.id));
   };
 
-  const addTxn = (type: 'grant' | 'spend', amount: number, note?: string) => {
-    const txn: NaturTxn = { id: uuid(), ts: Date.now(), type, amount, note };
-    const updated = applyTxn(state, txn);
-    setState(updated); saveState(updated);
+  useEffect(() => {
+    refresh();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [user?.id]);
+
+  const onSave = async (fields: { label: string; address: string }) => {
+    if (!wallet) return;
+    await saveWalletMeta(wallet.id, fields);
+    await refresh();
   };
 
-  const onGrant = () => addTxn('grant', 25, 'Demo grant');
-  const onSpend = () => addTxn('spend', 10, 'Demo spend');
+  const onGrant = async (note?: string) => {
+    if (!wallet || !user) return;
+    await grant(wallet.id, user.id, 25, note);
+    await refresh();
+  };
 
-  // simple page styles (scoped)
+  const onSpend = async (note?: string) => {
+    if (!wallet || !user) return;
+    await spend(wallet.id, user.id, 10, note);
+    await refresh();
+  };
+
   const styles = useMemo(() => ({
     page: { maxWidth: 920, margin: '0 auto' },
   }), []);
@@ -41,9 +61,13 @@ export default function NaturBankPage() {
       <h1 className="title">NaturBank</h1>
       <p className="muted center">Local demo mode.</p>
 
-      <WalletCard wallet={state.wallet} onSave={saveWallet} onGrant={onGrant} onSpend={onSpend} />
-      <BalanceCard balance={state.balance} />
-      <TransactionsCard txns={state.txns} />
+      {wallet && (
+        <>
+          <WalletCard wallet={wallet} onSave={onSave} onGrant={onGrant} onSpend={onSpend} />
+          <BalanceCard balance={wallet.balance} />
+        </>
+      )}
+      <TransactionsCard txns={txns} />
 
       <section className="card">
         <p className="muted">
