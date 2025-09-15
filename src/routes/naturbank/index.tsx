@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import WalletCard from '../../components/naturbank/WalletCard';
+import SendCard from '../../components/naturbank/SendCard';
 import BalanceCard from '../../components/naturbank/BalanceCard';
 import TransactionsCard from '../../components/naturbank/TransactionsCard';
 import {
@@ -7,6 +8,7 @@ import {
   listTxns,
   grant,
   spend,
+  transferTo,
   saveWalletMeta,
   type Wallet,
   type Txn,
@@ -48,6 +50,12 @@ export default function NaturBankPage() {
     await refresh();
   };
 
+  const onSend = async (recipient: string, amount: number, note?: string) => {
+    if (!user) return;
+    await transferTo(user.id, recipient, amount, note);
+    await refresh();
+  };
+
   const styles = useMemo(() => ({
     page: { maxWidth: 920, margin: '0 auto' },
   }), []);
@@ -64,6 +72,7 @@ export default function NaturBankPage() {
       {wallet && (
         <>
           <WalletCard wallet={wallet} onSave={onSave} onGrant={onGrant} onSpend={onSpend} />
+          <SendCard onSend={onSend} />
           <BalanceCard balance={wallet.balance} />
         </>
       )}

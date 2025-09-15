@@ -82,3 +82,19 @@ export const spend = (
   amount = 10,
   note?: string
 ) => writeTxn(walletId, userId, 'spend', amount, note);
+
+export async function transferTo(
+  senderUserId: string,
+  recipient: string,
+  amount: number,
+  note?: string
+) {
+  const { data, error } = await supabase.rpc('natur_transfer', {
+    p_sender_user_id: senderUserId,
+    p_recipient: recipient,
+    p_amount: amount,
+    p_note: note ?? null,
+  });
+  if (error) throw error;
+  return data as { sender_balance: number; recipient_balance: number }[];
+}
