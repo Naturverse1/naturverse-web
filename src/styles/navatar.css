@@ -1,3 +1,15 @@
+/* Heading spacing */
+.pageTitle {
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.bcRow {
+  margin: 0 auto 6px;
+  max-width: 980px;
+  padding: 0 16px;
+}
+
 /* --- Pills shared across Navatar pages --- */
 .pill {
   display: inline-flex;
@@ -65,6 +77,7 @@
 }
 
 /* Keep existing colors; enforce blue titles/links for the new page */
+.pageTitle,
 .page-title,
 .panel-title,
 .link,
