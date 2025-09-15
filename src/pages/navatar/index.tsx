@@ -32,13 +32,13 @@ export default function MyNavatarPage() {
   }, [user?.id]);
 
   return (
-    <main className="container page-pad">
+    <main className="page-pad mx-auto max-w-4xl p-4">
       <div className="bcRow">
         <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }]} />
       </div>
-      <h1 className="pageTitle">My Navatar</h1>
+      <h1 className="pageTitle mt-6 mb-12">My Navatar</h1>
       <NavatarTabs context="hub" />
-      <div className="nv-hub-grid" style={{ marginTop: 8 }}>
+      <div className="nv-hub-grid mt-6">
         <section>
           <div className="nv-panel">
             <NavatarCard src={avatar?.image_url || undefined} title={avatar?.name || "Turian"} />

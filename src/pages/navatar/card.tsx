@@ -5,6 +5,7 @@ import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
 import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
+import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
 
 export default function NavatarCardPage() {
@@ -13,6 +14,7 @@ export default function NavatarCardPage() {
   const [saving, setSaving] = useState(false);
   const [err, setErr] = useState<string | null>(null);
   const { user } = useAuthUser();
+  const toast = useToast();
 
   const [avatar, setAvatar] = useState<any | null>(null);
   const [name, setName] = useState("");
@@ -61,7 +63,7 @@ export default function NavatarCardPage() {
     setErr(null);
     try {
       if (!user || !avatar?.id) {
-        alert("Pick a Navatar first.");
+        toast({ text: "Pick a Navatar first.", kind: "err" });
         return;
       }
 
@@ -95,11 +97,11 @@ export default function NavatarCardPage() {
 
   if (loading) {
     return (
-      <main className="container page-pad">
+      <main className="page-pad mx-auto max-w-4xl p-4">
         <div className="bcRow">
           <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
         </div>
-        <h1 className="pageTitle">Character Card</h1>
+        <h1 className="pageTitle mt-6 mb-12">Character Card</h1>
         <BackToMyNavatar />
         <p>Loading…</p>
       </main>
@@ -107,13 +109,13 @@ export default function NavatarCardPage() {
   }
 
   return (
-    <main className="container page-pad">
+    <main className="page-pad mx-auto max-w-4xl p-4">
       <div className="bcRow">
         <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Card" }]} />
       </div>
-      <h1 className="pageTitle">Character Card</h1>
-      <NavatarTabs context="subpage" />
+      <h1 className="pageTitle mt-6 mb-12">Character Card</h1>
       <BackToMyNavatar />
+      <NavatarTabs context="subpage" />
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
 

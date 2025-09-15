@@ -30,13 +30,13 @@ export default function MintNavatarPage() {
   }, []);
 
   return (
-    <main className="container">
+    <main className="page-pad mx-auto max-w-4xl p-4">
       <div className="bcRow">
         <Breadcrumbs items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "NFT / Mint" }]} />
       </div>
-      <h1 className="pageTitle">NFT / Mint</h1>
-      <NavatarTabs context="subpage" />
+      <h1 className="pageTitle mt-6 mb-12">NFT / Mint</h1>
       <BackToMyNavatar />
+      <NavatarTabs context="subpage" />
       <p style={{ textAlign: "center", maxWidth: 560, margin: "8px auto 20px" }}>
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
