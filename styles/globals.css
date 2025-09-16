@@ -250,7 +250,6 @@ label,
 .nv-card p,
 .nv-card span,
 .nv-card .secondary-text,
-footer,
 .nv-breadcrumbs {
   color: #1a4d9c !important;
 }
@@ -513,19 +512,6 @@ a:hover {
   transform: none !important;
 }
 
-/* ---- Footer all-blue ---- */
-footer,
-footer a,
-footer p,
-footer span {
-  color: var(--naturverse-blue) !important;
-  text-decoration: none;
-}
-
-footer a:hover {
-  text-decoration: underline; /* optional: blue underline on hover */
-}
-
 /* =========================
    Naturverse Blue helpers
    ========================= */
@@ -675,4 +661,9 @@ footer a:hover {
 /* Safety net so secondary headings/labels inside cards default to blue */
 .card h3, .card h4, .card .label, .card .section-title {
   color: var(--naturverse-blue);
+}
+
+:where(a,button,[role="button"]):focus-visible{
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(59 130 246 / 35%);
 }
