@@ -1,60 +1,103 @@
-import React from "react";
+import React, { useEffect, useRef, useState } from "react";
 import "./turian.css";
 
-/** Optional: drop-in hook you can wire later */
-function useTurianChat() {
-  // Wire this to your API route when ready
-  async function send(message: string): Promise<string> {
-    const res = await fetch("/api/turian-chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message }),
-    });
-    const data = await res.json().catch(() => ({}));
-    return data?.reply ?? "";
+type Message = { role: "user" | "assistant"; content: string };
+
+export default function TurianPage() {
+  const [messages, setMessages] = useState<Message[]>([
+    { role: "assistant", content: "Howdy! I'm Turian the Durian 🍈🌿 Ask for tips, quests, or fun facts." }
+  ]);
+  const [input, setInput] = useState("");
+  const [busy, setBusy] = useState(false);
+  const endRef = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    endRef.current?.scrollIntoView({ behavior: "smooth" });
+  }, [messages, busy]);
+
+  async function send() {
+    const question = input.trim();
+    if (!question || busy) return;
+
+    setInput("");
+    const next: Message[] = [...messages, { role: "user", content: question }];
+    setMessages(next);
+    setBusy(true);
+
+    try {
+      const res = await fetch("/.netlify/functions/turian-chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ messages: next })
+      });
+      const data = await res.json();
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: data.reply || "…(no reply)…" }
+      ]);
+    } catch (error) {
+      console.error("Turian chat error", error);
+      setMessages((prev) => [
+        ...prev,
+        { role: "assistant", content: "My vines got tangled. Try again in a moment!" }
+      ]);
+    } finally {
+      setBusy(false);
+    }
   }
-  return { send };
-}
 
-export default function Turian() {
-  // const { send } = useTurianChat(); // keep for later
+  function handleKeyDown(event: React.KeyboardEvent<HTMLInputElement>) {
+    if (event.key === "Enter" && !event.shiftKey) {
+      event.preventDefault();
+      send();
+    }
+  }
+
   return (
-    <main className="turian-page" role="main" aria-labelledby="turian-title">
-      <nav className="turian-breadcrumb">
-        <a href="/">Home</a> <span>/</span> <span>Turian</span>
-      </nav>
-
+    <main className="turian-wrap">
       <header className="turian-hero">
-        <h1 id="turian-title">Turian the Durian</h1>
-        <p className="lead">
-          Ask for tips, quests, and facts. This is an offline demo—no external
-          calls or models yet.
-        </p>
+        <h1>Turian the Durian</h1>
+        <p>Ask for tips, quests, and facts. This runs on a free demo model (or a playful offline persona).</p>
       </header>
 
-      {/* Status card (kept), chat fully removed */}
-      <section className="turian-card" aria-live="polite">
-        <div className="turian-card__title">Chat with Turian</div>
-        <p className="turian-card__text">Chat feature temporarily disabled.</p>
+      <section className="turian-card">
+        <h2>Chat with Turian</h2>
+        <div className="chat-box" role="log" aria-live="polite">
+          {messages.map((message, index) => (
+            <div key={`${message.role}-${index}`} className={`row ${message.role}`}>
+              <div className="bubble">{message.content}</div>
+            </div>
+          ))}
+          {busy && (
+            <div className="row assistant">
+              <div className="bubble bubble-dots">
+                <span className="dot" />
+                <span className="dot" />
+                <span className="dot" />
+              </div>
+            </div>
+          )}
+          <div ref={endRef} />
+        </div>
+
+        <div className="composer">
+          <input
+            value={input}
+            onChange={(event) => setInput(event.target.value)}
+            onKeyDown={handleKeyDown}
+            placeholder="Ask Turian something…"
+            aria-label="Message Turian"
+            disabled={busy}
+          />
+          <button className="btn" onClick={send} disabled={busy || !input.trim()}>
+            {busy ? "Sending…" : "Send"}
+          </button>
+        </div>
       </section>
 
-      <p className="coming-soon">Live chat coming soon.</p>
-
-      {/* ------- When you’re ready, drop a new chat form here -------
-      <form className="turian-chat" onSubmit={async (e) => {
-        e.preventDefault();
-        const form = e.currentTarget as HTMLFormElement;
-        const input = form.querySelector("input[name='q']") as HTMLInputElement;
-        // const reply = await send(input.value);
-        // show reply in your UI
-        input.value = "";
-      }}>
-        <label htmlFor="turian-q" className="sr-only">Ask Turian</label>
-        <input id="turian-q" name="q" placeholder="Ask Turian anything…" />
-        <button type="submit" className="btn-primary">Ask</button>
-      </form>
-      ------------------------------------------------------------- */}
+      <section className="turian-note">
+        <em>No external calls? I’ll still role-play locally so the page never feels empty.</em>
+      </section>
     </main>
   );
 }
-
