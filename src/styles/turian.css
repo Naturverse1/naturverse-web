@@ -1,390 +1,80 @@
-.turian-suggestions {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-  gap: 12px;
-  margin: 10px 0 16px;
+/* Container */
+.turian-page {
+  padding: 16px;
 }
-.turian-card {
-  border: 1px solid var(--nv-border);
-  background: #fff;
-  border-radius: 14px;
-  padding: 10px;
+.turian-chat {
+  max-width: 720px;
+  margin: 0 auto;
+  padding: 0 12px 24px;
 }
-.turian-card-h .label {
-  font-weight: 800;
-  font-size: 14px;
-}
-.chips {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  margin-top: 8px;
-}
-.chip {
-  text-align: left;
-  border: 1px dashed var(--nv-border);
-  background: var(--nv-surface);
-  padding: 8px 10px;
-  border-radius: 10px;
-  font-size: 14px;
-}
-.chip:hover {
-  background: var(--nv-blue-50);
-  border-style: solid;
-}
-
-.turian-panel {
-  border: 1px solid var(--nv-border);
-  border-radius: 14px;
-  background: #fff;
-  overflow: hidden;
-}
-.turian-msgs {
-  max-height: 48vh;
-  overflow: auto;
-  padding: 12px;
-  background: var(--nv-surface);
-}
-.msg {
-  display: flex;
-  margin: 6px 0;
-  align-items: flex-start;
-  gap: 8px;
-}
-.msg.user {
-  justify-content: flex-end;
-}
-.bubble {
-  max-width: 680px;
-  border: 1px solid var(--nv-border);
-  background: #fff;
-  padding: 8px 10px;
+.turian-chat-card {
+  width: 100%;
+  box-sizing: border-box;
   border-radius: 12px;
-}
-.msg.user .bubble {
-  background: var(--nv-blue-50);
-  border-color: var(--nv-blue-200);
-}
-.msg.turian .bubble {
-  background: #fefce8;
-  border-color: #fde68a;
+  background: var(--panel, #f6f8ff);
+  border: 1px solid var(--panel-border, rgba(0,0,0,.06));
+  padding: 16px;
 }
 
-.turian-input {
-  display: flex;
-  gap: 8px;
-  padding: 10px;
-  border-top: 1px solid var(--nv-border);
-  background: #fff;
-}
-.turian-input input {
-  flex: 1;
-  border: 1px solid var(--nv-border);
-  border-radius: 10px;
-  padding: 10px;
-}
-.turian-avatar {
-  width: 28px;
-  height: 28px;
-  margin-right: 10px;
-}
-.turian-avatar-img {
-  width: 28px;
-  height: 28px;
-  border-radius: 6px;
-}
-.btn {
-  padding: 10px 12px;
-  border-radius: 10px;
-  border: 1px solid var(--nv-blue-600);
-  background: var(--nv-blue-600);
-  color: #fff;
-  font-weight: 700;
-}
-.btn.outline {
-  background: #fff;
-  color: var(--nv-blue-600);
-}
-.muted {
-  color: var(--nv-text-muted);
-}
-.meta {
-  color: var(--nv-text-muted);
-  font-size: 13px;
-  margin-top: 10px;
-}
-
-/* ===== Turian page – color + layout fix ===== */
-.turian :is(h1,h2,h3,h4,h5,h6, p, span, label, small, a) {
-  color: var(--naturverse-blue) !important;
-}
-
-/* Breadcrumbs */
-.turian .breadcrumb,
-.turian .breadcrumb a { color: var(--naturverse-blue) !important; }
-
-/* Only the big page title centered */
-.turian .pageTitle { text-align: center; }
-
-/* Everything inside cards back to LEFT align (the global centering caused the overlap) */
-.turian .card,
-.turian .card *:not(h1):not(h2):not(h3) {
-  text-align: left !important;
-}
-
-/* Chat card heading may stay centered, body left */
-.turian .chatCard .card-title { text-align: center !important; }
-.turian .chatCard .card-text  { text-align: left   !important; }
-
-/* Chat input row: keep it on one line and spaced correctly */
-.turian .chatBar {
-  display: flex;
-  gap: 12px;
-  align-items: center;
-}
-.turian .chatBar input[type="text"],
-.turian .chatBar input[type="search"],
-.turian .chatBar input[type="email"] {
-  flex: 1 1 auto;
-  min-width: 0;
-}
-
-/* Primary button style (Ask it, etc.) */
-.turian .btn-primary {
-  background: linear-gradient(180deg, #3f7cff 0%, #2452ff 100%);
-  color: #fff !important;
-  border: none;
-  box-shadow: 0 6px 0 rgba(25, 55, 170, 0.35);
-}
-.turian .btn-primary:disabled {
-  opacity: .45;
-  box-shadow: none;
-}
-.turian .btn-secondary,
-.turian .btn-outline {
-  color: var(--naturverse-blue) !important;
-  border-color: var(--naturverse-blue) !important;
-}
-
-/* Pills / badges in the panel */
-.turian .badge,
-.turian .pill {
-  color: var(--naturverse-blue) !important;
-  border-color: var(--naturverse-blue) !important;
-}
-
-/* Prevent ghost/overlapping white text from centered wrappers */
-.turian .center-all,
-.turian .text-center-everything {
-  text-align: initial !important;
-}
-
-/* Spacing tweaks so the panel breathes on mobile */
-.turian .card { padding: 18px; }
-.turian .chatCard { padding: 20px; border-radius: 16px; }
-
-/* Turian chat box layout fix */
-.chat-container,
-.chat-messages {
-  display: flex;
-  flex-direction: row !important;
-  align-items: flex-start !important;
-  justify-content: flex-start !important;
-  flex-wrap: wrap;
-  text-align: left !important;
-  margin-left: 0 !important;
-}
-
-/* Make text horizontal, left-aligned */
-.chat-message {
-  display: inline-block;
-  margin: 4px 8px;
-  color: var(--naturverse-blue) !important;
-  white-space: normal;
-}
-
-/* ===== Turian page only =====
-   Wrap the page in an id or class like <main id="turian-page"> …
-   (If you already have one, keep it; these selectors include common fallbacks.)
-*/
-#turian-page,
-[data-route="turian"],
-.page--turian {}
-
-/* 1) Force all “secondary” text + UI to Naturverse blue */
-#turian-page a,
-#turian-page h1, #turian-page h2, #turian-page h3,
-#turian-page .title,
-#turian-page .subtitle,
-#turian-page .label,
-#turian-page .price,
-#turian-page .fineprint,
-#turian-page .muted,
-#turian-page .pill,
-#turian-page .link {
-  color: var(--naturverse-blue) !important;
-  border-color: var(--naturverse-blue) !important;
-}
-
-/* Buttons */
-#turian-page .btn-primary {
-  background: var(--naturverse-blue) !important;
-  color: #fff !important;
-  border-color: var(--naturverse-blue) !important;
-}
-#turian-page .btn-ghost,
-#turian-page .btn-outline {
-  background: transparent !important;
-  color: var(--naturverse-blue) !important;
-  border: 2px solid var(--naturverse-blue) !important;
-}
-
-/* 2) Fix the “sample prompts” text: stop centering, stop stacking.
-      Make them left-aligned chips in a horizontal scroll row. */
-#turian-page .samplePrompts,
-#turian-page .comingSoonCopy {
-  /* kill any inherited centering/absolute positioning */
-  position: static !important;
-  display: block !important;
-  text-align: left !important;
-  margin: .25rem 0 0 0 !important;
-  white-space: normal !important;
+/* Bubbles */
+.turian-msg {
+  max-width: min(92%, 36rem);
   word-break: break-word;
   overflow-wrap: anywhere;
+  line-height: 1.45;
+  font-size: clamp(14px, 1.6vw, 16px);
+  border-radius: 12px;
+  padding: 10px 12px;
+  margin: 6px 0;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
+}
+.turian-msg.me {
+  margin-left: auto;
+  background: #eaf0ff;
 }
 
-/* If those prompts live in a flex row that was vertically centered, un-center it */
-#turian-page .chatDemoRow { align-items: stretch !important; }
-
-/* Turn the prompts into horizontal chips (scrollable) */
-#turian-page .samplePrompts {
-  display: flex !important;
-  gap: .6rem;
-  overflow-x: auto;
-  padding: .25rem 0;
+/* Typing indicator */
+.turian-typing {
+  display: inline-flex;
+  gap: 4px;
+  padding: 8px 10px;
+  border-radius: 12px;
+  background: #fff;
+  box-shadow: 0 1px 0 rgba(0,0,0,.06);
 }
-#turian-page .samplePrompts::-webkit-scrollbar { height: 6px; }
-#turian-page .promptChip {
-  flex: 0 0 auto;
-  padding: .5rem .75rem;
+.turian-typing i {
+  width: 6px; height: 6px; border-radius: 50%;
+  background: #6b7cff; opacity: .7; animation: tp 1.2s infinite ease-in-out;
+}
+.turian-typing i:nth-child(2){ animation-delay: .15s }
+.turian-typing i:nth-child(3){ animation-delay: .3s }
+@keyframes tp { 0%, 80%, 100%{transform:scale(.6)} 40%{transform:scale(1)} }
+
+/* Input row */
+.turian-input-row {
+  position: sticky;
+  bottom: 0;
+  background: var(--panel, #f6f8ff);
+  padding: 12px 12px calc(12px + env(safe-area-inset-bottom));
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 12px;
+  border-top: 1px solid rgba(0,0,0,.06);
+}
+.turian-input {
+  width: 100%;
   border-radius: 999px;
-  border: 2px solid var(--naturverse-blue);
-  color: var(--naturverse-blue);
-  background: rgba(40, 120, 255, .06);
-  white-space: nowrap;
+  padding: 12px 14px;
+  border: 1px solid rgba(0,0,0,.12);
+  background: #fff;
 }
+.turian-send {
+  border-radius: 999px;
+  padding: 0 18px;
+  height: 44px;
+}
+.turian-send[disabled] { opacity: .55; cursor: not-allowed; }
 
-/* ===== Turian chat: UNLOCK CENTER, FORCE LEFT LAYOUT ===== */
-#turian-page .turian-chat,                 /* container */
-#turian-page .turian-chat * {
-  text-align: left !important;
-}
-
-/* kill any vertical-centering hacks */
-#turian-page .turian-chat [style*="translateY"],
-#turian-page .turian-chat.vcenter,
-#turian-page .turian-chat .vcenter {
-  transform: none !important;
-}
-#turian-page .turian-chat [style*="top:"],
-#turian-page .turian-chat [style*="left:"],
-#turian-page .turian-chat .absolute,
-#turian-page .turian-chat .centered {
-  position: static !important;
-  top: auto !important;
-  left: auto !important;
-}
-
-/* chat card layout */
-#turian-page .turian-chat .chatCard {
-  display: block !important;
-}
-
-/* input row: text box grows, button at right */
-#turian-page .turian-chat .inputRow {
-  display: flex !important;
-  align-items: center !important;
-  gap: .75rem !important;
-}
-#turian-page .turian-chat .inputRow input,
-#turian-page .turian-chat .inputRow textarea {
-  flex: 1 1 auto !important;
-  text-align: left !important;
-}
-#turian-page .turian-chat .inputRow input::placeholder,
-#turian-page .turian-chat .inputRow textarea::placeholder {
-  text-align: left !important;
-}
-
-/* “Here’s a playful 3-stop itinerary …” prompts: normal flowing text */
-#turian-page .turian-chat .promptText,
-#turian-page .turian-chat .sampleText,
-#turian-page .turian-chat .fineprint {
-  display: block !important;
-  white-space: normal !important;
-  overflow: visible !important;
-  margin: .5rem 0 0 0 !important;
-}
-
-/* =========================
-   Turian page — chat box fixes
-   ========================= */
-#turianPage, [data-page="turian"] {}
-
-/* keep the header centered but make the chat area left-aligned */
-#turianPage .chatCard,
-[data-page="turian"] .chatCard { text-align: left !important; }
-
-/* input row: proper layout */
-#turianPage .inputRow,
-[data-page="turian"] .inputRow {
-  display: flex !important;
-  align-items: center !important;
-  gap: 12px !important;
-}
-#turianPage .inputRow input,
-[data-page="turian"] .inputRow input { flex: 1 1 auto !important; }
-#turianPage .inputRow button,
-[data-page="turian"] .inputRow button { flex: 0 0 auto !important; }
-
-/* suggestions: remove absolute/center tricks and flow like normal text */
-#turianPage .promptExamples,
-[data-page="turian"] .promptExamples {
-  position: static !important;
-  transform: none !important;
-  display: flex !important;
-  flex-wrap: wrap !important;
-  justify-content: flex-start !important;
-  align-items: flex-start !important;
-  gap: 12px !important;
-  margin: 0 !important;
-}
-
-/* each suggestion bubble */
-#turianPage .promptExamples .example,
-[data-page="turian"] .promptExamples .example {
-  position: static !important;
-  transform: none !important;
-  display: inline-block !important;
-  max-width: calc(50% - 12px) !important; /* two columns on mobile */
-  text-align: left !important;
-  white-space: normal !important;
-  line-height: 1.35 !important;
-}
-
-/* nuke any global centering that might leak in */
-#turianPage .promptExamples * ,
-#turianPage .inputRow * ,
-[data-page="turian"] .promptExamples * ,
-[data-page="turian"] .inputRow * {
-  text-align: left !important;
-  top: auto !important; right: auto !important; bottom: auto !important; left: auto !important;
-}
-
-/* color consistency */
-#turianPage .hero h1,
-#turianPage .chatCard h3,
-[data-page="turian"] .hero h1,
-[data-page="turian"] .chatCard h3 {
-  color: var(--naturverse-blue) !important;
-}
+/* Global safety */
+html, body { overflow-x: hidden; }

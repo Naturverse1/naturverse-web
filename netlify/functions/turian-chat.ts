@@ -1,60 +1,72 @@
 import type { Handler } from "@netlify/functions";
 
-const MODEL = "llama-3.1-8b-instant";
+const GROQ_URL = "https://api.groq.com/openai/v1/chat/completions";
+const MODEL = "llama-3.1-70b-versatile"; // change if you prefer another
 
-export const handler: Handler = async (event) => {
-  if (event.httpMethod !== "POST") {
-    return { statusCode: 405, body: "Method Not Allowed" };
-  }
-
-  const apiKey = process.env.GROQ_API_KEY;
-  if (!apiKey) {
-    return { statusCode: 500, body: "Missing GROQ_API_KEY" };
-  }
-
+const handler: Handler = async (event) => {
   try {
-    const { messages } = JSON.parse(event.body || "{}") as {
-      messages: { role: "system" | "user" | "assistant"; content: string }[];
+    const body = event.body ? JSON.parse(event.body) : {};
+    const messages = Array.isArray(body.messages) ? body.messages : [];
+
+    const payload = {
+      model: MODEL,
+      temperature: 0.2,
+      top_p: 0.9,
+      max_tokens: 512,
+      messages: messages.map((m: any) => ({ role: m.role, content: m.content })),
     };
 
-    if (!Array.isArray(messages) || messages.length === 0) {
-      return { statusCode: 400, body: "messages required" };
+    const controller = new AbortController();
+    const timer = setTimeout(() => controller.abort(), 15000);
+
+    async function callGroq() {
+      const res = await fetch(GROQ_URL, {
+        method: "POST",
+        headers: {
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY ?? ""}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload),
+        signal: controller.signal,
+      });
+      if (!res.ok) throw new Error(`groq ${res.status}`);
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content?.trim?.();
+      if (!content) throw new Error("empty");
+      return content;
     }
 
-    const last = messages[messages.length - 1]?.content || "";
-    if (last.length > 4000) {
-      return { statusCode: 413, body: "Message too long" };
+    let content: string;
+    try {
+      content = await callGroq();
+    } catch {
+      // one quick retry
+      try { content = await callGroq(); }
+      catch {
+        // offline persona fallback
+        return {
+          statusCode: 200,
+          body: JSON.stringify({
+            content:
+              "I’m in offline mode, but I’ve still got plenty of Naturverse wisdom! Ask me about worlds, quests, or how to earn NATUR. 🌿",
+            offline: true,
+          }),
+        };
+      }
+    } finally {
+      clearTimeout(timer);
     }
 
-    const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({
-        model: MODEL,
-        temperature: 0.7,
-        max_tokens: 400,
-        messages,
-      }),
-    });
-
-    if (!response.ok) {
-      const text = await response.text();
-      return { statusCode: 502, body: text || "Groq error" };
-    }
-
-    const json = await response.json();
-    const content = json?.choices?.[0]?.message?.content ?? "…";
-
+    return { statusCode: 200, body: JSON.stringify({ content }) };
+  } catch (err) {
     return {
       statusCode: 200,
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ content }),
+      body: JSON.stringify({
+        content: "Whoops—my vines got tangled. Try again in a moment.",
+        offline: true,
+      }),
     };
-  } catch (error) {
-    const message = error instanceof Error ? error.message : "Server error";
-    return { statusCode: 500, body: message };
   }
 };
+
+export { handler };
