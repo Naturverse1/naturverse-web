@@ -1,175 +1,113 @@
-import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
-import Breadcrumbs from "../components/Breadcrumbs";
-import type { NaturTxn } from "../types/bank";
-import { setTitle } from "./_meta";
+import { useEffect, useMemo, useState } from 'react';
+import { addTx, balanceOf, loadWallet, saveWallet, NaturTx } from '@/lib/naturbank';
+import { setTitle } from './_meta';
+import './naturbank.css';
 
-const LS_WALLET = "naturverse.bank.wallet.v1";
-const LS_TXNS = "naturverse.bank.txns.v1";
-const START_BAL = 120;
+function useUserId() {
+  const raw = localStorage.getItem('demo_user_id');
+  if (raw) return raw;
+  localStorage.setItem('demo_user_id', 'anon');
+  return 'anon';
+}
 
 export default function NaturBankPage() {
-  setTitle("NaturBank");
-  const [uid, setUid] = useState<string | null>(null);
-  const [usingLocal, setUsingLocal] = useState(true);
-  const [loading, setLoading] = useState(true);
-
-  const [address, setAddress] = useState<string>(() => {
-    try { return JSON.parse(localStorage.getItem(LS_WALLET) || `""`) || ""; } catch { return ""; }
-  });
-  const [label, setLabel] = useState<string>("My Wallet");
-  const [txns, setTxns] = useState<NaturTxn[]>(() => {
-    try { return JSON.parse(localStorage.getItem(LS_TXNS) || "[]"); } catch { return []; }
-  });
-
-  useEffect(() => { if (usingLocal) localStorage.setItem(LS_WALLET, JSON.stringify(address)); }, [address, usingLocal]);
-  useEffect(() => { if (usingLocal) localStorage.setItem(LS_TXNS, JSON.stringify(txns)); }, [txns, usingLocal]);
+  setTitle('NaturBank');
+  const uid = useUserId();
+  const [label, setLabel] = useState('My Wallet');
+  const [address, setAddress] = useState('');
+  const [starting, setStarting] = useState(120);
+  const [txs, setTxs] = useState<NaturTx[]>([]);
+  const [busy, setBusy] = useState<'save'|'grant'|'spend'|null>(null);
+  const [status, setStatus] = useState('');
 
   useEffect(() => {
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      const u = data.session?.user?.id ?? null;
-      setUid(u);
-      if (!u) { setLoading(false); return; }
+    const w = loadWallet(uid, 120);
+    setLabel(w.label);
+    setAddress(w.address);
+    setStarting(w.starting);
+    setTxs(w.txs);
+  }, [uid]);
 
-      try {
-        const { data: w, error: ew } = await supabase
-          .from("natur_wallets")
-          .select("address,label")
-          .eq("user_id", u)
-          .limit(1)
-          .maybeSingle();
-        if (ew) throw ew;
-        if (w?.address) setAddress(w.address);
+  const balance = useMemo(() => balanceOf({ label, address, starting, txs }), [label, address, starting, txs]);
 
-        const { data: t, error: et } = await supabase
-          .from("natur_transactions")
-          .select("id,user_id,wallet_address,kind,amount,note,created_at")
-          .eq("user_id", u)
-          .order("created_at", { ascending: false })
-          .limit(200);
-        if (et) throw et;
-        setTxns((t || []) as NaturTxn[]);
-        setUsingLocal(false);
-      } catch {
-        setUsingLocal(true);
-      } finally {
-        setLoading(false);
-      }
-    })();
-  }, []);
-
-  const balance = useMemo(() => {
-    const base = START_BAL;
-    const delta = txns.reduce((sum, t) => sum + (t.kind === "spend" ? -t.amount : t.amount), 0);
-    return Math.max(0, base + delta);
-  }, [txns]);
-
-  async function saveWallet() {
-    if (!address.trim()) return;
-    if (uid && !usingLocal) {
-      const { error } = await supabase
-        .from("natur_wallets")
-        .upsert({ user_id: uid, address: address.trim(), label: label || null }, { onConflict: "user_id" });
-      if (error) { alert(error.message); return; }
-    }
-    alert("Wallet saved.");
+  function doSave() {
+    setBusy('save');
+    const w = saveWallet(uid, { label, address, starting, txs });
+    setLabel(w.label);
+    setAddress(w.address);
+    setTxs(w.txs);
+    setBusy(null);
+    setStatus('Saved ✓');
+    setTimeout(() => setStatus(''), 1500);
   }
 
-  async function addTxn(kind: NaturTxn["kind"], amount: number, note?: string) {
-    const newT: Omit<NaturTxn, "id" | "created_at"> = {
-      user_id: uid || "local",
-      wallet_address: address || "local",
-      kind, amount, note: note || null,
-    };
-    if (uid && !usingLocal) {
-      const { data, error } = await supabase
-        .from("natur_transactions")
-        .insert(newT)
-        .select("id,user_id,wallet_address,kind,amount,note,created_at")
-        .single();
-      if (error) { alert(error.message); return; }
-      setTxns(prev => [data as NaturTxn, ...prev]);
-    } else {
-      const localT: NaturTxn = { ...newT, id: String(Date.now()), created_at: new Date().toISOString() };
-      setTxns(prev => [localT, ...prev]);
-    }
+  function grant(amount = 25) {
+    setBusy('grant');
+    const w = addTx(uid, { type: 'grant', amount, note: 'Daily grant' });
+    setTxs(w.txs);
+    setBusy(null);
   }
 
-  function faucet() { addTxn("grant", 25, "Daily grant"); }
-  function spend10() { if (balance >= 10) addTxn("spend", 10, "Shop demo"); }
-
-  if (loading)
-    return (
-      <main id="main" data-page="naturbank" className="naturbank-page">
-        <h1>NaturBank</h1>
-        <p>Loading…</p>
-      </main>
-    );
+  function spend(amount = 10) {
+    setBusy('spend');
+    const w = addTx(uid, { type: 'spend', amount, note: 'Shop demo' });
+    setTxs(w.txs);
+    setBusy(null);
+  }
 
   return (
-    <main
-      id="main"
-      data-page="naturbank"
-      className="nvrs-section naturbank page-wrap nv-secondary-scope naturbank-page"
-    >
-      <Breadcrumbs />
-      <div className="bank">
-      <h1>NaturBank</h1>
-      <p className="muted">{usingLocal ? "Local demo mode." : "Synced to your account."}</p>
+    <div className="container">
+      <nav className="bc">Home <span className="bc-divider">/</span> <span className="bc-current">NaturBank</span></nav>
+      <h1 className="page-title">NaturBank</h1>
+      <p className="muted">Local demo mode.</p>
 
-      <section className="panel">
+      <section className="card">
         <h2>Wallet</h2>
-        <div className="grid2">
-          <label className="field">
-            <span>Label</span>
-            <input value={label} onChange={e => setLabel(e.target.value)} placeholder="My Wallet" />
+        <div className="grid">
+          <label>
+            <div className="label">Label</div>
+            <input value={label} onChange={e => setLabel(e.target.value)} />
           </label>
-          <label className="field">
-            <span>Address</span>
-            <input value={address} onChange={e => setAddress(e.target.value)} placeholder="0x… or email handle" />
+          <label>
+            <div className="label">Address</div>
+            <input placeholder="0x… or email handle" value={address} onChange={e => setAddress(e.target.value)} />
           </label>
         </div>
-        <div className="row">
-          <button className="btn" onClick={saveWallet}>Save</button>
-          <button className="btn outline" onClick={faucet}>Grant +25 NATUR</button>
-          <button className="btn outline" onClick={spend10} disabled={balance < 10}>Spend −10 NATUR</button>
+
+        <div className="row gap">
+          <button disabled={!!busy} onClick={doSave}>Save</button>
+          <button disabled={busy==='grant'} onClick={() => grant(25)}>Grant +25 NATUR</button>
+          <button disabled={busy==='spend'} onClick={() => spend(10)}>Spend −10 NATUR</button>
+          {status && <span className="status">{status}</span>}
         </div>
       </section>
 
-      <section className="panel">
-        <h2>Balance</h2>
-        <p className="big">{balance} NATUR</p>
-        <p className="muted small">Starting demo balance: {START_BAL}. Transactions apply on top.</p>
+      <section className="card center">
+        <h3>Balance</h3>
+        <div className="big">{balance} NATUR</div>
+        <p className="muted">Starting demo balance: {starting}.<br/>Transactions apply on top.</p>
       </section>
 
-      <section className="panel">
-        <h2>Transactions</h2>
-        {txns.length === 0 ? (
+      <section className="card">
+        <h3>Transactions</h3>
+        {txs.length === 0 ? (
           <p className="muted">No activity yet. Use the grant/spend buttons to simulate flow.</p>
         ) : (
-          <table className="txn-table">
-            <thead>
-              <tr>
-                <th>When</th><th>Type</th><th>Amount</th><th>Note</th>
-              </tr>
-            </thead>
-            <tbody>
-              {txns.map(t => (
-                <tr key={t.id}>
-                  <td>{t.created_at ? new Date(t.created_at).toLocaleString() : ""}</td>
-                  <td className={`k ${t.kind}`}>{t.kind}</td>
-                  <td className="amt">{t.kind === "spend" ? `−${t.amount}` : `+${t.amount}`}</td>
-                  <td className="note">{t.note || ""}</td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          <div className="table">
+            <div className="thead">
+              <div>When</div><div>Type</div><div>Amount</div><div>Note</div>
+            </div>
+            {txs.map(t => (
+              <div className="trow" key={t.id}>
+                <div>{new Date(t.at).toLocaleString()}</div>
+                <div className={t.type}>{t.type}</div>
+                <div>{t.type === 'spend' ? `−${t.amount}` : `+${t.amount}`}</div>
+                <div>{t.note || '—'}</div>
+              </div>
+            ))}
+          </div>
         )}
       </section>
-
-      <p className="muted small">Coming soon: real wallet connect, custodial accounts, and redemptions.</p>
-      </div>
-    </main>
+    </div>
   );
 }
