@@ -27,7 +27,7 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 .thead { font-weight: 700; opacity: .7; border-bottom: 1px solid #e5ecff; }
 .trow + .trow { border-top: 1px solid #eef3ff; }
 .grant { color:#0b76d1; font-weight: 800; }
-.spend { color:#d13a2f; font-weight: 800; }
+.spend, .send { color:#d13a2f; font-weight: 800; }
 .muted { color:#6e7ba6; }
 .bc { margin: .25rem 0 .75rem; color:#6e7ba6; }
 .bc-current { color:#2f63ff; font-weight:700; }
@@ -71,3 +71,21 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   box-shadow:0 6px 0 rgba(42,85,255,.25);
 }
 .nb-buy:disabled { filter:saturate(.2) brightness(.95); cursor:not-allowed; }
+
+.nb-toolbar {
+  display:flex; gap:.5rem; align-items:center; flex-wrap:wrap;
+  margin-bottom:.75rem;
+}
+.nb-chip {
+  border-radius:999px; padding:.4rem .8rem; font-weight:800;
+  background:#eef2ff; border:1px solid #dbe1ff; cursor:pointer;
+}
+.nb-chip[aria-pressed="true"] { background:#2a55ff; color:#fff; border-color:#2a55ff; }
+.nb-spacer { flex:1; }
+.nb-export {
+  border-radius:999px; padding:.45rem .9rem; font-weight:800; border:1px solid #ccd2e0;
+  background:#fff; cursor:pointer;
+}
+.nb-pill-badge {
+  font-size:.85rem; font-weight:800; margin-left:.5rem; opacity:.7;
+}

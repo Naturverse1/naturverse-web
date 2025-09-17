@@ -1,4 +1,4 @@
-export type NaturTxType = 'grant' | 'spend';
+export type NaturTxType = 'grant' | 'spend' | 'send';
 
 export interface NaturTx {
   id: string;
@@ -105,7 +105,10 @@ export function saveWallet(uid: string, partial: Partial<NaturWallet>) {
 }
 
 export function balanceOf(w: NaturWallet): number {
-  const delta = w.txs.reduce((sum, t) => sum + (t.type === 'grant' ? t.amount : -t.amount), 0);
+  const delta = w.txs.reduce(
+    (sum, t) => sum + (t.type === 'grant' ? t.amount : -t.amount),
+    0
+  );
   return w.starting + delta;
 }
 
@@ -167,7 +170,7 @@ export function transferTo({ fromUid, to, amount, note, senderLabel }: TransferI
     return cleaned || recipientId;
   })();
 
-  const sender = addTx(senderId, { type: 'spend', amount, note: senderNote });
+  const sender = addTx(senderId, { type: 'send', amount, note: senderNote });
   let recipient = addTx(recipientId, {
     type: 'grant',
     amount,

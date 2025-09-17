@@ -12,7 +12,7 @@ import {
   transferTo,
   normalizeWalletId,
 } from '@/lib/naturbank';
-import type { NaturTx, RecentRecipient } from '@/lib/naturbank';
+import type { NaturTx, NaturTxType, RecentRecipient } from '@/lib/naturbank';
 import { SHOP_ITEMS } from '@/lib/naturshop';
 import { setTitle } from './_meta';
 import './naturbank.css';
@@ -34,6 +34,7 @@ export default function NaturBankPage() {
   const [address, setAddress] = useState('');
   const [starting, setStarting] = useState(120);
   const [txs, setTxs] = useState<NaturTx[]>([]);
+  const [filter, setFilter] = useState<'all' | NaturTxType>('all');
   const [busy, setBusy] = useState<'save' | 'grant' | 'spend' | 'send' | null>(null);
   const [status, setStatus] = useState('');
   const [sendTo, setSendTo] = useState('');
@@ -72,7 +73,55 @@ export default function NaturBankPage() {
     setTxs(w.txs);
   }, [uid]);
 
-  const balance = useMemo(() => balanceOf({ label, address, starting, txs }), [label, address, starting, txs]);
+  const balance = useMemo(
+    () => balanceOf({ label, address, starting, txs }),
+    [label, address, starting, txs]
+  );
+
+  const filteredTxs = useMemo(() => {
+    if (filter === 'all') return txs;
+    return txs.filter(t => t.type === filter);
+  }, [txs, filter]);
+
+  const filteredTotal = useMemo(
+    () =>
+      filteredTxs.reduce(
+        (sum, t) => sum + (t.type === 'grant' ? t.amount : -t.amount),
+        0
+      ),
+    [filteredTxs]
+  );
+
+  const filteredTotalLabel = useMemo(() => {
+    if (filteredTotal > 0) return `+${fmt(filteredTotal)}`;
+    if (filteredTotal < 0) return `-${fmt(Math.abs(filteredTotal))}`;
+    return `+${fmt(0)}`;
+  }, [filteredTotal]);
+
+  function exportCsv() {
+    const header = ['when', 'type', 'amount', 'note'];
+    const rows = filteredTxs.map(t => {
+      const signedAmount = t.type === 'grant' ? t.amount : -t.amount;
+      return [
+        new Date(t.at).toISOString(),
+        t.type,
+        String(signedAmount),
+        (t.note ?? '').replace(/"/g, '""'),
+      ];
+    });
+    const all = [header, ...rows]
+      .map(cols => cols.map(c => (/[,"\n]/.test(c) ? `"${c}"` : c)).join(','))
+      .join('\n');
+    const blob = new Blob([all], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `naturbank_${filter}_${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  }
 
   useEffect(() => {
     if (!sendTo.trim()) {
@@ -324,20 +373,60 @@ export default function NaturBankPage() {
         <p className="muted">Starting demo balance: {starting}.<br/>Transactions apply on top.</p>
       </section>
 
-      <section className="card">
-        <h3>Transactions</h3>
+      <section className="card nb-card" aria-labelledby="tx-title">
+        <div className="nb-toolbar">
+          <div role="group" aria-label="Transaction filters">
+            <button
+              className="nb-chip"
+              aria-pressed={filter === 'all'}
+              onClick={() => setFilter('all')}
+            >
+              All
+            </button>
+            <button
+              className="nb-chip"
+              aria-pressed={filter === 'grant'}
+              onClick={() => setFilter('grant')}
+            >
+              Grant
+            </button>
+            <button
+              className="nb-chip"
+              aria-pressed={filter === 'spend'}
+              onClick={() => setFilter('spend')}
+            >
+              Spend
+            </button>
+            <button
+              className="nb-chip"
+              aria-pressed={filter === 'send'}
+              onClick={() => setFilter('send')}
+            >
+              Send
+            </button>
+          </div>
+          <span className="nb-pill-badge">
+            Total (view): {filteredTotalLabel} NATUR
+          </span>
+          <div className="nb-spacer" />
+          <button className="nb-export" onClick={exportCsv}>Export CSV</button>
+        </div>
+
+        <h3 id="tx-title" style={{ marginTop: 0 }}>Transactions</h3>
         {txs.length === 0 ? (
           <p className="muted">No activity yet. Use the grant, spend, or send actions to simulate flow.</p>
+        ) : filteredTxs.length === 0 ? (
+          <p className="muted">No transactions match this filter.</p>
         ) : (
           <div className="table">
             <div className="thead">
               <div>When</div><div>Type</div><div>Amount</div><div>Note</div>
             </div>
-            {txs.map(t => (
+            {filteredTxs.map(t => (
               <div className="trow" key={t.id}>
                 <div>{new Date(t.at).toLocaleString()}</div>
                 <div className={t.type}>{t.type}</div>
-                <div>{t.type === 'spend' ? `−${t.amount}` : `+${t.amount}`}</div>
+                <div>{t.type === 'grant' ? `+${t.amount}` : `−${t.amount}`}</div>
                 <div>{t.note || '—'}</div>
               </div>
             ))}
