@@ -25,7 +25,7 @@ export default function WalletCard({ wallet, onSave, onGrant, onSpend }: Props) 
           <label className="lbl">Address</label>
           <input
             className="inp"
-            placeholder="0x… or email handle"
+            placeholder="Email or @handle"
             value={addr}
             onChange={e => setAddr(e.target.value)}
           />
