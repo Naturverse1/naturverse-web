@@ -184,4 +184,40 @@ export function transferTo({ fromUid, to, amount, note, senderLabel }: TransferI
   return { sender, recipient, recipientId, recipientLabel: recipient.label || recipientLabel };
 }
 
+const DEMO_USER_KEY = 'demo_user_id';
+
+function ensureDemoUserId(): string {
+  if (typeof window === 'undefined') return 'anon';
+  try {
+    const stored = localStorage.getItem(DEMO_USER_KEY) || '';
+    const normalized = stored ? normalizeWalletId(stored) : '';
+    const uid = normalized || 'anon';
+    if (!stored || stored !== uid) {
+      localStorage.setItem(DEMO_USER_KEY, uid);
+    }
+    return uid;
+  } catch {
+    return 'anon';
+  }
+}
+
+/** Lightweight helper for demos: grant NATUR to the local wallet and persist it. */
+export function demoGrant(amount: number, note?: string): NaturWallet {
+  const safeAmount = Number.isFinite(amount) ? Math.max(0, Math.round(amount)) : 0;
+  if (safeAmount <= 0) {
+    try {
+      return loadWallet(ensureDemoUserId());
+    } catch {
+      return { label: 'My Wallet', address: '', starting: 0, txs: [] } satisfies NaturWallet;
+    }
+  }
+  const entryNote = note?.trim() || 'Turian quest reward';
+  try {
+    const uid = ensureDemoUserId();
+    return addTx(uid, { type: 'grant', amount: safeAmount, note: entryNote });
+  } catch {
+    return { label: 'My Wallet', address: '', starting: 0, txs: [] } satisfies NaturWallet;
+  }
+}
+
 export * from './naturbank/api';

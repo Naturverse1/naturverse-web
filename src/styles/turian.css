@@ -39,11 +39,154 @@
   background: #fff;
   overflow: hidden;
 }
+.turian-thread {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.turian-thread > .turian-msg,
+.turian-thread > .turian-quest {
+  margin: 0;
+}
 .turian-msgs {
   max-height: 48vh;
   overflow: auto;
   padding: 12px;
   background: var(--nv-surface);
+}
+.turian-msg {
+  white-space: pre-wrap;
+  word-break: break-word;
+}
+.turian-quest {
+  border: 1px solid #dbe6ff;
+  background: linear-gradient(135deg, #f4f8ff 0%, #ffffff 100%);
+  border-radius: 18px;
+  padding: 16px;
+  box-shadow: 0 14px 30px rgba(53, 101, 255, 0.12);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.turian-quest--accepted {
+  background: linear-gradient(135deg, #f0fff4 0%, #ffffff 100%);
+  border-color: #8ce8b4;
+}
+.turian-quest__title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: #1f2d4d;
+}
+.turian-quest__reward {
+  font-size: 0.92rem;
+  color: #314262;
+}
+.turian-quest__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+.turian-quest__footer {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.turian-quest__status {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 700;
+  color: #166534;
+  background: rgba(59, 130, 246, 0.08);
+  padding: 6px 12px;
+  border-radius: 999px;
+  width: fit-content;
+}
+.turian-quest__receipt {
+  background: #fef3c7;
+  border-radius: 12px;
+  padding: 8px 12px;
+  font-size: 0.92rem;
+  color: #854d0e;
+  width: fit-content;
+}
+.turian-quest__links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 14px;
+}
+.turian-quest__link {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #2f68ff;
+  text-decoration: none;
+}
+.turian-quest__link:hover,
+.turian-quest__link:focus {
+  text-decoration: underline;
+}
+.turian-quest__btn {
+  border-radius: 999px;
+  padding: 10px 18px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+.turian-quest__btn:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+.turian-quest__btn--accept {
+  background: linear-gradient(135deg, #3f7cff 0%, #2452ff 100%);
+  color: #fff;
+  box-shadow: 0 10px 18px rgba(36, 82, 255, 0.25);
+}
+.turian-quest__btn--accept:not(:disabled):hover,
+.turian-quest__btn--accept:not(:disabled):focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 12px 24px rgba(36, 82, 255, 0.32);
+}
+.turian-quest__btn--later {
+  background: #fff;
+  color: #2f68ff;
+  border-color: #2f68ff;
+}
+.turian-quest__btn--later:not(:disabled):hover,
+.turian-quest__btn--later:not(:disabled):focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 10px 18px rgba(47, 104, 255, 0.12);
+}
+.turian-toast {
+  margin-top: 16px;
+  align-self: center;
+  background: rgba(47, 104, 255, 0.95);
+  color: #fff;
+  padding: 10px 18px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 0.92rem;
+  box-shadow: 0 18px 32px rgba(35, 78, 210, 0.28);
+}
+
+@media (max-width: 540px) {
+  .turian-quest__actions {
+    flex-direction: column;
+  }
+  .turian-quest__btn {
+    width: 100%;
+    text-align: center;
+  }
+  .turian-quest__links {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .turian-quest__link {
+    width: fit-content;
+  }
 }
 .msg {
   display: flex;
