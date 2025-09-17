@@ -3,6 +3,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import "./turian-chat.css";
 
 type Msg = { role: "user" | "assistant"; content: string };
+type ApiMessage = { role: "system" | "user" | "assistant"; content: string };
 
 const SYSTEM_PROMPT =
   "You are Turian the Durian, a cheerful Naturverse guide. " +
@@ -13,6 +14,22 @@ const DEFAULT_GREETING: Msg = {
   role: "assistant",
   content: "Howdy! I'm Turian the Durian. Ask for tips, quests, or fun facts. 🥥🌿",
 };
+
+async function askTurian(messages: ApiMessage[]): Promise<string> {
+  const res = await fetch("/.netlify/functions/turian-chat", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ messages }),
+  });
+
+  if (!res.ok) {
+    const err = await res.text();
+    throw new Error(`Turian is offline (${res.status}): ${err}`);
+  }
+
+  const { reply } = (await res.json()) as { reply?: string };
+  return typeof reply === "string" ? reply : "";
+}
 
 function offlineReply(input: string): string {
   const tips = [
@@ -46,9 +63,9 @@ export default function TurianChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages]);
 
-  const apiMessages = useMemo(
+  const apiMessages = useMemo<ApiMessage[]>(
     () => [
-      { role: "system" as const, content: SYSTEM_PROMPT },
+      { role: "system", content: SYSTEM_PROMPT },
       ...messages.map((message) => ({ role: message.role, content: message.content })),
     ],
     [messages],
@@ -59,33 +76,24 @@ export default function TurianChat() {
     if (!trimmed || loading) return;
 
     const mine: Msg = { role: "user", content: trimmed };
+    const chatPayload: ApiMessage[] = [...apiMessages, { role: "user", content: trimmed }];
     setMessages((prev) => [...prev, mine]);
     setInput("");
     setLoading(true);
+    const fallback = offlineReply(trimmed);
 
     try {
-      const response = await fetch("/.netlify/functions/turian-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...apiMessages, { role: "user", content: trimmed }] }),
-      });
-
-      let text: string;
-      if (response.ok) {
-        const json = await response.json();
-        text = String(json?.content ?? "").trim();
-      } else {
-        text = offlineReply(trimmed);
-      }
-
+      const reply = (await askTurian(chatPayload)).trim();
+      const text = reply || fallback;
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: text || offlineReply(trimmed) },
+        { role: "assistant", content: text },
       ]);
-    } catch {
+    } catch (error) {
+      console.error("Turian chat error:", error);
       setMessages((prev) => [
         ...prev,
-        { role: "assistant", content: offlineReply(trimmed) },
+        { role: "assistant", content: fallback },
       ]);
     } finally {
       setLoading(false);
