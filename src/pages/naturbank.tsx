@@ -1,13 +1,17 @@
 import { useEffect, useMemo, useState } from 'react';
-import { addTx, balanceOf, loadWallet, saveWallet, NaturTx } from '@/lib/naturbank';
+import { addTx, balanceOf, loadWallet, saveWallet, NaturTx, transferTo, normalizeWalletId } from '@/lib/naturbank';
 import { setTitle } from './_meta';
 import './naturbank.css';
+import { useToast } from '@/components/Toast';
 
 function useUserId() {
   const raw = localStorage.getItem('demo_user_id');
-  if (raw) return raw;
-  localStorage.setItem('demo_user_id', 'anon');
-  return 'anon';
+  const normalized = raw ? normalizeWalletId(raw) : '';
+  const uid = normalized || 'anon';
+  if (!raw || raw !== uid) {
+    localStorage.setItem('demo_user_id', uid);
+  }
+  return uid;
 }
 
 export default function NaturBankPage() {
@@ -17,8 +21,13 @@ export default function NaturBankPage() {
   const [address, setAddress] = useState('');
   const [starting, setStarting] = useState(120);
   const [txs, setTxs] = useState<NaturTx[]>([]);
-  const [busy, setBusy] = useState<'save'|'grant'|'spend'|null>(null);
+  const [busy, setBusy] = useState<'save'|'grant'|'spend'|'send'|null>(null);
   const [status, setStatus] = useState('');
+  const [sendTo, setSendTo] = useState('');
+  const [sendAmount, setSendAmount] = useState('10');
+  const [sendNote, setSendNote] = useState('');
+  const [sendError, setSendError] = useState('');
+  const toast = useToast();
 
   useEffect(() => {
     const w = loadWallet(uid, 120);
@@ -55,6 +64,46 @@ export default function NaturBankPage() {
     setBusy(null);
   }
 
+  function sendNatur() {
+    const trimmedRecipient = sendTo.trim();
+    if (!trimmedRecipient) {
+      setSendError('Enter a recipient');
+      return;
+    }
+
+    const amountValue = Number(sendAmount);
+    if (!Number.isFinite(amountValue)) {
+      setSendError('Enter a valid amount');
+      return;
+    }
+
+    setSendError('');
+    setBusy('send');
+    try {
+      const { sender, recipientLabel } = transferTo({
+        fromUid: uid,
+        to: trimmedRecipient,
+        amount: amountValue,
+        note: sendNote,
+        senderLabel: label,
+      });
+      setTxs(sender.txs);
+      setSendError('');
+      setSendTo('');
+      setSendAmount('10');
+      setSendNote('');
+      toast({ text: `✅ Sent ${amountValue} NATUR to ${recipientLabel}.`, kind: 'ok' });
+    } catch (err) {
+      if (err instanceof Error) {
+        setSendError(err.message);
+      } else {
+        setSendError('Transfer failed');
+      }
+    } finally {
+      setBusy(null);
+    }
+  }
+
   return (
     <div className="container">
       <nav className="bc">Home <span className="bc-divider">/</span> <span className="bc-current">NaturBank</span></nav>
@@ -80,6 +129,55 @@ export default function NaturBankPage() {
           <button disabled={busy==='spend'} onClick={() => spend(10)}>Spend −10 NATUR</button>
           {status && <span className="status">{status}</span>}
         </div>
+
+        <div className="send-panel">
+          <h3>Send</h3>
+          <div className="send-grid">
+            <label>
+              <div className="label">Recipient</div>
+              <input
+                placeholder="Email or @handle"
+                value={sendTo}
+                onChange={e => {
+                  setSendTo(e.target.value);
+                  setSendError('');
+                }}
+              />
+            </label>
+            <label>
+              <div className="label">Amount</div>
+              <input
+                type="number"
+                min="1"
+                value={sendAmount}
+                onChange={e => {
+                  setSendAmount(e.target.value);
+                  setSendError('');
+                }}
+              />
+            </label>
+            <label className="send-note">
+              <div className="label">Note (optional)</div>
+              <input
+                placeholder="What's this for?"
+                value={sendNote}
+                onChange={e => setSendNote(e.target.value)}
+              />
+            </label>
+          </div>
+          {sendError && <p className="error" role="alert">{sendError}</p>}
+          <button
+            className="send-btn"
+            disabled={busy==='send'}
+            onClick={sendNatur}
+          >
+            {busy==='send' ? (
+              <>
+                <span className="spinner" aria-hidden /> Sending…
+              </>
+            ) : 'Send NATUR'}
+          </button>
+        </div>
       </section>
 
       <section className="card center">
@@ -91,7 +189,7 @@ export default function NaturBankPage() {
       <section className="card">
         <h3>Transactions</h3>
         {txs.length === 0 ? (
-          <p className="muted">No activity yet. Use the grant/spend buttons to simulate flow.</p>
+          <p className="muted">No activity yet. Use the grant, spend, or send actions to simulate flow.</p>
         ) : (
           <div className="table">
             <div className="thead">
