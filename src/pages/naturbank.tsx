@@ -83,7 +83,7 @@ export default function NaturBankPage() {
     return txs.filter(t => t.type === filter);
   }, [txs, filter]);
 
-  const filteredTotal = useMemo(
+  const viewTotal = useMemo(
     () =>
       filteredTxs.reduce(
         (sum, t) => sum + (t.type === 'grant' ? t.amount : -t.amount),
@@ -92,11 +92,11 @@ export default function NaturBankPage() {
     [filteredTxs]
   );
 
-  const filteredTotalLabel = useMemo(() => {
-    if (filteredTotal > 0) return `+${fmt(filteredTotal)}`;
-    if (filteredTotal < 0) return `-${fmt(Math.abs(filteredTotal))}`;
-    return `+${fmt(0)}`;
-  }, [filteredTotal]);
+  const viewTotalLabel = useMemo(() => {
+    if (viewTotal === 0) return `+${fmt(0)}`;
+    const formatted = fmt(Math.abs(viewTotal));
+    return viewTotal > 0 ? `+${formatted}` : `-${formatted}`;
+  }, [viewTotal]);
 
   function exportCsv() {
     const header = ['when', 'type', 'amount', 'note'];
@@ -230,91 +230,50 @@ export default function NaturBankPage() {
   const disableSend = busy === 'send' || !!sendAddrError || !!sendAmountError || !sendTo.trim();
 
   return (
-    <div className="container">
-      <nav className="bc">Home <span className="bc-divider">/</span> <span className="bc-current">NaturBank</span></nav>
-      <h1 className="page-title">NaturBank</h1>
-      <p className="muted">Local demo mode.</p>
+    <main className="nb-page">
+      <header className="nb-header">
+        <h1>NaturBank</h1>
+        <p>Local demo mode.</p>
+      </header>
 
-      <section className="card">
-        <h2>Wallet</h2>
-        <div className="grid">
-          <label>
-            <div className="label">Label</div>
-            <input value={label} onChange={e => setLabel(e.target.value)} />
-          </label>
-          <label>
-            <div className="label">Address</div>
-            <input placeholder="0x… or email handle" value={address} onChange={e => setAddress(e.target.value)} />
-          </label>
+      <section className="nb-section" aria-labelledby="wallet-title">
+        <h2 id="wallet-title">Wallet</h2>
+
+        <div className="nb-wallet-grid">
+          <div className="nb-field">
+            <label htmlFor="nb-label">Label</label>
+            <input id="nb-label" value={label} onChange={e => setLabel(e.target.value)} />
+          </div>
+          <div className="nb-field">
+            <label htmlFor="nb-address">Address</label>
+            <input
+              id="nb-address"
+              placeholder="0x… or email handle"
+              value={address}
+              onChange={e => setAddress(e.target.value)}
+            />
+          </div>
         </div>
 
-        <div className="row gap">
-          <button disabled={!!busy} onClick={doSave}>Save</button>
-          <button disabled={busy==='grant'} onClick={() => grant(25)}>Grant +25 NATUR</button>
-          <button disabled={busy==='spend'} onClick={() => spend(10)}>Spend −10 NATUR</button>
-          {status && <span className="status">{status}</span>}
-        </div>
-
-        <div className="send-panel">
-          <h3>Send</h3>
-          <label>
-            <div className="label">Recipient</div>
-            <input
-              placeholder="Email or @handle"
-              value={sendTo}
-              onChange={e => setSendTo(e.target.value)}
-            />
-          </label>
-          {sendAddrError && <div className="nb-inline" role="alert">{sendAddrError}</div>}
-          {!!recents.length && (
-            <div className="nb-chips" aria-label="Recent recipients">
-              {recents.map(r => (
-                <button
-                  type="button"
-                  className="nb-chip"
-                  key={r.id}
-                  onClick={() => setSendTo(r.id)}
-                >
-                  {r.label}
-                </button>
-              ))}
-            </div>
-          )}
-          <label>
-            <div className="label">Amount</div>
-            <input
-              type="number"
-              inputMode="decimal"
-              value={sendAmount}
-              onChange={e => setSendAmount(e.target.value)}
-            />
-          </label>
-          {sendAmountError && <div className="nb-inline" role="alert">{sendAmountError}</div>}
-          <label className="send-note">
-            <div className="label">Note (optional)</div>
-            <input
-              placeholder="What's this for?"
-              value={sendNote}
-              onChange={e => setSendNote(e.target.value)}
-            />
-          </label>
-          <button
-            type="button"
-            className="send-btn"
-            disabled={disableSend}
-            aria-disabled={disableSend}
-            onClick={sendNatur}
-          >
-            {busy === 'send' ? (
-              <>
-                <span className="spinner" aria-hidden /> Sending…
-              </>
-            ) : 'Send NATUR'}
+        <div className="nb-actions" style={{ marginTop: 12 }}>
+          <button className="btn" disabled={!!busy} onClick={doSave}>
+            Save
           </button>
-          <div className="nb-tools">
+          <button className="btn" disabled={busy === 'grant'} onClick={() => grant(25)}>
+            Grant +25 NATUR
+          </button>
+          <button className="btn" disabled={busy === 'spend'} onClick={() => spend(10, 'Shop demo')}>
+            Spend −10 NATUR
+          </button>
+          {status && <span className="nb-status">{status}</span>}
+        </div>
+
+        <div className="nb-send" aria-labelledby="send-title">
+          <div className="nb-send-head">
+            <h3 id="send-title">Send</h3>
             <button
               type="button"
-              className="nb-chip"
+              className="nb-copy"
               onClick={async () => {
                 const trimmed = address.trim();
                 if (!trimmed) {
@@ -327,16 +286,92 @@ export default function NaturBankPage() {
             >
               Copy my address
             </button>
-            <small style={{ opacity: 0.7 }}>Balance: {fmt(balance)} NATUR</small>
+          </div>
+
+          <div className="nb-send-grid">
+            <div className="nb-field">
+              <label htmlFor="nb-recipient">Recipient</label>
+              <input
+                id="nb-recipient"
+                placeholder="Email or @handle"
+                value={sendTo}
+                onChange={e => setSendTo(e.target.value)}
+                aria-invalid={sendAddrError ? 'true' : 'false'}
+                aria-describedby={sendAddrError ? 'nb-recipient-error' : undefined}
+              />
+              {sendAddrError && (
+                <p id="nb-recipient-error" className="nb-error" role="alert">
+                  {sendAddrError}
+                </p>
+              )}
+            </div>
+            <div className="nb-field">
+              <label htmlFor="nb-amount">Amount</label>
+              <input
+                id="nb-amount"
+                type="number"
+                inputMode="decimal"
+                value={sendAmount}
+                onChange={e => setSendAmount(e.target.value)}
+                aria-invalid={sendAmountError ? 'true' : 'false'}
+                aria-describedby={sendAmountError ? 'nb-amount-error' : undefined}
+              />
+              {sendAmountError && (
+                <p id="nb-amount-error" className="nb-error" role="alert">
+                  {sendAmountError}
+                </p>
+              )}
+            </div>
+            <div className="nb-field nb-send-note">
+              <label htmlFor="nb-note">Note (optional)</label>
+              <input
+                id="nb-note"
+                placeholder="What's this for?"
+                value={sendNote}
+                onChange={e => setSendNote(e.target.value)}
+              />
+            </div>
+          </div>
+
+          {!!recents.length && (
+            <div className="nb-recents" aria-label="Recent recipients">
+              <span className="nb-recents-label">Recent:</span>
+              {recents.map(r => (
+                <button
+                  type="button"
+                  className="nb-recent"
+                  key={r.id}
+                  onClick={() => setSendTo(r.id)}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          )}
+
+          <div className="nb-send-actions">
+            <button
+              type="button"
+              className="btn"
+              disabled={disableSend}
+              aria-disabled={disableSend}
+              onClick={sendNatur}
+            >
+              {busy === 'send' ? (
+                <>
+                  <span className="spinner" aria-hidden="true" /> Sending…
+                </>
+              ) : (
+                'Send NATUR'
+              )}
+            </button>
+            <small className="nb-balance-note">Balance: {fmt(balance)} NATUR</small>
           </div>
         </div>
       </section>
 
-      <section className="card" aria-labelledby="nb-shop-title">
-        <h3 id="nb-shop-title" style={{ marginTop: 0 }}>Shop</h3>
-        <p style={{ marginTop: '-.25rem', opacity: 0.75 }}>
-          Spend NATUR on small items to simulate purchases.
-        </p>
+      <section className="nb-section" aria-labelledby="nb-shop-title">
+        <h2 id="nb-shop-title">Shop</h2>
         <div className="nb-shop">
           {SHOP_ITEMS.map(item => {
             const insufficient = balance < item.price;
@@ -347,13 +382,15 @@ export default function NaturBankPage() {
                 : 'Processing purchase'
               : `Buy ${item.name}`;
             return (
-              <div className="nb-card" key={item.id} aria-label={`${item.name} card`}>
-                <div className="nb-item-emoji" aria-hidden="true">{item.emoji}</div>
-                <div className="nb-item-name">{item.name}</div>
-                {item.blurb && <div className="nb-item-blurb">{item.blurb}</div>}
-                <div className="nb-item-price">{fmt(item.price)} NATUR</div>
+              <div className="nb-item" key={item.id} aria-label={`${item.name} card`}>
+                <div className="nb-item-emoji" aria-hidden="true">
+                  {item.emoji}
+                </div>
+                <h4>{item.name}</h4>
+                {item.blurb && <p>{item.blurb}</p>}
+                <p className="nb-item-price">{fmt(item.price)} NATUR</p>
                 <button
-                  className="nb-buy"
+                  className="btn"
                   onClick={() => spend(item.price, item.name)}
                   disabled={disabled}
                   aria-disabled={disabled}
@@ -367,73 +404,69 @@ export default function NaturBankPage() {
         </div>
       </section>
 
-      <section className="card center">
-        <h3>Balance</h3>
-        <div className="big">{fmt(balance)} NATUR</div>
-        <p className="muted">Starting demo balance: {starting}.<br/>Transactions apply on top.</p>
+      <section className="nb-section nb-balance" aria-labelledby="balance-title">
+        <h2 id="balance-title">Balance</h2>
+        <div className="amount">{fmt(balance)} NATUR</div>
+        <small>Starting demo balance: {fmt(starting)}. Transactions apply on top.</small>
       </section>
 
-      <section className="card nb-card" aria-labelledby="tx-title">
-        <div className="nb-toolbar">
-          <div role="group" aria-label="Transaction filters">
+      <section className="nb-section" aria-labelledby="tx-title">
+        <div className="nb-pills" role="tablist" aria-label="Filter transactions">
+          {(['all', 'grant', 'spend', 'send'] as const).map(key => (
             <button
-              className="nb-chip"
-              aria-pressed={filter === 'all'}
-              onClick={() => setFilter('all')}
+              key={key}
+              role="tab"
+              aria-selected={filter === key}
+              className={`nb-pill${filter === key ? ' is-active' : ''}`}
+              onClick={() => setFilter(key)}
             >
-              All
+              {key[0].toUpperCase() + key.slice(1)}
             </button>
-            <button
-              className="nb-chip"
-              aria-pressed={filter === 'grant'}
-              onClick={() => setFilter('grant')}
-            >
-              Grant
-            </button>
-            <button
-              className="nb-chip"
-              aria-pressed={filter === 'spend'}
-              onClick={() => setFilter('spend')}
-            >
-              Spend
-            </button>
-            <button
-              className="nb-chip"
-              aria-pressed={filter === 'send'}
-              onClick={() => setFilter('send')}
-            >
-              Send
-            </button>
-          </div>
-          <span className="nb-pill-badge">
-            Total (view): {filteredTotalLabel} NATUR
-          </span>
-          <div className="nb-spacer" />
-          <button className="nb-export" onClick={exportCsv}>Export CSV</button>
+          ))}
+          <div className="nb-total">Total (view): {viewTotalLabel} NATUR</div>
         </div>
 
-        <h3 id="tx-title" style={{ marginTop: 0 }}>Transactions</h3>
-        {txs.length === 0 ? (
-          <p className="muted">No activity yet. Use the grant, spend, or send actions to simulate flow.</p>
-        ) : filteredTxs.length === 0 ? (
-          <p className="muted">No transactions match this filter.</p>
-        ) : (
-          <div className="table">
-            <div className="thead">
-              <div>When</div><div>Type</div><div>Amount</div><div>Note</div>
-            </div>
-            {filteredTxs.map(t => (
-              <div className="trow" key={t.id}>
-                <div>{new Date(t.at).toLocaleString()}</div>
-                <div className={t.type}>{t.type}</div>
-                <div>{t.type === 'grant' ? `+${t.amount}` : `−${t.amount}`}</div>
-                <div>{t.note || '—'}</div>
-              </div>
-            ))}
-          </div>
-        )}
+        <button className="btn nb-export" onClick={exportCsv}>
+          Export CSV
+        </button>
+
+        <h2 id="tx-title" style={{ marginTop: 14 }}>
+          Transactions
+        </h2>
+        <table className="nb-table">
+          <thead>
+            <tr>
+              <th>When</th>
+              <th>Type</th>
+              <th>Amount</th>
+              <th>Note</th>
+            </tr>
+          </thead>
+          <tbody>
+            {txs.length === 0 ? (
+              <tr>
+                <td colSpan={4}>
+                  No activity yet. Use the grant, spend, or send actions to simulate flow.
+                </td>
+              </tr>
+            ) : filteredTxs.length === 0 ? (
+              <tr>
+                <td colSpan={4}>No transactions match this filter.</td>
+              </tr>
+            ) : (
+              filteredTxs.map(t => (
+                <tr key={t.id}>
+                  <td>{new Date(t.at).toLocaleString()}</td>
+                  <td className={`nb-type--${t.type}`}>{t.type}</td>
+                  <td>{t.type === 'grant' ? `+${fmt(t.amount)}` : `-${fmt(t.amount)}`}</td>
+                  <td>{t.note || ''}</td>
+                </tr>
+              ))
+            )}
+          </tbody>
+        </table>
       </section>
       <div ref={toastRef} className="toast" role="status" aria-live="polite" />
-    </div>
+    </main>
   );
 }
