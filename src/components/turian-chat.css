@@ -1,0 +1,124 @@
+.turian-chat-card {
+  background: var(--card, #fff);
+  border: 1px solid rgba(0, 0, 0, 0.06);
+  border-radius: 16px;
+  padding: 16px;
+  max-width: 960px;
+  margin: 0 auto;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.04);
+}
+
+.turian-chat-card .turian-chat-title {
+  text-align: center;
+  margin: 0 0 8px;
+}
+
+.turian-chat-card .turian-chat-scroll {
+  height: 40vh;
+  min-height: 280px;
+  overflow: auto;
+  background: #f7faff;
+  border-radius: 12px;
+  padding: 12px;
+}
+
+.turian-chat-card .turian-chat-bubble {
+  max-width: 84%;
+  margin: 8px 0;
+  padding: 10px 12px;
+  border-radius: 14px;
+  line-height: 1.45;
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+.turian-chat-card .turian-chat-bubble.user {
+  background: #2f6bff;
+  color: #fff;
+  margin-left: auto;
+  border-bottom-right-radius: 6px;
+}
+
+.turian-chat-card .turian-chat-bubble.assistant {
+  background: #fff;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  color: #222;
+  margin-right: auto;
+  border-bottom-left-radius: 6px;
+}
+
+.turian-chat-card .turian-chat-typing {
+  display: inline-flex;
+  gap: 4px;
+  margin: 6px 10px;
+}
+
+.turian-chat-card .turian-chat-typing span {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: #8aa3ff;
+  opacity: 0.7;
+  animation: turian-chat-bounce 1s infinite ease-in-out;
+}
+
+.turian-chat-card .turian-chat-typing span:nth-child(2) {
+  animation-delay: 0.15s;
+}
+
+.turian-chat-card .turian-chat-typing span:nth-child(3) {
+  animation-delay: 0.3s;
+}
+
+@keyframes turian-chat-bounce {
+  0%,
+  80%,
+  100% {
+    transform: scale(0.7);
+  }
+  40% {
+    transform: scale(1);
+  }
+}
+
+.turian-chat-card .turian-chat-composer {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.turian-chat-card .turian-chat-composer input {
+  flex: 1;
+  border-radius: 999px;
+  border: 1px solid #ccd7ff;
+  padding: 12px 14px;
+}
+
+.turian-chat-card .turian-chat-send {
+  border: 0;
+  border-radius: 999px;
+  padding: 12px 18px;
+  font-weight: 700;
+  background: #2f6bff;
+  color: #fff;
+  box-shadow: 0 6px 0 #b6c5ff;
+}
+
+.turian-chat-card .turian-chat-send:disabled {
+  opacity: 0.6;
+  box-shadow: none;
+}
+
+.turian-chat-card .turian-chat-footnote {
+  text-align: center;
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 8px;
+}
+
+@media (min-width: 768px) {
+  .turian-chat-card .turian-chat-scroll {
+    height: 52vh;
+  }
+}
