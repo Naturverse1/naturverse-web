@@ -33,3 +33,18 @@ button:disabled { opacity: .6; cursor: not-allowed; }
 .bc-current { color:#2f63ff; font-weight:700; }
 .bc-divider { opacity:.35; margin: 0 .35rem; }
 .page-title { font-size:2rem; font-weight:800; margin:0; }
+.nb-chips { display:flex; gap:.5rem; flex-wrap:wrap; margin:.5rem 0 0; }
+.nb-chip { padding:.25rem .6rem; border-radius:999px; background:#eef3ff; color:#2a55ff; font-weight:600; cursor:pointer; box-shadow:0 1px 0 rgba(0,0,0,.06); }
+.nb-chip:hover { background:#e4ecff; }
+
+.nb-inline { color:#e03131; font-size:.9rem; margin-top:.35rem; }
+
+.nb-tools { display:flex; gap:.5rem; align-items:center; margin-top:.5rem; flex-wrap:wrap; }
+
+.toast {
+  position: fixed; left: 50%; transform: translateX(-50%);
+  bottom: 18px; z-index: 60; background:#111; color:#fff;
+  padding:.6rem .9rem; border-radius:10px; box-shadow:0 6px 24px rgba(0,0,0,.25);
+  opacity:0; pointer-events:none; transition:opacity .15s ease;
+}
+.toast.show { opacity:1; }

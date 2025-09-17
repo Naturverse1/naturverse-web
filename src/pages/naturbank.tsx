@@ -1,8 +1,20 @@
-import { useEffect, useMemo, useState } from 'react';
-import { addTx, balanceOf, loadWallet, saveWallet, NaturTx, transferTo, normalizeWalletId } from '@/lib/naturbank';
+import { useEffect, useMemo, useRef, useState } from 'react';
+import {
+  addRecent,
+  addTx,
+  balanceOf,
+  copy,
+  fmt,
+  isValidHandleOrEmail,
+  loadRecents,
+  loadWallet,
+  saveWallet,
+  transferTo,
+  normalizeWalletId,
+} from '@/lib/naturbank';
+import type { NaturTx, RecentRecipient } from '@/lib/naturbank';
 import { setTitle } from './_meta';
 import './naturbank.css';
-import { useToast } from '@/components/Toast';
 
 function useUserId() {
   const raw = localStorage.getItem('demo_user_id');
@@ -21,13 +33,35 @@ export default function NaturBankPage() {
   const [address, setAddress] = useState('');
   const [starting, setStarting] = useState(120);
   const [txs, setTxs] = useState<NaturTx[]>([]);
-  const [busy, setBusy] = useState<'save'|'grant'|'spend'|'send'|null>(null);
+  const [busy, setBusy] = useState<'save' | 'grant' | 'spend' | 'send' | null>(null);
   const [status, setStatus] = useState('');
   const [sendTo, setSendTo] = useState('');
   const [sendAmount, setSendAmount] = useState('10');
   const [sendNote, setSendNote] = useState('');
-  const [sendError, setSendError] = useState('');
-  const toast = useToast();
+  const [recents, setRecents] = useState<RecentRecipient[]>(() => loadRecents());
+  const [sendAddrError, setSendAddrError] = useState('');
+  const [sendAmountError, setSendAmountError] = useState('');
+  const toastRef = useRef<HTMLDivElement>(null);
+  const toastTimer = useRef<number | null>(null);
+
+  function showToast(message: string) {
+    if (!toastRef.current) return;
+    toastRef.current.textContent = message;
+    toastRef.current.classList.add('show');
+    if (toastTimer.current) {
+      window.clearTimeout(toastTimer.current);
+    }
+    toastTimer.current = window.setTimeout(() => {
+      toastRef.current?.classList.remove('show');
+      toastTimer.current = null;
+    }, 1500);
+  }
+
+  useEffect(() => () => {
+    if (toastTimer.current) {
+      window.clearTimeout(toastTimer.current);
+    }
+  }, []);
 
   useEffect(() => {
     const w = loadWallet(uid, 120);
@@ -38,6 +72,35 @@ export default function NaturBankPage() {
   }, [uid]);
 
   const balance = useMemo(() => balanceOf({ label, address, starting, txs }), [label, address, starting, txs]);
+
+  useEffect(() => {
+    if (!sendTo.trim()) {
+      setSendAddrError('');
+      return;
+    }
+    setSendAddrError(isValidHandleOrEmail(sendTo) ? '' : 'Enter an email, @handle, or 0x… address');
+  }, [sendTo]);
+
+  useEffect(() => {
+    if (!sendAmount.trim()) {
+      setSendAmountError('Enter an amount');
+      return;
+    }
+    const value = Number(sendAmount);
+    if (Number.isNaN(value)) {
+      setSendAmountError('Enter a number');
+      return;
+    }
+    if (value <= 0) {
+      setSendAmountError('Amount must be positive');
+      return;
+    }
+    if (value > balance) {
+      setSendAmountError('Insufficient balance');
+      return;
+    }
+    setSendAmountError('');
+  }, [sendAmount, balance]);
 
   function doSave() {
     setBusy('save');
@@ -67,17 +130,23 @@ export default function NaturBankPage() {
   function sendNatur() {
     const trimmedRecipient = sendTo.trim();
     if (!trimmedRecipient) {
-      setSendError('Enter a recipient');
+      setSendAddrError('Enter an email, @handle, or 0x… address');
+      showToast('Fix errors to continue');
       return;
     }
 
     const amountValue = Number(sendAmount);
     if (!Number.isFinite(amountValue)) {
-      setSendError('Enter a valid amount');
+      setSendAmountError('Enter a number');
+      showToast('Fix errors to continue');
       return;
     }
 
-    setSendError('');
+    if (sendAddrError || sendAmountError) {
+      showToast('Fix errors to continue');
+      return;
+    }
+
     setBusy('send');
     try {
       const { sender, recipientLabel } = transferTo({
@@ -88,21 +157,27 @@ export default function NaturBankPage() {
         senderLabel: label,
       });
       setTxs(sender.txs);
-      setSendError('');
+      addRecent(trimmedRecipient);
+      setRecents(loadRecents());
       setSendTo('');
       setSendAmount('10');
       setSendNote('');
-      toast({ text: `✅ Sent ${amountValue} NATUR to ${recipientLabel}.`, kind: 'ok' });
+      showToast(`Sent ${fmt(amountValue)} NATUR to ${recipientLabel}.`);
     } catch (err) {
-      if (err instanceof Error) {
-        setSendError(err.message);
-      } else {
-        setSendError('Transfer failed');
+      const message = err instanceof Error ? err.message : 'Transfer failed';
+      const lower = message.toLowerCase();
+      if (lower.includes('recipient') || lower.includes('yourself')) {
+        setSendAddrError(message);
+      } else if (lower.includes('amount') || lower.includes('balance')) {
+        setSendAmountError(message);
       }
+      showToast(message);
     } finally {
       setBusy(null);
     }
   }
+
+  const disableSend = busy === 'send' || !!sendAddrError || !!sendAmountError || !sendTo.trim();
 
   return (
     <div className="container">
@@ -132,57 +207,84 @@ export default function NaturBankPage() {
 
         <div className="send-panel">
           <h3>Send</h3>
-          <div className="send-grid">
-            <label>
-              <div className="label">Recipient</div>
-              <input
-                placeholder="Email or @handle"
-                value={sendTo}
-                onChange={e => {
-                  setSendTo(e.target.value);
-                  setSendError('');
-                }}
-              />
-            </label>
-            <label>
-              <div className="label">Amount</div>
-              <input
-                type="number"
-                min="1"
-                value={sendAmount}
-                onChange={e => {
-                  setSendAmount(e.target.value);
-                  setSendError('');
-                }}
-              />
-            </label>
-            <label className="send-note">
-              <div className="label">Note (optional)</div>
-              <input
-                placeholder="What's this for?"
-                value={sendNote}
-                onChange={e => setSendNote(e.target.value)}
-              />
-            </label>
-          </div>
-          {sendError && <p className="error" role="alert">{sendError}</p>}
+          <label>
+            <div className="label">Recipient</div>
+            <input
+              placeholder="Email or @handle"
+              value={sendTo}
+              onChange={e => setSendTo(e.target.value)}
+            />
+          </label>
+          {sendAddrError && <div className="nb-inline" role="alert">{sendAddrError}</div>}
+          {!!recents.length && (
+            <div className="nb-chips" aria-label="Recent recipients">
+              {recents.map(r => (
+                <button
+                  type="button"
+                  className="nb-chip"
+                  key={r.id}
+                  onClick={() => setSendTo(r.id)}
+                >
+                  {r.label}
+                </button>
+              ))}
+            </div>
+          )}
+          <label>
+            <div className="label">Amount</div>
+            <input
+              type="number"
+              inputMode="decimal"
+              value={sendAmount}
+              onChange={e => setSendAmount(e.target.value)}
+            />
+          </label>
+          {sendAmountError && <div className="nb-inline" role="alert">{sendAmountError}</div>}
+          <label className="send-note">
+            <div className="label">Note (optional)</div>
+            <input
+              placeholder="What's this for?"
+              value={sendNote}
+              onChange={e => setSendNote(e.target.value)}
+            />
+          </label>
           <button
+            type="button"
             className="send-btn"
-            disabled={busy==='send'}
+            disabled={disableSend}
+            aria-disabled={disableSend}
             onClick={sendNatur}
           >
-            {busy==='send' ? (
+            {busy === 'send' ? (
               <>
                 <span className="spinner" aria-hidden /> Sending…
               </>
             ) : 'Send NATUR'}
           </button>
+          <div className="nb-tools">
+            <button
+              type="button"
+              className="nb-chip"
+              onClick={async () => {
+                const trimmed = address.trim();
+                if (!trimmed) {
+                  showToast('Add an address first');
+                  return;
+                }
+                const ok = await copy(trimmed);
+                showToast(ok ? 'Address copied' : 'Copy failed');
+              }}
+            >
+              Copy my address
+            </button>
+            <small style={{ opacity: 0.7 }}>Balance: {fmt(balance)} NATUR</small>
+          </div>
         </div>
       </section>
 
       <section className="card center">
         <h3>Balance</h3>
-        <div className="big">{balance} NATUR</div>
+        <div className="big">{fmt(balance)} NATUR</div>
         <p className="muted">Starting demo balance: {starting}.<br/>Transactions apply on top.</p>
       </section>
 
@@ -206,6 +308,7 @@ export default function NaturBankPage() {
           </div>
         )}
       </section>
+      <div ref={toastRef} className="toast" role="status" aria-live="polite" />
     </div>
   );
 }
