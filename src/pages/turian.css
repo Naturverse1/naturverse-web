@@ -1,63 +1,105 @@
-.turian-page {
-  --nv-blue: var(--naturverse-blue, #2f6bff);
-  --nv-bg: #eef5ff;
-  padding: 32px 0 64px;
-  background: transparent;
-  color: var(--nv-blue);
+/* Page frame to match other hubs */
+.nv-page {
+  max-width: 1040px;
+  margin: 0 auto;
+  padding: 24px 16px 48px;
 }
 
-.turian-page .turian-breadcrumb {
-  margin: 0 auto 12px;
-  max-width: 960px;
+.nv-breadcrumbs {
+  margin: 4px 0 16px;
+  color: #5b6b8b;
+  font-size: 14px;
+}
+.nv-breadcrumbs a { text-decoration: none; }
+
+.nv-hero {
+  text-align: center;
+  background: rgba(69,137,255,0.06);
+  border-radius: 16px;
+  padding: 24px 16px;
+  margin-bottom: 20px;
+}
+.nv-hero_title {
+  margin: 0 0 4px;
+  font-size: clamp(28px, 4.5vw, 44px);
+  line-height: 1.1;
+}
+.nv-hero_sub {
+  margin: 0;
+  font-size: clamp(14px, 2.4vw, 18px);
+  color: #334155;
+}
+
+/* Chat section */
+.turian-chat_section { margin-top: 8px; }
+.turian-chat_heading {
+  text-align: center;
+  font-size: clamp(20px, 3.2vw, 28px);
+  margin: 8px 0 12px;
+}
+
+/* Constrain and center the chat card */
+.turian-chat_card {
+  max-width: 780px;        /* stops full-width “blowout” on mobile */
+  margin: 0 auto;
+  border-radius: 18px;
+  border: 1px solid #E6EBF5;
+  background: #fff;
+  padding: 14px;
+  box-shadow: 0 6px 18px rgba(18, 40, 120, 0.06);
+}
+
+/* Bubbles and composer */
+.turian-msg {
+  border-radius: 14px;
+  padding: 12px 14px;
+  margin: 10px 0;
+  line-height: 1.35;
+}
+.turian-msg--user   { background: #2f68ff; color: #fff; }
+.turian-msg--bot    { background: #f5f8ff; color: #1f2d4d; }
+.turian-msg--notice { background: #fff7e6; border: 1px solid #fcd276; color: #6a4a00; }
+
+.turian-composer {
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 10px;
+  margin-top: 10px;
+}
+.turian-input {
+  height: 46px;
+  border-radius: 24px;
+  padding: 0 14px;
+  border: 1px solid #DDE3EE;
+  outline: none;
+}
+.turian-send {
+  height: 46px;
+  padding: 0 18px;
+  border-radius: 24px;
+  border: none;
+  background: #2f68ff;
+  color: #fff;
+  font-weight: 600;
+  cursor: pointer;
+}
+.turian-send:disabled { opacity: 0.5; cursor: default; }
+
+/* Badge row */
+.turian-status {
   display: flex;
   align-items: center;
   gap: 8px;
-  font-size: 15px;
+  font-size: 13px;
+  color: #334155;
+  margin: 6px 0 8px;
 }
+.turian-dot { width: 10px; height: 10px; border-radius: 50%; }
+.turian-dot--online  { background: #19c37d; }
+.turian-dot--offline { background: #f59e0b; }
 
-.turian-page .turian-breadcrumb a {
-  color: var(--nv-blue) !important;
-  text-decoration: underline;
-}
-
-.turian-page .turian-breadcrumb .sep {
-  opacity: 0.55;
-  color: var(--nv-blue);
-}
-
-.turian-page .turian-hero {
-  margin: 0 auto 20px;
-  max-width: 960px;
-  background: var(--nv-bg);
-  border-radius: 16px;
-  padding: 24px;
-  box-shadow: 0 8px 24px rgba(0, 40, 160, 0.08);
-  text-align: left;
-}
-
-.turian-page .turian-hero h1 {
-  margin: 0 0 8px;
-  font-size: clamp(2rem, 5vw, 2.75rem);
-  line-height: 1.15;
-  color: var(--nv-blue) !important;
-}
-
-.turian-page .turian-hero .lead {
-  margin: 0;
-  font-weight: 500;
-  color: rgba(23, 65, 160, 0.9);
-}
-
-@media (max-width: 640px) {
-  .turian-page {
-    padding: 24px 0 48px;
-  }
-
-  .turian-page .turian-hero {
-    padding: 20px;
-  }
-
-  .turian-page .turian-hero h1 {
-    font-size: 2.15rem;
-  }
+/* Prevent layout jump on tiny screens */
+@media (max-width: 420px) {
+  .turian-chat_card { padding: 12px; }
+  .turian-msg { font-size: 15px; }
 }

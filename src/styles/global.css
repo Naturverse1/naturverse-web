@@ -1,5 +1,23 @@
 @import './tokens.css';
 
+/* ---- Mobile typing zoom fix (iOS) ---- */
+input, textarea, select, button {
+  font-size: 16px; /* prevents iOS focus zoom */
+}
+
+/* iOS fine-tune without affecting desktop */
+@supports (-webkit-touch-callout: none) {
+  input, textarea, select, button {
+    line-height: 1.35;
+  }
+}
+
+/* Keep browser from “helpfully” resizing text */
+html {
+  -webkit-text-size-adjust: 100%;
+  text-size-adjust: 100%;
+}
+
 /* Page background */
 :root {
   --page-bg: #f8fbff; /* light blue background used across pages */

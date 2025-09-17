@@ -1,25 +1,25 @@
 import TurianChat from "../components/TurianChat";
 import "./turian.css";
 
-export default function Turian() {
+export default function TurianPage() {
   return (
-    <main className="turian-page" role="main" aria-labelledby="turian-title">
-      <nav className="turian-breadcrumb breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">Home</a>
-        <span className="sep" aria-hidden>
-          /
-        </span>
-        <span>Turian</span>
+    <main className="nv-page">
+      <nav className="nv-breadcrumbs">
+        <a href="/">Home</a> <span>/</span> <span>Turian</span>
       </nav>
 
-      <header className="turian-hero">
-        <h1 id="turian-title">Turian the Durian</h1>
-        <p className="lead">
+      <section className="nv-hero">
+        <h1 className="nv-hero_title">Turian the Durian</h1>
+        <p className="nv-hero_sub">
           Ask for tips, quests, and facts. Turian is standing by with cheerful guidance.
         </p>
-      </header>
+      </section>
 
-      <TurianChat />
+      <section className="turian-chat_section">
+        <h2 className="turian-chat_heading">Chat with Turian</h2>
+        {/* badge lives inside the card header; status text is set by the component */}
+        <TurianChat />
+      </section>
     </main>
   );
 }
