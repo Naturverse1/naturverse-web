@@ -1,4 +1,4 @@
-export type NaturTxnType = 'grant' | 'spend';
+export type NaturTxnType = 'grant' | 'spend' | 'send';
 
 export interface NaturTxn {
   id: string;             // uuid
