@@ -1,26 +1,19 @@
 import TurianChat from "../components/TurianChat";
-import "./turian.css";
+import "../styles/turian.css";
 
-export default function Turian() {
+export default function TurianPage() {
   return (
-    <main className="turian-page" role="main" aria-labelledby="turian-title">
-      <nav className="turian-breadcrumb breadcrumbs" aria-label="Breadcrumb">
-        <a href="/">Home</a>
-        <span className="sep" aria-hidden>
-          /
-        </span>
-        <span>Turian</span>
-      </nav>
+    <div className="turian-page">
+      <section className="hero">
+        <h1>Turian the Durian</h1>
+        <p>Ask for tips, quests, and facts. Turian is standing by with cheerful guidance.</p>
+      </section>
 
-      <header className="turian-hero">
-        <h1 id="turian-title">Turian the Durian</h1>
-        <p className="lead">
-          Ask for tips, quests, and facts. Turian is standing by with cheerful guidance.
-        </p>
-      </header>
-
+      <h2 style={{ textAlign: "center" }}>Chat with Turian</h2>
       <TurianChat />
-    </main>
+      <p style={{ textAlign: "center", opacity: .7, marginTop: 8, fontSize: 14 }}>
+        Uses a free demo model via a secure Netlify Function. If the model isn’t reachable, Turian role-plays locally so the page never feels empty.
+      </p>
+    </div>
   );
 }
-
