@@ -15,6 +15,61 @@ export interface NaturWallet {
   txs: NaturTx[];
 }
 
+export const NATUR_BANK_LS = {
+  WALLET: 'naturbank:wallet',
+  RECENTS: 'naturbank:recipients',
+} as const;
+
+export type RecentRecipient = { id: string; label: string };
+
+export function loadRecents(): RecentRecipient[] {
+  try {
+    const raw = localStorage.getItem(NATUR_BANK_LS.RECENTS);
+    return raw ? JSON.parse(raw) : [];
+  } catch {
+    return [];
+  }
+}
+
+export function addRecent(recipient: string) {
+  const norm = recipient.trim();
+  if (!norm) return;
+  const recents = loadRecents().filter(r => r.id !== norm);
+  recents.unshift({ id: norm, label: norm });
+  localStorage.setItem(NATUR_BANK_LS.RECENTS, JSON.stringify(recents.slice(0, 8)));
+}
+
+export function copy(text: string): Promise<boolean> {
+  const value = text.trim();
+  if (!value) return Promise.resolve(false);
+  if (navigator.clipboard?.writeText) {
+    return navigator.clipboard
+      .writeText(value)
+      .then(() => true)
+      .catch(() => false);
+  }
+  const ta = document.createElement('textarea');
+  ta.value = value;
+  document.body.appendChild(ta);
+  ta.select();
+  const ok = document.execCommand('copy');
+  document.body.removeChild(ta);
+  return Promise.resolve(ok);
+}
+
+export function isValidHandleOrEmail(v: string) {
+  const s = v.trim();
+  if (!s) return false;
+  if (s.startsWith('@')) return s.length > 1 && /^[\w._-]+$/.test(s.slice(1));
+  if (s.includes('@')) return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
+  if (s.startsWith('0x')) return /^0x[a-fA-F0-9]{6,}$/.test(s);
+  return /^[\w._-]+$/.test(s);
+}
+
+export function fmt(n: number) {
+  return new Intl.NumberFormat().format(n);
+}
+
 export function normalizeWalletId(raw: string): string {
   return raw.trim().replace(/\s+/g, '').toLowerCase();
 }
