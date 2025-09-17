@@ -1,139 +1,90 @@
-import type { KeyboardEvent } from "react";
-import { useEffect, useMemo, useRef, useState } from "react";
-import "./turian-chat.css";
+import { useEffect, useRef, useState } from 'react';
+import './turian.css';
 
-type Msg = { role: "user" | "assistant"; content: string };
+type Msg = { role: 'user'|'bot'|'notice'; text: string };
 
-const SYSTEM_PROMPT =
-  "You are Turian the Durian, a cheerful Naturverse guide. " +
-  "Answer briefly (1-4 sentences), be playful but helpful, avoid claims that require real-world actions.";
+export function TurianChat() {
+  const [msgs, setMsgs] = useState<Msg[]>([
+    { role: 'bot', text: "Heya! I'm Turian the Durian, your cheerful Naturverse guide. Ask for quests, tips, or fun facts and I'll keep it light!" }
+  ]);
+  const [input, setInput] = useState('');
+  const [online, setOnline] = useState<boolean>(true); // toggled by pinging the function
+  const [busy, setBusy] = useState(false);
+  const view = useRef<HTMLDivElement>(null);
 
-const LS_KEY = "naturverse_turian_chat_v1";
-const DEFAULT_GREETING: Msg = {
-  role: "assistant",
-  content: "Howdy! I'm Turian the Durian. Ask for tips, quests, or fun facts. 🥥🌿",
-};
-
-function offlineReply(input: string): string {
-  const tips = [
-    "Plant a tiny seed of kindness today.",
-    "Take three slow breaths—growth starts inside.",
-    "Spot one green thing nearby and smile at it.",
-    "Tiny steps beat perfect plans. What's one step?",
-  ];
-  const pick = tips[(input.length + tips.length) % tips.length];
-  return `Offline Turian here 🌱\n${pick}`;
-}
-
-export default function TurianChat() {
-  const [messages, setMessages] = useState<Msg[]>(() => {
-    if (typeof window === "undefined") return [DEFAULT_GREETING];
-    try {
-      const saved = window.localStorage.getItem(LS_KEY);
-      return saved ? (JSON.parse(saved) as Msg[]) : [DEFAULT_GREETING];
-    } catch {
-      return [DEFAULT_GREETING];
-    }
-  });
-  const [input, setInput] = useState("");
-  const [loading, setLoading] = useState(false);
-  const scrollRef = useRef<HTMLDivElement>(null);
+  // simple heartbeat to decide ONLINE/OFFLINE badge
+  useEffect(() => {
+    const ping = async () => {
+      try {
+        const r = await fetch('/.netlify/functions/turian-chat-ping');
+        setOnline(r.ok);
+      } catch { setOnline(false); }
+    };
+    ping();
+  }, []);
 
   useEffect(() => {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(LS_KEY, JSON.stringify(messages));
-    }
-    scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
-  }, [messages]);
+    view.current?.scrollTo({ top: view.current.scrollHeight, behavior: 'smooth' });
+  }, [msgs, busy]);
 
-  const apiMessages = useMemo(
-    () => [
-      { role: "system" as const, content: SYSTEM_PROMPT },
-      ...messages.map((message) => ({ role: message.role, content: message.content })),
-    ],
-    [messages],
-  );
-
-  async function send() {
-    const trimmed = input.trim();
-    if (!trimmed || loading) return;
-
-    const mine: Msg = { role: "user", content: trimmed };
-    setMessages((prev) => [...prev, mine]);
-    setInput("");
-    setLoading(true);
+  const ask = async () => {
+    if (!input.trim()) return;
+    const q = input.trim();
+    setMsgs(m => [...m, { role: 'user', text: q }]);
+    setInput('');
+    setBusy(true);
 
     try {
-      const response = await fetch("/.netlify/functions/turian-chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ messages: [...apiMessages, { role: "user", content: trimmed }] }),
+      const r = await fetch('/.netlify/functions/turian-chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ prompt: q })
       });
-
-      let text: string;
-      if (response.ok) {
-        const json = await response.json();
-        text = String(json?.content ?? "").trim();
-      } else {
-        text = offlineReply(trimmed);
-      }
-
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: text || offlineReply(trimmed) },
-      ]);
+      if (!r.ok) throw new Error('offline');
+      const { reply } = await r.json();
+      setMsgs(m => [...m, { role: 'bot', text: reply }]);
+      setOnline(true);
     } catch {
-      setMessages((prev) => [
-        ...prev,
-        { role: "assistant", content: offlineReply(trimmed) },
-      ]);
+      setOnline(false);
+      setMsgs(m => [...m, { role: 'notice', text:
+        "Offline mode engaged, yet I'm still bursting with jungle cheer. Ask about worlds, quests, or how to earn NATUR—I'll answer locally until the breeze returns."
+      }]);
     } finally {
-      setLoading(false);
+      setBusy(false);
     }
-  }
-
-  function onKeyDown(event: KeyboardEvent<HTMLInputElement>) {
-    if (event.key === "Enter") {
-      event.preventDefault();
-      send();
-    }
-  }
+  };
 
   return (
-    <div className="turian-card turian-chat-card">
-      <h3 className="turian-chat-title">Chat with Turian</h3>
-      <div className="turian-chat-scroll" ref={scrollRef} aria-live="polite">
-        {messages.map((message, index) => (
-          <div key={`${message.role}-${index}`} className={`turian-chat-bubble ${message.role}`}>
-            <p>{message.content}</p>
+    <div className="turian-chat_card" aria-live="polite">
+      <div className="turian-status" role="status">
+        <span className={`turian-dot ${online ? 'turian-dot--online' : 'turian-dot--offline'}`} />
+        <span>{online ? 'Online' : 'Offline mode'}</span>
+      </div>
+
+      <div ref={view} style={{maxHeight: 420, overflowY: 'auto', padding: 4}}>
+        {msgs.map((m, i) => (
+          <div key={i} className={`turian-msg turian-msg--${m.role}`}>
+            {m.text}
           </div>
         ))}
-        {loading && (
-          <div className="turian-chat-typing" aria-hidden="true">
-            <span />
-            <span />
-            <span />
-          </div>
-        )}
       </div>
 
-      <div className="turian-chat-composer">
+      <div className="turian-composer">
         <input
-          aria-label="Message Turian"
-          placeholder="Ask Turian something…"
+          className="turian-input"
+          placeholder="Ask Turian something..."
           value={input}
-          onChange={(event) => setInput(event.target.value)}
-          onKeyDown={onKeyDown}
+          onChange={e => setInput(e.target.value)}
+          onKeyDown={e => (e.key === 'Enter' ? ask() : null)}
+          inputMode="text"
+          aria-label="Message Turian"
         />
-        <button className="turian-chat-send" onClick={send} disabled={loading || !input.trim()}>
-          {loading ? "Sending…" : "Send"}
+        <button className="turian-send" disabled={busy || !input.trim()} onClick={ask}>
+          {busy ? '…' : 'Send'}
         </button>
       </div>
-
-      <p className="turian-chat-footnote">
-        Uses a free demo model via a secure Netlify Function. If the model isn’t reachable,
-        Turian role-plays locally so the page never feels empty.
-      </p>
     </div>
   );
 }
+
+export default TurianChat;
