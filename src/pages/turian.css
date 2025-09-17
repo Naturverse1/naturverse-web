@@ -30,6 +30,332 @@
   color: #334155;
 }
 
+/* Quest board */
+.turian-quests {
+  margin: 28px auto 36px;
+  max-width: 780px;
+  padding: 0 8px;
+  text-align: center;
+}
+
+.turian-quests__title {
+  margin: 0 0 6px;
+  font-size: clamp(22px, 3.6vw, 32px);
+  font-weight: 700;
+  color: #102a68;
+}
+
+.turian-quests__lead {
+  margin: 0 auto 18px;
+  color: #334155;
+  font-size: clamp(14px, 2.4vw, 17px);
+  max-width: 560px;
+}
+
+.turian-quests__actions {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 18px;
+}
+
+.turian-quests__button {
+  border: none;
+  border-radius: 999px;
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  font-weight: 700;
+  font-size: 1rem;
+  padding: 12px 28px;
+  cursor: pointer;
+  box-shadow: 0 18px 34px rgba(37, 99, 235, 0.24);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.turian-quests__button:not(:disabled):hover,
+.turian-quests__button:not(:disabled):focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 40px rgba(37, 99, 235, 0.3);
+}
+
+.turian-quests__button:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.turian-quests__placeholder {
+  border: 1px dashed rgba(79, 120, 255, 0.5);
+  background: rgba(79, 120, 255, 0.08);
+  border-radius: 18px;
+  padding: 22px 18px;
+  max-width: 640px;
+  margin: 0 auto;
+  color: #1f2d4d;
+  font-size: 0.96rem;
+  box-shadow: 0 16px 30px rgba(79, 120, 255, 0.12);
+}
+
+@keyframes turian-quest-rise {
+  from {
+    opacity: 0;
+    transform: translateY(18px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+.turian-quest-card {
+  --card-start: rgba(59, 130, 246, 0.16);
+  --card-end: rgba(255, 255, 255, 0.96);
+  --card-border: rgba(59, 130, 246, 0.35);
+  --icon-bg: rgba(59, 130, 246, 0.16);
+  --icon-shadow: rgba(15, 23, 42, 0.12);
+  background: linear-gradient(135deg, var(--card-start) 0%, var(--card-end) 100%);
+  border: 1px solid var(--card-border);
+  border-radius: 24px;
+  padding: 22px 24px;
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 18px;
+  box-shadow: 0 24px 40px rgba(15, 23, 42, 0.14);
+  animation: turian-quest-rise 0.42s ease;
+  text-align: left;
+  color: #0f172a;
+}
+
+.turian-quest-card--complete {
+  border-color: rgba(16, 185, 129, 0.45);
+  box-shadow: 0 26px 46px rgba(16, 185, 129, 0.18);
+}
+
+.turian-quest-card--nature {
+  --card-start: rgba(34, 197, 94, 0.22);
+  --card-border: rgba(16, 185, 129, 0.5);
+  --icon-bg: rgba(16, 185, 129, 0.18);
+}
+
+.turian-quest-card--learning {
+  --card-start: rgba(59, 130, 246, 0.22);
+  --card-border: rgba(37, 99, 235, 0.45);
+  --icon-bg: rgba(59, 130, 246, 0.18);
+}
+
+.turian-quest-card--creative {
+  --card-start: rgba(244, 114, 182, 0.24);
+  --card-border: rgba(236, 72, 153, 0.45);
+  --icon-bg: rgba(244, 114, 182, 0.24);
+}
+
+.turian-quest-card--adventure {
+  --card-start: rgba(250, 204, 21, 0.28);
+  --card-border: rgba(234, 179, 8, 0.55);
+  --icon-bg: rgba(250, 204, 21, 0.22);
+}
+
+.turian-quest-card--fun {
+  --card-start: rgba(99, 102, 241, 0.24);
+  --card-border: rgba(79, 70, 229, 0.5);
+  --icon-bg: rgba(99, 102, 241, 0.2);
+}
+
+.turian-quest-card__icon {
+  width: clamp(72px, 18vw, 104px);
+  height: clamp(72px, 18vw, 104px);
+  border-radius: 26px;
+  display: grid;
+  place-items: center;
+  background: var(--icon-bg);
+  font-size: clamp(36px, 9vw, 60px);
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45), 0 12px 24px var(--icon-shadow);
+}
+
+.turian-quest-card__body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.turian-quest-card__category {
+  font-size: 0.82rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgba(15, 23, 42, 0.62);
+}
+
+.turian-quest-card__title {
+  margin: 0;
+  font-size: clamp(20px, 3.2vw, 26px);
+  line-height: 1.15;
+  color: #0b1d4a;
+}
+
+.turian-quest-card__text {
+  margin: 0;
+  font-size: 0.98rem;
+  color: #1f2d4d;
+}
+
+.turian-quest-card__meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.turian-quest-card__chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.08);
+  font-weight: 600;
+  font-size: 0.9rem;
+}
+
+.turian-quest-card__chip-icon {
+  font-size: 1.05rem;
+}
+
+.turian-quest-card__actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 6px;
+}
+
+.turian-quest-card__button {
+  border: none;
+  border-radius: 999px;
+  padding: 10px 22px;
+  font-size: 0.96rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: transform 0.18s ease, box-shadow 0.18s ease;
+}
+
+.turian-quest-card__button--primary {
+  background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%);
+  color: #fff;
+  box-shadow: 0 18px 32px rgba(37, 99, 235, 0.24);
+}
+
+.turian-quest-card__button--primary:not(:disabled):hover,
+.turian-quest-card__button--primary:not(:disabled):focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 22px 38px rgba(37, 99, 235, 0.32);
+}
+
+.turian-quest-card__button--ghost {
+  background: rgba(255, 255, 255, 0.9);
+  color: #1f2937;
+  border: 1px solid rgba(148, 163, 184, 0.5);
+}
+
+.turian-quest-card__button--ghost:not(:disabled):hover,
+.turian-quest-card__button--ghost:not(:disabled):focus-visible {
+  transform: translateY(-1px);
+  box-shadow: 0 16px 28px rgba(15, 23, 42, 0.12);
+}
+
+.turian-quest-card__button:disabled {
+  opacity: 0.55;
+  cursor: default;
+  transform: none;
+  box-shadow: none;
+}
+
+.turian-quest-card__status {
+  margin-top: 14px;
+  padding: 12px 16px;
+  border-radius: 18px;
+  background: rgba(16, 185, 129, 0.16);
+  border: 1px solid rgba(16, 185, 129, 0.45);
+}
+
+.turian-quest-card__status-main {
+  font-weight: 700;
+  color: #065f46;
+}
+
+.turian-quest-card__status-sub {
+  margin-top: 4px;
+  font-size: 0.9rem;
+  color: #0f172a;
+  opacity: 0.78;
+}
+
+.turian-quest-card__status--error {
+  background: rgba(248, 113, 113, 0.16);
+  border-color: rgba(239, 68, 68, 0.45);
+}
+
+.turian-quest-card__status--error .turian-quest-card__status-main {
+  color: #b91c1c;
+}
+
+.turian-quest-card__status--error .turian-quest-card__status-sub {
+  color: #7f1d1d;
+  opacity: 0.85;
+}
+
+@media (max-width: 720px) {
+  .turian-quest-card {
+    grid-template-columns: 1fr;
+    padding: 20px;
+  }
+
+  .turian-quest-card__icon {
+    margin: 0 auto;
+  }
+
+  .turian-quest-card__body {
+    text-align: left;
+  }
+
+  .turian-quest-card__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .turian-quest-card__button {
+    width: 100%;
+  }
+
+  .turian-quests__lead {
+    font-size: 0.95rem;
+  }
+
+  .turian-quests__button {
+    width: 100%;
+  }
+}
+
+@media (max-width: 480px) {
+  .turian-quest-card__title {
+    font-size: 22px;
+  }
+
+  .turian-quest-card__text {
+    font-size: 0.94rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .turian-quest-card {
+    animation: none;
+  }
+
+  .turian-quests__button,
+  .turian-quest-card__button {
+    transition: none;
+  }
+}
+
 /* Chat section */
 .turian-chat_section { margin-top: 8px; }
 .turian-chat_heading {
