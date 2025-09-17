@@ -28,3 +28,39 @@ export function confettiBurst(x = 0.5, y = 0.4) {
   }
   setTimeout(()=>root.remove(), 1000);
 }
+
+type ConfettiEventDetail = {
+  x?: number;
+  y?: number;
+};
+
+let detach: (() => void) | null = null;
+
+export function mountConfettiOnce(): (() => void) | undefined {
+  if (typeof window === 'undefined') return undefined;
+  if (detach) return detach;
+
+  const clamp = (value: number, fallback: number) => {
+    if (!Number.isFinite(value)) return fallback;
+    return Math.min(1, Math.max(0, value));
+  };
+
+  const handler = (event: Event) => {
+    const detail = (event as CustomEvent<ConfettiEventDetail>).detail;
+    if (detail && (typeof detail.x === 'number' || typeof detail.y === 'number')) {
+      const nextX = clamp(detail.x ?? 0.5, 0.5);
+      const nextY = clamp(detail.y ?? 0.4, 0.4);
+      confettiBurst(nextX, nextY);
+      return;
+    }
+    confettiBurst();
+  };
+
+  window.addEventListener('natur:confetti', handler as EventListener);
+  detach = () => {
+    window.removeEventListener('natur:confetti', handler as EventListener);
+    detach = null;
+  };
+
+  return detach;
+}

@@ -1,6 +1,4 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { demoGrant } from '@/lib/naturbank';
-import { demoAddStamp } from '@/lib/passport';
 import './turian.css';
 
 type Role = 'user' | 'bot' | 'notice';
@@ -336,22 +334,32 @@ export function TurianChat() {
     }
   };
 
-  const acceptQuest = async (entry: ChatQuestEntry) => {
+  const acceptQuest = (entry: ChatQuestEntry) => {
     if (entry.status === 'accepted') return;
     setProcessingQuestId(entry.id);
-    const receipt = `+${entry.quest.rewardNatur} NATUR granted • Stamp added (${entry.quest.stampLabel})`;
     try {
-      demoGrant(entry.quest.rewardNatur, `Quest: ${entry.quest.title}`);
-      demoAddStamp(entry.quest.world, entry.quest.title);
+      if (typeof window !== 'undefined') {
+        const detail = {
+          id: entry.quest.id,
+          title: entry.quest.title,
+          world: entry.quest.world,
+          rewardNatur: entry.quest.rewardNatur,
+          stamp: entry.quest.stampLabel,
+        } satisfies Record<string, unknown>;
+        window.dispatchEvent(new CustomEvent('natur:quest:accepted', { detail }));
+      }
+      const receipt = `Quest saved — mark it complete below to earn +${entry.quest.rewardNatur} NATUR and a ${entry.quest.stampLabel} stamp.`;
+      const acceptedAt = Date.now();
       setEntries(prev => prev.map(item => {
         if (item.kind === 'quest' && item.id === entry.id) {
-          return { ...item, status: 'accepted', acceptedAt: Date.now(), receipt };
+          return { ...item, status: 'accepted', acceptedAt, receipt };
         }
         return item;
       }));
-      setToast(receipt);
-    } catch {
-      setToast('Whoops! I could not grant that reward. Try again in a moment.');
+      setToast('Quest pinned to My Quests!');
+    } catch (err) {
+      console.error('turian-chat:acceptQuest failed', err);
+      setToast('Whoops! I could not save that quest. Try again in a moment.');
     } finally {
       setProcessingQuestId(null);
     }

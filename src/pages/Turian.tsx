@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react";
 import TurianChat from "../components/TurianChat";
-import { addBadge, addStamp, grantNatur } from "../utils/progress";
+import MyQuestsCard from "../components/MyQuestsCard";
 import { setTitle } from "./_meta";
 import "./turian.css";
 
@@ -86,6 +86,8 @@ export default function TurianPage() {
 
       <TurianQuestBoard />
 
+      <MyQuestsCard />
+
       <section className="turian-chat_section">
         <h2 className="turian-chat_heading">Chat with Turian</h2>
         {/* badge lives inside the card header; status text is set by the component */}
@@ -116,40 +118,30 @@ function TurianQuestBoard() {
     setError("");
   };
 
-  const acceptQuest = async () => {
-    if (!quest || status === "accepting" || status === "accepted") return;
-    setStatus("accepting");
+  const acceptQuest = () => {
+    if (!quest || status === "accepted") return;
     setError("");
 
     try {
-      const naturResult = await grantNatur(quest.reward.natur, `Quest: ${quest.title}`);
-      const stampResult = await addStamp(quest.reward.stamp, quest.title);
-      const badgeResult = await addBadge(quest.reward.stamp);
-
-      const details = [
-        `+${quest.reward.natur} NATUR`,
-        `Stamp: ${quest.reward.stamp}`,
-      ];
-      if (badgeResult.award) {
-        details.push(`${badgeResult.award.emoji} ${badgeResult.award.label}`);
+      if (typeof window !== "undefined") {
+        const detail = {
+          id: quest.id,
+          title: quest.title,
+          world: quest.reward.stamp,
+          rewardNatur: quest.reward.natur,
+          stamp: quest.reward.stamp,
+        } satisfies Record<string, unknown>;
+        window.dispatchEvent(new CustomEvent("natur:quest:accepted", { detail }));
       }
-      setFeedback(details.join(" • "));
 
-      const allRemote = [naturResult.status, stampResult.status, badgeResult.status].every(
-        (state) => state === "remote" || state === "noop",
-      );
-      setSyncMessage(
-        allRemote
-          ? "Synced to NaturBank and Passport."
-          : "Saved locally — sign in to sync later.",
-      );
-
+      setFeedback(`+${quest.reward.natur} NATUR • Stamp: ${quest.reward.stamp}`);
+      setSyncMessage("Saved to My Quests — mark it complete below when you're done.");
       setStatus("accepted");
     } catch (err) {
       console.error(err);
       setFeedback("");
       setSyncMessage("");
-      setError("Whoops! Turian couldn't record that quest just now. Try again in a moment.");
+      setError("Whoops! Turian couldn't save that quest just now. Try again in a moment.");
       setStatus("error");
     }
   };
