@@ -13,6 +13,7 @@ import {
   normalizeWalletId,
 } from '@/lib/naturbank';
 import type { NaturTx, RecentRecipient } from '@/lib/naturbank';
+import { SHOP_ITEMS } from '@/lib/naturshop';
 import { setTitle } from './_meta';
 import './naturbank.css';
 
@@ -120,9 +121,9 @@ export default function NaturBankPage() {
     setBusy(null);
   }
 
-  function spend(amount = 10) {
+  function spend(amount = 10, note = 'Shop demo') {
     setBusy('spend');
-    const w = addTx(uid, { type: 'spend', amount, note: 'Shop demo' });
+    const w = addTx(uid, { type: 'spend', amount, note });
     setTxs(w.txs);
     setBusy(null);
   }
@@ -279,6 +280,41 @@ export default function NaturBankPage() {
             </button>
             <small style={{ opacity: 0.7 }}>Balance: {fmt(balance)} NATUR</small>
           </div>
+        </div>
+      </section>
+
+      <section className="card" aria-labelledby="nb-shop-title">
+        <h3 id="nb-shop-title" style={{ marginTop: 0 }}>Shop</h3>
+        <p style={{ marginTop: '-.25rem', opacity: 0.75 }}>
+          Spend NATUR on small items to simulate purchases.
+        </p>
+        <div className="nb-shop">
+          {SHOP_ITEMS.map(item => {
+            const insufficient = balance < item.price;
+            const disabled = busy === 'spend' || insufficient;
+            const tooltip = disabled
+              ? insufficient
+                ? 'Insufficient balance'
+                : 'Processing purchase'
+              : `Buy ${item.name}`;
+            return (
+              <div className="nb-card" key={item.id} aria-label={`${item.name} card`}>
+                <div className="nb-item-emoji" aria-hidden="true">{item.emoji}</div>
+                <div className="nb-item-name">{item.name}</div>
+                {item.blurb && <div className="nb-item-blurb">{item.blurb}</div>}
+                <div className="nb-item-price">{fmt(item.price)} NATUR</div>
+                <button
+                  className="nb-buy"
+                  onClick={() => spend(item.price, item.name)}
+                  disabled={disabled}
+                  aria-disabled={disabled}
+                  title={tooltip}
+                >
+                  Buy
+                </button>
+              </div>
+            );
+          })}
         </div>
       </section>
 

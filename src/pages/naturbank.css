@@ -48,3 +48,26 @@ button:disabled { opacity: .6; cursor: not-allowed; }
   opacity:0; pointer-events:none; transition:opacity .15s ease;
 }
 .toast.show { opacity:1; }
+
+/* NaturShop */
+.nb-shop { display:grid; gap:1rem; grid-template-columns: repeat(4, minmax(0,1fr)); }
+@media (max-width: 900px){ .nb-shop { grid-template-columns: repeat(2, minmax(0,1fr)); } }
+@media (max-width: 520px){ .nb-shop { grid-template-columns: 1fr; } }
+
+.nb-card {
+  background:#fff; border-radius:16px; padding:1rem;
+  box-shadow: 0 6px 24px rgba(44,62,80,.06), 0 1px 2px rgba(44,62,80,.06);
+}
+
+.nb-item-emoji { font-size:2.25rem; line-height:1; }
+.nb-item-name { font-weight:800; margin:.25rem 0 0; }
+.nb-item-blurb { opacity:.7; font-size:.9rem; margin:.15rem 0 .5rem; }
+.nb-item-price { font-weight:800; letter-spacing:.2px; }
+
+.nb-buy {
+  margin-top:.6rem; width:100%;
+  border-radius:999px; padding:.55rem .9rem; font-weight:800;
+  background:#2a55ff; color:#fff; border:none; cursor:pointer;
+  box-shadow:0 6px 0 rgba(42,85,255,.25);
+}
+.nb-buy:disabled { filter:saturate(.2) brightness(.95); cursor:not-allowed; }
