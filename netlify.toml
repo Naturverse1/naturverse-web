@@ -5,6 +5,8 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
+  included_files = []
+  external_node_modules = []
 
 # SPA routing
 [[redirects]]
@@ -19,6 +21,11 @@
     X-Frame-Options = "DENY"
     X-Content-Type-Options = "nosniff"
     Referrer-Policy = "strict-origin-when-cross-origin"
+
+[[headers]]
+  for = "/.netlify/functions/ai"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/*"

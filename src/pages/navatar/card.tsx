@@ -6,7 +6,17 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
+import { callAI } from "@/lib/ai";
+import { naturEvent } from "@/lib/events";
+import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
 import "../../styles/navatar.css";
+
+type NavatarAiResult = {
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
+};
 
 export default function NavatarCardPage() {
   const nav = useNavigate();
@@ -16,13 +26,19 @@ export default function NavatarCardPage() {
   const { user } = useAuthUser();
   const toast = useToast();
 
+  const aiEnabled = import.meta.env.PROD || import.meta.env.VITE_ENABLE_AI === "true";
+  const initialDraft = useMemo(() => readNavatarDraft(), []);
   const [avatar, setAvatar] = useState<any | null>(null);
-  const [name, setName] = useState("");
-  const [species, setSpecies] = useState("");
-  const [kingdom, setKingdom] = useState("");
-  const [backstory, setBackstory] = useState("");
-  const [powers, setPowers] = useState("");
-  const [traits, setTraits] = useState("");
+  const [description, setDescription] = useState(initialDraft.description);
+  const [name, setName] = useState(initialDraft.name);
+  const [species, setSpecies] = useState(initialDraft.species);
+  const [kingdom, setKingdom] = useState(initialDraft.kingdom);
+  const [backstory, setBackstory] = useState(initialDraft.backstory);
+  const [powers, setPowers] = useState(initialDraft.powers);
+  const [traits, setTraits] = useState(initialDraft.traits);
+  const [aiBusy, setAiBusy] = useState<"card" | "backstory" | null>(null);
+  const [cooldownUntil, setCooldownUntil] = useState(0);
+  const [rewardGranted, setRewardGranted] = useState(false);
 
   useEffect(() => {
     if (!user) return;
@@ -50,6 +66,81 @@ export default function NavatarCardPage() {
       alive = false;
     };
   }, [user?.id]);
+
+  useEffect(() => {
+    saveNavatarDraft({ description, name, species, kingdom, backstory, powers, traits });
+  }, [description, name, species, kingdom, backstory, powers, traits]);
+
+  const ensureCooldown = () => {
+    const now = Date.now();
+    if (now < cooldownUntil) {
+      toast({ text: "Give Turian a moment to finish the last request.", kind: "warn" });
+      return false;
+    }
+    setCooldownUntil(now + 3000);
+    return true;
+  };
+
+  async function generateWithTurian() {
+    if (!aiEnabled || aiBusy) return;
+    const idea = description.trim();
+    if (!idea) {
+      toast({ text: "Describe your character idea first.", kind: "warn" });
+      return;
+    }
+    if (!ensureCooldown()) return;
+
+    setAiBusy("card");
+    try {
+      const data = await callAI<NavatarAiResult>("navatar.card", { description: idea });
+      setName(String(data.name ?? ""));
+      setSpecies(String(data.species ?? ""));
+      setKingdom(String(data.kingdom ?? ""));
+      setBackstory(String(data.backstory ?? ""));
+      toast({ text: "Turian drafted your character!" });
+
+      if (!rewardGranted) {
+        const noteBase = String(data.name ?? "Navatar card").slice(0, 60) || "Navatar card";
+        naturEvent("grant_natur", { amount: 5, note: `Navatar card: ${noteBase}` });
+        naturEvent("passport_stamp", { world: "Creative", note: noteBase });
+        setRewardGranted(true);
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Turian is offline right now.";
+      toast({ text: message, kind: "err" });
+    } finally {
+      setAiBusy(null);
+    }
+  }
+
+  async function suggestBackstory() {
+    if (!aiEnabled || aiBusy) return;
+    if (!name && !species && !kingdom) {
+      toast({ text: "Add a name, species, or kingdom first.", kind: "warn" });
+      return;
+    }
+    if (!ensureCooldown()) return;
+
+    setAiBusy("backstory");
+    try {
+      const seed = { name, species, kingdom };
+      const data = await callAI<NavatarAiResult>("navatar.card", {
+        description: JSON.stringify(seed),
+      });
+      const next = String(data.backstory ?? "");
+      if (next) {
+        setBackstory(next);
+        toast({ text: "Backstory updated!" });
+      } else {
+        toast({ text: "Turian couldn't find a backstory just now.", kind: "warn" });
+      }
+    } catch (error) {
+      const message = error instanceof Error ? error.message : "Turian is offline right now.";
+      toast({ text: message, kind: "err" });
+    } finally {
+      setAiBusy(null);
+    }
+  }
 
   const canSave = useMemo(
     () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
@@ -119,6 +210,51 @@ export default function NavatarCardPage() {
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
 
+        {aiEnabled && (
+          <section className="ai-card" aria-label="AI assist">
+            <label>
+              Character description
+              <textarea
+                rows={3}
+                value={description}
+                onChange={e => setDescription(e.target.value)}
+                placeholder="Describe your Navatar in a few sentences"
+              />
+            </label>
+            <div className="ai-actions">
+              <button
+                type="button"
+                className="ai-btn"
+                onClick={generateWithTurian}
+                disabled={aiBusy === "card" || description.trim().length === 0}
+              >
+                {aiBusy === "card" ? (
+                  <>
+                    <span className="spinner spinner-inline" aria-hidden="true" /> Generating…
+                  </>
+                ) : (
+                  "Generate with Turian"
+                )}
+              </button>
+              <button
+                type="button"
+                className="ai-btn ai-btn--ghost"
+                onClick={suggestBackstory}
+                disabled={aiBusy === "backstory" || (!name && !species && !kingdom)}
+              >
+                {aiBusy === "backstory" ? (
+                  <>
+                    <span className="spinner spinner-inline" aria-hidden="true" /> Suggesting…
+                  </>
+                ) : (
+                  "Suggest Backstory"
+                )}
+              </button>
+            </div>
+            <p className="ai-note">We only send your description—never personal info.</p>
+          </section>
+        )}
+
         <label>
           Name
           <input value={name} onChange={e => setName(e.target.value)} />
@@ -136,7 +272,12 @@ export default function NavatarCardPage() {
 
         <label>
           Backstory
-          <textarea rows={5} value={backstory} onChange={e => setBackstory(e.target.value)} />
+          <textarea
+            rows={5}
+            className="backstory-input"
+            value={backstory}
+            onChange={e => setBackstory(e.target.value)}
+          />
         </label>
 
         <label>
