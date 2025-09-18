@@ -69,7 +69,7 @@ function buildPrompt(kind: string, input: Record<string, unknown> | null | undef
       return {
         schema: ["title", "intro", "outline", "activities", "quiz"],
         system:
-          "You write short, kid-friendly nature lessons. Return JSON with title, intro (1 paragraph), outline (3 bullets), activities (2 short items), quiz (3 Q&A). No extra text.",
+          "You write short, kid-friendly nature lessons. Respond only with JSON containing: title (string), intro (single paragraph), outline (array of 3 short bullet strings), activities (array of 2 short activities), and quiz (array of exactly 3 objects each with keys q, options, answer where answer equals one of the options). No markdown or commentary.",
         user: `Topic: ${topic}\nAge: ${age}`,
       };
     }
@@ -85,34 +85,82 @@ function getCache(): Map<string, CacheEntry> {
   return globalThis.__aiCache;
 }
 
-type Sanitized = Record<string, string | string[] | { q: string; a: string }[]>;
+type QuizItem = { q: string; options: string[]; answer: string };
+
+type Sanitized = Record<string, string | string[] | QuizItem[]>;
+
+const sanitizeString = (value: unknown, limit: number) => String(value ?? "").trim().slice(0, limit);
+
+const normalizeOptions = (value: unknown): string[] => {
+  const list = Array.isArray(value)
+    ? value
+    : value && typeof value === "object"
+    ? Object.values(value as Record<string, unknown>)
+    : [];
+
+  const options: string[] = [];
+  for (const entry of list) {
+    const text = sanitizeString(entry, 160);
+    if (!text) continue;
+    const exists = options.some((item) => item.localeCompare(text, undefined, { sensitivity: "accent" }) === 0);
+    if (!exists) options.push(text);
+    if (options.length >= 4) break;
+  }
+  return options;
+};
+
+function sanitizeQuiz(raw: unknown): QuizItem[] {
+  const source = Array.isArray(raw)
+    ? raw
+    : raw && typeof raw === "object" && Array.isArray((raw as Record<string, unknown>).questions)
+    ? (raw as Record<string, unknown>).questions
+    : [];
+
+  return source
+    .slice(0, 3)
+    .map((entry) => {
+      if (entry && typeof entry === "object") {
+        const record = entry as Record<string, unknown>;
+        const q = sanitizeString(record.q ?? record.question, 320);
+        const options = normalizeOptions(record.options ?? record.choices ?? record.answers);
+        let answer = sanitizeString(record.answer ?? record.correct ?? record.solution, 160);
+
+        if (/^[A-D]$/i.test(answer) && options.length > 0) {
+          const idx = answer.toUpperCase().charCodeAt(0) - 65;
+          if (options[idx]) answer = options[idx];
+        }
+
+        if (answer && !options.some((item) => item.localeCompare(answer, undefined, { sensitivity: "accent" }) === 0)) {
+          if (options.length < 4) options.push(answer);
+        }
+
+        const resolvedAnswer = answer || options[0] || "";
+        return { q, options, answer: resolvedAnswer };
+      }
+
+      const q = sanitizeString(entry, 320);
+      return { q, options: [], answer: "" };
+    })
+    .filter((item) => item.q.length > 0);
+}
 
 function sanitizeBySchema(schema: LessonSchema, value: Record<string, unknown>): Sanitized {
   const clean: Sanitized = {};
   for (const key of schema) {
     const raw = value[key];
+    if (key === "quiz") {
+      clean[key] = sanitizeQuiz(raw);
+      continue;
+    }
+
     if (Array.isArray(raw)) {
-      if (key === "quiz") {
-        clean[key] = raw
-          .slice(0, 3)
-          .map((item) => {
-            if (typeof item === "object" && item !== null) {
-              const q = String((item as Record<string, unknown>).q ?? "").slice(0, 320);
-              const a = String((item as Record<string, unknown>).a ?? "").slice(0, 320);
-              return { q, a };
-            }
-            return { q: String(item ?? "").slice(0, 320), a: "" };
-          })
-          .filter((item) => item.q.length > 0);
-      } else {
-        const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
-        clean[key] = raw
-          .slice(0, limit)
-          .map((entry) => String(entry ?? "").slice(0, 320))
-          .filter((entry) => entry.length > 0);
-      }
+      const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
+      clean[key] = raw
+        .slice(0, limit)
+        .map((entry) => sanitizeString(entry, 320))
+        .filter((entry) => entry.length > 0);
     } else {
-      clean[key] = String(raw ?? "").slice(0, 800);
+      clean[key] = sanitizeString(raw, 800);
     }
   }
   return clean;
@@ -167,7 +215,7 @@ export const handler: Handler = async (event) => {
     },
     body: JSON.stringify({
       model: MODEL,
-      temperature: 0.6,
+      temperature: 0.7,
       messages: [
         { role: "system", content: cfg.system },
         { role: "user", content: cfg.user },
@@ -178,7 +226,10 @@ export const handler: Handler = async (event) => {
   });
 
   if (!response.ok) {
-    return bad(`Groq error ${response.status}`, response.status);
+    const detail = await response.text().catch(() => "");
+    const trimmed = detail.replace(/\s+/g, " ").trim().slice(0, 400);
+    const message = trimmed ? `Groq error ${response.status}: ${trimmed}` : `Groq error ${response.status}`;
+    return bad(message, response.status);
   }
 
   let payload: any;
