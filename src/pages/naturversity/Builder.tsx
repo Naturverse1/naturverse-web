@@ -1,9 +1,16 @@
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
+import NaturversityQuiz from "@/components/naturversity/Quiz";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
-import { LessonPlan, saveLessonPlan, loadLessonPlan, listLessonPlans } from "@/lib/localdb";
+import {
+  LessonPlan,
+  saveLessonPlan,
+  loadLessonPlan,
+  listLessonPlans,
+} from "@/lib/localdb";
+import type { NaturversityQuiz as NaturversityQuizPayload } from "@/lib/ai/promptSchemas";
 import { setTitle } from "../_meta";
 import "../../styles/lesson-builder.css";
 
@@ -12,7 +19,9 @@ type LessonResponse = {
   intro?: string;
   outline?: string[];
   activities?: string[];
-  quiz?: { q: string; a: string }[];
+  quiz?:
+    | { q?: string; a?: string; choices?: string[] }[]
+    | { items?: { q?: string; a?: string; choices?: string[] }[] };
 };
 
 const DEFAULT_PLAN: LessonPlan = {
@@ -20,7 +29,7 @@ const DEFAULT_PLAN: LessonPlan = {
   intro: "",
   outline: [],
   activities: [],
-  quiz: [],
+  quiz: { items: [] },
 };
 
 export default function LessonBuilderPage() {
@@ -33,6 +42,7 @@ export default function LessonBuilderPage() {
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldownUntil, setCooldownUntil] = useState(0);
+  const [rewardGranted, setRewardGranted] = useState(false);
 
   const numericAge = useMemo(() => {
     const value = Number(age);
@@ -46,13 +56,17 @@ export default function LessonBuilderPage() {
       setTopic(recent.topic);
       setAge(String(recent.age));
       setPlan(recent.plan);
+      setRewardGranted(false);
     }
   }, []);
 
   useEffect(() => {
     if (!topic.trim() || numericAge === 0) return;
     const stored = loadLessonPlan(topic, numericAge);
-    if (stored) setPlan(stored);
+    if (stored) {
+      setPlan(stored);
+      setRewardGranted(false);
+    }
   }, [topic, numericAge]);
 
   const ensureCooldown = () => {
@@ -65,31 +79,53 @@ export default function LessonBuilderPage() {
     return true;
   };
 
-  const sanitizePlan = (input: LessonResponse): LessonPlan => ({
-    title: String(input.title ?? "").trim(),
-    intro: String(input.intro ?? "").trim(),
-    outline: Array.isArray(input.outline)
+  const sanitizePlan = (input: LessonResponse): LessonPlan => {
+    const outline = Array.isArray(input.outline)
       ? input.outline
           .slice(0, 3)
-          .map(item => String(item ?? "").trim())
+          .map((item) => String(item ?? "").trim())
           .filter(Boolean)
-      : [],
-    activities: Array.isArray(input.activities)
+      : [];
+    const activities = Array.isArray(input.activities)
       ? input.activities
           .slice(0, 2)
-          .map(item => String(item ?? "").trim())
+          .map((item) => String(item ?? "").trim())
           .filter(Boolean)
-      : [],
-    quiz: Array.isArray(input.quiz)
+      : [];
+    const quizSource = Array.isArray(input.quiz)
       ? input.quiz
-          .slice(0, 3)
-          .map((item) => ({
-            q: String(item?.q ?? "").trim(),
-            a: String(item?.a ?? "").trim(),
-          }))
-          .filter((item) => item.q.length > 0)
-      : [],
-  });
+      : Array.isArray((input.quiz as any)?.items)
+        ? (((input.quiz as any)?.items as unknown[]) ?? [])
+        : [];
+    const quizItems = quizSource
+      .slice(0, 3)
+      .map((raw) => {
+        const item = raw as { q?: string; a?: string; choices?: string[] };
+        const q = String(item?.q ?? "").trim();
+        const a = String(item?.a ?? "").trim();
+        const choices = Array.isArray(item?.choices)
+          ? item.choices
+              .map((choice) => String(choice ?? "").trim())
+              .filter(Boolean)
+              .slice(0, 6)
+          : [];
+        const entry: { q: string; a: string; choices?: string[] } = { q, a };
+        if (choices.length >= 2) {
+          if (!choices.includes(a)) choices.push(a);
+          entry.choices = Array.from(new Set(choices)).slice(0, 6);
+        }
+        return entry;
+      })
+      .filter((item) => item.q.length > 0);
+
+    return {
+      title: String(input.title ?? "").trim(),
+      intro: String(input.intro ?? "").trim(),
+      outline,
+      activities,
+      quiz: { items: quizItems },
+    };
+  };
 
   async function buildLesson(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -108,18 +144,42 @@ export default function LessonBuilderPage() {
 
     setBusy(true);
     setError(null);
+    setRewardGranted(false);
     try {
       const response = await callAI<LessonResponse>("naturversity.lesson", {
         topic: trimmedTopic,
         age: numericAge,
       });
       const built = sanitizePlan(response);
-      const stored = saveLessonPlan(trimmedTopic, numericAge, { ...DEFAULT_PLAN, ...built });
-      const finalized = stored?.plan ?? built;
+      let nextPlan: LessonPlan = {
+        ...DEFAULT_PLAN,
+        ...built,
+        quiz: built.quiz ?? { items: [] },
+      };
+
+      setPlan(nextPlan);
+
+      try {
+        const quiz = await callAI<NaturversityQuizPayload>("naturversity.quiz", {
+          topic: trimmedTopic,
+          age: numericAge,
+          outline: nextPlan.outline,
+        });
+        const quizItems = Array.isArray(quiz?.items) ? quiz.items.slice(0, 3) : [];
+        nextPlan = { ...nextPlan, quiz: { items: quizItems } };
+      } catch (quizError) {
+        console.error("Quiz generation failed", quizError);
+        toast({ text: "Quiz will appear once Turian is back online.", kind: "warn" });
+      }
+
+      const stored = saveLessonPlan(trimmedTopic, numericAge, nextPlan);
+      const finalized = stored?.plan ?? nextPlan;
       setPlan(finalized);
-      toast({ text: "Lesson ready!" });
-      naturEvent("grant_natur", { amount: 5, note: `Lesson: ${finalized.title || trimmedTopic}` });
-      naturEvent("passport_stamp", { world: "Learning", note: finalized.title || trimmedTopic });
+      toast({
+        text: finalized.quiz?.items?.length
+          ? "Lesson ready! Take the quiz to earn your Learning stamp."
+          : "Lesson ready!",
+      });
     } catch (err) {
       const message = err instanceof Error ? err.message : "Could not build that lesson.";
       setError(message);
@@ -128,6 +188,15 @@ export default function LessonBuilderPage() {
       setBusy(false);
     }
   }
+
+  const handleQuizPassed = () => {
+    if (!plan || rewardGranted) return;
+    const note = plan.title || topic.trim() || "Naturversity lesson";
+    setRewardGranted(true);
+    toast({ text: "Learning stamp earned!" });
+    naturEvent("grant_natur", { amount: 5, note: `Lesson: ${note}` });
+    naturEvent("passport_stamp", { world: "Learning", note });
+  };
 
   return (
     <div className="page-wrap">
@@ -211,24 +280,19 @@ export default function LessonBuilderPage() {
 
               <section className="lesson-quiz">
                 <h3>Quiz</h3>
-                {plan.quiz.length ? (
-                  <ul>
-                    {plan.quiz.map((item, index) => (
-                      <li key={`${item.q}-${index}`}>
-                        <strong>{item.q}</strong>
-                        <span>{item.a}</span>
-                      </li>
-                    ))}
-                  </ul>
+                {plan.quiz?.items?.length ? (
+                  <NaturversityQuiz items={plan.quiz.items} onPassed={handleQuizPassed} />
                 ) : (
                   <p className="placeholder">Three check-in questions will show here.</p>
                 )}
               </section>
 
-              <aside className="lesson-reward" aria-live="polite">
-                <div className="lesson-reward__pill">+5 NATUR</div>
-                <div className="lesson-reward__note">Learning passport stamp awarded</div>
-              </aside>
+              {rewardGranted && (
+                <aside className="lesson-reward" aria-live="polite">
+                  <div className="lesson-reward__pill">+5 NATUR</div>
+                  <div className="lesson-reward__note">Learning passport stamp awarded</div>
+                </aside>
+              )}
             </>
           ) : (
             <p className="placeholder">Build a lesson to see the outline, activities, and quiz.</p>

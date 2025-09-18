@@ -1,4 +1,11 @@
 import type { Handler } from "@netlify/functions";
+import {
+  NATURVERSITY_QUIZ_SAFETY_RULES,
+  NATURVERSITY_QUIZ_SYSTEM_PROMPT,
+  buildNaturversityQuizUserPrompt,
+  clampNaturversityQuizAge,
+} from "../../src/lib/ai/promptSchemas";
+import type { NaturversityQuizItem } from "../../src/lib/ai/promptSchemas";
 
 type SchemaKey =
   | "name"
@@ -9,10 +16,12 @@ type SchemaKey =
   | "intro"
   | "outline"
   | "activities"
-  | "quiz";
+  | "quiz"
+  | "topic"
+  | "age";
 type LessonSchema = SchemaKey[];
 
-const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const MODEL = process.env.GROQ_MODEL || "llama-3.1-70b-versatile";
 const API_KEY = process.env.GROQ_API_KEY;
 const TTL_MS = 1000 * 60 * 30; // 30 minutes
 
@@ -73,6 +82,20 @@ function buildPrompt(kind: string, input: Record<string, unknown> | null | undef
         user: `Topic: ${topic}\nAge: ${age}`,
       };
     }
+    case "naturversity.quiz": {
+      const topic = String(input?.topic ?? "").slice(0, 200);
+      const age = clampNaturversityQuizAge(Number(input?.age ?? 0) || 0);
+      const outlineRaw = Array.isArray(input?.outline) ? (input?.outline as unknown[]) : [];
+      const outline = outlineRaw
+        .map((entry) => String(entry ?? "").slice(0, 200))
+        .filter((entry) => entry.length > 0)
+        .slice(0, 8);
+      return {
+        schema: ["topic", "age", "quiz"],
+        system: `${NATURVERSITY_QUIZ_SYSTEM_PROMPT}\n${NATURVERSITY_QUIZ_SAFETY_RULES}`,
+        user: buildNaturversityQuizUserPrompt(topic, age, outline),
+      };
+    }
     default:
       throw new Error("Unknown kind");
   }
@@ -85,35 +108,64 @@ function getCache(): Map<string, CacheEntry> {
   return globalThis.__aiCache;
 }
 
-type Sanitized = Record<string, string | string[] | { q: string; a: string }[]>;
+const sanitizeString = (value: unknown, limit = 320) => String(value ?? "").trim().slice(0, limit);
+
+type Sanitized = Record<string, string | number | string[] | NaturversityQuizItem[]>;
 
 function sanitizeBySchema(schema: LessonSchema, value: Record<string, unknown>): Sanitized {
   const clean: Sanitized = {};
   for (const key of schema) {
     const raw = value[key];
-    if (Array.isArray(raw)) {
-      if (key === "quiz") {
-        clean[key] = raw
-          .slice(0, 3)
-          .map((item) => {
-            if (typeof item === "object" && item !== null) {
-              const q = String((item as Record<string, unknown>).q ?? "").slice(0, 320);
-              const a = String((item as Record<string, unknown>).a ?? "").slice(0, 320);
-              return { q, a };
-            }
-            return { q: String(item ?? "").slice(0, 320), a: "" };
-          })
-          .filter((item) => item.q.length > 0);
-      } else {
-        const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
-        clean[key] = raw
-          .slice(0, limit)
-          .map((entry) => String(entry ?? "").slice(0, 320))
-          .filter((entry) => entry.length > 0);
-      }
-    } else {
-      clean[key] = String(raw ?? "").slice(0, 800);
+
+    if (key === "age") {
+      const num = Number(raw ?? 0);
+      clean[key] = clampNaturversityQuizAge(Number.isFinite(num) ? num : 0);
+      continue;
     }
+
+    if (key === "quiz") {
+      const source = Array.isArray(raw)
+        ? raw
+        : Array.isArray((raw as any)?.items)
+          ? ((raw as any)?.items as unknown[])
+          : [];
+      const items: NaturversityQuizItem[] = source
+        .slice(0, 3)
+        .map((entry) => {
+          if (typeof entry === "object" && entry !== null) {
+            const record = entry as Record<string, unknown>;
+            const q = sanitizeString(record.q, 320);
+            const a = sanitizeString(record.a, 160);
+            const choices = Array.isArray(record.choices)
+              ? (record.choices as unknown[])
+                  .map((choice) => sanitizeString(choice, 80))
+                  .filter((choice) => choice.length > 0)
+                  .slice(0, 6)
+              : [];
+            const item: NaturversityQuizItem = { q, a };
+            if (choices.length >= 2) {
+              if (!choices.includes(a)) choices.push(a);
+              item.choices = Array.from(new Set(choices)).slice(0, 6);
+            }
+            return item;
+          }
+          return { q: sanitizeString(entry, 320), a: "" };
+        })
+        .filter((item) => item.q.length > 0);
+      clean[key] = items;
+      continue;
+    }
+
+    if (Array.isArray(raw)) {
+      const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
+      clean[key] = raw
+        .slice(0, limit)
+        .map((entry) => sanitizeString(entry, 320))
+        .filter((entry) => entry.length > 0);
+      continue;
+    }
+
+    clean[key] = sanitizeString(raw, 800);
   }
   return clean;
 }
@@ -201,8 +253,39 @@ export const handler: Handler = async (event) => {
   }
 
   const clean = sanitizeBySchema(cfg.schema, parsed);
-  cache.set(cacheKey, { t: now, v: clean });
-  return ok(clean);
+  let result: unknown = clean;
+
+  if (kind === "naturversity.quiz") {
+    const topicRaw = (clean as Record<string, unknown>).topic;
+    const ageRaw = (clean as Record<string, unknown>).age;
+    const quizRaw = (clean as Record<string, unknown>).quiz;
+    const topic = sanitizeString(topicRaw, 120);
+    const age = clampNaturversityQuizAge(
+      typeof ageRaw === "number" ? ageRaw : Number(ageRaw ?? 0)
+    );
+    const items = Array.isArray(quizRaw)
+      ? (quizRaw as NaturversityQuizItem[]).map((item) => {
+          const base: NaturversityQuizItem = {
+            q: sanitizeString(item.q, 320),
+            a: sanitizeString(item.a, 160),
+          };
+          if (Array.isArray(item.choices)) {
+            const choices = item.choices
+              .map((choice) => sanitizeString(choice, 80))
+              .filter((choice) => choice.length > 0);
+            if (!choices.includes(base.a)) choices.push(base.a);
+            const unique = Array.from(new Set(choices)).slice(0, 6);
+            if (unique.length >= 2) base.choices = unique;
+          }
+          return base;
+        })
+      : [];
+
+    result = { topic, age, items };
+  }
+
+  cache.set(cacheKey, { t: now, v: result });
+  return ok(result);
 };
 
 export default handler;

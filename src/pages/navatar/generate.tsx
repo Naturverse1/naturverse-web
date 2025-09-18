@@ -14,6 +14,7 @@ export default function GenerateNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
+  const [genBusy, setGenBusy] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
 
@@ -26,6 +27,15 @@ export default function GenerateNavatarPage() {
     setDraftUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  function handleGenerateArt() {
+    if (genBusy) return;
+    setGenBusy(true);
+    setTimeout(() => {
+      setGenBusy(false);
+      toast({ text: "AI art & edits coming soon." });
+    }, 400);
+  }
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -62,6 +72,18 @@ export default function GenerateNavatarPage() {
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
         />
+        <button
+          type="button"
+          className="pill"
+          onClick={handleGenerateArt}
+          disabled={genBusy}
+          style={{ width: "100%" }}
+        >
+          {genBusy ? "Thinking…" : "Generate Art with Turian"}
+        </button>
+        <p style={{ margin: 0, fontSize: "0.85rem", color: "#4b5563", textAlign: "center" }}>
+          AI art previews coming soon — this button is ready for Turian.
+        </p>
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
@@ -74,7 +96,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        AI art & edit coming soon.
+        We’ll save art here as soon as the Turian image maker comes online.
       </p>
     </main>
   );
