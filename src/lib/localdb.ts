@@ -8,7 +8,7 @@ export type NavatarCardDraft = {
   traits: string;
 };
 
-export type LessonQuizItem = { q: string; a: string };
+export type LessonQuizItem = { q: string; options: string[]; answer: string };
 export type LessonPlan = {
   title: string;
   intro: string;
@@ -74,6 +74,26 @@ export function clearNavatarDraft() {
   } catch {}
 }
 
+const includesInsensitive = (list: string[], value: string) =>
+  list.some((item) => item.localeCompare(value, undefined, { sensitivity: "accent" }) === 0);
+
+const sanitizeQuizOptions = (raw: unknown, sanitize: (value: unknown, limit?: number) => string) => {
+  const source = Array.isArray(raw)
+    ? raw
+    : raw && typeof raw === "object"
+    ? Object.values(raw as Record<string, unknown>)
+    : [];
+
+  const options: string[] = [];
+  for (const entry of source) {
+    const text = sanitize(entry, 160);
+    if (!text) continue;
+    if (!includesInsensitive(options, text)) options.push(text);
+    if (options.length >= 4) break;
+  }
+  return options;
+};
+
 function sanitizeLessonPlan(plan: LessonPlan): LessonPlan {
   const sanitizeString = (value: unknown, limit = 320) => String(value ?? "").trim().slice(0, limit);
   const sanitizeList = (value: unknown[], limit: number) =>
@@ -85,10 +105,35 @@ function sanitizeLessonPlan(plan: LessonPlan): LessonPlan {
   const quiz = Array.isArray(plan.quiz)
     ? plan.quiz
         .slice(0, 3)
-        .map((item) => ({
-          q: sanitizeString(item?.q, 320),
-          a: sanitizeString(item?.a, 320),
-        }))
+        .map((item) => {
+          if (item && typeof item === "object") {
+            const record = item as Record<string, unknown>;
+            const q = sanitizeString(record.q ?? record.question, 320);
+            const options = sanitizeQuizOptions(
+              record.options ?? record.choices ?? record.answers,
+              sanitizeString
+            );
+            let answer = sanitizeString(record.answer ?? record.a ?? record.correct ?? "", 160);
+
+            if (/^[A-D]$/i.test(answer) && options.length > 0) {
+              const idx = answer.toUpperCase().charCodeAt(0) - 65;
+              if (options[idx]) answer = options[idx];
+            }
+
+            if (answer) {
+              if (!includesInsensitive(options, answer)) {
+                if (options.length >= 4) options[options.length - 1] = answer;
+                else options.push(answer);
+              }
+            }
+
+            const resolvedAnswer = answer || options[0] || "";
+            return { q, options, answer: resolvedAnswer };
+          }
+
+          const q = sanitizeString(item, 320);
+          return { q, options: [] as string[], answer: "" };
+        })
         .filter((entry) => entry.q.length > 0)
     : [];
 

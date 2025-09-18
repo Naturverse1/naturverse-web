@@ -3,7 +3,8 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
+import { getMyNavatar, getMyNavatarCard, saveNavatarCard } from "../../lib/navatar";
+import type { DbNavatar } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
@@ -28,7 +29,7 @@ export default function NavatarCardPage() {
 
   const aiEnabled = import.meta.env.PROD || import.meta.env.VITE_ENABLE_AI === "true";
   const initialDraft = useMemo(() => readNavatarDraft(), []);
-  const [avatar, setAvatar] = useState<any | null>(null);
+  const [navatar, setNavatar] = useState<DbNavatar | null>(null);
   const [description, setDescription] = useState(initialDraft.description);
   const [name, setName] = useState(initialDraft.name);
   const [species, setSpecies] = useState(initialDraft.species);
@@ -45,9 +46,9 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const a = await getMyAvatar();
-        if (alive) setAvatar(a || null);
-        const c = await getMyCharacterCard();
+        const a = await getMyNavatar();
+        if (alive) setNavatar(a || null);
+        const c = await getMyNavatarCard();
         if (c && alive) {
           setName(c.name ?? "");
           setSpecies(c.species ?? "");
@@ -153,7 +154,12 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      if (!user || !avatar?.id) {
+      if (!user) {
+        toast({ text: "Pick a Navatar first.", kind: "err" });
+        return;
+      }
+
+      if (!navatar?.id) {
         toast({ text: "Pick a Navatar first.", kind: "err" });
         return;
       }
@@ -168,7 +174,7 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      await saveCharacterCard({
+      await saveNavatarCard({
         name,
         species,
         kingdom,

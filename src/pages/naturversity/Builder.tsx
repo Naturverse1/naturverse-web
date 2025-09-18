@@ -7,12 +7,23 @@ import { LessonPlan, saveLessonPlan, loadLessonPlan, listLessonPlans } from "@/l
 import { setTitle } from "../_meta";
 import "../../styles/lesson-builder.css";
 
+type LessonQuizResponse = {
+  q?: string;
+  question?: string;
+  options?: unknown;
+  choices?: unknown;
+  answers?: unknown;
+  answer?: string;
+  a?: string;
+  correct?: string;
+};
+
 type LessonResponse = {
   title?: string;
   intro?: string;
-  outline?: string[];
-  activities?: string[];
-  quiz?: { q: string; a: string }[];
+  outline?: unknown;
+  activities?: unknown;
+  quiz?: LessonQuizResponse[] | { questions?: LessonQuizResponse[] };
 };
 
 const DEFAULT_PLAN: LessonPlan = {
@@ -65,31 +76,78 @@ export default function LessonBuilderPage() {
     return true;
   };
 
-  const sanitizePlan = (input: LessonResponse): LessonPlan => ({
-    title: String(input.title ?? "").trim(),
-    intro: String(input.intro ?? "").trim(),
-    outline: Array.isArray(input.outline)
-      ? input.outline
-          .slice(0, 3)
-          .map(item => String(item ?? "").trim())
-          .filter(Boolean)
-      : [],
-    activities: Array.isArray(input.activities)
-      ? input.activities
-          .slice(0, 2)
-          .map(item => String(item ?? "").trim())
-          .filter(Boolean)
-      : [],
-    quiz: Array.isArray(input.quiz)
+  const sanitizePlan = (input: LessonResponse): LessonPlan => {
+    const sanitizeString = (value: unknown, limit = 320) => String(value ?? "").trim().slice(0, limit);
+    const sanitizeList = (value: unknown, limit: number) =>
+      Array.isArray(value)
+        ? value
+            .slice(0, limit)
+            .map((item) => sanitizeString(item))
+            .filter(Boolean)
+        : [];
+    const includesInsensitive = (list: string[], value: string) =>
+      list.some((item) => item.localeCompare(value, undefined, { sensitivity: "accent" }) === 0);
+    const sanitizeOptions = (value: unknown) => {
+      const source = Array.isArray(value)
+        ? value
+        : value && typeof value === "object"
+        ? Object.values(value as Record<string, unknown>)
+        : [];
+
+      const options: string[] = [];
+      for (const entry of source) {
+        const text = sanitizeString(entry, 160);
+        if (!text) continue;
+        if (!includesInsensitive(options, text)) options.push(text);
+        if (options.length >= 4) break;
+      }
+      return options;
+    };
+
+    const quizSource = Array.isArray(input.quiz)
       ? input.quiz
-          .slice(0, 3)
-          .map((item) => ({
-            q: String(item?.q ?? "").trim(),
-            a: String(item?.a ?? "").trim(),
-          }))
-          .filter((item) => item.q.length > 0)
-      : [],
-  });
+      : input.quiz && typeof input.quiz === "object" && Array.isArray(input.quiz.questions)
+      ? input.quiz.questions
+      : [];
+
+    const quiz = quizSource
+      .slice(0, 3)
+      .map((item) => {
+        if (item && typeof item === "object") {
+          const record = item as LessonQuizResponse;
+          const q = sanitizeString(record.q ?? record.question, 320);
+          const options = sanitizeOptions(record.options ?? record.choices ?? record.answers);
+          let answer = sanitizeString(record.answer ?? record.a ?? record.correct ?? "", 160);
+
+          if (/^[A-D]$/i.test(answer) && options.length > 0) {
+            const idx = answer.toUpperCase().charCodeAt(0) - 65;
+            if (options[idx]) answer = options[idx];
+          }
+
+          if (answer) {
+            if (!includesInsensitive(options, answer)) {
+              if (options.length >= 4) options[options.length - 1] = answer;
+              else options.push(answer);
+            }
+          }
+
+          const resolvedAnswer = answer || options[0] || "";
+          return { q, options, answer: resolvedAnswer };
+        }
+
+        const q = sanitizeString(item, 320);
+        return { q, options: [] as string[], answer: "" };
+      })
+      .filter((entry) => entry.q.length > 0);
+
+    return {
+      title: sanitizeString(input.title, 160),
+      intro: sanitizeString(input.intro, 480),
+      outline: sanitizeList(input.outline, 3),
+      activities: sanitizeList(input.activities, 2),
+      quiz,
+    };
+  };
 
   async function buildLesson(event: FormEvent<HTMLFormElement>) {
     event.preventDefault();
@@ -212,14 +270,39 @@ export default function LessonBuilderPage() {
               <section className="lesson-quiz">
                 <h3>Quiz</h3>
                 {plan.quiz.length ? (
-                  <ul>
-                    {plan.quiz.map((item, index) => (
-                      <li key={`${item.q}-${index}`}>
-                        <strong>{item.q}</strong>
-                        <span>{item.a}</span>
-                      </li>
-                    ))}
-                  </ul>
+                  <ol className="lesson-quiz__list">
+                    {plan.quiz.map((item, index) => {
+                      const hasAnswerOption = item.options.some(
+                        (option) => option.localeCompare(item.answer, undefined, { sensitivity: "accent" }) === 0
+                      );
+                      return (
+                        <li key={`${item.q}-${index}`} className="lesson-quiz__item">
+                          <div className="lesson-quiz__prompt">{item.q}</div>
+                          {item.options.length ? (
+                            <ul className="lesson-quiz__options">
+                              {item.options.map((option, optIndex) => {
+                                const isAnswer = option.localeCompare(item.answer, undefined, { sensitivity: "accent" }) === 0;
+                                return (
+                                  <li
+                                    key={`${option}-${optIndex}`}
+                                    className={`lesson-quiz__option${isAnswer ? " lesson-quiz__option--answer" : ""}`}
+                                  >
+                                    <span className="lesson-quiz__option-label">
+                                      {String.fromCharCode(65 + optIndex)}.
+                                    </span>
+                                    <span>{option}</span>
+                                  </li>
+                                );
+                              })}
+                            </ul>
+                          ) : null}
+                          {item.answer && !hasAnswerOption ? (
+                            <div className="lesson-quiz__answer-note">Answer: {item.answer}</div>
+                          ) : null}
+                        </li>
+                      );
+                    })}
+                  </ol>
                 ) : (
                   <p className="placeholder">Three check-in questions will show here.</p>
                 )}
