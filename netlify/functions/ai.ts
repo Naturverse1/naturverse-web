@@ -1,208 +1,127 @@
-import type { Handler } from "@netlify/functions";
+import type { Handler } from '@netlify/functions';
+import { z } from 'zod';
 
-type SchemaKey =
-  | "name"
-  | "species"
-  | "kingdom"
-  | "backstory"
-  | "title"
-  | "intro"
-  | "outline"
-  | "activities"
-  | "quiz";
-type LessonSchema = SchemaKey[];
+const GROQ_KEY = process.env.GROQ_API_KEY!;
+const MODEL = process.env.GROQ_MODEL ?? 'llama-3.1-8b-instant';
 
-const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
-const API_KEY = process.env.GROQ_API_KEY;
-const TTL_MS = 1000 * 60 * 30; // 30 minutes
+const H = { 'content-type': 'application/json' as const };
 
-type CacheEntry = { t: number; v: unknown };
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __aiCache: Map<string, CacheEntry> | undefined;
-}
-
-const ok = (data: unknown) => ({
-  statusCode: 200,
-  headers: {
-    "content-type": "application/json",
-    "access-control-allow-origin": "*",
-  },
-  body: JSON.stringify({ ok: true, data }),
+const QuizSchema = z.object({
+  questions: z.array(z.object({
+    q: z.string(),
+    options: z.tuple([z.string(), z.string(), z.string(), z.string()]),
+    answer: z.enum(['A','B','C','D'])
+  })).min(1)
 });
 
-const bad = (message: string, statusCode = 400) => ({
-  statusCode,
-  headers: {
-    "content-type": "application/json",
-    "access-control-allow-origin": "*",
-  },
-  body: JSON.stringify({ ok: false, error: message }),
+const LessonSchema = z.object({
+  title: z.string(),
+  age: z.number(),
+  intro: z.string(),
+  outline: z.array(z.string()).min(1),
+  activities: z.array(z.string()).min(1)
 });
 
-type RequestBody = {
-  kind?: string;
-  input?: Record<string, unknown> | null;
+const CardSchema = z.object({
+  name: z.string(),
+  species: z.string(),
+  kingdom: z.string(),
+  backstory: z.string(),
+  powers: z.array(z.string()).default([]),
+  traits: z.array(z.string()).default([])
+});
+
+type Body = {
+  action: 'quiz' | 'lesson' | 'card';
+  prompt: string;   // user topic/description/notes
+  age?: number;     // used by quiz/lesson
 };
 
-type PromptConfig = {
-  schema: LessonSchema;
-  system: string;
-  user: string;
+const systemByAction: Record<Body['action'], string> = {
+  quiz:
+    `You are Turian. Create a short 3-question multiple-choice quiz (A–D) for kids.
+Return ONLY JSON with keys: questions:[{q, options:[A,B,C,D], answer}]. No prose.`,
+  lesson:
+    `You are Turian. Make a tiny lesson plan for kids.
+Return ONLY JSON: {title, age, intro, outline[], activities[]}. No prose.`,
+  card:
+    `You are Turian. Turn the description into a friendly character card.
+Return ONLY JSON: {name, species, kingdom, backstory, powers[], traits[]}. No prose.`
 };
 
-function buildPrompt(kind: string, input: Record<string, unknown> | null | undefined): PromptConfig {
-  switch (kind) {
-    case "navatar.card": {
-      const description = String(input?.description ?? "").slice(0, 2000);
-      return {
-        schema: ["name", "species", "kingdom", "backstory"],
-        system:
-          "You are Turian, a friendly kids guide. Return concise JSON only with keys: name, species, kingdom, backstory. Keep it positive and G-rated.",
-        user: `Describe a fun character from this description:\n${description}`,
-      };
-    }
-    case "naturversity.lesson": {
-      const topic = String(input?.topic ?? "").slice(0, 200);
-      const age = Number(input?.age ?? 0) || 0;
-      return {
-        schema: ["title", "intro", "outline", "activities", "quiz"],
-        system:
-          "You write short, kid-friendly nature lessons. Return JSON with title, intro (1 paragraph), outline (3 bullets), activities (2 short items), quiz (3 Q&A). No extra text.",
-        user: `Topic: ${topic}\nAge: ${age}`,
-      };
-    }
-    default:
-      throw new Error("Unknown kind");
+const schemaByAction = {
+  quiz: QuizSchema,
+  lesson: LessonSchema,
+  card: CardSchema
+} as const;
+
+const bad = (status: number, message: string, detail?: unknown) =>
+  new Response(JSON.stringify({ error: message, detail }), { status, headers: H });
+
+export const handler: Handler = async (ev) => {
+  if (ev.httpMethod !== 'POST') return bad(405, 'Method not allowed');
+
+  let body: Body;
+  try {
+    body = JSON.parse(ev.body || '{}');
+  } catch {
+    return bad(400, 'Invalid JSON body');
   }
-}
+  const { action, prompt, age } = body;
+  if (!action || !prompt) return bad(400, 'Missing action or prompt');
 
-function getCache(): Map<string, CacheEntry> {
-  if (!globalThis.__aiCache) {
-    globalThis.__aiCache = new Map<string, CacheEntry>();
-  }
-  return globalThis.__aiCache;
-}
-
-type Sanitized = Record<string, string | string[] | { q: string; a: string }[]>;
-
-function sanitizeBySchema(schema: LessonSchema, value: Record<string, unknown>): Sanitized {
-  const clean: Sanitized = {};
-  for (const key of schema) {
-    const raw = value[key];
-    if (Array.isArray(raw)) {
-      if (key === "quiz") {
-        clean[key] = raw
-          .slice(0, 3)
-          .map((item) => {
-            if (typeof item === "object" && item !== null) {
-              const q = String((item as Record<string, unknown>).q ?? "").slice(0, 320);
-              const a = String((item as Record<string, unknown>).a ?? "").slice(0, 320);
-              return { q, a };
-            }
-            return { q: String(item ?? "").slice(0, 320), a: "" };
-          })
-          .filter((item) => item.q.length > 0);
-      } else {
-        const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
-        clean[key] = raw
-          .slice(0, limit)
-          .map((entry) => String(entry ?? "").slice(0, 320))
-          .filter((entry) => entry.length > 0);
-      }
-    } else {
-      clean[key] = String(raw ?? "").slice(0, 800);
-    }
-  }
-  return clean;
-}
-
-export const handler: Handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 204,
+  try {
+    const res = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+      method: 'POST',
       headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST,OPTIONS",
-        "access-control-allow-headers": "content-type",
+        Authorization: `Bearer ${GROQ_KEY}`,
+        'Content-Type': 'application/json'
       },
-      body: "",
-    };
+      body: JSON.stringify({
+        model: MODEL,
+        temperature: 0.4,
+        max_tokens: 800,
+        messages: [
+          { role: 'system', content: systemByAction[action] },
+          { role: 'user', content: `${prompt}${action !== 'card' && age ? `\nAge: ${age}` : ''}` }
+        ]
+      })
+    });
+
+    // Surface Groq error details instead of a generic 400
+    if (!res.ok) {
+      const text = await res.text().catch(() => '');
+      return bad(res.status, 'Groq request failed', text || undefined);
+    }
+
+    const data = await res.json();
+    const text = data?.choices?.[0]?.message?.content ?? '';
+    if (!text) return bad(502, 'Empty response from model');
+
+    // Try to extract JSON from content (handles accidental prose)
+    const jsonStr = (() => {
+      // if content is pure JSON
+      if (text.trim().startsWith('{') || text.trim().startsWith('[')) return text;
+      // fenced code block
+      const m = text.match(/```(?:json)?\s*([\s\S]*?)```/i);
+      return m ? m[1] : text;
+    })();
+
+    let parsed: unknown;
+    try {
+      parsed = JSON.parse(jsonStr);
+    } catch (e) {
+      return bad(502, 'Model returned non-JSON content', { content: text });
+    }
+
+    // Validate & coerce
+    const schema = schemaByAction[action as keyof typeof schemaByAction];
+    const cleaned = schema.parse(parsed);
+
+    // Cache-friendly success
+    return new Response(JSON.stringify({ ok: true, data: cleaned }), { status: 200, headers: H });
+  } catch (err) {
+    return bad(500, 'Server error', String(err));
   }
-
-  if (event.httpMethod !== "POST") return bad("POST only", 405);
-  if (!API_KEY) return bad("Server missing GROQ_API_KEY", 500);
-
-  let body: RequestBody;
-  try {
-    body = JSON.parse(event.body || "{}") as RequestBody;
-  } catch (error) {
-    return bad("Invalid JSON body");
-  }
-
-  const { kind, input } = body;
-  if (!kind) return bad("Missing kind");
-
-  let cfg: PromptConfig;
-  try {
-    cfg = buildPrompt(kind, input ?? {});
-  } catch (error) {
-    return bad(error instanceof Error ? error.message : "Unsupported kind");
-  }
-
-  const cacheKey = `${kind}:${JSON.stringify(input ?? {})}`;
-  const cache = getCache();
-  const now = Date.now();
-  const cached = cache.get(cacheKey);
-  if (cached && now - cached.t < TTL_MS) {
-    return ok(cached.v);
-  }
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      temperature: 0.6,
-      messages: [
-        { role: "system", content: cfg.system },
-        { role: "user", content: cfg.user },
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 800,
-    }),
-  });
-
-  if (!response.ok) {
-    return bad(`Groq error ${response.status}`, response.status);
-  }
-
-  let payload: any;
-  try {
-    payload = await response.json();
-  } catch (error) {
-    return bad("Invalid response from Groq", 502);
-  }
-
-  const content = payload?.choices?.[0]?.message?.content;
-  if (typeof content !== "string") {
-    return bad("Groq returned no content", 502);
-  }
-
-  let parsed: Record<string, unknown>;
-  try {
-    parsed = JSON.parse(content) as Record<string, unknown>;
-  } catch (error) {
-    return bad("Groq returned invalid JSON", 502);
-  }
-
-  const clean = sanitizeBySchema(cfg.schema, parsed);
-  cache.set(cacheKey, { t: now, v: clean });
-  return ok(clean);
 };
-
 export default handler;
