@@ -2,15 +2,15 @@ import { useEffect, useState } from "react";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarTabs from "../../components/NavatarTabs";
 import NavatarCard from "../../components/NavatarCard";
-import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
-import type { CharacterCard } from "../../lib/navatar";
+import { getMyNavatar, getCardForNavatar } from "../../lib/navatar";
+import type { NavatarCard as NavatarCardData, NavatarRow } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { Link } from "react-router-dom";
 import "../../styles/navatar.css";
 
 export default function MyNavatarPage() {
-  const [avatar, setAvatar] = useState<any | null>(null);
-  const [card, setCard] = useState<CharacterCard | null>(null);
+  const [navatar, setNavatar] = useState<NavatarRow | null>(null);
+  const [card, setCard] = useState<NavatarCardData | null>(null);
   const { user } = useAuthUser();
 
   useEffect(() => {
@@ -18,10 +18,15 @@ export default function MyNavatarPage() {
     let alive = true;
     (async () => {
       try {
-        const my = await getMyAvatar();
-        if (alive) setAvatar(my);
-        const c = await getMyCharacterCard();
-        if (alive) setCard(c);
+        const row = await getMyNavatar();
+        if (!alive) return;
+        setNavatar(row || null);
+        if (row?.id) {
+          const cardData = await getCardForNavatar(row.id);
+          if (alive) setCard(cardData ?? null);
+        } else if (alive) {
+          setCard(null);
+        }
       } catch {
         // ignore
       }
@@ -41,7 +46,7 @@ export default function MyNavatarPage() {
       <div className="nv-hub-grid mt-6">
         <section>
           <div className="nv-panel">
-            <NavatarCard src={avatar?.image_url || undefined} title={avatar?.name || "Turian"} />
+            <NavatarCard src={navatar?.image_url || undefined} title={navatar?.name || "Turian"} />
           </div>
         </section>
 
