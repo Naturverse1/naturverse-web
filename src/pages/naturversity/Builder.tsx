@@ -15,6 +15,16 @@ type LessonResponse = {
   quiz?: { q: string; a: string }[];
 };
 
+type QuizResponse = {
+  questions: {
+    q: string;
+    options: [string, string, string, string];
+    answer: "A" | "B" | "C" | "D";
+  }[];
+};
+
+const ANSWER_LETTERS = ["A", "B", "C", "D"] as const;
+
 const DEFAULT_PLAN: LessonPlan = {
   title: "",
   intro: "",
@@ -30,6 +40,7 @@ export default function LessonBuilderPage() {
   const [topic, setTopic] = useState("");
   const [age, setAge] = useState("8");
   const [plan, setPlan] = useState<LessonPlan | null>(null);
+  const [quiz, setQuiz] = useState<QuizResponse | null>(null);
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [cooldownUntil, setCooldownUntil] = useState(0);
@@ -46,12 +57,14 @@ export default function LessonBuilderPage() {
       setTopic(recent.topic);
       setAge(String(recent.age));
       setPlan(recent.plan);
+      setQuiz(null);
     }
   }, []);
 
   useEffect(() => {
     if (!topic.trim() || numericAge === 0) return;
     const stored = loadLessonPlan(topic, numericAge);
+    setQuiz(null);
     if (stored) setPlan(stored);
   }, [topic, numericAge]);
 
@@ -63,6 +76,23 @@ export default function LessonBuilderPage() {
     }
     setCooldownUntil(now + 3000);
     return true;
+  };
+
+  const safeParse = <T,>(input: string): T | null => {
+    try {
+      return JSON.parse(input) as T;
+    } catch {
+      return null;
+    }
+  };
+
+  const extractMessage = (error: unknown, fallback: string) => {
+    if (!error) return fallback;
+    if (typeof error === "string") return error;
+    if (typeof (error as any)?.message === "string") return (error as any).message;
+    if (typeof (error as any)?.error === "string") return (error as any).error;
+    if (typeof (error as any)?.error?.message === "string") return (error as any).error.message;
+    return fallback;
   };
 
   const sanitizePlan = (input: LessonResponse): LessonPlan => ({
@@ -109,17 +139,46 @@ export default function LessonBuilderPage() {
     setBusy(true);
     setError(null);
     try {
-      const response = await callAI<LessonResponse>("naturversity.lesson", {
-        topic: trimmedTopic,
-        age: numericAge,
-      });
+      const response = await callAI<LessonResponse>(
+        "lesson",
+        `Topic: ${trimmedTopic}\nAge: ${numericAge}`
+      );
       const built = sanitizePlan(response);
+      setQuiz(null);
       const stored = saveLessonPlan(trimmedTopic, numericAge, { ...DEFAULT_PLAN, ...built });
       const finalized = stored?.plan ?? built;
       setPlan(finalized);
       toast({ text: "Lesson ready!" });
       naturEvent("grant_natur", { amount: 5, note: `Lesson: ${finalized.title || trimmedTopic}` });
       naturEvent("passport_stamp", { world: "Learning", note: finalized.title || trimmedTopic });
+      const quizPrompt = `${trimmedTopic} for age ${numericAge}`;
+      try {
+        const qResp = await fetch("/.netlify/functions/ai", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action: "quiz", prompt: quizPrompt }),
+        });
+        const qText = await qResp.text();
+        const qJson = safeParse<{ ok?: boolean; data?: QuizResponse; error?: any }>(qText);
+        if (!qResp.ok || !qJson?.data?.questions) {
+          const message = extractMessage(qJson?.error, qText || "Quiz could not load right now.");
+          toast({ text: message, kind: "warn" });
+        } else {
+          setQuiz(qJson.data);
+          const simplified = qJson.data.questions.map((item) => {
+            const letterIndex = { A: 0, B: 1, C: 2, D: 3 }[item.answer];
+            const answerText = item.options[letterIndex] ?? "";
+            const label = item.answer + (answerText ? `. ${answerText}` : "");
+            return { q: item.q, a: label };
+          });
+          const withQuiz = { ...finalized, quiz: simplified };
+          setPlan(withQuiz);
+          saveLessonPlan(trimmedTopic, numericAge, withQuiz);
+        }
+      } catch (quizError) {
+        const message = quizError instanceof Error ? quizError.message : "Quiz could not load right now.";
+        toast({ text: message, kind: "warn" });
+      }
     } catch (err) {
       const message = err instanceof Error ? err.message : "Could not build that lesson.";
       setError(message);
@@ -211,7 +270,29 @@ export default function LessonBuilderPage() {
 
               <section className="lesson-quiz">
                 <h3>Quiz</h3>
-                {plan.quiz.length ? (
+                {quiz?.questions?.length ? (
+                  <ol className="lesson-quiz__list">
+                    {quiz.questions.map((item, index) => (
+                      <li key={`${item.q}-${index}`}>
+                        <strong>{index + 1}. {item.q}</strong>
+                        <ol type="A" className="lesson-quiz__options">
+                          {item.options.map((option, optIndex) => {
+                            const letter = (ANSWER_LETTERS[optIndex] ?? "A") as QuizResponse["questions"][number]["answer"];
+                            const isAnswer = letter === item.answer;
+                            return (
+                              <li
+                                key={`${item.q}-${letter}`}
+                                style={{ fontWeight: isAnswer ? 600 : undefined }}
+                              >
+                                {letter}. {option}
+                              </li>
+                            );
+                          })}
+                        </ol>
+                      </li>
+                    ))}
+                  </ol>
+                ) : plan.quiz.length ? (
                   <ul>
                     {plan.quiz.map((item, index) => (
                       <li key={`${item.q}-${index}`}>

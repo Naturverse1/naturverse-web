@@ -563,10 +563,14 @@ footer a:hover {
   color: var(--naturverse-blue) !important;
 }
 [data-page="naturbank"] button,
-[data-page="naturbank"] .btn {
+[data-page="naturbank"] .btn {  
   background: var(--naturverse-blue) !important;
   color: #fff !important;
   border: none !important;
+}
+
+.page-bottom-actions {
+  padding-bottom: 84px;
 }
 
 /* Optional: inputs look consistent next to blue labels */
