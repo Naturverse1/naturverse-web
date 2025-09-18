@@ -29,6 +29,7 @@ import Courses from './pages/naturversity/Courses';
 import CourseDetail from './pages/naturversity/CourseDetail';
 import LanguagesHub from './pages/naturversity/languages';
 import LanguageDetail from './pages/naturversity/languages/[slug]';
+import LessonBuilder from './pages/naturversity/Builder';
 import NaturversityLayout from './layouts/Naturversity';
 import NaturBankPage from './pages/naturbank';
 import BankWallet from './pages/naturbank/Wallet';
@@ -105,6 +106,7 @@ export const router = createBrowserRouter([
           { path: 'partners', element: <Partners /> },
           { path: 'courses', element: <Courses /> },
           { path: 'course/:slug', element: <CourseDetail /> },
+          { path: 'builder', element: <LessonBuilder /> },
           { path: 'languages', element: <LanguagesHub /> },
           { path: 'languages/:slug', element: <LanguageDetail /> },
         ],

@@ -62,6 +62,17 @@ export default function NaturversityPage() {
             <p className="tile__subtitle">Nature, art, music, wellness, crypto basics…</p>
           </div>
         </Link>
+
+        {/* Lesson Builder */}
+        <Link to="/naturversity/builder" className="tile">
+          <div className="tile__icon" aria-hidden>
+            <span role="img" aria-label="lightbulb">💡</span>
+          </div>
+          <div className="tile__body">
+            <h2 className="tile__title">Lesson Builder</h2>
+            <p className="tile__subtitle">Draft a mini-lesson with Turian’s help.</p>
+          </div>
+        </Link>
       </div>
 
       <p className="coming-soon">Coming soon: AI tutors and step-by-step lessons.</p>
