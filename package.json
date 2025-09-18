@@ -20,7 +20,8 @@
     "three": "^0.160.0",
     "workbox-window": "^7.1.0",
     "nprogress": "^0.2.0",
-    "react-helmet-async": "^2.0.4"
+    "react-helmet-async": "^2.0.4",
+    "zod": "^3.23.8"
   },
   "devDependencies": {
     "@types/node": "^20.14.11",
@@ -29,7 +30,7 @@
     "@vitejs/plugin-react-swc": "^3.7.1",
     "ts-node": "^10.9.2",
     "typescript": "^5.5.4",
-    "vite": "^5.4.2",
+    "vite": "^5.0.0",
     "vite-plugin-pwa": "^0.20.0"
   },
   "overrides": {

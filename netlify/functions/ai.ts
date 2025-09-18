@@ -12,7 +12,7 @@ type SchemaKey =
   | "quiz";
 type LessonSchema = SchemaKey[];
 
-const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const MODEL = process.env.GROQ_MODEL || "llama3-8b-8192";
 const API_KEY = process.env.GROQ_API_KEY;
 const TTL_MS = 1000 * 60 * 30; // 30 minutes
 
@@ -162,8 +162,8 @@ export const handler: Handler = async (event) => {
   const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
     method: "POST",
     headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${API_KEY}`,
+      Authorization: `Bearer ${API_KEY}`,
+      "Content-Type": "application/json",
     },
     body: JSON.stringify({
       model: MODEL,
@@ -172,13 +172,14 @@ export const handler: Handler = async (event) => {
         { role: "system", content: cfg.system },
         { role: "user", content: cfg.user },
       ],
-      response_format: { type: "json_object" },
       max_tokens: 800,
     }),
   });
 
   if (!response.ok) {
-    return bad(`Groq error ${response.status}`, response.status);
+    const errorText = await response.text();
+    console.error("Groq error:", errorText || response.statusText);
+    return bad(errorText || "Groq request failed", 500);
   }
 
   let payload: any;
