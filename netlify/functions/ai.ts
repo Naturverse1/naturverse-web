@@ -12,7 +12,23 @@ type SchemaKey =
   | "quiz";
 type LessonSchema = SchemaKey[];
 
-const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
+const DEFAULT_MODEL = "llama-3.1-8b-instant";
+
+function upgradeModel(model?: string | null): string {
+  const normalized = (model ?? "").toLowerCase().replace(/\s+/g, "");
+  const table: Record<string, string> = {
+    "llama3-8b-8192": "llama-3.1-8b-instant",
+    "llama3-70b-8192": "llama-3.1-70b-versatile",
+    "llama3-8b": "llama-3.1-8b-instant",
+    "llama3-70b": "llama-3.1-70b-versatile",
+  };
+  const upgraded = table[normalized];
+  if (upgraded) return upgraded;
+  const trimmed = (model ?? "").trim();
+  return trimmed.length > 0 ? trimmed : DEFAULT_MODEL;
+}
+
+const MODEL = upgradeModel(process.env.GROQ_MODEL);
 const API_KEY = process.env.GROQ_API_KEY;
 const TTL_MS = 1000 * 60 * 30; // 30 minutes
 
@@ -32,13 +48,17 @@ const ok = (data: unknown) => ({
   body: JSON.stringify({ ok: true, data }),
 });
 
-const bad = (message: string, statusCode = 400) => ({
+const bad = (message: string, statusCode = 400, detail?: unknown) => ({
   statusCode,
   headers: {
     "content-type": "application/json",
     "access-control-allow-origin": "*",
   },
-  body: JSON.stringify({ ok: false, error: message }),
+  body: JSON.stringify(
+    detail === undefined
+      ? { ok: false, error: message }
+      : { ok: false, error: message, detail }
+  ),
 });
 
 type RequestBody = {
@@ -172,20 +192,24 @@ export const handler: Handler = async (event) => {
         { role: "system", content: cfg.system },
         { role: "user", content: cfg.user },
       ],
-      response_format: { type: "json_object" },
       max_tokens: 800,
     }),
   });
 
+  const raw = await response.text();
+
   if (!response.ok) {
-    return bad(`Groq error ${response.status}`, response.status);
+    return bad(`Groq error ${response.status}`, response.status, raw);
   }
 
   let payload: any;
   try {
-    payload = await response.json();
+    payload = JSON.parse(raw);
   } catch (error) {
-    return bad("Invalid response from Groq", 502);
+    return bad("Invalid response from Groq", 502, {
+      raw,
+      parseError: error instanceof Error ? error.message : String(error),
+    });
   }
 
   const content = payload?.choices?.[0]?.message?.content;
