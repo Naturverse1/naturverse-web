@@ -1,20 +1,31 @@
-export async function callAI<T>(kind: string, input: unknown): Promise<T> {
+type AiAction = 'lesson' | 'quiz' | 'card';
+
+export async function callAI<T>(action: AiAction, prompt: string): Promise<T> {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), 30000);
   try {
     const response = await fetch("/.netlify/functions/ai", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ kind, input }),
+      body: JSON.stringify({ action, prompt }),
       signal: controller.signal,
     });
 
-    const json = await response.json().catch(() => ({ ok: false, error: "Invalid server response" }));
-    if (!response.ok || !json.ok) {
-      const message = json?.error || `AI failed (${response.status})`;
+    const raw = await response.text();
+    let json: any = {};
+    try {
+      json = raw ? JSON.parse(raw) : {};
+    } catch {
+      json = {};
+    }
+
+    if (!response.ok) {
+      const message = typeof json?.error === "string" && json.error
+        ? json.error
+        : raw || `AI failed (${response.status})`;
       throw new Error(message);
     }
-    return json.data as T;
+    return json as T;
   } catch (error) {
     if (error instanceof DOMException && error.name === "AbortError") {
       throw new Error("AI request timed out");

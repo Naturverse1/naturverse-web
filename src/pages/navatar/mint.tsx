@@ -4,29 +4,37 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
-import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabase-client";
+import { getCardForNavatar, navatarImageUrl, getMyNavatar } from "../../lib/navatar";
+import type { NavatarCard as NavatarCardData, NavatarRow } from "../../lib/navatar";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
-  const [navatar, setNavatar] = useState<any | null>(null);
-  const [card, setCard] = useState<any>(null);
+  const [navatar, setNavatar] = useState<NavatarRow | null>(null);
+  const [card, setCard] = useState<NavatarCardData | null>(null);
 
   useEffect(() => {
-    const activeId = getActiveNavatarId();
-    if (!activeId) return;
-
+    let alive = true;
     (async () => {
-      const { data } = await supabase
-        .from("avatars")
-        .select("id,name,image_path")
-        .eq("id", activeId)
-        .maybeSingle();
-      setNavatar(data);
-      const c = await getCardForAvatar(activeId);
-      setCard(c);
+      try {
+        const row = await getMyNavatar();
+        if (!alive) return;
+        setNavatar(row || null);
+        if (row?.id) {
+          const cardData = await getCardForNavatar(row.id);
+          if (alive) setCard(cardData ?? null);
+        } else if (alive) {
+          setCard(null);
+        }
+      } catch {
+        if (alive) {
+          setNavatar(null);
+          setCard(null);
+        }
+      }
     })();
+    return () => {
+      alive = false;
+    };
   }, []);
 
   return (
@@ -41,7 +49,7 @@ export default function MintNavatarPage() {
         Coming soon: mint your Navatar on-chain. In the meantime, make merch with your Navatar on the Marketplace.
       </p>
       <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
-        <NavatarCard src={navatarImageUrl(navatar?.image_path)} title={navatar?.name || "My Navatar"} />
+        <NavatarCard src={navatarImageUrl(navatar?.image_path ?? null)} title={navatar?.name || "My Navatar"} />
         <a className="pill" href="/marketplace">Go to Marketplace</a>
       </div>
 

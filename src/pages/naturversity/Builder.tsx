@@ -5,6 +5,7 @@ import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { LessonPlan, saveLessonPlan, loadLessonPlan, listLessonPlans } from "@/lib/localdb";
 import { setTitle } from "../_meta";
+import Quiz from "../../components/naturversity/Quiz";
 import "../../styles/lesson-builder.css";
 
 type LessonResponse = {
@@ -12,7 +13,6 @@ type LessonResponse = {
   intro?: string;
   outline?: string[];
   activities?: string[];
-  quiz?: { q: string; a: string }[];
 };
 
 const DEFAULT_PLAN: LessonPlan = {
@@ -20,7 +20,6 @@ const DEFAULT_PLAN: LessonPlan = {
   intro: "",
   outline: [],
   activities: [],
-  quiz: [],
 };
 
 export default function LessonBuilderPage() {
@@ -80,15 +79,6 @@ export default function LessonBuilderPage() {
           .map(item => String(item ?? "").trim())
           .filter(Boolean)
       : [],
-    quiz: Array.isArray(input.quiz)
-      ? input.quiz
-          .slice(0, 3)
-          .map((item) => ({
-            q: String(item?.q ?? "").trim(),
-            a: String(item?.a ?? "").trim(),
-          }))
-          .filter((item) => item.q.length > 0)
-      : [],
   });
 
   async function buildLesson(event: FormEvent<HTMLFormElement>) {
@@ -109,10 +99,7 @@ export default function LessonBuilderPage() {
     setBusy(true);
     setError(null);
     try {
-      const response = await callAI<LessonResponse>("naturversity.lesson", {
-        topic: trimmedTopic,
-        age: numericAge,
-      });
+      const response = await callAI<LessonResponse>("lesson", `Topic: ${trimmedTopic}\nAge: ${numericAge}`);
       const built = sanitizePlan(response);
       const stored = saveLessonPlan(trimmedTopic, numericAge, { ...DEFAULT_PLAN, ...built });
       const finalized = stored?.plan ?? built;
@@ -211,18 +198,7 @@ export default function LessonBuilderPage() {
 
               <section className="lesson-quiz">
                 <h3>Quiz</h3>
-                {plan.quiz.length ? (
-                  <ul>
-                    {plan.quiz.map((item, index) => (
-                      <li key={`${item.q}-${index}`}>
-                        <strong>{item.q}</strong>
-                        <span>{item.a}</span>
-                      </li>
-                    ))}
-                  </ul>
-                ) : (
-                  <p className="placeholder">Three check-in questions will show here.</p>
-                )}
+                <Quiz topic={topic} age={numericAge} />
               </section>
 
               <aside className="lesson-reward" aria-live="polite">

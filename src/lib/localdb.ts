@@ -8,13 +8,11 @@ export type NavatarCardDraft = {
   traits: string;
 };
 
-export type LessonQuizItem = { q: string; a: string };
 export type LessonPlan = {
   title: string;
   intro: string;
   outline: string[];
   activities: string[];
-  quiz: LessonQuizItem[];
 };
 
 type StoredPlan = {
@@ -82,22 +80,11 @@ function sanitizeLessonPlan(plan: LessonPlan): LessonPlan {
       .map((item) => sanitizeString(item))
       .filter((item) => item.length > 0);
 
-  const quiz = Array.isArray(plan.quiz)
-    ? plan.quiz
-        .slice(0, 3)
-        .map((item) => ({
-          q: sanitizeString(item?.q, 320),
-          a: sanitizeString(item?.a, 320),
-        }))
-        .filter((entry) => entry.q.length > 0)
-    : [];
-
   return {
     title: sanitizeString(plan.title, 160),
     intro: sanitizeString(plan.intro, 480),
     outline: Array.isArray(plan.outline) ? sanitizeList(plan.outline, 3) : [],
     activities: Array.isArray(plan.activities) ? sanitizeList(plan.activities, 2) : [],
-    quiz,
   };
 }
 
