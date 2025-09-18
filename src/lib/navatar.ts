@@ -164,7 +164,7 @@ export async function saveCharacterCard(input: Omit<CharacterCard, 'user_id' | '
 }
 
 /** Get character card for a specific avatar */
-export async function getCardForAvatar(avatarId: string) {
+export async function getCharacterCardForAvatar(avatarId: string) {
   const { data, error } = await supabase
     .from('character_cards')
     .select('*')
@@ -173,5 +173,15 @@ export async function getCardForAvatar(avatarId: string) {
 
   if (error && (error as any).code !== 'PGRST116') throw error;
   return (data as CharacterCard | null) ?? null;
+}
+
+/**
+ * Return a stable route where the app edits / displays a card for a given Navatar.
+ * We keep it a front-end route so it works regardless of API shape.
+ */
+export function getCardForAvatar(avatarId: string): string {
+  if (!avatarId) return '/navatar/card';
+  const q = new URLSearchParams({ avatarId }).toString();
+  return `/navatar/card?${q}`;
 }
 
