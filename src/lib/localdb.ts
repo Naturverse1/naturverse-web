@@ -8,13 +8,14 @@ export type NavatarCardDraft = {
   traits: string;
 };
 
-export type LessonQuizItem = { q: string; a: string };
+export type LessonQuizItem = { q: string; a: string; choices?: string[] };
+export type LessonQuiz = { items: LessonQuizItem[] };
 export type LessonPlan = {
   title: string;
   intro: string;
   outline: string[];
   activities: string[];
-  quiz: LessonQuizItem[];
+  quiz?: LessonQuiz;
 };
 
 type StoredPlan = {
@@ -74,30 +75,61 @@ export function clearNavatarDraft() {
   } catch {}
 }
 
-function sanitizeLessonPlan(plan: LessonPlan): LessonPlan {
+function sanitizeLessonPlan(plan: Partial<LessonPlan> | Record<string, unknown>): LessonPlan {
   const sanitizeString = (value: unknown, limit = 320) => String(value ?? "").trim().slice(0, limit);
   const sanitizeList = (value: unknown[], limit: number) =>
     value
       .slice(0, limit)
       .map((item) => sanitizeString(item))
       .filter((item) => item.length > 0);
+  const sanitizeQuizItems = (value: unknown): LessonQuizItem[] => {
+    const source = Array.isArray(value)
+      ? value
+      : Array.isArray((value as any)?.items)
+        ? ((value as any)?.items as unknown[])
+        : [];
+    return source
+      .slice(0, 3)
+      .map((entry) => {
+        if (typeof entry === "object" && entry !== null) {
+          const record = entry as Record<string, unknown>;
+          const q = sanitizeString(record.q, 320);
+          const a = sanitizeString(record.a, 160);
+          const choices = Array.isArray(record.choices)
+            ? (record.choices as unknown[])
+                .map((choice) => sanitizeString(choice, 80))
+                .filter((choice) => choice.length > 0)
+                .slice(0, 6)
+            : [];
+          const item: LessonQuizItem = { q, a };
+          if (choices.length >= 2) {
+            if (!choices.includes(a)) choices.push(a);
+            item.choices = Array.from(new Set(choices)).slice(0, 6);
+          }
+          return item;
+        }
+        return { q: sanitizeString(entry, 320), a: "" };
+      })
+      .filter((entry) => entry.q.length > 0);
+  };
 
-  const quiz = Array.isArray(plan.quiz)
-    ? plan.quiz
-        .slice(0, 3)
-        .map((item) => ({
-          q: sanitizeString(item?.q, 320),
-          a: sanitizeString(item?.a, 320),
-        }))
-        .filter((entry) => entry.q.length > 0)
+  const anyPlan = plan as Record<string, unknown>;
+  const title = sanitizeString(anyPlan.title, 160);
+  const intro = sanitizeString(anyPlan.intro, 480);
+  const outline = Array.isArray((anyPlan as any).outline)
+    ? sanitizeList(((anyPlan as any).outline as unknown[]), 3)
     : [];
+  const activities = Array.isArray((anyPlan as any).activities)
+    ? sanitizeList(((anyPlan as any).activities as unknown[]), 2)
+    : [];
+  const quizItems = sanitizeQuizItems((anyPlan as any).quiz);
 
   return {
-    title: sanitizeString(plan.title, 160),
-    intro: sanitizeString(plan.intro, 480),
-    outline: Array.isArray(plan.outline) ? sanitizeList(plan.outline, 3) : [],
-    activities: Array.isArray(plan.activities) ? sanitizeList(plan.activities, 2) : [],
-    quiz,
+    title,
+    intro,
+    outline,
+    activities,
+    quiz: { items: quizItems },
   };
 }
 
