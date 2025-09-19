@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getCardForAvatar, navatarImageUrl } from "../../lib/navatar";
+import { getMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
 import { getActiveNavatarId } from "../../lib/localNavatar";
 import { supabase } from "../../lib/supabase-client";
 import "../../styles/navatar.css";
@@ -24,7 +24,7 @@ export default function MintNavatarPage() {
         .eq("id", activeId)
         .maybeSingle();
       setNavatar(data);
-      const c = await getCardForAvatar(activeId);
+      const c = await getMyCharacterCard();
       setCard(c);
     })();
   }, []);
