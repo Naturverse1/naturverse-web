@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { pickNavatar } from "../../lib/navatar";
+import { getOrCreateNavatar, upsertNavatar } from "../../lib/navatar";
 import { listNavatarImages } from "../../shared/storage";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useAuthUser } from "../../lib/useAuthUser";
@@ -13,7 +13,7 @@ import "../../styles/navatar.css";
 
 export default function PickNavatarPage() {
   const [items, setItems] = useState<{ name: string; url: string; path: string }[]>([]);
-  const nav = useNavigate();
+  const navigate = useNavigate();
   const { user } = useAuthUser();
   const toast = useToast();
 
@@ -21,15 +21,20 @@ export default function PickNavatarPage() {
     listNavatarImages().then(setItems).catch(() => setItems([]));
   }, []);
 
-  async function choose(item: { path: string; name: string }) {
+  async function choose(item: { path: string; name: string; url: string }) {
     if (!user) {
       toast({ text: "Please sign in.", kind: "err" });
       return;
     }
     try {
-      const row = await pickNavatar(item.path, item.name);
-      setActiveNavatarId(row.id);
-      nav("/navatar");
+      const base = await getOrCreateNavatar(user.id);
+      const updated = await upsertNavatar(user.id, {
+        image_url: item.url,
+        image_path: item.path,
+        ...(base.name ? {} : { name: item.name }),
+      });
+      setActiveNavatarId(updated.id);
+      navigate("/navatar");
     } catch {
       toast({ text: "Could not save Navatar.", kind: "err" });
     }

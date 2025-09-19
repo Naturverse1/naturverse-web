@@ -1,58 +1,117 @@
-import { supabase } from './supabase-client';
-import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { supabase } from "./supabase-client";
 
-export const NAVATAR_BUCKET = 'avatars';
-export const NAVATAR_PREFIX = 'navatars';
+export const NAVATAR_BUCKET = "avatars";
+export const NAVATAR_PREFIX = "navatars";
 
-export type DbAvatar = {
+export type Navatar = {
   id: string;
-  user_id: string | null;
-  name: string | null;
-  image_url: string | null;
-  image_path: string | null;
-  thumbnail_url: string | null;
-  is_public: boolean | null;
-  is_primary: boolean | null;
-  metadata: Record<string, any> | null;
-  card: Record<string, any> | null;
-  updated_at: string | null;
-};
-
-export type CharacterCard = {
-  id: string;
-  owner_id: string;
+  user_id: string;
   name: string | null;
   species: string | null;
   kingdom: string | null;
   backstory: string | null;
-  powers: string[];
-  traits: string[];
-  created_at: string | null;
-  updated_at: string | null;
+  image_url: string | null;
+  image_path?: string | null;
+  created_at: string;
+  updated_at: string;
 };
 
+export type NavatarCard = {
+  id: string;
+  user_id: string;
+  navatar_id: string;
+  name: string | null;
+  species: string | null;
+  kingdom: string | null;
+  backstory: string | null;
+  powers: string[] | null;
+  traits: string[] | null;
+  created_at: string;
+  updated_at: string;
+};
+
+export type CharacterCard = NavatarCard;
+
+const cleanField = (value?: string | null) => {
+  const text = (value ?? "").toString().trim();
+  return text.length > 0 ? text : null;
+};
+
+const cleanList = (list?: string[] | null) =>
+  Array.isArray(list) ? list.map(item => item.trim()).filter(Boolean) : [];
+
+const withoutUndefined = <T extends Record<string, any>>(value: T) =>
+  Object.fromEntries(Object.entries(value).filter(([, v]) => v !== undefined)) as T;
+
+async function fetchNavatarForUser(userId: string): Promise<Navatar | null> {
+  const { data, error } = await supabase
+    .from("navatars")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+
+  if (error && (error as any).code !== "PGRST116") throw error;
+  return (data as Navatar | null) ?? null;
+}
+
+function mapNavatarPatch(
+  partial: Partial<Omit<Navatar, "id" | "user_id" | "created_at" | "updated_at">>
+) {
+  const patch: Record<string, any> = {};
+  if (partial.name !== undefined) patch.name = cleanField(partial.name);
+  if (partial.species !== undefined) patch.species = cleanField(partial.species);
+  if (partial.kingdom !== undefined) patch.kingdom = cleanField(partial.kingdom);
+  if (partial.backstory !== undefined) patch.backstory = cleanField(partial.backstory);
+  if ((partial as any).image_url !== undefined) patch.image_url = (partial as any).image_url ?? null;
+  if ((partial as any).image_path !== undefined) patch.image_path = (partial as any).image_path ?? null;
+  if ((partial as any).thumbnail_url !== undefined)
+    patch.thumbnail_url = (partial as any).thumbnail_url ?? null;
+  if ((partial as any).is_public !== undefined) patch.is_public = (partial as any).is_public ?? null;
+  if ((partial as any).is_primary !== undefined) patch.is_primary = (partial as any).is_primary ?? null;
+  if ((partial as any).metadata !== undefined) patch.metadata = (partial as any).metadata ?? null;
+  return withoutUndefined(patch);
+}
+
+function mapCardPatch(
+  payload: Omit<Partial<NavatarCard>, "id" | "user_id" | "navatar_id" | "created_at" | "updated_at">
+) {
+  const patch: Record<string, any> = {};
+  if (payload.name !== undefined) patch.name = cleanField(payload.name);
+  if (payload.species !== undefined) patch.species = cleanField(payload.species);
+  if (payload.kingdom !== undefined) patch.kingdom = cleanField(payload.kingdom);
+  if (payload.backstory !== undefined) patch.backstory = cleanField(payload.backstory);
+  if (payload.powers !== undefined) patch.powers = cleanList(payload.powers ?? []);
+  if (payload.traits !== undefined) patch.traits = cleanList(payload.traits ?? []);
+  return withoutUndefined(patch);
+}
+
 export async function getSessionUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error('Not signed in');
+  const {
+    data: { user },
+    error,
+  } = await supabase.auth.getUser();
+  if (error) throw error;
+  if (!user) throw new Error("Not signed in");
   return user.id;
 }
 
-export function navatarImageUrl(path: string | null) {
+export function navatarImageUrl(path: string | null | undefined) {
   if (!path) return null;
   const { data } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
   return data?.publicUrl ?? null;
 }
 
-/** List available navatars to pick (reads files under avatars/navatars) */
 export async function listNavatars(): Promise<{ name: string; url: string; path: string }[]> {
   const { data, error } = await supabase
     .storage.from(NAVATAR_BUCKET)
-    .list(NAVATAR_PREFIX, { limit: 200, sortBy: { column: 'name', order: 'asc' } });
+    .list(NAVATAR_PREFIX, { limit: 200, sortBy: { column: "name", order: "asc" } });
 
   if (error) throw error;
 
   return (data ?? [])
-    .filter(item => item.name && !item.name.endsWith('/'))
+    .filter(item => item.name && !item.name.endsWith("/"))
     .map(item => {
       const path = `${NAVATAR_PREFIX}/${item.name}`;
       const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
@@ -60,113 +119,129 @@ export async function listNavatars(): Promise<{ name: string; url: string; path:
     });
 }
 
-/** Pick an existing image as the user’s avatar (upsert into public.avatars by user_id) */
-export async function pickNavatar(imagePath: string, name?: string) {
-  const user_id = await getSessionUserId();
-  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
+export async function getOrCreateNavatar(userId: string): Promise<Navatar> {
+  const existing = await fetchNavatarForUser(userId);
+  if (existing) return existing;
 
   const { data, error } = await supabase
-    .from('avatars')
-    .upsert({
-      user_id,
-      name: name ?? 'Me',
-      image_url: pub.publicUrl,
-      image_path: imagePath,
-      is_primary: true,
-      is_public: false,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
-    .select()
+    .from("navatars")
+    .insert({ user_id: userId })
+    .select("*")
     .single();
-
   if (error) throw error;
-  return data as DbAvatar;
+  return data as Navatar;
 }
 
-/** Upload a custom image to navatars/<user_id>/… and upsert avatars row */
-export async function uploadNavatar(file: File, name?: string) {
-  const user_id = await getSessionUserId();
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${user_id}/${crypto.randomUUID()}.${ext}`;
+export async function upsertNavatar(
+  userId: string,
+  partial: Partial<Omit<Navatar, "id" | "user_id" | "created_at" | "updated_at">>
+) {
+  const base = await getOrCreateNavatar(userId);
+  const patch = mapNavatarPatch(partial);
+  if (Object.keys(patch).length === 0) {
+    return base;
+  }
 
-  const { error: upErr } = await supabase
+  const { data, error } = await supabase
+    .from("navatars")
+    .update(patch)
+    .eq("id", base.id)
+    .eq("user_id", userId)
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data as Navatar;
+}
+
+export async function getCardForNavatar(userId: string) {
+  const { data, error } = await supabase
+    .from("navatar_cards")
+    .select("*")
+    .eq("user_id", userId)
+    .order("created_at", { ascending: true })
+    .limit(1)
+    .maybeSingle();
+  if (error && (error as any).code !== "PGRST116") throw error;
+  return (data as NavatarCard | null) ?? null;
+}
+
+export async function upsertCard(
+  userId: string,
+  navatarId: string,
+  payload: Omit<Partial<NavatarCard>, "id" | "user_id" | "navatar_id" | "created_at" | "updated_at">
+) {
+  const patch = mapCardPatch(payload);
+  const existing = await getCardForNavatar(userId);
+
+  if (existing) {
+    const { data, error } = await supabase
+      .from("navatar_cards")
+      .update(patch)
+      .eq("id", existing.id)
+      .eq("user_id", userId)
+      .select("*")
+      .single();
+    if (error) throw error;
+    return data as NavatarCard;
+  }
+
+  const { data, error } = await supabase
+    .from("navatar_cards")
+    .insert({ user_id: userId, navatar_id: navatarId, ...patch })
+    .select("*")
+    .single();
+  if (error) throw error;
+  return data as NavatarCard;
+}
+
+export async function pickNavatar(imagePath: string, name?: string) {
+  const userId = await getSessionUserId();
+  const navatar = await getOrCreateNavatar(userId);
+  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
+  const patch: Partial<Navatar> = {
+    image_url: pub.publicUrl,
+    image_path: imagePath,
+  };
+  if (name && !navatar.name) {
+    patch.name = name;
+  }
+  return await upsertNavatar(userId, patch);
+}
+
+export async function uploadNavatar(file: File, name?: string) {
+  const userId = await getSessionUserId();
+  const key = `${NAVATAR_PREFIX}/${userId}/${crypto.randomUUID()}-${file.name}`;
+
+  const { error: uploadError } = await supabase
     .storage.from(NAVATAR_BUCKET)
     .upload(key, file, { upsert: true });
-
-  if (upErr) throw upErr;
+  if (uploadError) throw uploadError;
 
   const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(key);
 
-  const { data, error } = await supabase
-    .from('avatars')
-    .upsert({
-      user_id,
-      name: name ?? 'Me',
-      image_url: pub.publicUrl,
-      image_path: key,
-      is_primary: true,
-      is_public: false,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as DbAvatar;
+  return await upsertNavatar(userId, {
+    name,
+    image_url: pub.publicUrl,
+    image_path: key,
+  });
 }
 
-/** Load the current user’s avatar (avatars row) */
 export async function getMyAvatar() {
-  const user_id = await getSessionUserId();
-  const { data, error } = await supabase
-    .from('avatars')
-    .select('*')
-    .eq('user_id', user_id)
-    .single();
-
-  if (error && (error as any).code !== 'PGRST116') throw error;
-  return (data as DbAvatar | null) ?? null;
+  try {
+    const userId = await getSessionUserId();
+    return await fetchNavatarForUser(userId);
+  } catch (error: any) {
+    if (error?.code === "PGRST116") return null;
+    throw error;
+  }
 }
 
-/** Load the current user's character card */
-export async function getMyCharacterCard(): Promise<CharacterCard | null> {
-  const ownerId = await getSessionUserId();
-  const { data, error } = await supabase
-    .from('navatars')
-    .select(
-      'id, owner_id, name, species, kingdom, backstory, created_at, updated_at, navatar_cards(powers, traits, updated_at)'
-    )
-    .eq('owner_id', ownerId)
-    .order('updated_at', { ascending: false, nullsFirst: true })
-    .order('created_at', { ascending: false })
-    .limit(1)
-    .maybeSingle();
-
-  if (error && (error as any).code !== 'PGRST116') throw error;
-  if (!data) return null;
-
-  const metaRaw = (data as any).navatar_cards;
-  const meta = Array.isArray(metaRaw) ? metaRaw[0] : metaRaw;
-  const powers = (meta?.powers as string[] | null) ?? [];
-  const traits = (meta?.traits as string[] | null) ?? [];
-
-  return {
-    id: data.id as string,
-    owner_id: data.owner_id as string,
-    name: (data as any).name ?? null,
-    species: (data as any).species ?? null,
-    kingdom: (data as any).kingdom ?? null,
-    backstory: (data as any).backstory ?? null,
-    powers,
-    traits,
-    created_at: (data as any).created_at ?? null,
-    updated_at: (data as any).updated_at ?? meta?.updated_at ?? null,
-  };
+export async function getMyCharacterCard(): Promise<NavatarCard | null> {
+  const userId = await getSessionUserId();
+  return await getCardForNavatar(userId);
 }
 
-/** Save / upsert the character card */
 export async function saveCharacterCard(input: {
-  id?: string;
   name?: string;
   species?: string;
   kingdom?: string;
@@ -174,30 +249,20 @@ export async function saveCharacterCard(input: {
   powers?: string[];
   traits?: string[];
 }) {
-  const saved = await upsertNavatar({
-    id: input.id,
-    name: input.name ?? '',
-    species: input.species ?? '',
-    kingdom: input.kingdom ?? '',
-    backstory: input.backstory ?? '',
-    powers: input.powers ?? [],
-    traits: input.traits ?? [],
+  const userId = await getSessionUserId();
+  const navatar = await upsertNavatar(userId, {
+    name: input.name,
+    species: input.species,
+    kingdom: input.kingdom,
+    backstory: input.backstory,
   });
 
-  const powers = Array.isArray(saved.powers) ? saved.powers : [];
-  const traits = Array.isArray(saved.traits) ? saved.traits : [];
-
-  return {
-    id: saved.id as string,
-    owner_id: saved.owner_id as string,
-    name: saved.name ?? null,
-    species: saved.species ?? null,
-    kingdom: saved.kingdom ?? null,
-    backstory: saved.backstory ?? null,
-    powers,
-    traits,
-    created_at: saved.created_at ?? null,
-    updated_at: saved.updated_at ?? null,
-  } satisfies CharacterCard;
+  return await upsertCard(userId, navatar.id, {
+    name: input.name,
+    species: input.species,
+    kingdom: input.kingdom,
+    backstory: input.backstory,
+    powers: input.powers,
+    traits: input.traits,
+  });
 }
-
