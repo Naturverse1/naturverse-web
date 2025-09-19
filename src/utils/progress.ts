@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabase-client";
+import { supabase } from "@/lib/supabaseClient";
 import { demoGrant } from "@/lib/naturbank";
 import { demoAddStamp } from "@/lib/passport";
 import {

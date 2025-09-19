@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import LoginForm from '../components/LoginForm';
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 function redirectAfterLogin() {
   try {

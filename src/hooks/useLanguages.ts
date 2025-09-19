@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { supabase } from "@/lib/supabaseClient";
 
 export function useLanguages() {
   const [languages, setLanguages] = useState<any[]>([]);

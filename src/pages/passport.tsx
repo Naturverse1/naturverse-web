@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabase-client";
+import { supabase } from "@/lib/supabaseClient";
 import { WORLDS, WorldKey } from "../data/worlds";
 import type { PassportStamp, PassportBadge } from "../types/passport";
 import Breadcrumbs from "../components/Breadcrumbs";

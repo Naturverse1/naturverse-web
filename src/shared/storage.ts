@@ -1,4 +1,4 @@
-import { supabase } from '../lib/supabase-client';
+import { supabase } from '../lib/supabaseClient';
 
 const IMAGE_EXT = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'];
 

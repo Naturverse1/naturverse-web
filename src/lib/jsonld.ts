@@ -1,7 +1,7 @@
 import { SITE } from './site';
 
 export const siteUrl =
-  import.meta.env.NEXT_PUBLIC_SITE_URL || SITE.url;
+  import.meta.env.VITE_SITE_URL || SITE.url;
 
 export const organizationLd = {
   '@context': 'https://schema.org',

@@ -1,20 +1,17 @@
-import { supabase } from './supabase-client';
+import { supabase } from './supabaseClient';
+import { getActiveNavatarId } from './localNavatar';
 import { saveNavatar as upsertNavatar } from './supabaseHelpers';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
 
-export type DbAvatar = {
+export type NavatarRow = {
   id: string;
-  user_id: string | null;
+  owner_id: string;
   name: string | null;
   image_url: string | null;
   image_path: string | null;
-  thumbnail_url: string | null;
-  is_public: boolean | null;
-  is_primary: boolean | null;
-  metadata: Record<string, any> | null;
-  card: Record<string, any> | null;
+  created_at: string | null;
   updated_at: string | null;
 };
 
@@ -60,34 +57,54 @@ export async function listNavatars(): Promise<{ name: string; url: string; path:
     });
 }
 
-/** Pick an existing image as the user’s avatar (upsert into public.avatars by user_id) */
-export async function pickNavatar(imagePath: string, name?: string) {
-  const user_id = await getSessionUserId();
-  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
+async function resolveExistingNavatarId(ownerId: string): Promise<string | null> {
+  const activeId = getActiveNavatarId();
+  if (activeId) return activeId;
 
   const { data, error } = await supabase
-    .from('avatars')
-    .upsert({
-      user_id,
-      name: name ?? 'Me',
-      image_url: pub.publicUrl,
-      image_path: imagePath,
-      is_primary: true,
-      is_public: false,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
-    .select()
+    .from('navatars')
+    .select('id')
+    .eq('owner_id', ownerId)
+    .order('updated_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
+
+  if (error && (error as any).code !== 'PGRST116') throw error;
+  return (data?.id as string | undefined) ?? null;
+}
+
+/** Pick an existing image and upsert it into public.navatars */
+export async function pickNavatar(imagePath: string, name?: string): Promise<NavatarRow> {
+  const owner_id = await getSessionUserId();
+  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
+
+  const payload: Record<string, any> = {
+    owner_id,
+    name: name ?? 'My Navatar',
+    image_url: pub.publicUrl ?? null,
+    image_path: imagePath,
+    updated_at: new Date().toISOString(),
+  };
+
+  const existingId = await resolveExistingNavatarId(owner_id);
+  if (existingId) payload.id = existingId;
+
+  const { data, error } = await supabase
+    .from('navatars')
+    .upsert(payload, { onConflict: 'id' })
+    .select('*')
     .single();
 
   if (error) throw error;
-  return data as DbAvatar;
+  return data as NavatarRow;
 }
 
-/** Upload a custom image to navatars/<user_id>/… and upsert avatars row */
-export async function uploadNavatar(file: File, name?: string) {
-  const user_id = await getSessionUserId();
+/** Upload a custom image then store it in public.navatars */
+export async function uploadNavatar(file: File, name?: string): Promise<NavatarRow> {
+  const owner_id = await getSessionUserId();
   const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${user_id}/${crypto.randomUUID()}.${ext}`;
+  const key = `${NAVATAR_PREFIX}/${owner_id}/${crypto.randomUUID()}.${ext}`;
 
   const { error: upErr } = await supabase
     .storage.from(NAVATAR_BUCKET)
@@ -95,37 +112,37 @@ export async function uploadNavatar(file: File, name?: string) {
 
   if (upErr) throw upErr;
 
-  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(key);
-
-  const { data, error } = await supabase
-    .from('avatars')
-    .upsert({
-      user_id,
-      name: name ?? 'Me',
-      image_url: pub.publicUrl,
-      image_path: key,
-      is_primary: true,
-      is_public: false,
-      updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as DbAvatar;
+  return pickNavatar(key, name);
 }
 
-/** Load the current user’s avatar (avatars row) */
-export async function getMyAvatar() {
-  const user_id = await getSessionUserId();
+/** Load the current user's navatar row */
+export async function getMyAvatar(): Promise<NavatarRow | null> {
+  const owner_id = await getSessionUserId();
+  const activeId = getActiveNavatarId();
+
+  if (activeId) {
+    const { data, error } = await supabase
+      .from('navatars')
+      .select('*')
+      .eq('owner_id', owner_id)
+      .eq('id', activeId)
+      .maybeSingle();
+
+    if (error && (error as any).code !== 'PGRST116') throw error;
+    if (data) return data as NavatarRow;
+  }
+
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .select('*')
-    .eq('user_id', user_id)
-    .single();
+    .eq('owner_id', owner_id)
+    .order('updated_at', { ascending: false, nullsFirst: false })
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error && (error as any).code !== 'PGRST116') throw error;
-  return (data as DbAvatar | null) ?? null;
+  return (data as NavatarRow | null) ?? null;
 }
 
 /** Load the current user's character card */
@@ -200,4 +217,3 @@ export async function saveCharacterCard(input: {
     updated_at: saved.updated_at ?? null,
   } satisfies CharacterCard;
 }
-
