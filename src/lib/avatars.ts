@@ -1,33 +1,33 @@
 import { supabase } from "./supabase-client";
 
-export type AvatarRow = {
+export type NavatarRow = {
   id: string;
-  user_id: string;
+  owner_id: string;
   name: string | null;
   image_url: string | null;
-  appearance_data?: any | null;
+  metadata?: any | null;
   is_primary?: boolean | null;
 };
 
-export async function getMyAvatar(userId: string) {
+export async function getMyNavatar(userId: string) {
   return supabase
-    .from("avatars")
+    .from("navatars")
     .select("*")
-    .eq("user_id", userId)
-    .maybeSingle<AvatarRow>();
+    .eq("owner_id", userId)
+    .maybeSingle<NavatarRow>();
 }
 
-// Pick/Set current avatar image + optional name (single row per user)
-export async function upsertMyAvatar(userId: string, fields: Partial<AvatarRow>) {
+// Pick/Set current navatar image + optional name (single row per user)
+export async function upsertMyNavatar(userId: string, fields: Partial<NavatarRow>) {
   const payload = {
-    user_id: userId,
+    owner_id: userId,
     is_primary: true,
     ...fields,
   };
   return supabase
-    .from("avatars")
-    .upsert(payload, { onConflict: "user_id" })
+    .from("navatars")
+    .upsert(payload, { onConflict: "owner_id" })
     .select()
-    .maybeSingle<AvatarRow>();
+    .maybeSingle<NavatarRow>();
 }
 

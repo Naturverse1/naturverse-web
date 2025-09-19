@@ -115,9 +115,9 @@ export type WishlistItem = CatalogItem & {
   wishedAt: Date;
 };
 
-export type CharacterCard = {
+export type NavatarCardRow = {
   id: string;
-  user_id: string;
+  owner_id: string;
   navatar_id: string | null;
   name: string | null;
   species: string | null;

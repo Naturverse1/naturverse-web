@@ -9,10 +9,10 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 const categories = [
-  { id: 'fruit', name: '🍎 Fruit', description: 'Sweet and colorful fruit avatars' },
-  { id: 'animal', name: '🦁 Animal', description: 'Wild and wonderful creatures' },
-  { id: 'spirit', name: '✨ Spirit', description: 'Mystical and magical beings' },
-  { id: 'insect', name: '🦋 Insect', description: 'Tiny but mighty creatures' },
+  { id: 'fruit', name: '🍎 Fruit', description: 'Sweet and colorful fruit navatars' },
+  { id: 'animal', name: '🦁 Animal', description: 'Wild and wonderful navatar creatures' },
+  { id: 'spirit', name: '✨ Spirit', description: 'Mystical and magical navatars' },
+  { id: 'insect', name: '🦋 Insect', description: 'Tiny but mighty navatars' },
 ];
 
 export default function NavatarCreator() {
@@ -30,16 +30,16 @@ export default function NavatarCreator() {
     setSuccess('');
 
     try {
-      // Create navatar in Supabase avatars table
+      // Create navatar in Supabase navatars table
       const categoryData = categories.find((c) => c.id === selectedCategory);
       const { data, error: insertError } = await supabase
-        .from('avatars')
+        .from('navatars')
         .insert({
-          user_id: user.id,
-          name: `${categoryData?.name} Avatar`,
-          category: selectedCategory,
+          owner_id: user.id,
+          name: `${categoryData?.name} Navatar`,
+          base_type: selectedCategory,
           image_url: null, // Will be set when user uploads custom image
-          appearance_data: {
+          metadata: {
             category: selectedCategory,
             emoji: categoryData?.name.split(' ')[0],
             createdAt: new Date().toISOString(),
@@ -71,7 +71,7 @@ export default function NavatarCreator() {
             🎨 Navatar Creator
           </h1>
           <p className="text-white/90 text-lg">
-            Create your magical nature avatar to represent you in The Naturverse!
+            Create your magical nature navatar to represent you in The Naturverse!
           </p>
 
           {error && (

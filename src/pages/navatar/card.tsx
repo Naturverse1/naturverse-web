@@ -3,13 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
+import { getMyNavatar, getMyNavatarCard, upsertNavatarCard } from "../../lib/navatar";
+import type { NavatarRecord } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
-import { saveNavatar } from "@/lib/supabaseHelpers";
 import "../../styles/navatar.css";
 
 type NavatarAiResult = {
@@ -29,7 +29,7 @@ export default function NavatarCardPage() {
 
   const aiEnabled = import.meta.env.PROD || import.meta.env.VITE_ENABLE_AI === "true";
   const initialDraft = useMemo(() => readNavatarDraft(), []);
-  const [avatar, setAvatar] = useState<any | null>(null);
+  const [navatar, setNavatar] = useState<NavatarRecord | null>(null);
   const [description, setDescription] = useState(initialDraft.description);
   const [name, setName] = useState(initialDraft.name);
   const [species, setSpecies] = useState(initialDraft.species);
@@ -47,9 +47,9 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const a = await getMyAvatar();
-        if (alive) setAvatar(a || null);
-        const c = await getMyCharacterCard();
+        const nextNavatar = await getMyNavatar();
+        if (alive) setNavatar(nextNavatar);
+        const c = await getMyNavatarCard();
         if (c && alive) {
           setNavatarId(c.id);
           setName(c.name ?? "");
@@ -156,7 +156,7 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      if (!user || !avatar?.id) {
+      if (!user || !navatar?.id) {
         toast({ text: "Pick a Navatar first.", kind: "err" });
         return;
       }
@@ -171,7 +171,7 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      const saved = await saveNavatar({
+      const saved = await upsertNavatarCard({
         id: navatarId ?? undefined,
         name,
         species,

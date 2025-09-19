@@ -5,7 +5,7 @@ export const supabase = createClient(
   import.meta.env.VITE_SUPABASE_ANON_KEY!
 );
 
-type SaveNavatarParams = {
+type UpsertNavatarParams = {
   id?: string;
   name: string;
   species: string;
@@ -22,7 +22,7 @@ const cleanField = (value?: string) => {
 
 const cleanList = (list?: string[]) => (list ?? []).map((item) => item.trim()).filter((item) => item.length > 0);
 
-export async function saveNavatar(params: SaveNavatarParams) {
+export async function upsertNavatarWithCard(params: UpsertNavatarParams) {
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;
   const userId = userData?.user?.id;
