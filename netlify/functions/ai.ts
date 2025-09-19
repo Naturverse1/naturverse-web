@@ -1,208 +1,132 @@
 import type { Handler } from "@netlify/functions";
 
-type SchemaKey =
-  | "name"
-  | "species"
-  | "kingdom"
-  | "backstory"
-  | "title"
-  | "intro"
-  | "outline"
-  | "activities"
-  | "quiz";
-type LessonSchema = SchemaKey[];
+const HEADERS = {
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+  "Access-Control-Allow-Origin": "*",
+};
+
+const OPTIONS_HEADERS = {
+  ...HEADERS,
+  "Access-Control-Allow-Methods": "POST,OPTIONS",
+  "Access-Control-Allow-Headers": "content-type",
+};
+
+type Body = {
+  action: "lesson" | "quiz" | "card" | "backstory";
+  prompt: string;
+  age?: number;
+};
 
 const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const API_KEY = process.env.GROQ_API_KEY;
-const TTL_MS = 1000 * 60 * 30; // 30 minutes
 
-type CacheEntry = { t: number; v: unknown };
-
-declare global {
-  // eslint-disable-next-line no-var
-  var __aiCache: Map<string, CacheEntry> | undefined;
-}
-
-const ok = (data: unknown) => ({
-  statusCode: 200,
-  headers: {
-    "content-type": "application/json",
-    "access-control-allow-origin": "*",
-  },
-  body: JSON.stringify({ ok: true, data }),
-});
-
-const bad = (message: string, statusCode = 400) => ({
-  statusCode,
-  headers: {
-    "content-type": "application/json",
-    "access-control-allow-origin": "*",
-  },
-  body: JSON.stringify({ ok: false, error: message }),
-});
-
-type RequestBody = {
-  kind?: string;
-  input?: Record<string, unknown> | null;
+const systemByAction: Record<Body["action"], string> = {
+  lesson:
+    "You are Turian. Write a short kid-friendly mini-lesson (title, intro, 3-bullet outline, 2 activities). Return ONLY JSON: {title, intro, outline:[...], activities:[...]}.",
+  quiz:
+    "Create 3 kid-friendly multiple-choice questions (A–D) about the given topic. Return ONLY JSON: {questions:[{q, options:[\"A\",\"B\",\"C\",\"D\"], answer:\"A\"}]}.",
+  card:
+    "From this short description, suggest {name, species, kingdom, backstory}. Return ONLY JSON with those keys.",
+  backstory:
+    "Write a 2–3 sentence playful backstory for a kids character. Return ONLY JSON: {backstory}.",
 };
 
-type PromptConfig = {
-  schema: LessonSchema;
-  system: string;
-  user: string;
-};
-
-function buildPrompt(kind: string, input: Record<string, unknown> | null | undefined): PromptConfig {
-  switch (kind) {
-    case "navatar.card": {
-      const description = String(input?.description ?? "").slice(0, 2000);
-      return {
-        schema: ["name", "species", "kingdom", "backstory"],
-        system:
-          "You are Turian, a friendly kids guide. Return concise JSON only with keys: name, species, kingdom, backstory. Keep it positive and G-rated.",
-        user: `Describe a fun character from this description:\n${description}`,
-      };
-    }
-    case "naturversity.lesson": {
-      const topic = String(input?.topic ?? "").slice(0, 200);
-      const age = Number(input?.age ?? 0) || 0;
-      return {
-        schema: ["title", "intro", "outline", "activities", "quiz"],
-        system:
-          "You write short, kid-friendly nature lessons. Return JSON with title, intro (1 paragraph), outline (3 bullets), activities (2 short items), quiz (3 Q&A). No extra text.",
-        user: `Topic: ${topic}\nAge: ${age}`,
-      };
-    }
-    default:
-      throw new Error("Unknown kind");
-  }
+function respond(statusCode: number, payload: Record<string, unknown>) {
+  return {
+    statusCode,
+    headers: HEADERS,
+    body: JSON.stringify(payload),
+  };
 }
 
-function getCache(): Map<string, CacheEntry> {
-  if (!globalThis.__aiCache) {
-    globalThis.__aiCache = new Map<string, CacheEntry>();
-  }
-  return globalThis.__aiCache;
-}
-
-type Sanitized = Record<string, string | string[] | { q: string; a: string }[]>;
-
-function sanitizeBySchema(schema: LessonSchema, value: Record<string, unknown>): Sanitized {
-  const clean: Sanitized = {};
-  for (const key of schema) {
-    const raw = value[key];
-    if (Array.isArray(raw)) {
-      if (key === "quiz") {
-        clean[key] = raw
-          .slice(0, 3)
-          .map((item) => {
-            if (typeof item === "object" && item !== null) {
-              const q = String((item as Record<string, unknown>).q ?? "").slice(0, 320);
-              const a = String((item as Record<string, unknown>).a ?? "").slice(0, 320);
-              return { q, a };
-            }
-            return { q: String(item ?? "").slice(0, 320), a: "" };
-          })
-          .filter((item) => item.q.length > 0);
-      } else {
-        const limit = key === "outline" ? 3 : key === "activities" ? 2 : raw.length;
-        clean[key] = raw
-          .slice(0, limit)
-          .map((entry) => String(entry ?? "").slice(0, 320))
-          .filter((entry) => entry.length > 0);
-      }
-    } else {
-      clean[key] = String(raw ?? "").slice(0, 800);
-    }
-  }
-  return clean;
-}
+const ok = (data: unknown) => respond(200, { ok: true, data });
+const bad = (statusCode: number, error: unknown) =>
+  respond(statusCode, { ok: false, error: typeof error === "string" ? error : String(error) });
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return {
-      statusCode: 204,
+  try {
+    if (event.httpMethod === "OPTIONS") {
+      return {
+        statusCode: 200,
+        headers: OPTIONS_HEADERS,
+        body: "",
+      };
+    }
+
+    if (event.httpMethod !== "POST") {
+      return bad(405, "Method not allowed");
+    }
+
+    if (!API_KEY) {
+      return bad(500, "Missing GROQ_API_KEY");
+    }
+
+    let body: Body;
+    try {
+      body = JSON.parse(event.body || "{}") as Body;
+    } catch {
+      return bad(400, "Invalid JSON body");
+    }
+
+    if (!body || !body.action || !(body.action in systemByAction)) {
+      return bad(400, "Unsupported action");
+    }
+
+    const prompt = String(body.prompt ?? "").trim();
+    if (!prompt) {
+      return bad(400, "Prompt is required");
+    }
+
+    const systemPrompt = systemByAction[body.action];
+    const userContent = body.age && Number.isFinite(body.age)
+      ? `${prompt}\nAge: ${Math.round(body.age)}`
+      : prompt;
+
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
       headers: {
-        "access-control-allow-origin": "*",
-        "access-control-allow-methods": "POST,OPTIONS",
-        "access-control-allow-headers": "content-type",
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${API_KEY}`,
       },
-      body: "",
-    };
-  }
+      body: JSON.stringify({
+        model: MODEL,
+        messages: [
+          { role: "system", content: systemPrompt },
+          { role: "user", content: userContent },
+        ],
+        temperature: 0.7,
+      }),
+    });
 
-  if (event.httpMethod !== "POST") return bad("POST only", 405);
-  if (!API_KEY) return bad("Server missing GROQ_API_KEY", 500);
+    const text = await groqRes.text();
+    if (!groqRes.ok) {
+      return bad(groqRes.status, `Groq error: ${text}`);
+    }
 
-  let body: RequestBody;
-  try {
-    body = JSON.parse(event.body || "{}") as RequestBody;
+    let parsed: any;
+    try {
+      parsed = JSON.parse(text);
+    } catch {
+      return bad(502, "Invalid response from Groq");
+    }
+
+    const content = parsed?.choices?.[0]?.message?.content?.trim();
+    if (!content) {
+      return bad(502, "No content from model");
+    }
+
+    const jsonText = content.replace(/^```json\s*|\s*```$/g, "");
+    try {
+      const data = JSON.parse(jsonText);
+      return ok(data);
+    } catch {
+      return bad(502, `Non-JSON content from model: ${content}`);
+    }
   } catch (error) {
-    return bad("Invalid JSON body");
+    const message = error instanceof Error ? error.message : String(error);
+    return bad(500, `Unhandled error: ${message}`);
   }
-
-  const { kind, input } = body;
-  if (!kind) return bad("Missing kind");
-
-  let cfg: PromptConfig;
-  try {
-    cfg = buildPrompt(kind, input ?? {});
-  } catch (error) {
-    return bad(error instanceof Error ? error.message : "Unsupported kind");
-  }
-
-  const cacheKey = `${kind}:${JSON.stringify(input ?? {})}`;
-  const cache = getCache();
-  const now = Date.now();
-  const cached = cache.get(cacheKey);
-  if (cached && now - cached.t < TTL_MS) {
-    return ok(cached.v);
-  }
-
-  const response = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: `Bearer ${API_KEY}`,
-    },
-    body: JSON.stringify({
-      model: MODEL,
-      temperature: 0.6,
-      messages: [
-        { role: "system", content: cfg.system },
-        { role: "user", content: cfg.user },
-      ],
-      response_format: { type: "json_object" },
-      max_tokens: 800,
-    }),
-  });
-
-  if (!response.ok) {
-    return bad(`Groq error ${response.status}`, response.status);
-  }
-
-  let payload: any;
-  try {
-    payload = await response.json();
-  } catch (error) {
-    return bad("Invalid response from Groq", 502);
-  }
-
-  const content = payload?.choices?.[0]?.message?.content;
-  if (typeof content !== "string") {
-    return bad("Groq returned no content", 502);
-  }
-
-  let parsed: Record<string, unknown>;
-  try {
-    parsed = JSON.parse(content) as Record<string, unknown>;
-  } catch (error) {
-    return bad("Groq returned invalid JSON", 502);
-  }
-
-  const clean = sanitizeBySchema(cfg.schema, parsed);
-  cache.set(cacheKey, { t: now, v: clean });
-  return ok(clean);
 };
 
 export default handler;

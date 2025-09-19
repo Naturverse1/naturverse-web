@@ -3,12 +3,13 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getMyCharacterCard, saveCharacterCard } from "../../lib/navatar";
+import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
+import { saveNavatar } from "@/lib/supabaseHelpers";
 import "../../styles/navatar.css";
 
 type NavatarAiResult = {
@@ -39,6 +40,7 @@ export default function NavatarCardPage() {
   const [aiBusy, setAiBusy] = useState<"card" | "backstory" | null>(null);
   const [cooldownUntil, setCooldownUntil] = useState(0);
   const [rewardGranted, setRewardGranted] = useState(false);
+  const [navatarId, setNavatarId] = useState<string | null>(null);
 
   useEffect(() => {
     if (!user) return;
@@ -49,6 +51,7 @@ export default function NavatarCardPage() {
         if (alive) setAvatar(a || null);
         const c = await getMyCharacterCard();
         if (c && alive) {
+          setNavatarId(c.id);
           setName(c.name ?? "");
           setSpecies(c.species ?? "");
           setKingdom(c.kingdom ?? "");
@@ -92,7 +95,7 @@ export default function NavatarCardPage() {
 
     setAiBusy("card");
     try {
-      const data = await callAI<NavatarAiResult>("navatar.card", { description: idea });
+      const data = await callAI<NavatarAiResult>("card", { prompt: idea });
       setName(String(data.name ?? ""));
       setSpecies(String(data.species ?? ""));
       setKingdom(String(data.kingdom ?? ""));
@@ -124,8 +127,8 @@ export default function NavatarCardPage() {
     setAiBusy("backstory");
     try {
       const seed = { name, species, kingdom };
-      const data = await callAI<NavatarAiResult>("navatar.card", {
-        description: JSON.stringify(seed),
+      const data = await callAI<{ backstory?: string }>("backstory", {
+        prompt: JSON.stringify(seed),
       });
       const next = String(data.backstory ?? "");
       if (next) {
@@ -168,7 +171,8 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      await saveCharacterCard({
+      const saved = await saveNavatar({
+        id: navatarId ?? undefined,
         name,
         species,
         kingdom,
@@ -176,6 +180,10 @@ export default function NavatarCardPage() {
         powers: powersArr,
         traits: traitsArr,
       });
+
+      if (saved?.id) {
+        setNavatarId(saved.id as string);
+      }
 
       nav("/navatar");
     } catch (e: any) {

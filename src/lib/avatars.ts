@@ -31,33 +31,3 @@ export async function upsertMyAvatar(userId: string, fields: Partial<AvatarRow>)
     .maybeSingle<AvatarRow>();
 }
 
-// Character Card (stored in character_cards, linked by avatar_id)
-export async function saveCharacterCard(params: {
-  userId: string;
-  avatarId: string;
-  name?: string;
-  species?: string;
-  kingdom?: string;
-  backstory?: string;
-  powers?: string[];
-  traits?: string[];
-}) {
-  const { userId, avatarId, ...card } = params;
-  return supabase
-    .from("character_cards")
-    .upsert(
-      [{ user_id: userId, avatar_id: avatarId, ...card }],
-      { onConflict: "avatar_id" }
-    )
-    .select()
-    .maybeSingle();
-}
-
-export async function getCharacterCard(avatarId: string) {
-  return supabase
-    .from("character_cards")
-    .select("*")
-    .eq("avatar_id", avatarId)
-    .maybeSingle();
-}
-

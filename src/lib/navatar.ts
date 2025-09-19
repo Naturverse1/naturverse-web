@@ -1,4 +1,5 @@
 import { supabase } from './supabase-client';
+import { saveNavatar as upsertNavatar } from './supabaseHelpers';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
@@ -18,15 +19,16 @@ export type DbAvatar = {
 };
 
 export type CharacterCard = {
-  id?: string;
-  user_id: string;
-  avatar_id: string | null;
+  id: string;
+  owner_id: string;
   name: string | null;
   species: string | null;
   kingdom: string | null;
   backstory: string | null;
-  powers: string[] | null;
-  traits: string[] | null;
+  powers: string[];
+  traits: string[];
+  created_at: string | null;
+  updated_at: string | null;
 };
 
 export async function getSessionUserId() {
@@ -127,51 +129,75 @@ export async function getMyAvatar() {
 }
 
 /** Load the current user's character card */
-export async function getMyCharacterCard() {
-  const user_id = await getSessionUserId();
+export async function getMyCharacterCard(): Promise<CharacterCard | null> {
+  const ownerId = await getSessionUserId();
   const { data, error } = await supabase
-    .from('character_cards')
-    .select('*')
-    .eq('user_id', user_id)
-    .single();
+    .from('navatars')
+    .select(
+      'id, owner_id, name, species, kingdom, backstory, created_at, updated_at, navatar_cards(powers, traits, updated_at)'
+    )
+    .eq('owner_id', ownerId)
+    .order('updated_at', { ascending: false, nullsFirst: true })
+    .order('created_at', { ascending: false })
+    .limit(1)
+    .maybeSingle();
 
   if (error && (error as any).code !== 'PGRST116') throw error;
-  return (data as CharacterCard | null) ?? null;
-}
+  if (!data) return null;
 
-/** Save / upsert the character card, link to avatar row */
-export async function saveCharacterCard(input: Omit<CharacterCard, 'user_id' | 'avatar_id'>) {
-  const user_id = await getSessionUserId();
-  const myAvatar = await getMyAvatar();
-  const avatar_id = myAvatar?.id ?? null;
+  const metaRaw = (data as any).navatar_cards;
+  const meta = Array.isArray(metaRaw) ? metaRaw[0] : metaRaw;
+  const powers = (meta?.powers as string[] | null) ?? [];
+  const traits = (meta?.traits as string[] | null) ?? [];
 
-  const payload: CharacterCard = {
-    user_id,
-    avatar_id,
-    ...input,
-    powers: input.powers?.map(s => s.trim()).filter(Boolean) ?? null,
-    traits: input.traits?.map(s => s.trim()).filter(Boolean) ?? null,
+  return {
+    id: data.id as string,
+    owner_id: data.owner_id as string,
+    name: (data as any).name ?? null,
+    species: (data as any).species ?? null,
+    kingdom: (data as any).kingdom ?? null,
+    backstory: (data as any).backstory ?? null,
+    powers,
+    traits,
+    created_at: (data as any).created_at ?? null,
+    updated_at: (data as any).updated_at ?? meta?.updated_at ?? null,
   };
-
-  const { data, error } = await supabase
-    .from('character_cards')
-    .upsert(payload, { onConflict: 'user_id' })
-    .select()
-    .single();
-
-  if (error) throw error;
-  return data as CharacterCard;
 }
 
-/** Get character card for a specific avatar */
-export async function getCardForAvatar(avatarId: string) {
-  const { data, error } = await supabase
-    .from('character_cards')
-    .select('*')
-    .eq('avatar_id', avatarId)
-    .single();
+/** Save / upsert the character card */
+export async function saveCharacterCard(input: {
+  id?: string;
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
+  powers?: string[];
+  traits?: string[];
+}) {
+  const saved = await upsertNavatar({
+    id: input.id,
+    name: input.name ?? '',
+    species: input.species ?? '',
+    kingdom: input.kingdom ?? '',
+    backstory: input.backstory ?? '',
+    powers: input.powers ?? [],
+    traits: input.traits ?? [],
+  });
 
-  if (error && (error as any).code !== 'PGRST116') throw error;
-  return (data as CharacterCard | null) ?? null;
+  const powers = Array.isArray(saved.powers) ? saved.powers : [];
+  const traits = Array.isArray(saved.traits) ? saved.traits : [];
+
+  return {
+    id: saved.id as string,
+    owner_id: saved.owner_id as string,
+    name: saved.name ?? null,
+    species: saved.species ?? null,
+    kingdom: saved.kingdom ?? null,
+    backstory: saved.backstory ?? null,
+    powers,
+    traits,
+    created_at: saved.created_at ?? null,
+    updated_at: saved.updated_at ?? null,
+  } satisfies CharacterCard;
 }
 
