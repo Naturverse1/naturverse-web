@@ -1,4 +1,5 @@
 import type { Handler } from "@netlify/functions";
+import { z } from "zod";
 
 const HEADERS = {
   "Content-Type": "application/json",
@@ -12,11 +13,13 @@ const OPTIONS_HEADERS = {
   "Access-Control-Allow-Headers": "content-type",
 };
 
-type Body = {
-  action: "lesson" | "quiz" | "card" | "backstory";
-  prompt: string;
-  age?: number;
-};
+const Body = z.object({
+  action: z.enum(["lesson", "quiz", "card", "backstory"]),
+  prompt: z.string().min(1, "Prompt is required"),
+  age: z.number().optional(),
+});
+
+type Body = z.infer<typeof Body>;
 
 const MODEL = process.env.GROQ_MODEL || "llama-3.1-8b-instant";
 const API_KEY = process.env.GROQ_API_KEY;
@@ -32,17 +35,45 @@ const systemByAction: Record<Body["action"], string> = {
     "Write a 2–3 sentence playful backstory for a kids character. Return ONLY JSON: {backstory}.",
 };
 
-function respond(statusCode: number, payload: Record<string, unknown>) {
+function respond(
+  statusCode: number,
+  payload: Record<string, unknown>,
+  extraHeaders?: Record<string, string>
+) {
   return {
     statusCode,
-    headers: HEADERS,
+    headers: { ...HEADERS, ...extraHeaders },
     body: JSON.stringify(payload),
   };
 }
 
 const ok = (data: unknown) => respond(200, { ok: true, data });
-const bad = (statusCode: number, error: unknown) =>
-  respond(statusCode, { ok: false, error: typeof error === "string" ? error : String(error) });
+
+const bad = (statusCode: number, message: string, detail?: unknown) =>
+  respond(statusCode, { ok: false, error: { message, detail } });
+
+// Normalizers for LLM wobble
+function forceStringArray(x: unknown): string[] {
+  if (Array.isArray(x)) {
+    return x
+      .map(item => {
+        if (item == null) return "";
+        if (typeof item === "string") return item;
+        if (typeof item === "object") {
+          const value =
+            (item as any).title ??
+            (item as any).text ??
+            (item as any).step ??
+            JSON.stringify(item);
+          return String(value);
+        }
+        return String(item);
+      })
+      .filter(Boolean);
+  }
+  if (typeof x === "string") return [x];
+  return [];
+}
 
 export const handler: Handler = async (event) => {
   try {
@@ -55,33 +86,37 @@ export const handler: Handler = async (event) => {
     }
 
     if (event.httpMethod !== "POST") {
-      return bad(405, "Method not allowed");
+      return bad(405, "method_not_allowed");
     }
 
     if (!API_KEY) {
-      return bad(500, "Missing GROQ_API_KEY");
+      return bad(500, "missing_api_key");
     }
 
-    let body: Body;
+    let parsedJson: unknown;
     try {
-      body = JSON.parse(event.body || "{}") as Body;
+      parsedJson = JSON.parse(event.body || "{}");
     } catch {
-      return bad(400, "Invalid JSON body");
+      return bad(400, "invalid_json");
     }
 
-    if (!body || !body.action || !(body.action in systemByAction)) {
-      return bad(400, "Unsupported action");
+    const parsed = Body.safeParse(parsedJson);
+    if (!parsed.success) {
+      return bad(400, "invalid_request", parsed.error.flatten());
     }
+
+    const body: Body = parsed.data;
 
     const prompt = String(body.prompt ?? "").trim();
     if (!prompt) {
-      return bad(400, "Prompt is required");
+      return bad(400, "prompt_required");
     }
 
     const systemPrompt = systemByAction[body.action];
-    const userContent = body.age && Number.isFinite(body.age)
-      ? `${prompt}\nAge: ${Math.round(body.age)}`
-      : prompt;
+    const userContent =
+      typeof body.age === "number" && Number.isFinite(body.age)
+        ? `${prompt}\nAge: ${Math.round(body.age)}`
+        : prompt;
 
     const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       method: "POST",
@@ -101,31 +136,36 @@ export const handler: Handler = async (event) => {
 
     const text = await groqRes.text();
     if (!groqRes.ok) {
-      return bad(groqRes.status, `Groq error: ${text}`);
+      return bad(groqRes.status || 502, "upstream_error", text);
     }
 
     let parsed: any;
     try {
       parsed = JSON.parse(text);
     } catch {
-      return bad(502, "Invalid response from Groq");
+      return bad(502, "invalid_response", text);
     }
 
     const content = parsed?.choices?.[0]?.message?.content?.trim();
     if (!content) {
-      return bad(502, "No content from model");
+      return bad(502, "empty_content");
     }
 
     const jsonText = content.replace(/^```json\s*|\s*```$/g, "");
     try {
       const data = JSON.parse(jsonText);
+
+      if (body.action === "lesson") {
+        (data as any).activities = forceStringArray((data as any)?.activities);
+      }
+
       return ok(data);
     } catch {
-      return bad(502, `Non-JSON content from model: ${content}`);
+      return bad(502, "non_json_content", content);
     }
   } catch (error) {
-    const message = error instanceof Error ? error.message : String(error);
-    return bad(500, `Unhandled error: ${message}`);
+    const detail = error instanceof Error ? { message: error.message } : { message: String(error) };
+    return bad(500, "unhandled_error", detail);
   }
 };
 

@@ -10,7 +10,7 @@ export type ProfileRow = {
 
 export type NavatarRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   name: string | null;
   base_type: 'animal' | 'fruit' | 'insect' | 'spirit';
   species: string | null;
@@ -73,7 +73,7 @@ export type Profile = {
 
 export type Navatar = {
   id: string;
-  ownerId: string;
+  userId: string;
   name: string;
   base: NavatarRow['base_type'];
   species?: string;

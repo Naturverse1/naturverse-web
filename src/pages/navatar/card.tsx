@@ -3,13 +3,18 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
+import {
+  getCardForNavatar,
+  getOrCreateNavatar,
+  upsertCard,
+  upsertNavatar,
+  type Navatar,
+} from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
-import { saveNavatar } from "@/lib/supabaseHelpers";
 import "../../styles/navatar.css";
 
 type NavatarAiResult = {
@@ -29,7 +34,7 @@ export default function NavatarCardPage() {
 
   const aiEnabled = import.meta.env.PROD || import.meta.env.VITE_ENABLE_AI === "true";
   const initialDraft = useMemo(() => readNavatarDraft(), []);
-  const [avatar, setAvatar] = useState<any | null>(null);
+  const [navatar, setNavatar] = useState<Navatar | null>(null);
   const [description, setDescription] = useState(initialDraft.description);
   const [name, setName] = useState(initialDraft.name);
   const [species, setSpecies] = useState(initialDraft.species);
@@ -47,20 +52,24 @@ export default function NavatarCardPage() {
     let alive = true;
     (async () => {
       try {
-        const a = await getMyAvatar();
-        if (alive) setAvatar(a || null);
-        const c = await getMyCharacterCard();
-        if (c && alive) {
-          setNavatarId(c.id);
-          setName(c.name ?? "");
-          setSpecies(c.species ?? "");
-          setKingdom(c.kingdom ?? "");
-          setBackstory(c.backstory ?? "");
-          setPowers((c.powers ?? []).join(", "));
-          setTraits((c.traits ?? []).join(", "));
+        const base = await getOrCreateNavatar(user.id);
+        if (!alive) return;
+        setNavatar(base);
+        setNavatarId(base.id);
+
+        const card = await getCardForNavatar(user.id);
+        if (!alive) return;
+        if (card) {
+          setNavatarId(card.navatar_id);
+          setName(card.name ?? "");
+          setSpecies(card.species ?? "");
+          setKingdom(card.kingdom ?? "");
+          setBackstory(card.backstory ?? "");
+          setPowers((card.powers ?? []).join(", "));
+          setTraits((card.traits ?? []).join(", "));
         }
       } catch (e: any) {
-        setErr(e.message ?? "Failed to load");
+        if (alive) setErr(e.message ?? "Failed to load");
       } finally {
         if (alive) setLoading(false);
       }
@@ -156,7 +165,13 @@ export default function NavatarCardPage() {
     setSaving(true);
     setErr(null);
     try {
-      if (!user || !avatar?.id) {
+      if (!user) {
+        toast({ text: "Please sign in.", kind: "err" });
+        return;
+      }
+
+      const navatarKey = navatar?.id ?? navatarId;
+      if (!navatarKey) {
         toast({ text: "Pick a Navatar first.", kind: "err" });
         return;
       }
@@ -171,8 +186,16 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      const saved = await saveNavatar({
-        id: navatarId ?? undefined,
+      const updatedNavatar = await upsertNavatar(user.id, {
+        name,
+        species,
+        kingdom,
+        backstory,
+      });
+      setNavatar(updatedNavatar);
+      setNavatarId(updatedNavatar.id);
+
+      await upsertCard(user.id, updatedNavatar.id, {
         name,
         species,
         kingdom,
@@ -180,10 +203,6 @@ export default function NavatarCardPage() {
         powers: powersArr,
         traits: traitsArr,
       });
-
-      if (saved?.id) {
-        setNavatarId(saved.id as string);
-      }
 
       nav("/navatar");
     } catch (e: any) {
