@@ -1,24 +1,28 @@
 import { supabase } from './supabase-client';
-import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { upsertNavatarWithCard } from './supabaseHelpers';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
 
-export type DbAvatar = {
+export type NavatarRecord = {
   id: string;
-  user_id: string | null;
+  owner_id: string | null;
   name: string | null;
+  base_type?: string | null;
+  species?: string | null;
+  kingdom?: string | null;
+  backstory?: string | null;
   image_url: string | null;
   image_path: string | null;
   thumbnail_url: string | null;
   is_public: boolean | null;
   is_primary: boolean | null;
-  metadata: Record<string, any> | null;
-  card: Record<string, any> | null;
+  metadata: Record<string, unknown> | null;
+  card: Record<string, unknown> | null;
   updated_at: string | null;
 };
 
-export type CharacterCard = {
+export type NavatarCard = {
   id: string;
   owner_id: string;
   name: string | null;
@@ -60,34 +64,34 @@ export async function listNavatars(): Promise<{ name: string; url: string; path:
     });
 }
 
-/** Pick an existing image as the user’s avatar (upsert into public.avatars by user_id) */
+/** Pick an existing image as the user’s navatar (upsert into public.navatars by owner_id) */
 export async function pickNavatar(imagePath: string, name?: string) {
-  const user_id = await getSessionUserId();
+  const ownerId = await getSessionUserId();
   const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
 
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .upsert({
-      user_id,
+      owner_id: ownerId,
       name: name ?? 'Me',
       image_url: pub.publicUrl,
       image_path: imagePath,
       is_primary: true,
       is_public: false,
       updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
+    }, { onConflict: 'owner_id' })
     .select()
     .single();
 
   if (error) throw error;
-  return data as DbAvatar;
+  return data as NavatarRecord;
 }
 
-/** Upload a custom image to navatars/<user_id>/… and upsert avatars row */
+/** Upload a custom image to navatars/<owner_id>/… and upsert navatars row */
 export async function uploadNavatar(file: File, name?: string) {
-  const user_id = await getSessionUserId();
+  const ownerId = await getSessionUserId();
   const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${user_id}/${crypto.randomUUID()}.${ext}`;
+  const key = `${NAVATAR_PREFIX}/${ownerId}/${crypto.randomUUID()}.${ext}`;
 
   const { error: upErr } = await supabase
     .storage.from(NAVATAR_BUCKET)
@@ -98,38 +102,38 @@ export async function uploadNavatar(file: File, name?: string) {
   const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(key);
 
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .upsert({
-      user_id,
+      owner_id: ownerId,
       name: name ?? 'Me',
       image_url: pub.publicUrl,
       image_path: key,
       is_primary: true,
       is_public: false,
       updated_at: new Date().toISOString()
-    }, { onConflict: 'user_id' })
+    }, { onConflict: 'owner_id' })
     .select()
     .single();
 
   if (error) throw error;
-  return data as DbAvatar;
+  return data as NavatarRecord;
 }
 
-/** Load the current user’s avatar (avatars row) */
-export async function getMyAvatar() {
-  const user_id = await getSessionUserId();
+/** Load the current user’s navatar */
+export async function getMyNavatar() {
+  const ownerId = await getSessionUserId();
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .select('*')
-    .eq('user_id', user_id)
+    .eq('owner_id', ownerId)
     .single();
 
   if (error && (error as any).code !== 'PGRST116') throw error;
-  return (data as DbAvatar | null) ?? null;
+  return (data as NavatarRecord | null) ?? null;
 }
 
-/** Load the current user's character card */
-export async function getMyCharacterCard(): Promise<CharacterCard | null> {
+/** Load the current user's navatar card */
+export async function getMyNavatarCard(): Promise<NavatarCard | null> {
   const ownerId = await getSessionUserId();
   const { data, error } = await supabase
     .from('navatars')
@@ -161,11 +165,11 @@ export async function getMyCharacterCard(): Promise<CharacterCard | null> {
     traits,
     created_at: (data as any).created_at ?? null,
     updated_at: (data as any).updated_at ?? meta?.updated_at ?? null,
-  };
+  } satisfies NavatarCard;
 }
 
-/** Save / upsert the character card */
-export async function saveCharacterCard(input: {
+/** Save / upsert the navatar card */
+export async function upsertNavatarCard(input: {
   id?: string;
   name?: string;
   species?: string;
@@ -174,7 +178,7 @@ export async function saveCharacterCard(input: {
   powers?: string[];
   traits?: string[];
 }) {
-  const saved = await upsertNavatar({
+  const saved = await upsertNavatarWithCard({
     id: input.id,
     name: input.name ?? '',
     species: input.species ?? '',
@@ -198,6 +202,6 @@ export async function saveCharacterCard(input: {
     traits,
     created_at: saved.created_at ?? null,
     updated_at: saved.updated_at ?? null,
-  } satisfies CharacterCard;
+  } satisfies NavatarCard;
 }
 

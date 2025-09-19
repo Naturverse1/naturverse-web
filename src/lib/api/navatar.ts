@@ -1,39 +1,39 @@
 import { supabase } from '../db'
 import type { Database } from '../../types/db'
 
-type Avatar = Database['public']['Tables']['avatars']['Row']
-type AvatarInsert = Database['public']['Tables']['avatars']['Insert']
-type AvatarUpdate = Database['public']['Tables']['avatars']['Update']
+type Navatar = Database['public']['Tables']['navatars']['Row']
+type NavatarInsert = Database['public']['Tables']['navatars']['Insert']
+type NavatarUpdate = Database['public']['Tables']['navatars']['Update']
 
-export async function listMyAvatars() {
+export async function listMyNavatars() {
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) return []
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .select('*')
-    .eq('user_id', user.id)
+    .eq('owner_id', user.id)
     .order('created_at', { ascending: false })
   if (error) throw error
-  return data as Avatar[]
+  return data as Navatar[]
 }
 
-export async function createAvatar(input: AvatarInsert) {
+export async function createNavatar(input: NavatarInsert) {
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .insert(input)
     .select()
     .single()
   if (error) throw error
-  return data as Avatar
+  return data as Navatar
 }
 
-export async function updateAvatar(id: string, patch: AvatarUpdate) {
+export async function updateNavatar(id: string, patch: NavatarUpdate) {
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .update(patch)
     .eq('id', id)
     .select()
     .single()
   if (error) throw error
-  return data as Avatar
+  return data as Navatar
 }
