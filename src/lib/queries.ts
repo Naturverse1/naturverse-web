@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 // --------------------
 // Profiles
@@ -28,7 +28,7 @@ export async function updateProfile(userId: string, updates: Record<string, unkn
 // --------------------
 export async function createAvatar(navatar: Record<string, unknown>) {
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .insert(navatar)
     .select();
   if (error) throw error;
@@ -37,9 +37,9 @@ export async function createAvatar(navatar: Record<string, unknown>) {
 
 export async function getAvatarsByUser(userId: string) {
   const { data, error } = await supabase
-    .from('avatars')
+    .from('navatars')
     .select('*')
-    .eq('user_id', userId);
+    .eq('owner_id', userId);
   if (error) throw error;
   return data;
 }

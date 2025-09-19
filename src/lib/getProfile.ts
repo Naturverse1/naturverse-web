@@ -1,5 +1,5 @@
 // Tiny helper to load the current user and their profile row
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 export type NaturProfile = {
   id: string;

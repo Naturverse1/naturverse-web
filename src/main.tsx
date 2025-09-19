@@ -13,7 +13,7 @@ import './styles/nv-sweep.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';

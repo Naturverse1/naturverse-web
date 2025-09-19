@@ -22,22 +22,55 @@ export type Database = {
         };
         Update: Partial<Database['public']['Tables']['profiles']['Insert']>;
       };
-      avatars: {
+      navatars: {
         Row: {
           id: string;
-          user_id: string;
+          owner_id: string;
           name: string | null;
-          base_type: string;
-          backstory: string | null;
           image_url: string | null;
+          image_path: string | null;
           created_at: string;
           updated_at: string;
         };
-        Insert: Omit<
-          Database['public']['Tables']['avatars']['Row'],
-          'id' | 'created_at' | 'updated_at'
-        >;
-        Update: Partial<Database['public']['Tables']['avatars']['Insert']>;
+        Insert: {
+          id?: string;
+          owner_id: string;
+          name?: string | null;
+          image_url?: string | null;
+          image_path?: string | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['navatars']['Insert']>;
+      };
+      navatar_cards: {
+        Row: {
+          id: string;
+          owner_id: string;
+          navatar_id: string | null;
+          name: string | null;
+          species: string | null;
+          kingdom: string | null;
+          backstory: string | null;
+          powers: string[] | null;
+          traits: string[] | null;
+          created_at: string;
+          updated_at: string;
+        };
+        Insert: {
+          id?: string;
+          owner_id: string;
+          navatar_id?: string | null;
+          name?: string | null;
+          species?: string | null;
+          kingdom?: string | null;
+          backstory?: string | null;
+          powers?: string[] | null;
+          traits?: string[] | null;
+          created_at?: string;
+          updated_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['navatar_cards']['Insert']>;
       };
       passport_stamps: {
         Row: { id: number; user_id: string; kingdom: string; stamped_at: string };

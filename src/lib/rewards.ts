@@ -1,11 +1,5 @@
 import { confettiBurst } from './confetti';
-import { createClient } from '@supabase/supabase-js';
-
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const sb = (supabaseUrl && supabaseAnon)
-  ? createClient(supabaseUrl, supabaseAnon)
-  : null;
+import { supabase } from '@/lib/supabaseClient';
 
 type StampGrant = { world: string; inc?: number; reason?: string };
 
@@ -24,17 +18,16 @@ export async function grantStamp({ world, inc = 1 }: StampGrant) {
   setLocalPassport(data);
   confettiBurst();
 
-  // Cloud (if signed in + sb present)
+  // Cloud (if signed in)
   try {
-    if (!sb) return;
-    const { data: { user } } = await sb.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     const uid = user?.id;
     if (!uid) return;
     // use RPC if available, else client upsert
-    const rpc = await sb.rpc('grant_world_stamp', { p_user: uid, p_world: world, p_inc: inc });
+    const rpc = await supabase.rpc('grant_world_stamp', { p_user: uid, p_world: world, p_inc: inc });
     if (rpc.error) {
       // fallback: insert or update
-      await sb.from('user_world_stamps').upsert(
+      await supabase.from('user_world_stamps').upsert(
         { user_id: uid, world, count: inc, last_granted_at: new Date().toISOString() },
         { onConflict: 'user_id,world', ignoreDuplicates: false }
       );
@@ -45,15 +38,14 @@ export async function grantStamp({ world, inc = 1 }: StampGrant) {
 /** Post a score safely */
 export async function postScore(game: string, value: number) {
   try {
-    if (!sb) return; // silently no-op in local demo
-    const { data: { user } } = await sb.auth.getUser();
+    const { data: { user } } = await supabase.auth.getUser();
     const uid = user?.id ?? null;
-    await sb.from('scores').insert({ game, value, user_id: uid });
+    await supabase.from('scores').insert({ game, value, user_id: uid });
   } catch {}
 }
 
 // --- AUTO STAMPS (feature-flagged, once-per-day per world) ---
-const AUTO_FLAG = typeof window !== 'undefined' && (process.env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS === 'true');
+const AUTO_FLAG = typeof window !== 'undefined' && (import.meta.env.VITE_ENABLE_AUTO_STAMPS === 'true');
 const AUTO_KEY = 'naturverse.autoStamp.last'; // { [world]: ISO }
 
 function readAuto(): Record<string, string> {

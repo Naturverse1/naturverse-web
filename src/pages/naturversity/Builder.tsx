@@ -23,6 +23,36 @@ const DEFAULT_PLAN: LessonPlan = {
   quiz: [],
 };
 
+const normalizeItem = (value: unknown) => {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    return trimmed === "[object Object]" ? "" : trimmed;
+  }
+  if (value && typeof value === "object") {
+    const maybeText = (value as { text?: unknown }).text;
+    if (typeof maybeText === "string") {
+      const trimmed = maybeText.trim();
+      return trimmed === "[object Object]" ? "" : trimmed;
+    }
+  }
+  const raw = String(value ?? "").trim();
+  return raw === "[object Object]" ? "" : raw;
+};
+
+const toDisplayText = (value: unknown) => {
+  const normalized = normalizeItem(value);
+  if (normalized) return normalized;
+  if (value && typeof value === "object") {
+    try {
+      const serialized = JSON.stringify(value);
+      return serialized === "{}" ? "" : serialized;
+    } catch {
+      return "";
+    }
+  }
+  return "";
+};
+
 export default function LessonBuilderPage() {
   setTitle("Lesson Builder");
   const toast = useToast();
@@ -66,18 +96,18 @@ export default function LessonBuilderPage() {
   };
 
   const sanitizePlan = (input: LessonResponse): LessonPlan => ({
-    title: String(input.title ?? "").trim(),
-    intro: String(input.intro ?? "").trim(),
+    title: normalizeItem(input.title) ?? "",
+    intro: normalizeItem(input.intro) ?? "",
     outline: Array.isArray(input.outline)
       ? input.outline
           .slice(0, 3)
-          .map(item => String(item ?? "").trim())
+          .map(normalizeItem)
           .filter(Boolean)
       : [],
     activities: Array.isArray(input.activities)
       ? input.activities
           .slice(0, 2)
-          .map(item => String(item ?? "").trim())
+          .map(normalizeItem)
           .filter(Boolean)
       : [],
     quiz: [],
@@ -120,6 +150,9 @@ export default function LessonBuilderPage() {
       setBusy(false);
     }
   }
+
+  const outlineItems = plan?.outline?.map(toDisplayText).filter(Boolean) ?? [];
+  const activityItems = plan?.activities?.map(toDisplayText).filter(Boolean) ?? [];
 
   return (
     <div className="page-wrap">
@@ -177,9 +210,9 @@ export default function LessonBuilderPage() {
               <div className="lesson-output__grid">
                 <div className="lesson-output__card">
                   <h3>Outline</h3>
-                  {plan.outline.length ? (
+                  {outlineItems.length ? (
                     <ul>
-                      {plan.outline.map((item, index) => (
+                      {outlineItems.map((item, index) => (
                         <li key={`${item}-${index}`}>{item}</li>
                       ))}
                     </ul>
@@ -189,9 +222,9 @@ export default function LessonBuilderPage() {
                 </div>
                 <div className="lesson-output__card">
                   <h3>Activities</h3>
-                  {plan.activities.length ? (
+                  {activityItems.length ? (
                     <ol>
-                      {plan.activities.map((item, index) => (
+                      {activityItems.map((item, index) => (
                         <li key={`${item}-${index}`}>{item}</li>
                       ))}
                     </ol>

@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 type Props = {
   cta?: string;           // e.g., "Create account"

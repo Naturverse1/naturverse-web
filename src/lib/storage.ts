@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 function sanitizeFilename(name: string) {
   return name.toLowerCase().replace(/[^a-z0-9\.\-_]/g, '_');

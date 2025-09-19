@@ -30,8 +30,12 @@ export default function PickNavatarPage() {
       const row = await pickNavatar(item.path, item.name);
       setActiveNavatarId(row.id);
       nav("/navatar");
-    } catch {
-      toast({ text: "Could not save Navatar.", kind: "err" });
+    } catch (error: any) {
+      console.error(error);
+      const message = typeof error?.message === "string" && error.message.trim().length > 0
+        ? error.message
+        : "Could not save Navatar.";
+      toast({ text: message, kind: "err" });
     }
   }
 

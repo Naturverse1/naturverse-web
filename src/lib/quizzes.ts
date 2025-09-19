@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 /** Create a quiz shell (title/metadata); questions inserted separately */
 export async function createQuiz(payload: {

@@ -1,5 +1,5 @@
 import { ComponentType, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabase-client';
+import { supabase } from '@/lib/supabaseClient';
 
 type Props = { component: ComponentType<any> };
 
