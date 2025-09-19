@@ -1,9 +1,7 @@
 import { confettiBurst } from './confetti';
-import { createClient } from '@supabase/supabase-js';
+import { supabase as sharedSupabase } from './supabase-client';
 
-const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const key = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const sb = (url && key) ? createClient(url, key) : null;
+const sb = sharedSupabase;
 
 type StampGrant = { world: string; inc?: number };
 

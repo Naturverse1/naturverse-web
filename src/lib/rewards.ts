@@ -1,11 +1,7 @@
 import { confettiBurst } from './confetti';
-import { createClient } from '@supabase/supabase-js';
+import { supabase as sharedSupabase } from '@/lib/supabase-client';
 
-const supabaseUrl = process.env.NEXT_PUBLIC_SUPABASE_URL;
-const supabaseAnon = process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
-const sb = (supabaseUrl && supabaseAnon)
-  ? createClient(supabaseUrl, supabaseAnon)
-  : null;
+const sb = sharedSupabase;
 
 type StampGrant = { world: string; inc?: number; reason?: string };
 
@@ -53,7 +49,20 @@ export async function postScore(game: string, value: number) {
 }
 
 // --- AUTO STAMPS (feature-flagged, once-per-day per world) ---
-const AUTO_FLAG = typeof window !== 'undefined' && (process.env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS === 'true');
+const enableAutoStamps = () => {
+  const fromImportMeta = (() => {
+    try {
+      const env = import.meta.env as Record<string, string | undefined>;
+      return env.NEXT_PUBLIC_ENABLE_AUTO_STAMPS ?? env.VITE_ENABLE_AUTO_STAMPS;
+    } catch {
+      return undefined;
+    }
+  })();
+  const fromProcess = typeof process !== 'undefined' ? process.env?.NEXT_PUBLIC_ENABLE_AUTO_STAMPS : undefined;
+  return (fromImportMeta ?? fromProcess) === 'true';
+};
+
+const AUTO_FLAG = typeof window !== 'undefined' && enableAutoStamps();
 const AUTO_KEY = 'naturverse.autoStamp.last'; // { [world]: ISO }
 
 function readAuto(): Record<string, string> {
