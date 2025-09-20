@@ -1,8 +1,15 @@
-import { createClientComponentClient } from "@supabase/auth-helpers-nextjs";
+import { createClient } from "@supabase/supabase-js";
+
+const supabaseUrl = process.env.SUPABASE_URL ?? process.env.VITE_SUPABASE_URL;
+const supabaseAnonKey = process.env.SUPABASE_ANON_KEY ?? process.env.VITE_SUPABASE_ANON_KEY;
+
+if (!supabaseUrl || !supabaseAnonKey) {
+  throw new Error("Missing Supabase configuration");
+}
+
+const supabase = createClient(supabaseUrl, supabaseAnonKey, { auth: { persistSession: false } });
 
 export async function getNavatarUrl(userId: string): Promise<string | null> {
-  const supabase = createClientComponentClient();
-  // assumes table `profiles` with column `navatar_url`
   const { data, error } = await supabase
     .from("profiles")
     .select("navatar_url")

@@ -145,21 +145,21 @@ export default function NavatarCardPage() {
     }
   }
 
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
-
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
+    if (saving) return;
+    if (!user) {
+      toast({ text: "Please sign in to save.", kind: "err" });
+      return;
+    }
+    if (!avatar?.id) {
+      toast({ text: "Pick a Navatar first.", kind: "err" });
+      return;
+    }
+
     setSaving(true);
     setErr(null);
     try {
-      if (!user || !avatar?.id) {
-        toast({ text: "Pick a Navatar first.", kind: "err" });
-        return;
-      }
 
       const powersArr = (powers || "")
         .split(",")
@@ -302,7 +302,7 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button className="pill pill--active" type="submit" disabled={saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

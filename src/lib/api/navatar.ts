@@ -11,16 +11,22 @@ export async function listMyAvatars() {
   const { data, error } = await supabase
     .from('navatars')
     .select('*')
-    .eq('owner_id', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
   if (error) throw error
   return data as Navatar[]
 }
 
 export async function createAvatar(input: NavatarInsert) {
+  const payload: NavatarInsert = { ...input };
+  if (!payload.user_id) {
+    const { data: { user } } = await supabase.auth.getUser();
+    if (!user) throw new Error('Not signed in');
+    payload.user_id = user.id;
+  }
   const { data, error } = await supabase
     .from('navatars')
-    .insert(input)
+    .insert(payload)
     .select()
     .single()
   if (error) throw error

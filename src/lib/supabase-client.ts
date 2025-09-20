@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import { getBrowserClient, supabase } from './supabaseClient';
 
-export { supabase };
-export const createClient = () => supabase;
+export { getBrowserClient, supabase };
+export const createClient = () => getBrowserClient();

@@ -10,11 +10,11 @@
     "allowJs": false,
     "noEmit": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
     }
   },
-  "include": ["app", "components", "lib", "scripts", "src"]
+  "include": ["src", "scripts"]
 }
