@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, type FormEvent, type MouseEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
@@ -18,6 +18,8 @@ type NavatarAiResult = {
   kingdom?: string;
   backstory?: string;
 };
+
+type SubmitEvent = FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>;
 
 export default function NavatarCardPage() {
   const nav = useNavigate();
@@ -145,22 +147,26 @@ export default function NavatarCardPage() {
     }
   }
 
-  const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
-  );
+  const attemptSave = async () => {
+    if (saving) return;
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!canSave) return;
+    const hasDetails = [name, species, kingdom, backstory, powers, traits].some(
+      value => value.trim().length > 0
+    );
+    if (!hasDetails) {
+      toast({ text: "Add some details before saving your Navatar card.", kind: "warn" });
+      return;
+    }
+
+    if (!user || !avatar?.id) {
+      toast({ text: "Pick a Navatar first.", kind: "err" });
+      return;
+    }
+
     setSaving(true);
     setErr(null);
-    try {
-      if (!user || !avatar?.id) {
-        toast({ text: "Pick a Navatar first.", kind: "err" });
-        return;
-      }
 
+    try {
       const powersArr = (powers || "")
         .split(",")
         .map(s => s.trim())
@@ -192,7 +198,12 @@ export default function NavatarCardPage() {
     } finally {
       setSaving(false);
     }
-  }
+  };
+
+  const handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault();
+    void attemptSave();
+  };
 
   if (loading) {
     return (
@@ -215,7 +226,7 @@ export default function NavatarCardPage() {
       <h1 className="pageTitle mt-6 mb-12">Character Card</h1>
       <BackToMyNavatar />
       <NavatarTabs context="subpage" />
-      <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
+      <form className="form-card" onSubmit={handleSubmit} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
 
         {aiEnabled && (
@@ -302,7 +313,12 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button
+            className="pill pill--active"
+            type="submit"
+            onClick={handleSubmit}
+            disabled={saving}
+          >
             {saving ? "Saving…" : "Save"}
           </button>
         </div>
