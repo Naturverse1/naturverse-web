@@ -59,7 +59,7 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
+        <button className="pill pill--active" type="submit" disabled={!file}>
           Save
         </button>
       </form>

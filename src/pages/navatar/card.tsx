@@ -302,7 +302,7 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button className="pill pill--active" type="submit" disabled={saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>
