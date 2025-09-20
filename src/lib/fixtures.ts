@@ -88,6 +88,7 @@ export const sampleWishlist: WishlistRow[] = [
 export const sampleNavatar: NavatarRow = {
   id: 'n1',
   owner_id: 'u1',
+  user_id: 'u1',
   name: 'Macaw',
   base_type: 'animal',
   species: 'Macaw',
