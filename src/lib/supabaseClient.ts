@@ -1,23 +1,6 @@
-import { createClient, type SupabaseClient } from '@supabase/supabase-js';
+import type { SupabaseClient } from '@supabase/supabase-js';
+import { getBrowserClient } from './supabase/browser';
 
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-const supabaseAnonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
+export const supabase: SupabaseClient = getBrowserClient();
 
-if (!supabaseUrl || !supabaseAnonKey) {
-  throw new Error('Missing Supabase environment variables.');
-}
-
-type NaturverseGlobal = typeof globalThis & {
-  __naturverseSupabase?: SupabaseClient;
-};
-
-const globalRef = globalThis as NaturverseGlobal;
-
-export const supabase: SupabaseClient =
-  globalRef.__naturverseSupabase ??
-  (globalRef.__naturverseSupabase = createClient(supabaseUrl, supabaseAnonKey, {
-    auth: {
-      persistSession: true,
-      detectSessionInUrl: true,
-    },
-  }));
+export { getBrowserClient };
