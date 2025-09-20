@@ -27,9 +27,16 @@ export async function updateProfile(userId: string, updates: Record<string, unkn
 // Avatars
 // --------------------
 export async function createAvatar(navatar: Record<string, unknown>) {
+  const payload = { ...navatar } as Record<string, any>;
+  if (!payload.user_id && payload.owner_id) {
+    payload.user_id = payload.owner_id;
+  }
+  if (!payload.owner_id && payload.user_id) {
+    payload.owner_id = payload.user_id;
+  }
   const { data, error } = await supabase
     .from('navatars')
-    .insert(navatar)
+    .insert(payload)
     .select();
   if (error) throw error;
   return data;
@@ -39,7 +46,7 @@ export async function getAvatarsByUser(userId: string) {
   const { data, error } = await supabase
     .from('navatars')
     .select('*')
-    .eq('owner_id', userId);
+    .eq('user_id', userId);
   if (error) throw error;
   return data;
 }

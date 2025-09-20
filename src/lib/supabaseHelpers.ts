@@ -27,6 +27,7 @@ export async function saveNavatar(params: SaveNavatarParams) {
 
   const base = {
     owner_id: userId,
+    user_id: userId,
     name: cleanField(params.name),
     species: cleanField(params.species),
     kingdom: cleanField(params.kingdom),
@@ -52,6 +53,8 @@ export async function saveNavatar(params: SaveNavatarParams) {
     .from("navatar_cards")
     .upsert(
       {
+        owner_id: userId,
+        user_id: userId,
         navatar_id: navatarRow.id,
         powers: cleanList(params.powers),
         traits: cleanList(params.traits),

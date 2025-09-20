@@ -2,15 +2,22 @@ import { supabase } from '@/lib/supabaseClient';
 
 // Table names are navatars; storage bucket remains **avatars**
 export async function saveAvatarRow(payload: any) {
-  // e.g., { owner_id, name, image_url, meta }
-  return await supabase.from('navatars').insert(payload).select().single();
+  // e.g., { owner_id, user_id, name, image_url, meta }
+  const normalized = { ...payload };
+  if (!normalized.user_id && normalized.owner_id) {
+    normalized.user_id = normalized.owner_id;
+  }
+  if (!normalized.owner_id && normalized.user_id) {
+    normalized.owner_id = normalized.user_id;
+  }
+  return await supabase.from('navatars').insert(normalized).select().single();
 }
 
 export async function listAvatarsByUser(userId: string) {
   return await supabase
     .from('navatars')
     .select('*')
-    .eq('owner_id', userId)
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
 }
 

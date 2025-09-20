@@ -35,7 +35,7 @@ export function mapProfileRow(row: ProfileRow): Profile {
 export function mapNavatarRow(row: NavatarRow): Navatar {
   return {
     id: row.id,
-    ownerId: row.owner_id,
+    ownerId: row.owner_id ?? row.user_id,
     name: row.name ?? 'Navatar',
     base: row.base_type,
     species: row.species ?? undefined,
