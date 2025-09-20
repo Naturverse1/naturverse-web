@@ -10,7 +10,7 @@ export default defineConfig({
     splitVendorChunkPlugin(),
     VitePWA({
       registerType: 'autoUpdate',
-      injectRegister: 'auto',
+      injectRegister: null,
       workbox: {
         globPatterns: ['**/*.{js,css,html,svg,png,ico,webp,woff2}'],
         maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
@@ -35,6 +35,17 @@ export default defineConfig({
       },
       // Runtime caching for stuff that isn’t in the precache
       runtimeCaching: [
+        {
+          urlPattern: ({ request }) =>
+            request.destination === 'script' || request.destination === 'style',
+          handler: 'NetworkFirst',
+          options: {
+            cacheName: 'nv-assets',
+            cacheableResponse: {
+              statuses: [200],
+            },
+          },
+        },
         {
           urlPattern: ({ request }) => request.destination === 'image',
           handler: 'CacheFirst',
