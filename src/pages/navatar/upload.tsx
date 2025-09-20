@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type FormEvent, type MouseEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -9,9 +9,12 @@ import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
 
+type SubmitEvent = FormEvent<HTMLFormElement> | MouseEvent<HTMLButtonElement>;
+
 export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
+  const [saving, setSaving] = useState(false);
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
   const nav = useNavigate();
   const toast = useToast();
@@ -26,9 +29,14 @@ export default function UploadNavatarPage() {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
-    if (!file) return;
+  const attemptUpload = async () => {
+    if (saving) return;
+    if (!file) {
+      toast({ text: "Choose an image before saving.", kind: "warn" });
+      return;
+    }
+
+    setSaving(true);
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
@@ -36,8 +44,15 @@ export default function UploadNavatarPage() {
       nav("/navatar");
     } catch {
       toast({ text: "Upload failed", kind: "err" });
+    } finally {
+      setSaving(false);
     }
-  }
+  };
+
+  const handleSubmit = (event: SubmitEvent) => {
+    event.preventDefault();
+    void attemptUpload();
+  };
 
   return (
     <main className="page-pad mx-auto max-w-4xl p-4">
@@ -48,7 +63,7 @@ export default function UploadNavatarPage() {
       <BackToMyNavatar />
       <NavatarTabs context="subpage" />
       <form
-        onSubmit={onSave}
+        onSubmit={handleSubmit}
         style={{ display: "grid", justifyItems: "center", gap: 12, maxWidth: 480, margin: "16px auto" }}
       >
         <NavatarCard src={previewUrl} title={name || "My Navatar"} />
@@ -59,8 +74,13 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
-          Save
+        <button
+          className="pill pill--active"
+          type="submit"
+          onClick={handleSubmit}
+          disabled={saving}
+        >
+          {saving ? "Saving…" : "Save"}
         </button>
       </form>
     </main>
