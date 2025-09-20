@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { FormEvent, useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -13,6 +13,7 @@ export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [saving, setSaving] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
 
@@ -26,16 +27,20 @@ export default function UploadNavatarPage() {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  async function onSave(e: React.FormEvent) {
+  async function onSave(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!file) return;
+    if (!file || saving) return;
+    setSaving(true);
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
       toast({ text: "Uploaded ✓", kind: "ok" });
       nav("/navatar");
-    } catch {
+    } catch (error) {
+      console.error(error);
       toast({ text: "Upload failed", kind: "err" });
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -59,8 +64,8 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
-          Save
+        <button className="pill pill--active" type="submit" disabled={!file || saving}>
+          {saving ? "Saving…" : "Save"}
         </button>
       </form>
     </main>

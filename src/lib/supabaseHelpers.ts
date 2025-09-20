@@ -1,4 +1,6 @@
-import { supabase } from '@/lib/supabaseClient';
+import { getBrowserClient } from '@/lib/supabase/browser';
+
+const supabase = getBrowserClient();
 
 type SaveNavatarParams = {
   id?: string;
