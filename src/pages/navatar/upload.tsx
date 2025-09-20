@@ -13,6 +13,7 @@ export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [saving, setSaving] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
 
@@ -28,7 +29,12 @@ export default function UploadNavatarPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!file) return;
+    if (saving) return;
+    if (!file) {
+      toast({ text: "Choose an image first.", kind: "warn" });
+      return;
+    }
+    setSaving(true);
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
@@ -36,6 +42,8 @@ export default function UploadNavatarPage() {
       nav("/navatar");
     } catch {
       toast({ text: "Upload failed", kind: "err" });
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -59,8 +67,8 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
-          Save
+        <button className="pill pill--active" type="submit" disabled={saving}>
+          {saving ? "Saving…" : "Save"}
         </button>
       </form>
     </main>

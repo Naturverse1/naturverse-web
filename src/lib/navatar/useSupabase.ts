@@ -2,7 +2,7 @@ import { supabase } from '@/lib/supabaseClient';
 
 // Table names are navatars; storage bucket remains **avatars**
 export async function saveAvatarRow(payload: any) {
-  // e.g., { owner_id, name, image_url, meta }
+  // e.g., { user_id, name, image_url, meta }
   return await supabase.from('navatars').insert(payload).select().single();
 }
 
@@ -10,7 +10,7 @@ export async function listAvatarsByUser(userId: string) {
   return await supabase
     .from('navatars')
     .select('*')
-    .eq('owner_id', userId)
+    .eq('user_id', userId)
     .order('created_at', { ascending: false });
 }
 

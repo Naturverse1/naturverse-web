@@ -10,7 +10,7 @@ export type ProfileRow = {
 
 export type NavatarRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   name: string | null;
   base_type: 'animal' | 'fruit' | 'insect' | 'spirit';
   species: string | null;
@@ -23,7 +23,7 @@ export type NavatarRow = {
 
 export type PassportStampRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   kingdom: string;
   stamped_at: string;
 };
@@ -38,7 +38,7 @@ export type BadgeRow = {
 
 export type XpLedgerRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   delta: number;
   reason: string;
   created_at: string;
@@ -56,7 +56,7 @@ export type ProductRow = {
 
 export type WishlistRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   product_id: string;
   created_at: string;
 };
@@ -73,7 +73,7 @@ export type Profile = {
 
 export type Navatar = {
   id: string;
-  ownerId: string;
+  userId: string;
   name: string;
   base: NavatarRow['base_type'];
   species?: string;

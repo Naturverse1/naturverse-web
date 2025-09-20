@@ -39,7 +39,7 @@ export async function getAvatarsByUser(userId: string) {
   const { data, error } = await supabase
     .from('navatars')
     .select('*')
-    .eq('owner_id', userId);
+    .eq('user_id', userId);
   if (error) throw error;
   return data;
 }

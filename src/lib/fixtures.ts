@@ -26,13 +26,13 @@ export const ALL_KINGDOMS = [
 export const sampleStamps: PassportStampRow[] = [
   {
     id: 's1',
-    owner_id: 'u1',
+    user_id: 'u1',
     kingdom: 'thailandia',
     stamped_at: new Date().toISOString(),
   },
   {
     id: 's2',
-    owner_id: 'u1',
+    user_id: 'u1',
     kingdom: 'amerilandia',
     stamped_at: new Date().toISOString(),
   },
@@ -41,14 +41,14 @@ export const sampleStamps: PassportStampRow[] = [
 export const sampleXp: XpLedgerRow[] = [
   {
     id: 'x1',
-    owner_id: 'u1',
+    user_id: 'u1',
     delta: 10,
     reason: 'welcome',
     created_at: new Date().toISOString(),
   },
   {
     id: 'x2',
-    owner_id: 'u1',
+    user_id: 'u1',
     delta: 5,
     reason: 'quest',
     created_at: new Date(Date.now() - 3 * 864e5).toISOString(),
@@ -79,7 +79,7 @@ export const sampleProducts: ProductRow[] = [
 export const sampleWishlist: WishlistRow[] = [
   {
     id: 'w1',
-    owner_id: 'u1',
+    user_id: 'u1',
     product_id: 'p2',
     created_at: new Date().toISOString(),
   },
@@ -87,7 +87,7 @@ export const sampleWishlist: WishlistRow[] = [
 
 export const sampleNavatar: NavatarRow = {
   id: 'n1',
-  owner_id: 'u1',
+  user_id: 'u1',
   name: 'Macaw',
   base_type: 'animal',
   species: 'Macaw',
