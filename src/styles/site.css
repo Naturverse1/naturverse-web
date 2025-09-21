@@ -105,3 +105,36 @@ header .nv-icon {
 .btn-danger{ background:#fff0f0; border-color:#e11d48; color:#e11d48; }
 .nv-cart-badge{ position:relative; display:inline-flex; align-items:center; gap:.25rem; }
 .nv-cart-dot{ position:absolute; top:-6px; right:-10px; font:600 12px/1 system-ui; padding:.15rem .35rem; border-radius:999px; background:#1f64ff; color:#fff; }
+
+/* ===== Assistant FAB fixes ===== */
+/* The wrapper must NOT cover the page; keep it to the button’s box only */
+.fab-root {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  z-index: 9999;           /* visible above content */
+  pointer-events: none;    /* wrapper never steals clicks */
+}
+
+.fab-root > .fab-button {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  border: 2px solid rgba(37, 99, 235, .35);
+  box-shadow: rgba(0, 0, 0, .15) 6px 6px 20px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: #fff;
+  padding: 0;
+  cursor: pointer;
+  pointer-events: auto; /* only the visible circle is clickable */
+}
+
+/* make sure pills can receive pointer events */
+.pill,
+.pill--active {
+  pointer-events: auto;
+}

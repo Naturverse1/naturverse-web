@@ -4,6 +4,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { assistantMap } from "@/data/assistantMap";
 import { logEvent } from "@/lib/analytics";
 import { findRoute } from "@/lib/navIntents";
+import AssistantFab from "./AssistantFab";
 
 /** Brand tokens (adjust if your blue is different) */
 const BRAND_BLUE = "#2563EB"; // Naturverse blue
@@ -175,37 +176,12 @@ export default function TurianAssistant({
 
   return (
     <>
-      {/* Floating button (bottom-right) */}
-      <button
-        aria-label="Ask Turian"
-        onClick={open ? closeBot : openBot}
-        style={{
-          position: "fixed",
-          right: 16,
-          bottom: 16,
-          width: 56,
-          height: 56,
-          borderRadius: "50%",
-          background: "#ffffff",
-          border: `2px solid ${BRAND_BLUE}`,
-          boxShadow: "0 6px 20px rgba(0,0,0,0.15)",
-          display: open ? "none" : "inline-flex",
-          alignItems: "center",
-          justifyContent: "center",
-          padding: 0,
-          cursor: "pointer",
-          zIndex: 90_000,
-        }}
-      >
-        {/* Turian head from /public */}
-        <img
-          src="/favicon-64x64.png"
-          alt="Turian"
-          width={32}
-          height={32}
-          style={{ display: "block" }}
+      {!open && (
+        <AssistantFab
+          ariaLabel="Ask Turian"
+          onClick={openBot}
         />
-      </button>
+      )}
 
       {/* Drawer */}
       {open && (
