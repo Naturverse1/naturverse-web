@@ -2,7 +2,7 @@ import { useState } from 'react';
 import { useLocation, Link } from 'wouter';
 
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,7 +45,7 @@ export default function Signup() {
 
       if (user) {
         // Insert user into users table (ignore if already exists)
-        await supabase
+        await supabase()
           .from('users')
           .insert([{ id: user.id, email: user.email }])
           .select()

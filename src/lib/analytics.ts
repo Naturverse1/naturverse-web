@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import supabase from './supabaseClient';
 
 type AnalyticsEvent = {
   event: string;
@@ -9,7 +9,7 @@ type AnalyticsEvent = {
 
 export async function logEvent(payload: AnalyticsEvent) {
   try {
-    await supabase.from('analytics').insert({
+    await supabase().from('analytics').insert({
       event: payload.event,
       from_page: payload.from_page ?? null,
       to_page: payload.to_page ?? null,

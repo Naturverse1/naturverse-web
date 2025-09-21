@@ -15,7 +15,7 @@ import TurianLogo from '@assets/turian_media_logo_transparent.png';
 import { useState, useEffect } from 'react';
 
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';

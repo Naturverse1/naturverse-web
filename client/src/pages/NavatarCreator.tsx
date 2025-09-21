@@ -1,7 +1,7 @@
 import { useState } from 'react';
 
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Badge } from '@/components/ui/badge';
@@ -32,7 +32,7 @@ export default function NavatarCreator() {
     try {
       // Create navatar in Supabase avatars table
       const categoryData = categories.find((c) => c.id === selectedCategory);
-      const { data, error: insertError } = await supabase
+      const { data, error: insertError } = await supabase()
         .from('avatars')
         .insert({
           user_id: user.id,

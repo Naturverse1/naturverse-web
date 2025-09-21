@@ -1,5 +1,5 @@
 import { confettiBurst } from './confetti';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 type StampGrant = { world: string; inc?: number; reason?: string };
 
@@ -20,14 +20,14 @@ export async function grantStamp({ world, inc = 1 }: StampGrant) {
 
   // Cloud (if signed in)
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase().auth.getUser();
     const uid = user?.id;
     if (!uid) return;
     // use RPC if available, else client upsert
-    const rpc = await supabase.rpc('grant_world_stamp', { p_user: uid, p_world: world, p_inc: inc });
+    const rpc = await supabase().rpc('grant_world_stamp', { p_user: uid, p_world: world, p_inc: inc });
     if (rpc.error) {
       // fallback: insert or update
-      await supabase.from('user_world_stamps').upsert(
+      await supabase().from('user_world_stamps').upsert(
         { user_id: uid, world, count: inc, last_granted_at: new Date().toISOString() },
         { onConflict: 'user_id,world', ignoreDuplicates: false }
       );
@@ -38,9 +38,9 @@ export async function grantStamp({ world, inc = 1 }: StampGrant) {
 /** Post a score safely */
 export async function postScore(game: string, value: number) {
   try {
-    const { data: { user } } = await supabase.auth.getUser();
+    const { data: { user } } = await supabase().auth.getUser();
     const uid = user?.id ?? null;
-    await supabase.from('scores').insert({ game, value, user_id: uid });
+    await supabase().from('scores').insert({ game, value, user_id: uid });
   } catch {}
 }
 

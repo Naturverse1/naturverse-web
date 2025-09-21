@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 
 export function useXP() {
   const [xp, setXp] = useState(0);
@@ -7,11 +7,11 @@ export function useXP() {
 
   useEffect(() => {
     (async () => {
-      const { data: userRes } = await supabase.auth.getUser();
+      const { data: userRes } = await supabase().auth.getUser();
       const userId = userRes.user?.id;
       if (!userId) { setXp(0); setLoading(false); return; }
 
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from("xp_ledger")
         .select("delta")
         .eq("user_id", userId);
@@ -25,10 +25,10 @@ export function useXP() {
   }, []);
 
   async function addXP(delta: number, source = "manual") {
-    const { data: userRes } = await supabase.auth.getUser();
+    const { data: userRes } = await supabase().auth.getUser();
     const userId = userRes.user?.id;
     if (!userId) return;
-    await supabase.from("xp_ledger").insert({ user_id: userId, delta, source });
+    await supabase().from("xp_ledger").insert({ user_id: userId, delta, source });
     setXp((v) => v + delta);
   }
 

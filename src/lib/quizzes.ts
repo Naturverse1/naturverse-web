@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 /** Create a quiz shell (title/metadata); questions inserted separately */
 export async function createQuiz(payload: {
@@ -9,7 +9,7 @@ export async function createQuiz(payload: {
   difficulty?: 'easy' | 'medium' | 'hard';
   is_published?: boolean;
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('quizzes')
     .insert(payload)
     .select()
@@ -20,14 +20,14 @@ export async function createQuiz(payload: {
 
 /** Fetch quiz with its published questions */
 export async function getQuiz(quizId: string) {
-  const { data: quiz, error: e1 } = await supabase
+  const { data: quiz, error: e1 } = await supabase()
     .from('quizzes')
     .select('*')
     .eq('id', quizId)
     .single();
   if (e1) throw e1;
 
-  const { data: questions, error: e2 } = await supabase
+  const { data: questions, error: e2 } = await supabase()
     .from('quiz_questions')
     .select('*')
     .eq('quiz_id', quizId)
@@ -47,7 +47,7 @@ export async function submitQuizAttempt(input: {
   duration_ms?: number;
   detail?: unknown; // optional JSON with per-question results
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('quiz_attempts')
     .insert({
       user_id: input.user_id,
@@ -65,7 +65,7 @@ export async function submitQuizAttempt(input: {
 
 /** Attempts for a user (newest first) */
 export async function getUserQuizAttempts(userId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('quiz_attempts')
     .select('*, quizzes(title)')
     .eq('user_id', userId)
@@ -76,7 +76,7 @@ export async function getUserQuizAttempts(userId: string) {
 
 /** Simple leaderboard for a quiz (top scores, fastest tiebreak) */
 export async function getLeaderboard(quizId: string, limit = 25) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('quiz_attempts')
     .select('user_id, score, max_score, duration_ms, created_at')
     .eq('quiz_id', quizId)

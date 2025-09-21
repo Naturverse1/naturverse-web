@@ -1,4 +1,4 @@
-import { supabase } from './supabaseClient';
+import supabase from './supabaseClient';
 
 export { supabase };
-export const createClient = () => supabase;
+export const createClient = () => supabase();

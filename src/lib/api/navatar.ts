@@ -1,4 +1,4 @@
-import { supabase } from '../db'
+import supabase from '../db'
 import type { Database } from '../../types/db'
 
 type Navatar = Database['public']['Tables']['navatars']['Row']
@@ -6,19 +6,19 @@ type NavatarInsert = Database['public']['Tables']['navatars']['Insert']
 type NavatarUpdate = Database['public']['Tables']['navatars']['Update']
 
 export async function listMyAvatars() {
-  const { data: { user } } = await supabase.auth.getUser()
+  const { data: { user } } = await supabase().auth.getUser()
   if (!user) return []
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('navatars')
     .select('*')
-    .eq('owner_id', user.id)
+    .eq('user_id', user.id)
     .order('created_at', { ascending: false })
   if (error) throw error
   return data as Navatar[]
 }
 
 export async function createAvatar(input: NavatarInsert) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('navatars')
     .insert(input)
     .select()
@@ -28,7 +28,7 @@ export async function createAvatar(input: NavatarInsert) {
 }
 
 export async function updateAvatar(id: string, patch: NavatarUpdate) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('navatars')
     .update(patch)
     .eq('id', id)

@@ -1,4 +1,4 @@
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import { demoGrant } from "@/lib/naturbank";
 import { demoAddStamp } from "@/lib/passport";
 import {
@@ -59,7 +59,7 @@ const LOCAL_STAMP_KEY = "naturverse.passport.stamps.v1";
 
 async function getCurrentUserId() {
   try {
-    const { data } = await supabase.auth.getSession();
+    const { data } = await supabase().auth.getSession();
     return data.session?.user?.id ?? null;
   } catch (error) {
     console.warn("progress:getSession failed", error);
@@ -167,7 +167,7 @@ function addBadgeLocal(region: string): BadgeResult {
 }
 
 async function addBadgeRemote(region: string, userId: string): Promise<BadgeResult> {
-  const { count, error: countError } = await supabase
+  const { count, error: countError } = await supabase()
     .from("passport_stamps")
     .select("id", { count: "exact", head: true })
     .eq("user_id", userId)
@@ -178,7 +178,7 @@ async function addBadgeRemote(region: string, userId: string): Promise<BadgeResu
   if (!unlocked) return { status: "noop" };
 
   const code = createBadgeCode(region, unlocked.level);
-  const { data: existing, error: existingError } = await supabase
+  const { data: existing, error: existingError } = await supabase()
     .from("passport_badges")
     .select("id")
     .eq("user_id", userId)
@@ -188,7 +188,7 @@ async function addBadgeRemote(region: string, userId: string): Promise<BadgeResu
   if (existing) return { status: "noop" };
 
   const award = toBadgeAward(region, unlocked);
-  const { error: insertError } = await supabase
+  const { error: insertError } = await supabase()
     .from("passport_badges")
     .insert({ user_id: userId, code, label: award.label });
   if (insertError) throw insertError;
@@ -204,7 +204,7 @@ export async function grantNatur(amount: number, note: string): Promise<GrantNat
   try {
     const userId = await getCurrentUserId();
     if (userId) {
-      const { error } = await supabase.rpc("earn_spend_natur", {
+      const { error } = await supabase().rpc("earn_spend_natur", {
         p_kind: "earn",
         p_amount: safeAmount,
         p_meta: { source: "turian-quest", note: entryNote },
@@ -234,7 +234,7 @@ export async function addStamp(region: string, questTitle: string): Promise<Stam
   try {
     const userId = await getCurrentUserId();
     if (userId) {
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from("passport_stamps")
         .insert({ user_id: userId, world, title, note })
         .select("id,user_id,world,title,note,created_at")

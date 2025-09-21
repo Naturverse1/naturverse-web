@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 import { useAuth } from '../auth/AuthContext';
 import { saveProfile } from '../lib/saveProfile';
 
@@ -12,7 +12,7 @@ export default function ProfileForm() {
   useEffect(() => {
     if (!user) return;
       (async () => {
-        const { data } = await supabase
+        const { data } = await supabase()
           .from('profiles')
           .select('display_name')
           .eq('id', user.id)
@@ -26,7 +26,7 @@ export default function ProfileForm() {
       if (!user) return;
       try {
         setLoading(true);
-        await saveProfile(supabase, user, displayName, file);
+        await saveProfile(supabase(), user, displayName, file);
         alert('Profile saved!');
       } catch (e: any) {
         alert(`Save failed: ${e.message ?? 'Unknown error'}`);

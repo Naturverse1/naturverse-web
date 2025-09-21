@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
@@ -14,13 +14,13 @@ export default function LoginForm() {
     let mounted = true;
 
     // Load initial session
-    supabase.auth.getSession().then(({ data }) => {
+    supabase().auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setSession(data.session ?? null);
     });
 
     // Subscribe to auth state changes
-    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_event: AuthChangeEvent, newSession) => {
       setSession(newSession);
     });
 
@@ -37,7 +37,7 @@ export default function LoginForm() {
     setMessage(null);
     try {
       sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOtp({
+      const { error } = await supabase().auth.signInWithOtp({
         email,
         options: {
           emailRedirectTo: `${window.location.origin}/auth/callback`,
@@ -57,7 +57,7 @@ export default function LoginForm() {
     setMessage(null);
     try {
       sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
-      const { error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase().auth.signInWithOAuth({
         provider: 'google',
         options: { redirectTo: `${window.location.origin}/auth/callback` },
       });
@@ -70,7 +70,7 @@ export default function LoginForm() {
   }
 
   async function handleLogout() {
-    await supabase.auth.signOut();
+    await supabase().auth.signOut();
     setMessage('Signed out.');
   }
 

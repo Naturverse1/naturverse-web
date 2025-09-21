@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useLocation } from 'wouter';
 
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -17,7 +17,7 @@ export default function ResetPassword() {
 
   useEffect(() => {
     // Check if we have a valid session from the magic link
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase().auth.getSession().then(({ data: { session } }) => {
       if (!session) {
         setError('Invalid or expired reset link. Please request a new one.');
       }
@@ -42,7 +42,7 @@ export default function ResetPassword() {
     }
 
     try {
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await supabase().auth.updateUser({
         password: password,
       });
 

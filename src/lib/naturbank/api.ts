@@ -1,4 +1,4 @@
-import { supabase } from '../supabaseClient';
+import supabase from '../supabaseClient';
 
 export type Wallet = {
   id: string;
@@ -17,7 +17,7 @@ export type Txn = {
 };
 
 export async function getOrCreateWallet(userId: string): Promise<Wallet> {
-  const { data: existing, error } = await supabase
+  const { data: existing, error } = await supabase()
     .from('wallets')
     .select('*')
     .eq('user_id', userId)
@@ -25,7 +25,7 @@ export async function getOrCreateWallet(userId: string): Promise<Wallet> {
 
   if (!error && existing) return existing as Wallet;
 
-  const { data, error: insErr } = await supabase
+  const { data, error: insErr } = await supabase()
     .from('wallets')
     .insert({ user_id: userId })
     .select()
@@ -38,7 +38,7 @@ export async function saveWalletMeta(
   walletId: string,
   fields: Partial<Pick<Wallet, 'label' | 'address'>>
 ) {
-  const { error } = await supabase
+  const { error } = await supabase()
     .from('wallets')
     .update(fields)
     .eq('id', walletId);
@@ -46,7 +46,7 @@ export async function saveWalletMeta(
 }
 
 export async function listTxns(walletId: string, userId: string): Promise<Txn[]> {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('wallet_txns')
     .select('id,type,amount,note,created_at')
     .eq('wallet_id', walletId)
@@ -63,7 +63,7 @@ async function writeTxn(
   amount: number,
   note?: string
 ) {
-  const { error } = await supabase
+  const { error } = await supabase()
     .from('wallet_txns')
     .insert({ wallet_id: walletId, user_id: userId, type, amount, note: note ?? null });
   if (error) throw error;

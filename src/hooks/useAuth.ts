@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import type { User } from '@supabase/supabase-js'
-import { supabase } from '@/lib/supabaseClient'
+import supabase from '@/lib/supabaseClient'
 
 export function useAuth() {
   const [user, setUser] = useState<User | null>(null)
@@ -9,14 +9,14 @@ export function useAuth() {
   useEffect(() => {
     let ignore = false
 
-    supabase.auth.getUser().then(({ data }) => {
+    supabase().auth.getUser().then(({ data }) => {
       if (!ignore) {
         setUser(data.user ?? null)
         setLoading(false)
       }
     })
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_ev, sess) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_ev, sess) => {
       setUser(sess?.user ?? null)
     })
 

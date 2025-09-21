@@ -1,23 +1,28 @@
-import { supabase } from './supabaseClient';
+import supabase from './supabaseClient';
 import { getActiveNavatarId } from './localNavatar';
-import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { saveAvatar as upsertNavatar } from './supabaseHelpers';
+
+const sb = supabase();
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
 
 export type NavatarRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   name: string | null;
   image_url: string | null;
   image_path: string | null;
+  species?: string | null;
+  kingdom?: string | null;
+  backstory?: string | null;
   created_at: string | null;
   updated_at: string | null;
 };
 
 export type CharacterCard = {
   id: string;
-  owner_id: string;
+  user_id: string;
   name: string | null;
   species: string | null;
   kingdom: string | null;
@@ -29,20 +34,20 @@ export type CharacterCard = {
 };
 
 export async function getSessionUserId() {
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user } } = await sb.auth.getUser();
   if (!user) throw new Error('Not signed in');
   return user.id;
 }
 
 export function navatarImageUrl(path: string | null) {
   if (!path) return null;
-  const { data } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
+  const { data } = sb.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
   return data?.publicUrl ?? null;
 }
 
 /** List available navatars to pick (reads files under avatars/navatars) */
 export async function listNavatars(): Promise<{ name: string; url: string; path: string }[]> {
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .storage.from(NAVATAR_BUCKET)
     .list(NAVATAR_PREFIX, { limit: 200, sortBy: { column: 'name', order: 'asc' } });
 
@@ -52,19 +57,19 @@ export async function listNavatars(): Promise<{ name: string; url: string; path:
     .filter(item => item.name && !item.name.endsWith('/'))
     .map(item => {
       const path = `${NAVATAR_PREFIX}/${item.name}`;
-      const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
+      const { data: pub } = sb.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
       return { name: item.name!, url: pub.publicUrl, path };
     });
 }
 
-async function resolveExistingNavatarId(ownerId: string): Promise<string | null> {
+async function resolveExistingNavatarId(userId: string): Promise<string | null> {
   const activeId = getActiveNavatarId();
   if (activeId) return activeId;
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('navatars')
     .select('id')
-    .eq('owner_id', ownerId)
+    .eq('user_id', userId)
     .order('updated_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     .limit(1)
@@ -76,21 +81,21 @@ async function resolveExistingNavatarId(ownerId: string): Promise<string | null>
 
 /** Pick an existing image and upsert it into public.navatars */
 export async function pickNavatar(imagePath: string, name?: string): Promise<NavatarRow> {
-  const owner_id = await getSessionUserId();
-  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
+  const user_id = await getSessionUserId();
+  const { data: pub } = sb.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
 
   const payload: Record<string, any> = {
-    owner_id,
+    user_id,
     name: name ?? 'My Navatar',
     image_url: pub.publicUrl ?? null,
     image_path: imagePath,
     updated_at: new Date().toISOString(),
   };
 
-  const existingId = await resolveExistingNavatarId(owner_id);
+  const existingId = await resolveExistingNavatarId(user_id);
   if (existingId) payload.id = existingId;
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('navatars')
     .upsert(payload, { onConflict: 'id' })
     .select('*')
@@ -102,11 +107,11 @@ export async function pickNavatar(imagePath: string, name?: string): Promise<Nav
 
 /** Upload a custom image then store it in public.navatars */
 export async function uploadNavatar(file: File, name?: string): Promise<NavatarRow> {
-  const owner_id = await getSessionUserId();
+  const user_id = await getSessionUserId();
   const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${owner_id}/${crypto.randomUUID()}.${ext}`;
+  const key = `${NAVATAR_PREFIX}/${user_id}/${crypto.randomUUID()}.${ext}`;
 
-  const { error: upErr } = await supabase
+  const { error: upErr } = await sb
     .storage.from(NAVATAR_BUCKET)
     .upload(key, file, { upsert: true });
 
@@ -117,14 +122,14 @@ export async function uploadNavatar(file: File, name?: string): Promise<NavatarR
 
 /** Load the current user's navatar row */
 export async function getMyAvatar(): Promise<NavatarRow | null> {
-  const owner_id = await getSessionUserId();
+  const user_id = await getSessionUserId();
   const activeId = getActiveNavatarId();
 
   if (activeId) {
-    const { data, error } = await supabase
+    const { data, error } = await sb
       .from('navatars')
       .select('*')
-      .eq('owner_id', owner_id)
+      .eq('user_id', user_id)
       .eq('id', activeId)
       .maybeSingle();
 
@@ -132,10 +137,10 @@ export async function getMyAvatar(): Promise<NavatarRow | null> {
     if (data) return data as NavatarRow;
   }
 
-  const { data, error } = await supabase
+  const { data, error } = await sb
     .from('navatars')
     .select('*')
-    .eq('owner_id', owner_id)
+    .eq('user_id', user_id)
     .order('updated_at', { ascending: false, nullsFirst: false })
     .order('created_at', { ascending: false })
     .limit(1)
@@ -147,13 +152,13 @@ export async function getMyAvatar(): Promise<NavatarRow | null> {
 
 /** Load the current user's character card */
 export async function getMyCharacterCard(): Promise<CharacterCard | null> {
-  const ownerId = await getSessionUserId();
-  const { data, error } = await supabase
+  const userId = await getSessionUserId();
+  const { data, error } = await sb
     .from('navatars')
     .select(
-      'id, owner_id, name, species, kingdom, backstory, created_at, updated_at, navatar_cards(powers, traits, updated_at)'
+      'id, user_id, name, species, kingdom, backstory, created_at, updated_at, navatar_cards(powers, traits, updated_at)'
     )
-    .eq('owner_id', ownerId)
+    .eq('user_id', userId)
     .order('updated_at', { ascending: false, nullsFirst: true })
     .order('created_at', { ascending: false })
     .limit(1)
@@ -169,7 +174,7 @@ export async function getMyCharacterCard(): Promise<CharacterCard | null> {
 
   return {
     id: data.id as string,
-    owner_id: data.owner_id as string,
+    user_id: data.user_id as string,
     name: (data as any).name ?? null,
     species: (data as any).species ?? null,
     kingdom: (data as any).kingdom ?? null,
@@ -206,7 +211,7 @@ export async function saveCharacterCard(input: {
 
   return {
     id: saved.id as string,
-    owner_id: saved.owner_id as string,
+    user_id: saved.user_id as string,
     name: saved.name ?? null,
     species: saved.species ?? null,
     kingdom: saved.kingdom ?? null,
