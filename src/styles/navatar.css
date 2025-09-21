@@ -338,3 +338,9 @@
   }
 }
 
+/* Ensure generate button is always shown */
+.generate-btn {
+  opacity: 1;
+  visibility: visible;
+}
+
