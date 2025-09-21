@@ -74,27 +74,6 @@ export const DEFAULT_NEGATIVE_PROMPT =
 
 export const MAX_SEED = 0xffff_ffff; // 4294967295
 
-export class StabilityError extends Error {
-  status?: number;
-  remaining?: number | null;
-
-  constructor(message: string, status?: number, remaining?: number | null) {
-    super(message);
-    this.name = "StabilityError";
-    this.status = status;
-    this.remaining = remaining ?? null;
-  }
-}
-
-export class RateLimitError extends StabilityError {
-  constructor(message: string, remaining?: number | null) {
-    super(message, 429, remaining ?? null);
-    this.name = "RateLimitError";
-  }
-}
-
-export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free 25 Stability generations.";
-
 export function buildPrompt(userPrompt: string, style: StylePreset): string {
   const trimmed = userPrompt.trim();
   const parts = [
@@ -128,44 +107,67 @@ export function normalizeSeed(seed: number | undefined): number | undefined {
   return Math.floor(seed);
 }
 
-function parseRemaining(header: string | null): number | null {
-  if (!header) return null;
-  const value = Number(header);
-  return Number.isFinite(value) ? value : null;
+function normalizeDimension(value: number | undefined): number | undefined {
+  if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
+  return Math.max(256, Math.min(2048, Math.floor(value)));
 }
 
-export interface StabilityGenerateOptions {
+function stringifyErrorPayload(payload: unknown): string {
+  if (!payload) return "Unknown error from Hugging Face";
+  if (typeof payload === "string") return payload;
+  if (typeof payload === "object") {
+    const record = payload as Record<string, unknown>;
+    const detail = record.detail ?? record.error ?? record.message;
+    if (typeof detail === "string" && detail.trim()) {
+      return detail;
+    }
+    try {
+      return JSON.stringify(payload);
+    } catch {
+      return String(payload);
+    }
+  }
+  return String(payload);
+}
+
+export interface GenerateNavatarOptions {
   prompt: string;
-  negativePrompt?: string;
+  avoid?: string;
   seed?: number;
-  size?: string;
-  style?: string;
+  width?: number;
+  height?: number;
+  onBrand?: boolean;
   signal?: AbortSignal;
 }
 
-export interface StabilityGenerateResult {
-  blob: Blob;
-  remaining?: number | null;
-}
-
-export async function generateWithStability({
+export async function generateNavatarImage({
   prompt,
-  negativePrompt,
+  avoid,
   seed,
-  size,
-  style,
+  width,
+  height,
+  onBrand = true,
   signal,
-}: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
-  if (!prompt?.trim()) {
-    throw new StabilityError("Prompt required");
+}: GenerateNavatarOptions): Promise<Blob> {
+  const trimmedPrompt = prompt?.trim();
+  if (!trimmedPrompt) {
+    throw new Error("Prompt required");
   }
 
   const payload: Record<string, unknown> = {
-    prompt,
-    negativePrompt: negativePrompt?.trim() || undefined,
-    size,
-    style,
+    prompt: trimmedPrompt,
+    onBrand,
   };
+
+  const normalizedWidth = normalizeDimension(width) ?? 1024;
+  const normalizedHeight = normalizeDimension(height) ?? 1024;
+  payload.width = normalizedWidth;
+  payload.height = normalizedHeight;
+
+  const trimmedAvoid = avoid?.trim();
+  if (trimmedAvoid) {
+    payload.avoid = trimmedAvoid;
+  }
 
   const normalizedSeed = normalizeSeed(seed);
   if (typeof normalizedSeed === "number") {
@@ -174,31 +176,43 @@ export async function generateWithStability({
 
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/ai-generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal,
     });
   } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
+    throw new Error("Unable to reach the AI generator. Check your connection and try again.");
   }
 
-  const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const ct = resp.headers.get("content-type") || "";
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
-
-    if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
-      throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
+    const raw = await resp.text();
+    let parsed: unknown = raw;
+    if (ct.includes("json")) {
+      try {
+        parsed = JSON.parse(raw || "null");
+      } catch {
+        parsed = raw;
+      }
     }
-
-    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
+    throw new Error(stringifyErrorPayload(parsed));
   }
 
-  const blob = await resp.blob();
-  return { blob, remaining };
+  if (ct.includes("image/")) {
+    return await resp.blob();
+  }
+
+  const raw = await resp.text();
+  let parsed: unknown = raw;
+  if (ct.includes("json")) {
+    try {
+      parsed = JSON.parse(raw || "null");
+    } catch {
+      parsed = raw;
+    }
+  }
+  throw new Error(stringifyErrorPayload(parsed));
 }

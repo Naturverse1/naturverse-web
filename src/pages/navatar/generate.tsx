@@ -12,36 +12,19 @@ import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
   STYLE_PRESETS,
   buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
+  generateNavatarImage,
   seedFromUserId,
-} from "../../lib/navatar/stability";
+} from "../../lib/navatar/generator";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
-
-const BRAND_NEGATIVE = [
+const HF_BRAND_NEGATIVE = [
   "photo, photorealistic, hyperrealistic,",
   "text, caption, letters, logo, watermark, signature,",
   "grain, noise, artifacts, extra limbs, deformed hands",
 ].join(", ");
-
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
-}
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
@@ -83,7 +66,7 @@ export default function GenerateNavatarPage() {
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
   const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
+    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${HF_BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
     [onBrand]
   );
 
@@ -110,12 +93,8 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
+    const negativePrompt = buildNegativePrompt(extraNegativePrompt);
 
     const generationSeed =
       keepStyle && typeof stableSeed === "number"
@@ -124,12 +103,13 @@ export default function GenerateNavatarPage() {
 
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const blob = await generateNavatarImage({
         prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
+        avoid: negativePrompt,
         seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+        width: 1024,
+        height: 1024,
+        onBrand,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -137,18 +117,10 @@ export default function GenerateNavatarPage() {
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message = error instanceof Error ? error.message : "Error generating image";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -260,7 +232,7 @@ export default function GenerateNavatarPage() {
           disabled={isGenerating}
           style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -279,7 +251,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face Inference (FLUX.1-dev) – square 1024×1024 art.
       </p>
     </main>
   );
