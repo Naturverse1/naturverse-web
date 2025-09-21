@@ -150,8 +150,8 @@ export default function NavatarCardPage() {
     [name, species, kingdom, backstory, powers, traits]
   );
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSave(e?: React.FormEvent | React.MouseEvent) {
+    e?.preventDefault?.();
     if (!canSave) return;
     setSaving(true);
     setErr(null);
@@ -302,7 +302,13 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button
+            className="pill pill--active"
+            type="submit"
+            onClick={onSave}
+            aria-label="Save card"
+            disabled={!canSave || saving}
+          >
             {saving ? "Saving…" : "Save"}
           </button>
         </div>
