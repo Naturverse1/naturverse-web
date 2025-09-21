@@ -235,7 +235,7 @@ export default function GenerateNavatarPage() {
         </details>
         <button
           type="button"
-          className="pill"
+          className="pill generate-btn"
           onClick={handleGenerate}
           disabled={isGenerating}
           style={{ width: "100%" }}
