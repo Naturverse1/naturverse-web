@@ -26,7 +26,7 @@ export async function saveNavatar(params: SaveNavatarParams) {
   }
 
   const base = {
-    owner_id: userId,
+    user_id: userId,
     name: cleanField(params.name),
     species: cleanField(params.species),
     kingdom: cleanField(params.kingdom),
