@@ -18,18 +18,26 @@
   min-height: 40px;
   line-height: 1.2;
   border-radius: 999px;
-  border: 1px solid #cfe0ff;
+  border: 1px solid var(--gray-300, #d1d5db);
   background: #f6f9ff;
-  color: #1e4ed8;
+  color: var(--gray-900, #111827);
   text-decoration: none;
   font-weight: 600;
   box-shadow: 0 2px 0 rgba(0,0,0,.08);
+}
+.pill:focus-visible {
+  outline: 2px solid var(--blue-500, #3b82f6);
+  outline-offset: 2px;
 }
 .pill--active {
   background: #1e4ed8;
   color: #fff;
   border-color: #1e4ed8;
   font-weight: 700;
+}
+.button-generate {
+  display: flex;
+  width: 100%;
 }
 
 /* --- Card: single source of truth for size & fit --- */
