@@ -1,4 +1,5 @@
 import { supabase } from '../lib/supabaseClient';
+import { NAVATAR_BUCKET } from '../lib/storage';
 
 const IMAGE_EXT = ['.png', '.jpg', '.jpeg', '.webp', '.gif', '.svg'];
 
@@ -6,7 +7,7 @@ export async function listNavatarImages() {
   const path = 'navatars';
   const { data, error } = await supabase
     .storage
-    .from('avatars')
+    .from(NAVATAR_BUCKET)
     .list(path, { limit: 200, sortBy: { column: 'name', order: 'asc' } });
 
   if (error) throw error;
@@ -19,7 +20,7 @@ export async function listNavatarImages() {
     })
     .map(item => {
       const fullPath = `${path}/${item.name}`;
-      const { data: pub } = supabase.storage.from('avatars').getPublicUrl(fullPath);
+      const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(fullPath);
       return { name: item.name, url: pub.publicUrl, path: fullPath };
     });
 }

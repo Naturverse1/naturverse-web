@@ -1,8 +1,9 @@
 import { supabase } from './supabaseClient';
 import { getActiveNavatarId } from './localNavatar';
 import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { NAVATAR_BUCKET, uploadNavatar as uploadNavatarToBucket } from './storage';
 
-export const NAVATAR_BUCKET = 'avatars';
+export { NAVATAR_BUCKET } from './storage';
 export const NAVATAR_PREFIX = 'navatars';
 
 export type NavatarRow = {
@@ -40,7 +41,7 @@ export function navatarImageUrl(path: string | null) {
   return data?.publicUrl ?? null;
 }
 
-/** List available navatars to pick (reads files under avatars/navatars) */
+/** List available navatars to pick (reads files under the navatars bucket) */
 export async function listNavatars(): Promise<{ name: string; url: string; path: string }[]> {
   const { data, error } = await supabase
     .storage.from(NAVATAR_BUCKET)
@@ -103,16 +104,13 @@ export async function pickNavatar(imagePath: string, name?: string): Promise<Nav
 /** Upload a custom image then store it in public.navatars */
 export async function uploadNavatar(file: File, name?: string): Promise<NavatarRow> {
   const owner_id = await getSessionUserId();
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${owner_id}/${crypto.randomUUID()}.${ext}`;
+  const uploaded = await uploadNavatarToBucket(file, owner_id, name);
 
-  const { error: upErr } = await supabase
-    .storage.from(NAVATAR_BUCKET)
-    .upload(key, file, { upsert: true });
+  if (!uploaded.image_path) {
+    throw new Error('Upload succeeded without a file path');
+  }
 
-  if (upErr) throw upErr;
-
-  return pickNavatar(key, name);
+  return pickNavatar(uploaded.image_path, name);
 }
 
 /** Load the current user's navatar row */

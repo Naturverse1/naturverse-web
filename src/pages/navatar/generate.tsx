@@ -4,8 +4,10 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
+import { pickNavatar } from "../../lib/navatar";
+import { uploadNavatar } from "../../lib/storage";
 import { setActiveNavatarId } from "../../lib/localNavatar";
+import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
 
@@ -16,6 +18,7 @@ export default function GenerateNavatarPage() {
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const nav = useNavigate();
   const toast = useToast();
+  const { user } = useAuthUser();
 
   useEffect(() => {
     if (!file) {
@@ -30,8 +33,13 @@ export default function GenerateNavatarPage() {
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     if (!file) return;
+    if (!user?.id) {
+      toast({ text: "Please sign in.", kind: "err" });
+      return;
+    }
     try {
-      const row = await uploadNavatar(file, name || undefined);
+      const uploaded = await uploadNavatar(file, user.id, name || undefined);
+      const row = await pickNavatar(uploaded.image_path, name || undefined);
       setActiveNavatarId(row.id);
       toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
