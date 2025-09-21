@@ -93,7 +93,7 @@ export class RateLimitError extends StabilityError {
   }
 }
 
-export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free 25 Stability generations.";
+export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free Stability fallback limit.";
 
 export function buildPrompt(userPrompt: string, style: StylePreset): string {
   const trimmed = userPrompt.trim();
@@ -140,6 +140,8 @@ export interface StabilityGenerateOptions {
   seed?: number;
   size?: string;
   style?: string;
+  keepSeed?: boolean;
+  onBrand?: boolean;
   signal?: AbortSignal;
 }
 
@@ -152,8 +154,8 @@ export async function generateWithStability({
   prompt,
   negativePrompt,
   seed,
-  size,
-  style,
+  keepSeed,
+  onBrand = true,
   signal,
 }: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
   if (!prompt?.trim()) {
@@ -162,35 +164,50 @@ export async function generateWithStability({
 
   const payload: Record<string, unknown> = {
     prompt,
-    negativePrompt: negativePrompt?.trim() || undefined,
-    size,
-    style,
+    avoid: negativePrompt?.trim() || undefined,
+    onBrand,
   };
 
   const normalizedSeed = normalizeSeed(seed);
   if (typeof normalizedSeed === "number") {
     payload.seed = normalizedSeed;
+    payload.keepSeed = keepSeed ?? true;
+  } else if (typeof keepSeed === "boolean") {
+    payload.keepSeed = keepSeed;
   }
 
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/ai-generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal,
     });
   } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
+    throw new StabilityError(
+      "Unable to reach the Navatar generator right now. Check your connection and try again.",
+    );
   }
 
   const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const contentType = resp.headers.get("content-type") || "";
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
+    let detail: string | null = null;
+
+    if (contentType.includes("application/json")) {
+      const err = await resp.json().catch(() => null);
+      if (err && typeof err === "object") {
+        const source = (err as any).error ?? (err as any).message ?? (err as any).detail;
+        if (typeof source === "string") {
+          detail = source;
+        }
+      }
+    } else {
+      const text = await resp.text().catch(() => "");
+      detail = text || null;
+    }
 
     if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
       throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
@@ -200,5 +217,14 @@ export async function generateWithStability({
   }
 
   const blob = await resp.blob();
+  if (!contentType.startsWith("image/")) {
+    const text = await blob.text().catch(() => "");
+    throw new StabilityError(
+      text || "Unexpected response format from generator",
+      resp.status,
+      remaining,
+    );
+  }
+
   return { blob, remaining };
 }
