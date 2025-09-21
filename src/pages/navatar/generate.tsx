@@ -8,40 +8,42 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
+import { generateWithNaturverseAI } from "@/lib/navatar/generate";
 import {
-  DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
-  MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
   STYLE_PRESETS,
-  buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
   seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
-
-const BRAND_NEGATIVE = [
-  "photo, photorealistic, hyperrealistic,",
-  "text, caption, letters, logo, watermark, signature,",
-  "grain, noise, artifacts, extra limbs, deformed hands",
+const BASE_NEGATIVE_PROMPT = [
+  "photo",
+  "photorealistic",
+  "hyperrealistic",
+  "text",
+  "caption",
+  "letters",
+  "logo",
+  "watermark",
+  "signature",
+  "grain",
+  "noise",
+  "artifacts",
+  "extra limbs",
+  "deformed hands",
 ].join(", ");
 
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
-}
+const STABILITY_STYLE_MAP: Record<string, string | undefined> = {
+  "cute-creature": "digital-art",
+  "mythical-friend": "fantasy-art",
+  "jungle-buddy": "digital-art",
+  "ocean-guardian": "digital-art",
+  "forest-sprite": "fantasy-art",
+  "sky-traveler": "comic-book",
+  "crystal-beast": "digital-art",
+  "robot-pal": "3d-model",
+};
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
@@ -82,10 +84,12 @@ export default function GenerateNavatarPage() {
 
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
-  const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
-    [onBrand]
+  const stylePresetForFallback = useMemo(
+    () => STABILITY_STYLE_MAP[selectedStyle.id],
+    [selectedStyle.id]
   );
+
+  const alwaysFilteredPrompt = BASE_NEGATIVE_PROMPT;
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -110,26 +114,20 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
-
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
+    const trimmedAvoid = extraNegativePrompt.trim();
+    const shouldKeepSeed = keepStyle && typeof stableSeed === "number";
+    const generationSeed = shouldKeepSeed ? stableSeed : undefined;
 
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const blob = await generateWithNaturverseAI({
         prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
+        avoid: trimmedAvoid || undefined,
+        keepSeed: shouldKeepSeed,
         seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+        onBrand,
+        stylePreset: stylePresetForFallback,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -137,18 +135,10 @@ export default function GenerateNavatarPage() {
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message = error instanceof Error ? error.message : "Error generating image";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -255,12 +245,11 @@ export default function GenerateNavatarPage() {
         </details>
         <button
           type="button"
-          className="pill"
+          className="pill button-generate"
           onClick={handleGenerate}
           disabled={isGenerating}
-          style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -279,7 +268,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face FLUX with Stability fallback – square 1024×1024 art.
       </p>
     </main>
   );
