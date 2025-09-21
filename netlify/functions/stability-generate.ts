@@ -13,10 +13,10 @@ const NEGATIVE = [
   "grain, noise, artifacts, extra limbs, deformed hands",
 ].join(", ");
 
-const clampSeed = (seed: unknown): number | undefined => {
-  if (typeof seed !== "number" || !Number.isFinite(seed)) return undefined;
-  const clamped = Math.max(0, Math.min(0xffff_ffff, Math.floor(seed)));
-  return clamped;
+const clampSeed = (s: unknown) => {
+  if (typeof s !== "number" || !Number.isFinite(s)) return undefined;
+  const n = Math.floor(s);
+  return Math.min(0xffff_ffff, Math.max(0, n));
 };
 
 export const handler: Handler = async (event) => {
@@ -25,112 +25,85 @@ export const handler: Handler = async (event) => {
     if (!API_KEY) {
       return {
         statusCode: 500,
-        body: JSON.stringify({ error: "Missing STABILITY_API_KEY" }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Missing STABILITY_API_KEY" }),
       };
     }
 
-    const body = JSON.parse(event.body || "{}");
     const {
       prompt,
-      negativePrompt,
-      avoid = "",
       onBrand = true,
-      seed,
       keepSeed,
+      seed,
+      avoid = "",
       stylePreset,
-      style,
-    } = body ?? {};
+    } = JSON.parse(event.body || "{}");
 
-    if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+    if (typeof prompt !== "string" || !prompt.trim()) {
       return {
         statusCode: 400,
-        body: JSON.stringify({ error: "Missing prompt" }),
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Missing prompt" }),
       };
     }
 
-    const trimmedPrompt = prompt.trim();
-    const userNegative =
-      typeof avoid === "string" && avoid.trim()
-        ? avoid.trim()
-        : typeof negativePrompt === "string"
-        ? negativePrompt.trim()
-        : "";
+    const finalPrompt = onBrand ? `${prompt.trim()}. ${BRAND_STYLE}` : prompt.trim();
+    const negative_prompt = [NEGATIVE, typeof avoid === "string" ? avoid.trim() : ""]
+      .filter(Boolean)
+      .join(", ");
 
-    const brandEnabled = typeof onBrand === "boolean" ? onBrand : true;
-
-    const finalPrompt = brandEnabled
-      ? `${trimmedPrompt}. ${BRAND_STYLE}`
-      : trimmedPrompt;
-
-    const negative = brandEnabled
-      ? [NEGATIVE, userNegative].filter(Boolean).join(", ")
-      : userNegative || undefined;
-
-    const normalizedSeed = clampSeed(seed);
-    const shouldKeepSeed = Boolean(keepSeed && typeof normalizedSeed === "number");
+    const effectiveSeed = keepSeed ? clampSeed(seed) : undefined;
 
     const bodyPayload: Record<string, unknown> = {
       model: "stable-image-ultra",
       prompt: finalPrompt,
-      style_preset: typeof stylePreset === "string" ? stylePreset : typeof style === "string" ? style : "comic-book",
+      negative_prompt,
       output_format: "png",
       aspect_ratio: "1:1",
     };
+    if (typeof stylePreset === "string" && stylePreset) bodyPayload.style_preset = stylePreset;
+    if (typeof effectiveSeed === "number") bodyPayload.seed = effectiveSeed;
 
-    if (negative) {
-      bodyPayload.negative_prompt = negative;
-    }
-
-    if (shouldKeepSeed && typeof normalizedSeed === "number") {
-      bodyPayload.seed = normalizedSeed;
-    }
-
-    const resp = await fetch(
+    const res = await fetch(
       "https://api.stability.ai/v2beta/stable-image/generate/core",
       {
         method: "POST",
         headers: {
           Authorization: `Bearer ${API_KEY}`,
           "Content-Type": "application/json",
-          // IMPORTANT: Accept must be image/png for this endpoint
-          Accept: "image/png",
+          Accept: "image/*, application/json",
         },
         body: JSON.stringify(bodyPayload),
       }
     );
 
-    const remaining = resp.headers.get("x-ratelimit-remaining");
-
-    if (!resp.ok) {
-      const errTxt = await resp.text().catch(() => "");
+    const ct = res.headers.get("content-type") || "";
+    if (res.ok && ct.startsWith("image/")) {
+      const buf = Buffer.from(await res.arrayBuffer());
       return {
-        statusCode: resp.status,
-        body: JSON.stringify({ error: "stability_error", detail: errTxt }),
-        headers: {
-          "Content-Type": "application/json",
-          ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
-        },
+        statusCode: 200,
+        isBase64Encoded: true,
+        headers: { "Content-Type": ct, "Cache-Control": "no-store" },
+        body: buf.toString("base64"),
       };
     }
 
-    const buf = Buffer.from(await resp.arrayBuffer());
+    let err: any;
+    try {
+      err = await res.json();
+    } catch {
+      err = { message: await res.text() };
+    }
     return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "no-store",
-        ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
-      },
-      body: buf.toString("base64"),
-      isBase64Encoded: true,
+      statusCode: res.status,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "stability_error", status: res.status, details: err }),
     };
   } catch (e: any) {
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: "proxy_failure", detail: e?.message }),
       headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "server_error", message: e?.message || String(e) }),
     };
   }
 };
