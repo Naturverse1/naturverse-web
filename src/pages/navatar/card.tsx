@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { FormEvent, useEffect, useMemo, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
@@ -150,9 +150,9 @@ export default function NavatarCardPage() {
     [name, species, kingdom, backstory, powers, traits]
   );
 
-  async function onSave(e: React.FormEvent) {
+  async function onSave(e: FormEvent<HTMLFormElement>) {
     e.preventDefault();
-    if (!canSave) return;
+    if (!canSave || saving) return;
     setSaving(true);
     setErr(null);
     try {
@@ -185,6 +185,7 @@ export default function NavatarCardPage() {
         setNavatarId(saved.id as string);
       }
 
+      toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
     } catch (e: any) {
       console.error(e);
@@ -302,7 +303,7 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button className="pill pill--active" type="submit" disabled={!canSave || saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

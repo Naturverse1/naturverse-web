@@ -1,9 +1,11 @@
-import { supabase } from './supabaseClient';
+import { getBrowserClient } from './supabase/browser';
 import { getActiveNavatarId } from './localNavatar';
 import { saveNavatar as upsertNavatar } from './supabaseHelpers';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
+
+const supabase = getBrowserClient();
 
 export type NavatarRow = {
   id: string;

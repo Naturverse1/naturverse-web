@@ -13,10 +13,11 @@ import './styles/nv-sweep.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
-import { supabase } from '@/lib/supabaseClient';
+import { getBrowserClient } from '@/lib/supabase/browser';
 import './runtime-logger';
-import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
+
+const supabase = getBrowserClient();
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
@@ -25,36 +26,20 @@ async function bootstrap() {
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
       {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
-        <AuthProvider initialSession={initialSession}>
-          <SkipLink />
-          <ToastProvider>
-            <OfflineBanner />
-            <BaseAuthProvider>
-              <App />
-            </BaseAuthProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </React.StrictMode>,
+      <AuthProvider initialSession={initialSession}>
+        <SkipLink />
+        <ToastProvider>
+          <OfflineBanner />
+          <BaseAuthProvider>
+            <App />
+          </BaseAuthProvider>
+        </ToastProvider>
+      </AuthProvider>
+    </React.StrictMode>,
   );
 }
 
 bootstrap();
-
-// Prefetch common route chunks at idle
-if ('requestIdleCallback' in window) {
-  (window as any).requestIdleCallback(() => {
-    const routes = import.meta.glob('./routes/**/index.tsx');
-    prefetchGlob(routes);
-  });
-} else {
-  setTimeout(() => {
-    const routes = import.meta.glob('./routes/**/index.tsx');
-    prefetchGlob(routes);
-  }, 100);
-}
-
-// Also prefetch when users hover links
-prefetchOnHover();
 
 // Force lazy loading for any <img> missing it (no deps, safe)
 document.addEventListener('DOMContentLoaded', () => {
