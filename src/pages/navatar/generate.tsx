@@ -8,13 +8,12 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHF } from "../../lib/navatar/generate";
+import { generateWithHuggingFace } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
-  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -76,8 +75,6 @@ export default function GenerateNavatarPage() {
     [styleId]
   );
 
-  const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
-
   const alwaysFilteredPrompt = useMemo(
     () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
     [onBrand]
@@ -110,17 +107,9 @@ export default function GenerateNavatarPage() {
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
-    const keepSeed = keepStyle && Boolean(user?.id);
-    const seed = keepSeed && typeof stableSeed === "number" ? stableSeed : undefined;
-
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHF({
-        prompt: promptWithAvoidance,
-        onBrand,
-        seed,
-        keepSeed,
-      });
+      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
@@ -235,10 +224,9 @@ export default function GenerateNavatarPage() {
         </details>
         <button
           type="button"
-          className="pill"
+          className="generate-btn w-full rounded-xl px-5 py-3 text-base font-semibold text-white bg-blue-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleGenerate}
           disabled={isGenerating}
-          style={{ width: "100%" }}
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
