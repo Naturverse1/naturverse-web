@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -7,17 +7,33 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
-import { generateWithStability } from "../../lib/navatar/stability";
+import { useAuthUser } from "../../lib/useAuthUser";
+import {
+  DEFAULT_NEGATIVE_PROMPT,
+  DEFAULT_STYLE_ID,
+  MAX_SEED,
+  RATE_LIMIT_MESSAGE,
+  RateLimitError,
+  STYLE_PRESETS,
+  buildNegativePrompt,
+  buildPrompt,
+  generateWithStability,
+  seedFromUserId,
+} from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
+  const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
+  const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
+  const [keepStyle, setKeepStyle] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
+  const { user } = useAuthUser();
 
   useEffect(() => {
     if (!file) {
@@ -28,6 +44,21 @@ export default function GenerateNavatarPage() {
     setDraftUrl(url);
     return () => URL.revokeObjectURL(url);
   }, [file]);
+
+  useEffect(() => {
+    if (user?.id) {
+      setKeepStyle((prev) => (prev ? prev : true));
+    } else {
+      setKeepStyle(false);
+    }
+  }, [user?.id]);
+
+  const selectedStyle = useMemo(
+    () => STYLE_PRESETS.find((preset) => preset.id === styleId) ?? STYLE_PRESETS[0],
+    [styleId]
+  );
+
+  const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -51,19 +82,38 @@ export default function GenerateNavatarPage() {
       return;
     }
 
+    const generationSeed =
+      keepStyle && typeof stableSeed === "number"
+        ? stableSeed
+        : Math.floor(Math.random() * MAX_SEED) || 1;
+
     setIsGenerating(true);
     try {
-      const blob = await generateWithStability(prompt);
+      const { blob, remaining } = await generateWithStability({
+        prompt: buildPrompt(prompt, selectedStyle),
+        negativePrompt: buildNegativePrompt(extraNegativePrompt),
+        seed: generationSeed,
+        size: "1024x1024",
+        style: selectedStyle.id,
+      });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
       });
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
+
+      if (typeof remaining === "number" && remaining <= 0) {
+        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
+      }
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : "Error generating image";
-      toast({ text: message, kind: "err" });
+      if (error instanceof RateLimitError) {
+        toast({ text: error.message, kind: "warn" });
+      } else {
+        const message = error instanceof Error ? error.message : "Error generating image";
+        toast({ text: message, kind: "err" });
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -86,13 +136,75 @@ export default function GenerateNavatarPage() {
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
         <NavatarCard src={draftUrl} title={name || "My Navatar"} />
-        <textarea
-          rows={4}
-          placeholder="Describe your Navatar (e.g., friendly water-buffalo spirit)…"
-          style={{ width: "100%" }}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-        />
+        <div className="navatar-field">
+          <label htmlFor="navatar-prompt">Describe your Navatar</label>
+          <textarea
+            id="navatar-prompt"
+            rows={4}
+            placeholder="Friendly nature guide, glowing shell, playful pose…"
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+          />
+        </div>
+        <div className="navatar-field">
+          <label htmlFor="navatar-style">Style preset</label>
+          <div className="navatar-style-picker">
+            <select
+              id="navatar-style"
+              className="navatar-style-select"
+              value={selectedStyle.id}
+              onChange={(e) => setStyleId(e.target.value)}
+              disabled={isGenerating}
+            >
+              {STYLE_PRESETS.map((preset) => (
+                <option key={preset.id} value={preset.id}>
+                  {preset.label}
+                </option>
+              ))}
+            </select>
+            <div className="navatar-style-preview">
+              <strong>{selectedStyle.label}</strong>
+              <p>{selectedStyle.description}</p>
+            </div>
+          </div>
+        </div>
+        <label
+          className={`navatar-keep-style${!user?.id ? " navatar-keep-style--disabled" : ""}`}
+          htmlFor="navatar-keep-style"
+        >
+          <input
+            id="navatar-keep-style"
+            type="checkbox"
+            checked={keepStyle && Boolean(user?.id)}
+            onChange={(e) => setKeepStyle(e.target.checked)}
+            disabled={!user?.id || isGenerating}
+          />
+          <span>
+            Keep style consistent
+            <small>
+              {user?.id
+                ? "Uses your account seed so regenerations keep the same vibe."
+                : "Sign in to lock a style seed to your Navatar."}
+            </small>
+          </span>
+        </label>
+        <details className="navatar-advanced">
+          <summary>Advanced prompt controls</summary>
+          <div className="navatar-advanced__content">
+            <p>
+              We always filter out: <code>{DEFAULT_NEGATIVE_PROMPT}</code>
+            </p>
+            <label htmlFor="navatar-negative">Add more things to avoid (optional)</label>
+            <textarea
+              id="navatar-negative"
+              rows={3}
+              placeholder="e.g., spooky shadows, cluttered background"
+              value={extraNegativePrompt}
+              onChange={(e) => setExtraNegativePrompt(e.target.value)}
+              disabled={isGenerating}
+            />
+          </div>
+        </details>
         <button
           type="button"
           className="pill"
@@ -119,7 +231,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – free tier includes 25 generations/day.
+        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
       </p>
     </main>
   );
