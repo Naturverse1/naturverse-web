@@ -74,26 +74,17 @@ export const DEFAULT_NEGATIVE_PROMPT =
 
 export const MAX_SEED = 0xffff_ffff; // 4294967295
 
-export class StabilityError extends Error {
+export class GenerationError extends Error {
   status?: number;
-  remaining?: number | null;
+  details?: unknown;
 
-  constructor(message: string, status?: number, remaining?: number | null) {
+  constructor(message: string, status?: number, details?: unknown) {
     super(message);
-    this.name = "StabilityError";
+    this.name = "GenerationError";
     this.status = status;
-    this.remaining = remaining ?? null;
+    this.details = details;
   }
 }
-
-export class RateLimitError extends StabilityError {
-  constructor(message: string, remaining?: number | null) {
-    super(message, 429, remaining ?? null);
-    this.name = "RateLimitError";
-  }
-}
-
-export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free 25 Stability generations.";
 
 export function buildPrompt(userPrompt: string, style: StylePreset): string {
   const trimmed = userPrompt.trim();
@@ -121,50 +112,60 @@ export function seedFromUserId(userId: string): number {
   return normalized === 0 ? 1 : normalized;
 }
 
-export function normalizeSeed(seed: number | undefined): number | undefined {
+function normalizeSeed(seed: number | undefined): number | undefined {
   if (typeof seed !== "number" || !Number.isFinite(seed)) return undefined;
   if (seed < 0) return 0;
   if (seed > MAX_SEED) return MAX_SEED;
   return Math.floor(seed);
 }
 
-function parseRemaining(header: string | null): number | null {
-  if (!header) return null;
-  const value = Number(header);
-  return Number.isFinite(value) ? value : null;
-}
-
-export interface StabilityGenerateOptions {
+export interface GenerateOptions {
   prompt: string;
   negativePrompt?: string;
   seed?: number;
   size?: string;
-  style?: string;
   signal?: AbortSignal;
 }
 
-export interface StabilityGenerateResult {
+export interface GenerateResult {
   blob: Blob;
-  remaining?: number | null;
 }
 
-export async function generateWithStability({
+function deriveErrorMessage(payload: unknown, fallback: string): string {
+  if (payload && typeof payload === "object") {
+    const errors = Array.isArray((payload as any).errors)
+      ? (payload as any).errors.filter((entry: unknown) => typeof entry === "string")
+      : null;
+    if (errors && errors.length > 0) {
+      return errors[0] as string;
+    }
+    if (typeof (payload as any).error === "string") {
+      return (payload as any).error;
+    }
+    if (typeof (payload as any).message === "string") {
+      return (payload as any).message;
+    }
+  } else if (typeof payload === "string" && payload.trim()) {
+    return payload.trim();
+  }
+  return fallback;
+}
+
+export async function generateNavatarImage({
   prompt,
   negativePrompt,
   seed,
   size,
-  style,
   signal,
-}: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
+}: GenerateOptions): Promise<GenerateResult> {
   if (!prompt?.trim()) {
-    throw new StabilityError("Prompt required");
+    throw new GenerationError("Prompt required");
   }
 
   const payload: Record<string, unknown> = {
     prompt,
     negativePrompt: negativePrompt?.trim() || undefined,
     size,
-    style,
   };
 
   const normalizedSeed = normalizeSeed(seed);
@@ -174,31 +175,48 @@ export async function generateWithStability({
 
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/ai-generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal,
     });
   } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
+    throw new GenerationError(
+      "Unable to reach the image generator right now. Check your connection and try again.",
+    );
   }
 
-  const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const contentType = resp.headers.get("content-type") || "";
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
-
-    if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
-      throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
+    let detail: unknown = null;
+    if (contentType.includes("json")) {
+      detail = await resp.json().catch(() => null);
+    } else {
+      const text = await resp.text().catch(() => "");
+      detail = text || null;
     }
 
-    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
+    const message = deriveErrorMessage(detail, `HTTP ${resp.status}`);
+    throw new GenerationError(message, resp.status || undefined, detail);
+  }
+
+  if (!contentType.startsWith("image/")) {
+    let detail: unknown = null;
+    if (contentType.includes("json")) {
+      detail = await resp.json().catch(() => null);
+    } else {
+      const text = await resp.text().catch(() => "");
+      detail = text || null;
+    }
+    throw new GenerationError(
+      "Unexpected response from image generator",
+      resp.status || undefined,
+      detail,
+    );
   }
 
   const blob = await resp.blob();
-  return { blob, remaining };
+  return { blob };
 }
