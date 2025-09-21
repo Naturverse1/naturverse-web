@@ -30,7 +30,6 @@
   color: #fff;
   border-color: #1e4ed8;
   font-weight: 700;
-  pointer-events: none;
 }
 
 /* --- Card: single source of truth for size & fit --- */
