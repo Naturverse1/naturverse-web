@@ -29,8 +29,13 @@ export default function Footer() {
           color: "var(--nv-blue-600)",
         }}
       >
-        {/* LEFT: copyright (always blue) */}
-        <small style={{ color: "var(--nv-blue-600)" }}>{SITE.copyright}</small>
+        {/* LEFT: copyright + attribution */}
+        <div style={{ display: "flex", flexDirection: "column", gap: 2 }}>
+          <small style={{ color: "var(--nv-blue-600)" }}>{SITE.copyright}</small>
+          <small style={{ color: "var(--nv-blue-600)", opacity: 0.9 }}>
+            Powered by Stability AI — free tier includes 25 generations/day.
+          </small>
+        </div>
 
         {/* CENTER: policy links */}
         <nav
