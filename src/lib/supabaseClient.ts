@@ -13,11 +13,25 @@ type NaturverseGlobal = typeof globalThis & {
 
 const globalRef = globalThis as NaturverseGlobal;
 
-export const supabase: SupabaseClient =
-  globalRef.__naturverseSupabase ??
-  (globalRef.__naturverseSupabase = createClient(supabaseUrl, supabaseAnonKey, {
+let browserClient: SupabaseClient | null = globalRef.__naturverseSupabase ?? null;
+
+export function getSupabase(): SupabaseClient {
+  if (browserClient) return browserClient;
+
+  const storage = typeof window !== 'undefined' ? window.localStorage : undefined;
+
+  browserClient = createClient(supabaseUrl, supabaseAnonKey, {
     auth: {
       persistSession: true,
+      autoRefreshToken: true,
       detectSessionInUrl: true,
+      storage,
     },
-  }));
+  });
+
+  globalRef.__naturverseSupabase = browserClient;
+
+  return browserClient;
+}
+
+export const supabase: SupabaseClient = getSupabase();

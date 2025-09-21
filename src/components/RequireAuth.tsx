@@ -1,36 +1,25 @@
-import { ReactNode, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import { ReactNode } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { useAuthUser } from '@/lib/session';
+import { DEFAULT_REDIRECT_PATH } from '@/lib/auth';
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
-  const [ready, setReady] = useState(false);
-  const [authed, setAuthed] = useState(false);
+  const { user, loading } = useAuthUser();
+  const location = useLocation();
 
-  useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      const ok = !!data.session;
-      if (!mounted) return;
-      setAuthed(ok);
-      setReady(true);
-      if (!ok) {
-        try {
-          sessionStorage.setItem("naturverse.returnTo", location.pathname + location.search);
-        } catch {}
-        location.replace("/login");
-      }
-    })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
-      setAuthed(!!session);
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
+  if (loading) {
+    return (
+      <div className="center-pad">
+        <div className="spinner" />
+      </div>
+    );
+  }
 
-  if (!ready) return <div className="center-pad"><div className="spinner" /></div>;
-  if (!authed) return null;
+  if (!user) {
+    const next = encodeURIComponent(location.pathname + location.search || DEFAULT_REDIRECT_PATH);
+    return <Navigate to={`/login?next=${next}`} replace />;
+  }
+
   return <>{children}</>;
 }
 

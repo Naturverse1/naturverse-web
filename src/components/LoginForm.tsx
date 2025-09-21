@@ -1,14 +1,26 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import type { AuthChangeEvent, Session } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabaseClient';
+import { getSupabase } from '@/lib/supabaseClient';
+import { buildAuthRedirect, DEFAULT_REDIRECT_PATH, resolveRedirectPath } from '@/lib/auth';
 
 type Status = 'idle' | 'sending' | 'sent' | 'error';
 
-export default function LoginForm() {
+type Props = {
+  next?: string;
+};
+
+const supabase = getSupabase();
+
+export default function LoginForm({ next }: Props) {
   const [email, setEmail] = useState('');
   const [status, setStatus] = useState<Status>('idle');
   const [message, setMessage] = useState<string | null>(null);
   const [session, setSession] = useState<Session | null>(null);
+
+  const redirectTarget = useMemo(
+    () => resolveRedirectPath(next, DEFAULT_REDIRECT_PATH),
+    [next],
+  );
 
   useEffect(() => {
     let mounted = true;
@@ -20,9 +32,11 @@ export default function LoginForm() {
     });
 
     // Subscribe to auth state changes
-    const { data: sub } = supabase.auth.onAuthStateChange((_event: AuthChangeEvent, newSession) => {
-      setSession(newSession);
-    });
+    const { data: sub } = supabase.auth.onAuthStateChange(
+      (_event: AuthChangeEvent, newSession) => {
+        setSession(newSession);
+      },
+    );
 
     return () => {
       mounted = false;
@@ -36,11 +50,11 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
+      const emailRedirectTo = buildAuthRedirect(redirectTarget, redirectTarget);
       const { error } = await supabase.auth.signInWithOtp({
         email,
         options: {
-          emailRedirectTo: `${window.location.origin}/auth/callback`,
+          emailRedirectTo,
         },
       });
       if (error) throw error;
@@ -56,10 +70,13 @@ export default function LoginForm() {
     setStatus('sending');
     setMessage(null);
     try {
-      sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
+      const redirectTo = buildAuthRedirect(redirectTarget, redirectTarget);
       const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
-        options: { redirectTo: `${window.location.origin}/auth/callback` },
+        options: {
+          redirectTo,
+          queryParams: { prompt: 'select_account' },
+        },
       });
       if (error) throw error;
       setStatus('idle');

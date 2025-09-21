@@ -1,34 +1,26 @@
-import { useEffect } from 'react';
+import { useEffect, useMemo } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import LoginForm from '../components/LoginForm';
-import { supabase } from '@/lib/supabaseClient';
-
-function redirectAfterLogin() {
-  try {
-    const dest = sessionStorage.getItem('naturverse.returnTo');
-    if (dest) {
-      sessionStorage.removeItem('naturverse.returnTo');
-      window.location.replace(dest);
-      return;
-    }
-  } catch {}
-  window.location.replace('/profile');
-}
+import { useAuthUser } from '@/lib/session';
+import { DEFAULT_REDIRECT_PATH, resolveRedirectPath } from '@/lib/auth';
 
 export default function LoginPage() {
+  const { user, loading } = useAuthUser();
+  const navigate = useNavigate();
+  const location = useLocation();
+
+  const next = useMemo(() => {
+    const params = new URLSearchParams(location.search);
+    return resolveRedirectPath(params.get('next'), DEFAULT_REDIRECT_PATH);
+  }, [location.search]);
+
   useEffect(() => {
-    let mounted = true;
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (mounted && data.session) redirectAfterLogin();
-    })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
-      if (session) redirectAfterLogin();
-    });
-    return () => {
-      mounted = false;
-      sub.subscription.unsubscribe();
-    };
-  }, []);
+    if (!loading && user) {
+      navigate(next, { replace: true });
+    }
+  }, [loading, user, navigate, next]);
+
+  const showLoading = loading && !user;
 
   return (
     <main className="page">
@@ -37,7 +29,11 @@ export default function LoginPage() {
         <p>Use a magic link or sign in with a provider.</p>
       </header>
 
-      <LoginForm />
+      {showLoading ? (
+        <p>Checking your session…</p>
+      ) : (
+        <LoginForm next={next} />
+      )}
     </main>
   );
 }
