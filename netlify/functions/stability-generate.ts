@@ -24,9 +24,9 @@ export const handler: Handler = async (event) => {
     const API_KEY = process.env.STABILITY_API_KEY;
     if (!API_KEY) {
       return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Missing STABILITY_API_KEY" }),
+        statusCode: 200,
         headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ error: "Stability not configured" }),
       };
     }
 
@@ -51,22 +51,17 @@ export const handler: Handler = async (event) => {
     }
 
     const trimmedPrompt = prompt.trim();
-    const userNegative =
-      typeof avoid === "string" && avoid.trim()
-        ? avoid.trim()
-        : typeof negativePrompt === "string"
-        ? negativePrompt.trim()
-        : "";
-
     const brandEnabled = typeof onBrand === "boolean" ? onBrand : true;
 
     const finalPrompt = brandEnabled
-      ? `${trimmedPrompt}. ${BRAND_STYLE}`
+      ? `${BRAND_STYLE}, ${trimmedPrompt}`
       : trimmedPrompt;
 
-    const negative = brandEnabled
-      ? [NEGATIVE, userNegative].filter(Boolean).join(", ")
-      : userNegative || undefined;
+    const finalNegative =
+      [brandEnabled ? NEGATIVE : "", avoid, negativePrompt]
+        .map((value) => (typeof value === "string" ? value.trim() : ""))
+        .filter(Boolean)
+        .join(", ") || undefined;
 
     const normalizedSeed = clampSeed(seed);
     const shouldKeepSeed = Boolean(keepSeed && typeof normalizedSeed === "number");
@@ -74,14 +69,17 @@ export const handler: Handler = async (event) => {
     const bodyPayload: Record<string, unknown> = {
       model: "stable-image-ultra",
       prompt: finalPrompt,
-      style_preset: typeof stylePreset === "string" ? stylePreset : typeof style === "string" ? style : "comic-book",
-      output_format: "png",
+      negative_prompt: finalNegative,
       aspect_ratio: "1:1",
+      output_format: "png",
+      style_preset:
+        typeof stylePreset === "string"
+          ? stylePreset
+          : typeof style === "string"
+          ? style
+          : undefined,
+      mode: "text-to-image",
     };
-
-    if (negative) {
-      bodyPayload.negative_prompt = negative;
-    }
 
     if (shouldKeepSeed && typeof normalizedSeed === "number") {
       bodyPayload.seed = normalizedSeed;
@@ -94,37 +92,53 @@ export const handler: Handler = async (event) => {
         headers: {
           Authorization: `Bearer ${API_KEY}`,
           "Content-Type": "application/json",
-          // IMPORTANT: Accept must be image/png for this endpoint
-          Accept: "image/png",
+          Accept: "image/*",
         },
         body: JSON.stringify(bodyPayload),
       }
     );
 
     const remaining = resp.headers.get("x-ratelimit-remaining");
+    const ct = resp.headers.get("content-type") || "";
 
     if (!resp.ok) {
-      const errTxt = await resp.text().catch(() => "");
+      const raw = await resp.text();
+      console.error("Stability error:", raw);
+      let err: unknown;
+      try {
+        err = JSON.parse(raw);
+      } catch (error) {
+        err = { error: raw };
+      }
+
       return {
         statusCode: resp.status,
-        body: JSON.stringify({ error: "stability_error", detail: errTxt }),
         headers: {
           "Content-Type": "application/json",
           ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
         },
+        body: JSON.stringify(err),
       };
     }
 
-    const buf = Buffer.from(await resp.arrayBuffer());
+    if (ct.startsWith("image/")) {
+      const buf = Buffer.from(await resp.arrayBuffer());
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": ct,
+          "Cache-Control": "no-store",
+          ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
+        },
+        body: buf.toString("base64"),
+        isBase64Encoded: true,
+      };
+    }
+
     return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "no-store",
-        ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
-      },
-      body: buf.toString("base64"),
-      isBase64Encoded: true,
+      statusCode: 500,
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ error: "Unexpected response from Stability" }),
     };
   } catch (e: any) {
     return {
