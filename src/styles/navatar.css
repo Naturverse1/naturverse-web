@@ -25,6 +25,11 @@
   font-weight: 600;
   box-shadow: 0 2px 0 rgba(0,0,0,.08);
 }
+.generate-btn {
+  opacity: 1 !important;
+  visibility: visible !important;
+  transition: none;
+}
 .pill--active {
   background: #1e4ed8;
   color: #fff;
