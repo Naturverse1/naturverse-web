@@ -1,8 +1,9 @@
 import { supabase } from './supabaseClient';
 import { getActiveNavatarId } from './localNavatar';
 import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { getNavatarPublicUrl, uploadNavatarImage, NAVATAR_BUCKET } from './navatar/storage';
+export { NAVATAR_BUCKET } from './navatar/storage';
 
-export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
 
 export type NavatarRow = {
@@ -35,9 +36,7 @@ export async function getSessionUserId() {
 }
 
 export function navatarImageUrl(path: string | null) {
-  if (!path) return null;
-  const { data } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
-  return data?.publicUrl ?? null;
+  return getNavatarPublicUrl(path);
 }
 
 /** List available navatars to pick (reads files under avatars/navatars) */
@@ -52,9 +51,11 @@ export async function listNavatars(): Promise<{ name: string; url: string; path:
     .filter(item => item.name && !item.name.endsWith('/'))
     .map(item => {
       const path = `${NAVATAR_PREFIX}/${item.name}`;
-      const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(path);
-      return { name: item.name!, url: pub.publicUrl, path };
-    });
+      const publicUrl = getNavatarPublicUrl(path);
+      if (!publicUrl) return null;
+      return { name: item.name!, url: publicUrl, path };
+    })
+    .filter((item): item is { name: string; url: string; path: string } => Boolean(item));
 }
 
 async function resolveExistingNavatarId(ownerId: string): Promise<string | null> {
@@ -77,42 +78,31 @@ async function resolveExistingNavatarId(ownerId: string): Promise<string | null>
 /** Pick an existing image and upsert it into public.navatars */
 export async function pickNavatar(imagePath: string, name?: string): Promise<NavatarRow> {
   const owner_id = await getSessionUserId();
-  const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
-
-  const payload: Record<string, any> = {
-    owner_id,
-    name: name ?? 'My Navatar',
-    image_url: pub.publicUrl ?? null,
-    image_path: imagePath,
-    updated_at: new Date().toISOString(),
-  };
-
   const existingId = await resolveExistingNavatarId(owner_id);
-  if (existingId) payload.id = existingId;
+  const publicUrl = getNavatarPublicUrl(imagePath);
 
-  const { data, error } = await supabase
-    .from('navatars')
-    .upsert(payload, { onConflict: 'id' })
-    .select('*')
-    .single();
+  const saved = await upsertNavatar({
+    id: existingId ?? undefined,
+    name: name ?? 'My Navatar',
+    image_url: publicUrl ?? null,
+    image_path: imagePath,
+  });
 
-  if (error) throw error;
-  return data as NavatarRow;
+  return saved as NavatarRow;
 }
 
 /** Upload a custom image then store it in public.navatars */
 export async function uploadNavatar(file: File, name?: string): Promise<NavatarRow> {
-  const owner_id = await getSessionUserId();
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${owner_id}/${crypto.randomUUID()}.${ext}`;
+  const upload = await uploadNavatarImage(file, name);
+  const existingId = await resolveExistingNavatarId(upload.userId);
+  const saved = await upsertNavatar({
+    id: existingId ?? undefined,
+    name: name ?? 'My Navatar',
+    image_url: upload.publicUrl ?? null,
+    image_path: upload.path,
+  });
 
-  const { error: upErr } = await supabase
-    .storage.from(NAVATAR_BUCKET)
-    .upload(key, file, { upsert: true });
-
-  if (upErr) throw upErr;
-
-  return pickNavatar(key, name);
+  return saved as NavatarRow;
 }
 
 /** Load the current user's navatar row */

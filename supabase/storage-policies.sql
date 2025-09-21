@@ -1,36 +1,42 @@
--- Storage buckets: avatars, navatars (create from Studio if not present)
--- RLS policies so users can read public files and write their own
-
--- Public read for these buckets
+-- Ensure the avatars bucket exists (public read is handled via policy)
 INSERT INTO storage.buckets (id, name, public)
-VALUES ('avatars','avatars', true)
+VALUES ('avatars', 'avatars', true)
 ON CONFLICT (id) DO NOTHING;
 
-INSERT INTO storage.buckets (id, name, public)
-VALUES ('navatars','navatars', true)
-ON CONFLICT (id) DO NOTHING;
+-- Enable RLS if not already enabled
+alter table storage.objects enable row level security;
 
--- Policies (idempotent)
--- Delete existing with same names if present
-DO $$
-BEGIN
-  DELETE FROM storage.policies WHERE name IN
-    ('avatars-public-read','avatars-owner-write','navatars-public-read','navatars-owner-write');
-EXCEPTION WHEN OTHERS THEN NULL;
-END$$;
+-- Drop old policies so re-running this script is safe
+drop policy if exists "public read avatars" on storage.objects;
+drop policy if exists "avatars_user_insert" on storage.objects;
+drop policy if exists "avatars_owner_update" on storage.objects;
+drop policy if exists "avatars_owner_delete" on storage.objects;
 
--- Public read
-INSERT INTO storage.policies (name, bucket_id, definition, action)
-VALUES
-('avatars-public-read','avatars', '(bucket_id = ''avatars'')', 'SELECT'),
-('navatars-public-read','navatars', '(bucket_id = ''navatars'')', 'SELECT');
+-- 1) Public read of files in "avatars"
+create policy "public read avatars"
+on storage.objects
+for select
+to public
+using (bucket_id = 'avatars');
 
--- Owner write (folder per user: userId/*)
-INSERT INTO storage.policies (name, bucket_id, definition, action)
-VALUES
-('avatars-owner-write','avatars',
- 'auth.role() = ''authenticated'' AND (storage.foldername(name))[1] = auth.uid()::text',
- 'INSERT'),
-('navatars-owner-write','navatars',
- 'auth.role() = ''authenticated'' AND (storage.foldername(name))[1] = auth.uid()::text',
- 'INSERT');
+-- 2) Insert: only logged-in users can upload to "avatars"
+create policy "avatars_user_insert"
+on storage.objects
+for insert
+to authenticated
+with check (bucket_id = 'avatars');
+
+-- 3) Update: only owner can modify their files in "avatars"
+create policy "avatars_owner_update"
+on storage.objects
+for update
+to authenticated
+using (bucket_id = 'avatars' and owner = auth.uid())
+with check (bucket_id = 'avatars' and owner = auth.uid());
+
+-- 4) Delete: only owner can delete their files in "avatars"
+create policy "avatars_owner_delete"
+on storage.objects
+for delete
+to authenticated
+using (bucket_id = 'avatars' and owner = auth.uid());
