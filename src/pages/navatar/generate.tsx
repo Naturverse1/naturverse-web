@@ -8,51 +8,31 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import {
-  DEFAULT_NEGATIVE_PROMPT,
-  DEFAULT_STYLE_ID,
-  MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
-  STYLE_PRESETS,
-  buildNegativePrompt,
-  buildPrompt,
-  generateWithStability,
-  seedFromUserId,
-} from "../../lib/navatar/stability";
+import { generateNavatar } from "@/lib/navatar/ai";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
+const MAX_SEED = 0xffff_ffff; // 4294967295
 
-const BRAND_NEGATIVE = [
-  "photo, photorealistic, hyperrealistic,",
-  "text, caption, letters, logo, watermark, signature,",
-  "grain, noise, artifacts, extra limbs, deformed hands",
-].join(", ");
-
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
+function seedFromUserId(userId: string): number {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i += 1) {
+    hash = (hash << 5) - hash + userId.charCodeAt(i);
+    hash |= 0; // force 32-bit
+  }
+  const normalized = (hash >>> 0) % MAX_SEED;
+  return normalized === 0 ? 1 : normalized;
 }
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
-  const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
-  const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
+  const [avoidPrompt, setAvoidPrompt] = useState("");
   const [keepStyle, setKeepStyle] = useState(false);
   const [onBrand, setOnBrand] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [error, setError] = useState<string | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -75,17 +55,7 @@ export default function GenerateNavatarPage() {
     }
   }, [user?.id]);
 
-  const selectedStyle = useMemo(
-    () => STYLE_PRESETS.find((preset) => preset.id === styleId) ?? STYLE_PRESETS[0],
-    [styleId]
-  );
-
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
-
-  const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
-    [onBrand]
-  );
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -110,45 +80,39 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
-
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
-
+    setError(null);
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
-        prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
-        seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+      const seed = keepStyle && typeof stableSeed === "number" ? stableSeed : undefined;
+      const avoid = avoidPrompt.trim();
+      const dataUrl = await generateNavatar({
+        prompt: trimmedPrompt,
+        onBrand,
+        avoid,
+        seed,
       });
+
+      const response = await fetch(dataUrl);
+      const blob = await response.blob();
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
       });
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message =
+        error instanceof Error
+          ? error.message
+          : typeof error === "string"
+            ? error
+            : "Generation failed";
+      setError(
+        message.includes("Hugging Face")
+          ? "Hugging Face error — tap for details in console"
+          : message || "Generation failed"
+      );
     } finally {
       setIsGenerating(false);
     }
@@ -168,6 +132,7 @@ export default function GenerateNavatarPage() {
       <NavatarTabs context="subpage" />
       <form
         onSubmit={onSave}
+        className="navatar-generate"
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
         <NavatarCard src={draftUrl} title={name || "My Navatar"} />
@@ -194,28 +159,6 @@ export default function GenerateNavatarPage() {
             <small>Wraps your prompt in our bright, friendly brand art direction.</small>
           </span>
         </label>
-        <div className="navatar-field">
-          <label htmlFor="navatar-style">Style preset</label>
-          <div className="navatar-style-picker">
-            <select
-              id="navatar-style"
-              className="navatar-style-select"
-              value={selectedStyle.id}
-              onChange={(e) => setStyleId(e.target.value)}
-              disabled={isGenerating}
-            >
-              {STYLE_PRESETS.map((preset) => (
-                <option key={preset.id} value={preset.id}>
-                  {preset.label}
-                </option>
-              ))}
-            </select>
-            <div className="navatar-style-preview">
-              <strong>{selectedStyle.label}</strong>
-              <p>{selectedStyle.description}</p>
-            </div>
-          </div>
-        </div>
         <label
           className={`navatar-keep-style${!user?.id ? " navatar-keep-style--disabled" : ""}`}
           htmlFor="navatar-keep-style"
@@ -239,29 +182,31 @@ export default function GenerateNavatarPage() {
         <details className="navatar-advanced">
           <summary>Advanced prompt controls</summary>
           <div className="navatar-advanced__content">
-            <p>
-              We always filter out: <code>{alwaysFilteredPrompt}</code>
-            </p>
+            <p>We always apply our default safety filters. Add more specifics to avoid below.</p>
             <label htmlFor="navatar-negative">Add more things to avoid (optional)</label>
             <textarea
               id="navatar-negative"
               rows={3}
               placeholder="e.g., spooky shadows, cluttered background"
-              value={extraNegativePrompt}
-              onChange={(e) => setExtraNegativePrompt(e.target.value)}
+              value={avoidPrompt}
+              onChange={(e) => setAvoidPrompt(e.target.value)}
               disabled={isGenerating}
             />
           </div>
         </details>
         <button
           type="button"
-          className="pill"
+          className="pill primary"
           onClick={handleGenerate}
           disabled={isGenerating}
-          style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
+        {error ? (
+          <p className="navatar-error" role="alert">
+            {error}
+          </p>
+        ) : null}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
@@ -279,7 +224,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face FLUX – square 1024×1024 art.
       </p>
     </main>
   );
