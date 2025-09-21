@@ -60,6 +60,8 @@ export default defineConfig({
       ],
     }),
   ],
+  // Ensure built asset URLs are absolute so Netlify previews don't rewrite them
+  base: '/',
   envPrefix: 'VITE_',
   resolve: {
     alias: {
