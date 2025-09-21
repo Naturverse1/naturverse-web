@@ -74,27 +74,6 @@ export const DEFAULT_NEGATIVE_PROMPT =
 
 export const MAX_SEED = 0xffff_ffff; // 4294967295
 
-export class StabilityError extends Error {
-  status?: number;
-  remaining?: number | null;
-
-  constructor(message: string, status?: number, remaining?: number | null) {
-    super(message);
-    this.name = "StabilityError";
-    this.status = status;
-    this.remaining = remaining ?? null;
-  }
-}
-
-export class RateLimitError extends StabilityError {
-  constructor(message: string, remaining?: number | null) {
-    super(message, 429, remaining ?? null);
-    this.name = "RateLimitError";
-  }
-}
-
-export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free 25 Stability generations.";
-
 export function buildPrompt(userPrompt: string, style: StylePreset): string {
   const trimmed = userPrompt.trim();
   const parts = [
@@ -128,77 +107,45 @@ export function normalizeSeed(seed: number | undefined): number | undefined {
   return Math.floor(seed);
 }
 
-function parseRemaining(header: string | null): number | null {
-  if (!header) return null;
-  const value = Number(header);
-  return Number.isFinite(value) ? value : null;
-}
-
-export interface StabilityGenerateOptions {
+export type GenerateWithAIOptions = {
   prompt: string;
-  negativePrompt?: string;
+  avoid?: string;
+  keepSeed?: boolean;
   seed?: number;
-  size?: string;
-  style?: string;
-  signal?: AbortSignal;
-}
+  onBrand?: boolean;
+};
 
-export interface StabilityGenerateResult {
-  blob: Blob;
-  remaining?: number | null;
-}
+export async function generateWithAI(options: GenerateWithAIOptions): Promise<Blob> {
+  const res = await fetch("/.netlify/functions/ai-generate", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "image/*, application/json",
+    },
+    body: JSON.stringify(options),
+  });
 
-export async function generateWithStability({
-  prompt,
-  negativePrompt,
-  seed,
-  size,
-  style,
-  signal,
-}: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
-  if (!prompt?.trim()) {
-    throw new StabilityError("Prompt required");
-  }
+  const ct = res.headers.get("content-type") || "";
 
-  const payload: Record<string, unknown> = {
-    prompt,
-    negativePrompt: negativePrompt?.trim() || undefined,
-    size,
-    style,
-  };
-
-  const normalizedSeed = normalizeSeed(seed);
-  if (typeof normalizedSeed === "number") {
-    payload.seed = normalizedSeed;
-  }
-
-  let resp: Response;
-  try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(payload),
-      signal,
-    });
-  } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
-  }
-
-  const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
-
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
-
-    if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
-      throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
+  if (!res.ok) {
+    let message = `HTTP ${res.status}`;
+    if (ct.includes("application/json")) {
+      const payload = await res.json().catch(() => ({}));
+      if (payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string") {
+        message = payload.error;
+      }
     }
-
-    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
+    throw new Error(message);
   }
 
-  const blob = await resp.blob();
-  return { blob, remaining };
+  if (!ct.startsWith("image/")) {
+    const payload = await res.json().catch(() => ({}));
+    const message =
+      payload && typeof payload === "object" && "error" in payload && typeof payload.error === "string"
+        ? payload.error
+        : "AI did not return an image.";
+    throw new Error(message);
+  }
+
+  return await res.blob();
 }
