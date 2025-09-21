@@ -11,7 +11,6 @@ import { useAuthUser } from "../../lib/useAuthUser";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
-  MAX_SEED,
   RATE_LIMIT_MESSAGE,
   RateLimitError,
   STYLE_PRESETS,
@@ -21,27 +20,6 @@ import {
   seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
-
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
-
-const BRAND_NEGATIVE = [
-  "photo, photorealistic, hyperrealistic,",
-  "text, caption, letters, logo, watermark, signature,",
-  "grain, noise, artifacts, extra limbs, deformed hands",
-].join(", ");
-
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
-}
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
@@ -82,10 +60,7 @@ export default function GenerateNavatarPage() {
 
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
-  const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
-    [onBrand]
-  );
+  const alwaysFilteredPrompt = useMemo(() => DEFAULT_NEGATIVE_PROMPT, []);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -110,26 +85,19 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
     const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
-
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
+    const shouldKeepSeed = keepStyle && typeof stableSeed === "number";
+    const seedToUse = shouldKeepSeed ? stableSeed : undefined;
 
     setIsGenerating(true);
     try {
       const { blob, remaining } = await generateWithStability({
         prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
-        seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+        negativePrompt: baseNegativePrompt,
+        seed: seedToUse,
+        keepSeed: shouldKeepSeed,
+        onBrand,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -260,7 +228,7 @@ export default function GenerateNavatarPage() {
           disabled={isGenerating}
           style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate Navatar"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -274,12 +242,17 @@ export default function GenerateNavatarPage() {
           onChange={(e) => setFile(e.target.files?.[0] || null)}
           disabled={isGenerating}
         />
-        <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
-          {isGenerating ? "Generating…" : "Save"}
+        <button
+          className="btn btn-primary"
+          type="submit"
+          style={{ marginTop: 8, width: "100%" }}
+          disabled={!canSave}
+        >
+          Use as Navatar
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face (free) with a Stability fallback — square 1024×1024 art.
       </p>
     </main>
   );
