@@ -8,16 +8,12 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
+import { generateWithHF } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
-  MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
   STYLE_PRESETS,
-  buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
   seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
@@ -112,43 +108,27 @@ export default function GenerateNavatarPage() {
 
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
-
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
+    const avoid = extraNegativePrompt.trim();
+    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const keepSeed = keepStyle && Boolean(user?.id);
+    const seed = keepSeed && typeof stableSeed === "number" ? stableSeed : undefined;
 
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
-        prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
-        seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+      const dataUrl = await generateWithHF({
+        prompt: promptWithAvoidance,
+        onBrand,
+        seed,
+        keepSeed,
       });
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
-        type: blob.type || "image/png",
-      });
+      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message = error instanceof Error ? error.message : "Error generating image";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -260,7 +240,7 @@ export default function GenerateNavatarPage() {
           disabled={isGenerating}
           style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -279,9 +259,15 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face Inference (FLUX.1-dev) – square 1024×1024 art.
       </p>
     </main>
   );
+}
+
+async function dataUrlToFile(dataUrl: string, filename: string) {
+  const res = await fetch(dataUrl);
+  const blob = await res.blob();
+  return new File([blob], filename, { type: blob.type || "image/png" });
 }
 
