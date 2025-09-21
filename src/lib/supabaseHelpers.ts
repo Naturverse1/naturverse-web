@@ -1,11 +1,11 @@
-import { supabase } from '@/lib/supabaseClient';
+import { getBrowserClient } from "@/lib/supabaseClient";
 
-type SaveNavatarParams = {
+type SaveAvatarParams = {
   id?: string;
-  name: string;
-  species: string;
-  kingdom: string;
-  backstory: string;
+  name?: string;
+  species?: string;
+  kingdom?: string;
+  backstory?: string;
   powers?: string[];
   traits?: string[];
 };
@@ -15,26 +15,33 @@ const cleanField = (value?: string) => {
   return text.length > 0 ? text : null;
 };
 
-const cleanList = (list?: string[]) => (list ?? []).map((item) => item.trim()).filter((item) => item.length > 0);
+const cleanList = (list?: string[]) =>
+  (list ?? []).map((item) => item.trim()).filter((item) => item.length > 0);
 
-export async function saveNavatar(params: SaveNavatarParams) {
+export async function saveAvatar(
+  params: SaveAvatarParams
+): Promise<Record<string, any>> {
+  const supabase = getBrowserClient();
+
   const { data: userData, error: userError } = await supabase.auth.getUser();
   if (userError) throw userError;
-  const userId = userData?.user?.id;
-  if (!userId) {
+
+  const user = userData?.user;
+  if (!user) {
     throw new Error("Not signed in");
   }
 
-  const base = {
-    owner_id: userId,
+  const base: Record<string, any> = {
+    id: params.id,
+    user_id: user.id,
     name: cleanField(params.name),
     species: cleanField(params.species),
     kingdom: cleanField(params.kingdom),
     backstory: cleanField(params.backstory),
-  } as Record<string, any>;
+  };
 
-  if (params.id) {
-    base.id = params.id;
+  if (!base.id) {
+    delete base.id;
   }
 
   const { data: navatarRow, error: navatarError } = await supabase
@@ -48,22 +55,30 @@ export async function saveNavatar(params: SaveNavatarParams) {
     throw new Error("Failed to save navatar");
   }
 
+  const cardPayload: Record<string, any> = {
+    navatar_id: navatarRow.id,
+    powers: cleanList(params.powers),
+    traits: cleanList(params.traits),
+  };
+
   const { data: cardRow, error: cardError } = await supabase
     .from("navatar_cards")
-    .upsert(
-      {
-        navatar_id: navatarRow.id,
-        powers: cleanList(params.powers),
-        traits: cleanList(params.traits),
-      },
-      { onConflict: "navatar_id" }
-    )
+    .upsert(cardPayload, { onConflict: "navatar_id" })
     .select()
     .single();
 
   if (cardError) throw cardError;
+
+  const normalizedNavatar = { ...navatarRow } as Record<string, any>;
+  if (!("user_id" in normalizedNavatar)) {
+    normalizedNavatar.user_id = user.id;
+  }
+  if (!("owner_id" in normalizedNavatar)) {
+    normalizedNavatar.owner_id = normalizedNavatar.user_id;
+  }
+
   return {
-    ...navatarRow,
+    ...normalizedNavatar,
     powers: (cardRow?.powers as string[] | null) ?? [],
     traits: (cardRow?.traits as string[] | null) ?? [],
   };

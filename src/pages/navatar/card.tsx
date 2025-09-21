@@ -9,7 +9,7 @@ import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
-import { saveNavatar } from "@/lib/supabaseHelpers";
+import { saveAvatar } from "@/lib/supabaseHelpers";
 import "../../styles/navatar.css";
 
 type NavatarAiResult = {
@@ -146,17 +146,38 @@ export default function NavatarCardPage() {
   }
 
   const canSave = useMemo(
-    () => [name, species, kingdom, backstory, powers, traits].some(v => v.trim().length > 0),
-    [name, species, kingdom, backstory, powers, traits]
+    () =>
+      !!user &&
+      !!(avatar?.id || navatarId) &&
+      [name, species, kingdom, backstory, powers, traits].some(
+        v => v.trim().length > 0
+      ),
+    [
+      user,
+      avatar?.id,
+      navatarId,
+      name,
+      species,
+      kingdom,
+      backstory,
+      powers,
+      traits,
+    ]
   );
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!canSave) return;
+    if (!canSave || saving) return;
     setSaving(true);
     setErr(null);
     try {
-      if (!user || !avatar?.id) {
+      if (!user) {
+        toast({ text: "Sign in to save your Navatar.", kind: "err" });
+        return;
+      }
+
+      const currentNavatarId = navatarId ?? avatar?.id;
+      if (!currentNavatarId) {
         toast({ text: "Pick a Navatar first.", kind: "err" });
         return;
       }
@@ -171,8 +192,8 @@ export default function NavatarCardPage() {
         .map(s => s.trim())
         .filter(Boolean);
 
-      const saved = await saveNavatar({
-        id: navatarId ?? undefined,
+      const saved = await saveAvatar({
+        id: currentNavatarId,
         name,
         species,
         kingdom,
@@ -302,7 +323,7 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button className="pill pill--active" type="submit" disabled={!canSave || saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

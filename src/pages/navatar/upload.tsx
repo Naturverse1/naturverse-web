@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
+import { uploadNavatar } from "../../lib/navatar/uploadNavatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
@@ -13,6 +13,7 @@ export default function UploadNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [previewUrl, setPreviewUrl] = useState<string | undefined>();
+  const [saving, setSaving] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
 
@@ -28,14 +29,17 @@ export default function UploadNavatarPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
-    if (!file) return;
+    if (!file || saving) return;
+    setSaving(true);
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
       toast({ text: "Uploaded ✓", kind: "ok" });
       nav("/navatar");
-    } catch {
-      toast({ text: "Upload failed", kind: "err" });
+    } catch (err: any) {
+      toast({ text: err?.message ?? "Upload failed", kind: "err" });
+    } finally {
+      setSaving(false);
     }
   }
 
@@ -59,8 +63,8 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
-          Save
+        <button className="pill pill--active" type="submit" disabled={!file || saving}>
+          {saving ? "Saving…" : "Save"}
         </button>
       </form>
     </main>
