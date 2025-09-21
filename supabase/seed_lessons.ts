@@ -1,6 +1,13 @@
-import { createClient } from "../lib/supabase-client";
+import { createClient } from "@supabase/supabase-js";
 
-const supabase = createClient();
+const url = process.env.VITE_SUPABASE_URL ?? process.env.SUPABASE_URL;
+const key = process.env.VITE_SUPABASE_ANON_KEY ?? process.env.SUPABASE_ANON_KEY;
+
+if (!url || !key) {
+  throw new Error("Missing Supabase credentials. Set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY (or SUPABASE_URL/SUPABASE_ANON_KEY).");
+}
+
+const supabase = createClient(url, key);
 
 const lessons = [
   {

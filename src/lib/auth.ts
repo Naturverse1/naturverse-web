@@ -19,3 +19,18 @@ export async function sendMagicLink(email: string) {
     options: { emailRedirectTo },
   });
 }
+
+export async function signInWithMagic(email: string) {
+  return sendMagicLink(email);
+}
+
+export async function getUser() {
+  const { data, error } = await supabase.auth.getUser();
+  if (error) throw error;
+  return data.user;
+}
+
+export async function signOut() {
+  const { error } = await supabase.auth.signOut();
+  if (error) throw error;
+}

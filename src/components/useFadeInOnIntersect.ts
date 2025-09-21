@@ -15,8 +15,8 @@ export function useFadeInOnIntersect<T extends HTMLElement>() {
       entries => entries.forEach(e => {
         if (e.isIntersecting) {
           // If it's an <img>, wait for load; else reveal immediately
-          if ((el as HTMLImageElement).tagName === "IMG") {
-            const img = el as HTMLImageElement;
+          if (el instanceof HTMLImageElement) {
+            const img = el;
             if (img.complete) tryShow();
             else img.addEventListener("load", tryShow, { once: true });
           } else {

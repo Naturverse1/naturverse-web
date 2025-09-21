@@ -40,24 +40,29 @@ export default function RouteFX(): null {
     }
 
     // Listen for route changes without react-router
-    const origPush = history.pushState;
-    const origReplace = history.replaceState;
+    const rawPush = history.pushState;
+    const rawReplace = history.replaceState;
+    const origPush = rawPush.bind(history);
+    const origReplace = rawReplace.bind(history);
 
     function fireNavEvent() {
       window.dispatchEvent(new Event("naturverse:navigation"));
     }
 
-    history.pushState = function (...args) {
-      const ret = origPush.apply(this, args as any);
+    const push: typeof history.pushState = (...args) => {
+      const ret = origPush(...args);
       fireNavEvent();
       return ret;
-    } as any;
+    };
 
-    history.replaceState = function (...args) {
-      const ret = origReplace.apply(this, args as any);
+    const replace: typeof history.replaceState = (...args) => {
+      const ret = origReplace(...args);
       fireNavEvent();
       return ret;
-    } as any;
+    };
+
+    history.pushState = push;
+    history.replaceState = replace;
 
     const onPop = () => fireNavEvent();
     const onNV = () => runEffects();
@@ -67,8 +72,8 @@ export default function RouteFX(): null {
 
     return () => {
       // Cleanup & restore originals
-      history.pushState = origPush;
-      history.replaceState = origReplace;
+      history.pushState = rawPush;
+      history.replaceState = rawReplace;
       window.removeEventListener("popstate", onPop);
       window.removeEventListener("naturverse:navigation", onNV);
     };
