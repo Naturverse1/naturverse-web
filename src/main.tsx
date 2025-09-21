@@ -17,6 +17,9 @@ import { supabase } from '@/lib/supabaseClient';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
+import { initPWA } from './init/pwa';
+
+initPWA();
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
@@ -65,6 +68,3 @@ document.addEventListener('DOMContentLoaded', () => {
 
 import './styles/overrides.css';
 
-if (import.meta.env.PROD) {
-  import('./register-sw');
-}
