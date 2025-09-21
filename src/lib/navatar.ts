@@ -1,6 +1,6 @@
 import { supabase } from './supabaseClient';
 import { getActiveNavatarId } from './localNavatar';
-import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { saveAvatar as upsertNavatar } from './supabaseHelpers';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
@@ -201,12 +201,23 @@ export async function saveCharacterCard(input: {
     traits: input.traits ?? [],
   });
 
+  const savedRecord = { ...saved } as Record<string, any>;
+  const ownerId =
+    (savedRecord.owner_id as string | undefined) ??
+    (savedRecord.user_id as string | undefined);
+
+  if (!ownerId) {
+    throw new Error('Saved navatar is missing an owner');
+  }
+
+  savedRecord.owner_id = ownerId;
+
   const powers = Array.isArray(saved.powers) ? saved.powers : [];
   const traits = Array.isArray(saved.traits) ? saved.traits : [];
 
   return {
     id: saved.id as string,
-    owner_id: saved.owner_id as string,
+    owner_id: ownerId,
     name: saved.name ?? null,
     species: saved.species ?? null,
     kingdom: saved.kingdom ?? null,
