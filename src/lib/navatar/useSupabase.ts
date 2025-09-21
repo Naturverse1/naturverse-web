@@ -16,14 +16,24 @@ export async function listAvatarsByUser(userId: string) {
 
 // Storage bucket also **avatars**
 export async function uploadAvatarImage(userId: string, file: File) {
-  const path = `${userId}/${Date.now()}-${file.name}`;
-  const { data, error } = await supabase
+  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
+  const uniqueId = typeof crypto !== 'undefined' && 'randomUUID' in crypto
+    ? crypto.randomUUID()
+    : `${Date.now()}-${Math.random().toString(16).slice(2)}`;
+  const path = `navatars/${userId}/${uniqueId}.${ext}`;
+  const { error: uploadError } = await supabase
     .storage
     .from('avatars')
-    .upload(path, file, { upsert: false });
-  if (error) throw error;
+    .upload(path, file, {
+      upsert: false,
+      contentType: file.type || 'image/png',
+      cacheControl: '3600',
+    });
+  if (uploadError) throw uploadError;
+
   const { data: pub } = await supabase.storage
     .from('avatars')
     .getPublicUrl(path);
-  return pub.publicUrl; // public URL for card
+
+  return { publicUrl: pub?.publicUrl ?? null, path };
 }

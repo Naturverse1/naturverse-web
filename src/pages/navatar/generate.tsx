@@ -4,9 +4,11 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
+import { generateStabilityPng } from "@/lib/ai/stability";
+import { uploadAvatarImage, saveAvatarRow } from "@/lib/navatar/useSupabase";
+import { useAuthUser } from "@/lib/useAuthUser";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -15,8 +17,11 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [isSaving, setIsSaving] = useState(false);
+  const [generatedPrompt, setGeneratedPrompt] = useState<string | null>(null);
   const nav = useNavigate();
   const toast = useToast();
+  const { user } = useAuthUser();
 
   useEffect(() => {
     if (!file) {
@@ -30,72 +35,77 @@ export default function GenerateNavatarPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
+    if (!user?.id) {
+      toast({ text: "Please log in first", kind: "err" });
+      return;
+    }
     if (!file) {
       toast({ text: "Add or generate an image first", kind: "err" });
       return;
     }
+    setIsSaving(true);
     try {
-      const row = await uploadNavatar(file, name || undefined);
-      setActiveNavatarId(row.id);
+      const { publicUrl, path } = await uploadAvatarImage(user.id, file);
+      if (!publicUrl) {
+        throw new Error("Upload failed");
+      }
+
+      const { data, error } = await saveAvatarRow({
+        owner_id: user.id,
+        name: name.trim() || null,
+        image_url: publicUrl,
+        image_path: path,
+        meta: generatedPrompt ? { source: "stability", prompt: generatedPrompt } : null,
+      });
+
+      if (error) throw error;
+      if (!data?.id) {
+        throw new Error("Failed to save Navatar");
+      }
+
+      setActiveNavatarId(data.id);
       toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
-    } catch {
-      toast({ text: "Save failed", kind: "err" });
+    } catch (error) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : "Save failed";
+      toast({ text: message, kind: "err" });
+    } finally {
+      setIsSaving(false);
     }
   }
 
   async function handleGenerate() {
-    if (!prompt.trim()) {
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
+      return;
+    }
+    if (!user?.id) {
+      toast({ text: "Please log in first", kind: "err" });
       return;
     }
 
     setIsGenerating(true);
     try {
-      const res = await fetch("/.netlify/functions/generate-navatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
-
-      if (!res.ok) {
-        const message = await res.text();
-        throw new Error(message || "Failed to generate image");
-      }
-
-      const data: { image?: string } = await res.json();
-      if (!data?.image) {
-        throw new Error("No image returned");
-      }
-
-      // Convert base64 data URI to a File so existing upload flow works.
-      const base64 = data.image.split(",")[1];
-      if (!base64) {
-        throw new Error("Invalid image payload");
-      }
-
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-
-      const blob = new Blob([bytes], { type: "image/png" });
+      toast({ text: "Generating image with Stability…", kind: "warn" });
+      const blob = await generateStabilityPng(trimmedPrompt);
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, { type: "image/png" });
 
-      setDraftUrl(data.image);
       setFile(generatedFile);
+      setGeneratedPrompt(trimmedPrompt);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
+      setGeneratedPrompt(null);
     } finally {
       setIsGenerating(false);
     }
   }
 
-  const canSave = Boolean(file) && !isGenerating;
+  const canSave = Boolean(file) && !isGenerating && !isSaving;
 
   return (
     <main className="page-pad mx-auto max-w-4xl p-4">
@@ -123,7 +133,7 @@ export default function GenerateNavatarPage() {
           type="button"
           className="pill"
           onClick={handleGenerate}
-          disabled={isGenerating}
+          disabled={isGenerating || isSaving}
           style={{ width: "100%" }}
         >
           {isGenerating ? "Generating…" : "Generate with Stability AI"}
@@ -137,11 +147,14 @@ export default function GenerateNavatarPage() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
-          disabled={isGenerating}
+          onChange={(e) => {
+            setFile(e.target.files?.[0] || null);
+            setGeneratedPrompt(null);
+          }}
+          disabled={isGenerating || isSaving}
         />
         <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
-          {isGenerating ? "Generating…" : "Save"}
+          {isSaving ? "Saving…" : isGenerating ? "Generating…" : "Save"}
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
