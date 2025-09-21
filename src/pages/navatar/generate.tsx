@@ -22,11 +22,33 @@ import {
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
+const BRAND_STYLE = [
+  "cute character, navatar style, bright friendly palette,",
+  "big expressive eyes, rounded shapes, thick clean outlines,",
+  "storybook illustration, flat lighting, soft shading,",
+  "kid-friendly, sticker-ready, high contrast, no tiny details",
+].join(" ");
+
+const BRAND_NEGATIVE = [
+  "photo, photorealistic, hyperrealistic,",
+  "text, caption, letters, logo, watermark, signature,",
+  "grain, noise, artifacts, extra limbs, deformed hands",
+].join(", ");
+
+function wrapWithBrandStyle(raw: string): string {
+  const trimmed = raw.trim();
+  if (!trimmed) return "";
+  const needsPeriod = !/[.!?]$/.test(trimmed);
+  const base = needsPeriod ? `${trimmed}.` : trimmed;
+  return `${base} ${BRAND_STYLE}`;
+}
+
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
   const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
   const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
   const [keepStyle, setKeepStyle] = useState(false);
+  const [onBrand, setOnBrand] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
@@ -60,6 +82,11 @@ export default function GenerateNavatarPage() {
 
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
+  const alwaysFilteredPrompt = useMemo(
+    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
+    [onBrand]
+  );
+
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     if (!file) {
@@ -77,10 +104,18 @@ export default function GenerateNavatarPage() {
   }
 
   async function handleGenerate() {
-    if (!prompt.trim()) {
+    const trimmedPrompt = prompt.trim();
+    if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
       return;
     }
+
+    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
+    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
+    const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
+    const combinedNegativePrompt = onBrand
+      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
+      : baseNegativePrompt;
 
     const generationSeed =
       keepStyle && typeof stableSeed === "number"
@@ -90,8 +125,8 @@ export default function GenerateNavatarPage() {
     setIsGenerating(true);
     try {
       const { blob, remaining } = await generateWithStability({
-        prompt: buildPrompt(prompt, selectedStyle),
-        negativePrompt: buildNegativePrompt(extraNegativePrompt),
+        prompt: finalPrompt,
+        negativePrompt: combinedNegativePrompt,
         seed: generationSeed,
         size: "1024x1024",
         style: selectedStyle.id,
@@ -146,6 +181,19 @@ export default function GenerateNavatarPage() {
             onChange={(e) => setPrompt(e.target.value)}
           />
         </div>
+        <label className="navatar-toggle" htmlFor="navatar-brand-style">
+          <input
+            id="navatar-brand-style"
+            type="checkbox"
+            checked={onBrand}
+            onChange={(e) => setOnBrand(e.target.checked)}
+            disabled={isGenerating}
+          />
+          <span>
+            Naturverse Navatar style
+            <small>Wraps your prompt in our bright, friendly brand art direction.</small>
+          </span>
+        </label>
         <div className="navatar-field">
           <label htmlFor="navatar-style">Style preset</label>
           <div className="navatar-style-picker">
@@ -192,7 +240,7 @@ export default function GenerateNavatarPage() {
           <summary>Advanced prompt controls</summary>
           <div className="navatar-advanced__content">
             <p>
-              We always filter out: <code>{DEFAULT_NEGATIVE_PROMPT}</code>
+              We always filter out: <code>{alwaysFilteredPrompt}</code>
             </p>
             <label htmlFor="navatar-negative">Add more things to avoid (optional)</label>
             <textarea

@@ -153,6 +153,7 @@
   margin-bottom: 4px;
   font-weight: 700;
 }
+.navatar-toggle,
 .navatar-keep-style {
   width: 100%;
   display: flex;
@@ -165,9 +166,11 @@
   text-align: left;
   color: #111827;
 }
+.navatar-toggle input,
 .navatar-keep-style input {
   margin-top: 4px;
 }
+.navatar-toggle small,
 .navatar-keep-style small {
   display: block;
   margin-top: 2px;
