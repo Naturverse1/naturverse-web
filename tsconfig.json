@@ -16,5 +16,5 @@
       "@/*": ["src/*"]
     }
   },
-  "include": ["app", "components", "lib", "scripts", "src"]
+  "include": ["scripts", "src", "supabase"]
 }

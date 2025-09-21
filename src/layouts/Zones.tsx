@@ -1,5 +1,5 @@
 import { Outlet } from "react-router-dom";
-import "../../app/styles/zones.css";
+import "../styles/zones.css";
 import ZonesBlueScope from "../components/ZonesBlueScope";
 
 export default function ZonesLayout() {
