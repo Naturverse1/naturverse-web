@@ -134,28 +134,31 @@ function parseRemaining(header: string | null): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
-export interface StabilityGenerateOptions {
+export interface GenerateWithAIOptions {
   prompt: string;
   negativePrompt?: string;
   seed?: number;
   size?: string;
   style?: string;
   signal?: AbortSignal;
+  onBrand?: boolean;
 }
 
-export interface StabilityGenerateResult {
+export interface GenerateWithAIResult {
   blob: Blob;
   remaining?: number | null;
+  provider?: string | null;
 }
 
-export async function generateWithStability({
+export async function generateWithAI({
   prompt,
   negativePrompt,
   seed,
   size,
   style,
   signal,
-}: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
+  onBrand,
+}: GenerateWithAIOptions): Promise<GenerateWithAIResult> {
   if (!prompt?.trim()) {
     throw new StabilityError("Prompt required");
   }
@@ -163,8 +166,8 @@ export async function generateWithStability({
   const payload: Record<string, unknown> = {
     prompt,
     negativePrompt: negativePrompt?.trim() || undefined,
-    size,
-    style,
+    size: size?.trim() || undefined,
+    style: style?.trim() || undefined,
   };
 
   const normalizedSeed = normalizeSeed(seed);
@@ -172,25 +175,45 @@ export async function generateWithStability({
     payload.seed = normalizedSeed;
   }
 
+  if (typeof onBrand === "boolean") {
+    payload.onBrand = onBrand;
+  }
+
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/ai-generate", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal,
     });
   } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
+    throw new StabilityError(
+      "Unable to reach the Navatar generator right now. Check your connection and try again."
+    );
   }
 
   const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const provider = resp.headers.get("x-ai-provider");
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
+    let detail: string | null = null;
+    const contentType = resp.headers.get("content-type") ?? "";
+
+    if (contentType.includes("application/json")) {
+      const err = await resp.json().catch(() => null);
+      if (err && typeof err === "object") {
+        if ("detail" in err && typeof (err as any).detail === "string") {
+          detail = (err as any).detail;
+        } else if ("error" in err && typeof (err as any).error === "string") {
+          detail = (err as any).error;
+        }
+      }
+    }
+
+    if (!detail) {
+      detail = await resp.text().catch(() => null);
+    }
 
     if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
       throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
@@ -200,5 +223,5 @@ export async function generateWithStability({
   }
 
   const blob = await resp.blob();
-  return { blob, remaining };
+  return { blob, remaining, provider: provider ?? null };
 }

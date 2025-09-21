@@ -18,18 +18,30 @@
   min-height: 40px;
   line-height: 1.2;
   border-radius: 999px;
-  border: 1px solid #cfe0ff;
-  background: #f6f9ff;
-  color: #1e4ed8;
+  border: 1px solid #4c6ef5;
+  background: linear-gradient(180deg, #eef3ff 0%, #d8e4ff 100%);
+  color: #0f1f5c;
   text-decoration: none;
   font-weight: 600;
-  box-shadow: 0 2px 0 rgba(0,0,0,.08);
+  box-shadow: 0 2px 6px rgba(30, 64, 175, 0.18);
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease,
+    box-shadow 0.2s ease;
+}
+.pill:hover {
+  background: linear-gradient(180deg, #e1ebff 0%, #c5d7ff 100%);
+  color: #0b1552;
+}
+.pill:focus-visible {
+  outline: 3px solid #facc15;
+  outline-offset: 2px;
+  box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.35);
 }
 .pill--active {
   background: #1e4ed8;
   color: #fff;
   border-color: #1e4ed8;
   font-weight: 700;
+  box-shadow: 0 4px 12px rgba(30, 78, 216, 0.25);
 }
 
 /* --- Card: single source of truth for size & fit --- */
