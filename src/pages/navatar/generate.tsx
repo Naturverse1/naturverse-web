@@ -4,6 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
+import { generateImageWithStability } from "../../lib/ai/stability";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
@@ -45,45 +46,22 @@ export default function GenerateNavatarPage() {
   }
 
   async function handleGenerate() {
-    if (!prompt.trim()) {
+    const trimmed = prompt.trim();
+    if (!trimmed) {
       toast({ text: "Describe your Navatar first", kind: "err" });
       return;
     }
 
     setIsGenerating(true);
     try {
-      const res = await fetch("/.netlify/functions/generate-navatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
-      });
+      toast({ text: "Generating image with Stability…", kind: "warn" });
 
-      if (!res.ok) {
-        const message = await res.text();
-        throw new Error(message || "Failed to generate image");
-      }
+      const { image } = await generateImageWithStability(trimmed, { width: 768, height: 1024 });
+      const dataUrl = `data:image/png;base64,${image}`;
+      const pngBlob = await (await fetch(dataUrl)).blob();
+      const generatedFile = new File([pngBlob], `navatar-${Date.now()}.png`, { type: "image/png" });
 
-      const data: { image?: string } = await res.json();
-      if (!data?.image) {
-        throw new Error("No image returned");
-      }
-
-      // Convert base64 data URI to a File so existing upload flow works.
-      const base64 = data.image.split(",")[1];
-      if (!base64) {
-        throw new Error("Invalid image payload");
-      }
-
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-
-      const blob = new Blob([bytes], { type: "image/png" });
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, { type: "image/png" });
-
-      setDraftUrl(data.image);
+      setDraftUrl(dataUrl);
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
