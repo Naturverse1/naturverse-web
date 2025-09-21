@@ -11,15 +11,14 @@ import { useAuthUser } from "../../lib/useAuthUser";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
+  GenerationError,
   MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
   STYLE_PRESETS,
   buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
+  generateNavatarImage,
   seedFromUserId,
-} from "../../lib/navatar/stability";
+} from "../../lib/navatar/generate";
 import "../../styles/navatar.css";
 
 const BRAND_STYLE = [
@@ -124,12 +123,11 @@ export default function GenerateNavatarPage() {
 
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const { blob } = await generateNavatarImage({
         prompt: finalPrompt,
         negativePrompt: combinedNegativePrompt,
         seed: generationSeed,
         size: "1024x1024",
-        style: selectedStyle.id,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -137,18 +135,15 @@ export default function GenerateNavatarPage() {
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message =
+        error instanceof GenerationError
+          ? error.message
+          : error instanceof Error
+          ? error.message
+          : "Error generating image";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -260,7 +255,7 @@ export default function GenerateNavatarPage() {
           disabled={isGenerating}
           style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate with Hugging Face FLUX"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -279,7 +274,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face FLUX – square 1024×1024 art.
       </p>
     </main>
   );
