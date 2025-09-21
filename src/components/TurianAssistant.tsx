@@ -133,34 +133,38 @@ export default function TurianAssistant({
       return;
     }
 
-    setMessages((m) => [...m, { role: "user", content: text }]);
+    const userMessage: ChatMsg = { role: "user", content: text };
+    const updatedMessages = [...messages, userMessage];
+    setMessages(updatedMessages);
     setInput("");
+    setThinking(true);
 
     try {
-      setThinking(true);
-      const res = await fetch("/.netlify/functions/chat", {
+      const apiMessages: { role: "user" | "assistant" | "system"; content: string }[] = [
+        { role: "system", content: `The visitor is currently in the ${zone} zone.` },
+        ...updatedMessages,
+      ];
+
+      const res = await fetch("/.netlify/functions/ask-turian", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          zone,
-          messages: [
-            { role: "system", content: `You are Turian in ${zone}.` },
-            ...messages,
-            { role: "user", content: text },
-          ],
-        }),
+        body: JSON.stringify({ messages: apiMessages }),
       });
 
       if (!res.ok) throw new Error(await res.text());
-      const json = (await res.json()) as { reply?: string };
+      const { content } = (await res.json()) as { content?: string };
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: json.reply || "Okay!" },
+        { role: "assistant", content: content?.trim() || "…" },
       ]);
     } catch (e) {
+      console.error(e);
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: "Something went wrong. Try again." },
+        {
+          role: "assistant",
+          content: "Hmm, I had trouble reaching Turian. Try again?",
+        },
       ]);
     } finally {
       setThinking(false);
