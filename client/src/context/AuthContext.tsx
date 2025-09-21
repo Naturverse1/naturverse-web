@@ -1,7 +1,7 @@
 import { User, Session, AuthError } from '@supabase/supabase-js';
 import React, { createContext, useContext, useEffect, useState } from 'react';
 
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 interface Profile {
   id: string;
@@ -49,7 +49,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
   useEffect(() => {
     // Get initial session
-    supabase.auth.getSession().then(({ data: { session } }) => {
+    supabase().auth.getSession().then(({ data: { session } }) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -62,7 +62,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
     // Listen for auth changes
     const {
       data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => {
+    } = supabase().auth.onAuthStateChange((_event, session) => {
       setSession(session);
       setUser(session?.user ?? null);
       if (session?.user) {
@@ -77,7 +77,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   }, []);
 
   const signUp = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signUp({
+    const { data, error } = await supabase().auth.signUp({
       email,
       password,
     });
@@ -85,7 +85,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signIn = async (email: string, password: string) => {
-    const { data, error } = await supabase.auth.signInWithPassword({
+    const { data, error } = await supabase().auth.signInWithPassword({
       email,
       password,
     });
@@ -93,7 +93,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signInWithGoogle = async () => {
-    const { data, error } = await supabase.auth.signInWithOAuth({
+    const { data, error } = await supabase().auth.signInWithOAuth({
       provider: 'google',
       options: {
         redirectTo: `${window.location.origin}/`,
@@ -106,7 +106,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase().auth.signOut();
     return { error };
   };
 
@@ -116,7 +116,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
       const {
         data: { user },
         error: userError,
-      } = await supabase.auth.getUser();
+      } = await supabase().auth.getUser();
 
       if (userError || !user) {
         console.error('Error getting user:', userError);

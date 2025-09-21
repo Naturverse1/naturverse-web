@@ -226,3 +226,7 @@
   }
 }
 
+
+/* ensure our forms aren't accidentally non-interactive */
+.form-card button[disabled] { opacity: .6; }
+.form-card, .form-card * { pointer-events: auto; }

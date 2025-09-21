@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -16,7 +16,7 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
     if (!email) return;
     setLoading("ml");
     sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase().auth.signInWithOtp({
       email,
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
     });
@@ -28,7 +28,7 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
   const signInWithGoogle = async () => {
     setLoading("google");
     sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
-    const { error } = await supabase.auth.signInWithOAuth({
+    const { error } = await supabase().auth.signInWithOAuth({
       provider: "google",
       options: { redirectTo: `${window.location.origin}/auth/callback` }
     });

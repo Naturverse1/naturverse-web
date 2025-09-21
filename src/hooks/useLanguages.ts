@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 
 export function useLanguages() {
   const [languages, setLanguages] = useState<any[]>([]);
@@ -7,14 +7,14 @@ export function useLanguages() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase.from("languages").select("*").order("name");
+      const { data, error } = await supabase().from("languages").select("*").order("name");
       if (!error) setLanguages(data || []);
       setLoading(false);
     })();
   }, []);
 
   async function getLessons(languageId: string) {
-    const { data, error } = await supabase
+    const { data, error } = await supabase()
       .from("language_lessons")
       .select("*, language_lesson_items(*)")
       .eq("language_id", languageId)

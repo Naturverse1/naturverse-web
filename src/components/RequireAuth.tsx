@@ -1,5 +1,5 @@
 import { ReactNode, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 
 export default function RequireAuth({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
@@ -8,7 +8,7 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       const ok = !!data.session;
       if (!mounted) return;
       setAuthed(ok);
@@ -20,7 +20,7 @@ export default function RequireAuth({ children }: { children: ReactNode }) {
         location.replace("/login");
       }
     })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_e, session) => {
       setAuthed(!!session);
     });
     return () => {

@@ -6,7 +6,7 @@ import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
 import { getMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
 import { getActiveNavatarId } from "../../lib/localNavatar";
-import { supabase } from "../../lib/supabaseClient";
+import supabase from "../../lib/supabaseClient";
 import "../../styles/navatar.css";
 
 export default function MintNavatarPage() {
@@ -18,7 +18,7 @@ export default function MintNavatarPage() {
     if (!activeId) return;
 
     (async () => {
-      const { data } = await supabase
+      const { data } = await supabase()
         .from("navatars")
         .select("id,name,image_path")
         .eq("id", activeId)

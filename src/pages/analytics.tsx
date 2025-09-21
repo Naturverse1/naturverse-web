@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 type Row = {
   id: string;
@@ -16,7 +16,7 @@ export default function AnalyticsPage() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from('analytics')
         .select('*')
         .order('created_at', { ascending: false })

@@ -1,4 +1,4 @@
-import { supabase } from "./supabaseClient";
+import supabase from "./supabaseClient";
 
 export type AvatarRow = {
   id: string;
@@ -10,7 +10,7 @@ export type AvatarRow = {
 };
 
 export async function getMyAvatar(userId: string) {
-  return supabase
+  return supabase()
     .from("avatars")
     .select("*")
     .eq("user_id", userId)
@@ -24,7 +24,7 @@ export async function upsertMyAvatar(userId: string, fields: Partial<AvatarRow>)
     is_primary: true,
     ...fields,
   };
-  return supabase
+  return supabase()
     .from("avatars")
     .upsert(payload, { onConflict: "user_id" })
     .select()

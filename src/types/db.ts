@@ -25,7 +25,7 @@ export type Database = {
       navatars: {
         Row: {
           id: string;
-          owner_id: string;
+          user_id: string;
           name: string | null;
           image_url: string | null;
           image_path: string | null;
@@ -34,7 +34,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          owner_id: string;
+          user_id: string;
           name?: string | null;
           image_url?: string | null;
           image_path?: string | null;
@@ -46,7 +46,7 @@ export type Database = {
       navatar_cards: {
         Row: {
           id: string;
-          owner_id: string;
+          user_id: string;
           navatar_id: string | null;
           name: string | null;
           species: string | null;
@@ -59,7 +59,7 @@ export type Database = {
         };
         Insert: {
           id?: string;
-          owner_id: string;
+          user_id: string;
           navatar_id?: string | null;
           name?: string | null;
           species?: string | null;

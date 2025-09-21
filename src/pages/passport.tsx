@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import { WORLDS, WorldKey } from "../data/worlds";
 import type { PassportStamp, PassportBadge } from "../types/passport";
 import Breadcrumbs from "../components/Breadcrumbs";
@@ -33,19 +33,19 @@ export default function PassportPage() {
 
   useEffect(() => {
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       const u = data.session?.user?.id ?? null;
       setUid(u);
       if (!u) { setLoading(false); return; }
       try {
-        const { data: s, error: es } = await supabase
+        const { data: s, error: es } = await supabase()
           .from("passport_stamps")
           .select("id,user_id,world,title,note,created_at")
           .eq("user_id", u)
           .order("created_at", { ascending: false });
         if (es) throw es;
 
-        const { data: b, error: eb } = await supabase
+        const { data: b, error: eb } = await supabase()
           .from("passport_badges")
           .select("id,user_id,code,label,created_at")
           .eq("user_id", u)
@@ -75,7 +75,7 @@ export default function PassportPage() {
       user_id: uid || "local", world, title, note: note || null,
     };
     if (uid && !usingLocal) {
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from("passport_stamps")
         .insert(base)
         .select("id,user_id,world,title,note,created_at")
@@ -93,7 +93,7 @@ export default function PassportPage() {
       user_id: uid || "local", code, label,
     };
     if (uid && !usingLocal) {
-      const { data, error } = await supabase
+      const { data, error } = await supabase()
         .from("passport_badges")
         .insert(base)
         .select("id,user_id,code,label,created_at")

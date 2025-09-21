@@ -1,7 +1,7 @@
 import { User } from '@supabase/supabase-js';
 import { useEffect, useState } from 'react';
 
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 export default function UserProfile() {
   const [user, setUser] = useState<User | null>(null);
@@ -14,11 +14,11 @@ export default function UserProfile() {
       const {
         data: { user },
         error,
-      } = await supabase.auth.getUser();
+      } = await supabase().auth.getUser();
       if (user) {
         setUser(user);
 
-        const { data, error: profileError } = await supabase
+        const { data, error: profileError } = await supabase()
           .from('users')
           .select('username, avatar_url')
           .eq('id', user.id)
@@ -37,7 +37,7 @@ export default function UserProfile() {
 
   const updateProfile = async () => {
     if (!user) return;
-    const { error } = await supabase
+    const { error } = await supabase()
       .from('users')
       .update({
         username,

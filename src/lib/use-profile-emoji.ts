@@ -1,12 +1,12 @@
 'use client';
 import { useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 export function useProfileEmoji() {
   const [emoji, setEmoji] = useState('🙂');
   useEffect(() => {
     const fetchEmoji = async () => {
-      const { data } = await supabase
+      const { data } = await supabase()
         .from('profiles')
         .select('navatar_emoji, avatar')
         .single();

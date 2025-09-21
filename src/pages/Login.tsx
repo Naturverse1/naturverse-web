@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 import LoginForm from '../components/LoginForm';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 function redirectAfterLogin() {
   try {
@@ -18,10 +18,10 @@ export default function LoginPage() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       if (mounted && data.session) redirectAfterLogin();
     })();
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, session) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_event, session) => {
       if (session) redirectAfterLogin();
     });
     return () => {

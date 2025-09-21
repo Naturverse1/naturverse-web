@@ -1,5 +1,5 @@
 import { useEffect, useState, useRef } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import LazyImg from "./LazyImg";
 import "../styles/auth-menu.css";
 
@@ -14,14 +14,14 @@ export default function AuthMenu() {
     let mounted = true;
 
     async function load() {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await supabase().auth.getUser();
       const sUser = data.user;
       if (!sUser) {
         if (mounted) setUser(null);
         return;
       }
 
-      const { data: prof } = await supabase
+      const { data: prof } = await supabase()
         .from("profiles")
         .select("avatar_url")
         .eq("id", sUser.id)
@@ -37,7 +37,7 @@ export default function AuthMenu() {
     }
 
     load();
-    const { data: sub } = supabase.auth.onAuthStateChange(() => load());
+    const { data: sub } = supabase().auth.onAuthStateChange(() => load());
     return () => sub.subscription.unsubscribe();
   }, []);
 
@@ -51,7 +51,7 @@ export default function AuthMenu() {
   }, []);
 
   async function signOut() {
-    await supabase.auth.signOut();
+    await supabase().auth.signOut();
     setUser(null);
     setOpen(false);
   }

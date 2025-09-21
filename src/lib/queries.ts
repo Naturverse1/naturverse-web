@@ -1,10 +1,10 @@
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 // --------------------
 // Profiles
 // --------------------
 export async function getProfile(userId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('profiles')
     .select('*')
     .eq('id', userId)
@@ -14,7 +14,7 @@ export async function getProfile(userId: string) {
 }
 
 export async function updateProfile(userId: string, updates: Record<string, unknown>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('profiles')
     .update(updates)
     .eq('id', userId)
@@ -27,7 +27,7 @@ export async function updateProfile(userId: string, updates: Record<string, unkn
 // Avatars
 // --------------------
 export async function createAvatar(navatar: Record<string, unknown>) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('navatars')
     .insert(navatar)
     .select();
@@ -36,10 +36,10 @@ export async function createAvatar(navatar: Record<string, unknown>) {
 }
 
 export async function getAvatarsByUser(userId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('navatars')
     .select('*')
-    .eq('owner_id', userId);
+    .eq('user_id', userId);
   if (error) throw error;
   return data;
 }
@@ -48,7 +48,7 @@ export async function getAvatarsByUser(userId: string) {
 // Passport Stamps
 // --------------------
 export async function awardStamp(userId: string, region: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('stamps')
     .insert({ user_id: userId, region })
     .select();
@@ -57,7 +57,7 @@ export async function awardStamp(userId: string, region: string) {
 }
 
 export async function getStamps(userId: string) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('stamps')
     .select('*')
     .eq('user_id', userId);

@@ -1,11 +1,12 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import { supabase, signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
 
+type SupabaseClient = ReturnType<typeof supabase>;
+type SupabaseSession = Awaited<ReturnType<SupabaseClient['auth']['getSession']>>['data']['session'];
+
 type Ctx = {
   ready: boolean;
-  user: null | NonNullable<
-    Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session']
-  >['user'];
+  user: null | NonNullable<SupabaseSession>['user'];
   signInWithGoogle: () => Promise<void>;
   signInWithMagicLink: () => Promise<void>;
   signOut: () => Promise<void>;
@@ -25,7 +26,7 @@ export function AuthProvider({
   initialSession,
 }: {
   children: React.ReactNode;
-  initialSession: Awaited<ReturnType<typeof supabase.auth.getSession>>['data']['session'] | null;
+  initialSession: SupabaseSession | null;
 }) {
   const [ready, setReady] = useState(Boolean(initialSession));
   const [user, setUser] = useState<Ctx['user']>(initialSession?.user ?? null);
@@ -52,18 +53,18 @@ export function AuthProvider({
   };
 
   const signOut = async () => {
-    const { error } = await supabase.auth.signOut();
+    const { error } = await supabase().auth.signOut();
     if (error) alert(error.message);
   };
 
   // Stay in sync after first paint
   useEffect(() => {
-    const { data } = supabase.auth.onAuthStateChange((_ev, session) => {
+    const { data } = supabase().auth.onAuthStateChange((_ev, session) => {
       setUser(session?.user ?? null);
       setReady(true);
     });
     // also fetch once on mount so the homepage knows immediately
-    supabase.auth.getSession().then(({ data }) => {
+    supabase().auth.getSession().then(({ data }) => {
       setUser(data.session?.user ?? null);
       setReady(true);
     });

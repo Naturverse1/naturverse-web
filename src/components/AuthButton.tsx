@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import type { User } from "@supabase/supabase-js";
 
 export default function AuthButton() {
@@ -8,12 +8,12 @@ export default function AuthButton() {
 
   useEffect(() => {
     let mounted = true;
-    supabase.auth.getSession().then(({ data }) => {
+    supabase().auth.getSession().then(({ data }) => {
       if (!mounted) return;
       setUser(data.session?.user ?? null);
       setLoading(false);
     });
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
     });
     return () => {

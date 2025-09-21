@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 
 type Wallet = { balance: number };
 
@@ -8,7 +8,7 @@ export function useWallet() {
   const [loading, setLoading] = useState(true);
 
   async function refresh() {
-    const { data } = await supabase.from("v_my_wallet").select("*").single();
+    const { data } = await supabase().from("v_my_wallet").select("*").single();
     setWallet((data as Wallet) || { balance: 0 });
     return data;
   }
@@ -20,12 +20,12 @@ export function useWallet() {
   }, []);
 
   async function earn(amount: number, meta: object = {}) {
-    await supabase.rpc("earn_spend_natur", { p_kind: "earn", p_amount: amount, p_meta: meta });
+    await supabase().rpc("earn_spend_natur", { p_kind: "earn", p_amount: amount, p_meta: meta });
     return refresh();
   }
 
   async function spend(amount: number, meta: object = {}) {
-    await supabase.rpc("earn_spend_natur", { p_kind: "spend", p_amount: amount, p_meta: meta });
+    await supabase().rpc("earn_spend_natur", { p_kind: "spend", p_amount: amount, p_meta: meta });
     return refresh();
   }
 

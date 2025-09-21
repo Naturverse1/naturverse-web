@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import WalletPanel from "../components/profile/WalletPanel";
 import XPPanel from "../components/profile/XPPanel";
 import { useCloudProfile } from "../hooks/useCloudProfile";
@@ -56,7 +56,7 @@ export default function ProfilePage() {
   useEffect(() => {
     if (p.email) return;
     (async () => {
-      const { data } = await supabase.auth.getUser();
+      const { data } = await supabase().auth.getUser();
       if (data.user?.email) setP((prev) => ({ ...prev, email: data.user!.email! }));
     })();
   }, []);
@@ -69,11 +69,11 @@ export default function ProfilePage() {
       let newAvatarUrl = avatarUrl;
       if (avatarFile) {
         const path = `${userId}/avatar.png`;
-        const { error: upErr } = await supabase
+        const { error: upErr } = await supabase()
           .storage.from("avatars")
           .upload(path, avatarFile, { upsert: true, cacheControl: "3600" });
         if (upErr) throw upErr;
-        const { data: pub } = supabase.storage.from("avatars").getPublicUrl(path);
+        const { data: pub } = supabase().storage.from("avatars").getPublicUrl(path);
         newAvatarUrl = pub.publicUrl;
       }
 
@@ -145,7 +145,7 @@ export default function ProfilePage() {
         {/* Local Sign out lives here only */}
         <button
           type="button"
-          onClick={async () => { await supabase.auth.signOut(); location.href = "/"; }}
+          onClick={async () => { await supabase().auth.signOut(); location.href = "/"; }}
           className="secondary"
           style={{ marginTop: 12 }}
         >

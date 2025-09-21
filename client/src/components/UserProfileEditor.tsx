@@ -4,7 +4,7 @@ import TurianLogo from '@assets/turian_media_logo_transparent.png';
 import { useState, useEffect } from 'react';
 
 import { useAuth } from '../context/AuthContext';
-import { supabase } from '../lib/supabaseClient';
+import supabase from '../lib/supabaseClient';
 
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -45,7 +45,7 @@ export default function UserProfileEditor({ className }: UserProfileEditorProps)
       setError('');
 
       // Update user metadata in Supabase Auth
-      const { error } = await supabase.auth.updateUser({
+      const { error } = await supabase().auth.updateUser({
         data: {
           full_name: name,
           display_name: name,

@@ -1,5 +1,5 @@
 import { ComponentType, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 type Props = { component: ComponentType<any> };
 
@@ -9,7 +9,7 @@ export default function ProtectedRoute({ component: C }: Props) {
   useEffect(() => {
     let on = true;
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       if (!on) return;
       if (data.session) {
         setOk(true);

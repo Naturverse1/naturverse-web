@@ -1,4 +1,4 @@
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 
 /** Submit general app/lesson feedback */
 export async function submitFeedback(input: {
@@ -8,7 +8,7 @@ export async function submitFeedback(input: {
   page_path?: string | null;
   meta?: unknown; // optional JSON payload
 }) {
-  const { data, error } = await supabase
+  const { data, error } = await supabase()
     .from('feedback')
     .insert({
       user_id: input.user_id ?? null,
@@ -25,7 +25,7 @@ export async function submitFeedback(input: {
 
 /** List feedback for a user (or all if no userId provided and RLS allows) */
 export async function listFeedback(opts?: { userId?: string }) {
-  const q = supabase
+  const q = supabase()
     .from('feedback')
     .select('*')
     .order('created_at', { ascending: false });

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
 import type { Session, User } from '@supabase/supabase-js';
-import { supabase } from '@/lib/supabaseClient';
+import supabase from '@/lib/supabaseClient';
 import { upsertProfile } from '../lib/upsertProfile';
 
 type AuthCtx = {
@@ -23,7 +23,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     let mounted = true;
 
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       if (!mounted) return;
       setSession(data.session ?? null);
       setUser(data.session?.user ?? null);
@@ -34,7 +34,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_event, s) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_event, s) => {
       setSession(s ?? null);
       setUser(s?.user ?? null);
       setLoading(false);
@@ -52,7 +52,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   // Email magic link
   const signInWithEmail: AuthCtx['signInWithEmail'] = async (email) => {
-    const { error } = await supabase.auth.signInWithOtp({
+    const { error } = await supabase().auth.signInWithOtp({
       email,
       options: { emailRedirectTo: `${window.location.origin}/auth/callback` },
     });
@@ -60,7 +60,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   };
 
   const signOut = async () => {
-    await supabase.auth.signOut();
+    await supabase().auth.signOut();
   };
 
   const value = useMemo<AuthCtx>(

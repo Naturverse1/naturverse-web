@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import LazyImg from "./LazyImg";
 
 type SessionUser = {
@@ -21,12 +21,12 @@ export default function UserMenu() {
   useEffect(() => {
     let mounted = true;
     (async () => {
-      const { data } = await supabase.auth.getSession();
+      const { data } = await supabase().auth.getSession();
       if (!mounted) return;
       setUser(data.session?.user ?? null);
     })();
 
-    const { data: sub } = supabase.auth.onAuthStateChange((_e, session) => {
+    const { data: sub } = supabase().auth.onAuthStateChange((_e, session) => {
       setUser(session?.user ?? null);
     });
 
@@ -81,7 +81,7 @@ export default function UserMenu() {
           <button
             className="item danger"
             onClick={async () => {
-              await supabase.auth.signOut();
+              await supabase().auth.signOut();
               window.location.replace("/");
             }}
           >

@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from "react";
-import { supabase } from "@/lib/supabaseClient";
+import supabase from "@/lib/supabaseClient";
 import { getUserId } from "../lib/session";
 import type { CloudProfile, LocalProfile } from "../types/profile";
 
@@ -13,7 +13,7 @@ export function useCloudProfile() {
       const id = await getUserId();
       setUserId(id);
       if (!id) { setCloud(null); setLoading(false); return; }
-      const { data, error } = await supabase.from("profiles").select("*").eq("id", id).single();
+      const { data, error } = await supabase().from("profiles").select("*").eq("id", id).single();
       if (!error) setCloud(data as CloudProfile);
       setLoading(false);
     })();
@@ -33,7 +33,7 @@ export function useCloudProfile() {
         avatar_url: avatar_url ?? null,
         updated_at: new Date().toISOString(),
       };
-      const { data, error } = await supabase.from("profiles").upsert(payload, { onConflict: "id" }).select().single();
+      const { data, error } = await supabase().from("profiles").upsert(payload, { onConflict: "id" }).select().single();
       if (!error) setCloud(data as CloudProfile);
       return { data, error } as const;
     },
