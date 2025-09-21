@@ -8,36 +8,17 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHF } from "../../lib/navatar/generate";
+import { generateNavatar } from "../../lib/navatar/space";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
   seedFromUserId,
-} from "../../lib/navatar/stability";
+} from "../../lib/navatar/prompting";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
-
-const BRAND_NEGATIVE = [
-  "photo, photorealistic, hyperrealistic,",
-  "text, caption, letters, logo, watermark, signature,",
-  "grain, noise, artifacts, extra limbs, deformed hands",
-].join(", ");
-
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
-}
+const ALWAYS_FILTERED_PROMPT = DEFAULT_NEGATIVE_PROMPT;
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
@@ -78,10 +59,7 @@ export default function GenerateNavatarPage() {
 
   const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
 
-  const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
-    [onBrand]
-  );
+  const alwaysFilteredPrompt = ALWAYS_FILTERED_PROMPT;
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -106,8 +84,7 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
     const keepSeed = keepStyle && Boolean(user?.id);
@@ -115,14 +92,7 @@ export default function GenerateNavatarPage() {
 
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHF({
-        prompt: promptWithAvoidance,
-        onBrand,
-        seed,
-        keepSeed,
-      });
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
-
+      const { file: generatedFile } = await generateNavatar(promptWithAvoidance, seed, { onBrand });
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
@@ -259,15 +229,9 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Hugging Face Inference (FLUX.1-dev) – square 1024×1024 art.
+        Powered by our Hugging Face Space – square 1024×1024 art.
       </p>
     </main>
   );
-}
-
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
-  const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type || "image/png" });
 }
 

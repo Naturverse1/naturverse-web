@@ -1,32 +1,10 @@
+// Calls your HF Space JSON API and returns a simple envelope for the UI.
 import type { Handler } from "@netlify/functions";
 
-const HF_MODEL = "black-forest-labs/FLUX.1-dev";
+const SPACE_URL = process.env.HF_SPACE_URL || "";
 
-type ReqBody = {
-  prompt?: string;
-  onBrand?: boolean;
-  seed?: number;
-  keepSeed?: boolean;
-};
-
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette",
-  "big expressive eyes, rounded shapes, thick clean outlines",
-  "storybook illustration, flat lighting, soft shading",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(", ");
-
-const NEGATIVE = [
-  "photo, photorealistic, hyperrealistic",
-  "text, caption, letters, logo, watermark, signature",
-  "grain, noise, artifacts, extra limbs, deformed hands, gore, violence, guns",
-].join(", ");
-
-function clampSeed(v: unknown) {
-  if (typeof v !== "number" || !Number.isFinite(v)) return undefined;
-  const n = Math.max(0, Math.min(0xffff_ffff, Math.floor(v)));
-  return n;
-}
+const naturverseStyle =
+  "Cute Creature style, adorable creature design, plush textures, rounded silhouettes, cozy lighting, soft gradients, family-friendly, bright friendly palette, big expressive eyes, thick clean outlines, storybook illustration, kid-friendly, high contrast, no tiny details";
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
@@ -38,66 +16,48 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const API_KEY =
-      process.env.HUGGINGFACE_API_KEY || process.env.HF_API_TOKEN || "";
-    if (!API_KEY) {
-      return json({ ok: false, error: "Missing HUGGINGFACE_API_KEY" }, 500);
-    }
+    if (!SPACE_URL) return json(500, { errors: ["HF_SPACE_URL not set"] });
 
-    const { prompt, onBrand = true, seed, keepSeed }: ReqBody =
+    const { prompt, seed, width = 1024, height = 1024, onBrand }: Record<string, unknown> =
       JSON.parse(event.body || "{}");
 
-    if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
-      return json({ ok: false, error: "Missing prompt" }, 400);
+    if (typeof prompt !== "string" || !prompt.trim()) {
+      return json(400, { errors: ["Missing prompt"] });
     }
 
-    const finalPrompt = onBrand ? `${prompt.trim()}. ${BRAND_STYLE}` : prompt.trim();
-    const negativePrompt = NEGATIVE;
-    const effectiveSeed = keepSeed ? clampSeed(seed) : undefined;
+    const shouldUseBrand = onBrand !== false;
+    const finalPrompt = shouldUseBrand ? `${prompt.trim()}. ${naturverseStyle}` : prompt.trim();
 
-    const res = await fetch(
-      `https://api-inference.huggingface.co/models/${HF_MODEL}`,
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-          Accept: "image/png",
-        },
-        body: JSON.stringify({
-          inputs: finalPrompt,
-          parameters: {
-            negative_prompt: negativePrompt,
-            width: 1024,
-            height: 1024,
-            num_inference_steps: 28,
-            guidance_scale: 5,
-            seed: effectiveSeed,
-          },
-        }),
-      }
-    );
+    const body = {
+      prompt: finalPrompt,
+      width,
+      height,
+      steps: 28,
+      guidance: 5.5,
+      seed,
+      negative:
+        "photo, photorealistic, hyperrealistic, realistic skin, words, text, letters, caption, logo, watermark, gore, violence",
+    };
 
-    const ct = res.headers.get("content-type") || "";
+    const r = await fetch(`${SPACE_URL}/api/generate`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      body: JSON.stringify(body),
+    });
 
-    if (!res.ok) {
-      let raw = "";
-      try {
-        raw = await res.text();
-      } catch {}
-      return json({ ok: false, error: "Hugging Face error", raw }, res.status);
+    if (!r.ok) {
+      const raw = await r.text();
+      return json(502, { errors: ["Space request failed"], raw });
     }
 
-    if (ct.startsWith("image/")) {
-      const buf = Buffer.from(await res.arrayBuffer());
-      const dataUrl = `data:image/png;base64,${buf.toString("base64")}`;
-      return json({ ok: true, image: dataUrl, provider: "huggingface" });
+    const data = (await r.json()) as { image?: string; seed?: number };
+    if (!data?.image) {
+      return json(502, { errors: ["Space response missing image"] });
     }
 
-    const raw = await res.text();
-    return json({ ok: false, error: "Unexpected response", raw }, 502);
+    return json(200, { imageDataUrl: data.image, seed: data.seed });
   } catch (err: any) {
-    return json({ ok: false, error: String(err?.message || err) }, 500);
+    return json(500, { errors: [err?.message || String(err)] });
   }
 };
 
@@ -105,14 +65,18 @@ function corsHeaders() {
   return {
     "Access-Control-Allow-Origin": "*",
     "Access-Control-Allow-Methods": "POST,OPTIONS",
-    "Access-Control-Allow-Headers": "content-type,authorization",
-  };
+    "Access-Control-Allow-Headers": "content-type",
+    "Cache-Control": "no-store",
+  } as const;
 }
 
-function json(body: any, statusCode = 200) {
+function json(status: number, body: unknown) {
   return {
-    statusCode,
-    headers: { "Content-Type": "application/json", ...corsHeaders() },
+    statusCode: status,
+    headers: {
+      ...corsHeaders(),
+      "Content-Type": "application/json",
+    },
     body: JSON.stringify(body),
   };
 }
