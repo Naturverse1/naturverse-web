@@ -11,7 +11,8 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    const { prompt } = JSON.parse(event.body || "{}");
+    const body = JSON.parse(event.body || "{}");
+    const { prompt, negativePrompt, seed, size } = body ?? {};
     if (!prompt || typeof prompt !== "string") {
       return {
         statusCode: 400,
@@ -24,6 +25,38 @@ export const handler: Handler = async (event) => {
     const form = new FormData();
     form.append("prompt", prompt);
     form.append("output_format", "png");
+
+    if (negativePrompt && typeof negativePrompt === "string") {
+      form.append("negative_prompt", negativePrompt);
+    }
+
+    if (typeof seed === "number" && Number.isFinite(seed)) {
+      const clamped = Math.max(0, Math.min(0xffff_ffff, Math.floor(seed)));
+      form.append("seed", String(clamped));
+    }
+
+    let width: number | undefined;
+    let height: number | undefined;
+
+    if (size && typeof size === "string") {
+      const match = size.toLowerCase().split("x");
+      if (match.length === 2) {
+        const parsedWidth = Number(match[0]);
+        const parsedHeight = Number(match[1]);
+        if (Number.isFinite(parsedWidth) && Number.isFinite(parsedHeight)) {
+          width = Math.max(128, Math.min(2048, Math.floor(parsedWidth)));
+          height = Math.max(128, Math.min(2048, Math.floor(parsedHeight)));
+        }
+      }
+    }
+
+    if (!width || !height) {
+      width = 1024;
+      height = 1024;
+    }
+
+    form.append("width", String(width));
+    form.append("height", String(height));
 
     const resp = await fetch(
       "https://api.stability.ai/v2beta/stable-image/generate/core",
@@ -38,19 +71,28 @@ export const handler: Handler = async (event) => {
       }
     );
 
+    const remaining = resp.headers.get("x-ratelimit-remaining");
+
     if (!resp.ok) {
       const errTxt = await resp.text().catch(() => "");
       return {
         statusCode: resp.status,
         body: JSON.stringify({ error: "stability_error", detail: errTxt }),
-        headers: { "Content-Type": "application/json" },
+        headers: {
+          "Content-Type": "application/json",
+          ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
+        },
       };
     }
 
     const buf = Buffer.from(await resp.arrayBuffer());
     return {
       statusCode: 200,
-      headers: { "Content-Type": "image/png", "Cache-Control": "no-store" },
+      headers: {
+        "Content-Type": "image/png",
+        "Cache-Control": "no-store",
+        ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
+      },
       body: buf.toString("base64"),
       isBase64Encoded: true,
     };
