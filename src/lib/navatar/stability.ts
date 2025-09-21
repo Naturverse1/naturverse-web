@@ -90,6 +90,45 @@ function parseRemaining(header: string | null): number | null {
   return Number.isFinite(value) ? value : null;
 }
 
+const DATA_URL_REGEX = /^data:(.*?);base64,(.*)$/s;
+
+function decodeBase64ToBytes(base64: string): Uint8Array {
+  if (typeof atob === "function") {
+    const binary = atob(base64);
+    const length = binary.length;
+    const bytes = new Uint8Array(length);
+    for (let i = 0; i < length; i += 1) {
+      bytes[i] = binary.charCodeAt(i);
+    }
+    return bytes;
+  }
+
+  if (typeof Buffer !== "undefined") {
+    return Uint8Array.from(Buffer.from(base64, "base64"));
+  }
+
+  throw new StabilityError("Unable to decode image data.");
+}
+
+function dataUrlToBlob(dataUrl: string): Blob {
+  const match = DATA_URL_REGEX.exec(dataUrl);
+  if (!match) {
+    throw new StabilityError("Invalid image data received from Stability.");
+  }
+
+  const mime = match[1] || "image/png";
+  const base64 = match[2];
+  const bytes = decodeBase64ToBytes(base64);
+
+  const arrayBuffer = bytes.buffer.slice(bytes.byteOffset, bytes.byteOffset + bytes.byteLength) as ArrayBuffer;
+
+  try {
+    return new Blob([arrayBuffer], { type: mime || "image/png" });
+  } catch {
+    return new Blob([arrayBuffer], { type: "image/png" });
+  }
+}
+
 export interface StabilityGenerateOptions {
   prompt: string;
   avoid?: string;
@@ -135,9 +174,12 @@ export async function generateWithStability({
 
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/stability", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        Accept: "application/json",
+      },
       body: JSON.stringify(payload),
       signal,
     });
@@ -146,20 +188,67 @@ export async function generateWithStability({
   }
 
   const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const clone = resp.clone();
+  let cachedCloneText: string | null | undefined;
+  const readCloneText = async (): Promise<string | null> => {
+    if (cachedCloneText !== undefined) return cachedCloneText;
+    try {
+      cachedCloneText = await clone.text();
+    } catch {
+      cachedCloneText = null;
+    }
+    return cachedCloneText;
+  };
+
+  let data: unknown = null;
+  try {
+    data = await resp.json();
+  } catch {
+    data = null;
+  }
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
+    const detail =
+      data && typeof data === "object"
+        ? "detail" in (data as Record<string, unknown>)
+          ? String((data as Record<string, unknown>).detail)
+          : "error" in (data as Record<string, unknown>)
+          ? String((data as Record<string, unknown>).error)
+          : "message" in (data as Record<string, unknown>)
+          ? String((data as Record<string, unknown>).message)
+          : null
+        : null;
 
     if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
       throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
     }
 
-    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
+    const fallback = detail || (await readCloneText()) || null;
+    const message = fallback?.trim() ? fallback : `HTTP ${resp.status}`;
+    throw new StabilityError(message, resp.status, remaining);
   }
 
-  const blob = await resp.blob();
+  if (!data || typeof data !== "object") {
+    const fallback = (await readCloneText()) || null;
+    const message = fallback?.trim() ? fallback : "Invalid response from Stability";
+    throw new StabilityError(message, resp.status, remaining);
+  }
+
+  const imageDataUrl = (data as { imageDataUrl?: unknown }).imageDataUrl;
+  if (typeof imageDataUrl !== "string" || !imageDataUrl.startsWith("data:")) {
+    throw new StabilityError("Invalid image data from Stability", resp.status, remaining);
+  }
+
+  let blob: Blob;
+  try {
+    blob = dataUrlToBlob(imageDataUrl);
+  } catch (error) {
+    const message =
+      error instanceof Error && error.message
+        ? error.message
+        : "Unable to decode image returned from Stability.";
+    throw new StabilityError(message, resp.status, remaining);
+  }
+
   return { blob, remaining };
 }
