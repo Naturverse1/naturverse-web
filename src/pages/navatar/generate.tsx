@@ -17,7 +17,7 @@ import {
   STYLE_PRESETS,
   buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
+  generateWithAI,
   seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
@@ -53,6 +53,7 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationMode, setGenerationMode] = useState<"generate" | "regenerate" | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -103,7 +104,7 @@ export default function GenerateNavatarPage() {
     }
   }
 
-  async function handleGenerate() {
+  async function runGeneration(mode: "generate" | "regenerate" = "generate") {
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
@@ -123,20 +124,32 @@ export default function GenerateNavatarPage() {
         : Math.floor(Math.random() * MAX_SEED) || 1;
 
     setIsGenerating(true);
+    setGenerationMode(mode);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const { blob, remaining, provider } = await generateWithAI({
         prompt: finalPrompt,
         negativePrompt: combinedNegativePrompt,
         seed: generationSeed,
         size: "1024x1024",
         style: selectedStyle.id,
+        onBrand,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
       });
 
       setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
+      const providerName = provider?.toLowerCase();
+      const providerLabel =
+        providerName === "huggingface"
+          ? "Hugging Face"
+          : providerName === "stability"
+            ? "Stability AI"
+            : null;
+      toast({
+        text: providerLabel ? `Navatar generated with ${providerLabel} ✓` : "Navatar generated ✓",
+        kind: "ok",
+      });
 
       if (typeof remaining === "number" && remaining <= 0) {
         toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
@@ -151,6 +164,7 @@ export default function GenerateNavatarPage() {
       }
     } finally {
       setIsGenerating(false);
+      setGenerationMode(null);
     }
   }
 
@@ -253,15 +267,27 @@ export default function GenerateNavatarPage() {
             />
           </div>
         </details>
-        <button
-          type="button"
-          className="pill"
-          onClick={handleGenerate}
-          disabled={isGenerating}
-          style={{ width: "100%" }}
-        >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
-        </button>
+        {!file ? (
+          <button
+            type="button"
+            className="pill"
+            onClick={() => runGeneration("generate")}
+            disabled={isGenerating}
+            style={{ width: "100%" }}
+          >
+            {isGenerating && generationMode === "generate" ? "Generating…" : "Generate"}
+          </button>
+        ) : (
+          <button
+            type="button"
+            className="pill"
+            onClick={() => runGeneration("regenerate")}
+            disabled={isGenerating}
+            style={{ width: "100%" }}
+          >
+            {isGenerating && generationMode === "regenerate" ? "Regenerating…" : "Regenerate"}
+          </button>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
@@ -275,11 +301,11 @@ export default function GenerateNavatarPage() {
           disabled={isGenerating}
         />
         <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
-          {isGenerating ? "Generating…" : "Save"}
+          Use as Navatar
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face (FLUX.1 dev) with Stability AI fallback – single 1024×1024 art.
       </p>
     </main>
   );
