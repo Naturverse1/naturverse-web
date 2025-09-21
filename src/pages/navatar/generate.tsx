@@ -10,6 +10,10 @@ import { useToast } from "../../components/Toast";
 import { generateWithStability } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
+const hasStability =
+  import.meta.env.VITE_ENABLE_STABILITY === "1" ||
+  import.meta.env.VITE_ENABLE_STABILITY === "true";
+
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
   const [file, setFile] = useState<File | null>(null);
@@ -46,6 +50,11 @@ export default function GenerateNavatarPage() {
   }
 
   async function handleGenerate() {
+    if (!hasStability) {
+      toast({ text: "Stability not configured", kind: "err" });
+      return;
+    }
+
     if (!prompt.trim()) {
       toast({ text: "Describe your Navatar first", kind: "err" });
       return;

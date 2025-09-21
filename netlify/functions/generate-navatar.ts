@@ -9,7 +9,10 @@ export const handler: Handler = async (event) => {
 
   const apiKey = process.env.STABILITY_API_KEY;
   if (!apiKey) {
-    return { statusCode: 500, body: "Missing STABILITY_API_KEY" };
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "STABILITY_API_KEY not set" }),
+    };
   }
 
   let prompt: string | undefined;
