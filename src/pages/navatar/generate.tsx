@@ -7,6 +7,7 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
+import { generateWithStability } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
 export default function GenerateNavatarPage() {
@@ -52,38 +53,11 @@ export default function GenerateNavatarPage() {
 
     setIsGenerating(true);
     try {
-      const res = await fetch("/.netlify/functions/generate-navatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt }),
+      const blob = await generateWithStability(prompt);
+      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
+        type: blob.type || "image/png",
       });
 
-      if (!res.ok) {
-        const message = await res.text();
-        throw new Error(message || "Failed to generate image");
-      }
-
-      const data: { image?: string } = await res.json();
-      if (!data?.image) {
-        throw new Error("No image returned");
-      }
-
-      // Convert base64 data URI to a File so existing upload flow works.
-      const base64 = data.image.split(",")[1];
-      if (!base64) {
-        throw new Error("Invalid image payload");
-      }
-
-      const binary = atob(base64);
-      const bytes = new Uint8Array(binary.length);
-      for (let i = 0; i < binary.length; i += 1) {
-        bytes[i] = binary.charCodeAt(i);
-      }
-
-      const blob = new Blob([bytes], { type: "image/png" });
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, { type: "image/png" });
-
-      setDraftUrl(data.image);
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
