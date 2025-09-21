@@ -2,6 +2,9 @@
   command = "npm run build"
   publish = "dist"
 
+[build.environment]
+  VITE_STABILITY_API_KEY = "set-in-dashboard"
+
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
