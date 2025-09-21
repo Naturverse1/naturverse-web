@@ -8,13 +8,12 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHF } from "../../lib/navatar/generate";
+import { generateWithHuggingFace } from "../../lib/huggingface";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
-  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -76,8 +75,6 @@ export default function GenerateNavatarPage() {
     [styleId]
   );
 
-  const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
-
   const alwaysFilteredPrompt = useMemo(
     () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
     [onBrand]
@@ -109,19 +106,13 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
-    const keepSeed = keepStyle && Boolean(user?.id);
-    const seed = keepSeed && typeof stableSeed === "number" ? stableSeed : undefined;
-
+    const avoidList = [alwaysFilteredPrompt, avoid].filter(Boolean).join(", ");
+    const promptWithAvoidance = avoidList ? `${finalPrompt}. Avoid: ${avoidList}` : finalPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHF({
-        prompt: promptWithAvoidance,
-        onBrand,
-        seed,
-        keepSeed,
-      });
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const stylePrompt = `${selectedStyle.label} — ${selectedStyle.prompt}`;
+      const imageUrl = await generateWithHuggingFace(promptWithAvoidance, stylePrompt);
+      const generatedFile = await dataUrlToFile(imageUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
