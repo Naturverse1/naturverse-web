@@ -10,7 +10,7 @@
     "allowJs": false,
     "noEmit": true,
     "strict": true,
-    "types": ["node"],
+    "types": ["vite/client", "node"],
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
