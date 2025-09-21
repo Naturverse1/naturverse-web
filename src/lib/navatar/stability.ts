@@ -105,6 +105,30 @@ export interface StabilityGenerateResult {
   remaining?: number | null;
 }
 
+function messageFromErrorPayload(payload: unknown): string | null {
+  if (!payload) return null;
+  if (typeof payload === "string") {
+    return payload.trim() || null;
+  }
+  if (typeof payload === "object") {
+    const detail =
+      "detail" in payload && typeof (payload as any).detail === "string"
+        ? (payload as any).detail
+        : null;
+    if (detail?.trim()) {
+      return detail.trim();
+    }
+    const error =
+      "error" in payload && typeof (payload as any).error === "string"
+        ? (payload as any).error
+        : null;
+    if (error?.trim()) {
+      return error.trim();
+    }
+  }
+  return null;
+}
+
 export async function generateWithStability({
   prompt,
   avoid,
@@ -146,12 +170,17 @@ export async function generateWithStability({
   }
 
   const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const contentType = resp.headers.get("content-type") || "";
 
   if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
+    let payload: unknown = null;
+    if (contentType.includes("application/json")) {
+      payload = await resp.json().catch(() => null);
+    } else {
+      const text = await resp.text().catch(() => "");
+      payload = text ? { error: text } : null;
+    }
+    const detail = messageFromErrorPayload(payload);
 
     if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
       throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
@@ -160,6 +189,19 @@ export async function generateWithStability({
     throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
   }
 
-  const blob = await resp.blob();
-  return { blob, remaining };
+  if (contentType.startsWith("image/")) {
+    const blob = await resp.blob();
+    return { blob, remaining };
+  }
+
+  let fallbackPayload: unknown = null;
+  if (contentType.includes("application/json")) {
+    fallbackPayload = await resp.json().catch(() => null);
+  } else {
+    const text = await resp.text().catch(() => "");
+    fallbackPayload = text ? { error: text } : null;
+  }
+
+  const message = messageFromErrorPayload(fallbackPayload) || "Unexpected response from Stability";
+  throw new StabilityError(message, resp.status || 500, remaining);
 }

@@ -87,27 +87,39 @@ export const handler: Handler = async (event) => {
       bodyPayload.seed = normalizedSeed;
     }
 
-    const resp = await fetch(
-      "https://api.stability.ai/v2beta/stable-image/generate/core",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-          // IMPORTANT: Accept must be image/png for this endpoint
-          Accept: "image/png",
-        },
-        body: JSON.stringify(bodyPayload),
-      }
-    );
+    const resp = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${API_KEY}`,
+        Accept: "image/*",
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(bodyPayload),
+    });
 
     const remaining = resp.headers.get("x-ratelimit-remaining");
+    const contentType = resp.headers.get("content-type") || "";
 
     if (!resp.ok) {
-      const errTxt = await resp.text().catch(() => "");
+      let errBody: unknown;
+      if (contentType.includes("application/json")) {
+        try {
+          errBody = await resp.json();
+        } catch {
+          errBody = { error: "stability_error" };
+        }
+      } else {
+        try {
+          const text = await resp.text();
+          errBody = { error: text || "stability_error" };
+        } catch {
+          errBody = { error: "stability_error" };
+        }
+      }
+
       return {
         statusCode: resp.status,
-        body: JSON.stringify({ error: "stability_error", detail: errTxt }),
+        body: JSON.stringify(errBody),
         headers: {
           "Content-Type": "application/json",
           ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
@@ -115,16 +127,27 @@ export const handler: Handler = async (event) => {
       };
     }
 
-    const buf = Buffer.from(await resp.arrayBuffer());
+    if (contentType.startsWith("image/")) {
+      const buf = Buffer.from(await resp.arrayBuffer());
+      return {
+        statusCode: 200,
+        headers: {
+          "Content-Type": contentType,
+          "Cache-Control": "no-store",
+          ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
+        },
+        body: buf.toString("base64"),
+        isBase64Encoded: true,
+      };
+    }
+
     return {
-      statusCode: 200,
+      statusCode: 500,
+      body: JSON.stringify({ error: "Unexpected response from Stability" }),
       headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "no-store",
+        "Content-Type": "application/json",
         ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
       },
-      body: buf.toString("base64"),
-      isBase64Encoded: true,
     };
   } catch (e: any) {
     return {
