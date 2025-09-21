@@ -1,9 +1,14 @@
 "use client";
 
 import { useEffect, useMemo, useRef, useState } from "react";
+import { useLocation } from "react-router-dom";
 import { assistantMap } from "@/data/assistantMap";
 import { logEvent } from "@/lib/analytics";
 import { findRoute } from "@/lib/navIntents";
+import { askTurian, type ChatMessage } from "@/lib/ai/client";
+import { buildMessages, type NavatarCtx } from "@/lib/ai/prompt";
+import { getActiveNavatarForUser } from "@/lib/navatar/useNavatar";
+import { useAuthUser } from "@/lib/useAuthUser";
 import AssistantFab from "./AssistantFab";
 
 /** Brand tokens (adjust if your blue is different) */
@@ -16,6 +21,17 @@ type TurianAssistantProps = {
 };
 
 type ChatMsg = { role: "user" | "assistant"; content: string };
+
+const ASSISTANT_HISTORY_LIMIT = 12;
+
+const toAssistantHistory = (items: ChatMsg[]): ChatMessage[] =>
+  items
+    .map((msg): ChatMessage => ({
+      role: msg.role === "user" ? "user" : "assistant",
+      content: msg.content,
+    }))
+    .filter((msg) => msg.content.trim().length > 0)
+    .slice(-ASSISTANT_HISTORY_LIMIT);
 
 function getZone(pathname: string) {
   // tiny helper so we can answer differently later (Home, Worlds, Zones, etc.)
@@ -45,13 +61,18 @@ function isSignedIn() {
 export default function TurianAssistant({
   isAuthed,
 }: TurianAssistantProps) {
+  const { user } = useAuthUser();
+  const routerLocation = useLocation();
+  const pathname = routerLocation.pathname;
   const [open, setOpen] = useState(false);
   const [input, setInput] = useState("");
   const [thinking, setThinking] = useState(false);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
+  const [navatar, setNavatar] = useState<NavatarCtx>({});
   const listRef = useRef<HTMLDivElement | null>(null);
 
-  const zone = useMemo(() => getZone(window.location.pathname), []);
+  const zone = useMemo(() => getZone(pathname), [pathname]);
+  const theme = useMemo(() => ({ route: pathname || "/", zone }), [pathname, zone]);
 
   useEffect(() => {
     // starter tip so the box isn't empty
@@ -63,6 +84,32 @@ export default function TurianAssistant({
       ]);
     }
   }, []); // eslint-disable-line
+
+  useEffect(() => {
+    let active = true;
+
+    if (!user?.id) {
+      setNavatar({});
+      return () => {
+        active = false;
+      };
+    }
+
+    (async () => {
+      try {
+        const data = await getActiveNavatarForUser(user.id);
+        if (!active) return;
+        setNavatar(data);
+      } catch {
+        if (!active) return;
+        setNavatar({});
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
 
   useEffect(() => {
     if (listRef.current) {
@@ -86,11 +133,11 @@ export default function TurianAssistant({
 
   function openBot() {
     setOpen(true);
-    void logEvent({ event: "bot_open", from_page: location.pathname });
+    void logEvent({ event: "bot_open", from_page: pathname });
   }
   function closeBot() {
     setOpen(false);
-    void logEvent({ event: "bot_close", from_page: location.pathname });
+    void logEvent({ event: "bot_close", from_page: pathname });
   }
 
   async function onSend() {
@@ -99,7 +146,7 @@ export default function TurianAssistant({
 
     await logEvent({
       event: "bot_message",
-      from_page: location.pathname,
+      from_page: pathname,
       text,
     });
 
@@ -107,7 +154,7 @@ export default function TurianAssistant({
     if (target) {
       await logEvent({
         event: "bot_navigate",
-        from_page: location.pathname,
+        from_page: pathname,
         to_page: target,
         text,
       });
@@ -115,7 +162,7 @@ export default function TurianAssistant({
         ...m,
         { role: "assistant", content: `Taking you to ${target}…` },
       ]);
-      location.assign(target);
+      window.location.assign(target);
       return;
     }
 
@@ -133,29 +180,21 @@ export default function TurianAssistant({
       return;
     }
 
+    const history = toAssistantHistory(messages);
     setMessages((m) => [...m, { role: "user", content: text }]);
     setInput("");
 
     try {
       setThinking(true);
-      const res = await fetch("/.netlify/functions/chat", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          zone,
-          messages: [
-            { role: "system", content: `You are Turian in ${zone}.` },
-            ...messages,
-            { role: "user", content: text },
-          ],
-        }),
-      });
-
-      if (!res.ok) throw new Error(await res.text());
-      const json = (await res.json()) as { reply?: string };
+      const baseMessages = buildMessages(text, navatar, theme);
+      const [systemMessage, userMessage] = baseMessages;
+      const payload: ChatMessage[] = [systemMessage, ...history, userMessage].filter(
+        (msg): msg is ChatMessage => Boolean(msg?.content),
+      );
+      const reply = await askTurian(payload);
       setMessages((m) => [
         ...m,
-        { role: "assistant", content: json.reply || "Okay!" },
+        { role: "assistant", content: reply },
       ]);
     } catch (e) {
       setMessages((m) => [

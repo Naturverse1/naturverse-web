@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 import { demoGrant } from '@/lib/naturbank';
 import { demoAddStamp } from '@/lib/passport';
+import { askTurian, type ChatMessage } from '@/lib/ai/client';
+import { buildMessages, type NavatarCtx } from '@/lib/ai/prompt';
+import { getActiveNavatarForUser } from '@/lib/navatar/useNavatar';
+import { useAuthUser } from '@/lib/useAuthUser';
 import './turian.css';
 
 type Role = 'user' | 'bot' | 'notice';
@@ -40,6 +45,7 @@ const STORAGE_KEY = 'naturverse.turian.thread.v1';
 const QUEST_TAG = /<<quest\|([^|]+)\|([^|]+)\|([^|]+)\|([^|>]+)(?:\|([^|>]+))?>>/i;
 const QUEST_REWARD = 5;
 const MAX_ENTRIES = 80;
+const MAX_HISTORY_MESSAGES = 12;
 
 const INITIAL_ENTRIES: ChatEntry[] = [
   {
@@ -200,7 +206,18 @@ const limitEntries = (entries: ChatEntry[]) => {
   return entries.slice(entries.length - MAX_ENTRIES);
 };
 
+const toHistoryMessages = (entries: ChatEntry[]): ChatMessage[] =>
+  entries
+    .filter((item): item is ChatMessageEntry => item.kind === 'message' && item.role !== 'notice')
+    .map((item): ChatMessage => ({
+      role: item.role === 'user' ? 'user' : 'assistant',
+      content: item.text,
+    }))
+    .slice(-MAX_HISTORY_MESSAGES);
+
 export function TurianChat() {
+  const { user } = useAuthUser();
+  const { pathname } = useLocation();
   const [entries, setEntries] = useState<ChatEntry[]>(() => INITIAL_ENTRIES);
   const [input, setInput] = useState('');
   const [online, setOnline] = useState<boolean>(true);
@@ -208,6 +225,8 @@ export function TurianChat() {
   const [processingQuestId, setProcessingQuestId] = useState<string | null>(null);
   const [toast, setToast] = useState('');
   const [hydrated, setHydrated] = useState(false);
+  const [navatar, setNavatar] = useState<NavatarCtx>({});
+  const theme = useMemo(() => ({ route: pathname || '/', zone: 'Turian Chat' }), [pathname]);
   const view = useRef<HTMLDivElement>(null);
   const offlineNotice = useRef(false);
 
@@ -219,6 +238,32 @@ export function TurianChat() {
     }
     setHydrated(true);
   }, []);
+
+  useEffect(() => {
+    let active = true;
+
+    if (!user?.id) {
+      setNavatar({});
+      return () => {
+        active = false;
+      };
+    }
+
+    (async () => {
+      try {
+        const data = await getActiveNavatarForUser(user.id);
+        if (!active) return;
+        setNavatar(data);
+      } catch {
+        if (!active) return;
+        setNavatar({});
+      }
+    })();
+
+    return () => {
+      active = false;
+    };
+  }, [user?.id]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -314,21 +359,23 @@ export function TurianChat() {
   const ask = async () => {
     const trimmed = input.trim();
     if (!trimmed) return;
+    const prompt = buildPrompt(trimmed);
+    const history = toHistoryMessages(entries);
+
     addMessage('user', trimmed);
     setInput('');
     setBusy(true);
 
     try {
-      const r = await fetch('/.netlify/functions/turian-chat', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ prompt: buildPrompt(trimmed) }),
-      });
-      if (!r.ok) throw new Error('offline');
-      const { reply } = await r.json();
+      const baseMessages = buildMessages(prompt, navatar, theme);
+      const [systemMessage, userMessage] = baseMessages;
+      const payload: ChatMessage[] = [systemMessage, ...history, userMessage].filter(
+        (msg): msg is ChatMessage => Boolean(msg?.content),
+      );
+      const reply = await askTurian(payload);
       setOnline(true);
       offlineNotice.current = false;
-      handleReply(String(reply ?? ''), trimmed);
+      handleReply(reply, trimmed);
     } catch {
       handleOffline(trimmed);
     } finally {
