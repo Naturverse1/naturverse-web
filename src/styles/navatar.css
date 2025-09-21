@@ -31,6 +31,16 @@
   border-color: #1e4ed8;
   font-weight: 700;
 }
+.navatar-pills .pill {
+  border-color: var(--blue-6, #1e4ed8);
+}
+.navatar-generate .pill--primary {
+  width: 100%;
+  justify-content: center;
+}
+.navatar-generate .pill--primary:disabled {
+  opacity: 0.6;
+}
 
 /* --- Card: single source of truth for size & fit --- */
 .nav-card {
@@ -156,15 +166,26 @@
 .navatar-toggle,
 .navatar-keep-style {
   width: 100%;
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
   padding: 12px 14px;
   border-radius: 12px;
   border: 1px solid #e5e7eb;
   background: #f9fafb;
   text-align: left;
   color: #111827;
+}
+.navatar-toggle {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+.navatar-keep-style {
+  display: grid;
+  gap: 10px;
+}
+.navatar-keep-style__row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
 }
 .navatar-toggle input,
 .navatar-keep-style input {
@@ -180,6 +201,41 @@
 }
 .navatar-keep-style--disabled {
   opacity: 0.6;
+}
+.navatar-keep-style__seed {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  justify-content: space-between;
+  font-size: 0.85rem;
+  color: #374151;
+}
+.navatar-keep-style__seed code {
+  padding: 2px 6px;
+  border-radius: 6px;
+  background: rgba(30, 78, 216, 0.12);
+  color: #1e3a8a;
+  font-weight: 700;
+}
+.navatar-seed-label {
+  font-weight: 700;
+  color: #1f2937;
+}
+.navatar-seed-dice {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  border: 1px solid #c7d2fe;
+  background: #eef2ff;
+  color: #1e3a8a;
+  font-weight: 600;
+  font-size: 0.8rem;
+}
+.navatar-seed-dice:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 .navatar-advanced {
   width: 100%;

@@ -8,26 +8,82 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import {
-  DEFAULT_NEGATIVE_PROMPT,
-  DEFAULT_STYLE_ID,
-  MAX_SEED,
-  RATE_LIMIT_MESSAGE,
-  RateLimitError,
-  STYLE_PRESETS,
-  buildNegativePrompt,
-  buildPrompt,
-  generateWithStability,
-  seedFromUserId,
-} from "../../lib/navatar/stability";
+import { generateNavatar } from "../../lib/navatar/generate";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
+type StylePreset = {
+  id: string;
+  label: string;
+  prompt: string;
+  description: string;
+};
+
+const STYLE_PRESETS: StylePreset[] = [
+  {
+    id: "cute-creature",
+    label: "Cute Creature",
+    prompt:
+      "adorable creature design, plush textures, rounded silhouettes, cozy lighting, soft gradients",
+    description: "Soft, plushy friend with big eyes and cozy colors.",
+  },
+  {
+    id: "mythical-friend",
+    label: "Mythical Friend",
+    prompt:
+      "mythical companion, gentle glow, fantasy illustration, ornate patterns, flowing shapes",
+    description: "Sparkling fantasy companion with storybook magic.",
+  },
+  {
+    id: "jungle-buddy",
+    label: "Jungle Buddy",
+    prompt:
+      "lush rainforest setting, tropical foliage, playful energy, vibrant greens and oranges, painterly strokes",
+    description: "Playful jungle explorer surrounded by tropical vibes.",
+  },
+  {
+    id: "ocean-guardian",
+    label: "Ocean Guardian",
+    prompt:
+      "underwater fantasy, coral-inspired shapes, shimmering light rays, teal and coral palette, smooth gradients",
+    description: "Glowing underwater hero with gentle waves.",
+  },
+  {
+    id: "forest-sprite",
+    label: "Forest Sprite",
+    prompt:
+      "mossy textures, dappled forest light, tiny guardian spirit, whimsical nature illustration, watercolor softness",
+    description: "Tiny woodland spirit with glowing leaves.",
+  },
+  {
+    id: "sky-traveler",
+    label: "Sky Traveler",
+    prompt:
+      "floating in clouds, warm sunlight, dynamic motion, airy composition, pastel blues and golds",
+    description: "Adventurer soaring through pastel skies.",
+  },
+  {
+    id: "crystal-beast",
+    label: "Crystal Beast",
+    prompt:
+      "faceted crystal forms, iridescent reflections, luminous core, high-contrast fantasy art, prismatic colors",
+    description: "Shimmering creature built from magical crystals.",
+  },
+  {
+    id: "robot-pal",
+    label: "Robot Pal",
+    prompt:
+      "friendly robot companion, smooth chrome panels, soft neon accents, rounded shapes, Pixar-like lighting",
+    description: "Helpful robo-buddy with glowing gadgets.",
+  },
+];
+
+const DEFAULT_STYLE_ID = STYLE_PRESETS[0]?.id ?? "cute-creature";
+
+const GUARDED_PHRASE =
+  "family-friendly, wholesome, cheerful expression, bright color palette, soft lighting, clean background, no text, no watermark, no signatures, kid-safe";
+
+const DEFAULT_NEGATIVE_PROMPT =
+  "realistic gore, violence, guns, logos, words, letters, watermark";
 
 const BRAND_NEGATIVE = [
   "photo, photorealistic, hyperrealistic,",
@@ -35,19 +91,44 @@ const BRAND_NEGATIVE = [
   "grain, noise, artifacts, extra limbs, deformed hands",
 ].join(", ");
 
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
+const MAX_SEED = 1_000_000;
+
+function randomSeed(): number {
+  return Math.floor(Math.random() * MAX_SEED) || 1;
+}
+
+function seedFromUserId(userId: string): number {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i += 1) {
+    hash = (hash << 5) - hash + userId.charCodeAt(i);
+    hash |= 0;
+  }
+  const normalized = Math.abs(hash) % MAX_SEED;
+  return normalized === 0 ? 1 : normalized;
+}
+
+function buildPrompt(userPrompt: string, style: StylePreset): string {
+  const trimmed = userPrompt.trim();
+  const parts = [
+    trimmed,
+    `Style: ${style.label} — ${style.prompt}`,
+    GUARDED_PHRASE,
+  ].filter(Boolean);
+  return parts.join("; ");
+}
+
+function buildNegativePrompt(extra?: string): string {
+  const additions = extra?.trim();
+  if (!additions) return DEFAULT_NEGATIVE_PROMPT;
+  return `${DEFAULT_NEGATIVE_PROMPT}, ${additions}`;
 }
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
   const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
   const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
-  const [keepStyle, setKeepStyle] = useState(false);
+  const [seedLocked, setSeedLocked] = useState(false);
+  const [seed, setSeed] = useState<number | undefined>();
   const [onBrand, setOnBrand] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
@@ -69,9 +150,11 @@ export default function GenerateNavatarPage() {
 
   useEffect(() => {
     if (user?.id) {
-      setKeepStyle((prev) => (prev ? prev : true));
+      setSeedLocked((prev) => (prev ? prev : true));
+      setSeed((prev) => (typeof prev === "number" ? prev : seedFromUserId(user.id)));
     } else {
-      setKeepStyle(false);
+      setSeedLocked(false);
+      setSeed(undefined);
     }
   }, [user?.id]);
 
@@ -80,12 +163,26 @@ export default function GenerateNavatarPage() {
     [styleId]
   );
 
-  const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
-
   const alwaysFilteredPrompt = useMemo(
     () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
     [onBrand]
   );
+
+  const handleSeedToggle = (checked: boolean) => {
+    setSeedLocked(checked);
+    if (checked && typeof seed !== "number") {
+      if (user?.id) {
+        setSeed(seedFromUserId(user.id));
+      } else {
+        setSeed(randomSeed());
+      }
+    }
+  };
+
+  const handleRandomizeSeed = () => {
+    if (!seedLocked) return;
+    setSeed(randomSeed());
+  };
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -110,26 +207,31 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
     const baseNegativePrompt = buildNegativePrompt(extraNegativePrompt);
-    const combinedNegativePrompt = onBrand
-      ? `${baseNegativePrompt}, ${BRAND_NEGATIVE}`
-      : baseNegativePrompt;
 
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
+    let generationSeed: number | undefined;
+    if (seedLocked) {
+      if (typeof seed === "number") {
+        generationSeed = seed;
+      } else if (user?.id) {
+        const lockedSeed = seedFromUserId(user.id);
+        generationSeed = lockedSeed;
+        setSeed(lockedSeed);
+      } else {
+        const random = randomSeed();
+        generationSeed = random;
+        setSeed(random);
+      }
+    }
 
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const blob = await generateNavatar({
         prompt: finalPrompt,
-        negativePrompt: combinedNegativePrompt,
+        avoid: baseNegativePrompt,
+        onBrand,
         seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -137,18 +239,10 @@ export default function GenerateNavatarPage() {
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
-
-      if (typeof remaining === "number" && remaining <= 0) {
-        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
-      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message, kind: "warn" });
-      } else {
-        const message = error instanceof Error ? error.message : "Error generating image";
-        toast({ text: message, kind: "err" });
-      }
+      const message = error instanceof Error ? error.message : "Error generating image";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -157,7 +251,7 @@ export default function GenerateNavatarPage() {
   const canSave = Boolean(file) && !isGenerating;
 
   return (
-    <main className="page-pad mx-auto max-w-4xl p-4">
+    <main className="navatar-generate page-pad mx-auto max-w-4xl p-4">
       <div className="bcRow">
         <Breadcrumbs
           items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
@@ -216,26 +310,40 @@ export default function GenerateNavatarPage() {
             </div>
           </div>
         </div>
-        <label
+        <div
           className={`navatar-keep-style${!user?.id ? " navatar-keep-style--disabled" : ""}`}
-          htmlFor="navatar-keep-style"
         >
-          <input
-            id="navatar-keep-style"
-            type="checkbox"
-            checked={keepStyle && Boolean(user?.id)}
-            onChange={(e) => setKeepStyle(e.target.checked)}
-            disabled={!user?.id || isGenerating}
-          />
-          <span>
-            Keep style consistent
-            <small>
-              {user?.id
-                ? "Uses your account seed so regenerations keep the same vibe."
-                : "Sign in to lock a style seed to your Navatar."}
-            </small>
-          </span>
-        </label>
+          <div className="navatar-keep-style__row">
+            <input
+              id="navatar-keep-style"
+              type="checkbox"
+              checked={seedLocked && Boolean(user?.id)}
+              onChange={(e) => handleSeedToggle(e.target.checked)}
+              disabled={!user?.id || isGenerating}
+            />
+            <label htmlFor="navatar-keep-style">
+              Keep style consistent (seed)
+              <small>
+                {user?.id
+                  ? "Uses your account seed so regenerations keep the same vibe."
+                  : "Sign in to lock a style seed to your Navatar."}
+              </small>
+            </label>
+          </div>
+          <div className="navatar-keep-style__seed" aria-live="polite">
+            <span className="navatar-seed-label">Seed</span>
+            <code>{seedLocked && typeof seed === "number" ? seed : "—"}</code>
+            <button
+              type="button"
+              className="navatar-seed-dice"
+              onClick={handleRandomizeSeed}
+              disabled={!seedLocked || !user?.id || isGenerating}
+            >
+              <span aria-hidden>🎲</span>
+              <span>Roll new seed</span>
+            </button>
+          </div>
+        </div>
         <details className="navatar-advanced">
           <summary>Advanced prompt controls</summary>
           <div className="navatar-advanced__content">
@@ -255,12 +363,11 @@ export default function GenerateNavatarPage() {
         </details>
         <button
           type="button"
-          className="pill"
+          className="pill pill--primary"
           onClick={handleGenerate}
           disabled={isGenerating}
-          style={{ width: "100%" }}
         >
-          {isGenerating ? "Generating…" : "Generate with Stability AI"}
+          {isGenerating ? "Generating…" : "Generate with Hugging Face FLUX"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -279,7 +386,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Stability AI – square 1024×1024 art, 25 generations/day on the free tier.
+        Powered by Hugging Face FLUX – square 1024×1024 art.
       </p>
     </main>
   );
