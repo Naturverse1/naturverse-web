@@ -10,6 +10,8 @@ VITE_SUPABASE_ANON_KEY=…
 
 Also set the same variables in Netlify → Site settings → Environment variables.
 
+- Stability generation: server env `STABILITY_API_KEY` and public toggle `VITE_ENABLE_STABILITY=1`.
+
 ### NaturBank
 - Page: `/naturbank`
 - Demo wallet label/address; NATUR balance computed from transactions; grant/spend buttons.
