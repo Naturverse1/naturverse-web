@@ -1,6 +1,7 @@
 import { supabase } from './supabaseClient';
 import { getActiveNavatarId } from './localNavatar';
 import { saveNavatar as upsertNavatar } from './supabaseHelpers';
+import { saveAvatarRow, uploadAvatarImage, type AvatarRowPayload } from './navatar/useSupabase';
 
 export const NAVATAR_BUCKET = 'avatars';
 export const NAVATAR_PREFIX = 'navatars';
@@ -79,7 +80,7 @@ export async function pickNavatar(imagePath: string, name?: string): Promise<Nav
   const owner_id = await getSessionUserId();
   const { data: pub } = supabase.storage.from(NAVATAR_BUCKET).getPublicUrl(imagePath);
 
-  const payload: Record<string, any> = {
+  const payload: AvatarRowPayload = {
     owner_id,
     name: name ?? 'My Navatar',
     image_url: pub.publicUrl ?? null,
@@ -90,29 +91,28 @@ export async function pickNavatar(imagePath: string, name?: string): Promise<Nav
   const existingId = await resolveExistingNavatarId(owner_id);
   if (existingId) payload.id = existingId;
 
-  const { data, error } = await supabase
-    .from('navatars')
-    .upsert(payload, { onConflict: 'id' })
-    .select('*')
-    .single();
-
-  if (error) throw error;
-  return data as NavatarRow;
+  const saved = await saveAvatarRow(payload);
+  return saved as NavatarRow;
 }
 
 /** Upload a custom image then store it in public.navatars */
-export async function uploadNavatar(file: File, name?: string): Promise<NavatarRow> {
+export async function uploadAvatar(file: File, name?: string): Promise<NavatarRow> {
   const owner_id = await getSessionUserId();
-  const ext = file.name.split('.').pop()?.toLowerCase() || 'png';
-  const key = `${NAVATAR_PREFIX}/${owner_id}/${crypto.randomUUID()}.${ext}`;
+  const image = await uploadAvatarImage(owner_id, file);
 
-  const { error: upErr } = await supabase
-    .storage.from(NAVATAR_BUCKET)
-    .upload(key, file, { upsert: true });
+  const payload: AvatarRowPayload = {
+    owner_id,
+    name: name ?? 'My Navatar',
+    image_url: image.publicUrl ?? null,
+    image_path: image.path ?? null,
+    updated_at: new Date().toISOString(),
+  };
 
-  if (upErr) throw upErr;
+  const existingId = await resolveExistingNavatarId(owner_id);
+  if (existingId) payload.id = existingId;
 
-  return pickNavatar(key, name);
+  const saved = await saveAvatarRow(payload);
+  return saved as NavatarRow;
 }
 
 /** Load the current user's navatar row */

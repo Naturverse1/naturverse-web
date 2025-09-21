@@ -152,6 +152,7 @@ export default function NavatarCardPage() {
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
+    if (saving) return;
     if (!canSave) return;
     setSaving(true);
     setErr(null);
@@ -185,10 +186,13 @@ export default function NavatarCardPage() {
         setNavatarId(saved.id as string);
       }
 
+      toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
     } catch (e: any) {
       console.error(e);
-      setErr(e.message ?? "Save failed");
+      const message = e?.message ?? "Save failed";
+      setErr(message);
+      toast({ text: message, kind: "err" });
     } finally {
       setSaving(false);
     }
@@ -302,7 +306,7 @@ export default function NavatarCardPage() {
           <Link to="/navatar" className="pill">
             Back to My Navatar
           </Link>
-          <button className="pill pill--active" disabled={!canSave || saving}>
+          <button className="pill pill--active" type="submit" disabled={!canSave || saving}>
             {saving ? "Saving…" : "Save"}
           </button>
         </div>

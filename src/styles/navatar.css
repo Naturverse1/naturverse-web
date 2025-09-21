@@ -226,3 +226,16 @@
   }
 }
 
+/* Keep the helper FAB from overlapping the form hit area */
+.ai-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 16px;
+  width: 56px;
+  height: 56px;
+  z-index: 20;
+}
+.ai-fab-overlay {
+  pointer-events: none;
+}
+

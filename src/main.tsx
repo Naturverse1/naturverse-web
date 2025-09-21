@@ -64,7 +64,3 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 import './styles/overrides.css';
-
-if (import.meta.env.PROD) {
-  import('./register-sw');
-}

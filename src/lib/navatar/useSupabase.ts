@@ -1,9 +1,25 @@
 import { supabase } from '@/lib/supabaseClient';
 
-// Table names are navatars; storage bucket remains **avatars**
-export async function saveAvatarRow(payload: any) {
-  // e.g., { owner_id, name, image_url, meta }
-  return await supabase.from('navatars').insert(payload).select().single();
+export type AvatarRowPayload = {
+  id?: string;
+  owner_id: string;
+  name?: string | null;
+  image_url?: string | null;
+  image_path?: string | null;
+  updated_at?: string | null;
+  [key: string]: unknown;
+};
+
+// Table writes
+export async function saveAvatarRow(payload: AvatarRowPayload) {
+  const { data, error } = await supabase
+    .from('navatars')
+    .upsert(payload, { onConflict: 'id' })
+    .select('*')
+    .single();
+
+  if (error) throw error;
+  return data;
 }
 
 export async function listAvatarsByUser(userId: string) {
@@ -14,16 +30,20 @@ export async function listAvatarsByUser(userId: string) {
     .order('created_at', { ascending: false });
 }
 
-// Storage bucket also **avatars**
+// Storage bucket **avatars**
 export async function uploadAvatarImage(userId: string, file: File) {
-  const path = `${userId}/${Date.now()}-${file.name}`;
-  const { data, error } = await supabase
-    .storage
-    .from('avatars')
-    .upload(path, file, { upsert: false });
+  const ext = (file.name.split('.').pop() || 'png').toLowerCase();
+  const path = `${userId}/${Date.now()}-${Math.random().toString(36).slice(2)}.${ext}`;
+
+  const { error } = await supabase.storage.from('avatars').upload(path, file, {
+    cacheControl: '31536000',
+    upsert: false,
+    contentType: file.type || 'image/png',
+  });
+
   if (error) throw error;
-  const { data: pub } = await supabase.storage
-    .from('avatars')
-    .getPublicUrl(path);
-  return pub.publicUrl; // public URL for card
+
+  const { data: pub } = await supabase.storage.from('avatars').getPublicUrl(path);
+  return { publicUrl: pub.publicUrl, path };
 }
+
