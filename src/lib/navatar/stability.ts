@@ -1,76 +1,35 @@
 export type StylePreset = {
   id: string;
   label: string;
-  prompt: string;
+  stylePreset: string;
   description: string;
 };
 
 export const STYLE_PRESETS: StylePreset[] = [
   {
-    id: "cute-creature",
-    label: "Cute Creature",
-    prompt:
-      "adorable creature design, plush textures, rounded silhouettes, cozy lighting, soft gradients",
-    description: "Soft, plushy friend with big eyes and cozy colors.",
+    id: "navatar-classic",
+    label: "Navatar Classic",
+    stylePreset: "comic-book",
+    description: "Bold outlines, bright palette, classic Naturverse vibe.",
   },
   {
-    id: "mythical-friend",
-    label: "Mythical Friend",
-    prompt:
-      "mythical companion, gentle glow, fantasy illustration, ornate patterns, flowing shapes",
-    description: "Sparkling fantasy companion with storybook magic.",
+    id: "storybook-soft",
+    label: "Storybook Soft",
+    stylePreset: "digital-art",
+    description: "Soft gradients and cozy light with painterly charm.",
   },
   {
-    id: "jungle-buddy",
-    label: "Jungle Buddy",
-    prompt:
-      "lush rainforest setting, tropical foliage, playful energy, vibrant greens and oranges, painterly strokes",
-    description: "Playful jungle explorer surrounded by tropical vibes.",
-  },
-  {
-    id: "ocean-guardian",
-    label: "Ocean Guardian",
-    prompt:
-      "underwater fantasy, coral-inspired shapes, shimmering light rays, teal and coral palette, smooth gradients",
-    description: "Glowing underwater hero with gentle waves.",
-  },
-  {
-    id: "forest-sprite",
-    label: "Forest Sprite",
-    prompt:
-      "mossy textures, dappled forest light, tiny guardian spirit, whimsical nature illustration, watercolor softness",
-    description: "Tiny woodland spirit with glowing leaves.",
-  },
-  {
-    id: "sky-traveler",
-    label: "Sky Traveler",
-    prompt:
-      "floating in clouds, warm sunlight, dynamic motion, airy composition, pastel blues and golds",
-    description: "Adventurer soaring through pastel skies.",
-  },
-  {
-    id: "crystal-beast",
-    label: "Crystal Beast",
-    prompt:
-      "faceted crystal forms, iridescent reflections, luminous core, high-contrast fantasy art, prismatic colors",
-    description: "Shimmering creature built from magical crystals.",
-  },
-  {
-    id: "robot-pal",
-    label: "Robot Pal",
-    prompt:
-      "friendly robot companion, smooth chrome panels, soft neon accents, rounded shapes, Pixar-like lighting",
-    description: "Helpful robo-buddy with glowing gadgets.",
+    id: "sticker-pop",
+    label: "Sticker Pop",
+    stylePreset: "fantasy-art",
+    description: "High-contrast colors and extra punchy highlights.",
   },
 ];
 
-export const DEFAULT_STYLE_ID = STYLE_PRESETS[0]?.id ?? "cute-creature";
-
-const GUARDED_PHRASE =
-  "family-friendly, wholesome, cheerful expression, bright color palette, soft lighting, clean background, no text, no watermark, no signatures, kid-safe";
+export const DEFAULT_STYLE_ID = STYLE_PRESETS[0]?.id ?? "navatar-classic";
 
 export const DEFAULT_NEGATIVE_PROMPT =
-  "realistic gore, violence, guns, logos, words, letters, watermark";
+  "photo, photorealistic, hyperrealistic, text, caption, letters, logo, watermark, signature, grain, noise, artifacts, extra limbs, deformed hands";
 
 export const MAX_SEED = 0xffff_ffff; // 4294967295
 
@@ -95,30 +54,27 @@ export class RateLimitError extends StabilityError {
 
 export const RATE_LIMIT_MESSAGE = "You’ve reached today’s free 25 Stability generations.";
 
-export function buildPrompt(userPrompt: string, style: StylePreset): string {
-  const trimmed = userPrompt.trim();
-  const parts = [
-    trimmed,
-    `Style: ${style.label} — ${style.prompt}`,
-    GUARDED_PHRASE,
-  ].filter(Boolean);
-  return parts.join("; ");
+export function buildPrompt(userPrompt: string): string {
+  return userPrompt.trim();
 }
 
 export function buildNegativePrompt(extra?: string): string {
-  const additions = extra?.trim();
-  if (!additions) return DEFAULT_NEGATIVE_PROMPT;
-  return `${DEFAULT_NEGATIVE_PROMPT}, ${additions}`;
+  return extra?.trim() ?? "";
 }
 
-export function seedFromUserId(userId: string): number {
+const seedFromString = (value: string): number => {
   let hash = 0;
-  for (let i = 0; i < userId.length; i += 1) {
-    hash = (hash << 5) - hash + userId.charCodeAt(i);
+  for (let i = 0; i < value.length; i += 1) {
+    hash = (hash << 5) - hash + value.charCodeAt(i);
     hash |= 0; // force 32-bit
   }
   const normalized = (hash >>> 0) % MAX_SEED;
   return normalized === 0 ? 1 : normalized;
+};
+
+export function seedFromUserId(userId?: string): number {
+  const source = userId?.trim() || "naturverse";
+  return seedFromString(source);
 }
 
 export function normalizeSeed(seed: number | undefined): number | undefined {
@@ -136,10 +92,11 @@ function parseRemaining(header: string | null): number | null {
 
 export interface StabilityGenerateOptions {
   prompt: string;
-  negativePrompt?: string;
+  avoid?: string;
   seed?: number;
-  size?: string;
-  style?: string;
+  keepSeed?: boolean;
+  onBrand?: boolean;
+  stylePreset?: string;
   signal?: AbortSignal;
 }
 
@@ -150,26 +107,30 @@ export interface StabilityGenerateResult {
 
 export async function generateWithStability({
   prompt,
-  negativePrompt,
+  avoid,
   seed,
-  size,
-  style,
+  keepSeed,
+  onBrand,
+  stylePreset,
   signal,
 }: StabilityGenerateOptions): Promise<StabilityGenerateResult> {
   if (!prompt?.trim()) {
     throw new StabilityError("Prompt required");
   }
 
+  const normalizedSeed = normalizeSeed(seed);
+  const shouldKeepSeed = Boolean(keepSeed && typeof normalizedSeed === "number");
+
   const payload: Record<string, unknown> = {
-    prompt,
-    negativePrompt: negativePrompt?.trim() || undefined,
-    size,
-    style,
+    prompt: prompt.trim(),
+    avoid: avoid?.trim() || undefined,
+    stylePreset,
+    onBrand,
   };
 
-  const normalizedSeed = normalizeSeed(seed);
-  if (typeof normalizedSeed === "number") {
+  if (shouldKeepSeed && typeof normalizedSeed === "number") {
     payload.seed = normalizedSeed;
+    payload.keepSeed = true;
   }
 
   let resp: Response;

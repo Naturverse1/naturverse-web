@@ -11,7 +11,6 @@ import { useAuthUser } from "../../lib/useAuthUser";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
-  MAX_SEED,
   RATE_LIMIT_MESSAGE,
   RateLimitError,
   STYLE_PRESETS,
@@ -26,6 +25,7 @@ export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
   const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
   const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
+  const [onBrand, setOnBrand] = useState(true);
   const [keepStyle, setKeepStyle] = useState(false);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
@@ -58,7 +58,7 @@ export default function GenerateNavatarPage() {
     [styleId]
   );
 
-  const stableSeed = useMemo(() => (user?.id ? seedFromUserId(user.id) : undefined), [user?.id]);
+  const stableSeed = useMemo(() => seedFromUserId(user?.id), [user?.id]);
 
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
@@ -82,19 +82,16 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const generationSeed =
-      keepStyle && typeof stableSeed === "number"
-        ? stableSeed
-        : Math.floor(Math.random() * MAX_SEED) || 1;
-
     setIsGenerating(true);
     try {
+      const shouldKeepSeed = keepStyle && Boolean(user?.id);
       const { blob, remaining } = await generateWithStability({
-        prompt: buildPrompt(prompt, selectedStyle),
-        negativePrompt: buildNegativePrompt(extraNegativePrompt),
-        seed: generationSeed,
-        size: "1024x1024",
-        style: selectedStyle.id,
+        prompt: buildPrompt(prompt),
+        avoid: buildNegativePrompt(extraNegativePrompt),
+        seed: shouldKeepSeed ? stableSeed : undefined,
+        keepSeed: shouldKeepSeed,
+        onBrand,
+        stylePreset: selectedStyle.stylePreset,
       });
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -141,10 +138,13 @@ export default function GenerateNavatarPage() {
           <textarea
             id="navatar-prompt"
             rows={4}
-            placeholder="Friendly nature guide, glowing shell, playful pose…"
+            placeholder="cheerful fox ranger with leafy cape, carrying a tiny acorn lantern"
             value={prompt}
             onChange={(e) => setPrompt(e.target.value)}
           />
+          <small>
+            We’ll auto-apply Navatar style and remove text/logos.
+          </small>
         </div>
         <div className="navatar-field">
           <label htmlFor="navatar-style">Style preset</label>
@@ -168,6 +168,19 @@ export default function GenerateNavatarPage() {
             </div>
           </div>
         </div>
+        <label className="navatar-keep-style" htmlFor="navatar-on-brand">
+          <input
+            id="navatar-on-brand"
+            type="checkbox"
+            checked={onBrand}
+            onChange={(e) => setOnBrand(e.target.checked)}
+            disabled={isGenerating}
+          />
+          <span>
+            Keep on-brand
+            <small>Recommended. Ensures every Navatar stays cartoony and Naturverse-friendly.</small>
+          </span>
+        </label>
         <label
           className={`navatar-keep-style${!user?.id ? " navatar-keep-style--disabled" : ""}`}
           htmlFor="navatar-keep-style"
@@ -183,7 +196,7 @@ export default function GenerateNavatarPage() {
             Keep style consistent
             <small>
               {user?.id
-                ? "Uses your account seed so regenerations keep the same vibe."
+                ? "Locks to your account seed so regenerations keep the same vibe."
                 : "Sign in to lock a style seed to your Navatar."}
             </small>
           </span>
@@ -191,9 +204,11 @@ export default function GenerateNavatarPage() {
         <details className="navatar-advanced">
           <summary>Advanced prompt controls</summary>
           <div className="navatar-advanced__content">
-            <p>
-              We always filter out: <code>{DEFAULT_NEGATIVE_PROMPT}</code>
-            </p>
+            {onBrand ? (
+              <p>
+                On-brand mode filters out: <code>{DEFAULT_NEGATIVE_PROMPT}</code>
+              </p>
+            ) : null}
             <label htmlFor="navatar-negative">Add more things to avoid (optional)</label>
             <textarea
               id="navatar-negative"
