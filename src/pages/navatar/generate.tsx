@@ -4,7 +4,7 @@ import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
+import { uploadAvatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import "../../styles/navatar.css";
@@ -31,7 +31,7 @@ export default function GenerateNavatarPage() {
     e.preventDefault();
     if (!file) return;
     try {
-      const row = await uploadNavatar(file, name || undefined);
+      const row = await uploadAvatar(file, name || undefined);
       setActiveNavatarId(row.id);
       toast({ text: "Saved ✓", kind: "ok" });
       nav("/navatar");
