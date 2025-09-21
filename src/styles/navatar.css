@@ -226,3 +226,34 @@
   }
 }
 
+/* Keep FAB from overlapping important controls */
+.fab,
+.mascot-fab,
+.naturverse-fab {
+  position: fixed;
+  right: 16px;
+  bottom: 96px;
+  z-index: 5;
+  width: 56px;
+  height: 56px;
+}
+
+/* Make sure the click target is only the visible circle */
+.fab *,
+.mascot-fab *,
+.naturverse-fab * {
+  pointer-events: auto;
+}
+.fab::before,
+.mascot-fab::before,
+.naturverse-fab::before {
+  content: none !important;
+}
+
+/* Ensure primary pills are always above ornaments */
+.pill,
+.pill--active {
+  position: relative;
+  z-index: 30;
+}
+

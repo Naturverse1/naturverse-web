@@ -26,13 +26,13 @@ export default function UploadNavatarPage() {
     return () => URL.revokeObjectURL(url);
   }, [file]);
 
-  async function onSave(e: React.FormEvent) {
-    e.preventDefault();
+  async function onSave(e?: React.FormEvent | React.MouseEvent) {
+    e?.preventDefault?.();
     if (!file) return;
     try {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
-      toast({ text: "Uploaded ✓", kind: "ok" });
+      toast({ text: "Uploaded ✔", kind: "ok" });
       nav("/navatar");
     } catch {
       toast({ text: "Upload failed", kind: "err" });
@@ -59,7 +59,12 @@ export default function UploadNavatarPage() {
           value={name}
           onChange={(e) => setName(e.target.value)}
         />
-        <button className="pill pill--active" type="submit">
+        <button
+          className="pill pill--active"
+          type="submit"
+          onClick={onSave}
+          aria-label="Save navatar"
+        >
           Save
         </button>
       </form>
