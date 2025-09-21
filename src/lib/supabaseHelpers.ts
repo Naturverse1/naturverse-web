@@ -48,16 +48,21 @@ export async function saveNavatar(params: SaveNavatarParams) {
     throw new Error("Failed to save navatar");
   }
 
+  const cardPayload: Record<string, any> = {
+    owner_id: userId,
+    user_id: userId,
+    navatar_id: navatarRow.id,
+    name: cleanField(params.name),
+    species: cleanField(params.species),
+    kingdom: cleanField(params.kingdom),
+    backstory: cleanField(params.backstory),
+    powers: cleanList(params.powers),
+    traits: cleanList(params.traits),
+  };
+
   const { data: cardRow, error: cardError } = await supabase
     .from("navatar_cards")
-    .upsert(
-      {
-        navatar_id: navatarRow.id,
-        powers: cleanList(params.powers),
-        traits: cleanList(params.traits),
-      },
-      { onConflict: "navatar_id" }
-    )
+    .upsert(cardPayload, { onConflict: "navatar_id" })
     .select()
     .single();
 
