@@ -1,6 +1,7 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
@@ -8,7 +9,13 @@
   included_files = []
   external_node_modules = []
 
-# SPA routing
+# Let static assets bypass SPA fallback
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# SPA fallback for app routes
 [[redirects]]
   from = "/*"
   to = "/index.html"
