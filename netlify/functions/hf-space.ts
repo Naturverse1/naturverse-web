@@ -1,62 +1,78 @@
 import type { Handler } from "@netlify/functions";
+import { hfFetch } from "./_hf";
 
-const SPACE = process.env.HF_SPACE_URL;
+type GenerationInput = {
+  prompt?: unknown;
+  negative_prompt?: unknown;
+  seed?: unknown;
+  randomize_seed?: unknown;
+  width?: unknown;
+  height?: unknown;
+  guidance_scale?: unknown;
+  num_inference_steps?: unknown;
+};
 
 export const handler: Handler = async (event) => {
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
     if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
+      return jsonResponse(405, { error: "Method Not Allowed" });
     }
 
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
-
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
-    });
-
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
-    }
-
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
+    let input: GenerationInput = {};
+    if (event.body) {
+      try {
+        input = JSON.parse(event.body);
+      } catch {
+        return jsonResponse(400, { error: "Invalid JSON" });
       }
     }
 
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
+    const payload = {
+      data: [
+        typeof input.prompt === "string" ? input.prompt : "",
+        typeof input.negative_prompt === "string" ? input.negative_prompt : "",
+        toNumber(input.seed, 0),
+        Boolean(input.randomize_seed ?? true),
+        toNumber(input.width, 1024),
+        toNumber(input.height, 1024),
+        toNumber(input.guidance_scale, 0),
+        toNumber(input.num_inference_steps, 2),
+      ],
+    };
 
-    return resp(200, { imageDataUrl });
-  } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
+    const response = await hfFetch("/gradio_api/call/infer", {
+      method: "POST",
+      body: JSON.stringify(payload),
+      retries: 1,
+    });
+
+    const json = await response.json();
+    return jsonResponse(200, json);
+  } catch (error: any) {
+    return jsonResponse(500, { error: String(error?.message || error) });
   }
 };
 
-function resp(status: number, body: unknown) {
+function jsonResponse(statusCode: number, body: unknown) {
   return {
-    statusCode: status,
+    statusCode,
     headers: {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
     },
     body: JSON.stringify(body),
   };
+}
+
+function toNumber(value: unknown, fallback: number) {
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return value;
+  }
+  if (typeof value === "string" && value.trim() !== "") {
+    const parsed = Number(value);
+    if (Number.isFinite(parsed)) {
+      return parsed;
+    }
+  }
+  return fallback;
 }
