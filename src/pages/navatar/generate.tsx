@@ -48,6 +48,7 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [errorDetail, setErrorDetail] = useState<string | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -106,17 +107,23 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
     setIsGenerating(true);
+    setErrorDetail(null);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const dataUrl = await generateWithHuggingFace({
+        prompt: finalPrompt,
+        negativePrompt,
+      });
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : "Error generating image";
+      const rawMessage = error instanceof Error ? error.message : "Error generating image";
+      const message = rawMessage.slice(0, 500) || "Space request failed";
+      setErrorDetail(message);
       toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
@@ -230,6 +237,19 @@ export default function GenerateNavatarPage() {
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
+        {errorDetail && (
+          <p
+            role="status"
+            style={{
+              color: "#7a1e1e",
+              textAlign: "center",
+              whiteSpace: "pre-wrap",
+              maxWidth: "100%",
+            }}
+          >
+            {errorDetail}
+          </p>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
