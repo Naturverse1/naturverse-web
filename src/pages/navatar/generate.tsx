@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { pollHF, startHF, warmupHF } from "../../lib/hfSpace";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -51,6 +51,7 @@ export default function GenerateNavatarPage() {
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
+  const abortRef = useRef<AbortController | null>(null);
 
   useEffect(() => {
     if (!file) {
@@ -69,6 +70,12 @@ export default function GenerateNavatarPage() {
       setKeepStyle(false);
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    warmupHF().catch(() => {
+      // Ignore warmup errors; the real request will surface issues if any.
+    });
+  }, []);
 
   const selectedStyle = useMemo(
     () => STYLE_PRESETS.find((preset) => preset.id === styleId) ?? STYLE_PRESETS[0],
@@ -97,6 +104,10 @@ export default function GenerateNavatarPage() {
   }
 
   async function handleGenerate() {
+    if (isGenerating) {
+      return;
+    }
+
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
@@ -107,20 +118,69 @@ export default function GenerateNavatarPage() {
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
-    setIsGenerating(true);
-    try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
-      setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
-    } catch (error) {
-      console.error(error);
-      const message = error instanceof Error ? error.message : "Error generating image";
-      toast({ text: message, kind: "err" });
+    setIsGenerating(true);
+
+    try {
+      await warmupHF();
+
+      abortRef.current?.abort();
+      const controller = new AbortController();
+      abortRef.current = controller;
+
+      const eventId = await startHF(promptWithAvoidance, {
+        steps: 2,
+        width: 512,
+        height: 512,
+        seed: 0,
+      });
+
+      let delay = 1200;
+      const delayMax = 5000;
+      const hardLimitMs = 8 * 60 * 1000;
+      const startedAt = Date.now();
+
+      while (true) {
+        const result = await pollHF(eventId, controller.signal);
+
+        if (result.status === "DONE") {
+          if (result.error) {
+            throw new Error(result.error);
+          }
+          if (!result.image) {
+            throw new Error("Space returned no image");
+          }
+
+          const generatedFile = await dataUrlToFile(result.image, `navatar-${Date.now()}.png`);
+          setFile(generatedFile);
+          toast({ text: "Navatar generated ✓", kind: "ok" });
+          break;
+        }
+
+        if (Date.now() - startedAt > hardLimitMs) {
+          throw new Error("Space result timeout");
+        }
+
+        await wait(delay, controller.signal);
+        delay = Math.min(delay + 400, delayMax);
+      }
+    } catch (error: unknown) {
+      const err = error instanceof Error ? error : new Error(String(error));
+
+      if (err.name === "AbortError") {
+        toast({ text: "Generation cancelled", kind: "err" });
+      } else {
+        console.error(err);
+        toast({ text: err.message || "Space request failed", kind: "err" });
+      }
     } finally {
+      abortRef.current = null;
       setIsGenerating(false);
     }
+  }
+
+  function handleCancel() {
+    abortRef.current?.abort();
   }
 
   const canSave = Boolean(file) && !isGenerating;
@@ -224,11 +284,11 @@ export default function GenerateNavatarPage() {
         </details>
         <button
           type="button"
-          className="generate-btn w-full rounded-xl px-5 py-3 text-base font-semibold text-white bg-blue-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-          onClick={handleGenerate}
-          disabled={isGenerating}
+          className="generate-btn w-full rounded-xl px-5 py-3 text-base font-semibold text-white bg-blue-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2"
+          onClick={isGenerating ? handleCancel : handleGenerate}
+          disabled={false}
         >
-          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
+          {isGenerating ? "Cancel (Generating...)" : "Generate with Hugging Face"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -247,7 +307,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Hugging Face Inference (FLUX.1-dev) – square 1024×1024 art.
+        Powered by Hugging Face Inference (FLUX.1-dev) – square 512×512 art.
       </p>
     </main>
   );
@@ -257,5 +317,32 @@ async function dataUrlToFile(dataUrl: string, filename: string) {
   const res = await fetch(dataUrl);
   const blob = await res.blob();
   return new File([blob], filename, { type: blob.type || "image/png" });
+}
+
+function wait(ms: number, signal?: AbortSignal) {
+  if (ms <= 0) {
+    return Promise.resolve();
+  }
+
+  return new Promise<void>((resolve, reject) => {
+    const timer = setTimeout(() => {
+      signal?.removeEventListener("abort", onAbort);
+      resolve();
+    }, ms);
+
+    const onAbort = () => {
+      clearTimeout(timer);
+      signal?.removeEventListener("abort", onAbort);
+      reject(new DOMException("Aborted", "AbortError"));
+    };
+
+    if (signal) {
+      if (signal.aborted) {
+        onAbort();
+      } else {
+        signal.addEventListener("abort", onAbort, { once: true });
+      }
+    }
+  });
 }
 
