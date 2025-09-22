@@ -8,6 +8,10 @@
   included_files = []
   external_node_modules = []
 
+# Give the HF proxy enough time to finish a generation
+[functions."hf-space"]
+  timeout = 60
+
 # SPA routing
 [[redirects]]
   from = "/*"
