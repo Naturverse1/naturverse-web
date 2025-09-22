@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -8,6 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
+import { pickHFImage } from "../../lib/hfResult";
 import { generateWithHuggingFace } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
@@ -46,21 +47,34 @@ export default function GenerateNavatarPage() {
   const [onBrand, setOnBrand] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
-  const [draftUrl, setDraftUrl] = useState<string | undefined>();
+  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
+  const previewObjectUrlRef = useRef<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
 
-  useEffect(() => {
-    if (!file) {
-      setDraftUrl(undefined);
-      return;
+  const updatePreview = (next: string | null, trackObjectUrl = false) => {
+    const current = previewObjectUrlRef.current;
+    if (current && current !== next) {
+      URL.revokeObjectURL(current);
+      previewObjectUrlRef.current = null;
     }
-    const url = URL.createObjectURL(file);
-    setDraftUrl(url);
-    return () => URL.revokeObjectURL(url);
-  }, [file]);
+    setPreviewUrl(next);
+    if (trackObjectUrl && next && next.startsWith("blob:")) {
+      previewObjectUrlRef.current = next;
+    } else if (!trackObjectUrl) {
+      previewObjectUrlRef.current = null;
+    }
+  };
+
+  useEffect(() => {
+    return () => {
+      if (previewObjectUrlRef.current) {
+        URL.revokeObjectURL(previewObjectUrlRef.current);
+      }
+    };
+  }, []);
 
   useEffect(() => {
     if (user?.id) {
@@ -109,10 +123,21 @@ export default function GenerateNavatarPage() {
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const payload = await generateWithHuggingFace(promptWithAvoidance);
+      const imageSrc = pickHFImage(payload);
 
+      if (!imageSrc) {
+        throw new Error("No image returned from Space");
+      }
+
+      updatePreview(imageSrc);
+
+      const generatedFile = await dataUrlToFile(imageSrc, `navatar-${Date.now()}.png`);
       setFile(generatedFile);
+
+      const objectUrl = URL.createObjectURL(generatedFile);
+      updatePreview(objectUrl, true);
+
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
       console.error(error);
@@ -139,7 +164,7 @@ export default function GenerateNavatarPage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        <NavatarCard src={draftUrl} title={name || "My Navatar"} />
+        <NavatarCard src={previewUrl ?? undefined} title={name || "My Navatar"} />
         <div className="navatar-field">
           <label htmlFor="navatar-prompt">Describe your Navatar</label>
           <textarea
@@ -239,7 +264,16 @@ export default function GenerateNavatarPage() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => {
+            const selected = e.target.files?.[0] || null;
+            setFile(selected);
+            if (selected) {
+              const objectUrl = URL.createObjectURL(selected);
+              updatePreview(objectUrl, true);
+            } else {
+              updatePreview(null);
+            }
+          }}
           disabled={isGenerating}
         />
         <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>

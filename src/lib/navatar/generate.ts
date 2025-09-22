@@ -1,4 +1,4 @@
-export async function generateWithHuggingFace(prompt: string): Promise<string> {
+export async function generateWithHuggingFace(prompt: string): Promise<any> {
   const response = await fetch("/.netlify/functions/hf-space", {
     method: "POST",
     headers: {
@@ -16,11 +16,5 @@ export async function generateWithHuggingFace(prompt: string): Promise<string> {
       : "Hugging Face Space error";
     throw new Error(message);
   }
-
-  const image = json?.imageDataUrl;
-  if (typeof image !== "string" || !image) {
-    throw new Error("Invalid image response from Hugging Face Space");
-  }
-
-  return image;
+  return json;
 }
