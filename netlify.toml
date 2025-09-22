@@ -8,6 +8,17 @@
   included_files = []
   external_node_modules = []
 
+# Optional convenience routes (so the browser can call /api/*)
+[[redirects]]
+  from = "/api/hf-space"
+  to = "/.netlify/functions/hf-space-start"
+  status = 200
+
+[[redirects]]
+  from = "/api/hf-space-result"
+  to = "/.netlify/functions/hf-space-result"
+  status = 200
+
 # SPA routing
 [[redirects]]
   from = "/*"

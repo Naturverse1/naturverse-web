@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { startGeneration, waitForImage } from "../../lib/hfSpaceClient";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -48,6 +48,7 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState<string | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -106,18 +107,36 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
+    const shouldRandomizeSeed = !(keepStyle && user?.id);
+    const seedSource = !shouldRandomizeSeed && user?.id ? `${user.id}:${selectedStyle.id}` : null;
+    const seed = seedSource ? stableSeedFromString(seedSource) : 0;
     setIsGenerating(true);
+    setGenerationStatus("Waiting for the Space…");
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const eventId = await startGeneration({
+        prompt: finalPrompt,
+        negative_prompt: negativePrompt,
+        seed,
+        randomize_seed: shouldRandomizeSeed,
+        width: 1024,
+        height: 1024,
+        guidance_scale: 0,
+        num_inference_steps: 2,
+      });
+      setGenerationStatus("Generating image…");
+      const imageUrl = await waitForImage(eventId, 120000);
+      setGenerationStatus("Fetching image…");
+      const generatedFile = await imageUrlToFile(imageUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
+      setGenerationStatus("Navatar generated ✓");
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
+      setGenerationStatus(`Error: ${message}`);
     } finally {
       setIsGenerating(false);
     }
@@ -230,6 +249,11 @@ export default function GenerateNavatarPage() {
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
+        {generationStatus && (
+          <p className="center" style={{ fontSize: "0.95rem", minHeight: 24 }}>
+            {generationStatus}
+          </p>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
@@ -253,8 +277,17 @@ export default function GenerateNavatarPage() {
   );
 }
 
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
+function stableSeedFromString(input: string): number {
+  let hash = 0;
+  for (let i = 0; i < input.length; i += 1) {
+    hash = (hash * 31 + input.charCodeAt(i)) | 0;
+  }
+  const positive = Math.abs(hash);
+  return positive || 1;
+}
+
+async function imageUrlToFile(imageUrl: string, filename: string) {
+  const res = await fetch(imageUrl);
   const blob = await res.blob();
   return new File([blob], filename, { type: blob.type || "image/png" });
 }
