@@ -8,12 +8,13 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { generateWithHuggingFace, type HfStatus } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
+  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -47,10 +48,12 @@ export default function GenerateNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
-  const [isGenerating, setIsGenerating] = useState(false);
+  type LoadingState = "idle" | HfStatus;
+  const [loadingState, setLoadingState] = useState<LoadingState>("idle");
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
+  const isGenerating = loadingState !== "idle";
 
   useEffect(() => {
     if (!file) {
@@ -106,10 +109,22 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
-    setIsGenerating(true);
+    const baseNegative = alwaysFilteredPrompt;
+    const negativePrompt = avoid ? `${baseNegative}, ${avoid}` : baseNegative;
+    const shouldLockSeed = keepStyle && Boolean(user?.id);
+
+    setLoadingState("starting");
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const dataUrl = await generateWithHuggingFace({
+        prompt: finalPrompt,
+        negativePrompt,
+        seed: shouldLockSeed && user?.id ? seedFromUserId(user.id) : 0,
+        randomizeSeed: !shouldLockSeed,
+        width: 1024,
+        height: 1024,
+        onStatusChange: (status) => setLoadingState(status),
+      });
+
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
@@ -118,9 +133,8 @@ export default function GenerateNavatarPage() {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
-    } finally {
-      setIsGenerating(false);
     }
+    setLoadingState("idle");
   }
 
   const canSave = Boolean(file) && !isGenerating;
@@ -228,8 +242,19 @@ export default function GenerateNavatarPage() {
           onClick={handleGenerate}
           disabled={isGenerating}
         >
-          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
+          {loadingState === "idle"
+            ? "Generate with Hugging Face"
+            : loadingState === "starting"
+              ? "Starting Hugging Face job…"
+              : "Waiting for Hugging Face…"}
         </button>
+        {isGenerating && (
+          <p className="center" style={{ marginTop: 8, opacity: 0.75 }}>
+            {loadingState === "starting"
+              ? "Contacting the Space…"
+              : "Waiting for the Space to finish…"}
+          </p>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
