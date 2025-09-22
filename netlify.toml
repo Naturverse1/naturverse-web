@@ -1,12 +1,23 @@
 [build]
   command = "npm run build"
   publish = "dist"
+  functions = "netlify/functions"
 
 [functions]
   node_bundler = "esbuild"
-  directory = "netlify/functions"
   included_files = []
   external_node_modules = []
+
+# ── Hugging Face proxy functions ─────────────────────────────
+# Generation submit is quick (returns an event_id)
+[functions."hf-space"]
+  timeout = 10
+  memory = 256
+
+# Result polling can take longer; give it time
+[functions."hf-space-result"]
+  timeout = 60
+  memory = 256
 
 # SPA routing
 [[redirects]]
@@ -26,6 +37,14 @@
   for = "/.netlify/functions/ai"
   [headers.values]
     Access-Control-Allow-Origin = "*"
+
+# (Optional) Allow CORS for these functions if you preview locally
+[[headers]]
+  for = "/.netlify/functions/*"
+  [headers.values]
+    Access-Control-Allow-Origin = "*"
+    Access-Control-Allow-Methods = "GET, POST, OPTIONS"
+    Access-Control-Allow-Headers = "Content-Type, Authorization"
 
 [[headers]]
   for = "/*"

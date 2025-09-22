@@ -107,10 +107,19 @@ export default function GenerateNavatarPage() {
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const imageUrl = await generateWithHuggingFace({
+        prompt: promptWithAvoidance,
+        negative_prompt: negativePrompt,
+        randomize_seed: true,
+        width: 1024,
+        height: 1024,
+        guidance_scale: 0,
+        num_inference_steps: 2,
+      });
+      const generatedFile = await imageUrlToFile(imageUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
@@ -253,8 +262,8 @@ export default function GenerateNavatarPage() {
   );
 }
 
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
+async function imageUrlToFile(imageUrl: string, filename: string) {
+  const res = await fetch(imageUrl);
   const blob = await res.blob();
   return new File([blob], filename, { type: blob.type || "image/png" });
 }
