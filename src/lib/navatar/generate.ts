@@ -1,23 +1,16 @@
-export async function generateWithHuggingFace(prompt: string): Promise<string> {
-  const response = await fetch("/.netlify/functions/hf-space", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({ prompt }),
-  });
+import { callSpace, pollSpace, type GenerateRequest } from "../hfSpaceClient";
 
-  const json = await response.json().catch(() => ({}));
+export type HuggingFaceGenerateOptions = GenerateRequest;
 
-  if (!response.ok) {
-    const message = Array.isArray(json?.errors) && json.errors.length > 0
-      ? json.errors[0]
-      : "Hugging Face Space error";
-    throw new Error(message);
+export async function generateWithHuggingFace(options: HuggingFaceGenerateOptions): Promise<string> {
+  const { prompt } = options;
+  if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+    throw new Error("Prompt required");
   }
 
-  const image = json?.imageDataUrl;
+  const { eventId } = await callSpace(options);
+  const result = await pollSpace(eventId);
+  const image = result?.imageDataUrl;
   if (typeof image !== "string" || !image) {
     throw new Error("Invalid image response from Hugging Face Space");
   }

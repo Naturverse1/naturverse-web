@@ -1,62 +1,58 @@
 import type { Handler } from "@netlify/functions";
 
-const SPACE = process.env.HF_SPACE_URL;
+const getSpaceBase = () => {
+  const raw =
+    process.env.HF_SPACE_URL ||
+    process.env.HUGGINGFACE_SPACE_URL ||
+    "";
+  return raw.replace(/\/+$/, "");
+};
+
+const json = (statusCode: number, data: unknown) => ({
+  statusCode,
+  headers: {
+    "Content-Type": "application/json",
+    "Cache-Control": "no-store",
+  },
+  body: JSON.stringify(data),
+});
 
 export const handler: Handler = async (event) => {
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
     if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
+      return json(405, { error: "Method Not Allowed" });
+    }
+    const SPACE = getSpaceBase();
+    if (!SPACE) {
+      return json(500, { error: "HF_SPACE_URL not set" });
     }
 
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
+    const { prompt, negativePrompt = "", seed = 0, width = 1024, height = 1024, guidance = 0, steps = 1 } =
+      JSON.parse(event.body || "{}");
+
+    if (!prompt || typeof prompt !== "string" || !prompt.trim()) {
+      return json(400, { error: "Missing prompt" });
     }
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
+    await fetch(`${SPACE}/`, { method: "GET" }).catch(() => {});
+
+    const post = await fetch(`${SPACE}/gradio_api/call/infer`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        data: [prompt, negativePrompt, seed, true, width, height, guidance, steps],
+      }),
     });
-
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
+    if (!post.ok) {
+      const txt = await post.text().catch(() => "");
+      return json(502, {
+        error: `Space call failed: ${post.status} ${post.statusText}`,
+        details: txt,
+      });
     }
-
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
-      }
-    }
-
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
-
-    return resp(200, { imageDataUrl });
+    const { event_id } = await post.json();
+    return json(200, { eventId: event_id });
   } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
+    return json(500, { error: err?.message || "Unknown error" });
   }
 };
-
-function resp(status: number, body: unknown) {
-  return {
-    statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
-  };
-}
