@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { generateWithSpace } from "@/lib/hfSpaceClient";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -106,10 +106,25 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const result = await generateWithSpace({
+        prompt: promptWithAvoidance,
+        negativePrompt,
+        seed: 0,
+        width: 1024,
+        height: 1024,
+        guidance: 0,
+        steps: 1,
+      });
+
+      const dataUrl = typeof result.image === "string" ? result.image : null;
+      if (!dataUrl) {
+        throw new Error("No image returned from Space");
+      }
+
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
