@@ -31,3 +31,9 @@
   for = "/*"
   [headers.values]
     Cache-Control = "public, max-age=1800"
+
+[functions."hf-space-start"]
+  timeout = 10
+
+[functions."hf-space-result"]
+  timeout = 10

@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { pollHF, startHF } from "../../lib/hfSpace";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -105,12 +105,42 @@ export default function GenerateNavatarPage() {
 
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const extraAvoid = extraNegativePrompt.trim();
+    const negativePromptParts = [alwaysFilteredPrompt, extraAvoid]
+      .map((part) => part.trim())
+      .filter((part) => part.length > 0);
+    const negativePrompt = negativePromptParts.length ? negativePromptParts.join(", ") : undefined;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const eventId = await startHF(finalPrompt, {
+        negativePrompt,
+        steps: 4,
+        width: 512,
+        height: 512,
+        seed: 0,
+      });
+
+      let imageDataUrl: string | null = null;
+      for (let tries = 0; tries < 120; tries += 1) {
+        const result = await pollHF(eventId);
+        if (result.error) {
+          throw new Error(result.error);
+        }
+        if (result.status === "DONE") {
+          if (result.image) {
+            imageDataUrl = result.image;
+            break;
+          }
+          throw new Error("Space returned no image");
+        }
+        await new Promise((resolve) => setTimeout(resolve, 1500));
+      }
+
+      if (!imageDataUrl) {
+        throw new Error("Space result timeout");
+      }
+
+      const generatedFile = await dataUrlToFile(imageDataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
