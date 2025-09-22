@@ -1,26 +1,15 @@
+import { generateWithSpace } from "../hfSpaceClient";
+
 export async function generateWithHuggingFace(prompt: string): Promise<string> {
-  const response = await fetch("/.netlify/functions/hf-space", {
-    method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
-    body: JSON.stringify({ prompt }),
-  });
+  const result = await generateWithSpace({ prompt });
 
-  const json = await response.json().catch(() => ({}));
-
-  if (!response.ok) {
-    const message = Array.isArray(json?.errors) && json.errors.length > 0
-      ? json.errors[0]
-      : "Hugging Face Space error";
-    throw new Error(message);
+  if (typeof result.image === "string" && result.image) {
+    return result.image;
   }
 
-  const image = json?.imageDataUrl;
-  if (typeof image !== "string" || !image) {
-    throw new Error("Invalid image response from Hugging Face Space");
+  if (result.errors?.length) {
+    throw new Error(String(result.errors[0]));
   }
 
-  return image;
+  throw new Error("Invalid image response from Hugging Face Space");
 }
