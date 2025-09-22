@@ -8,6 +8,13 @@
   included_files = []
   external_node_modules = []
 
+# Ensure the HF poller never waits long enough to trigger a Netlify 504.
+[functions."hf-space"]
+  timeout = 26
+
+[functions."hf-space-result"]
+  timeout = 3
+
 # SPA routing
 [[redirects]]
   from = "/*"

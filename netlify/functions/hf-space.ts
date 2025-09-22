@@ -1,62 +1,196 @@
 import type { Handler } from "@netlify/functions";
+import { extractImageUrl, getBearerToken, getSpaceConfig, jsonResponse, type SpaceConfig } from "./_hf";
 
-const SPACE = process.env.HF_SPACE_URL;
+type QueueOutcome =
+  | { kind: "pending"; eventId: string }
+  | { kind: "done"; imageUrl: string }
+  | { kind: "error"; statusCode?: number; message: string }
+  | { kind: "fallback" };
+
+type PredictOutcome =
+  | { kind: "done"; imageUrl: string }
+  | { kind: "error"; statusCode?: number; message: string };
 
 export const handler: Handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return jsonResponse(405, { ok: false, error: "Method Not Allowed" });
+  }
+
+  const config = getSpaceConfig();
+  if (!config) {
+    return jsonResponse(500, { ok: false, error: "HF_SPACE_URL not set" });
+  }
+
+  let prompt: string | undefined;
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
+    const payload = JSON.parse(event.body ?? "{}");
+    if (typeof payload?.prompt === "string") {
+      prompt = payload.prompt.trim();
     }
-    if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
-    }
+  } catch {
+    return jsonResponse(400, { ok: false, error: "Invalid JSON payload" });
+  }
 
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
+  if (!prompt) {
+    return jsonResponse(400, { ok: false, error: "Missing prompt" });
+  }
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
+  const bearer = getBearerToken();
+  const headers: Record<string, string> = {
+    "content-type": "application/json",
+    Accept: "application/json",
+  };
+  if (bearer) {
+    headers.Authorization = `Bearer ${bearer}`;
+  }
+
+  const queueOutcome = await tryQueue(config, headers, prompt);
+  if (queueOutcome.kind === "done") {
+    return jsonResponse(200, { ok: true, status: "done", imageUrl: queueOutcome.imageUrl });
+  }
+  if (queueOutcome.kind === "pending") {
+    return jsonResponse(200, { ok: true, status: "pending", eventId: queueOutcome.eventId });
+  }
+  if (queueOutcome.kind === "error") {
+    return jsonResponse(queueOutcome.statusCode ?? 502, { ok: false, error: queueOutcome.message });
+  }
+
+  const fallbackOutcome = await callPredict(config, headers, prompt);
+  if (fallbackOutcome.kind === "done") {
+    return jsonResponse(200, { ok: true, status: "done", imageUrl: fallbackOutcome.imageUrl });
+  }
+
+  return jsonResponse(fallbackOutcome.statusCode ?? 502, { ok: false, error: fallbackOutcome.message });
+};
+
+async function tryQueue(
+  config: SpaceConfig,
+  headers: Record<string, string>,
+  prompt: string
+): Promise<QueueOutcome> {
+  try {
+    const response = await fetch(`${config.hfBase}/gradio_api/call/infer`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
+      headers,
       body: JSON.stringify({ data: [prompt] }),
     });
 
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
+    if (response.status === 404 || response.status === 405) {
+      return { kind: "fallback" };
     }
 
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
+    const text = await response.text();
+    let payload: any = null;
+    if (text) {
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = null;
       }
     }
 
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
+    if (!response.ok) {
+      const message = extractErrorMessage(payload, response.status, text);
+      return { kind: "error", statusCode: response.status, message };
     }
 
-    return resp(200, { imageDataUrl });
-  } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
-  }
-};
+    const imageUrl = extractImageUrl(payload, config);
+    if (imageUrl) {
+      return { kind: "done", imageUrl };
+    }
 
-function resp(status: number, body: unknown) {
-  return {
-    statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
-  };
+    const eventId = extractEventId(payload);
+    if (eventId) {
+      return { kind: "pending", eventId };
+    }
+
+    if (payload && typeof payload.status === "string" && payload.status.toLowerCase().includes("error")) {
+      const message = extractErrorMessage(payload, 502, text);
+      return { kind: "error", statusCode: 502, message };
+    }
+
+    return { kind: "fallback" };
+  } catch {
+    return { kind: "fallback" };
+  }
+}
+
+async function callPredict(
+  config: SpaceConfig,
+  headers: Record<string, string>,
+  prompt: string
+): Promise<PredictOutcome> {
+  try {
+    const response = await fetch(`${config.rawBase}/api/predict/`, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ data: [prompt] }),
+    });
+
+    const text = await response.text();
+    let payload: any = null;
+    if (text) {
+      try {
+        payload = JSON.parse(text);
+      } catch {
+        payload = null;
+      }
+    }
+
+    if (!response.ok) {
+      const message = extractErrorMessage(payload, response.status, text);
+      return { kind: "error", statusCode: response.status, message };
+    }
+
+    const imageUrl = extractImageUrl(payload, config);
+    if (imageUrl) {
+      return { kind: "done", imageUrl };
+    }
+
+    return {
+      kind: "error",
+      statusCode: 502,
+      message: "Unexpected Space response",
+    };
+  } catch (error: any) {
+    return {
+      kind: "error",
+      statusCode: 500,
+      message: error?.message ?? "Unhandled error",
+    };
+  }
+}
+
+function extractEventId(payload: any): string | undefined {
+  if (!payload || typeof payload !== "object") return undefined;
+  const keys = ["event_id", "eventId", "id", "queue_id", "queueId"];
+  for (const key of keys) {
+    const value = payload[key];
+    if (typeof value === "string" && value.trim()) {
+      return value.trim();
+    }
+  }
+  if (payload.event && typeof payload.event === "object") {
+    const maybe = extractEventId(payload.event);
+    if (maybe) return maybe;
+  }
+  return undefined;
+}
+
+function extractErrorMessage(payload: any, status: number, fallbackText: string | null): string {
+  const candidates: unknown[] = [
+    payload?.error,
+    payload?.detail,
+    payload?.message,
+    payload?.errors && Array.isArray(payload.errors) ? payload.errors[0] : undefined,
+    fallbackText,
+  ];
+
+  for (const candidate of candidates) {
+    if (typeof candidate === "string" && candidate.trim()) {
+      return candidate.trim();
+    }
+  }
+
+  return `Space request failed (${status})`;
 }
