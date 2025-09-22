@@ -8,6 +8,13 @@
   included_files = []
   external_node_modules = []
 
+# Set timeouts per function (max 26s)
+[functions."ai-generate"]
+  timeout = 26
+
+[functions."hf-space"]
+  timeout = 26
+
 # SPA routing
 [[redirects]]
   from = "/*"
