@@ -75,6 +75,15 @@
   <body>
     <a class="skip-link" href="#main">Skip to content</a>
     <div id="root"></div>
+    <script>
+      (function () {
+        var existing = window.__HUGGINGFACE_SPACE_URL__;
+        var injected = "%HUGGINGFACE_SPACE_URL%";
+        if (!existing && typeof injected === "string" && injected && injected.indexOf("%") === -1) {
+          window.__HUGGINGFACE_SPACE_URL__ = injected;
+        }
+      })();
+    </script>
     <!-- Absolute path prevents preview builds from rewriting module requests -->
     <script type="module" src="/src/main.tsx"></script>
 

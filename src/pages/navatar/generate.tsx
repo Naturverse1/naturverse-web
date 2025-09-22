@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { runSpace } from "../../lib/hfSpace";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -106,14 +106,42 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
+    const promptWithAvoidance = finalPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const seed = 0;
+      const guidance = true;
+      const width = 1024;
+      const height = 1024;
+      const denoise = 0;
+      const steps = 1;
 
-      setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
+      const data = [
+        promptWithAvoidance,
+        negativePrompt,
+        seed,
+        guidance,
+        width,
+        height,
+        denoise,
+        steps,
+      ];
+
+      const result = await runSpace(data);
+
+      if (result.status === "ok") {
+        const firstImage = result.images[0];
+        if (!firstImage) {
+          throw new Error("Space returned no images");
+        }
+
+        const generatedFile = await dataUrlToFile(firstImage, `navatar-${Date.now()}.png`);
+        setFile(generatedFile);
+        toast({ text: "Navatar generated ✓", kind: "ok" });
+      } else {
+        toast({ text: result.message || "Space result failed", kind: "err" });
+      }
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
