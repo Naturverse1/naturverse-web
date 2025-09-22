@@ -1,3 +1,5 @@
+# Netlify config (merge-ready)
+
 [build]
   command = "npm run build"
   publish = "dist"
@@ -7,6 +9,15 @@
   directory = "netlify/functions"
   included_files = []
   external_node_modules = []
+
+# Give our HF proxy enough time to finish
+[functions."hf-space"]
+  timeout = 26
+  memory  = 1024
+
+[functions."hf-space-result"]
+  timeout = 26
+  memory  = 1024
 
 # SPA routing
 [[redirects]]

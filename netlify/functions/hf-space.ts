@@ -1,62 +1,52 @@
-import type { Handler } from "@netlify/functions";
+// POST /.netlify/functions/hf-space
+// Starts a generation job on the HF Space and returns {eventId}
 
-const SPACE = process.env.HF_SPACE_URL;
+import type { Handler } from "@netlify/functions";
+import { getSpaceUrl, fetchWithRetry, extractEventId, type StartResponse } from "./_hf";
+
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
+};
 
 export const handler: Handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return json({ ok: false, error: "Method Not Allowed" }, 405);
+  }
+
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
-    if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
-    }
+    const space = getSpaceUrl();
 
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
+    const rawBody = event.isBase64Encoded && event.body
+      ? Buffer.from(event.body, "base64").toString("utf8")
+      : event.body || "";
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
+    const url = `${space}/gradio_api/call/infer`;
+    const res = await fetchWithRetry(url, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
+      headers: { "Content-Type": "application/json" },
+      body: rawBody,
     });
 
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
+    if (!res.ok) {
+      return json({ ok: false, error: `HF start failed: ${res.status}` }, res.status);
     }
-
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
-      }
+    const eventId = await extractEventId(res);
+    if (!eventId) {
+      return json({ ok: false, error: "Could not parse eventId from HF." }, 502);
     }
-
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
-
-    return resp(200, { imageDataUrl });
-  } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
+    const out: StartResponse = { ok: true, eventId };
+    return json(out, 200);
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : "Unknown error";
+    return json({ ok: false, error: message }, 500);
   }
 };
 
-function resp(status: number, body: unknown) {
+function json(data: any, status = 200) {
   return {
     statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
+    headers: JSON_HEADERS,
+    body: JSON.stringify(data),
   };
 }
