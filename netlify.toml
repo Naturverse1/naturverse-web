@@ -8,6 +8,12 @@
   included_files = []
   external_node_modules = []
 
+[functions."hf-space"]
+  timeout = 26
+
+[functions."hf-space-result"]
+  timeout = 26
+
 # SPA routing
 [[redirects]]
   from = "/*"

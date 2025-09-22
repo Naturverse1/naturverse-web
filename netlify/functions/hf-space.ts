@@ -1,62 +1,49 @@
 import type { Handler } from "@netlify/functions";
-
-const SPACE = process.env.HF_SPACE_URL;
+import { getSpaceBaseUrl } from "../../src/utils/_hf";
 
 export const handler: Handler = async (event) => {
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
-    if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
-    }
+    if (event.httpMethod !== "POST") return { statusCode: 405, body: "Method Not Allowed" };
 
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
+    const spaceBase = getSpaceBaseUrl();
+    const payload = JSON.parse(event.body || "{}");
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
+    const data = [
+      String(payload.prompt ?? ""),
+      String(payload.negativePrompt ?? ""),
+      Number(payload.seed ?? 0),
+      Boolean(payload.randomizeSeed ?? true),
+      Number(payload.width ?? 1024),
+      Number(payload.height ?? 1024),
+      Number(payload.guidanceScale ?? 0),
+      Number(payload.steps ?? 2),
+    ];
+
+    const resp = await fetch(`${spaceBase}/gradio_api/call/infer`, {
       method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data }),
     });
 
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
+    const text = await resp.text();
+
+    let eventId = "";
+    try {
+      const j = JSON.parse(text);
+      eventId = j?.event_id || "";
+    } catch {
+      const m =
+        text.match(/"event_id"\s*:\s*"([^"]+)"/) ||
+        text.match(/([A-Za-z0-9_-]{8,})/);
+      eventId = m?.[1] || "";
     }
 
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
-      }
+    if (!resp.ok || !eventId) {
+      return { statusCode: 502, body: JSON.stringify({ error: "Failed to start job", details: text }) };
     }
 
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
-
-    return resp(200, { imageDataUrl });
+    return { statusCode: 200, body: JSON.stringify({ eventId }) };
   } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
+    return { statusCode: 500, body: JSON.stringify({ error: err?.message || "Server error" }) };
   }
 };
-
-function resp(status: number, body: unknown) {
-  return {
-    statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
-  };
-}
