@@ -6,7 +6,8 @@
   node_bundler = "esbuild"
   directory = "netlify/functions"
   included_files = []
-  external_node_modules = []
+  external_node_modules = ["node-fetch"]
+  timeout = 26
 
 # SPA routing
 [[redirects]]

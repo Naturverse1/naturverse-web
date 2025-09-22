@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { generateWithHuggingFace, isSpaceConfigured, missingSpaceMessage } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -51,6 +51,8 @@ export default function GenerateNavatarPage() {
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
+  const spaceConfigured = useMemo(() => isSpaceConfigured(), []);
+  const spaceMessage = useMemo(() => missingSpaceMessage(), []);
 
   useEffect(() => {
     if (!file) {
@@ -100,6 +102,11 @@ export default function GenerateNavatarPage() {
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
+      return;
+    }
+
+    if (!spaceConfigured) {
+      toast({ text: spaceMessage, kind: "err" });
       return;
     }
 
@@ -226,10 +233,19 @@ export default function GenerateNavatarPage() {
           type="button"
           className="generate-btn w-full rounded-xl px-5 py-3 text-base font-semibold text-white bg-blue-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleGenerate}
-          disabled={isGenerating}
+          disabled={isGenerating || !spaceConfigured}
         >
-          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
+          {spaceConfigured
+            ? isGenerating
+              ? "Generating…"
+              : "Generate with Hugging Face"
+            : "Hugging Face Space not configured"}
         </button>
+        {!spaceConfigured && (
+          <p className="center" style={{ color: "#dc2626", fontSize: "0.95rem" }}>
+            {spaceMessage}
+          </p>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
