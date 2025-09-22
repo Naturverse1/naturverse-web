@@ -107,15 +107,22 @@ export default function GenerateNavatarPage() {
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const previousDraft = draftUrl;
+    let nextDraft: string | undefined;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const imageUrl = await generateWithHuggingFace(promptWithAvoidance);
+      nextDraft = imageUrl;
+      setDraftUrl(imageUrl);
+      const generatedFile = await urlToFile(imageUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
       console.error(error);
+      if (nextDraft && previousDraft !== nextDraft) {
+        setDraftUrl(previousDraft);
+      }
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
     } finally {
@@ -253,9 +260,13 @@ export default function GenerateNavatarPage() {
   );
 }
 
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
-  const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type || "image/png" });
+async function urlToFile(imageUrl: string, filename: string) {
+  const response = await fetch(imageUrl);
+  if (!response.ok) {
+    throw new Error("Failed to download generated image");
+  }
+  const blob = await response.blob();
+  const type = blob.type || "image/png";
+  return new File([blob], filename, { type });
 }
 
