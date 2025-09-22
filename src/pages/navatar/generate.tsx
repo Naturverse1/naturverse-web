@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { generateWithHuggingFaceSpace } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -105,11 +105,17 @@ export default function GenerateNavatarPage() {
 
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const extraNegative = extraNegativePrompt.trim();
+    const negativePrompt = extraNegative
+      ? `${alwaysFilteredPrompt}, ${extraNegative}`
+      : alwaysFilteredPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const dataUrl = await generateWithHuggingFaceSpace(finalPrompt, {
+        negative: negativePrompt,
+        width: 1024,
+        height: 1024,
+      });
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
