@@ -1,62 +1,69 @@
 import type { Handler } from "@netlify/functions";
+import { HF_SPACE_HOST, fetchWithRetry, safeText } from "../../src/lib/_hf";
 
-const SPACE = process.env.HF_SPACE_URL;
-
-export const handler: Handler = async (event) => {
-  try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
-    if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
-    }
-
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
-
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
-    });
-
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
-    }
-
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
-      }
-    }
-
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
-
-    return resp(200, { imageDataUrl });
-  } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
-  }
+const JSON_HEADERS = {
+  "Content-Type": "application/json",
+  "Cache-Control": "no-store",
 };
 
-function resp(status: number, body: unknown) {
-  return {
-    statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
-  };
-}
+export const handler: Handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, headers: JSON_HEADERS, body: JSON.stringify({ error: "Method Not Allowed" }) };
+  }
+
+  if (!HF_SPACE_HOST) {
+    return { statusCode: 500, headers: JSON_HEADERS, body: JSON.stringify({ error: "HF_SPACE_URL not configured" }) };
+  }
+
+  try {
+    const payload = JSON.parse(event.body || "{}");
+    const data = payload?.data;
+    if (!data) {
+      return { statusCode: 400, headers: JSON_HEADERS, body: JSON.stringify({ error: "Missing data payload" }) };
+    }
+
+    const url = `${HF_SPACE_HOST}/gradio_api/call/infer`;
+    const res = await fetchWithRetry(url, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ data }),
+    });
+
+    const contentType = res.headers.get("content-type") || "";
+    if (!res.ok) {
+      const body = await safeText(res);
+      return {
+        statusCode: res.status,
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ error: "HF POST failed", detail: body }),
+      };
+    }
+
+    if (!contentType.includes("application/json")) {
+      const body = await safeText(res);
+      return {
+        statusCode: 502,
+        headers: JSON_HEADERS,
+        body: JSON.stringify({
+          error: "Unexpected response from Space (not JSON)",
+          detail: body.slice(0, 800),
+        }),
+      };
+    }
+
+    const json = await res.json();
+    const eventId = json?.event_id || json?.eventId || json?.data?.event_id;
+    if (!eventId) {
+      return {
+        statusCode: 502,
+        headers: JSON_HEADERS,
+        body: JSON.stringify({ error: "Missing event_id from Space", json }),
+      };
+    }
+
+    return { statusCode: 200, headers: JSON_HEADERS, body: JSON.stringify({ eventId }) };
+  } catch (error: unknown) {
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return { statusCode: 500, headers: JSON_HEADERS, body: JSON.stringify({ error: message }) };
+  }
+};
