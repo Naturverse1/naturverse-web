@@ -1,62 +1,101 @@
 import type { Handler } from "@netlify/functions";
+import { getSpaceBaseUrl, getBearer, retryingFetch } from "../../src/lib/_hf";
 
-const SPACE = process.env.HF_SPACE_URL;
-
-export const handler: Handler = async (event) => {
-  try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
-    }
-    if (event.httpMethod !== "POST") {
-      return resp(405, { errors: ["Method not allowed"] });
-    }
-
-    const { prompt } = JSON.parse(event.body || "{}");
-    if (!prompt || typeof prompt !== "string") {
-      return resp(400, { errors: ["Missing prompt"] });
-    }
-
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
-    });
-
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
-    }
-
-    const data = await gradio.json();
-
-    let imageDataUrl: string | null = null;
-
-    if (Array.isArray(data?.data)) {
-      const first = data.data[0];
-      if (typeof first === "string" && first.startsWith("data:image/")) {
-        imageDataUrl = first;
-      } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
-      }
-    }
-
-    if (!imageDataUrl) {
-      return resp(502, { errors: ["Unexpected Space response"], raw: data });
-    }
-
-    return resp(200, { imageDataUrl });
-  } catch (err: any) {
-    return resp(500, { errors: ["Unhandled error"], raw: String(err?.message || err) });
-  }
+type Payload = {
+  prompt: string;
+  negativePrompt?: string;
+  seed?: number | null;
+  width?: number;
+  height?: number;
+  guidanceScale?: number;
+  steps?: number;
 };
 
-function resp(status: number, body: unknown) {
-  return {
-    statusCode: status,
-    headers: {
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(body),
+export const handler: Handler = async (event) => {
+  if (event.httpMethod !== "POST") {
+    return { statusCode: 405, body: "Method Not Allowed" };
+  }
+
+  const base = getSpaceBaseUrl();
+  if (!base) {
+    return {
+      statusCode: 500,
+      body: JSON.stringify({ error: "HF_SPACE_URL not set" })
+    };
+  }
+
+  let body: Payload;
+  try {
+    body = JSON.parse(event.body || "{}");
+  } catch {
+    return { statusCode: 400, body: JSON.stringify({ error: "Bad JSON" }) };
+  }
+
+  const {
+    prompt,
+    negativePrompt = "",
+    seed = 0,
+    width = 1024,
+    height = 1024,
+    guidanceScale = 0,
+    steps = 2,
+  } = body;
+
+  if (!prompt || typeof prompt !== "string") {
+    return { statusCode: 400, body: JSON.stringify({ error: "Missing prompt" }) };
+  }
+
+  const apiUrl = `${base}/gradio_api/call/infer`;
+  const token = getBearer();
+  const headers: Record<string, string> = {
+    "Content-Type": "application/json",
   };
-}
+  if (token) headers.Authorization = `Bearer ${token}`;
+
+  // Gradio template params order (8):
+  // [ prompt, negative_prompt, seed, randomize_seed, width, height, guidance_scale, num_inference_steps ]
+  const data = [
+    prompt,
+    negativePrompt,
+    Number(seed) || 0,
+    seed === null || seed === undefined ? true : false, // randomize if no seed
+    Number(width) || 1024,
+    Number(height) || 1024,
+    Number(guidanceScale) || 0,
+    Number(steps) || 2,
+  ];
+
+  try {
+    const res = await retryingFetch(apiUrl, {
+      method: "POST",
+      headers,
+      body: JSON.stringify({ data }),
+      // keep requests snappy; we only need the event_id back
+      redirect: "follow",
+    });
+
+    const json = await res.json();
+
+    // Gradio returns an object with "event_id"
+    const eventId = json?.event_id || json?.eventId || json?.event?.id;
+    if (!eventId) {
+      return {
+        statusCode: 502,
+        body: JSON.stringify({ error: "No event_id from Space", raw: json }),
+      };
+    }
+
+    return {
+      statusCode: 200,
+      body: JSON.stringify({
+        ok: true,
+        eventId,
+      }),
+    };
+  } catch (err: any) {
+    return {
+      statusCode: 502,
+      body: JSON.stringify({ error: "Submit to Space failed", detail: String(err) }),
+    };
+  }
+};
