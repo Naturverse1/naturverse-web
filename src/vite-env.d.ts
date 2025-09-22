@@ -6,6 +6,7 @@ interface ImportMetaEnv {
   readonly VITE_SITE_URL?: string;
   readonly VITE_ENABLE_AI?: string;
   readonly VITE_ENABLE_AUTO_STAMPS?: string;
+  readonly PUBLIC_HUGGINGFACE_SPACE_URL?: string;
 }
 
 interface ImportMeta {
