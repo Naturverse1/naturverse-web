@@ -8,12 +8,13 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { pollHF, submitToHF } from "../../lib/navatarGenerator";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
+  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -47,6 +48,7 @@ export default function GenerateNavatarPage() {
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
+  const [generatedImageUrl, setGeneratedImageUrl] = useState<string | null>(null);
   const [isGenerating, setIsGenerating] = useState(false);
   const nav = useNavigate();
   const toast = useToast();
@@ -54,13 +56,18 @@ export default function GenerateNavatarPage() {
 
   useEffect(() => {
     if (!file) {
-      setDraftUrl(undefined);
+      if (!generatedImageUrl) {
+        setDraftUrl(undefined);
+      }
+      return;
+    }
+    if (generatedImageUrl) {
       return;
     }
     const url = URL.createObjectURL(file);
     setDraftUrl(url);
     return () => URL.revokeObjectURL(url);
-  }, [file]);
+  }, [file, generatedImageUrl]);
 
   useEffect(() => {
     if (user?.id) {
@@ -106,12 +113,24 @@ export default function GenerateNavatarPage() {
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = [alwaysFilteredPrompt, avoid].filter(Boolean).join(", ");
+    const seed = keepStyle && user?.id ? seedFromUserId(user.id) : null;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const { eventId } = await submitToHF({
+        prompt: finalPrompt,
+        negativePrompt,
+        seed,
+        width: 1024,
+        height: 1024,
+        guidanceScale: 0,
+        steps: 2,
+      });
 
+      const imageUrl = await pollHF(eventId);
+      const generatedFile = await imageUrlToFile(imageUrl, `navatar-${Date.now()}.png`);
+
+      setGeneratedImageUrl(imageUrl);
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
@@ -139,7 +158,7 @@ export default function GenerateNavatarPage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        <NavatarCard src={draftUrl} title={name || "My Navatar"} />
+        <NavatarCard src={generatedImageUrl ?? draftUrl} title={name || "My Navatar"} />
         <div className="navatar-field">
           <label htmlFor="navatar-prompt">Describe your Navatar</label>
           <textarea
@@ -239,7 +258,11 @@ export default function GenerateNavatarPage() {
         <input
           type="file"
           accept="image/*"
-          onChange={(e) => setFile(e.target.files?.[0] || null)}
+          onChange={(e) => {
+            const next = e.target.files?.[0] || null;
+            setGeneratedImageUrl(null);
+            setFile(next);
+          }}
           disabled={isGenerating}
         />
         <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
@@ -253,9 +276,13 @@ export default function GenerateNavatarPage() {
   );
 }
 
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
+async function imageUrlToFile(imageUrl: string, filename: string) {
+  const res = await fetch(imageUrl);
+  if (!res.ok) {
+    throw new Error(`Failed to download image (${res.status})`);
+  }
   const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type || "image/png" });
+  const type = blob.type || res.headers.get("content-type") || "image/png";
+  return new File([blob], filename, { type: typeof type === "string" ? type : "image/png" });
 }
 

@@ -22,6 +22,7 @@ export default function NavatarCard({ src, title = "My Navatar", subtitle, class
             <img
               src={src}
               alt={title}
+              crossOrigin="anonymous"
               loading="lazy"
               sizes="(max-width: 768px) 80vw, 260px"
               className={`object-contain rounded-lg shadow-sm transition-opacity duration-300 ${loaded ? "opacity-100" : "opacity-0"}`}
