@@ -8,7 +8,7 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
+import { generateViaHF } from "@/lib/hf";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -48,6 +48,7 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationError, setGenerationError] = useState<string | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -107,9 +108,15 @@ export default function GenerateNavatarPage() {
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    setGenerationError(null);
+    setFile(null);
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const { dataUrl } = await generateViaHF({
+        prompt: promptWithAvoidance,
+        width: 1024,
+        height: 1024,
+      });
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
@@ -118,6 +125,7 @@ export default function GenerateNavatarPage() {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
+      setGenerationError(message);
     } finally {
       setIsGenerating(false);
     }
@@ -230,6 +238,11 @@ export default function GenerateNavatarPage() {
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
+        {generationError && (
+          <p role="alert" className="center" style={{ color: "#b91c1c", fontWeight: 600 }}>
+            {generationError}
+          </p>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"

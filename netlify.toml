@@ -5,8 +5,15 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-  included_files = []
+  included_files = ["netlify/functions/**"]
   external_node_modules = []
+  timeout = 60
+
+# Optional API alias
+[[redirects]]
+  from = "/api/hf-generate"
+  to = "/.netlify/functions/hf-generate"
+  status = 200
 
 # SPA routing
 [[redirects]]
