@@ -32,6 +32,18 @@
   font-weight: 700;
 }
 
+.navatar-generator-switch {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin: 0 auto 8px;
+}
+
+.navatar-generator-switch button {
+  cursor: pointer;
+}
+
 /* --- Card: single source of truth for size & fit --- */
 .nav-card {
   --nav-card-w: 260px;    /* change this once to resize everywhere */
