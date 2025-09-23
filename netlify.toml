@@ -8,6 +8,10 @@
   included_files = []
   external_node_modules = []
 
+# Hugging Face generations can take longer; use a longer timeout for this function.
+[functions."hf-api"]
+  timeout = 60
+
 # SPA routing
 [[redirects]]
   from = "/*"
