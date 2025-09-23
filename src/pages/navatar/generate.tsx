@@ -8,7 +8,8 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { buildDicebearUrl, createDicebearAvatar, type DicebearStyle } from "../../lib/navatar/dicebear";
+import { dicebearUrl, type DicebearStyle } from "../../lib/dicebear";
+import { generateDicebearAndSave } from "../../lib/navatar/dicebear";
 import {
   DEFAULT_STYLE_ID,
   RATE_LIMIT_MESSAGE,
@@ -23,21 +24,41 @@ import {
 import "../../styles/navatar.css";
 
 type GeneratorMode = "stability" | "dicebear";
+type DicebearBackgroundSelection = "none" | "solid" | "gradientLinear" | "gradientRadial";
 
 const DICEBEAR_STYLE_OPTIONS: { value: DicebearStyle; label: string }[] = [
   { value: "adventurer", label: "Adventurer" },
   { value: "adventurer-neutral", label: "Adventurer Neutral" },
   { value: "avataaars", label: "Avataaars" },
-  { value: "micah", label: "Micah" },
-  { value: "open-peeps", label: "Open Peeps" },
-  { value: "pixel-art", label: "Pixel Art" },
-  { value: "pixel-art-neutral", label: "Pixel Art Neutral" },
+  { value: "big-ears", label: "Big Ears" },
+  { value: "big-ears-neutral", label: "Big Ears Neutral" },
+  { value: "big-smile", label: "Big Smile" },
+  { value: "bottts", label: "Bottts" },
+  { value: "croodles", label: "Croodles" },
+  { value: "croodles-neutral", label: "Croodles Neutral" },
   { value: "fun-emoji", label: "Fun Emoji" },
+  { value: "identicon", label: "Identicon" },
+  { value: "initials", label: "Initials" },
+  { value: "lorelei", label: "Lorelei" },
+  { value: "lorelei-neutral", label: "Lorelei Neutral" },
+  { value: "micah", label: "Micah" },
   { value: "notionists", label: "Notionists" },
-  { value: "shapes", label: "Shapes" },
+  { value: "notionists-neutral", label: "Notionists Neutral" },
 ];
 
 const DEFAULT_DICEBEAR_STYLE = DICEBEAR_STYLE_OPTIONS[0]?.value ?? "adventurer";
+const DICEBEAR_SIZE_OPTIONS = [256, 512, 1024, 2048] as const;
+const DEFAULT_DICEBEAR_SIZE = 1024;
+const DEFAULT_DICEBEAR_RADIUS = 0;
+const DEFAULT_DICEBEAR_SCALE = 100;
+const DEFAULT_DICEBEAR_TRANSLATE = 0;
+
+const DICEBEAR_BACKGROUND_OPTIONS: { value: DicebearBackgroundSelection; label: string }[] = [
+  { value: "none", label: "None (transparent)" },
+  { value: "solid", label: "Solid" },
+  { value: "gradientLinear", label: "Gradient (linear)" },
+  { value: "gradientRadial", label: "Gradient (radial)" },
+];
 
 const BRAND_STYLE = [
   "cute character, navatar style, bright friendly palette,",
@@ -74,8 +95,15 @@ export default function GenerateNavatarPage() {
   const [isSaving, setIsSaving] = useState(false);
   const [dicebearStyle, setDicebearStyle] = useState<DicebearStyle>(DEFAULT_DICEBEAR_STYLE);
   const [dicebearSeed, setDicebearSeed] = useState("");
-  const [dicebearBackground, setDicebearBackground] = useState("");
   const [dicebearSeedTouched, setDicebearSeedTouched] = useState(false);
+  const [dicebearBackgroundType, setDicebearBackgroundType] =
+    useState<DicebearBackgroundSelection>("none");
+  const [dicebearBackgroundColors, setDicebearBackgroundColors] = useState("");
+  const [dicebearSize, setDicebearSize] = useState<number>(DEFAULT_DICEBEAR_SIZE);
+  const [dicebearRadius, setDicebearRadius] = useState<number>(DEFAULT_DICEBEAR_RADIUS);
+  const [dicebearScale, setDicebearScale] = useState<number>(DEFAULT_DICEBEAR_SCALE);
+  const [dicebearTranslateX, setDicebearTranslateX] = useState<number>(DEFAULT_DICEBEAR_TRANSLATE);
+  const [dicebearTranslateY, setDicebearTranslateY] = useState<number>(DEFAULT_DICEBEAR_TRANSLATE);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -115,17 +143,60 @@ export default function GenerateNavatarPage() {
   );
 
   const dicebearSeedValue = dicebearSeed.trim() || user?.id || "naturverse";
-  const dicebearBackgroundValue = dicebearBackground.trim().replace(/^#/, "");
+  const dicebearBackgroundColorList = useMemo(
+    () =>
+      dicebearBackgroundColors
+        .split(",")
+        .map((color) => color.trim())
+        .filter(Boolean)
+        .map((color) => color.replace(/^#/, "").toLowerCase()),
+    [dicebearBackgroundColors]
+  );
+  const dicebearBackgroundTypeValue =
+    dicebearBackgroundType === "none" ? undefined : dicebearBackgroundType;
+  const dicebearBackgroundColorsValue =
+    dicebearBackgroundTypeValue && dicebearBackgroundColorList.length
+      ? dicebearBackgroundColorList
+      : undefined;
+  const isGradientBackground =
+    dicebearBackgroundType === "gradientLinear" || dicebearBackgroundType === "gradientRadial";
+  const canReverseBackgroundColors =
+    isGradientBackground && dicebearBackgroundColorList.length > 1;
+  const dicebearBackgroundPlaceholder = isGradientBackground ? "b6e3f4,c0aede" : "#b6e3f4";
+  const dicebearBackgroundHelper =
+    dicebearBackgroundType === "none"
+      ? "Transparent background keeps the sprite floating on your cards."
+      : isGradientBackground
+        ? "Comma-separated hex colors (e.g. b6e3f4,c0aede). Reverse swaps the gradient order."
+        : "Hex color, with or without the #.";
 
   const dicebearPreviewUrl = useMemo(
     () =>
-      buildDicebearUrl({
-        style: dicebearStyle,
-        seed: dicebearSeedValue || "naturverse",
-        backgroundColor: dicebearBackgroundValue || undefined,
-        format: "svg",
-      }),
-    [dicebearStyle, dicebearSeedValue, dicebearBackgroundValue]
+      dicebearUrl(
+        dicebearStyle,
+        {
+          seed: dicebearSeedValue || "naturverse",
+          size: dicebearSize,
+          backgroundType: dicebearBackgroundTypeValue,
+          backgroundColor: dicebearBackgroundColorsValue,
+          radius: dicebearRadius,
+          scale: dicebearScale,
+          translateX: dicebearTranslateX,
+          translateY: dicebearTranslateY,
+        },
+        "png"
+      ),
+    [
+      dicebearStyle,
+      dicebearSeedValue,
+      dicebearSize,
+      dicebearBackgroundTypeValue,
+      dicebearBackgroundColorsValue,
+      dicebearRadius,
+      dicebearScale,
+      dicebearTranslateX,
+      dicebearTranslateY,
+    ]
   );
 
   const previewUrl = mode === "stability" ? stabilityPreviewUrl : dicebearPreviewUrl;
@@ -136,6 +207,33 @@ export default function GenerateNavatarPage() {
   const saveLabel = isSaving ? "Saving…" : isStability && isGenerating ? "Generating…" : "Save";
   const cardTitle = name || (isDicebear ? dicebearSeedValue : "My Navatar");
 
+  function handleRandomDicebearSeed() {
+    const randomSeedValue = Math.random().toString(36).slice(2, 10);
+    setDicebearSeed(randomSeedValue);
+    setDicebearSeedTouched(true);
+  }
+
+  function handleReverseBackgroundColors() {
+    const values = dicebearBackgroundColors
+      .split(",")
+      .map((color) => color.trim())
+      .filter(Boolean);
+    if (values.length > 1) {
+      setDicebearBackgroundColors(values.reverse().join(", "));
+    }
+  }
+
+  function handleClearBackground() {
+    setDicebearBackgroundType("none");
+    setDicebearBackgroundColors("");
+  }
+
+  function handleResetCanvas() {
+    setDicebearScale(DEFAULT_DICEBEAR_SCALE);
+    setDicebearTranslateX(DEFAULT_DICEBEAR_TRANSLATE);
+    setDicebearTranslateY(DEFAULT_DICEBEAR_TRANSLATE);
+  }
+
   async function onSave(e: React.FormEvent) {
     e.preventDefault();
     if (isSaving) return;
@@ -143,16 +241,18 @@ export default function GenerateNavatarPage() {
     if (mode === "dicebear") {
       setIsSaving(true);
       try {
-        const { row } = await createDicebearAvatar(
-          {
-            style: dicebearStyle,
-            seed: dicebearSeedValue || "naturverse",
-            backgroundColor: dicebearBackgroundValue || undefined,
-            format: "png",
-            size: 1024,
-          },
-          name || undefined
-        );
+        const { row } = await generateDicebearAndSave({
+          style: dicebearStyle,
+          seed: dicebearSeedValue || "naturverse",
+          size: dicebearSize,
+          backgroundType: dicebearBackgroundTypeValue,
+          backgroundColor: dicebearBackgroundColorsValue,
+          radius: dicebearRadius,
+          scale: dicebearScale,
+          translateX: dicebearTranslateX,
+          translateY: dicebearTranslateY,
+          name: name || undefined,
+        });
         setActiveNavatarId(row.id);
         toast({ text: "Saved ✓", kind: "ok" });
         nav("/navatar");
@@ -281,31 +381,174 @@ export default function GenerateNavatarPage() {
             </div>
             <div className="navatar-field">
               <label htmlFor="dicebear-seed">Seed (name or handle)</label>
-              <input
-                id="dicebear-seed"
-                value={dicebearSeed}
-                onChange={(e) => {
-                  setDicebearSeed(e.target.value);
-                  setDicebearSeedTouched(true);
-                }}
-                placeholder={dicebearSeedValue}
-                disabled={isSaving}
-                style={{ width: "100%" }}
-              />
-              <small style={{ color: "#1e3a8a" }}>Same seed = same avatar every time.</small>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, width: "100%" }}>
+                <input
+                  id="dicebear-seed"
+                  value={dicebearSeed}
+                  onChange={(e) => {
+                    setDicebearSeed(e.target.value);
+                    setDicebearSeedTouched(true);
+                  }}
+                  placeholder={dicebearSeedValue}
+                  disabled={isSaving}
+                  style={{ flex: "1 1 200px", minWidth: 0 }}
+                />
+                <button
+                  type="button"
+                  className="pill"
+                  onClick={handleRandomDicebearSeed}
+                  disabled={isSaving}
+                  style={{ flex: "0 0 auto" }}
+                >
+                  Randomize
+                </button>
+              </div>
+              <small style={{ color: "#1e3a8a" }}>
+                Seed = same look every time. Try your handle or tap Randomize for a new vibe.
+              </small>
             </div>
             <div className="navatar-field">
-              <label htmlFor="dicebear-bg">Background color (optional)</label>
+              <label htmlFor="dicebear-bg-type">Background</label>
+              <select
+                id="dicebear-bg-type"
+                value={dicebearBackgroundType}
+                onChange={(e) => setDicebearBackgroundType(e.target.value as DicebearBackgroundSelection)}
+                disabled={isSaving}
+              >
+                {DICEBEAR_BACKGROUND_OPTIONS.map((option) => (
+                  <option key={option.value} value={option.value}>
+                    {option.label}
+                  </option>
+                ))}
+              </select>
+            </div>
+            <div className="navatar-field">
+              <label htmlFor="dicebear-bg">Background colors</label>
+              <div style={{ display: "flex", flexWrap: "wrap", gap: 8, width: "100%" }}>
+                <input
+                  id="dicebear-bg"
+                  value={dicebearBackgroundColors}
+                  onChange={(e) => setDicebearBackgroundColors(e.target.value)}
+                  placeholder={dicebearBackgroundPlaceholder}
+                  disabled={isSaving || dicebearBackgroundType === "none"}
+                  style={{ flex: "1 1 200px", minWidth: 0 }}
+                />
+                <button
+                  type="button"
+                  className="pill"
+                  onClick={handleReverseBackgroundColors}
+                  disabled={isSaving || !canReverseBackgroundColors}
+                  style={{ flex: "0 0 auto" }}
+                >
+                  Reverse colors
+                </button>
+                <button
+                  type="button"
+                  className="pill"
+                  onClick={handleClearBackground}
+                  disabled={isSaving || dicebearBackgroundType === "none"}
+                  style={{ flex: "0 0 auto" }}
+                >
+                  Transparent
+                </button>
+              </div>
+              <small style={{ color: "#1e3a8a" }}>{dicebearBackgroundHelper}</small>
+            </div>
+            <div className="navatar-field">
+              <label htmlFor="dicebear-size">Size</label>
+              <select
+                id="dicebear-size"
+                value={dicebearSize}
+                onChange={(e) => setDicebearSize(Number(e.target.value))}
+                disabled={isSaving}
+              >
+                {DICEBEAR_SIZE_OPTIONS.map((option) => (
+                  <option key={option} value={option}>
+                    {option} px
+                  </option>
+                ))}
+              </select>
+              <small style={{ color: "#1e3a8a" }}>
+                Quality tip: choose 1024 or 2048 for crisper marketplace cards.
+              </small>
+            </div>
+            <div className="navatar-field">
+              <label htmlFor="dicebear-radius">Corner radius ({dicebearRadius}px)</label>
               <input
-                id="dicebear-bg"
-                value={dicebearBackground}
-                onChange={(e) => setDicebearBackground(e.target.value)}
-                placeholder="#b6e3f4"
+                id="dicebear-radius"
+                type="range"
+                min={0}
+                max={50}
+                step={1}
+                value={dicebearRadius}
+                onChange={(e) => setDicebearRadius(Number(e.target.value))}
                 disabled={isSaving}
                 style={{ width: "100%" }}
               />
-              <small style={{ color: "#1e3a8a" }}>Hex color, with or without the #.</small>
+              <small style={{ color: "#1e3a8a" }}>
+                Soft corners help your Navatar sit nicely in rounded frames.
+              </small>
             </div>
+            <details className="navatar-advanced">
+              <summary>Canvas controls (zoom &amp; pan)</summary>
+              <div className="navatar-advanced__content">
+                <label htmlFor="dicebear-scale">Scale (zoom) {dicebearScale}%</label>
+                <input
+                  id="dicebear-scale"
+                  type="range"
+                  min={50}
+                  max={200}
+                  step={1}
+                  value={dicebearScale}
+                  onChange={(e) => setDicebearScale(Number(e.target.value))}
+                  disabled={isSaving}
+                  style={{ width: "100%" }}
+                />
+                <small style={{ color: "#1e3a8a" }}>
+                  Lower numbers zoom out to reveal more of the sprite when the style supports it.
+                </small>
+                <label htmlFor="dicebear-translate-x">
+                  Horizontal shift ({dicebearTranslateX})
+                </label>
+                <input
+                  id="dicebear-translate-x"
+                  type="range"
+                  min={-100}
+                  max={100}
+                  step={1}
+                  value={dicebearTranslateX}
+                  onChange={(e) => setDicebearTranslateX(Number(e.target.value))}
+                  disabled={isSaving}
+                  style={{ width: "100%" }}
+                />
+                <label htmlFor="dicebear-translate-y">
+                  Vertical shift ({dicebearTranslateY})
+                </label>
+                <input
+                  id="dicebear-translate-y"
+                  type="range"
+                  min={-100}
+                  max={100}
+                  step={1}
+                  value={dicebearTranslateY}
+                  onChange={(e) => setDicebearTranslateY(Number(e.target.value))}
+                  disabled={isSaving}
+                  style={{ width: "100%" }}
+                />
+                <small style={{ color: "#1e3a8a" }}>
+                  Nudge the art inside the frame to recenter full-body poses.
+                </small>
+                <button
+                  type="button"
+                  className="pill"
+                  onClick={handleResetCanvas}
+                  disabled={isSaving}
+                  style={{ marginTop: 8 }}
+                >
+                  Reset canvas
+                </button>
+              </div>
+            </details>
           </>
         ) : (
           <>
