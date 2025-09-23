@@ -8,6 +8,10 @@
   included_files = []
   external_node_modules = []
 
+[functions."generate-hf"]
+  timeout = 60
+  memory = 1024
+
 # SPA routing
 [[redirects]]
   from = "/*"
