@@ -8,41 +8,22 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
-import {
-  DEFAULT_NEGATIVE_PROMPT,
-  DEFAULT_STYLE_ID,
-  STYLE_PRESETS,
-  buildPrompt,
-} from "../../lib/navatar/stability";
+import { generateWithHF } from "../../lib/navatar/generate";
+import { DEFAULT_STYLE_ID, STYLE_PRESETS, buildPrompt } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
-const BRAND_STYLE = [
-  "cute character, navatar style, bright friendly palette,",
-  "big expressive eyes, rounded shapes, thick clean outlines,",
-  "storybook illustration, flat lighting, soft shading,",
-  "kid-friendly, sticker-ready, high contrast, no tiny details",
-].join(" ");
-
-const BRAND_NEGATIVE = [
-  "photo, photorealistic, hyperrealistic,",
-  "text, caption, letters, logo, watermark, signature,",
-  "grain, noise, artifacts, extra limbs, deformed hands",
+const ALWAYS_FILTERED_PROMPT = [
+  "photo, photorealistic, hyperrealistic",
+  "text, caption, letters, logo, watermark, signature",
+  "grain, noise, artifacts, extra limbs, deformed hands, gore, violence, guns",
 ].join(", ");
-
-function wrapWithBrandStyle(raw: string): string {
-  const trimmed = raw.trim();
-  if (!trimmed) return "";
-  const needsPeriod = !/[.!?]$/.test(trimmed);
-  const base = needsPeriod ? `${trimmed}.` : trimmed;
-  return `${base} ${BRAND_STYLE}`;
-}
 
 export default function GenerateNavatarPage() {
   const [prompt, setPrompt] = useState("");
   const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
   const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
-  const [keepStyle, setKeepStyle] = useState(false);
+  const [keepSeed, setKeepSeed] = useState(false);
+  const [seed, setSeed] = useState<number | undefined>(undefined);
   const [onBrand, setOnBrand] = useState(true);
   const [file, setFile] = useState<File | null>(null);
   const [name, setName] = useState("");
@@ -64,20 +45,24 @@ export default function GenerateNavatarPage() {
 
   useEffect(() => {
     if (user?.id) {
-      setKeepStyle((prev) => (prev ? prev : true));
+      setKeepSeed((prev) => (prev ? prev : true));
     } else {
-      setKeepStyle(false);
+      setKeepSeed(false);
+      setSeed(undefined);
     }
   }, [user?.id]);
+
+  useEffect(() => {
+    if (user?.id && keepSeed) {
+      setSeed(seedFromUserId(user.id));
+    } else if (!keepSeed) {
+      setSeed(undefined);
+    }
+  }, [user?.id, keepSeed]);
 
   const selectedStyle = useMemo(
     () => STYLE_PRESETS.find((preset) => preset.id === styleId) ?? STYLE_PRESETS[0],
     [styleId]
-  );
-
-  const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
-    [onBrand]
   );
 
   async function onSave(e: React.FormEvent) {
@@ -103,13 +88,18 @@ export default function GenerateNavatarPage() {
       return;
     }
 
-    const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
-    const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
+    const finalPrompt = buildPrompt(trimmedPrompt, selectedStyle);
     const avoid = extraNegativePrompt.trim();
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const deterministicSeed = keepSeed ? seed : undefined;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const dataUrl = await generateWithHF({
+        prompt: promptWithAvoidance,
+        onBrand,
+        seed: deterministicSeed,
+        keepSeed: keepSeed && typeof deterministicSeed === "number",
+      });
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
@@ -192,8 +182,8 @@ export default function GenerateNavatarPage() {
           <input
             id="navatar-keep-style"
             type="checkbox"
-            checked={keepStyle && Boolean(user?.id)}
-            onChange={(e) => setKeepStyle(e.target.checked)}
+            checked={keepSeed && Boolean(user?.id)}
+            onChange={(e) => setKeepSeed(e.target.checked)}
             disabled={!user?.id || isGenerating}
           />
           <span>
@@ -209,7 +199,7 @@ export default function GenerateNavatarPage() {
           <summary>Advanced prompt controls</summary>
           <div className="navatar-advanced__content">
             <p>
-              We always filter out: <code>{alwaysFilteredPrompt}</code>
+              We always filter out: <code>{ALWAYS_FILTERED_PROMPT}</code>
             </p>
             <label htmlFor="navatar-negative">Add more things to avoid (optional)</label>
             <textarea
@@ -226,7 +216,7 @@ export default function GenerateNavatarPage() {
           type="button"
           className="generate-btn w-full rounded-xl px-5 py-3 text-base font-semibold text-white bg-blue-600 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
           onClick={handleGenerate}
-          disabled={isGenerating}
+          disabled={isGenerating || !prompt.trim()}
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
@@ -257,5 +247,15 @@ async function dataUrlToFile(dataUrl: string, filename: string) {
   const res = await fetch(dataUrl);
   const blob = await res.blob();
   return new File([blob], filename, { type: blob.type || "image/png" });
+}
+
+function seedFromUserId(userId: string): number {
+  let hash = 0;
+  for (let i = 0; i < userId.length; i += 1) {
+    hash = (hash << 5) - hash + userId.charCodeAt(i);
+    hash |= 0;
+  }
+  const normalized = (hash >>> 0) % 0xffff_ffff;
+  return normalized === 0 ? 1 : normalized;
 }
 
