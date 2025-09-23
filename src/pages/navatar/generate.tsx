@@ -14,6 +14,7 @@ import {
   DEFAULT_STYLE_ID,
   STYLE_PRESETS,
   buildPrompt,
+  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -48,6 +49,9 @@ export default function GenerateNavatarPage() {
   const [name, setName] = useState("");
   const [draftUrl, setDraftUrl] = useState<string | undefined>();
   const [isGenerating, setIsGenerating] = useState(false);
+  const [generationStatus, setGenerationStatus] = useState<"idle" | "working" | "done" | "error">("idle");
+  const [generationError, setGenerationError] = useState("");
+  const [latestDataUrl, setLatestDataUrl] = useState("");
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -100,24 +104,42 @@ export default function GenerateNavatarPage() {
     const trimmedPrompt = prompt.trim();
     if (!trimmedPrompt) {
       toast({ text: "Describe your Navatar first", kind: "err" });
+      setGenerationStatus("idle");
       return;
     }
 
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
     const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativePrompt = avoid ? `${alwaysFilteredPrompt}, ${avoid}` : alwaysFilteredPrompt;
+    const seed = keepStyle && user?.id ? seedFromUserId(user.id) : null;
+
+    setGenerationStatus("working");
+    setGenerationError("");
+    setLatestDataUrl("");
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const { dataUrl } = await generateWithHuggingFace(finalPrompt, {
+        negative_prompt: negativePrompt,
+        width: 1024,
+        height: 1024,
+        num_inference_steps: 25,
+        guidance_scale: 3.0,
+        seed,
+      });
+      setLatestDataUrl(dataUrl);
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
+      setGenerationStatus("done");
     } catch (error) {
       console.error(error);
       const message = error instanceof Error ? error.message : "Error generating image";
       toast({ text: message, kind: "err" });
+      setGenerationError(message);
+      setGenerationStatus("error");
+      setLatestDataUrl("");
     } finally {
       setIsGenerating(false);
     }
@@ -230,6 +252,25 @@ export default function GenerateNavatarPage() {
         >
           {isGenerating ? "Generating…" : "Generate with Hugging Face"}
         </button>
+        {generationStatus === "working" && (
+          <p role="status" style={{ color: "#2563eb", fontWeight: 500, textAlign: "center" }}>
+            Crafting your Navatar with Hugging Face…
+          </p>
+        )}
+        {generationStatus === "error" && (
+          <p role="alert" style={{ color: "crimson", textAlign: "center" }}>
+            HF API failed: {generationError}
+          </p>
+        )}
+        {generationStatus === "done" && latestDataUrl && (
+          <div style={{ width: "100%", marginTop: 8 }}>
+            <img
+              src={latestDataUrl}
+              alt="Generated Navatar preview"
+              style={{ width: "100%", borderRadius: 12, boxShadow: "0 6px 18px rgba(15, 23, 42, 0.16)" }}
+            />
+          </div>
+        )}
         <input
           style={{ display: "block", width: "100%" }}
           placeholder="Name (optional)"
