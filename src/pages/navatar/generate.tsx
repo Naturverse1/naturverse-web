@@ -9,10 +9,15 @@ import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
 import {
-  DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
+  RATE_LIMIT_MESSAGE,
+  RateLimitError,
   STYLE_PRESETS,
+  StabilityError,
+  buildNegativePrompt,
   buildPrompt,
+  generateWithStability,
+  seedFromUserId,
 } from "../../lib/navatar/stability";
 import "../../styles/navatar.css";
 
@@ -75,7 +80,7 @@ export default function GenerateNavatarPage() {
   );
 
   const alwaysFilteredPrompt = useMemo(
-    () => (onBrand ? `${DEFAULT_NEGATIVE_PROMPT}, ${BRAND_NEGATIVE}` : DEFAULT_NEGATIVE_PROMPT),
+    () => buildNegativePrompt(onBrand ? BRAND_NEGATIVE : ""),
     [onBrand]
   );
 
@@ -104,36 +109,37 @@ export default function GenerateNavatarPage() {
 
     const promptForBrand = onBrand ? wrapWithBrandStyle(trimmedPrompt) : trimmedPrompt;
     const finalPrompt = buildPrompt(promptForBrand, selectedStyle);
-    const avoid = extraNegativePrompt.trim();
-    const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
+    const negativeExtras = [onBrand ? BRAND_NEGATIVE : "", extraNegativePrompt.trim()]
+      .filter(Boolean)
+      .join(", ");
+    const negativePrompt = buildNegativePrompt(negativeExtras);
+    const seed = keepStyle && user?.id ? seedFromUserId(user.id) : undefined;
     setIsGenerating(true);
     try {
-      const response = await fetch("/.netlify/functions/generate-navatar", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ prompt: promptWithAvoidance }),
+      const { blob } = await generateWithStability({
+        prompt: finalPrompt,
+        negativePrompt,
+        seed,
+        style: selectedStyle.id,
       });
 
-      if (!response.ok) {
-        const errorText = await response.text();
-        throw new Error(errorText || `Error generating image (${response.status})`);
-      }
-
-      const data: { image?: string } = await response.json();
-      const dataUrl = typeof data.image === "string" ? data.image : undefined;
-
-      if (!dataUrl) {
-        throw new Error("Stability AI did not return an image");
-      }
-
-      const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
+      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
+        type: blob.type || "image/png",
+      });
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
     } catch (error) {
       console.error(error);
-      const message = error instanceof Error ? error.message : "Error generating image";
-      toast({ text: message, kind: "err" });
+      if (error instanceof RateLimitError) {
+        toast({ text: error.message || RATE_LIMIT_MESSAGE, kind: "err" });
+      } else if (error instanceof StabilityError) {
+        toast({ text: error.message, kind: "err" });
+      } else if (error instanceof Error) {
+        toast({ text: error.message, kind: "err" });
+      } else {
+        toast({ text: "Error generating image", kind: "err" });
+      }
     } finally {
       setIsGenerating(false);
     }
@@ -267,11 +273,5 @@ export default function GenerateNavatarPage() {
       </p>
     </main>
   );
-}
-
-async function dataUrlToFile(dataUrl: string, filename: string) {
-  const res = await fetch(dataUrl);
-  const blob = await res.blob();
-  return new File([blob], filename, { type: blob.type || "image/png" });
 }
 
