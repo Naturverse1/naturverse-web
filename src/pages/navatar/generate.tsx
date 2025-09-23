@@ -8,7 +8,6 @@ import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
-import { generateWithHuggingFace } from "../../lib/navatar/generate";
 import {
   DEFAULT_NEGATIVE_PROMPT,
   DEFAULT_STYLE_ID,
@@ -109,7 +108,24 @@ export default function GenerateNavatarPage() {
     const promptWithAvoidance = avoid ? `${finalPrompt}. Avoid: ${avoid}` : finalPrompt;
     setIsGenerating(true);
     try {
-      const dataUrl = await generateWithHuggingFace(promptWithAvoidance);
+      const response = await fetch("/.netlify/functions/generate-navatar", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ prompt: promptWithAvoidance }),
+      });
+
+      if (!response.ok) {
+        const errorText = await response.text();
+        throw new Error(errorText || `Error generating image (${response.status})`);
+      }
+
+      const data: { image?: string } = await response.json();
+      const dataUrl = typeof data.image === "string" ? data.image : undefined;
+
+      if (!dataUrl) {
+        throw new Error("Stability AI did not return an image");
+      }
+
       const generatedFile = await dataUrlToFile(dataUrl, `navatar-${Date.now()}.png`);
 
       setFile(generatedFile);
@@ -228,7 +244,7 @@ export default function GenerateNavatarPage() {
           onClick={handleGenerate}
           disabled={isGenerating}
         >
-          {isGenerating ? "Generating…" : "Generate with Hugging Face"}
+          {isGenerating ? "Generating…" : "Generate with Stability AI"}
         </button>
         <input
           style={{ display: "block", width: "100%" }}
@@ -247,7 +263,7 @@ export default function GenerateNavatarPage() {
         </button>
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
-        Powered by Hugging Face Inference (FLUX.1-dev) – square 1024×1024 art.
+        Powered by Stability AI (Stable Image Core) – square 512×512 art.
       </p>
     </main>
   );
