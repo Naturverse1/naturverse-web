@@ -1,25 +1,33 @@
 export async function generateWithHuggingFace(prompt: string): Promise<string> {
-  const response = await fetch("/.netlify/functions/hf-space", {
+  const response = await fetch("/.netlify/functions/generate-hf", {
     method: "POST",
-    headers: {
-      "Content-Type": "application/json",
-      Accept: "application/json",
-    },
+    headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ prompt }),
   });
 
-  const json = await response.json().catch(() => ({}));
+  let body: unknown;
+  try {
+    body = await response.json();
+  } catch {
+    const text = await response.text();
+    throw new Error(`HF request returned non-JSON: ${text.slice(0, 200)}`);
+  }
 
   if (!response.ok) {
-    const message = Array.isArray(json?.errors) && json.errors.length > 0
-      ? json.errors[0]
-      : "Hugging Face Space error";
+    const message =
+      typeof body === "object" && body !== null && "error" in body && typeof (body as { error?: unknown }).error === "string"
+        ? (body as { error: string }).error
+        : "HF API error";
     throw new Error(message);
   }
 
-  const image = json?.imageDataUrl;
-  if (typeof image !== "string" || !image) {
-    throw new Error("Invalid image response from Hugging Face Space");
+  const image =
+    typeof body === "object" && body !== null && "image" in body && typeof (body as { image?: unknown }).image === "string"
+      ? (body as { image: string }).image
+      : undefined;
+
+  if (!image) {
+    throw new Error("HF API did not return an image");
   }
 
   return image;
