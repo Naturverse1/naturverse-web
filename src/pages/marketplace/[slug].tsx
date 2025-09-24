@@ -4,44 +4,68 @@ import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import "./../../styles/marketplace.css";
-import { fetchWishlistIds, toggleWishlistItem } from "@/lib/marketplace";
 import { useToast } from "@/components/Toast";
 import { useAuthUser } from "@/lib/useAuthUser";
+import { addToWishlist, getWishlist, removeFromWishlist } from "@/services/wishlist";
+import type { MarketProduct, WishlistItem } from "@/types/market";
 
-const MAP:any = {
-  "turian-plush": { id:"turian-plush", name:"Turian Plush", price:24, image:"/Marketplace/Turianplushie.png", blurb:"Cuddly plush of Turian." },
-  "navatar-tee":  { id:"navatar-tee",  name:"Navatar Tee",  price:18, image:"/Marketplace/Turiantshirt.png",  blurb:"Soft tee with Navatar." },
-  "stickers":     { id:"stickers",     name:"Sticker Pack", price:6,  image:"/Marketplace/Stickerpack.png", blurb:"Six vinyl stickers." },
+type ProductDetail = MarketProduct & { price: number; image: string; blurb: string };
+
+const MAP: Record<string, ProductDetail> = {
+  "turian-plush": { id: "turian-plush", name: "Turian Plush", price: 24, image: "/Marketplace/Turianplushie.png", blurb: "Cuddly plush of Turian." },
+  "navatar-tee": { id: "navatar-tee", name: "Navatar Tee", price: 18, image: "/Marketplace/Turiantshirt.png", blurb: "Soft tee with Navatar." },
+  "stickers": { id: "stickers", name: "Sticker Pack", price: 6, image: "/Marketplace/Stickerpack.png", blurb: "Six vinyl stickers." },
 };
 
 export default function ProductPage(){
   const { slug="" } = useParams();
   const p = MAP[slug];
   const toast = useToast();
-  const { user } = useAuthUser();
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const { user, loading: authLoading } = useAuthUser();
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
     let active = true;
-    (async () => {
-      try {
-        const ids = await fetchWishlistIds();
-        if (active) setWishlist(ids);
-      } catch (error) {
+    if (authLoading) {
+      return () => {
+        active = false;
+      };
+    }
+
+    if (!user) {
+      setWishlist([]);
+      setPending(false);
+      setLoadingWishlist(false);
+      return () => {
+        active = false;
+      };
+    }
+
+    setLoadingWishlist(true);
+    setPending(false);
+
+    getWishlist()
+      .then((items) => {
+        if (active) setWishlist(items);
+      })
+      .catch((error) => {
         if (import.meta.env.DEV) console.warn(error);
-      } finally {
+        if (active) setWishlist([]);
+      })
+      .finally(() => {
         if (active) setLoadingWishlist(false);
-      }
-    })();
+      });
+
     return () => {
       active = false;
     };
-  }, []);
+  }, [user, authLoading]);
 
   if (!p) return null;
 
-  const inWishlist = wishlist.includes(p.id);
+  const inWishlist = wishlist.some((item) => item.product_name === p.name);
 
   const onToggleWishlist = async () => {
     if (!user) {
@@ -49,17 +73,23 @@ export default function ProductPage(){
       return;
     }
     try {
-      const { saved } = await toggleWishlistItem(p.id);
-      setWishlist((prev) => {
-        const next = new Set(prev);
-        if (saved) next.add(p.id);
-        else next.delete(p.id);
-        return Array.from(next);
-      });
-      toast({ text: saved ? "Added to wishlist" : "Removed from wishlist", kind: saved ? "ok" : "warn" });
+      setPending(true);
+      const existing = wishlist.find((item) => item.product_name === p.name);
+
+      if (existing) {
+        await removeFromWishlist(existing.id);
+        setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
+        toast({ text: "Removed from wishlist", kind: "warn" });
+      } else {
+        const created = await addToWishlist(p);
+        setWishlist((prev) => [created, ...prev]);
+        toast({ text: "Added to wishlist", kind: "ok" });
+      }
     } catch (error) {
       const message = error instanceof Error ? error.message : "Could not update wishlist";
       toast({ text: message, kind: "err" });
+    } finally {
+      setPending(false);
     }
   };
   return (
@@ -78,7 +108,7 @@ export default function ProductPage(){
         </div>
         <button
           className="btn-secondary w-full"
-          disabled={loadingWishlist && !wishlist.length}
+          disabled={(loadingWishlist && !wishlist.length) || pending}
           onClick={onToggleWishlist}
           aria-pressed={inWishlist}
           style={{ marginTop: "1rem" }}
