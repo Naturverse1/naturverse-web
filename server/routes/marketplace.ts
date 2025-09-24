@@ -57,18 +57,25 @@ router.post('/demo-order', async (req, res) => {
 router.post('/wishlist', async (req, res) => {
   try {
     const supabase = requireClient();
-    const { userId, itemId } = req.body ?? {};
-
-    if (!itemId || typeof itemId !== 'string') {
-      return res.status(400).json({ error: 'itemId required' });
-    }
+    const { userId, itemId: legacyItemId, item } = req.body ?? {};
 
     const normalizedUserId = typeof userId === 'string' && userId.trim().length > 0 ? userId.trim() : null;
+
+    const normalizedItemId =
+      typeof legacyItemId === 'string' && legacyItemId.trim().length > 0
+        ? legacyItemId.trim()
+        : typeof item?.id === 'string' && item.id.trim().length > 0
+          ? item.id.trim()
+          : null;
+
+    if (!normalizedItemId) {
+      return res.status(400).json({ error: 'itemId required' });
+    }
 
     const query = supabase
       .from('wishlists')
       .select('id')
-      .eq('item_id', itemId)
+      .eq('item_id', normalizedItemId)
       .limit(1);
 
     if (normalizedUserId) {
@@ -84,18 +91,41 @@ router.post('/wishlist', async (req, res) => {
 
     if (existing?.id) {
       await supabase.from('wishlists').delete().eq('id', existing.id);
-      return res.json({ ok: true, saved: false });
+      return res.json({ ok: true, saved: false, id: existing.id });
     }
 
-    const insertPayload: Record<string, unknown> = { item_id: itemId };
+    const productName = typeof item?.name === 'string' ? item.name.trim() : '';
+    if (!productName) {
+      return res.status(400).json({ error: 'product name required' });
+    }
+
+    const insertPayload: Record<string, unknown> = {
+      item_id: normalizedItemId,
+      product_name: productName,
+    };
+
+    if (typeof item?.price === 'number' && Number.isFinite(item.price)) {
+      insertPayload.product_price = item.price;
+    }
+    if (typeof item?.image === 'string' && item.image.trim().length > 0) {
+      insertPayload.product_image = item.image.trim();
+    }
+    if (typeof item?.href === 'string' && item.href.trim().length > 0) {
+      insertPayload.product_href = item.href.trim();
+    }
     if (normalizedUserId) insertPayload.user_id = normalizedUserId;
 
-    const { error: insertError } = await supabase.from('wishlists').insert(insertPayload);
+    const { data: inserted, error: insertError } = await supabase
+      .from('wishlists')
+      .insert(insertPayload)
+      .select('id, item_id, product_name, product_price, product_image, product_href, added_at, created_at')
+      .single();
+
     if (insertError) {
       throw insertError;
     }
 
-    return res.json({ ok: true, saved: true });
+    return res.json({ ok: true, saved: true, item: inserted });
   } catch (error: any) {
     const message = error?.message ?? 'Unable to update wishlist';
     return res.status(500).json({ error: message });

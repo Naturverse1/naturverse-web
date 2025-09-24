@@ -294,6 +294,11 @@ create table if not exists public.wishlists (
   id uuid primary key default gen_random_uuid(),
   user_id uuid references auth.users(id) on delete cascade,
   item_id text not null,
+  product_name text not null,
+  product_price numeric,
+  product_image text,
+  product_href text,
+  added_at timestamptz not null default now(),
   created_at timestamptz not null default now(),
   unique (user_id, item_id)
 );
