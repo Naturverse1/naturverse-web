@@ -1,3 +1,4 @@
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { Product } from "../lib/commerce/types";
 
@@ -6,7 +7,7 @@ type CardProduct = Product & { saved?: boolean };
 type Props = {
   product: CardProduct;
   onAddToCart?: (p: Product) => void;
-  onToggleSave?: (p: Product) => void;
+  onToggleSave?: (p: Product) => Promise<boolean>;
   showCartButton?: boolean;
   showSaveButton?: boolean;
 };
@@ -18,6 +19,31 @@ export default function ProductCard({
   showCartButton = true,
   showSaveButton = true,
 }: Props) {
+  const [saved, setSaved] = useState(Boolean(product.saved));
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    setSaved(Boolean(product.saved));
+  }, [product.saved]);
+
+  async function handleToggle() {
+    if (!onToggleSave || busy) return;
+    setBusy(true);
+    try {
+      const next = await onToggleSave(product);
+      setSaved(Boolean(next));
+    } catch (err) {
+      console.error("Wishlist toggle failed", err);
+      const message =
+        err instanceof Error && err.message === "not_signed_in"
+          ? "Please sign in to update your wishlist"
+          : "Unable to update wishlist";
+      alert(message);
+    } finally {
+      setBusy(false);
+    }
+  }
+
   return (
     <div className="rounded-2xl border border-blue-200/60 p-4 shadow-sm">
       <div className="rounded-2xl bg-blue-50/40 p-4">
@@ -52,10 +78,11 @@ export default function ProductCard({
         {showSaveButton && (
           <button
             className="flex-1 rounded-xl bg-blue-600 px-4 py-3 font-semibold text-white shadow-sm active:translate-y-[1px]"
-            onClick={() => onToggleSave?.(product)}
-            aria-pressed={!!product.saved}
+            onClick={handleToggle}
+            aria-pressed={saved}
+            disabled={busy}
           >
-            {product.saved ? "Saved" : "Save"}
+            {saved ? "Saved" : "Save"}
           </button>
         )}
       </div>

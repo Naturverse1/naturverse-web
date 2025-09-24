@@ -299,19 +299,29 @@ export default function GenerateNavatarPage() {
     const seed = keepStyle && user?.id ? seedFromUserId(user.id) : undefined;
     setIsGenerating(true);
     try {
-      const { blob } = await generateWithStability({
+      const { blob, source } = await generateWithStability({
         prompt: finalPrompt,
         negativePrompt,
         seed,
         style: selectedStyle.id,
       });
 
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
+      const extension = blob.type?.includes("webp")
+        ? "webp"
+        : blob.type?.includes("svg")
+          ? "svg"
+          : "png";
+      const generatedFile = new File([blob], `navatar-${Date.now()}.${extension}`, {
         type: blob.type || "image/png",
       });
 
       setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
+      const toastKind = source === "dicebear" ? "warn" : "ok";
+      const toastText =
+        source === "dicebear"
+          ? "Stability unavailable — DiceBear fallback used ✓"
+          : "Navatar generated ✓";
+      toast({ text: toastText, kind: toastKind });
     } catch (error) {
       console.error(error);
       if (error instanceof RateLimitError) {

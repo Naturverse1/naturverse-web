@@ -128,12 +128,6 @@ export function normalizeSeed(seed: number | undefined): number | undefined {
   return Math.floor(seed);
 }
 
-function parseRemaining(header: string | null): number | null {
-  if (!header) return null;
-  const value = Number(header);
-  return Number.isFinite(value) ? value : null;
-}
-
 export interface StabilityGenerateOptions {
   prompt: string;
   negativePrompt?: string;
@@ -146,6 +140,7 @@ export interface StabilityGenerateOptions {
 export interface StabilityGenerateResult {
   blob: Blob;
   remaining?: number | null;
+  source: 'stability' | 'dicebear';
 }
 
 export async function generateWithStability({
@@ -174,31 +169,51 @@ export async function generateWithStability({
 
   let resp: Response;
   try {
-    resp = await fetch("/.netlify/functions/stability-generate", {
+    resp = await fetch("/.netlify/functions/generate-avatar", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
       signal,
     });
   } catch {
-    throw new StabilityError("Unable to reach Stability right now. Check your connection and try again.");
+    throw new StabilityError("Unable to reach the avatar generator right now. Check your connection and try again.");
   }
 
-  const remaining = parseRemaining(resp.headers.get("x-ratelimit-remaining"));
+  const data = await resp.json().catch(() => null);
 
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => null);
-    const detail = typeof err === "object" && err
-      ? ("detail" in err ? String((err as any).detail) : "error" in err ? String((err as any).error) : null)
-      : null;
-
-    if (resp.status === 429 || (typeof remaining === "number" && remaining <= 0)) {
-      throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
+  if (!resp.ok || !data) {
+    const detail = typeof data === "object" && data && "error" in data ? String((data as any).error) : null;
+    if (resp.status === 429 || resp.status === 402) {
+      throw new RateLimitError(RATE_LIMIT_MESSAGE, null);
     }
-
-    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
+    throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status);
   }
 
-  const blob = await resp.blob();
-  return { blob, remaining };
+  const { imageBase64, mime, source, remaining } = data as {
+    imageBase64?: string;
+    mime?: string;
+    source?: string;
+    remaining?: number | null;
+  };
+
+  if (!imageBase64 || !mime) {
+    throw new StabilityError("Invalid image response from generator");
+  }
+
+  const blob = base64ToBlob(imageBase64, mime);
+  return {
+    blob,
+    remaining: typeof remaining === "number" ? remaining : undefined,
+    source: source === "dicebear" ? "dicebear" : "stability",
+  };
+}
+
+function base64ToBlob(base64: string, mime: string) {
+  const binary = atob(base64);
+  const length = binary.length;
+  const bytes = new Uint8Array(length);
+  for (let i = 0; i < length; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+  return new Blob([bytes], { type: mime });
 }

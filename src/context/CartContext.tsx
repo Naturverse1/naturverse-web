@@ -14,7 +14,21 @@ type Cart = {
 const Ctx = createContext<Cart>(null!);
 
 export const CartProvider = ({ children }: { children: ReactNode }) => {
-  const [items, set] = useState<Item[]>(() => load("cart", []));
+  const [items, set] = useState<Item[]>(() => {
+    const raw = load<Item[]>("cart", []);
+    if (!Array.isArray(raw)) return [];
+    return raw.map((entry) => {
+      const product = entry?.product;
+      if (!product) return entry;
+      return {
+        ...entry,
+        product: {
+          ...product,
+          id: product.id ?? product.slug,
+        },
+      } satisfies Item;
+    });
+  });
   const persist = (v: Item[]) => {
     set(v);
     save("cart", v);
