@@ -3,6 +3,7 @@ import { RouterProvider } from 'react-router-dom';
 import { router } from './router';
 import { organizationLd, websiteLd } from './lib/jsonld';
 import { CartProvider } from './lib/cart';
+import { WishlistProvider } from './context/WishlistContext';
 import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import TurianAssistant from './components/TurianAssistant';
@@ -20,7 +21,7 @@ export default function App() {
   }, []);
   return (
     <CartProvider>
-      <>
+      <WishlistProvider>
         {/* Global route side-effects (scroll & focus) */}
         <RouteFX />
         <script
@@ -38,7 +39,7 @@ export default function App() {
         </main>
         <ToasterListener />
         <TurianAssistant isAuthed={isAuthed} />
-      </>
+      </WishlistProvider>
     </CartProvider>
   );
 }
