@@ -356,3 +356,21 @@
   visibility: visible;
 }
 
+.nv-alert {
+  width: 100%;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #eff6ff, #dbeafe);
+  color: #0f172a;
+  padding: 12px 16px;
+  border: 1px solid rgba(30, 64, 175, 0.2);
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.08);
+  text-align: center;
+  line-height: 1.4;
+}
+
+.nv-alert strong {
+  display: block;
+  font-weight: 700;
+  margin-bottom: 4px;
+}
+

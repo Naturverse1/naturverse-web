@@ -10,6 +10,7 @@ import { useToast } from "../../components/Toast";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { dicebearUrl, type DicebearStyle } from "../../lib/dicebear";
 import { generateDicebearAndSave } from "../../lib/navatar/dicebear";
+import { logEvent } from "@/lib/activity";
 import {
   DEFAULT_STYLE_ID,
   RATE_LIMIT_MESSAGE,
@@ -81,6 +82,15 @@ function wrapWithBrandStyle(raw: string): string {
   return `${base} ${BRAND_STYLE}`;
 }
 
+function seedFromPrompt(raw: string): string {
+  const fallback = raw
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 24);
+  return fallback || "naturverse";
+}
+
 export default function GenerateNavatarPage() {
   const [mode, setMode] = useState<GeneratorMode>("stability");
   const [prompt, setPrompt] = useState("");
@@ -104,6 +114,7 @@ export default function GenerateNavatarPage() {
   const [dicebearScale, setDicebearScale] = useState<number>(DEFAULT_DICEBEAR_SCALE);
   const [dicebearTranslateX, setDicebearTranslateX] = useState<number>(DEFAULT_DICEBEAR_TRANSLATE);
   const [dicebearTranslateY, setDicebearTranslateY] = useState<number>(DEFAULT_DICEBEAR_TRANSLATE);
+  const [stabilityRemaining, setStabilityRemaining] = useState<number | null>(null);
   const nav = useNavigate();
   const toast = useToast();
   const { user } = useAuthUser();
@@ -255,6 +266,13 @@ export default function GenerateNavatarPage() {
         });
         setActiveNavatarId(row.id);
         toast({ text: "Saved ✓", kind: "ok" });
+        void logEvent("avatar.created", {
+          method: "dicebear",
+          style: dicebearStyle,
+          seed: dicebearSeedValue,
+          background: dicebearBackgroundTypeValue ?? "none",
+        });
+        void logEvent("avatar.saved", { method: "dicebear", id: row.id });
         nav("/navatar");
       } catch (error) {
         const message = error instanceof Error ? error.message : "Save failed";
@@ -275,6 +293,7 @@ export default function GenerateNavatarPage() {
       const row = await uploadNavatar(file, name || undefined);
       setActiveNavatarId(row.id);
       toast({ text: "Saved ✓", kind: "ok" });
+      void logEvent("avatar.saved", { method: "upload", id: row.id });
       nav("/navatar");
     } catch {
       toast({ text: "Save failed", kind: "err" });
@@ -299,12 +318,13 @@ export default function GenerateNavatarPage() {
     const seed = keepStyle && user?.id ? seedFromUserId(user.id) : undefined;
     setIsGenerating(true);
     try {
-      const { blob } = await generateWithStability({
+      const { blob, remaining } = await generateWithStability({
         prompt: finalPrompt,
         negativePrompt,
         seed,
         style: selectedStyle.id,
       });
+      setStabilityRemaining(typeof remaining === "number" ? remaining : null);
 
       const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
         type: blob.type || "image/png",
@@ -312,12 +332,25 @@ export default function GenerateNavatarPage() {
 
       setFile(generatedFile);
       toast({ text: "Navatar generated ✓", kind: "ok" });
+      void logEvent("avatar.created", {
+        method: "stability",
+        style: selectedStyle.id,
+        onBrand,
+        keepStyle,
+      });
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message || RATE_LIMIT_MESSAGE, kind: "err" });
-      } else if (error instanceof StabilityError) {
-        toast({ text: error.message, kind: "err" });
+      if (
+        error instanceof RateLimitError ||
+        (error instanceof StabilityError && (error.status === 402 || error.status === 429))
+      ) {
+        setStabilityRemaining(typeof error.remaining === "number" ? error.remaining : 0);
+        if (!dicebearSeedTouched) {
+          setDicebearSeed(seedFromPrompt(trimmedPrompt || prompt));
+          setDicebearSeedTouched(true);
+        }
+        setMode("dicebear");
+        toast({ text: "AI credits low — switched to Free (DiceBear).", kind: "warn" });
       } else if (error instanceof Error) {
         toast({ text: error.message, kind: "err" });
       } else {
@@ -342,6 +375,13 @@ export default function GenerateNavatarPage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
+        {stabilityRemaining != null && stabilityRemaining <= 5 && (
+          <div className="nv-alert" role="status">
+            <strong>Heads up:</strong> {stabilityRemaining <= 0 ? "Stability credits are out." : (
+              <>Only {stabilityRemaining} Stability credits left today. We'll switch to Free (DiceBear) if you run out.</>
+            )}
+          </div>
+        )}
         <div className="navatar-generator-switch" role="group" aria-label="Navatar creation mode">
           <button
             type="button"

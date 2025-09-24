@@ -1,11 +1,22 @@
 import { useCart } from "../lib/cart";
+import { logEvent } from "@/lib/activity";
 export default function AddToCartButton({ id, name, price, image }:{
   id:string; name:string; price:number; image:string;
 }) {
   const { items, add, inc, dec, remove } = useCart();
   const line = items.find(i => i.id===id);
   if (!line) {
-    return <button className="btn-primary w-full" onClick={()=>add({id,name,price,image},1)}>Add to cart</button>;
+    return (
+      <button
+        className="btn-primary w-full"
+        onClick={() => {
+          add({ id, name, price, image }, 1);
+          void logEvent("marketplace.add_to_cart", { id, price, name });
+        }}
+      >
+        Add to cart
+      </button>
+    );
   }
   return (
     <div className="nv-stepper">

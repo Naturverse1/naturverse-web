@@ -281,3 +281,51 @@ insert into public.languages (slug, name, native_name) values
   ('amerilandia', 'Amerilandia (English)', 'English')
 on conflict (slug) do update set name=excluded.name, native_name=excluded.native_name;
 
+-- ---------- Marketplace Demo & Events ----------
+create table if not exists public.orders_demo (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete set null,
+  line_items jsonb not null,
+  status text default 'demo',
+  created_at timestamptz not null default now()
+);
+
+create table if not exists public.wishlists (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  item_id text not null,
+  created_at timestamptz not null default now(),
+  unique (user_id, item_id)
+);
+
+create table if not exists public.events (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid not null references auth.users(id) on delete cascade,
+  type text not null,
+  meta jsonb,
+  created_at timestamptz not null default now()
+);
+
+alter table public.orders_demo enable row level security;
+alter table public.wishlists enable row level security;
+alter table public.events enable row level security;
+
+do $$ begin
+  if not exists (select 1 from pg_policies where policyname='orders_demo_insert_self') then
+    create policy orders_demo_insert_self on public.orders_demo
+      for insert to authenticated with check (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='wishlists_self') then
+    create policy wishlists_self on public.wishlists
+      for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='events_self_insert') then
+    create policy events_self_insert on public.events
+      for insert to authenticated with check (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='events_self_select') then
+    create policy events_self_select on public.events
+      for select to authenticated using (user_id = auth.uid());
+  end if;
+end $$;
+
