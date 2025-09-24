@@ -4,7 +4,7 @@ import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import "./../../styles/marketplace.css";
-import { fetchWishlistIds, toggleWishlistItem } from "@/lib/marketplace";
+import { fetchWishlistItems, toggleWishlistItem, type WishlistItem } from "@/lib/marketplace";
 import { useToast } from "@/components/Toast";
 import { useAuthUser } from "@/lib/useAuthUser";
 
@@ -18,18 +18,32 @@ export default function ProductPage(){
   const { slug="" } = useParams();
   const p = MAP[slug];
   const toast = useToast();
-  const { user } = useAuthUser();
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const { user, loading: authLoading } = useAuthUser();
+  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
 
   useEffect(() => {
     let active = true;
+    if (!user) {
+      if (!authLoading) {
+        setWishlist([]);
+        setLoadingWishlist(false);
+      } else {
+        setLoadingWishlist(true);
+      }
+      return () => {
+        active = false;
+      };
+    }
+
     (async () => {
       try {
-        const ids = await fetchWishlistIds();
-        if (active) setWishlist(ids);
+        setLoadingWishlist(true);
+        const items = await fetchWishlistItems();
+        if (active) setWishlist(items);
       } catch (error) {
         if (import.meta.env.DEV) console.warn(error);
+        if (active) setWishlist([]);
       } finally {
         if (active) setLoadingWishlist(false);
       }
@@ -37,11 +51,11 @@ export default function ProductPage(){
     return () => {
       active = false;
     };
-  }, []);
+  }, [user, authLoading]);
 
   if (!p) return null;
 
-  const inWishlist = wishlist.includes(p.id);
+  const inWishlist = wishlist.some((item) => item.itemId === p.id);
 
   const onToggleWishlist = async () => {
     if (!user) {
@@ -49,12 +63,41 @@ export default function ProductPage(){
       return;
     }
     try {
-      const { saved } = await toggleWishlistItem(p.id);
+      const { saved, item } = await toggleWishlistItem({
+        id: p.id,
+        name: p.name,
+        price: p.price,
+        image: p.image,
+        href: `/marketplace/${p.id}`,
+      });
       setWishlist((prev) => {
-        const next = new Set(prev);
-        if (saved) next.add(p.id);
-        else next.delete(p.id);
-        return Array.from(next);
+        if (saved && item) {
+          let price: number | null = null;
+          if (typeof item.product_price === "number") {
+            price = item.product_price;
+          } else if (typeof item.product_price === "string") {
+            const parsed = Number(item.product_price);
+            price = Number.isFinite(parsed) ? parsed : null;
+          }
+
+          const map = new Map(prev.map((entry) => [entry.itemId, entry] as const));
+          map.set(item.item_id, {
+            id: item.id,
+            itemId: item.item_id,
+            name: item.product_name,
+            price,
+            image: item.product_image ?? null,
+            href: item.product_href ?? null,
+            addedAt: item.added_at ?? item.created_at ?? null,
+          });
+          return Array.from(map.values());
+        }
+
+        if (!saved) {
+          return prev.filter((entry) => entry.itemId !== p.id);
+        }
+
+        return prev;
       });
       toast({ text: saved ? "Added to wishlist" : "Removed from wishlist", kind: saved ? "ok" : "warn" });
     } catch (error) {

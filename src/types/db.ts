@@ -99,12 +99,22 @@ export type Database = {
           id: string;
           user_id: string | null;
           item_id: string;
+          product_name: string;
+          product_price: number | string | null;
+          product_image: string | null;
+          product_href: string | null;
+          added_at: string | null;
           created_at: string;
         };
         Insert: {
           id?: string;
           user_id?: string | null;
           item_id: string;
+          product_name: string;
+          product_price?: number | string | null;
+          product_image?: string | null;
+          product_href?: string | null;
+          added_at?: string | null;
           created_at?: string;
         };
         Update: Partial<Database['public']['Tables']['wishlists']['Insert']>;
