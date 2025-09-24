@@ -84,7 +84,15 @@ export default function MarketplaceShop() {
     };
   }, [user, authLoading]);
 
-  const wishlistNames = useMemo(() => new Set(wishlist.map((item) => item.product_name)), [wishlist]);
+  const wishlistKeys = useMemo(() => {
+    const keys = new Set<string>();
+    for (const item of wishlist) {
+      if (item.product_id) keys.add(item.product_id);
+      const slug = item.product?.slug;
+      if (slug) keys.add(slug);
+    }
+    return keys;
+  }, [wishlist]);
 
   const cards = useMemo<ProductCard[]>(
     () =>
@@ -92,6 +100,7 @@ export default function MarketplaceShop() {
         const price = product.price_cents / 100;
         const marketProduct: MarketProduct = {
           id: product.slug,
+          productId: product.id,
           name: product.name,
           price,
           image: product.image_url,
@@ -116,10 +125,16 @@ export default function MarketplaceShop() {
     try {
       setPendingId(card.product.slug);
 
-      const existing = wishlist.find((item) => item.product_name === card.marketProduct.name);
+      const existing = wishlist.find((item) => {
+        if (card.marketProduct.productId && item.product_id === card.marketProduct.productId) {
+          return true;
+        }
+        const slug = item.product?.slug;
+        return slug ? slug === card.marketProduct.id : false;
+      });
 
       if (existing) {
-        await removeFromWishlist(existing.id, card.marketProduct.name);
+        await removeFromWishlist(existing.id, card.marketProduct.id);
         setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
         track('wishlist_remove', { slug: card.product.slug, name: card.product.name });
@@ -171,9 +186,9 @@ export default function MarketplaceShop() {
               className="btn-secondary w-full"
               disabled={(loadingWishlist && !wishlist.length) || pendingId === card.product.slug || loadingProducts}
               onClick={() => void toggleWishlist(card)}
-              aria-pressed={wishlistNames.has(card.marketProduct.name)}
+              aria-pressed={wishlistKeys.has(card.marketProduct.productId ?? card.marketProduct.id)}
             >
-              {wishlistNames.has(card.marketProduct.name) ? 'In Wishlist' : 'Add to Wishlist'}
+              {wishlistKeys.has(card.marketProduct.productId ?? card.marketProduct.id) ? 'In Wishlist' : 'Add to Wishlist'}
             </button>
           </article>
         ))}

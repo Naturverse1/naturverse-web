@@ -243,6 +243,14 @@ create table if not exists public.wishlists (
   unique (user_id, item_id)
 );
 
+create table if not exists public.user_wishlist (
+  id uuid primary key default gen_random_uuid(),
+  user_id uuid references auth.users(id) on delete cascade,
+  product_id uuid references public.products(id) on delete cascade,
+  created_at timestamptz default timezone('utc'::text, now()),
+  unique (user_id, product_id)
+);
+
 create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
   user_id uuid not null references auth.users(id) on delete cascade,
@@ -253,6 +261,7 @@ create table if not exists public.events (
 
 alter table public.orders_demo enable row level security;
 alter table public.wishlists enable row level security;
+alter table public.user_wishlist enable row level security;
 alter table public.events enable row level security;
 
 create policy orders_demo_insert_self on public.orders_demo
@@ -260,6 +269,9 @@ create policy orders_demo_insert_self on public.orders_demo
 
 create policy wishlists_self on public.wishlists
   for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+
+create policy user_wishlist_self on public.user_wishlist
+  for all to authenticated using (auth.uid() = user_id) with check (auth.uid() = user_id);
 
 create policy events_self_insert on public.events
   for insert to authenticated with check (user_id = auth.uid());

@@ -84,6 +84,7 @@ export default function ProductPage() {
     if (!product) return null;
     return {
       id: product.slug,
+      productId: product.id,
       name: product.name,
       price: product.price_cents / 100,
       image: product.image_url,
@@ -93,7 +94,13 @@ export default function ProductPage() {
   const priceLabel = product ? formatPrice(product.price_cents) : '';
   const priceValue = product ? product.price_cents / 100 : 0;
   const inWishlist = marketProduct
-    ? wishlist.some((item) => item.product_name === marketProduct.name)
+    ? wishlist.some((item) => {
+        if (marketProduct.productId && item.product_id === marketProduct.productId) {
+          return true;
+        }
+        const slug = item.product?.slug;
+        return slug ? slug === marketProduct.id : false;
+      })
     : false;
 
   const onToggleWishlist = async () => {
@@ -104,10 +111,16 @@ export default function ProductPage() {
     if (!marketProduct) return;
     try {
       setPending(true);
-      const existing = wishlist.find((item) => item.product_name === marketProduct.name);
+      const existing = wishlist.find((item) => {
+        if (marketProduct.productId && item.product_id === marketProduct.productId) {
+          return true;
+        }
+        const slug = item.product?.slug;
+        return slug ? slug === marketProduct.id : false;
+      });
 
       if (existing) {
-        await removeFromWishlist(existing.id, marketProduct.name);
+        await removeFromWishlist(existing.id, marketProduct.id);
         setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
         track('wishlist_remove', { slug: marketProduct.id, name: marketProduct.name });

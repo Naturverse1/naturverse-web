@@ -56,7 +56,7 @@ export type ProductRow = {
 
 export type WishlistRow = {
   id: string;
-  owner_id: string;
+  user_id: string;
   product_id: string;
   created_at: string;
 };
