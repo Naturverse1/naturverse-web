@@ -13,7 +13,6 @@ import { generateDicebearAndSave } from "../../lib/navatar/dicebear";
 import {
   DEFAULT_STYLE_ID,
   RATE_LIMIT_MESSAGE,
-  RateLimitError,
   STYLE_PRESETS,
   StabilityError,
   buildNegativePrompt,
@@ -299,24 +298,28 @@ export default function GenerateNavatarPage() {
     const seed = keepStyle && user?.id ? seedFromUserId(user.id) : undefined;
     setIsGenerating(true);
     try {
-      const { blob } = await generateWithStability({
+      const { blob, mime, source } = await generateWithStability({
         prompt: finalPrompt,
         negativePrompt,
         seed,
         style: selectedStyle.id,
       });
 
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
-        type: blob.type || "image/png",
+      const extension = mime.split("/")[1]?.split(";")[0] || "png";
+      const fileType = mime || blob.type || "image/png";
+      const generatedFile = new File([blob], `navatar-${Date.now()}.${extension}`, {
+        type: fileType,
       });
 
       setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
+      if (source === "dicebear") {
+        toast({ text: RATE_LIMIT_MESSAGE, kind: "warn" });
+      } else {
+        toast({ text: "Navatar generated ✓", kind: "ok" });
+      }
     } catch (error) {
       console.error(error);
-      if (error instanceof RateLimitError) {
-        toast({ text: error.message || RATE_LIMIT_MESSAGE, kind: "err" });
-      } else if (error instanceof StabilityError) {
+      if (error instanceof StabilityError) {
         toast({ text: error.message, kind: "err" });
       } else if (error instanceof Error) {
         toast({ text: error.message, kind: "err" });
