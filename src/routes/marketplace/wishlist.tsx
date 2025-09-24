@@ -1,13 +1,13 @@
 import Breadcrumbs from "../../components/Breadcrumbs";
 import ProductCard from "../../components/ProductCard";
-import { products } from "../../lib/commerce/products";
 import { useCart } from "../../context/CartContext";
 import { useWishlist } from "../../context/WishlistContext";
 
 export default function Wishlist() {
   const { add } = useCart();
-  const { items, toggle } = useWishlist();
-  const liked = products.filter((p) => items.includes(p.slug));
+  const { entries, toggle, loading } = useWishlist();
+  const hasItems = entries.length > 0;
+
   return (
     <section>
       <Breadcrumbs
@@ -18,14 +18,16 @@ export default function Wishlist() {
         ]}
       />
       <h1>Wishlist</h1>
-      {liked.length ? (
+      {loading ? (
+        <p>Loading wishlist…</p>
+      ) : hasItems ? (
         <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-          {liked.map((p) => (
+          {entries.map(({ product }) => (
             <ProductCard
-              key={p.slug}
-              product={{ ...p, saved: true }}
+              key={product.id}
+              product={{ ...product, saved: true }}
               onAddToCart={(item) => add(item)}
-              onToggleSave={(item) => toggle(item.slug)}
+              onToggleSave={(item) => toggle(item.id)}
               showCartButton
               showSaveButton
             />
