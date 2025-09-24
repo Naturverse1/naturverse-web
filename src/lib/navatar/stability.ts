@@ -196,6 +196,10 @@ export async function generateWithStability({
       throw new RateLimitError(RATE_LIMIT_MESSAGE, remaining);
     }
 
+    if (resp.status === 402) {
+      throw new StabilityError(detail || "Out of credits", resp.status, remaining);
+    }
+
     throw new StabilityError(detail || `HTTP ${resp.status}`, resp.status, remaining);
   }
 

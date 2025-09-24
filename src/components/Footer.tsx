@@ -32,6 +32,19 @@ export default function Footer() {
         {/* LEFT: copyright (always blue) */}
         <small style={{ color: "var(--nv-blue-600)" }}>{SITE.copyright}</small>
 
+        <div
+          style={{
+            flex: "1 1 220px",
+            minWidth: 200,
+            textAlign: "center",
+            fontSize: "0.9rem",
+            color: "var(--nv-blue-500)",
+            fontWeight: 600,
+          }}
+        >
+          <span role="img" aria-label="sparkles">✨</span> Kickstarter-ready MVP — help us unlock full production!
+        </div>
+
         {/* CENTER: policy links */}
         <nav
           aria-label="Footer"

@@ -3,13 +3,15 @@ import { Link, useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import BackToMyNavatar from "../../components/BackToMyNavatar";
 import NavatarTabs from "../../components/NavatarTabs";
-import { getMyAvatar, getMyCharacterCard } from "../../lib/navatar";
+import NavatarCard from "../../components/NavatarCard";
+import { getMyAvatar, getMyCharacterCard, navatarImageUrl } from "../../lib/navatar";
 import { useAuthUser } from "../../lib/useAuthUser";
 import { useToast } from "../../components/Toast";
 import { callAI } from "@/lib/ai";
 import { naturEvent } from "@/lib/events";
 import { readNavatarDraft, saveNavatarDraft } from "@/lib/localdb";
 import { saveNavatar } from "@/lib/supabaseHelpers";
+import { logEvent } from "@/lib/activity";
 import "../../styles/navatar.css";
 
 type NavatarAiResult = {
@@ -185,6 +187,8 @@ export default function NavatarCardPage() {
         setNavatarId(saved.id as string);
       }
 
+      toast({ text: "Card saved ✓", kind: "ok" });
+      void logEvent("avatar.saved", { section: "card", navatarId: saved.id });
       nav("/navatar");
     } catch (e: any) {
       console.error(e);
@@ -217,6 +221,19 @@ export default function NavatarCardPage() {
       <NavatarTabs context="subpage" />
       <form className="form-card" onSubmit={onSave} style={{ margin: "16px auto" }}>
         {err && <p className="Error">{err}</p>}
+
+        <aside className="nv-panel" style={{ width: "100%", maxWidth: 440 }}>
+          <div className="nv-title">Mint preview (coming soon)</div>
+          <div style={{ display: "grid", justifyItems: "center", gap: 12 }}>
+            <NavatarCard src={navatarImageUrl(avatar?.image_path)} title={avatar?.name || name || "My Navatar"} />
+            <p style={{ textAlign: "center", margin: 0, opacity: 0.8 }}>
+              Your Navatar card art will drop right here when minting opens.
+            </p>
+            <Link to="/navatar/mint" className="pill">
+              NFT / Mint (coming soon)
+            </Link>
+          </div>
+        </aside>
 
         {aiEnabled && (
           <section className="ai-card" aria-label="AI assist">

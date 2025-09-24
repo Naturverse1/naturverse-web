@@ -1,8 +1,33 @@
+import { useState } from 'react';
 import { useCart } from '../lib/cart';
 import Breadcrumbs from '../components/Breadcrumbs';
+import { useToast } from '../components/Toast';
+import ShareNavatar from '../components/ShareNavatar';
+import { saveDemoOrder } from '@/lib/marketplace';
+import { logEvent } from '@/lib/activity';
 
 export default function CartPage() {
   const { items, inc, dec, remove, subtotal } = useCart();
+  const [shareOpen, setShareOpen] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const toast = useToast();
+
+  const handleCheckout = async () => {
+    if (items.length === 0 || saving) return;
+    setSaving(true);
+    try {
+      await saveDemoOrder(items.map((it) => ({ id: it.id, name: it.name, price: it.price, qty: it.qty })));
+      void logEvent('order.demo_created', { subtotal, count: items.length });
+      toast({ text: 'Demo order saved ✓', kind: 'ok' });
+      setShareOpen(true);
+    } catch (error) {
+      const message = error instanceof Error ? error.message : 'Checkout failed';
+      toast({ text: message, kind: 'err' });
+    } finally {
+      setSaving(false);
+    }
+  };
+
   return (
     <main data-page="cart" className="nvrs-section cart cart-page">
       <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Cart' }]} />
@@ -40,11 +65,12 @@ export default function CartPage() {
             <strong className="label">Subtotal</strong>
             <strong className="value">${subtotal.toFixed(2)}</strong>
           </div>
-          <button className="btn-primary w-full" style={{ marginTop: '1rem' }}>
-            Checkout (stub)
+          <button className="btn-primary w-full" style={{ marginTop: '1rem' }} onClick={handleCheckout} disabled={saving}>
+            {saving ? 'Saving demo order…' : 'Checkout (Demo)'}
           </button>
         </div>
       )}
+      <ShareNavatar open={shareOpen} onClose={() => setShareOpen(false)} />
     </main>
   );
 }

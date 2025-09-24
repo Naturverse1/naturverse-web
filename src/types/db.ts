@@ -77,6 +77,55 @@ export type Database = {
         Insert: { user_id: string; kingdom: string };
         Update: Partial<{ kingdom: string }>;
       };
+      orders_demo: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          line_items: unknown;
+          status: string | null;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          line_items: unknown;
+          status?: string | null;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['orders_demo']['Insert']>;
+      };
+      wishlists: {
+        Row: {
+          id: string;
+          user_id: string | null;
+          item_id: string;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id?: string | null;
+          item_id: string;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['wishlists']['Insert']>;
+      };
+      events: {
+        Row: {
+          id: string;
+          user_id: string;
+          type: string;
+          meta: unknown;
+          created_at: string;
+        };
+        Insert: {
+          id?: string;
+          user_id: string;
+          type: string;
+          meta?: unknown;
+          created_at?: string;
+        };
+        Update: Partial<Database['public']['Tables']['events']['Insert']>;
+      };
     };
     Views: {
       user_xp: {
