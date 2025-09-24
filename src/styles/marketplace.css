@@ -79,6 +79,18 @@
   margin-top: 0.5rem;
 }
 
+.wishlist-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 0.75rem;
+}
+
+.wishlist-actions .btn-primary,
+.wishlist-actions .btn-secondary {
+  flex: 1 1 140px;
+}
+
 /* Quantity controls */
 .mp-card .nv-stepper {
   display: flex;

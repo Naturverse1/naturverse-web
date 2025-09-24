@@ -1,30 +1,47 @@
-import { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
-import AddToCartButton from "../../components/AddToCartButton";
-import SaveButton from "../../components/SaveButton";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import "./../../styles/marketplace.css";
-import { useToast } from "@/components/Toast";
-import { useAuthUser } from "@/lib/useAuthUser";
-import { addToWishlist, getWishlist, removeFromWishlist } from "@/services/wishlist";
-import type { MarketProduct, WishlistItem } from "@/types/market";
+import { useEffect, useMemo, useState } from 'react';
+import { useParams } from 'react-router-dom';
+import AddToCartButton from '../../components/AddToCartButton';
+import SaveButton from '../../components/SaveButton';
+import Breadcrumbs from '../../components/Breadcrumbs';
+import './../../styles/marketplace.css';
+import { useToast } from '@/components/Toast';
+import { useAuthUser } from '@/lib/useAuthUser';
+import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
+import type { MarketProduct, WishlistItem } from '@/types/market';
+import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
+import { track } from '@/lib/analytics';
 
-type ProductDetail = MarketProduct & { price: number; image: string; blurb: string };
-
-const MAP: Record<string, ProductDetail> = {
-  "turian-plush": { id: "turian-plush", name: "Turian Plush", price: 24, image: "/Marketplace/Turianplushie.png", blurb: "Cuddly plush of Turian." },
-  "navatar-tee": { id: "navatar-tee", name: "Navatar Tee", price: 18, image: "/Marketplace/Turiantshirt.png", blurb: "Soft tee with Navatar." },
-  "stickers": { id: "stickers", name: "Sticker Pack", price: 6, image: "/Marketplace/Stickerpack.png", blurb: "Six vinyl stickers." },
-};
-
-export default function ProductPage(){
-  const { slug="" } = useParams();
-  const p = MAP[slug];
+export default function ProductPage() {
+  const { slug = '' } = useParams();
+  const [product, setProduct] = useState<Product | null>(() => FALLBACK_PRODUCTS.find((item) => item.slug === slug) ?? null);
+  const [loadingProduct, setLoadingProduct] = useState(true);
   const toast = useToast();
   const { user, loading: authLoading } = useAuthUser();
   const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
   const [pending, setPending] = useState(false);
+
+  useEffect(() => {
+    let active = true;
+    setLoadingProduct(true);
+    const fallback = FALLBACK_PRODUCTS.find((item) => item.slug === slug) ?? null;
+    setProduct(fallback);
+    fetchProducts()
+      .then((items) => {
+        if (!active) return;
+        const found = items.find((item) => item.slug === slug) ?? fallback ?? null;
+        setProduct(found);
+      })
+      .catch((error) => {
+        if (import.meta.env.DEV) console.warn(error);
+      })
+      .finally(() => {
+        if (active) setLoadingProduct(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [slug]);
 
   useEffect(() => {
     let active = true;
@@ -63,59 +80,90 @@ export default function ProductPage(){
     };
   }, [user, authLoading]);
 
-  if (!p) return null;
+  const marketProduct = useMemo<MarketProduct | null>(() => {
+    if (!product) return null;
+    return {
+      id: product.slug,
+      name: product.name,
+      price: product.price_cents / 100,
+      image: product.image_url,
+    };
+  }, [product]);
 
-  const inWishlist = wishlist.some((item) => item.product_name === p.name);
+  const priceLabel = product ? formatPrice(product.price_cents) : '';
+  const priceValue = product ? product.price_cents / 100 : 0;
+  const inWishlist = marketProduct
+    ? wishlist.some((item) => item.product_name === marketProduct.name)
+    : false;
 
   const onToggleWishlist = async () => {
     if (!user) {
-      toast({ text: "Sign in to use your wishlist.", kind: "warn" });
+      toast({ text: 'Sign in to use your wishlist.', kind: 'warn' });
       return;
     }
+    if (!marketProduct) return;
     try {
       setPending(true);
-      const existing = wishlist.find((item) => item.product_name === p.name);
+      const existing = wishlist.find((item) => item.product_name === marketProduct.name);
 
       if (existing) {
-        await removeFromWishlist(existing.id);
+        await removeFromWishlist(existing.id, marketProduct.name);
         setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
-        toast({ text: "Removed from wishlist", kind: "warn" });
+        toast({ text: 'Removed from wishlist', kind: 'warn' });
+        track('wishlist_remove', { slug: marketProduct.id, name: marketProduct.name });
       } else {
-        const created = await addToWishlist(p);
+        const created = await addToWishlist(marketProduct);
         setWishlist((prev) => [created, ...prev]);
-        toast({ text: "Added to wishlist", kind: "ok" });
+        toast({ text: 'Added to wishlist', kind: 'ok' });
+        track('wishlist_add', { slug: marketProduct.id, name: marketProduct.name });
       }
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not update wishlist";
-      toast({ text: message, kind: "err" });
+      const message = error instanceof Error ? error.message : 'Could not update wishlist';
+      toast({ text: message, kind: 'err' });
     } finally {
       setPending(false);
     }
   };
+
+  if (!product && !loadingProduct) {
+    return null;
+  }
+
   return (
     <main id="main" data-page="marketplace" className="nvrs-section marketplace nv-secondary-scope">
-      <Breadcrumbs items={[{ label: "Home", href: "/" }, { label: "Marketplace", href: "/marketplace" }, { label: p.name }]} />
-      <article className="nv-card">
-        <div className="mp-hero">
-          <img className="mp-img" src={p.image} alt={p.name} />
-        </div>
-        <h1>{p.name}</h1>
-        <div>${p.price.toFixed(2)}</div>
-        <p>{p.blurb}</p>
-        <div className="nv-cta">
-          <AddToCartButton id={p.id} name={p.name} price={p.price} image={p.image}/>
-          <SaveButton id={`product:${p.id}`} kind="product" title={p.name} href={`/marketplace/${p.id}`} />
-        </div>
-        <button
-          className="btn-secondary w-full"
-          disabled={(loadingWishlist && !wishlist.length) || pending}
-          onClick={onToggleWishlist}
-          aria-pressed={inWishlist}
-          style={{ marginTop: "1rem" }}
-        >
-          {inWishlist ? "In Wishlist" : "Add to Wishlist"}
-        </button>
-      </article>
+      <Breadcrumbs items={[{ label: 'Home', href: '/' }, { label: 'Marketplace', href: '/marketplace' }, { label: product?.name ?? 'Product' }]} />
+      {product ? (
+        <article className="nv-card">
+          <div className="mp-hero">
+            <img className="mp-img" src={product.image_url} alt={product.name} />
+          </div>
+          <h1>{product.name}</h1>
+          <div>{priceLabel}</div>
+          {product.description ? <p>{product.description}</p> : null}
+          {marketProduct && (
+            <div className="nv-cta">
+              <AddToCartButton
+                id={marketProduct.id}
+                name={marketProduct.name}
+                price={priceValue}
+                image={marketProduct.image ?? ''}
+              />
+              <SaveButton id={`product:${marketProduct.id}`} kind="product" title={marketProduct.name} href={`/marketplace/${marketProduct.id}`} />
+            </div>
+          )}
+          <button
+            className="btn-secondary w-full"
+            disabled={(loadingWishlist && !wishlist.length) || pending}
+            onClick={onToggleWishlist}
+            aria-pressed={inWishlist}
+            style={{ marginTop: '1rem' }}
+          >
+            {inWishlist ? 'In Wishlist' : 'Add to Wishlist'}
+          </button>
+        </article>
+      ) : (
+        <p style={{ marginTop: '2rem' }}>Loading product…</p>
+      )}
     </main>
   );
 }

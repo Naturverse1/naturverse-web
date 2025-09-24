@@ -5,11 +5,13 @@ import { useToast } from '../components/Toast';
 import ShareNavatar from '../components/ShareNavatar';
 import { saveDemoOrder } from '@/lib/marketplace';
 import { logEvent } from '@/lib/activity';
+import { startCheckout } from '@/lib/checkout';
 
 export default function CartPage() {
   const { items, inc, dec, remove, subtotal } = useCart();
   const [shareOpen, setShareOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [checkingOut, setCheckingOut] = useState(false);
   const toast = useToast();
 
   const handleCheckout = async () => {
@@ -67,6 +69,22 @@ export default function CartPage() {
           </div>
           <button className="btn-primary w-full" style={{ marginTop: '1rem' }} onClick={handleCheckout} disabled={saving}>
             {saving ? 'Saving demo order…' : 'Checkout (Demo)'}
+          </button>
+          <button
+            className="btn-secondary w-full"
+            style={{ marginTop: '0.75rem' }}
+            onClick={async () => {
+              if (checkingOut) return;
+              setCheckingOut(true);
+              try {
+                await startCheckout();
+              } finally {
+                setCheckingOut(false);
+              }
+            }}
+            disabled={checkingOut}
+          >
+            {checkingOut ? 'Preparing checkout…' : 'Checkout (Stripe)'}
           </button>
         </div>
       )}

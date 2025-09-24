@@ -1,4 +1,5 @@
 import { supabase } from './supabaseClient';
+import { analyticsCfg } from './featureFlags';
 
 type AnalyticsEvent = {
   event: string;
@@ -18,6 +19,18 @@ export async function logEvent(payload: AnalyticsEvent) {
   } catch (e) {
     // non-blocking: never break UX if logging fails
     console.warn('analytics log failed', e);
+  }
+}
+
+// PostHog minimal capture helper (no-op when keys missing)
+export function track(ev: string, props?: Record<string, any>) {
+  if (!analyticsCfg.posthogKey) return;
+  try {
+    (window as any).posthog?.capture(ev, props);
+  } catch (error) {
+    if (import.meta.env.DEV) {
+      console.warn('posthog capture failed', error);
+    }
   }
 }
 
