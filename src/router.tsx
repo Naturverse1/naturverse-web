@@ -58,6 +58,7 @@ import RootLayout from './layouts/Root';
 import ZonesLayout from './layouts/Zones';
 import AnalyticsPage from './pages/analytics';
 import ProtectedRoute from './components/ProtectedRoute';
+import KickstarterPage from './pages/Kickstarter';
 
 export const router = createBrowserRouter([
   {
@@ -121,6 +122,7 @@ export const router = createBrowserRouter([
       { path: 'contact', element: <Contact /> },
       { path: 'accessibility', element: <Accessibility /> },
       { path: 'about', element: <About /> },
+      { path: 'kickstarter', element: <KickstarterPage /> },
       {
         path: 'navatar',
         children: [

@@ -1,17 +1,19 @@
-import { useCart } from "../lib/cart";
+import { useCart, cart } from "../lib/cart";
 import { logEvent } from "@/lib/activity";
+import { track } from "@/lib/analytics";
 export default function AddToCartButton({ id, name, price, image }:{
   id:string; name:string; price:number; image:string;
 }) {
-  const { items, add, inc, dec, remove } = useCart();
+  const { items, inc, dec, remove } = useCart();
   const line = items.find(i => i.id===id);
   if (!line) {
     return (
       <button
         className="btn-primary w-full"
         onClick={() => {
-          add({ id, name, price, image }, 1);
+          cart.add(id, 1, { name, price, image });
           void logEvent("marketplace.add_to_cart", { id, price, name });
+          track("cart_add", { slug: id, name, price });
         }}
       >
         Add to cart

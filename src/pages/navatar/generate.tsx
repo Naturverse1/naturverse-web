@@ -11,6 +11,7 @@ import { useAuthUser } from "../../lib/useAuthUser";
 import { dicebearUrl, type DicebearStyle } from "../../lib/dicebear";
 import { generateDicebearAndSave } from "../../lib/navatar/dicebear";
 import { logEvent } from "@/lib/activity";
+import { flags } from "@/lib/featureFlags";
 import {
   DEFAULT_STYLE_ID,
   RATE_LIMIT_MESSAGE,
@@ -210,9 +211,17 @@ export default function GenerateNavatarPage() {
     ]
   );
 
-  const previewUrl = mode === "stability" ? stabilityPreviewUrl : dicebearPreviewUrl;
-  const isDicebear = mode === "dicebear";
-  const isStability = mode === "stability";
+  const stabilityEnabled = flags.stability;
+  const currentMode = !stabilityEnabled && mode === "stability" ? "dicebear" : mode;
+  const previewUrl = currentMode === "stability" ? stabilityPreviewUrl : dicebearPreviewUrl;
+  const isDicebear = currentMode === "dicebear";
+  const isStability = stabilityEnabled && currentMode === "stability";
+
+  useEffect(() => {
+    if (!stabilityEnabled && mode === "stability") {
+      setMode("dicebear");
+    }
+  }, [mode, stabilityEnabled]);
 
   const canSave = isDicebear ? !isSaving : Boolean(file) && !isGenerating && !isSaving;
   const saveLabel = isSaving ? "Saving…" : isStability && isGenerating ? "Generating…" : "Save";
@@ -375,7 +384,7 @@ export default function GenerateNavatarPage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        {stabilityRemaining != null && stabilityRemaining <= 5 && (
+        {isStability && stabilityRemaining != null && stabilityRemaining <= 5 && (
           <div className="nv-alert" role="status">
             <strong>Heads up:</strong> {stabilityRemaining <= 0 ? "Stability credits are out." : (
               <>Only {stabilityRemaining} Stability credits left today. We'll switch to Free (DiceBear) if you run out.</>
@@ -383,14 +392,16 @@ export default function GenerateNavatarPage() {
           </div>
         )}
         <div className="navatar-generator-switch" role="group" aria-label="Navatar creation mode">
-          <button
-            type="button"
-            className={`pill${isStability ? " pill--active" : ""}`}
-            onClick={() => setMode("stability")}
-            aria-pressed={isStability}
-          >
-            AI (Stability)
-          </button>
+          {stabilityEnabled && (
+            <button
+              type="button"
+              className={`pill${isStability ? " pill--active" : ""}`}
+              onClick={() => setMode("stability")}
+              aria-pressed={isStability}
+            >
+              AI (Stability)
+            </button>
+          )}
           <button
             type="button"
             className={`pill${isDicebear ? " pill--active" : ""}`}

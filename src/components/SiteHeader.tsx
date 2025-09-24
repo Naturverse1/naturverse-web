@@ -6,6 +6,7 @@ import AuthButton from './AuthButton';
 import CartBadge from './CartBadge';
 import { SITE } from '@/lib/site';
 import { useAuth } from '@/lib/auth-context';
+import HeaderHeart from './HeaderHeart';
 
 export default function SiteHeader() {
   const [open, setOpen] = useState(false);
@@ -83,6 +84,7 @@ export default function SiteHeader() {
         </div>
         <div className="nav-right">
           <AuthButton />
+          <HeaderHeart />
           <CartBadge />
           <button
             className={`nv-menu-btn${open ? ' is-open' : ''}`}

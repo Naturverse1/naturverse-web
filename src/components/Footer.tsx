@@ -1,5 +1,6 @@
 import { Link } from "react-router-dom";
 import { SITE } from "@/lib/site";
+import { flags } from "@/lib/featureFlags";
 
 export default function Footer() {
   const s = SITE.socials;
@@ -42,7 +43,14 @@ export default function Footer() {
             fontWeight: 600,
           }}
         >
-          <span role="img" aria-label="sparkles">✨</span> Kickstarter-ready MVP — help us unlock full production!
+          <span role="img" aria-label="sparkles">✨</span>{" "}
+          {flags.prelaunch ? (
+            <Link to="/kickstarter" style={{ color: "var(--nv-blue-600)" }}>
+              Kickstarter-ready MVP — help us unlock full production!
+            </Link>
+          ) : (
+            <>Kickstarter-ready MVP — help us unlock full production!</>
+          )}
         </div>
 
         {/* CENTER: policy links */}
