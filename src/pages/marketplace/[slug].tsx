@@ -4,7 +4,7 @@ import AddToCartButton from "../../components/AddToCartButton";
 import SaveButton from "../../components/SaveButton";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import "./../../styles/marketplace.css";
-import { fetchWishlistIds, toggleWishlistItem } from "@/lib/marketplace";
+import { getWishlistIds, toggleWishlist as toggleWishlistService } from "@/services/wishlist";
 import { useToast } from "@/components/Toast";
 import { useAuthUser } from "@/lib/useAuthUser";
 
@@ -19,15 +19,16 @@ export default function ProductPage(){
   const p = MAP[slug];
   const toast = useToast();
   const { user } = useAuthUser();
-  const [wishlist, setWishlist] = useState<string[]>([]);
+  const [wishlist, setWishlist] = useState<Set<string>>(() => new Set());
   const [loadingWishlist, setLoadingWishlist] = useState(true);
+  const [busy, setBusy] = useState(false);
 
   useEffect(() => {
     let active = true;
     (async () => {
       try {
-        const ids = await fetchWishlistIds();
-        if (active) setWishlist(ids);
+        const ids = await getWishlistIds();
+        if (active) setWishlist(new Set(ids));
       } catch (error) {
         if (import.meta.env.DEV) console.warn(error);
       } finally {
@@ -41,7 +42,7 @@ export default function ProductPage(){
 
   if (!p) return null;
 
-  const inWishlist = wishlist.includes(p.id);
+  const inWishlist = wishlist.has(p.id);
 
   const onToggleWishlist = async () => {
     if (!user) {
@@ -49,17 +50,27 @@ export default function ProductPage(){
       return;
     }
     try {
-      const { saved } = await toggleWishlistItem(p.id);
+      setBusy(true);
+      const saved = await toggleWishlistService(p.id);
       setWishlist((prev) => {
         const next = new Set(prev);
         if (saved) next.add(p.id);
         else next.delete(p.id);
-        return Array.from(next);
+        return next;
       });
       toast({ text: saved ? "Added to wishlist" : "Removed from wishlist", kind: saved ? "ok" : "warn" });
     } catch (error) {
-      const message = error instanceof Error ? error.message : "Could not update wishlist";
-      toast({ text: message, kind: "err" });
+      const message =
+        error instanceof Error
+          ? error.message === "not_signed_in"
+            ? "Sign in to use your wishlist."
+            : error.message === "product_not_found"
+              ? "Product unavailable."
+              : error.message
+          : "Could not update wishlist";
+      toast({ text: message, kind: error instanceof Error && error.message === "not_signed_in" ? "warn" : "err" });
+    } finally {
+      setBusy(false);
     }
   };
   return (
@@ -78,12 +89,12 @@ export default function ProductPage(){
         </div>
         <button
           className="btn-secondary w-full"
-          disabled={loadingWishlist && !wishlist.length}
+          disabled={busy || (loadingWishlist && wishlist.size === 0)}
           onClick={onToggleWishlist}
           aria-pressed={inWishlist}
           style={{ marginTop: "1rem" }}
         >
-          {inWishlist ? "In Wishlist" : "Add to Wishlist"}
+          {inWishlist ? "Saved" : "Add to Wishlist"}
         </button>
       </article>
     </main>
