@@ -8,3 +8,4 @@ export * from '../lib/queries';
 export * from '../lib/xp';
 export * from '../lib/quizzes';
 export * from '../lib/feedback';
+export * from './wishlist';
