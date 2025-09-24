@@ -94,20 +94,20 @@ export type Database = {
         };
         Update: Partial<Database['public']['Tables']['orders_demo']['Insert']>;
       };
-      wishlists: {
+      user_wishlist: {
         Row: {
           id: string;
-          user_id: string | null;
-          item_id: string;
+          user_id: string;
+          product_id: string;
           created_at: string;
         };
         Insert: {
           id?: string;
-          user_id?: string | null;
-          item_id: string;
+          user_id: string;
+          product_id: string;
           created_at?: string;
         };
-        Update: Partial<Database['public']['Tables']['wishlists']['Insert']>;
+        Update: Partial<Database['public']['Tables']['user_wishlist']['Insert']>;
       };
       events: {
         Row: {

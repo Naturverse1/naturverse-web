@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabaseClient';
 
 export type Product = {
+  id: string;
   slug: string;
   name: string;
   price_cents: number;
@@ -10,6 +11,7 @@ export type Product = {
 
 export const FALLBACK_PRODUCTS: Product[] = [
   {
+    id: 'turian-plush',
     slug: 'turian-plush',
     name: 'Turian Plush',
     price_cents: 2400,
@@ -17,6 +19,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     description: 'Soft plushy buddy.',
   },
   {
+    id: 'navatar-tee',
     slug: 'navatar-tee',
     name: 'Navatar Tee',
     price_cents: 1800,
@@ -24,6 +27,7 @@ export const FALLBACK_PRODUCTS: Product[] = [
     description: 'Classic tee with Navatar print.',
   },
   {
+    id: 'sticker-pack',
     slug: 'sticker-pack',
     name: 'Sticker Pack',
     price_cents: 600,
@@ -38,7 +42,7 @@ export async function fetchProducts(): Promise<Product[]> {
   try {
     const { data, error } = await supabase
       .from('products')
-      .select('slug,name,price_cents,image_url,description')
+      .select('id,slug,name,price_cents,image_url,description')
       .eq('active', true)
       .order('name');
     if (error) throw error;

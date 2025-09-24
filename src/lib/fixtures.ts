@@ -79,7 +79,7 @@ export const sampleProducts: ProductRow[] = [
 export const sampleWishlist: WishlistRow[] = [
   {
     id: 'w1',
-    owner_id: 'u1',
+    user_id: 'u1',
     product_id: 'p2',
     created_at: new Date().toISOString(),
   },
