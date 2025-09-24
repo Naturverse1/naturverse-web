@@ -1,3 +1,5 @@
+import type { Database } from './db';
+
 export type MarketProduct = {
   id: string;
   name: string;
@@ -5,11 +7,4 @@ export type MarketProduct = {
   image?: string;
 };
 
-export type WishlistItem = {
-  id: string;
-  user_id: string;
-  product_name: string;
-  product_price: number | null;
-  product_image: string | null;
-  added_at: string;
-};
+export type WishlistItem = Database['public']['Tables']['user_wishlist']['Row'];

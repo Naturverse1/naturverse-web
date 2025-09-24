@@ -6,7 +6,7 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import './../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
-import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
+import { addToWishlist, listWishlist, removeFromWishlist } from '@/features/wishlist/api';
 import type { MarketProduct, WishlistItem } from '@/types/market';
 import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
 import { track } from '@/lib/analytics';
@@ -63,7 +63,7 @@ export default function ProductPage() {
     setLoadingWishlist(true);
     setPending(false);
 
-    getWishlist()
+    listWishlist()
       .then((items) => {
         if (active) setWishlist(items);
       })
@@ -92,9 +92,7 @@ export default function ProductPage() {
 
   const priceLabel = product ? formatPrice(product.price_cents) : '';
   const priceValue = product ? product.price_cents / 100 : 0;
-  const inWishlist = marketProduct
-    ? wishlist.some((item) => item.product_name === marketProduct.name)
-    : false;
+  const inWishlist = slug ? wishlist.some((item) => item.product_slug === slug) : false;
 
   const onToggleWishlist = async () => {
     if (!user) {
@@ -104,20 +102,44 @@ export default function ProductPage() {
     if (!marketProduct) return;
     try {
       setPending(true);
-      const existing = wishlist.find((item) => item.product_name === marketProduct.name);
+      const productSlug = marketProduct.id;
+      const existing = wishlist.find((item) => item.product_slug === productSlug);
 
       if (existing) {
-        await removeFromWishlist(existing.id, marketProduct.name);
-        setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
+        await removeFromWishlist(productSlug);
+        setWishlist((prev) => prev.filter((item) => item.product_slug !== productSlug));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
-        track('wishlist_remove', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_remove', { slug: productSlug, name: marketProduct.name });
       } else {
-        const created = await addToWishlist(marketProduct);
-        setWishlist((prev) => [created, ...prev]);
+        const priceCents =
+          typeof product?.price_cents === 'number'
+            ? product.price_cents
+            : marketProduct.price != null
+            ? Math.round(marketProduct.price * 100)
+            : 0;
+
+        const created = await addToWishlist({
+          slug: productSlug,
+          name: marketProduct.name,
+          price_cents: priceCents,
+          image_url: product?.image_url ?? marketProduct.image,
+        });
+
+        if (created) {
+          setWishlist((prev) => [created, ...prev.filter((item) => item.product_slug !== productSlug)]);
+        } else {
+          const latest = await listWishlist();
+          setWishlist(latest);
+        }
+
         toast({ text: 'Added to wishlist', kind: 'ok' });
-        track('wishlist_add', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_add', { slug: productSlug, name: marketProduct.name });
       }
     } catch (error) {
+      if (error instanceof Error && error.message === 'SIGN_IN_REQUIRED') {
+        toast({ text: 'Sign in to use your wishlist.', kind: 'warn' });
+        return;
+      }
       const message = error instanceof Error ? error.message : 'Could not update wishlist';
       toast({ text: message, kind: 'err' });
     } finally {

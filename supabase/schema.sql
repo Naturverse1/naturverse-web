@@ -290,13 +290,24 @@ create table if not exists public.orders_demo (
   created_at timestamptz not null default now()
 );
 
-create table if not exists public.wishlists (
+create table if not exists public.user_wishlist (
   id uuid primary key default gen_random_uuid(),
-  user_id uuid references auth.users(id) on delete cascade,
-  item_id text not null,
-  created_at timestamptz not null default now(),
-  unique (user_id, item_id)
+  user_id uuid not null references auth.users(id) on delete cascade,
+  product_slug text not null,
+  product_name text not null,
+  product_price_cents integer not null,
+  product_image text,
+  added_at timestamptz not null default now()
 );
+
+create unique index if not exists user_wishlist_user_product_unique
+  on public.user_wishlist (user_id, product_slug);
+
+create index if not exists user_wishlist_user_idx
+  on public.user_wishlist (user_id);
+
+create index if not exists user_wishlist_added_at_idx
+  on public.user_wishlist (added_at desc);
 
 create table if not exists public.events (
   id uuid primary key default gen_random_uuid(),
@@ -307,7 +318,7 @@ create table if not exists public.events (
 );
 
 alter table public.orders_demo enable row level security;
-alter table public.wishlists enable row level security;
+alter table public.user_wishlist enable row level security;
 alter table public.events enable row level security;
 
 do $$ begin
@@ -315,9 +326,17 @@ do $$ begin
     create policy orders_demo_insert_self on public.orders_demo
       for insert to authenticated with check (user_id = auth.uid());
   end if;
-  if not exists (select 1 from pg_policies where policyname='wishlists_self') then
-    create policy wishlists_self on public.wishlists
-      for all to authenticated using (user_id = auth.uid()) with check (user_id = auth.uid());
+  if not exists (select 1 from pg_policies where policyname='user_wishlist_select_own') then
+    create policy user_wishlist_select_own on public.user_wishlist
+      for select to authenticated using (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='user_wishlist_insert_own') then
+    create policy user_wishlist_insert_own on public.user_wishlist
+      for insert to authenticated with check (user_id = auth.uid());
+  end if;
+  if not exists (select 1 from pg_policies where policyname='user_wishlist_delete_own') then
+    create policy user_wishlist_delete_own on public.user_wishlist
+      for delete to authenticated using (user_id = auth.uid());
   end if;
   if not exists (select 1 from pg_policies where policyname='events_self_insert') then
     create policy events_self_insert on public.events

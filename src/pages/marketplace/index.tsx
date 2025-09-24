@@ -8,7 +8,7 @@ import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
 import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
-import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
+import { addToWishlist, listWishlist, removeFromWishlist } from '@/features/wishlist/api';
 import { track } from '@/lib/analytics';
 import type { MarketProduct, WishlistItem } from '@/types/market';
 
@@ -65,7 +65,7 @@ export default function MarketplaceShop() {
     }
 
     setLoadingWishlist(true);
-    getWishlist()
+    listWishlist()
       .then((items) => {
         if (active) setWishlist(items);
       })
@@ -84,7 +84,7 @@ export default function MarketplaceShop() {
     };
   }, [user, authLoading]);
 
-  const wishlistNames = useMemo(() => new Set(wishlist.map((item) => item.product_name)), [wishlist]);
+  const wishlistSlugs = useMemo(() => new Set(wishlist.map((item) => item.product_slug)), [wishlist]);
 
   const cards = useMemo<ProductCard[]>(
     () =>
@@ -113,27 +113,45 @@ export default function MarketplaceShop() {
       return;
     }
 
-    try {
-      setPendingId(card.product.slug);
+    const slug = card.product.slug;
 
-      const existing = wishlist.find((item) => item.product_name === card.marketProduct.name);
+    try {
+      setPendingId(slug);
+
+      const existing = wishlist.find((item) => item.product_slug === slug);
 
       if (existing) {
-        await removeFromWishlist(existing.id, card.marketProduct.name);
-        setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
+        await removeFromWishlist(slug);
+        setWishlist((prev) => prev.filter((item) => item.product_slug !== slug));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
-        track('wishlist_remove', { slug: card.product.slug, name: card.product.name });
+        track('wishlist_remove', { slug, name: card.product.name });
       } else {
-        const created = await addToWishlist(card.marketProduct);
-        setWishlist((prev) => [created, ...prev]);
+        const created = await addToWishlist({
+          slug,
+          name: card.product.name,
+          price_cents: card.product.price_cents,
+          image_url: card.product.image_url,
+        });
+
+        if (created) {
+          setWishlist((prev) => [created, ...prev.filter((item) => item.product_slug !== slug)]);
+        } else {
+          const latest = await listWishlist();
+          setWishlist(latest);
+        }
+
         toast({ text: 'Added to wishlist', kind: 'ok' });
-        track('wishlist_add', { slug: card.product.slug, name: card.product.name });
+        track('wishlist_add', { slug, name: card.product.name });
       }
     } catch (error) {
+      if (error instanceof Error && error.message === 'SIGN_IN_REQUIRED') {
+        toast({ text: 'Sign in to use your wishlist.', kind: 'warn' });
+        return;
+      }
       const message = error instanceof Error ? error.message : 'Could not update wishlist';
       toast({ text: message, kind: 'err' });
     } finally {
-      setPendingId((prev) => (prev === card.product.slug ? null : prev));
+      setPendingId((prev) => (prev === slug ? null : prev));
     }
   };
 
@@ -171,9 +189,9 @@ export default function MarketplaceShop() {
               className="btn-secondary w-full"
               disabled={(loadingWishlist && !wishlist.length) || pendingId === card.product.slug || loadingProducts}
               onClick={() => void toggleWishlist(card)}
-              aria-pressed={wishlistNames.has(card.marketProduct.name)}
+              aria-pressed={wishlistSlugs.has(card.marketProduct.id)}
             >
-              {wishlistNames.has(card.marketProduct.name) ? 'In Wishlist' : 'Add to Wishlist'}
+              {wishlistSlugs.has(card.marketProduct.id) ? 'In Wishlist' : 'Add to Wishlist'}
             </button>
           </article>
         ))}

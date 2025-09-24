@@ -4,7 +4,7 @@ import MarketTabs from '../../components/MarketTabs';
 import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
-import { getWishlist, removeFromWishlist } from '@/services/wishlist';
+import { listWishlist, removeFromWishlist } from '@/features/wishlist/api';
 import type { WishlistItem } from '@/types/market';
 import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
 import { cart } from '@/lib/cart';
@@ -64,7 +64,7 @@ export default function MarketplaceWishlist() {
     setPendingId(null);
     setItems([]);
 
-    getWishlist()
+    listWishlist()
       .then((data) => {
         if (active) setItems(data);
       })
@@ -84,10 +84,10 @@ export default function MarketplaceWishlist() {
     };
   }, [user, authLoading]);
 
-  const productsByName = useMemo(() => {
+  const productsBySlug = useMemo(() => {
     const map = new Map<string, Product>();
     for (const product of catalog) {
-      map.set(product.name, product);
+      map.set(product.slug, product);
     }
     return map;
   }, [catalog]);
@@ -95,13 +95,13 @@ export default function MarketplaceWishlist() {
   const derived = useMemo<WishlistProductMeta[]>(
     () =>
       items.map((item) => {
-        const product = productsByName.get(item.product_name);
-        const priceCents = product?.price_cents ?? (typeof item.product_price === 'number' ? Math.round(item.product_price * 100) : null);
+        const product = productsBySlug.get(item.product_slug);
+        const priceCents = product?.price_cents ?? item.product_price_cents;
         const image = item.product_image ?? product?.image_url ?? null;
-        const href = product ? `/marketplace/${product.slug}` : undefined;
+        const href = product ? `/marketplace/${product.slug}` : `/marketplace/${item.product_slug}`;
         return { item, product, image, priceCents, href };
       }),
-    [items, productsByName]
+    [items, productsBySlug]
   );
 
   const handleRemove = async (entry: WishlistProductMeta) => {
@@ -111,11 +111,15 @@ export default function MarketplaceWishlist() {
     }
     try {
       setPendingId(entry.item.id);
-      await removeFromWishlist(entry.item.id, entry.item.product_name);
-      setItems((prev) => prev.filter((item) => item.id !== entry.item.id));
+      await removeFromWishlist(entry.item.product_slug);
+      setItems((prev) => prev.filter((item) => item.product_slug !== entry.item.product_slug));
       toast({ text: 'Removed from wishlist', kind: 'warn' });
-      track('wishlist_remove', { name: entry.item.product_name });
+      track('wishlist_remove', { slug: entry.item.product_slug, name: entry.item.product_name });
     } catch (err) {
+      if (err instanceof Error && err.message === 'SIGN_IN_REQUIRED') {
+        toast({ text: 'Sign in to update your wishlist.', kind: 'warn' });
+        return;
+      }
       const message = err instanceof Error ? err.message : 'Could not update wishlist';
       toast({ text: message, kind: 'err' });
     } finally {

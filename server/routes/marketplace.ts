@@ -57,41 +57,66 @@ router.post('/demo-order', async (req, res) => {
 router.post('/wishlist', async (req, res) => {
   try {
     const supabase = requireClient();
-    const { userId, itemId } = req.body ?? {};
+    const { userId, product } = req.body ?? {};
 
-    if (!itemId || typeof itemId !== 'string') {
-      return res.status(400).json({ error: 'itemId required' });
+    const normalizedUserId = typeof userId === 'string' && userId.trim().length > 0 ? userId.trim() : '';
+    if (!normalizedUserId) {
+      return res.status(400).json({ error: 'userId required' });
     }
 
-    const normalizedUserId = typeof userId === 'string' && userId.trim().length > 0 ? userId.trim() : null;
+    const slug = typeof product?.slug === 'string' && product.slug.trim().length > 0 ? product.slug.trim() : '';
+    const name = typeof product?.name === 'string' && product.name.trim().length > 0 ? product.name.trim() : '';
+    const imageUrl = typeof product?.image_url === 'string' && product.image_url.trim().length > 0 ? product.image_url.trim() : null;
 
-    const query = supabase
-      .from('wishlists')
+    let priceCents: number | null = null;
+    if (typeof product?.price_cents === 'number' && Number.isFinite(product.price_cents)) {
+      priceCents = Math.round(product.price_cents);
+    } else if (typeof product?.price === 'number' && Number.isFinite(product.price)) {
+      priceCents = Math.round(product.price * 100);
+    }
+
+    if (!slug) {
+      return res.status(400).json({ error: 'product.slug required' });
+    }
+    if (!name) {
+      return res.status(400).json({ error: 'product.name required' });
+    }
+    if (priceCents == null) {
+      return res.status(400).json({ error: 'product.price_cents required' });
+    }
+
+    const { data: existing, error: selectError } = await supabase
+      .from('user_wishlist')
       .select('id')
-      .eq('item_id', itemId)
-      .limit(1);
+      .eq('user_id', normalizedUserId)
+      .eq('product_slug', slug)
+      .maybeSingle();
 
-    if (normalizedUserId) {
-      query.eq('user_id', normalizedUserId);
-    } else {
-      query.is('user_id', null);
-    }
-
-    const { data: existing, error: selectError } = await query.maybeSingle();
     if (selectError && selectError.code !== 'PGRST116') {
       throw selectError;
     }
 
     if (existing?.id) {
-      await supabase.from('wishlists').delete().eq('id', existing.id);
+      const { error } = await supabase
+        .from('user_wishlist')
+        .delete()
+        .eq('id', existing.id);
+      if (error) throw error;
       return res.json({ ok: true, saved: false });
     }
 
-    const insertPayload: Record<string, unknown> = { item_id: itemId };
-    if (normalizedUserId) insertPayload.user_id = normalizedUserId;
+    const { error: insertError } = await supabase.from('user_wishlist').insert({
+      user_id: normalizedUserId,
+      product_slug: slug,
+      product_name: name,
+      product_price_cents: priceCents,
+      product_image: imageUrl,
+    });
 
-    const { error: insertError } = await supabase.from('wishlists').insert(insertPayload);
     if (insertError) {
+      if ((insertError as any)?.code === '23505') {
+        return res.json({ ok: true, saved: true });
+      }
       throw insertError;
     }
 
