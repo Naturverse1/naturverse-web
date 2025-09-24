@@ -17,24 +17,38 @@ import { supabase } from '@/lib/supabaseClient';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
+import { PostHogProvider } from 'posthog-js/react';
+
+const phKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+const phHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
   const initialSession = data.session ?? null;
 
+  // Ensure auth context wraps the entire app so Home gets updates immediately
+  const app = (
+    <AuthProvider initialSession={initialSession}>
+      <SkipLink />
+      <ToastProvider>
+        <OfflineBanner />
+        <BaseAuthProvider>
+          <App />
+        </BaseAuthProvider>
+      </ToastProvider>
+    </AuthProvider>
+  );
+
   ReactDOM.createRoot(document.getElementById('root')!).render(
     <React.StrictMode>
-      {/* Ensure auth context wraps the entire app so Home gets updates immediately */}
-        <AuthProvider initialSession={initialSession}>
-          <SkipLink />
-          <ToastProvider>
-            <OfflineBanner />
-            <BaseAuthProvider>
-              <App />
-            </BaseAuthProvider>
-          </ToastProvider>
-        </AuthProvider>
-      </React.StrictMode>,
+      {phKey ? (
+        <PostHogProvider apiKey={phKey} options={{ api_host: phHost }}>
+          {app}
+        </PostHogProvider>
+      ) : (
+        app
+      )}
+    </React.StrictMode>,
   );
 }
 
