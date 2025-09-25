@@ -83,7 +83,8 @@ export default function ProductPage() {
   const marketProduct = useMemo<MarketProduct | null>(() => {
     if (!product) return null;
     return {
-      id: product.slug,
+      id: product.id,
+      slug: product.slug,
       name: product.name,
       price: product.price_cents / 100,
       image: product.image_url,
@@ -93,7 +94,7 @@ export default function ProductPage() {
   const priceLabel = product ? formatPrice(product.price_cents) : '';
   const priceValue = product ? product.price_cents / 100 : 0;
   const inWishlist = marketProduct
-    ? wishlist.some((item) => item.product_name === marketProduct.name)
+    ? wishlist.some((item) => (item.product?.slug ?? item.product_id) === marketProduct.slug)
     : false;
 
   const onToggleWishlist = async () => {
@@ -104,18 +105,20 @@ export default function ProductPage() {
     if (!marketProduct) return;
     try {
       setPending(true);
-      const existing = wishlist.find((item) => item.product_name === marketProduct.name);
+      const existing = wishlist.find(
+        (item) => (item.product?.slug ?? item.product_id) === marketProduct.slug,
+      );
 
       if (existing) {
-        await removeFromWishlist(existing.id, marketProduct.name);
+        await removeFromWishlist(existing.id, marketProduct.slug, existing.product_id);
         setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
-        track('wishlist_remove', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_remove', { slug: marketProduct.slug, name: marketProduct.name });
       } else {
         const created = await addToWishlist(marketProduct);
         setWishlist((prev) => [created, ...prev]);
         toast({ text: 'Added to wishlist', kind: 'ok' });
-        track('wishlist_add', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_add', { slug: marketProduct.slug, name: marketProduct.name });
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Could not update wishlist';
@@ -143,12 +146,17 @@ export default function ProductPage() {
           {marketProduct && (
             <div className="nv-cta">
               <AddToCartButton
-                id={marketProduct.id}
+                id={marketProduct.slug}
                 name={marketProduct.name}
                 price={priceValue}
                 image={marketProduct.image ?? ''}
               />
-              <SaveButton id={`product:${marketProduct.id}`} kind="product" title={marketProduct.name} href={`/marketplace/${marketProduct.id}`} />
+              <SaveButton
+                id={`product:${marketProduct.slug}`}
+                kind="product"
+                title={marketProduct.name}
+                href={`/marketplace/${marketProduct.slug}`}
+              />
             </div>
           )}
           <button

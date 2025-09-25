@@ -84,14 +84,18 @@ export default function MarketplaceShop() {
     };
   }, [user, authLoading]);
 
-  const wishlistNames = useMemo(() => new Set(wishlist.map((item) => item.product_name)), [wishlist]);
+  const wishlistSlugs = useMemo(
+    () => new Set(wishlist.map((item) => item.product?.slug ?? item.product_id)),
+    [wishlist],
+  );
 
   const cards = useMemo<ProductCard[]>(
     () =>
       catalog.map((product) => {
         const price = product.price_cents / 100;
         const marketProduct: MarketProduct = {
-          id: product.slug,
+          id: product.id,
+          slug: product.slug,
           name: product.name,
           price,
           image: product.image_url,
@@ -116,10 +120,13 @@ export default function MarketplaceShop() {
     try {
       setPendingId(card.product.slug);
 
-      const existing = wishlist.find((item) => item.product_name === card.marketProduct.name);
+      const slug = card.marketProduct.slug;
+      const existing = wishlist.find(
+        (item) => (item.product?.slug ?? item.product_id) === slug,
+      );
 
       if (existing) {
-        await removeFromWishlist(existing.id, card.marketProduct.name);
+        await removeFromWishlist(existing.id, slug, existing.product_id);
         setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
         track('wishlist_remove', { slug: card.product.slug, name: card.product.name });
@@ -160,20 +167,25 @@ export default function MarketplaceShop() {
             <p className="price">{card.priceLabel}</p>
             <div className="actions">
               <AddToCartButton
-                id={card.marketProduct.id}
+                id={card.product.slug}
                 name={card.marketProduct.name}
                 price={card.price}
                 image={card.marketProduct.image ?? ''}
               />
-              <SaveButton id={`product:${card.marketProduct.id}`} kind="product" title={card.marketProduct.name} href={card.href} />
+              <SaveButton
+                id={`product:${card.marketProduct.slug}`}
+                kind="product"
+                title={card.marketProduct.name}
+                href={card.href}
+              />
             </div>
             <button
               className="btn-secondary w-full"
               disabled={(loadingWishlist && !wishlist.length) || pendingId === card.product.slug || loadingProducts}
               onClick={() => void toggleWishlist(card)}
-              aria-pressed={wishlistNames.has(card.marketProduct.name)}
+              aria-pressed={wishlistSlugs.has(card.marketProduct.slug)}
             >
-              {wishlistNames.has(card.marketProduct.name) ? 'In Wishlist' : 'Add to Wishlist'}
+              {wishlistSlugs.has(card.marketProduct.slug) ? 'In Wishlist' : 'Add to Wishlist'}
             </button>
           </article>
         ))}

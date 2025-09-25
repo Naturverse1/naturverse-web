@@ -22,20 +22,16 @@ const writeCache = (items: string[]) => {
   window.dispatchEvent(new Event('wishlist:changed'));
 };
 
-function toDbRow(product: MarketProduct, userId: string) {
-  return {
-    user_id: userId,
-    product_name: product.name,
-    product_price: product.price ?? null,
-    product_image: product.image ?? null,
-  };
-}
+const cacheKeyForItem = (item: WishlistItem) => item.product?.slug ?? item.product_id;
 
 export async function getWishlist(): Promise<WishlistItem[]> {
-  const { data, error } = await supabase.from('wishlist').select('*').order('added_at', { ascending: false });
+  const { data, error } = await supabase
+    .from('user_wishlist')
+    .select('id,user_id,product_id,created_at,product:products(id,slug,name,price_cents,image_url)')
+    .order('created_at', { ascending: false });
   if (error) throw error;
-  const items = (data ?? []) as WishlistItem[];
-  writeCache(items.map((item) => item.product_name));
+  const items = ((data ?? []) as unknown) as WishlistItem[];
+  writeCache(items.map(cacheKeyForItem));
   return items;
 }
 
@@ -49,29 +45,34 @@ export async function addToWishlist(product: MarketProduct): Promise<WishlistIte
   if (!user) throw new Error('Please sign in to use your wishlist.');
 
   const { data, error } = await supabase
-    .from('wishlist')
-    .insert([toDbRow(product, user.id)])
-    .select('*')
+    .from('user_wishlist')
+    .upsert([{ user_id: user.id, product_id: product.id }], {
+      onConflict: 'user_id,product_id',
+      ignoreDuplicates: true,
+    })
+    .select('id,user_id,product_id,created_at,product:products(id,slug,name,price_cents,image_url)')
     .single();
 
   if (error) throw error;
-  const item = data as WishlistItem;
+  const item = (data as unknown) as WishlistItem;
   const cache = readCache();
-  if (!cache.includes(item.product_name)) {
-    writeCache([...cache, item.product_name]);
+  const key = cacheKeyForItem(item) || product.slug || product.id;
+  if (!cache.includes(key)) {
+    writeCache([key, ...cache]);
   } else {
     writeCache(cache);
   }
   return item;
 }
 
-export async function removeFromWishlist(itemId: string, productName?: string) {
-  const { error } = await supabase.from('wishlist').delete().eq('id', itemId);
+export async function removeFromWishlist(itemId: string, productSlug?: string, productId?: string) {
+  const { error } = await supabase.from('user_wishlist').delete().eq('id', itemId);
   if (error) throw error;
-  if (productName) {
-    const cache = readCache();
-    writeCache(cache.filter((name) => name !== productName));
+  const cache = readCache();
+  if (productSlug || productId) {
+    const next = cache.filter((value) => value !== productSlug && value !== productId);
+    writeCache(next);
   } else {
-    writeCache(readCache());
+    writeCache(cache);
   }
 }
