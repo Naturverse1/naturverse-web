@@ -1,7 +1,7 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import { supabase } from "./supabaseClient";
 import type { Product } from "@/hooks/useProducts";
-import { findFallbackProduct } from "@/hooks/useProducts";
+import { findFallbackProduct, resolveProductImage } from "@/hooks/useProducts";
 
 export type CartItem = { id: string; name: string; price: number; image: string; qty: number };
 type Saved = Record<string, true>;
@@ -90,8 +90,10 @@ const resolveCartItem = (slug: string, qty: number, meta?: CartProductMeta): Car
       : fallback
       ? fallback.price_cents / 100
       : 0;
-  const image =
-    meta?.image ?? meta?.image_url ?? (fallback ? fallback.image_url : "");
+  const image = resolveProductImage(
+    slug,
+    meta?.image ?? meta?.image_url ?? meta?.product?.image_url ?? fallback?.image_url
+  );
   const name = meta?.name ?? fallback?.name ?? slug;
   return { id: slug, name, price, image, qty: sanitizeQty(qty) };
 };

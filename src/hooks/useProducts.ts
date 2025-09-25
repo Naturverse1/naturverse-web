@@ -1,5 +1,13 @@
 import { supabase } from '@/lib/supabaseClient';
 
+type ProductRecord = {
+  slug: string;
+  name: string;
+  price_cents: number;
+  image_url: string | null;
+  description?: string | null;
+};
+
 export type Product = {
   slug: string;
   name: string;
@@ -7,6 +15,8 @@ export type Product = {
   image_url: string;
   description?: string;
 };
+
+export const DEFAULT_PRODUCT_IMAGE = '/Marketplace/placeholder.svg';
 
 export const FALLBACK_PRODUCTS: Product[] = [
   {
@@ -34,6 +44,17 @@ export const FALLBACK_PRODUCTS: Product[] = [
 
 const fallbackMap = new Map(FALLBACK_PRODUCTS.map((product) => [product.slug, product] as const));
 
+export function resolveProductImage(slug: string, imageUrl?: string | null) {
+  if (imageUrl && imageUrl.trim().length > 0) {
+    return imageUrl;
+  }
+  const fallback = fallbackMap.get(slug);
+  if (fallback?.image_url) {
+    return fallback.image_url;
+  }
+  return DEFAULT_PRODUCT_IMAGE;
+}
+
 export async function fetchProducts(): Promise<Product[]> {
   try {
     const { data, error } = await supabase
@@ -42,13 +63,16 @@ export async function fetchProducts(): Promise<Product[]> {
       .eq('active', true)
       .order('name');
     if (error) throw error;
-    const products = (data ?? []) as Product[];
+    const products = (data ?? []) as ProductRecord[];
     if (!products.length) {
       return FALLBACK_PRODUCTS;
     }
     return products.map((product) => ({
-      ...product,
-      image_url: product.image_url || fallbackMap.get(product.slug)?.image_url || '/Marketplace/Turianplushie.png',
+      slug: product.slug,
+      name: product.name,
+      price_cents: product.price_cents,
+      image_url: resolveProductImage(product.slug, product.image_url ?? undefined),
+      description: product.description ?? undefined,
     }));
   } catch (error) {
     if (import.meta.env.DEV) {
