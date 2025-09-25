@@ -4,9 +4,9 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { useToast } from '../components/Toast';
 import ShareNavatar from '../components/ShareNavatar';
 import { saveDemoOrder } from '@/lib/marketplace';
-import { resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
 import { logEvent } from '@/lib/activity';
 import { startCheckout } from '@/lib/checkout';
+import { resolveImageUrl } from '@/utils/resolveImageUrl';
 
 export default function CartPage() {
   const { items, inc, dec, remove, subtotal } = useCart();
@@ -40,7 +40,7 @@ export default function CartPage() {
       ) : (
         <div className="nv-card cart-card">
           {items.map((it) => {
-            const imageSrc = resolveProductImage(it.id, it.image);
+            const imageSrc = resolveImageUrl(it.image);
             return (
               <div key={it.id} className="cart-line">
                 <img
@@ -49,7 +49,7 @@ export default function CartPage() {
                   loading="lazy"
                   onError={(event) => {
                     event.currentTarget.onerror = null;
-                    event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                    event.currentTarget.src = resolveImageUrl(null);
                   }}
                 />
                 <div>

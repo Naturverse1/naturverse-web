@@ -5,7 +5,8 @@ import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
 import { fetchWishlist, removeFromWishlist, type ProductSummary } from '@/lib/wishlist';
-import { formatPrice, resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
+import { formatPrice } from '@/hooks/useProducts';
+import { resolveImageUrl } from '@/utils/resolveImageUrl';
 import { cart } from '@/lib/cart';
 import { track } from '@/lib/analytics';
 
@@ -135,7 +136,7 @@ export default function MarketplaceWishlist() {
       ) : (
         <div className="mp-grid nv-card-grid" style={{ marginTop: '1.5rem' }}>
           {items.map((entry) => {
-            const imageSrc = resolveProductImage(entry.slug, entry.image_url ?? undefined);
+            const imageSrc = resolveImageUrl(entry.image_url);
             return (
               <article key={entry.id} className="mp-card nv-card">
                 <div className="mp-image nv-image">
@@ -145,7 +146,7 @@ export default function MarketplaceWishlist() {
                     loading="lazy"
                     onError={(event) => {
                       event.currentTarget.onerror = null;
-                      event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                      event.currentTarget.src = resolveImageUrl(null);
                     }}
                   />
                 </div>
