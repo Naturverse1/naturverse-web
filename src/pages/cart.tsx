@@ -4,6 +4,7 @@ import Breadcrumbs from '../components/Breadcrumbs';
 import { useToast } from '../components/Toast';
 import ShareNavatar from '../components/ShareNavatar';
 import { saveDemoOrder } from '@/lib/marketplace';
+import { resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
 import { logEvent } from '@/lib/activity';
 import { startCheckout } from '@/lib/checkout';
 
@@ -38,30 +39,41 @@ export default function CartPage() {
         <p>Your cart is empty.</p>
       ) : (
         <div className="nv-card cart-card">
-          {items.map((it) => (
-            <div key={it.id} className="cart-line">
-              <img src={it.image} alt="" />
-              <div>
-                <div className="title">{it.name}</div>
-                <div className="meta price">${it.price.toFixed(2)}</div>
-                <div className="qty-group">
-                  <div className="qty">
-                    <button onClick={() => dec(it.id)} aria-label="Decrease quantity">
-                      −
-                    </button>
-                    <input type="number" value={it.qty} readOnly aria-label="Quantity" />
-                    <button onClick={() => inc(it.id)} aria-label="Increase quantity">
-                      +
+          {items.map((it) => {
+            const imageSrc = resolveProductImage(it.id, it.image);
+            return (
+              <div key={it.id} className="cart-line">
+                <img
+                  src={imageSrc}
+                  alt={it.name}
+                  loading="lazy"
+                  onError={(event) => {
+                    event.currentTarget.onerror = null;
+                    event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                  }}
+                />
+                <div>
+                  <div className="title">{it.name}</div>
+                  <div className="meta price">${it.price.toFixed(2)}</div>
+                  <div className="qty-group">
+                    <div className="qty">
+                      <button onClick={() => dec(it.id)} aria-label="Decrease quantity">
+                        −
+                      </button>
+                      <input type="number" value={it.qty} readOnly aria-label="Quantity" />
+                      <button onClick={() => inc(it.id)} aria-label="Increase quantity">
+                        +
+                      </button>
+                    </div>
+                    <button className="btn-danger" onClick={() => remove(it.id)}>
+                      Remove
                     </button>
                   </div>
-                  <button className="btn-danger" onClick={() => remove(it.id)}>
-                    Remove
-                  </button>
                 </div>
+                <div className="meta price">${(it.qty * it.price).toFixed(2)}</div>
               </div>
-              <div className="meta price">${(it.qty * it.price).toFixed(2)}</div>
-            </div>
-          ))}
+            );
+          })}
           <hr />
           <div className="subtotal-row subtotal">
             <strong className="label">Subtotal</strong>

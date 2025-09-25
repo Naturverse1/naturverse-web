@@ -5,7 +5,7 @@ import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
 import { fetchWishlist, removeFromWishlist, type ProductSummary } from '@/lib/wishlist';
-import { formatPrice } from '@/hooks/useProducts';
+import { formatPrice, resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
 import { cart } from '@/lib/cart';
 import { track } from '@/lib/analytics';
 
@@ -134,29 +134,40 @@ export default function MarketplaceWishlist() {
         </p>
       ) : (
         <div className="mp-grid nv-card-grid" style={{ marginTop: '1.5rem' }}>
-          {items.map((entry) => (
-            <article key={entry.id} className="mp-card nv-card">
-              <div className="mp-image nv-image">
-                {entry.image_url ? <img src={entry.image_url} alt={entry.name} loading="lazy" /> : null}
-              </div>
-              <h3>
-                <Link to={`/marketplace/${entry.slug}`}>{entry.name}</Link>
-              </h3>
-              <p className="price">{formatPrice(entry.price_cents)}</p>
-              <div className="wishlist-actions">
-                <button className="btn-secondary" onClick={() => void handleRemove(entry)} disabled={pendingSlug === entry.slug}>
-                  Remove
-                </button>
-                <button
-                  className="btn-primary"
-                  onClick={() => void handleMoveToCart(entry)}
-                  disabled={pendingSlug === entry.slug}
-                >
-                  Move to cart
-                </button>
-              </div>
-            </article>
-          ))}
+          {items.map((entry) => {
+            const imageSrc = resolveProductImage(entry.slug, entry.image_url ?? undefined);
+            return (
+              <article key={entry.id} className="mp-card nv-card">
+                <div className="mp-image nv-image">
+                  <img
+                    src={imageSrc}
+                    alt={entry.name}
+                    loading="lazy"
+                    onError={(event) => {
+                      event.currentTarget.onerror = null;
+                      event.currentTarget.src = DEFAULT_PRODUCT_IMAGE;
+                    }}
+                  />
+                </div>
+                <h3>
+                  <Link to={`/marketplace/${entry.slug}`}>{entry.name}</Link>
+                </h3>
+                <p className="price">{formatPrice(entry.price_cents)}</p>
+                <div className="wishlist-actions">
+                  <button className="btn-secondary" onClick={() => void handleRemove(entry)} disabled={pendingSlug === entry.slug}>
+                    Remove
+                  </button>
+                  <button
+                    className="btn-primary"
+                    onClick={() => void handleMoveToCart(entry)}
+                    disabled={pendingSlug === entry.slug}
+                  >
+                    Move to cart
+                  </button>
+                </div>
+              </article>
+            );
+          })}
         </div>
       )}
     </main>
