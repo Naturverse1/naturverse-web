@@ -5,9 +5,21 @@ import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
 import { fetchWishlist, removeFromWishlist, type ProductSummary } from '@/lib/wishlist';
-import { formatPrice, resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
+import { formatPrice, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
 import { cart } from '@/lib/cart';
 import { track } from '@/lib/analytics';
+
+function resolveWishlistImage(src?: string | null) {
+  if (!src || src.trim().length === 0) {
+    return DEFAULT_PRODUCT_IMAGE;
+  }
+
+  if (/^https?:\/\//i.test(src)) {
+    return src;
+  }
+
+  return src.startsWith('/') ? src : `/${src}`;
+}
 
 export default function MarketplaceWishlist() {
   const [items, setItems] = useState<ProductSummary[]>([]);
@@ -135,7 +147,7 @@ export default function MarketplaceWishlist() {
       ) : (
         <div className="mp-grid nv-card-grid" style={{ marginTop: '1.5rem' }}>
           {items.map((entry) => {
-            const imageSrc = resolveProductImage(entry.slug, entry.image_url ?? undefined);
+            const imageSrc = resolveWishlistImage(entry.image_url);
             return (
               <article key={entry.id} className="mp-card nv-card">
                 <div className="mp-image nv-image">
