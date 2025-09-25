@@ -12,7 +12,9 @@ import { track } from '@/lib/analytics';
 
 interface WishlistProductMeta {
   item: WishlistItem;
-  product?: Product;
+  product: Product | null;
+  slug: string | null;
+  name: string;
   image: string | null;
   priceCents: number | null;
   href?: string;
@@ -84,10 +86,10 @@ export default function MarketplaceWishlist() {
     };
   }, [user, authLoading]);
 
-  const productsByName = useMemo(() => {
+  const productsBySlug = useMemo(() => {
     const map = new Map<string, Product>();
     for (const product of catalog) {
-      map.set(product.name, product);
+      map.set(product.slug, product);
     }
     return map;
   }, [catalog]);
@@ -95,13 +97,15 @@ export default function MarketplaceWishlist() {
   const derived = useMemo<WishlistProductMeta[]>(
     () =>
       items.map((item) => {
-        const product = productsByName.get(item.product_name);
-        const priceCents = product?.price_cents ?? (typeof item.product_price === 'number' ? Math.round(item.product_price * 100) : null);
-        const image = item.product_image ?? product?.image_url ?? null;
-        const href = product ? `/marketplace/${product.slug}` : undefined;
-        return { item, product, image, priceCents, href };
+        const slug = item.product?.slug ?? null;
+        const product = slug ? productsBySlug.get(slug) ?? null : null;
+        const priceCents = product?.price_cents ?? item.product?.price_cents ?? null;
+        const image = item.product?.image_url ?? product?.image_url ?? null;
+        const href = slug ? `/marketplace/${slug}` : undefined;
+        const name = item.product?.name ?? product?.name ?? 'Saved item';
+        return { item, product, slug, name, image, priceCents, href };
       }),
-    [items, productsByName]
+    [items, productsBySlug]
   );
 
   const handleRemove = async (entry: WishlistProductMeta) => {
@@ -111,10 +115,10 @@ export default function MarketplaceWishlist() {
     }
     try {
       setPendingId(entry.item.id);
-      await removeFromWishlist(entry.item.id, entry.item.product_name);
+      await removeFromWishlist(entry.item.id, entry.slug ?? undefined, entry.item.product_id);
       setItems((prev) => prev.filter((item) => item.id !== entry.item.id));
       toast({ text: 'Removed from wishlist', kind: 'warn' });
-      track('wishlist_remove', { name: entry.item.product_name });
+      track('wishlist_remove', { name: entry.name, slug: entry.slug ?? entry.item.product_id });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not update wishlist';
       toast({ text: message, kind: 'err' });
@@ -164,9 +168,9 @@ export default function MarketplaceWishlist() {
           {derived.map((entry) => (
             <article key={entry.item.id} className="mp-card nv-card">
               <div className="mp-image nv-image">
-                {entry.image ? <img src={entry.image} alt={entry.item.product_name} loading="lazy" /> : null}
+                {entry.image ? <img src={entry.image} alt={entry.name} loading="lazy" /> : null}
               </div>
-              <h3>{entry.href ? <Link to={entry.href}>{entry.item.product_name}</Link> : entry.item.product_name}</h3>
+              <h3>{entry.href ? <Link to={entry.href}>{entry.name}</Link> : entry.name}</h3>
               {entry.priceCents != null ? <p className="price">{formatPrice(entry.priceCents)}</p> : null}
               <div className="wishlist-actions">
                 <button className="btn-secondary" onClick={() => handleRemove(entry)} disabled={pendingId === entry.item.id}>
