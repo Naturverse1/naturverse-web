@@ -1,45 +1,21 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import MarketTabs from '../../components/MarketTabs';
 import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
-import { getWishlist, removeFromWishlist } from '@/services/wishlist';
-import type { WishlistItem } from '@/types/market';
-import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
+import { fetchWishlist, removeFromWishlist, type ProductSummary } from '@/lib/wishlist';
+import { formatPrice } from '@/hooks/useProducts';
 import { cart } from '@/lib/cart';
 import { track } from '@/lib/analytics';
 
-interface WishlistProductMeta {
-  item: WishlistItem;
-  product?: Product;
-  image: string | null;
-  priceCents: number | null;
-  href?: string;
-}
-
 export default function MarketplaceWishlist() {
-  const [items, setItems] = useState<WishlistItem[]>([]);
+  const [items, setItems] = useState<ProductSummary[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [pendingId, setPendingId] = useState<string | null>(null);
-  const [catalog, setCatalog] = useState<Product[]>(FALLBACK_PRODUCTS);
+  const [pendingSlug, setPendingSlug] = useState<string | null>(null);
   const toast = useToast();
   const { user, loading: authLoading } = useAuthUser();
-
-  useEffect(() => {
-    let active = true;
-    fetchProducts()
-      .then((products) => {
-        if (active) setCatalog(products);
-      })
-      .catch((err) => {
-        if (import.meta.env.DEV) console.warn(err);
-      });
-    return () => {
-      active = false;
-    };
-  }, []);
 
   useEffect(() => {
     let active = true;
@@ -52,7 +28,7 @@ export default function MarketplaceWishlist() {
     if (!user) {
       setItems([]);
       setError(null);
-      setPendingId(null);
+      setPendingSlug(null);
       setLoading(false);
       return () => {
         active = false;
@@ -61,10 +37,10 @@ export default function MarketplaceWishlist() {
 
     setLoading(true);
     setError(null);
-    setPendingId(null);
+    setPendingSlug(null);
     setItems([]);
 
-    getWishlist()
+    fetchWishlist()
       .then((data) => {
         if (active) setItems(data);
       })
@@ -84,59 +60,56 @@ export default function MarketplaceWishlist() {
     };
   }, [user, authLoading]);
 
-  const productsByName = useMemo(() => {
-    const map = new Map<string, Product>();
-    for (const product of catalog) {
-      map.set(product.name, product);
-    }
-    return map;
-  }, [catalog]);
-
-  const derived = useMemo<WishlistProductMeta[]>(
-    () =>
-      items.map((item) => {
-        const product = productsByName.get(item.product_name);
-        const priceCents = product?.price_cents ?? (typeof item.product_price === 'number' ? Math.round(item.product_price * 100) : null);
-        const image = item.product_image ?? product?.image_url ?? null;
-        const href = product ? `/marketplace/${product.slug}` : undefined;
-        return { item, product, image, priceCents, href };
-      }),
-    [items, productsByName]
-  );
-
-  const handleRemove = async (entry: WishlistProductMeta) => {
+  const removeWishlistEntry = async (
+    entry: ProductSummary,
+    options: { message: string; toastKind: 'ok' | 'warn' | 'err'; trackEvent: string; trackExtra?: Record<string, unknown>; onSuccess?: () => void }
+  ) => {
     if (!user) {
       toast({ text: 'Sign in to update your wishlist.', kind: 'warn' });
       return;
     }
     try {
-      setPendingId(entry.item.id);
-      await removeFromWishlist(entry.item.id, entry.item.product_name);
-      setItems((prev) => prev.filter((item) => item.id !== entry.item.id));
-      toast({ text: 'Removed from wishlist', kind: 'warn' });
-      track('wishlist_remove', { name: entry.item.product_name });
+      setPendingSlug(entry.slug);
+      const res = await removeFromWishlist(entry.slug);
+      if (!res.ok) {
+        const message =
+          res.reason === 'auth'
+            ? 'Sign in to update your wishlist.'
+            : 'Could not update wishlist';
+        toast({ text: message, kind: res.reason === 'db' ? 'err' : 'warn' });
+        if (res.reason === 'auth') {
+          setItems([]);
+        }
+        return;
+      }
+      setItems((prev) => prev.filter((item) => item.slug !== entry.slug));
+      options.onSuccess?.();
+      toast({ text: options.message, kind: options.toastKind });
+      track(options.trackEvent, { slug: entry.slug, name: entry.name, ...options.trackExtra });
     } catch (err) {
       const message = err instanceof Error ? err.message : 'Could not update wishlist';
       toast({ text: message, kind: 'err' });
     } finally {
-      setPendingId((prev) => (prev === entry.item.id ? null : prev));
+      setPendingSlug((prev) => (prev === entry.slug ? null : prev));
     }
   };
 
-  const handleMoveToCart = (entry: WishlistProductMeta) => {
-    if (!entry.product) {
-      toast({ text: 'Product not available yet.', kind: 'warn' });
-      return;
-    }
-    cart.add(entry.product.slug, 1, {
-      name: entry.product.name,
-      price_cents: entry.product.price_cents,
-      image_url: entry.product.image_url,
-      product: entry.product,
+  const handleRemove = (entry: ProductSummary) =>
+    removeWishlistEntry(entry, { message: 'Removed from wishlist', toastKind: 'warn', trackEvent: 'wishlist_remove' });
+
+  const handleMoveToCart = (entry: ProductSummary) =>
+    removeWishlistEntry(entry, {
+      message: 'Moved to cart',
+      toastKind: 'ok',
+      trackEvent: 'wishlist_move_to_cart',
+      onSuccess: () => {
+        cart.add(entry.slug, 1, {
+          name: entry.name,
+          price_cents: entry.price_cents,
+          image_url: entry.image_url ?? undefined,
+        });
+      },
     });
-    void handleRemove(entry);
-    track('wishlist_move_to_cart', { slug: entry.product.slug, name: entry.product.name });
-  };
 
   return (
     <main className="container">
@@ -155,27 +128,29 @@ export default function MarketplaceWishlist() {
         <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>Sign in to view your wishlist.</p>
       ) : error ? (
         <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>{error}</p>
-      ) : derived.length === 0 ? (
+      ) : items.length === 0 ? (
         <p style={{ textAlign: 'center', marginTop: '1.5rem' }}>
           No saved items yet. More products unlock as we hit funding goals.
         </p>
       ) : (
         <div className="mp-grid nv-card-grid" style={{ marginTop: '1.5rem' }}>
-          {derived.map((entry) => (
-            <article key={entry.item.id} className="mp-card nv-card">
+          {items.map((entry) => (
+            <article key={entry.id} className="mp-card nv-card">
               <div className="mp-image nv-image">
-                {entry.image ? <img src={entry.image} alt={entry.item.product_name} loading="lazy" /> : null}
+                {entry.image_url ? <img src={entry.image_url} alt={entry.name} loading="lazy" /> : null}
               </div>
-              <h3>{entry.href ? <Link to={entry.href}>{entry.item.product_name}</Link> : entry.item.product_name}</h3>
-              {entry.priceCents != null ? <p className="price">{formatPrice(entry.priceCents)}</p> : null}
+              <h3>
+                <Link to={`/marketplace/${entry.slug}`}>{entry.name}</Link>
+              </h3>
+              <p className="price">{formatPrice(entry.price_cents)}</p>
               <div className="wishlist-actions">
-                <button className="btn-secondary" onClick={() => handleRemove(entry)} disabled={pendingId === entry.item.id}>
+                <button className="btn-secondary" onClick={() => void handleRemove(entry)} disabled={pendingSlug === entry.slug}>
                   Remove
                 </button>
                 <button
                   className="btn-primary"
-                  onClick={() => handleMoveToCart(entry)}
-                  disabled={!entry.product || pendingId === entry.item.id}
+                  onClick={() => void handleMoveToCart(entry)}
+                  disabled={pendingSlug === entry.slug}
                 >
                   Move to cart
                 </button>

@@ -6,8 +6,8 @@ import Breadcrumbs from '../../components/Breadcrumbs';
 import './../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
-import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
-import type { MarketProduct, WishlistItem } from '@/types/market';
+import { fetchWishlist, removeFromWishlist, upsertWishlist, type ProductSummary } from '@/lib/wishlist';
+import type { MarketProduct } from '@/types/market';
 import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
 import { track } from '@/lib/analytics';
 
@@ -17,7 +17,7 @@ export default function ProductPage() {
   const [loadingProduct, setLoadingProduct] = useState(true);
   const toast = useToast();
   const { user, loading: authLoading } = useAuthUser();
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [wishlist, setWishlist] = useState<ProductSummary[]>([]);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
   const [pending, setPending] = useState(false);
 
@@ -63,7 +63,7 @@ export default function ProductPage() {
     setLoadingWishlist(true);
     setPending(false);
 
-    getWishlist()
+    fetchWishlist()
       .then((items) => {
         if (active) setWishlist(items);
       })
@@ -92,9 +92,8 @@ export default function ProductPage() {
 
   const priceLabel = product ? formatPrice(product.price_cents) : '';
   const priceValue = product ? product.price_cents / 100 : 0;
-  const inWishlist = marketProduct
-    ? wishlist.some((item) => item.product_name === marketProduct.name)
-    : false;
+  const productSlug = marketProduct?.id ?? slug;
+  const inWishlist = Boolean(productSlug && wishlist.some((item) => item.slug === productSlug));
 
   const onToggleWishlist = async () => {
     if (!user) {
@@ -104,18 +103,45 @@ export default function ProductPage() {
     if (!marketProduct) return;
     try {
       setPending(true);
-      const existing = wishlist.find((item) => item.product_name === marketProduct.name);
+      if (!productSlug) return;
 
-      if (existing) {
-        await removeFromWishlist(existing.id, marketProduct.name);
-        setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
+      const exists = wishlist.some((item) => item.slug === productSlug);
+
+      if (exists) {
+        const res = await removeFromWishlist(productSlug);
+        if (!res.ok) {
+          const message =
+            res.reason === 'auth'
+              ? 'Sign in to update your wishlist.'
+              : 'Could not update wishlist';
+          toast({ text: message, kind: res.reason === 'db' ? 'err' : 'warn' });
+          if (res.reason === 'auth') {
+            setWishlist([]);
+          }
+          return;
+        }
+        setWishlist((prev) => prev.filter((item) => item.slug !== productSlug));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
-        track('wishlist_remove', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_remove', { slug: productSlug, name: marketProduct.name });
       } else {
-        const created = await addToWishlist(marketProduct);
-        setWishlist((prev) => [created, ...prev]);
+        const res = await upsertWishlist(productSlug);
+        if (!res.ok) {
+          if (res.reason === 'auth') {
+            toast({ text: 'Sign in to use your wishlist.', kind: 'warn' });
+            setWishlist([]);
+          } else if (res.reason === 'not-found') {
+            toast({ text: 'Product unavailable.', kind: 'warn' });
+          } else {
+            toast({ text: 'Could not update wishlist', kind: 'err' });
+          }
+          return;
+        }
+        setWishlist((prev) => {
+          const filtered = prev.filter((item) => item.slug !== res.product.slug);
+          return [res.product, ...filtered];
+        });
         toast({ text: 'Added to wishlist', kind: 'ok' });
-        track('wishlist_add', { slug: marketProduct.id, name: marketProduct.name });
+        track('wishlist_add', { slug: productSlug, name: marketProduct.name });
       }
     } catch (error) {
       const message = error instanceof Error ? error.message : 'Could not update wishlist';
