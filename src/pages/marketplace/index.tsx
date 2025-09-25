@@ -8,9 +8,9 @@ import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
 import { fetchProducts, FALLBACK_PRODUCTS, formatPrice, type Product } from '@/hooks/useProducts';
-import { addToWishlist, getWishlist, removeFromWishlist } from '@/services/wishlist';
 import { track } from '@/lib/analytics';
-import type { MarketProduct, WishlistItem } from '@/types/market';
+import { fetchWishlist, removeFromWishlist, upsertWishlist, type ProductSummary } from '@/lib/wishlist';
+import type { MarketProduct } from '@/types/market';
 
 type ProductCard = {
   product: Product;
@@ -23,7 +23,7 @@ type ProductCard = {
 export default function MarketplaceShop() {
   const [catalog, setCatalog] = useState<Product[]>(FALLBACK_PRODUCTS);
   const [loadingProducts, setLoadingProducts] = useState(true);
-  const [wishlist, setWishlist] = useState<WishlistItem[]>([]);
+  const [wishlist, setWishlist] = useState<ProductSummary[]>([]);
   const [loadingWishlist, setLoadingWishlist] = useState(true);
   const [pendingId, setPendingId] = useState<string | null>(null);
   const toast = useToast();
@@ -65,7 +65,7 @@ export default function MarketplaceShop() {
     }
 
     setLoadingWishlist(true);
-    getWishlist()
+    fetchWishlist()
       .then((items) => {
         if (active) setWishlist(items);
       })
@@ -84,7 +84,7 @@ export default function MarketplaceShop() {
     };
   }, [user, authLoading]);
 
-  const wishlistNames = useMemo(() => new Set(wishlist.map((item) => item.product_name)), [wishlist]);
+  const wishlistSlugs = useMemo(() => new Set(wishlist.map((item) => item.slug)), [wishlist]);
 
   const cards = useMemo<ProductCard[]>(
     () =>
@@ -116,16 +116,41 @@ export default function MarketplaceShop() {
     try {
       setPendingId(card.product.slug);
 
-      const existing = wishlist.find((item) => item.product_name === card.marketProduct.name);
+      const alreadySaved = wishlistSlugs.has(card.product.slug);
 
-      if (existing) {
-        await removeFromWishlist(existing.id, card.marketProduct.name);
-        setWishlist((prev) => prev.filter((item) => item.id !== existing.id));
+      if (alreadySaved) {
+        const res = await removeFromWishlist(card.product.slug);
+        if (!res.ok) {
+          const message =
+            res.reason === 'auth'
+              ? 'Sign in to update your wishlist.'
+              : 'Could not update wishlist';
+          toast({ text: message, kind: res.reason === 'db' ? 'err' : 'warn' });
+          if (res.reason === 'auth') {
+            setWishlist([]);
+          }
+          return;
+        }
+        setWishlist((prev) => prev.filter((item) => item.slug !== card.product.slug));
         toast({ text: 'Removed from wishlist', kind: 'warn' });
         track('wishlist_remove', { slug: card.product.slug, name: card.product.name });
       } else {
-        const created = await addToWishlist(card.marketProduct);
-        setWishlist((prev) => [created, ...prev]);
+        const res = await upsertWishlist(card.product.slug);
+        if (!res.ok) {
+          if (res.reason === 'auth') {
+            toast({ text: 'Sign in to use your wishlist.', kind: 'warn' });
+            setWishlist([]);
+          } else if (res.reason === 'not-found') {
+            toast({ text: 'Product unavailable.', kind: 'warn' });
+          } else {
+            toast({ text: 'Could not update wishlist', kind: 'err' });
+          }
+          return;
+        }
+        setWishlist((prev) => {
+          const filtered = prev.filter((item) => item.slug !== res.product.slug);
+          return [res.product, ...filtered];
+        });
         toast({ text: 'Added to wishlist', kind: 'ok' });
         track('wishlist_add', { slug: card.product.slug, name: card.product.name });
       }
@@ -171,9 +196,9 @@ export default function MarketplaceShop() {
               className="btn-secondary w-full"
               disabled={(loadingWishlist && !wishlist.length) || pendingId === card.product.slug || loadingProducts}
               onClick={() => void toggleWishlist(card)}
-              aria-pressed={wishlistNames.has(card.marketProduct.name)}
+              aria-pressed={wishlistSlugs.has(card.product.slug)}
             >
-              {wishlistNames.has(card.marketProduct.name) ? 'In Wishlist' : 'Add to Wishlist'}
+              {wishlistSlugs.has(card.product.slug) ? 'In Wishlist' : 'Add to Wishlist'}
             </button>
           </article>
         ))}
