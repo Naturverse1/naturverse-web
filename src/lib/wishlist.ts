@@ -104,35 +104,37 @@ export async function removeFromWishlist(slug: string): Promise<WishlistResult> 
   return { ok: true };
 }
 
+type WishlistViewRow = {
+  id: string;
+  slug: string;
+  name: string;
+  price_cents: number | null;
+  image_url: string | null;
+  added_at: string;
+};
+
 export async function fetchWishlist(): Promise<ProductSummary[]> {
   const userId = await currentUserId();
   if (!userId) return [];
 
   const { data, error } = await supabase
-    .from('user_wishlist')
-    .select('created_at, products:product_id (id, slug, name, price_cents, image_url)')
+    .from('user_wishlist_view')
+    .select('id, slug, name, price_cents, image_url, added_at')
     .eq('user_id', userId)
-    .order('created_at', { ascending: false });
+    .order('added_at', { ascending: false });
 
   if (error) {
     console.error('wishlist fetch error', error);
     return [];
   }
 
-  return (data ?? [])
-    .map((row) => {
-      const raw = (row as { products?: ProductSummary | ProductSummary[] | null }).products;
-      const product = Array.isArray(raw) ? raw[0] ?? null : raw ?? null;
-      if (!product) return null;
-      return {
-        id: product.id,
-        slug: product.slug,
-        name: product.name,
-        price_cents: product.price_cents ?? 0,
-        image_url: product.image_url ?? null,
-      } satisfies ProductSummary;
-    })
-    .filter((item): item is ProductSummary => !!item);
+  return ((data ?? []) as WishlistViewRow[]).map((row) => ({
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    price_cents: row.price_cents ?? 0,
+    image_url: row.image_url ?? null,
+  } satisfies ProductSummary));
 }
 
 export async function isInWishlist(slug: string): Promise<boolean> {
