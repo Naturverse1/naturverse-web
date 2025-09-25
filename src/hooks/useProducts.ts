@@ -1,4 +1,5 @@
 import { supabase } from '@/lib/supabaseClient';
+import { resolveImageUrl, DEFAULT_IMAGE_URL } from '@/utils/resolveImageUrl';
 
 type ProductRecord = {
   slug: string;
@@ -16,7 +17,7 @@ export type Product = {
   description?: string;
 };
 
-export const DEFAULT_PRODUCT_IMAGE = '/Marketplace/placeholder.svg';
+export const DEFAULT_PRODUCT_IMAGE = DEFAULT_IMAGE_URL;
 
 export const FALLBACK_PRODUCTS: Product[] = [
   {
@@ -46,11 +47,11 @@ const fallbackMap = new Map(FALLBACK_PRODUCTS.map((product) => [product.slug, pr
 
 export function resolveProductImage(slug: string, imageUrl?: string | null) {
   if (imageUrl && imageUrl.trim().length > 0) {
-    return imageUrl;
+    return resolveImageUrl(imageUrl);
   }
   const fallback = fallbackMap.get(slug);
   if (fallback?.image_url) {
-    return fallback.image_url;
+    return resolveImageUrl(fallback.image_url);
   }
   return DEFAULT_PRODUCT_IMAGE;
 }

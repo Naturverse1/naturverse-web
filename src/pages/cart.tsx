@@ -5,6 +5,7 @@ import { useToast } from '../components/Toast';
 import ShareNavatar from '../components/ShareNavatar';
 import { saveDemoOrder } from '@/lib/marketplace';
 import { resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
+import resolveImageUrl from '@/utils/resolveImageUrl';
 import { logEvent } from '@/lib/activity';
 import { startCheckout } from '@/lib/checkout';
 
@@ -40,7 +41,8 @@ export default function CartPage() {
       ) : (
         <div className="nv-card cart-card">
           {items.map((it) => {
-            const imageSrc = resolveProductImage(it.id, it.image);
+            const fallbackImage = resolveProductImage(it.id);
+            const imageSrc = resolveImageUrl(it.image.trim() ? it.image : fallbackImage);
             return (
               <div key={it.id} className="cart-line">
                 <img
