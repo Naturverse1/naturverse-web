@@ -14,19 +14,32 @@ import { logEvent } from "@/lib/activity";
 import { flags } from "@/lib/featureFlags";
 import {
   DEFAULT_STYLE_ID,
-  RATE_LIMIT_MESSAGE,
   RateLimitError,
   STYLE_PRESETS,
   StabilityError,
   buildNegativePrompt,
   buildPrompt,
-  generateWithStability,
   seedFromUserId,
 } from "../../lib/navatar/stability";
+import { generateWithProvider, type Provider as ImageProvider } from "@/lib/imageProviders";
 import "../../styles/navatar.css";
 
 type GeneratorMode = "stability" | "dicebear";
 type DicebearBackgroundSelection = "none" | "solid" | "gradientLinear" | "gradientRadial";
+type AiProvider = Exclude<ImageProvider, "dicebear">;
+
+function providerDisplayName(value: ImageProvider): string {
+  switch (value) {
+    case "deepai":
+      return "DeepAI";
+    case "stability":
+      return "Stability AI";
+    case "dicebear":
+      return "DiceBear";
+    default:
+      return "Auto";
+  }
+}
 
 const DICEBEAR_STYLE_OPTIONS: { value: DicebearStyle; label: string }[] = [
   { value: "adventurer", label: "Adventurer" },
@@ -93,7 +106,10 @@ function seedFromPrompt(raw: string): string {
 }
 
 export default function GenerateNavatarPage() {
-  const [mode, setMode] = useState<GeneratorMode>("stability");
+  const stabilityEnabled = flags.stability;
+  const [mode, setMode] = useState<GeneratorMode>(stabilityEnabled ? "stability" : "dicebear");
+  const [provider, setProvider] = useState<ImageProvider>(stabilityEnabled ? "auto" : "dicebear");
+  const [lastAiProvider, setLastAiProvider] = useState<AiProvider>("auto");
   const [prompt, setPrompt] = useState("");
   const [styleId, setStyleId] = useState(DEFAULT_STYLE_ID);
   const [extraNegativePrompt, setExtraNegativePrompt] = useState("");
@@ -211,17 +227,55 @@ export default function GenerateNavatarPage() {
     ]
   );
 
-  const stabilityEnabled = flags.stability;
   const currentMode = !stabilityEnabled && mode === "stability" ? "dicebear" : mode;
   const previewUrl = currentMode === "stability" ? stabilityPreviewUrl : dicebearPreviewUrl;
   const isDicebear = currentMode === "dicebear";
   const isStability = stabilityEnabled && currentMode === "stability";
+  const providerButtonLabel =
+    provider === "auto"
+      ? "Generate (Auto fallback)"
+      : provider === "deepai"
+        ? "Generate with DeepAI"
+        : provider === "stability"
+          ? "Generate with Stability AI"
+          : "Generate";
+  const providerFooterText =
+    provider === "deepai"
+      ? "Powered by DeepAI — experimental photoreal and art models."
+      : provider === "auto"
+        ? "Auto tries DeepAI, then Stability AI, then DiceBear so you always get an image."
+        : "Powered by Stability AI (Stable Image Core) – square 512×512 art.";
 
   useEffect(() => {
-    if (!stabilityEnabled && mode === "stability") {
-      setMode("dicebear");
+    if (!stabilityEnabled) {
+      if (mode === "stability") {
+        setMode("dicebear");
+      }
+      if (provider !== "dicebear") {
+        setProvider("dicebear");
+      }
     }
-  }, [mode, stabilityEnabled]);
+  }, [mode, provider, stabilityEnabled]);
+
+  useEffect(() => {
+    if (provider === "dicebear" && mode !== "dicebear") {
+      setMode("dicebear");
+    } else if (provider !== "dicebear" && mode !== "stability") {
+      setMode("stability");
+    }
+  }, [provider, mode]);
+
+  useEffect(() => {
+    if (provider !== "dicebear" && provider !== lastAiProvider) {
+      setLastAiProvider(provider as AiProvider);
+    }
+  }, [provider, lastAiProvider]);
+
+  useEffect(() => {
+    if (provider !== "stability" && stabilityRemaining != null) {
+      setStabilityRemaining(null);
+    }
+  }, [provider, stabilityRemaining]);
 
   const canSave = isDicebear ? !isSaving : Boolean(file) && !isGenerating && !isSaving;
   const saveLabel = isSaving ? "Saving…" : isStability && isGenerating ? "Generating…" : "Save";
@@ -327,22 +381,28 @@ export default function GenerateNavatarPage() {
     const seed = keepStyle && user?.id ? seedFromUserId(user.id) : undefined;
     setIsGenerating(true);
     try {
-      const { blob, remaining } = await generateWithStability({
+      const generation = await generateWithProvider(provider, {
         prompt: finalPrompt,
         negativePrompt,
         seed,
         style: selectedStyle.id,
       });
-      setStabilityRemaining(typeof remaining === "number" ? remaining : null);
 
-      const generatedFile = new File([blob], `navatar-${Date.now()}.png`, {
-        type: blob.type || "image/png",
+      setStabilityRemaining(
+        generation.provider === "stability" && typeof generation.remaining === "number"
+          ? generation.remaining
+          : null,
+      );
+
+      const generatedFile = new File([generation.blob], `navatar-${Date.now()}.png`, {
+        type: generation.blob.type || "image/png",
       });
 
       setFile(generatedFile);
-      toast({ text: "Navatar generated ✓", kind: "ok" });
+      const providerName = providerDisplayName(generation.provider);
+      toast({ text: `Navatar generated via ${providerName} ✓`, kind: "ok" });
       void logEvent("avatar.created", {
-        method: "stability",
+        method: generation.provider,
         style: selectedStyle.id,
         onBrand,
         keepStyle,
@@ -358,7 +418,7 @@ export default function GenerateNavatarPage() {
           setDicebearSeed(seedFromPrompt(trimmedPrompt || prompt));
           setDicebearSeedTouched(true);
         }
-        setMode("dicebear");
+        setProvider("dicebear");
         toast({ text: "AI credits low — switched to Free (DiceBear).", kind: "warn" });
       } else if (error instanceof Error) {
         toast({ text: error.message, kind: "err" });
@@ -396,7 +456,10 @@ export default function GenerateNavatarPage() {
             <button
               type="button"
               className={`pill${isStability ? " pill--active" : ""}`}
-              onClick={() => setMode("stability")}
+              onClick={() => {
+                setMode("stability");
+                setProvider(lastAiProvider);
+              }}
               aria-pressed={isStability}
             >
               AI (Stability)
@@ -405,7 +468,7 @@ export default function GenerateNavatarPage() {
           <button
             type="button"
             className={`pill${isDicebear ? " pill--active" : ""}`}
-            onClick={() => setMode("dicebear")}
+            onClick={() => setProvider("dicebear")}
             aria-pressed={isDicebear}
           >
             Free (DiceBear)
@@ -614,6 +677,31 @@ export default function GenerateNavatarPage() {
                 disabled={isGenerating || isSaving}
               />
             </div>
+            <div className="navatar-field">
+              <label htmlFor="navatar-provider">Provider</label>
+              <select
+                id="navatar-provider"
+                className="navatar-style-select"
+                value={provider}
+                onChange={(e) => {
+                  const next = e.target.value as ImageProvider;
+                  if (next === "dicebear") {
+                    setProvider("dicebear");
+                    return;
+                  }
+                  setProvider(next);
+                }}
+                disabled={isGenerating || isSaving}
+              >
+                <option value="auto">Auto (DeepAI → Stability → DiceBear)</option>
+                <option value="deepai">DeepAI</option>
+                <option value="stability">Stability AI</option>
+                <option value="dicebear">DiceBear (switch to Free)</option>
+              </select>
+              <small style={{ color: "#1e3a8a" }}>
+                Auto tries DeepAI, then Stability, then DiceBear if others fail.
+              </small>
+            </div>
             <label className="navatar-toggle" htmlFor="navatar-brand-style">
               <input
                 id="navatar-brand-style"
@@ -692,7 +780,7 @@ export default function GenerateNavatarPage() {
               onClick={handleGenerate}
               disabled={isGenerating || isSaving}
             >
-              {isGenerating ? "Generating…" : "Generate with Stability AI"}
+              {isGenerating ? "Generating…" : providerButtonLabel}
             </button>
             <input
               type="file"
@@ -715,7 +803,7 @@ export default function GenerateNavatarPage() {
       </form>
       <p className="center" style={{ opacity: 0.8 }}>
         {isStability
-          ? "Powered by Stability AI (Stable Image Core) – square 512×512 art."
+          ? providerFooterText
           : "Powered by DiceBear avatars — saved straight to your Supabase storage."}
       </p>
     </main>
