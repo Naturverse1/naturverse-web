@@ -4,13 +4,13 @@ import MarketTabs from '../../components/MarketTabs';
 import '../../styles/marketplace.css';
 import { useToast } from '@/components/Toast';
 import { useAuthUser } from '@/lib/useAuthUser';
-import { fetchWishlist, removeFromWishlist, type ProductSummary } from '@/lib/wishlist';
+import { getWishlist, removeFromWishlist as removeWishlistRow, type WishlistItem } from '@/lib/marketplaceApi';
 import { formatPrice, resolveProductImage, DEFAULT_PRODUCT_IMAGE } from '@/hooks/useProducts';
 import { cart } from '@/lib/cart';
 import { track } from '@/lib/analytics';
 
 export default function MarketplaceWishlist() {
-  const [items, setItems] = useState<ProductSummary[]>([]);
+  const [items, setItems] = useState<WishlistItem[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [pendingSlug, setPendingSlug] = useState<string | null>(null);
@@ -40,7 +40,7 @@ export default function MarketplaceWishlist() {
     setPendingSlug(null);
     setItems([]);
 
-    fetchWishlist()
+    getWishlist()
       .then((data) => {
         if (active) setItems(data);
       })
@@ -61,7 +61,7 @@ export default function MarketplaceWishlist() {
   }, [user, authLoading]);
 
   const removeWishlistEntry = async (
-    entry: ProductSummary,
+    entry: WishlistItem,
     options: { message: string; toastKind: 'ok' | 'warn' | 'err'; trackEvent: string; trackExtra?: Record<string, unknown>; onSuccess?: () => void }
   ) => {
     if (!user) {
@@ -70,34 +70,32 @@ export default function MarketplaceWishlist() {
     }
     try {
       setPendingSlug(entry.slug);
-      const res = await removeFromWishlist(entry.slug);
-      if (!res.ok) {
-        const message =
-          res.reason === 'auth'
-            ? 'Sign in to update your wishlist.'
-            : 'Could not update wishlist';
-        toast({ text: message, kind: res.reason === 'db' ? 'err' : 'warn' });
-        if (res.reason === 'auth') {
-          setItems([]);
-        }
-        return;
-      }
+      await removeWishlistRow(entry.wishlist_id);
       setItems((prev) => prev.filter((item) => item.slug !== entry.slug));
       options.onSuccess?.();
       toast({ text: options.message, kind: options.toastKind });
       track(options.trackEvent, { slug: entry.slug, name: entry.name, ...options.trackExtra });
     } catch (err) {
-      const message = err instanceof Error ? err.message : 'Could not update wishlist';
-      toast({ text: message, kind: 'err' });
+      const code =
+        typeof err === 'object' && err && 'code' in err && typeof (err as { code?: unknown }).code === 'string'
+          ? ((err as { code: string }).code ?? '')
+          : '';
+      if (code === 'PGRST301' || code === 'PGRST302') {
+        toast({ text: 'Sign in to update your wishlist.', kind: 'warn' });
+        setItems([]);
+      } else {
+        const message = err instanceof Error ? err.message : 'Could not update wishlist';
+        toast({ text: message, kind: 'err' });
+      }
     } finally {
       setPendingSlug((prev) => (prev === entry.slug ? null : prev));
     }
   };
 
-  const handleRemove = (entry: ProductSummary) =>
+  const handleRemove = (entry: WishlistItem) =>
     removeWishlistEntry(entry, { message: 'Removed from wishlist', toastKind: 'warn', trackEvent: 'wishlist_remove' });
 
-  const handleMoveToCart = (entry: ProductSummary) =>
+  const handleMoveToCart = (entry: WishlistItem) =>
     removeWishlistEntry(entry, {
       message: 'Moved to cart',
       toastKind: 'ok',
@@ -137,7 +135,7 @@ export default function MarketplaceWishlist() {
           {items.map((entry) => {
             const imageSrc = resolveProductImage(entry.slug, entry.image_url ?? undefined);
             return (
-              <article key={entry.id} className="mp-card nv-card">
+              <article key={entry.wishlist_id} className="mp-card nv-card">
                 <div className="mp-image nv-image">
                   <img
                     src={imageSrc}
