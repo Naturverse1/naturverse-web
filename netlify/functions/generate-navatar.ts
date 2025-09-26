@@ -25,13 +25,15 @@ export const handler: Handler = async (event) => {
   }
 
   try {
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${apiKey}`,
+      "Content-Type": "application/json",
+      Accept: "image/png",
+    };
+
     const response = await fetch(API_URL, {
       method: "POST",
-      headers: {
-        Authorization: `Bearer ${apiKey}`,
-        "Content-Type": "application/json",
-        Accept: "image/png",
-      },
+      headers,
       body: JSON.stringify({
         prompt,
         output_format: "png",
