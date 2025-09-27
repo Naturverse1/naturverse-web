@@ -1,106 +1,47 @@
 import type { Handler } from "@netlify/functions";
 
+function cors() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST,OPTIONS",
+    "Access-Control-Allow-Headers": "content-type,authorization",
+  };
+}
+function json(body: any, statusCode = 200) {
+  return { statusCode, headers: { "Content-Type": "application/json", ...cors() }, body: JSON.stringify(body) };
+}
+
 export const handler: Handler = async (event) => {
+  if (event.httpMethod === "OPTIONS") return json("", 204);
+
+  const API_KEY = process.env.STABILITY_API_KEY || "";
+  if (!API_KEY) return json({ ok: false, error: "Missing STABILITY_API_KEY" }, 500);
+
   try {
-    const API_KEY = process.env.STABILITY_API_KEY;
-    if (!API_KEY) {
-      return {
-        statusCode: 500,
-        body: JSON.stringify({ error: "Missing STABILITY_API_KEY" }),
-        headers: { "Content-Type": "application/json" },
-      };
-    }
+    const { prompt, size = "1024x1024" } = JSON.parse(event.body || "{}");
+    if (!prompt || typeof prompt !== "string") return json({ ok: false, error: "Missing prompt" }, 400);
 
-    const body = JSON.parse(event.body || "{}");
-    const { prompt, negativePrompt, seed, size } = body ?? {};
-    if (!prompt || typeof prompt !== "string") {
-      return {
-        statusCode: 400,
-        body: JSON.stringify({ error: "Missing prompt" }),
-        headers: { "Content-Type": "application/json" },
-      };
-    }
-
-    // Build multipart form-data (let fetch set the Content-Type+boundary)
+    const [w, h] = String(size).split("x").map((n) => Math.max(128, Math.min(2048, Math.floor(Number(n) || 1024))));
     const form = new FormData();
     form.append("prompt", prompt);
     form.append("output_format", "png");
+    form.append("width", String(w));
+    form.append("height", String(h));
 
-    if (negativePrompt && typeof negativePrompt === "string") {
-      form.append("negative_prompt", negativePrompt);
+    const res = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${API_KEY}`, Accept: "image/*" },
+      body: form,
+    });
+
+    if (!res.ok) {
+      const err = await res.text().catch(() => "");
+      return json({ ok: false, error: "stability_error", detail: err || undefined }, res.status);
     }
 
-    if (typeof seed === "number" && Number.isFinite(seed)) {
-      const clamped = Math.max(0, Math.min(0xffff_ffff, Math.floor(seed)));
-      form.append("seed", String(clamped));
-    }
-
-    let width: number | undefined;
-    let height: number | undefined;
-
-    if (size && typeof size === "string") {
-      const match = size.toLowerCase().split("x");
-      if (match.length === 2) {
-        const parsedWidth = Number(match[0]);
-        const parsedHeight = Number(match[1]);
-        if (Number.isFinite(parsedWidth) && Number.isFinite(parsedHeight)) {
-          width = Math.max(128, Math.min(2048, Math.floor(parsedWidth)));
-          height = Math.max(128, Math.min(2048, Math.floor(parsedHeight)));
-        }
-      }
-    }
-
-    if (!width || !height) {
-      width = 1024;
-      height = 1024;
-    }
-
-    form.append("width", String(width));
-    form.append("height", String(height));
-
-    const resp = await fetch(
-      "https://api.stability.ai/v2beta/stable-image/generate/core",
-      {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          // IMPORTANT: Accept must be image/* or application/json
-          Accept: "image/*",
-        },
-        body: form,
-      }
-    );
-
-    const remaining = resp.headers.get("x-ratelimit-remaining");
-
-    if (!resp.ok) {
-      const errTxt = await resp.text().catch(() => "");
-      return {
-        statusCode: resp.status,
-        body: JSON.stringify({ error: "stability_error", detail: errTxt }),
-        headers: {
-          "Content-Type": "application/json",
-          ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
-        },
-      };
-    }
-
-    const buf = Buffer.from(await resp.arrayBuffer());
-    return {
-      statusCode: 200,
-      headers: {
-        "Content-Type": "image/png",
-        "Cache-Control": "no-store",
-        ...(remaining ? { "x-ratelimit-remaining": remaining } : {}),
-      },
-      body: buf.toString("base64"),
-      isBase64Encoded: true,
-    };
+    const buf = Buffer.from(await res.arrayBuffer());
+    return json({ ok: true, provider: "stability", image: `data:image/png;base64,${buf.toString("base64")}` });
   } catch (e: any) {
-    return {
-      statusCode: 500,
-      body: JSON.stringify({ error: "proxy_failure", detail: e?.message }),
-      headers: { "Content-Type": "application/json" },
-    };
+    return json({ ok: false, error: "stability_exception", detail: String(e?.message || e) }, 500);
   }
 };
