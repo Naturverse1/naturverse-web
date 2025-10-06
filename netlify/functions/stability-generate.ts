@@ -58,15 +58,17 @@ export const handler: Handler = async (event) => {
     form.append("width", String(width));
     form.append("height", String(height));
 
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${API_KEY}`,
+      // IMPORTANT: Accept must be image/* or application/json
+      Accept: "image/*",
+    };
+
     const resp = await fetch(
       "https://api.stability.ai/v2beta/stable-image/generate/core",
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          // IMPORTANT: Accept must be image/* or application/json
-          Accept: "image/*",
-        },
+        headers,
         body: form,
       }
     );

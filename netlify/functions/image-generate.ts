@@ -68,7 +68,7 @@ export const handler: Handler = async (event) => {
   if (user) requestBody.user = user;
   if (n) requestBody.n = n;
 
-  const requestHeaders: Record<string, string> = {
+  const headers: Record<string, string> = {
     "content-type": "application/json",
     authorization: `Bearer ${apiKey}`,
   };
@@ -76,7 +76,7 @@ export const handler: Handler = async (event) => {
   try {
     const response = await fetch(OPENAI_IMAGE_URL, {
       method: "POST",
-      headers: requestHeaders,
+      headers,
       body: JSON.stringify(requestBody),
     });
 

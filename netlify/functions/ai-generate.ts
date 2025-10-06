@@ -55,15 +55,17 @@ export const handler: Handler = async (event) => {
     const negativePrompt = NEGATIVE;
     const effectiveSeed = keepSeed ? clampSeed(seed) : undefined;
 
+    const headers: Record<string, string> = {
+      Authorization: `Bearer ${API_KEY}`,
+      "Content-Type": "application/json",
+      Accept: "image/png",
+    };
+
     const res = await fetch(
       `https://api-inference.huggingface.co/models/${HF_MODEL}`,
       {
         method: "POST",
-        headers: {
-          Authorization: `Bearer ${API_KEY}`,
-          "Content-Type": "application/json",
-          Accept: "image/png",
-        },
+        headers,
         body: JSON.stringify({
           inputs: finalPrompt,
           parameters: {
