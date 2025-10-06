@@ -1,138 +1,278 @@
 import type { Handler } from "@netlify/functions";
 
-// Netlify (Node 20) has global fetch/Headers/FormData via undici.
+type ReqBody = {
+  prompt: string;
+  provider?: "openai" | "stability" | "deepai" | "huggingface" | "multiavatar" | "auto";
+  size?: number | string;
+  seed?: string | number;
+};
 
-const OPENAI_IMAGE_URL = "https://api.openai.com/v1/images/generations";
-
-const CORS_HEADERS = {
+const cors = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
   "Access-Control-Allow-Methods": "POST,OPTIONS",
-} as const;
-
-type ImagePayload = {
-  prompt?: string;
-  model?: string;
-  size?: string;
-  quality?: string;
-  style?: string;
-  background?: string;
-  n?: number;
-  user?: string;
+  "Access-Control-Allow-Headers": "content-type,authorization",
 };
 
 export const handler: Handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: { ...CORS_HEADERS } };
+    return { statusCode: 204, headers: cors, body: "" };
   }
 
   if (event.httpMethod !== "POST") {
-    return json(405, { error: "method_not_allowed" });
+    return json({ ok: false, error: "Method not allowed" }, 405);
   }
-
-  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_BEARER;
-  if (!apiKey) {
-    return json(500, { error: "missing_openai_key" });
-  }
-
-  let payload: ImagePayload;
-  try {
-    payload = JSON.parse(event.body || "{}") as ImagePayload;
-  } catch (error) {
-    return json(400, { error: "invalid_json" });
-  }
-
-  const prompt = typeof payload.prompt === "string" ? payload.prompt.trim() : "";
-  if (!prompt) {
-    return json(400, { error: "prompt_required" });
-  }
-
-  const model = normaliseString(payload.model) || "gpt-image-1";
-  const size = normaliseString(payload.size);
-  const quality = normaliseString(payload.quality);
-  const style = normaliseString(payload.style);
-  const background = normaliseString(payload.background);
-  const user = normaliseString(payload.user);
-  const n = normaliseCount(payload.n);
-
-  const requestBody: Record<string, unknown> = {
-    model,
-    prompt,
-    response_format: "b64_json",
-  };
-
-  if (size) requestBody.size = size;
-  if (quality) requestBody.quality = quality;
-  if (style) requestBody.style = style;
-  if (background) requestBody.background = background;
-  if (user) requestBody.user = user;
-  if (n) requestBody.n = n;
-
-  const requestHeaders: Record<string, string> = {
-    "content-type": "application/json",
-    authorization: `Bearer ${apiKey}`,
-  };
 
   try {
-    const response = await fetch(OPENAI_IMAGE_URL, {
-      method: "POST",
-      headers: requestHeaders,
-      body: JSON.stringify(requestBody),
-    });
+    const body: ReqBody = JSON.parse(event.body || "{}");
 
-    if (!response.ok) {
-      const detail = await response.text().catch(() => "");
-      return json(response.status, { error: "openai_error", detail: detail.slice(0, 10_000) });
+    const providerIn = (body.provider || process.env.VITE_IMAGE_PROVIDER || "auto")
+      .toString()
+      .toLowerCase() as ReqBody["provider"];
+
+    const prompt = (body.prompt || "").trim();
+    if (!prompt) return json({ ok: false, error: "Missing prompt" }, 400);
+
+    let width = 1024;
+    let height = 1024;
+    if (body.size) {
+      const s = String(body.size).toLowerCase();
+      if (s.includes("x")) {
+        const [w, h] = s.split("x").map((v) => Number(v));
+        if (Number.isFinite(w) && Number.isFinite(h)) {
+          width = clampSize(w);
+          height = clampSize(h);
+        }
+      } else {
+        const n = Number(s);
+        if (Number.isFinite(n)) width = height = clampSize(n);
+      }
     }
 
-    const data = await response.json().catch(() => null);
-    if (!data || !Array.isArray(data?.data)) {
-      return json(502, { error: "invalid_openai_response" });
+    const tried: string[] = [];
+    const errors: string[] = [];
+
+    async function tryProvider(p: NonNullable<ReqBody["provider"]>) {
+      tried.push(p);
+      try {
+        switch (p) {
+          case "openai":
+            return await viaOpenAI(prompt, width, height);
+          case "stability":
+            return await viaStability(prompt, width, height, body.seed);
+          case "deepai":
+            return await viaDeepAI(prompt, width, height);
+          case "huggingface":
+            return await viaHuggingFace(prompt, width, height, body.seed);
+          case "multiavatar":
+            return await viaMultiavatar(prompt, body.seed);
+          default:
+            throw new Error("Unknown provider");
+        }
+      } catch (e: any) {
+        errors.push(`${p}: ${e?.status || e?.code || ""} ${e?.message || String(e)}`.trim());
+        return null;
+      }
     }
 
-    const images = data.data
-      .map((entry: any) => extractImage(entry))
-      .filter((url: string | null): url is string => typeof url === "string" && url.length > 0);
-
-    if (images.length === 0) {
-      return json(502, { error: "no_images_returned" });
+    if (providerIn === "auto") {
+      for (const p of ["openai", "stability", "deepai", "huggingface", "multiavatar"] as const) {
+        const out = await tryProvider(p);
+        if (out) return json({ ok: true, dataUrl: out, provider: p });
+      }
+      return json({ ok: false, error: `All providers failed: ${errors.join(" | ")}` }, 502);
     }
 
-    return json(200, { images });
-  } catch (error: any) {
-    return json(500, { error: "unexpected_error", detail: error?.message || String(error) });
+    const out = await tryProvider(providerIn);
+    if (out) return json({ ok: true, dataUrl: out, provider: providerIn });
+    return json({ ok: false, error: errors.join(" | ") || "Generation failed" }, 502);
+  } catch (err: any) {
+    return json({ ok: false, error: String(err?.message || err) }, 500);
   }
 };
 
-function json(statusCode: number, payload: unknown) {
+function json(body: any, statusCode = 200) {
   return {
     statusCode,
-    headers: {
-      ...CORS_HEADERS,
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(payload),
+    headers: { "Content-Type": "application/json", ...cors },
+    body: JSON.stringify(body),
   };
 }
 
-function normaliseString(value: unknown) {
-  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
+function clampSize(n: number) {
+  return Math.max(128, Math.min(2048, Math.floor(n)));
 }
 
-function normaliseCount(value: unknown) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
-  const clamped = Math.min(Math.max(Math.floor(value), 1), 4);
-  return clamped;
+async function viaOpenAI(prompt: string, width: number, height: number): Promise<string> {
+  const key = process.env.OPENAI_API_KEY || "";
+  if (!key) throw new Error("Missing OPENAI_API_KEY");
+
+  const res = await fetch("https://api.openai.com/v1/images/generations", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "gpt-image-1",
+      prompt,
+      size: `${width}x${height}`,
+      response_format: "b64_json",
+    }),
+  });
+
+  const raw = await res.text();
+  if (!res.ok) {
+    const msg = safeMsg(raw);
+    const err: any = new Error(`openai ${res.status} ${msg}`);
+    err.status = res.status;
+    throw err;
+  }
+  const data = JSON.parse(raw);
+  const b64 = data?.data?.[0]?.b64_json;
+  if (!b64) throw new Error("openai empty response");
+  return `data:image/png;base64,${b64}`;
 }
 
-function extractImage(entry: any): string | null {
-  if (!entry || typeof entry !== "object") return null;
-  if (typeof entry.b64_json === "string" && entry.b64_json) {
-    return `data:image/png;base64,${entry.b64_json}`;
+async function viaStability(
+  prompt: string,
+  width: number,
+  height: number,
+  seed?: string | number,
+): Promise<string> {
+  const key = process.env.STABILITY_API_KEY || "";
+  if (!key) throw new Error("Missing STABILITY_API_KEY");
+
+  const form = new FormData();
+  form.append("prompt", prompt);
+  form.append("output_format", "png");
+  form.append("width", String(width));
+  form.append("height", String(height));
+  if (seed !== undefined && seed !== null) form.append("seed", String(seed));
+  form.append("cfg_scale", "5");
+
+  const res = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      Accept: "image/*",
+    },
+    body: form,
+  });
+
+  const okAsImage = (res.headers.get("content-type") || "").startsWith("image/");
+  const raw = okAsImage ? null : await res.text();
+  if (!res.ok || !okAsImage) {
+    const err: any = new Error(`stability ${res.status} ${safeMsg(raw || "")}`);
+    err.status = res.status;
+    throw err;
   }
-  if (typeof entry.url === "string" && entry.url) {
-    return entry.url;
+  const buf = Buffer.from(await res.arrayBuffer());
+  return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
+async function viaDeepAI(prompt: string, width: number, height: number): Promise<string> {
+  const key = process.env.DEEPAI_API_KEY || "";
+  if (!key) throw new Error("Missing DEEPAI_API_KEY");
+
+  const form = new URLSearchParams();
+  form.set("text", prompt);
+  form.set("width", String(width));
+  form.set("height", String(height));
+
+  const res = await fetch("https://api.deepai.org/api/text2img", {
+    method: "POST",
+    headers: { "api-key": key, "Content-Type": "application/x-www-form-urlencoded" },
+    body: form.toString(),
+  });
+
+  const raw = await res.text();
+  if (!res.ok) {
+    const err: any = new Error(`deepai ${res.status} ${safeMsg(raw)}`);
+    err.status = res.status;
+    throw err;
   }
-  return null;
+  const data = JSON.parse(raw);
+  const url = data?.output_url;
+  if (!url) throw new Error("deepai empty response");
+
+  const img = await fetch(url);
+  if (!img.ok) throw new Error(`deepai fetch ${img.status}`);
+  const buf = Buffer.from(await img.arrayBuffer());
+  return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
+async function viaHuggingFace(
+  prompt: string,
+  width: number,
+  height: number,
+  seed?: string | number,
+): Promise<string> {
+  const key = process.env.HUGGINGFACE_API_KEY || process.env.HF_API_TOKEN || "";
+  if (!key) throw new Error("Missing HUGGINGFACE_API_KEY");
+
+  const model = process.env.HF_MODEL_ID || "black-forest-labs/FLUX.1-dev";
+  const payload = {
+    inputs: prompt,
+    parameters: {
+      width,
+      height,
+      guidance_scale: 5,
+      num_inference_steps: 28,
+      ...(seed !== undefined ? { seed } : {}),
+      negative_prompt:
+        "photo, photorealistic, watermark, logo, signature, text, letters, gore, violence, guns, extra limbs, deformed",
+    },
+  };
+
+  const res = await fetch(`https://api-inference.huggingface.co/models/${encodeURIComponent(model)}`, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${key}`,
+      "Content-Type": "application/json",
+      Accept: "image/png",
+    },
+    body: JSON.stringify(payload),
+  });
+
+  const ct = res.headers.get("content-type") || "";
+  if (!res.ok || !ct.startsWith("image/")) {
+    const raw = await res.text().catch(() => "");
+    const err: any = new Error(`hf ${res.status} ${safeMsg(raw)}`);
+    err.status = res.status;
+    throw err;
+  }
+
+  const buf = Buffer.from(await res.arrayBuffer());
+  return `data:image/png;base64,${buf.toString("base64")}`;
+}
+
+async function viaMultiavatar(prompt: string, seed?: string | number): Promise<string> {
+  const s = seed ?? simpleHash(prompt);
+  const res = await fetch(`https://api.multiavatar.com/${encodeURIComponent(String(s))}.svg`);
+  const svg = await res.text();
+  if (!res.ok || !svg) {
+    const err: any = new Error(`multiavatar ${res.status}`);
+    err.status = res.status;
+    throw err;
+  }
+  const svgEnc = encodeURIComponent(svg.replace(/\n+/g, ""));
+  return `data:image/svg+xml;utf8,${svgEnc}`;
+}
+
+function simpleHash(str: string) {
+  let h = 2166136261 >>> 0;
+  for (let i = 0; i < str.length; i++) {
+    h ^= str.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return (h >>> 0).toString(16);
+}
+
+function safeMsg(s: string) {
+  try {
+    const j = JSON.parse(s);
+    return j?.error?.message || j?.error || j?.message || s;
+  } catch {
+    return s;
+  }
 }

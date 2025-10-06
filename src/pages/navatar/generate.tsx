@@ -7,35 +7,56 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
-import { generateImage } from "@/lib/image/generate";
-import {
-  getSelectedProvider,
-  setSelectedProvider,
-  type Provider,
-  haveDeepAI,
-  haveStability,
-} from "@/lib/image/providers";
+import { generateNavatar, type ProviderOption } from "@/shared/image";
 import { logEvent } from "@/lib/activity";
 import "../../styles/navatar.css";
 
-const SIZE_OPTIONS = [512, 1024, 2048] as const;
+const PROVIDERS: { label: string; value: ProviderOption }[] = [
+  { label: "Auto (OpenAI → Stability → DeepAI → HF → Basic)", value: "auto" },
+  { label: "OpenAI", value: "openai" },
+  { label: "Stability", value: "stability" },
+  { label: "DeepAI", value: "deepai" },
+  { label: "Hugging Face", value: "huggingface" },
+  { label: "Basic (Multiavatar)", value: "multiavatar" },
+];
+
+const PROVIDER_LABEL: Record<ProviderOption, string> = {
+  auto: "Auto",
+  openai: "OpenAI",
+  stability: "Stability",
+  deepai: "DeepAI",
+  huggingface: "Hugging Face",
+  multiavatar: "Multiavatar",
+};
+
+const SIZE_OPTIONS = ["512", "1024", "1024x1024", "1536x1536"] as const;
+const PROVIDER_STORAGE_KEY = "navatar:provider:v2";
 
 export default function DescribeAndGeneratePage() {
   const toast = useToast();
   const nav = useNavigate();
-  const [provider, setProvider] = useState<Provider>(getSelectedProvider());
+  const [provider, setProvider] = useState<ProviderOption>("auto");
   const [prompt, setPrompt] = useState("");
-  const [size, setSize] = useState<number>(1024);
+  const [size, setSize] = useState<string>("1024");
   const [name, setName] = useState("");
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [generatedFile, setGeneratedFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
+  const [usedProvider, setUsedProvider] = useState<ProviderOption | null>(null);
 
   useEffect(() => {
-    setSelectedProvider(provider);
+    if (typeof window === "undefined") return;
+    const saved = window.localStorage.getItem(PROVIDER_STORAGE_KEY) as ProviderOption | null;
+    if (saved && (PROVIDERS.some((it) => it.value === saved))) {
+      setProvider(saved);
+    }
+  }, []);
+
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    window.localStorage.setItem(PROVIDER_STORAGE_KEY, provider);
   }, [provider]);
 
   useEffect(() => {
@@ -63,23 +84,26 @@ export default function DescribeAndGeneratePage() {
     setUsedProvider(null);
 
     try {
-      const { url, provider: used } = await generateImage({ prompt: prompt.trim(), size });
-      setUsedProvider(used);
+      const result = await generateNavatar({ prompt: prompt.trim(), provider, size });
+      setUsedProvider(result.provider);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(result.dataUrl);
+        if (!response.ok) {
+          throw new Error(`Failed to load generated image (${response.status})`);
+        }
         const blob = await response.blob();
-        const file = new File([blob], `navatar-${Date.now()}.png`, {
-          type: blob.type || "image/png",
-        });
+        const mime = blob.type || "image/png";
+        const extension = mime === "image/svg+xml" ? "svg" : "png";
+        const file = new File([blob], `navatar-${Date.now()}.${extension}`, { type: mime });
         const localUrl = URL.createObjectURL(blob);
         setGeneratedFile(file);
         setObjectUrl(localUrl);
         setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
+        void logEvent("avatar.created", { method: "generate", provider: result.provider, size });
       } catch (err) {
         console.error(err);
-        setPreviewUrl(url);
+        setPreviewUrl(result.dataUrl);
         toast({
           text: "Generation succeeded, but we couldn't prepare the image for saving.",
           kind: "err",
@@ -87,7 +111,7 @@ export default function DescribeAndGeneratePage() {
       }
     } catch (e) {
       console.error(e);
-      toast({ text: "Generation failed. Check API keys or try the other provider.", kind: "err" });
+      toast({ text: "Generation failed. Try another provider or check API keys.", kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -139,18 +163,17 @@ export default function DescribeAndGeneratePage() {
           <label style={{ marginRight: 8 }}>Provider</label>
           <select
             value={provider}
-            onChange={(e) => setProvider(e.target.value as Provider)}
+            onChange={(e) => setProvider(e.target.value as ProviderOption)}
             disabled={isGenerating || isSaving}
           >
-            <option value="deepai" disabled={!haveDeepAI()}>
-              DeepAI
-            </option>
-            <option value="stability" disabled={!haveStability()}>
-              Stability
-            </option>
+            {PROVIDERS.map((option) => (
+              <option key={option.value} value={option.value}>
+                {option.label}
+              </option>
+            ))}
           </select>
           <small style={{ marginLeft: 8 }}>
-            Primary is your selection; it auto-falls back to the other if needed.
+            Auto mode falls back in order: OpenAI → Stability → DeepAI → Hugging Face → Multiavatar.
           </small>
         </div>
 
@@ -164,7 +187,7 @@ export default function DescribeAndGeneratePage() {
         />
         <div style={{ marginBottom: "0.75rem", width: "100%" }}>
           <label>Size</label>{" "}
-          <select value={size} onChange={(e) => setSize(Number(e.target.value))} disabled={isGenerating || isSaving}>
+          <select value={size} onChange={(e) => setSize(e.target.value)} disabled={isGenerating || isSaving}>
             {SIZE_OPTIONS.map((option) => (
               <option key={option} value={option}>
                 {option}
@@ -192,7 +215,7 @@ export default function DescribeAndGeneratePage() {
       </form>
       {previewUrl && usedProvider && (
         <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {usedProvider === "deepai" ? "DeepAI" : "Stability AI"}.
+          Generated with {PROVIDER_LABEL[usedProvider]}.
         </p>
       )}
     </main>
