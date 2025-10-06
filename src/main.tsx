@@ -10,6 +10,7 @@ import './main.css';
 import './styles/nvcard.css';
 import './app.css';
 import './styles/nv-sweep.css';
+import './styles/nv.css';
 import ToastProvider from './components/Toast';
 import SkipLink from './components/SkipLink';
 import OfflineBanner from './components/OfflineBanner';
@@ -17,7 +18,14 @@ import { supabase } from '@/lib/supabaseClient';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
-import { PostHogProvider } from 'posthog-js/react';
+let PostHogProvider: any = React.Fragment;
+try {
+  // only load if key exists; prevents Vite failure when package missing
+  if (import.meta.env.VITE_PUBLIC_POSTHOG_KEY) {
+    // @ts-ignore
+    PostHogProvider = (await import('posthog-js/react')).PostHogProvider;
+  }
+} catch {}
 
 const phKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
 const phHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
