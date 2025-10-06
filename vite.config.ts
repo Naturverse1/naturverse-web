@@ -93,8 +93,14 @@ export default defineConfig(async () => {
         'react-helmet-async',
       ],
     },
+    server: {
+      hmr: {
+        overlay: false,
+      },
+    },
     build: {
       outDir: 'dist',
+      target: 'es2022',
       rollupOptions: {
         external: [],
         output: {

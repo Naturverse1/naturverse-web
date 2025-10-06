@@ -17,10 +17,7 @@ import { supabase } from '@/lib/supabaseClient';
 import './runtime-logger';
 import { prefetchGlob, prefetchOnHover } from './lib/prefetch';
 import './boot/warmup';
-import { PostHogProvider } from 'posthog-js/react';
-
-const phKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
-const phHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST || 'https://us.i.posthog.com';
+import { initPostHogIfEnabled } from './lib/analytics';
 
 async function bootstrap() {
   const { data } = await supabase.auth.getSession();
@@ -39,17 +36,17 @@ async function bootstrap() {
     </AuthProvider>
   );
 
-  ReactDOM.createRoot(document.getElementById('root')!).render(
-    <React.StrictMode>
-      {phKey ? (
-        <PostHogProvider apiKey={phKey} options={{ api_host: phHost }}>
-          {app}
-        </PostHogProvider>
-      ) : (
-        app
-      )}
-    </React.StrictMode>,
-  );
+  const rootElement = document.getElementById('root');
+  if (!rootElement) {
+    throw new Error('Failed to find the root element to mount the app.');
+  }
+
+  const root = ReactDOM.createRoot(rootElement);
+  const renderApp = (children: React.ReactNode) =>
+    root.render(<React.StrictMode>{children}</React.StrictMode>);
+
+  renderApp(app);
+  initPostHogIfEnabled(renderApp, app);
 }
 
 bootstrap();
