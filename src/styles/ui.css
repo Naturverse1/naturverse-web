@@ -1,0 +1,90 @@
+/* Pills */
+.pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.pill {
+  padding: 0.6rem 1rem;
+  border-radius: 9999px;
+  font-weight: 700;
+  background: #eaf0ff;
+  color: #2a4bff;
+  border: 2px solid #cfe0ff;
+  cursor: pointer;
+}
+
+.pill.active {
+  background: #2a4bff;
+  color: #ffffff;
+  border-color: #2a4bff;
+}
+
+.pill:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Inputs */
+.input,
+.textarea {
+  width: 100%;
+  border: 2px solid #e5e7eb;
+  border-radius: 12px;
+  padding: 0.9rem 1rem;
+  font-size: 1rem;
+  background: #ffffff;
+  color: #111827;
+}
+
+.hint {
+  font-size: 0.85rem;
+  color: #6b7280;
+  margin-top: 0.25rem;
+}
+
+/* Button (blue / white text) */
+.btn-primary {
+  width: 100%;
+  border: none;
+  border-radius: 12px;
+  padding: 1rem 1.25rem;
+  background: #1e5bff;
+  color: #ffffff;
+  font-weight: 800;
+  font-size: 1.05rem;
+  box-shadow: 0 10px 25px rgba(30, 91, 255, 0.25);
+}
+
+.btn-primary:hover {
+  filter: brightness(1.05);
+}
+
+.btn-primary:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Result card */
+.result-card {
+  margin-top: 1rem;
+  border-radius: 16px;
+  background: #f5f7fb;
+  padding: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 320px;
+}
+
+.result-card img {
+  max-width: 100%;
+  border-radius: 12px;
+}
+
+.error {
+  color: #b91c1c;
+  font-weight: 700;
+  margin-top: 0.75rem;
+}

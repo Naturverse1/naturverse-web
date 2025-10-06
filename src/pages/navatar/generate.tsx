@@ -1,200 +1,154 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarCard from "../../components/NavatarCard";
-import BackToMyNavatar from "../../components/BackToMyNavatar";
-import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import { useToast } from "../../components/Toast";
-import { generateImage } from "@/lib/image/generate";
-import {
-  getSelectedProvider,
-  setSelectedProvider,
-  type Provider,
-  haveDeepAI,
-  haveStability,
-} from "@/lib/image/providers";
-import { logEvent } from "@/lib/activity";
-import "../../styles/navatar.css";
+import { useState } from "react";
+import { postJSON } from "../../lib/req";
+import "../../styles/ui.css";
 
-const SIZE_OPTIONS = [512, 1024, 2048] as const;
+type Provider = "openai" | "huggingface" | "deepai" | "basic";
 
-export default function DescribeAndGeneratePage() {
-  const toast = useToast();
-  const nav = useNavigate();
-  const [provider, setProvider] = useState<Provider>(getSelectedProvider());
-  const [prompt, setPrompt] = useState("");
-  const [size, setSize] = useState<number>(1024);
-  const [name, setName] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [generatedFile, setGeneratedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
+const PROVIDERS: { key: Provider; label: string; endpoint: string }[] = [
+  {
+    key: "openai",
+    label: "OpenAI",
+    endpoint: "/.netlify/functions/openai-generate",
+  },
+  {
+    key: "huggingface",
+    label: "Hugging Face",
+    endpoint: "/.netlify/functions/hf-generate",
+  },
+  {
+    key: "deepai",
+    label: "DeepAI",
+    endpoint: "/.netlify/functions/deepai-generate",
+  },
+  {
+    key: "basic",
+    label: "Basic (Avatar)",
+    endpoint: "/.netlify/functions/multavatar-generate",
+  },
+];
 
-  useEffect(() => {
-    setSelectedProvider(provider);
-  }, [provider]);
+export default function GeneratePage() {
+  const [provider, setProvider] = useState<Provider>("openai");
+  const [prompt, setPrompt] = useState<string>(
+    "Cartoon action hero frog with a cape",
+  );
+  const [seed, setSeed] = useState<string>("turtle-hero");
+  const [size, setSize] = useState<string>("1024x1024");
+  const [loading, setLoading] = useState(false);
+  const [image, setImage] = useState<string>("");
+  const [err, setErr] = useState<string>("");
 
-  useEffect(() => {
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [objectUrl]);
+  const onGenerate = async () => {
+    setErr("");
+    setImage("");
+    setLoading(true);
+    const ep = PROVIDERS.find((p) => p.key === provider)!.endpoint;
+    const payload = provider === "basic" ? { seed } : { prompt, size };
+    const { json } = await postJSON(ep, payload);
+    setLoading(false);
 
-  async function onGenerate() {
-    if (!prompt.trim()) {
-      toast({ text: "Enter a description first.", kind: "warn" });
+    if (json?.ok && json?.image) {
+      setImage(json.image);
       return;
     }
-
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
-      setObjectUrl(null);
-    }
-
-    setIsGenerating(true);
-    setGeneratedFile(null);
-    setPreviewUrl(null);
-    setUsedProvider(null);
-
-    try {
-      const { url, provider: used } = await generateImage({ prompt: prompt.trim(), size });
-      setUsedProvider(used);
-
-      try {
-        const response = await fetch(url);
-        const blob = await response.blob();
-        const file = new File([blob], `navatar-${Date.now()}.png`, {
-          type: blob.type || "image/png",
-        });
-        const localUrl = URL.createObjectURL(blob);
-        setGeneratedFile(file);
-        setObjectUrl(localUrl);
-        setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
-      } catch (err) {
-        console.error(err);
-        setPreviewUrl(url);
-        toast({
-          text: "Generation succeeded, but we couldn't prepare the image for saving.",
-          kind: "err",
-        });
-      }
-    } catch (e) {
-      console.error(e);
-      toast({ text: "Generation failed. Check API keys or try the other provider.", kind: "err" });
-    } finally {
-      setIsGenerating(false);
-    }
-  }
-
-  async function onSave(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (isSaving) return;
-
-    if (!generatedFile) {
-      toast({ text: "Generate an image first.", kind: "err" });
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const row = await uploadNavatar(generatedFile, name || undefined);
-      setActiveNavatarId(row.id);
-      toast({ text: "Saved ✓", kind: "ok" });
-      const methodProvider = usedProvider ?? provider;
-      void logEvent("avatar.saved", { method: "generate", provider: methodProvider, id: row.id });
-      nav("/navatar");
-    } catch (error) {
-      console.error(error);
-      toast({ text: "Save failed", kind: "err" });
-    } finally {
-      setIsSaving(false);
-    }
-  }
-
-  const canSave = Boolean(generatedFile) && !isSaving;
-  const cardTitle = name.trim() || "My Navatar";
+    setErr(humanError(json?.error || "unknown_error"));
+  };
 
   return (
-    <main className="page-pad mx-auto max-w-4xl p-4">
-      <div className="bcRow">
-        <Breadcrumbs
-          items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
-        />
-      </div>
-      <h1 className="pageTitle mt-6 mb-12">Describe &amp; Generate</h1>
-      <BackToMyNavatar />
-      <NavatarTabs context="subpage" />
-      <form
-        onSubmit={onSave}
-        style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
+    <div style={{ maxWidth: 960, margin: "0 auto", padding: "1.25rem" }}>
+      <h1
+        style={{
+          fontSize: "2.25rem",
+          fontWeight: 800,
+          color: "#1f2937",
+          marginBottom: "1rem",
+        }}
       >
-        <div className="row" style={{ marginBottom: "0.75rem", width: "100%", alignItems: "center" }}>
-          <label style={{ marginRight: 8 }}>Provider</label>
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value as Provider)}
-            disabled={isGenerating || isSaving}
+        Describe &amp; Generate
+      </h1>
+
+      <div className="pills" style={{ marginBottom: ".75rem" }}>
+        {PROVIDERS.map((p) => (
+          <button
+            key={p.key}
+            className={`pill ${provider === p.key ? "active" : ""}`}
+            onClick={() => setProvider(p.key)}
           >
-            <option value="deepai" disabled={!haveDeepAI()}>
-              DeepAI
-            </option>
-            <option value="stability" disabled={!haveStability()}>
-              Stability
-            </option>
-          </select>
-          <small style={{ marginLeft: 8 }}>
-            Primary is your selection; it auto-falls back to the other if needed.
-          </small>
-        </div>
+            {p.label}
+          </button>
+        ))}
+      </div>
 
-        <textarea
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your Navatar…"
-          rows={3}
-          style={{ width: "100%", marginBottom: "0.5rem" }}
-          disabled={isGenerating || isSaving}
-        />
-        <div style={{ marginBottom: "0.75rem", width: "100%" }}>
-          <label>Size</label>{" "}
-          <select value={size} onChange={(e) => setSize(Number(e.target.value))} disabled={isGenerating || isSaving}>
-            {SIZE_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
+      {provider === "basic" ? (
+        <>
+          <input
+            className="input"
+            placeholder="Seed / Name (e.g., turtle-hero)"
+            value={seed}
+            onChange={(e) => setSeed(e.target.value)}
+          />
+          <div className="hint">Uses Multiavatar by seed.</div>
+        </>
+      ) : (
+        <>
+          <textarea
+            className="textarea"
+            rows={3}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe your Navatar..."
+          />
+          <div style={{ display: "flex", gap: ".5rem", marginTop: ".5rem" }}>
+            {["512x512", "1024x1024", "2048x2048"].map((s) => (
+              <button
+                key={s}
+                className={`pill ${size === s ? "active" : ""}`}
+                onClick={() => setSize(s)}
+              >
+                {s.split("x")[0]}
+              </button>
             ))}
-          </select>
-        </div>
-
-        <button className="btn-primary" type="button" onClick={onGenerate} disabled={isGenerating || isSaving}>
-          {isGenerating ? "Generating…" : "Generate"}
-        </button>
-
-        <NavatarCard src={previewUrl ?? undefined} title={cardTitle} />
-
-        <input
-          style={{ display: "block", width: "100%" }}
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={isSaving}
-        />
-        <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
-          {isSaving ? "Saving…" : "Save"}
-        </button>
-      </form>
-      {previewUrl && usedProvider && (
-        <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {usedProvider === "deepai" ? "DeepAI" : "Stability AI"}.
-        </p>
+          </div>
+          <div className="hint">Format: WIDTHxHEIGHT (e.g., 1024x1024)</div>
+        </>
       )}
-    </main>
+
+      <div style={{ marginTop: "1rem" }}>
+        <button className="btn-primary" disabled={loading} onClick={onGenerate}>
+          {loading ? "Generating..." : "Generate"}
+        </button>
+      </div>
+
+      <div className="result-card">
+        {image ? (
+          <img alt="Navatar" src={image} />
+        ) : (
+          <div style={{ color: "#94a3b8", fontWeight: 700 }}>My Navatar</div>
+        )}
+      </div>
+
+      {err ? <div className="error">Generation failed: {err}</div> : null}
+    </div>
   );
+}
+
+function humanError(tag: string) {
+  switch (tag) {
+    case "missing_prompt":
+      return "Please enter a prompt.";
+    case "openai_400":
+      return "OpenAI rejected the request (400).";
+    case "openai_401":
+      return "OpenAI key is invalid.";
+    case "openai_quota":
+      return "OpenAI quota is exhausted.";
+    case "hf_quota":
+      return "Hugging Face quota is exhausted.";
+    case "deepai_quota":
+      return "DeepAI credits are exhausted.";
+    case "timeout_504":
+      return "Provider took too long (504). Try a smaller size.";
+    default:
+      return tag.replace(/_/g, " ");
+  }
 }

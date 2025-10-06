@@ -12,6 +12,9 @@
   included_files = []
   external_node_modules = []
 
+[functions."*"]
+  timeout = 26
+
 # SPA routing
 [[redirects]]
   from = "/*"
