@@ -1,17 +1,15 @@
-export type Provider = 'deepai' | 'stability';
+export type Provider = 'openai' | 'huggingface' | 'deepai' | 'basic';
+
+const STORAGE_KEY = 'navatar:provider';
 
 export function getSelectedProvider(): Provider {
-  const v = (localStorage.getItem('navatar:provider') || '').toLowerCase();
-  return v === 'stability' ? 'stability' : 'deepai';
+  const value = (localStorage.getItem(STORAGE_KEY) || '').toLowerCase();
+  if (value === 'huggingface' || value === 'deepai' || value === 'basic') {
+    return value;
+  }
+  return 'openai';
 }
 
-export function setSelectedProvider(p: Provider) {
-  localStorage.setItem('navatar:provider', p);
-}
-
-export function haveDeepAI() {
-  return !!import.meta.env.VITE_DEEPAI_API_KEY;
-}
-export function haveStability() {
-  return !!(import.meta.env.VITE_STABILITY_API_KEY || import.meta.env.STABILITY_API_KEY);
+export function setSelectedProvider(provider: Provider) {
+  localStorage.setItem(STORAGE_KEY, provider);
 }
