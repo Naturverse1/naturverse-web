@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, type ChangeEvent } from "react";
 import { useNavigate } from "react-router-dom";
 import Breadcrumbs from "../../components/Breadcrumbs";
 import NavatarCard from "../../components/NavatarCard";
@@ -7,14 +7,12 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
-import { generateImage } from "@/lib/image/generate";
 import {
-  getSelectedProvider,
-  setSelectedProvider,
+  getProviderPref,
+  setProviderPref,
+  PROVIDER_LABEL,
   type Provider,
-  haveDeepAI,
-  haveStability,
-} from "@/lib/image/providers";
+} from "@/lib/navatar/providerPref";
 import { logEvent } from "@/lib/activity";
 import "../../styles/navatar.css";
 
@@ -23,7 +21,7 @@ const SIZE_OPTIONS = [512, 1024, 2048] as const;
 export default function DescribeAndGeneratePage() {
   const toast = useToast();
   const nav = useNavigate();
-  const [provider, setProvider] = useState<Provider>(getSelectedProvider());
+  const [provider, setProvider] = useState<Provider>("auto");
   const [prompt, setPrompt] = useState("");
   const [size, setSize] = useState<number>(1024);
   const [name, setName] = useState("");
@@ -35,8 +33,14 @@ export default function DescribeAndGeneratePage() {
   const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
 
   useEffect(() => {
-    setSelectedProvider(provider);
-  }, [provider]);
+    setProvider(getProviderPref());
+  }, []);
+
+  const handleProviderChange = (event: ChangeEvent<HTMLSelectElement>) => {
+    const value = event.target.value as Provider;
+    setProvider(value);
+    setProviderPref(value);
+  };
 
   useEffect(() => {
     return () => {
@@ -63,23 +67,38 @@ export default function DescribeAndGeneratePage() {
     setUsedProvider(null);
 
     try {
-      const { url, provider: used } = await generateImage({ prompt: prompt.trim(), size });
-      setUsedProvider(used);
+      const response = await fetch("/.netlify/functions/navatar-generate", {
+        method: "POST",
+        headers: { "content-type": "application/json" },
+        body: JSON.stringify({ prompt: prompt.trim(), provider, size }),
+      });
+      const data: { ok?: boolean; dataUrl?: string; error?: string; provider?: Provider } = await response.json();
+      if (!data?.ok || !data.dataUrl) {
+        toast({
+          text: `Generation failed: ${data?.error ?? "Unknown error"}. Try another provider.`,
+          kind: "err",
+        });
+        return;
+      }
+
+      const resolvedProvider = (data.provider ?? provider) as Provider;
+      setUsedProvider(resolvedProvider);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(data.dataUrl);
         const blob = await response.blob();
         const file = new File([blob], `navatar-${Date.now()}.png`, {
-          type: blob.type || "image/png",
+          type:
+            blob.type || (data.dataUrl.startsWith("data:image/svg+xml") ? "image/svg+xml" : "image/png"),
         });
         const localUrl = URL.createObjectURL(blob);
         setGeneratedFile(file);
         setObjectUrl(localUrl);
         setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
+        void logEvent("avatar.created", { method: "generate", provider: resolvedProvider, size });
       } catch (err) {
         console.error(err);
-        setPreviewUrl(url);
+        setPreviewUrl(data.dataUrl);
         toast({
           text: "Generation succeeded, but we couldn't prepare the image for saving.",
           kind: "err",
@@ -87,7 +106,7 @@ export default function DescribeAndGeneratePage() {
       }
     } catch (e) {
       console.error(e);
-      toast({ text: "Generation failed. Check API keys or try the other provider.", kind: "err" });
+      toast({ text: "Generation failed. Check API keys or try another provider.", kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -135,24 +154,18 @@ export default function DescribeAndGeneratePage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        <div className="row" style={{ marginBottom: "0.75rem", width: "100%", alignItems: "center" }}>
-          <label style={{ marginRight: 8 }}>Provider</label>
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value as Provider)}
-            disabled={isGenerating || isSaving}
-          >
-            <option value="deepai" disabled={!haveDeepAI()}>
-              DeepAI
-            </option>
-            <option value="stability" disabled={!haveStability()}>
-              Stability
-            </option>
+        <label className="field" style={{ width: "100%" }}>
+          <span className="label">Provider</span>
+          <select value={provider} onChange={handleProviderChange} disabled={isGenerating || isSaving}>
+            {(
+              ["auto", "openai", "stability", "deepai", "huggingface", "multiavatar"] as Provider[]
+            ).map((option) => (
+              <option key={option} value={option}>
+                {PROVIDER_LABEL[option]}
+              </option>
+            ))}
           </select>
-          <small style={{ marginLeft: 8 }}>
-            Primary is your selection; it auto-falls back to the other if needed.
-          </small>
-        </div>
+        </label>
 
         <textarea
           value={prompt}
@@ -192,7 +205,7 @@ export default function DescribeAndGeneratePage() {
       </form>
       {previewUrl && usedProvider && (
         <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {usedProvider === "deepai" ? "DeepAI" : "Stability AI"}.
+          Generated with {PROVIDER_LABEL[usedProvider] ?? usedProvider}.
         </p>
       )}
     </main>
