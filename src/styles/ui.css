@@ -1,0 +1,43 @@
+/* Core container & typography */
+.pageRoot { max-width: 880px; margin: 0 auto; padding: 1.25rem; }
+.nv-title { font-size: 1.875rem; font-weight: 800; text-align: center; color: #1f2a44; margin-bottom: 1rem; }
+
+/* Pills */
+.nv-pillRow { display: flex; flex-wrap: wrap; gap: .5rem; justify-content: center; margin: .5rem 0 1rem; }
+.nv-pill {
+  border-radius: 9999px;
+  padding: .375rem .875rem;
+  font-weight: 700;
+  line-height: 1;
+  border: 1px solid transparent;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease;
+}
+.nv-pill--idle { background: #eef2ff; color: #1e40af; }
+.nv-pill--idle:hover { background: #dbe4ff; }
+.nv-pill--active { background: #2563eb; color: white; box-shadow: 0 0 0 3px rgba(37,99,235,.2); }
+
+/* Inputs */
+.nv-form { display: grid; gap: .5rem; }
+.nv-label { font-weight: 700; color: #1f2a44; }
+.nv-input, .nv-textarea {
+  width: 100%; border-radius: .75rem; border: 1px solid #d1d5db; padding: .625rem .875rem; font-size: 1rem; background: #fff;
+}
+.nv-input:focus, .nv-textarea:focus { outline: none; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,.2); }
+.nv-hint { font-size: .8125rem; color: #64748b; }
+
+/* Buttons */
+.nv-btn {
+  border-radius: .75rem; padding: .625rem 1.125rem; font-weight: 800; border: 0; cursor: pointer;
+  transition: transform .06s ease, box-shadow .12s ease, background .12s ease, opacity .12s ease;
+}
+.nv-btn--primary { background: #2563eb; color: #fff; box-shadow: 0 8px 24px rgba(37,99,235,.28); }
+.nv-btn--primary:hover { transform: translateY(-1px); box-shadow: 0 12px 28px rgba(37,99,235,.32); }
+.nv-btn--primary:active { transform: translateY(0); box-shadow: 0 6px 18px rgba(37,99,235,.26); }
+.nv-btn--disabled, .nv-btn--disabled:hover { opacity: .6; cursor: not-allowed; transform: none; }
+
+/* Result card */
+.nv-result { margin-top: 1rem; }
+.nv-card { border-radius: 1rem; background: #f8fafc; border: 1px solid #e5e7eb; padding: .75rem; min-height: 260px; display: grid; place-items: center; }
+.nv-img { display: block; width: 100%; height: auto; border-radius: .75rem; }
+.nv-placeholder { color: #94a3b8; font-weight: 700; }
+.nv-error { margin-top: .75rem; color: #b91c1c; font-weight: 700; word-break: break-word; }
