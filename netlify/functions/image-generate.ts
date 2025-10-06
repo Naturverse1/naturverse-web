@@ -1,138 +1,188 @@
+// netlify/functions/image-generate.ts
 import type { Handler } from "@netlify/functions";
 
-// Netlify (Node 20) has global fetch/Headers/FormData via undici.
-
-const OPENAI_IMAGE_URL = "https://api.openai.com/v1/images/generations";
-
-const CORS_HEADERS = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST,OPTIONS",
-} as const;
-
-type ImagePayload = {
-  prompt?: string;
-  model?: string;
-  size?: string;
-  quality?: string;
-  style?: string;
-  background?: string;
-  n?: number;
-  user?: string;
+// Netlify's hard cap is 26s on Pro; set a bit under
+export const config = {
+  timeout: 25,
 };
+
+type Provider = "openai" | "huggingface" | "stability" | "deepai";
+type Req = {
+  provider: Provider;
+  prompt: string;
+  size?: string | number; // "1024x1024" or 512|1024|2048
+};
+
+function cors() {
+  return {
+    "Access-Control-Allow-Origin": "*",
+    "Access-Control-Allow-Methods": "POST,OPTIONS",
+    "Access-Control-Allow-Headers": "content-type,authorization",
+  };
+}
+
+function ok(body: any, statusCode = 200) {
+  return { statusCode, headers: { "Content-Type": "application/json", ...cors() }, body: JSON.stringify(body) };
+}
+function fail(message: string, statusCode = 400, meta: any = {}) {
+  return ok({ ok: false, error: message, ...meta }, statusCode);
+}
+
+function normSize(size: Req["size"]) {
+  // Accept 512|1024|2048 or "WxH"
+  if (!size) return { width: 1024, height: 1024, sizeStr: "1024x1024" };
+  if (typeof size === "number") return { width: size, height: size, sizeStr: `${size}x${size}` };
+  const m = String(size).match(/^(\d+)\s*x\s*(\d+)$/);
+  if (m) return { width: +m[1], height: +m[2], sizeStr: `${+m[1]}x${+m[2]}` };
+  const n = Number(size);
+  if (Number.isFinite(n)) return { width: n, height: n, sizeStr: `${n}x${n}` };
+  return { width: 1024, height: 1024, sizeStr: "1024x1024" };
+}
 
 export const handler: Handler = async (event) => {
-  if (event.httpMethod === "OPTIONS") {
-    return { statusCode: 204, headers: { ...CORS_HEADERS } };
-  }
+  if (event.httpMethod === "OPTIONS") return ok("");
+  if (event.httpMethod !== "POST") return fail("Method not allowed", 405);
 
-  if (event.httpMethod !== "POST") {
-    return json(405, { error: "method_not_allowed" });
-  }
-
-  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_BEARER;
-  if (!apiKey) {
-    return json(500, { error: "missing_openai_key" });
-  }
-
-  let payload: ImagePayload;
+  let body: Req | undefined;
   try {
-    payload = JSON.parse(event.body || "{}") as ImagePayload;
-  } catch (error) {
-    return json(400, { error: "invalid_json" });
+    body = JSON.parse(event.body || "{}");
+  } catch {
+    return fail("bad_json");
   }
 
-  const prompt = typeof payload.prompt === "string" ? payload.prompt.trim() : "";
-  if (!prompt) {
-    return json(400, { error: "prompt_required" });
-  }
+  const provider = body?.provider;
+  const prompt = (body?.prompt || "").trim();
+  if (!provider || !prompt) return fail("missing_fields", 400, { need: { provider: true, prompt: true } });
 
-  const model = normaliseString(payload.model) || "gpt-image-1";
-  const size = normaliseString(payload.size);
-  const quality = normaliseString(payload.quality);
-  const style = normaliseString(payload.style);
-  const background = normaliseString(payload.background);
-  const user = normaliseString(payload.user);
-  const n = normaliseCount(payload.n);
-
-  const requestBody: Record<string, unknown> = {
-    model,
-    prompt,
-    response_format: "b64_json",
-  };
-
-  if (size) requestBody.size = size;
-  if (quality) requestBody.quality = quality;
-  if (style) requestBody.style = style;
-  if (background) requestBody.background = background;
-  if (user) requestBody.user = user;
-  if (n) requestBody.n = n;
-
-  const requestHeaders: Record<string, string> = {
-    "content-type": "application/json",
-    authorization: `Bearer ${apiKey}`,
-  };
+  const { width, height, sizeStr } = normSize(body?.size);
 
   try {
-    const response = await fetch(OPENAI_IMAGE_URL, {
-      method: "POST",
-      headers: requestHeaders,
-      body: JSON.stringify(requestBody),
-    });
+    switch (provider) {
+      case "openai": {
+        const key = process.env.OPENAI_API_KEY || "";
+        if (!key) return fail("openai_key_missing", 500);
+        const project = process.env.OPENAI_PROJECT_ID || undefined;
 
-    if (!response.ok) {
-      const detail = await response.text().catch(() => "");
-      return json(response.status, { error: "openai_error", detail: detail.slice(0, 10_000) });
+        const res = await fetch("https://api.openai.com/v1/images/generations", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "application/json",
+            ...(project ? { "OpenAI-Project": project } : {}),
+          },
+          body: JSON.stringify({
+            model: "gpt-image-1",
+            prompt,
+            size: sizeStr,
+            // quality: "standard",
+            // style: "vivid",
+          }),
+        });
+
+        const raw = await res.text();
+        if (!res.ok) return fail("openai_error", res.status, { raw });
+
+        // OpenAI returns {data:[{b64_json: "..."}]}
+        const data = JSON.parse(raw);
+        const b64 = data?.data?.[0]?.b64_json;
+        if (!b64) return fail("openai_empty", 502, { raw });
+
+        return ok({ ok: true, provider, dataUrl: `data:image/png;base64,${b64}` });
+      }
+
+      case "huggingface": {
+        const key = process.env.HF_API_TOKEN || process.env.HUGGINGFACE_API_KEY || "";
+        if (!key) return fail("huggingface_key_missing", 500);
+        const model = process.env.HF_MODEL_ID || "black-forest-labs/FLUX.1-dev";
+
+        const res = await fetch(`https://api-inference.huggingface.co/models/${model}`, {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "application/json",
+            Accept: "image/png",
+          },
+          body: JSON.stringify({
+            inputs: prompt,
+            parameters: {
+              width,
+              height,
+              guidance_scale: 5,
+              num_inference_steps: 28,
+            },
+          }),
+        });
+
+        // HF returns image bytes when ok; text (error json or HTML) when not
+        const ct = res.headers.get("content-type") || "";
+        if (!res.ok || !ct.startsWith("image/")) {
+          const raw = await res.text();
+          return fail("huggingface_error", res.status, { raw });
+        }
+        const buf = Buffer.from(await res.arrayBuffer());
+        return ok({ ok: true, provider, dataUrl: `data:image/png;base64,${buf.toString("base64")}` });
+      }
+
+      case "stability": {
+        const key = process.env.STABILITY_API_KEY || process.env.VITE_STABILITY_API_KEY || "";
+        if (!key) return fail("stability_key_missing", 500);
+
+        const res = await fetch("https://api.stability.ai/v2beta/stable-image/generate/core", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${key}`,
+            "Content-Type": "application/json",
+            Accept: "image/png",
+          },
+          body: JSON.stringify({
+            prompt,
+            output_format: "png",
+            width,
+            height,
+          }),
+        });
+
+        const ct = res.headers.get("content-type") || "";
+        if (!res.ok || !ct.startsWith("image/")) {
+          const raw = await res.text();
+          return fail("stability_error", res.status, { raw });
+        }
+
+        const buf = Buffer.from(await res.arrayBuffer());
+        return ok({ ok: true, provider, dataUrl: `data:image/png;base64,${buf.toString("base64")}` });
+      }
+
+      case "deepai": {
+        const key = process.env.DEEPAI_API_KEY || process.env.VITE_DEEPAI_API_KEY || "";
+        if (!key) return fail("deepai_key_missing", 500);
+
+        // DeepAI needs form-data
+        const fd = new FormData();
+        fd.set("text", prompt);
+        // optional: grid_size, width/height not supported for all models
+
+        const res = await fetch("https://api.deepai.org/api/text2img", {
+          method: "POST",
+          headers: { "api-key": key },
+          body: fd as any,
+        });
+
+        const raw = await res.text();
+        if (!res.ok) return fail("deepai_error", res.status, { raw });
+
+        const data = JSON.parse(raw);
+        // DeepAI returns a URL; fetch it and convert to dataURL for uniformity
+        const imgUrl = data?.output_url;
+        if (!imgUrl) return fail("deepai_empty", 502, { raw });
+
+        const imgRes = await fetch(imgUrl);
+        const buf = Buffer.from(await imgRes.arrayBuffer());
+        return ok({ ok: true, provider, dataUrl: `data:image/png;base64,${buf.toString("base64")}` });
+      }
     }
 
-    const data = await response.json().catch(() => null);
-    if (!data || !Array.isArray(data?.data)) {
-      return json(502, { error: "invalid_openai_response" });
-    }
-
-    const images = data.data
-      .map((entry: any) => extractImage(entry))
-      .filter((url: string | null): url is string => typeof url === "string" && url.length > 0);
-
-    if (images.length === 0) {
-      return json(502, { error: "no_images_returned" });
-    }
-
-    return json(200, { images });
-  } catch (error: any) {
-    return json(500, { error: "unexpected_error", detail: error?.message || String(error) });
+    return fail("unknown_provider", 400, { provider });
+  } catch (err: any) {
+    return fail("server_exception", 500, { message: String(err?.message || err) });
   }
 };
-
-function json(statusCode: number, payload: unknown) {
-  return {
-    statusCode,
-    headers: {
-      ...CORS_HEADERS,
-      "Content-Type": "application/json",
-      "Cache-Control": "no-store",
-    },
-    body: JSON.stringify(payload),
-  };
-}
-
-function normaliseString(value: unknown) {
-  return typeof value === "string" && value.trim().length > 0 ? value.trim() : undefined;
-}
-
-function normaliseCount(value: unknown) {
-  if (typeof value !== "number" || !Number.isFinite(value)) return undefined;
-  const clamped = Math.min(Math.max(Math.floor(value), 1), 4);
-  return clamped;
-}
-
-function extractImage(entry: any): string | null {
-  if (!entry || typeof entry !== "object") return null;
-  if (typeof entry.b64_json === "string" && entry.b64_json) {
-    return `data:image/png;base64,${entry.b64_json}`;
-  }
-  if (typeof entry.url === "string" && entry.url) {
-    return entry.url;
-  }
-  return null;
-}

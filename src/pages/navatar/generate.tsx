@@ -7,18 +7,41 @@ import NavatarTabs from "../../components/NavatarTabs";
 import { uploadNavatar } from "../../lib/navatar";
 import { setActiveNavatarId } from "../../lib/localNavatar";
 import { useToast } from "../../components/Toast";
-import { generateImage } from "@/lib/image/generate";
-import {
-  getSelectedProvider,
-  setSelectedProvider,
-  type Provider,
-  haveDeepAI,
-  haveStability,
-} from "@/lib/image/providers";
+import { jsonPost } from "@/lib/jsonPost";
+import { getSelectedProvider, listProviders, setSelectedProvider, type Provider } from "@/lib/image/providers";
 import { logEvent } from "@/lib/activity";
 import "../../styles/navatar.css";
 
 const SIZE_OPTIONS = [512, 1024, 2048] as const;
+const PROVIDER_LABELS: Record<Provider, string> = {
+  openai: "OpenAI",
+  huggingface: "Hugging Face",
+  stability: "Stability AI",
+  deepai: "DeepAI",
+};
+
+type GenerateResponse = {
+  ok: boolean;
+  dataUrl?: string;
+  error?: string;
+  raw?: string;
+};
+
+async function doGenerate(provider: Provider, prompt: string, size: number) {
+  const payload = { provider, prompt, size };
+  const res = await jsonPost<GenerateResponse>("/.netlify/functions/image-generate", payload);
+
+  if (!res.ok || !res.dataUrl) {
+    const detail = res.error || "unknown_error";
+    const err = new Error(`Generation failed: ${detail}`);
+    if (res.raw) {
+      (err as Error & { raw?: string }).raw = res.raw;
+    }
+    throw err;
+  }
+
+  return res.dataUrl;
+}
 
 export default function DescribeAndGeneratePage() {
   const toast = useToast();
@@ -33,6 +56,7 @@ export default function DescribeAndGeneratePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
+  const providers = listProviders();
 
   useEffect(() => {
     setSelectedProvider(provider);
@@ -63,11 +87,12 @@ export default function DescribeAndGeneratePage() {
     setUsedProvider(null);
 
     try {
-      const { url, provider: used } = await generateImage({ prompt: prompt.trim(), size });
-      setUsedProvider(used);
+      const dataUrl = await doGenerate(provider, prompt.trim(), size);
+      setUsedProvider(provider);
+      setPreviewUrl(dataUrl);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(dataUrl);
         const blob = await response.blob();
         const file = new File([blob], `navatar-${Date.now()}.png`, {
           type: blob.type || "image/png",
@@ -76,10 +101,9 @@ export default function DescribeAndGeneratePage() {
         setGeneratedFile(file);
         setObjectUrl(localUrl);
         setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
+        void logEvent("avatar.created", { method: "generate", provider, size });
       } catch (err) {
         console.error(err);
-        setPreviewUrl(url);
         toast({
           text: "Generation succeeded, but we couldn't prepare the image for saving.",
           kind: "err",
@@ -87,7 +111,11 @@ export default function DescribeAndGeneratePage() {
       }
     } catch (e) {
       console.error(e);
-      toast({ text: "Generation failed. Check API keys or try the other provider.", kind: "err" });
+      if (e && typeof e === "object" && "raw" in e) {
+        console.error((e as { raw?: string }).raw);
+      }
+      const message = e instanceof Error ? e.message : "Generation failed.";
+      toast({ text: message, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -142,16 +170,12 @@ export default function DescribeAndGeneratePage() {
             onChange={(e) => setProvider(e.target.value as Provider)}
             disabled={isGenerating || isSaving}
           >
-            <option value="deepai" disabled={!haveDeepAI()}>
-              DeepAI
-            </option>
-            <option value="stability" disabled={!haveStability()}>
-              Stability
-            </option>
+            {providers.map((option) => (
+              <option key={option} value={option}>
+                {PROVIDER_LABELS[option]}
+              </option>
+            ))}
           </select>
-          <small style={{ marginLeft: 8 }}>
-            Primary is your selection; it auto-falls back to the other if needed.
-          </small>
         </div>
 
         <textarea
@@ -192,7 +216,7 @@ export default function DescribeAndGeneratePage() {
       </form>
       {previewUrl && usedProvider && (
         <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {usedProvider === "deepai" ? "DeepAI" : "Stability AI"}.
+          Generated with {PROVIDER_LABELS[usedProvider]}.
         </p>
       )}
     </main>
