@@ -12,8 +12,8 @@ import {
   getSelectedProvider,
   setSelectedProvider,
   type Provider,
-  haveDeepAI,
-  haveStability,
+  listProviders,
+  providerLabel,
 } from "@/lib/image/providers";
 import { logEvent } from "@/lib/activity";
 import "../../styles/navatar.css";
@@ -33,6 +33,7 @@ export default function DescribeAndGeneratePage() {
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [objectUrl, setObjectUrl] = useState<string | null>(null);
   const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
+  const providerOptions = listProviders();
 
   useEffect(() => {
     setSelectedProvider(provider);
@@ -63,11 +64,16 @@ export default function DescribeAndGeneratePage() {
     setUsedProvider(null);
 
     try {
-      const { url, provider: used } = await generateImage({ prompt: prompt.trim(), size });
+      const { imageUrl, provider: used } = await generateImage({
+        provider,
+        prompt: prompt.trim(),
+        size,
+      });
       setUsedProvider(used);
+      setPreviewUrl(imageUrl);
 
       try {
-        const response = await fetch(url);
+        const response = await fetch(imageUrl);
         const blob = await response.blob();
         const file = new File([blob], `navatar-${Date.now()}.png`, {
           type: blob.type || "image/png",
@@ -79,7 +85,7 @@ export default function DescribeAndGeneratePage() {
         void logEvent("avatar.created", { method: "generate", provider: used, size });
       } catch (err) {
         console.error(err);
-        setPreviewUrl(url);
+        setPreviewUrl(imageUrl);
         toast({
           text: "Generation succeeded, but we couldn't prepare the image for saving.",
           kind: "err",
@@ -87,7 +93,10 @@ export default function DescribeAndGeneratePage() {
       }
     } catch (e) {
       console.error(e);
-      toast({ text: "Generation failed. Check API keys or try the other provider.", kind: "err" });
+      const message = e instanceof Error ? e.message : "Generation failed.";
+      const detail = typeof (e as any)?.details === "string" ? (e as any).details : "";
+      const extra = detail ? ` — ${detail.slice(0, 160)}` : "";
+      toast({ text: `${message || "Generation failed."}${extra}`, kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -135,23 +144,18 @@ export default function DescribeAndGeneratePage() {
         onSubmit={onSave}
         style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
       >
-        <div className="row" style={{ marginBottom: "0.75rem", width: "100%", alignItems: "center" }}>
-          <label style={{ marginRight: 8 }}>Provider</label>
-          <select
-            value={provider}
-            onChange={(e) => setProvider(e.target.value as Provider)}
-            disabled={isGenerating || isSaving}
-          >
-            <option value="deepai" disabled={!haveDeepAI()}>
-              DeepAI
-            </option>
-            <option value="stability" disabled={!haveStability()}>
-              Stability
-            </option>
-          </select>
-          <small style={{ marginLeft: 8 }}>
-            Primary is your selection; it auto-falls back to the other if needed.
-          </small>
+        <div className="navatar-generator-switch" role="tablist" aria-label="Image provider">
+          {providerOptions.map((option) => (
+            <button
+              key={option.id}
+              type="button"
+              className={`pill${provider === option.id ? " pill--active" : ""}`}
+              onClick={() => setProvider(option.id)}
+              disabled={isGenerating || isSaving}
+            >
+              {option.label}
+            </button>
+          ))}
         </div>
 
         <textarea
@@ -192,7 +196,7 @@ export default function DescribeAndGeneratePage() {
       </form>
       {previewUrl && usedProvider && (
         <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {usedProvider === "deepai" ? "DeepAI" : "Stability AI"}.
+          Generated with {providerLabel(usedProvider)}.
         </p>
       )}
     </main>
