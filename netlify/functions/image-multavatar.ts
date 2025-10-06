@@ -3,8 +3,8 @@ import crypto from "node:crypto";
 
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST,OPTIONS",
+  "Access-Control-Allow-Headers": "Content-Type",
+  "Access-Control-Allow-Methods": "POST, OPTIONS",
 } as const;
 
 interface RequestBody {
@@ -12,59 +12,60 @@ interface RequestBody {
   size?: unknown;
 }
 
+const PROVIDER = "multavatar" as const;
+const TIMEOUT_MS = 20_000;
+
+type NormalisedSize = "512" | "1024" | "2048";
+
 export const handler: Handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
-    return respond(204);
+    return respond(200, {});
   }
 
   if (event.httpMethod !== "POST") {
-    return respond(405, { error: "method_not_allowed" });
+    return respondError(405, "method_not_allowed");
   }
 
   const apiKey = process.env.MULTAVATAR_API_KEY || process.env.MV_API_KEY || "";
   if (!apiKey) {
-    return respond(500, { error: "missing_multavatar_key" });
+    return respondError(500, "missing_api_key", "MULTAVATAR_API_KEY");
   }
 
   let payload: RequestBody;
   try {
     payload = JSON.parse(event.body || "{}") as RequestBody;
-  } catch (error) {
-    return respond(400, { error: "invalid_json" });
+  } catch {
+    return respondError(400, "invalid_json");
   }
 
   const prompt = normalisePrompt(payload.prompt) || "navatar";
-  void normaliseSize(payload.size); // Multavatar does not use size but we validate input for consistency.
+  void normaliseSize(payload.size);
 
   try {
     const seed = toSeed(prompt);
     const url = new URL(`https://api.multiavatar.com/${encodeURIComponent(seed)}.svg`);
     url.searchParams.set("apikey", apiKey);
 
-    const response = await fetch(url);
+    const response = await fetchWithTimeout(url.toString(), { method: "GET" });
     const svg = await response.text();
 
     if (!response.ok) {
-      return respond(response.status, {
-        error: "multavatar_error",
-        details: trimDetails(svg),
-      });
+      return respondError(response.status, "upstream_error", svg.slice(0, 160));
     }
 
     const base64 = Buffer.from(svg, "utf-8").toString("base64");
     return respond(200, {
       imageUrl: `data:image/svg+xml;base64,${base64}`,
-      provider: "multavatar",
     });
   } catch (error: any) {
-    return respond(500, {
-      error: "multavatar_unexpected",
-      details: trimDetails(error?.message || String(error)),
-    });
+    if (isAbortError(error)) {
+      return respondError(504, "timeout");
+    }
+    return respondError(502, "network_error", error?.message);
   }
 };
 
-function respond(statusCode: number, payload?: Record<string, unknown>) {
+function respond(statusCode: number, payload: Record<string, unknown>) {
   return {
     statusCode,
     headers: {
@@ -72,7 +73,23 @@ function respond(statusCode: number, payload?: Record<string, unknown>) {
       "Content-Type": "application/json",
       "Cache-Control": "no-store",
     },
-    body: payload ? JSON.stringify(payload) : "",
+    body: JSON.stringify({ provider: PROVIDER, ...payload }),
+  };
+}
+
+function respondError(statusCode: number, error: string, code?: unknown) {
+  const body: Record<string, unknown> = { provider: PROVIDER, error };
+  if (typeof code === "string" || typeof code === "number") {
+    body.code = code;
+  }
+  return {
+    statusCode,
+    headers: {
+      ...CORS_HEADERS,
+      "Content-Type": "application/json",
+      "Cache-Control": "no-store",
+    },
+    body: JSON.stringify(body),
   };
 }
 
@@ -81,34 +98,44 @@ function normalisePrompt(value: unknown) {
   return value.trim();
 }
 
-function normaliseSize(value: unknown) {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    return clampSize(Math.round(value));
-  }
+function normaliseSize(value: unknown): NormalisedSize | undefined {
+  const allowed: NormalisedSize[] = ["512", "1024", "2048"];
   if (typeof value === "string") {
-    const numeric = Number.parseInt(value, 10);
+    const trimmed = value.trim();
+    if ((allowed as readonly string[]).includes(trimmed)) {
+      return trimmed as NormalisedSize;
+    }
+    const numeric = Number.parseInt(trimmed, 10);
     if (Number.isFinite(numeric)) {
       return clampSize(numeric);
     }
   }
+  if (typeof value === "number" && Number.isFinite(value)) {
+    return clampSize(Math.round(value));
+  }
   return undefined;
 }
 
-function clampSize(value: number) {
-  const allowed = [256, 512, 768, 896, 1024];
-  let best = allowed[0];
-  for (const option of allowed) {
-    if (value >= option) {
-      best = option;
-    }
-  }
-  return best;
+function clampSize(value: number): NormalisedSize {
+  if (value <= 512) return "512";
+  if (value <= 1024) return "1024";
+  return "2048";
 }
 
 function toSeed(prompt: string) {
   return crypto.createHash("sha256").update(prompt).digest("hex").slice(0, 16);
 }
 
-function trimDetails(details: string) {
-  return details ? details.slice(0, 4000) : "";
+async function fetchWithTimeout(input: RequestInfo, init: RequestInit) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), TIMEOUT_MS);
+  try {
+    return await fetch(input, { ...init, signal: controller.signal });
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
+function isAbortError(error: unknown) {
+  return error instanceof Error && error.name === "AbortError";
 }

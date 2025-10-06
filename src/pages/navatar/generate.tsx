@@ -91,12 +91,10 @@ export default function DescribeAndGeneratePage() {
           kind: "err",
         });
       }
-    } catch (e) {
-      console.error(e);
-      const message = e instanceof Error ? e.message : "Generation failed.";
-      const detail = typeof (e as any)?.details === "string" ? (e as any).details : "";
-      const extra = detail ? ` — ${detail.slice(0, 160)}` : "";
-      toast({ text: `${message || "Generation failed."}${extra}`, kind: "err" });
+    } catch (error) {
+      console.error(error);
+      const message = error instanceof Error ? error.message : "Generation failed.";
+      toast({ text: message || "Generation failed.", kind: "err" });
     } finally {
       setIsGenerating(false);
     }
@@ -127,7 +125,7 @@ export default function DescribeAndGeneratePage() {
     }
   }
 
-  const canSave = Boolean(generatedFile) && !isSaving;
+  const canSave = Boolean(generatedFile) && !isSaving && !isGenerating;
   const cardTitle = name.trim() || "My Navatar";
 
   return (

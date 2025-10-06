@@ -11,6 +11,7 @@
   directory = "netlify/functions"
   included_files = []
   external_node_modules = []
+  timeout = 26
 
 # SPA routing
 [[redirects]]

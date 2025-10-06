@@ -5,22 +5,6 @@ import { analyticsCfg } from './featureFlags';
 
 type RenderFn = (children: ReactNode) => void;
 
-const schedule = (callback: () => void) => {
-  if (typeof window === 'undefined') {
-    return;
-  }
-
-  const idle = (window as typeof window & { requestIdleCallback?: (cb: () => void) => void })
-    .requestIdleCallback;
-
-  if (typeof idle === 'function') {
-    idle(callback);
-    return;
-  }
-
-  window.setTimeout(callback, 50);
-};
-
 export const initPostHogIfEnabled = (render: RenderFn, app: ReactNode) => {
   const apiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
   const apiHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
@@ -29,35 +13,59 @@ export const initPostHogIfEnabled = (render: RenderFn, app: ReactNode) => {
     return;
   }
 
-  const mount = async () => {
-    try {
-      const moduleName = 'posthog-js/react';
-      const module = (await import(/* @vite-ignore */ moduleName)) as {
-        PostHogProvider?: ComponentType<{ apiKey: string; options: { api_host: string } }>;
-      };
-
-      const PostHogProvider = module.PostHogProvider;
-
-      if (!PostHogProvider) {
-        return;
-      }
-
-      render(
-        createElement(
-          PostHogProvider,
-          { apiKey, options: { api_host: apiHost } },
-          app,
-        ),
-      );
-    } catch (error) {
-      if (import.meta.env.DEV) {
-        console.warn('PostHog analytics unavailable. Continuing without analytics.', error);
-      }
+  const schedule = (callback: () => void) => {
+    if (typeof window === 'undefined') {
+      return;
     }
+
+    const idle = (window as typeof window & { requestIdleCallback?: (cb: () => void) => void })
+      .requestIdleCallback;
+
+    const run = () => {
+      if (typeof queueMicrotask === 'function') {
+        queueMicrotask(callback);
+      } else {
+        Promise.resolve()
+          .then(callback)
+          .catch(() => {
+            /* noop */
+          });
+      }
+    };
+
+    if (typeof idle === 'function') {
+      idle(run);
+      return;
+    }
+
+    window.setTimeout(run, 50);
   };
 
   schedule(() => {
-    void mount();
+    const moduleName = 'posthog-js/react';
+    import(/* @vite-ignore */ moduleName)
+      .then((module) => {
+        const PostHogProvider = module?.PostHogProvider as
+          | ComponentType<{ apiKey: string; options: { api_host: string } }>
+          | undefined;
+
+        if (!PostHogProvider) {
+          return;
+        }
+
+        render(
+          createElement(
+            PostHogProvider,
+            { apiKey, options: { api_host: apiHost } },
+            app,
+          ),
+        );
+      })
+      .catch((error) => {
+        if (import.meta.env.DEV) {
+          console.warn('PostHog analytics unavailable. Continuing without analytics.', error);
+        }
+      });
   });
 };
 
