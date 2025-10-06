@@ -1,5 +1,65 @@
+import { createElement } from 'react';
+import type { ComponentType, ReactNode } from 'react';
 import { supabase } from './supabaseClient';
 import { analyticsCfg } from './featureFlags';
+
+type RenderFn = (children: ReactNode) => void;
+
+const schedule = (callback: () => void) => {
+  if (typeof window === 'undefined') {
+    return;
+  }
+
+  const idle = (window as typeof window & { requestIdleCallback?: (cb: () => void) => void })
+    .requestIdleCallback;
+
+  if (typeof idle === 'function') {
+    idle(callback);
+    return;
+  }
+
+  window.setTimeout(callback, 50);
+};
+
+export const initPostHogIfEnabled = (render: RenderFn, app: ReactNode) => {
+  const apiKey = import.meta.env.VITE_PUBLIC_POSTHOG_KEY;
+  const apiHost = import.meta.env.VITE_PUBLIC_POSTHOG_HOST;
+
+  if (!apiKey || !apiHost) {
+    return;
+  }
+
+  const mount = async () => {
+    try {
+      const moduleName = 'posthog-js/react';
+      const module = (await import(/* @vite-ignore */ moduleName)) as {
+        PostHogProvider?: ComponentType<{ apiKey: string; options: { api_host: string } }>;
+      };
+
+      const PostHogProvider = module.PostHogProvider;
+
+      if (!PostHogProvider) {
+        return;
+      }
+
+      render(
+        createElement(
+          PostHogProvider,
+          { apiKey, options: { api_host: apiHost } },
+          app,
+        ),
+      );
+    } catch (error) {
+      if (import.meta.env.DEV) {
+        console.warn('PostHog analytics unavailable. Continuing without analytics.', error);
+      }
+    }
+  };
+
+  schedule(() => {
+    void mount();
+  });
+};
 
 type AnalyticsEvent = {
   event: string;
@@ -33,4 +93,3 @@ export function track(ev: string, props?: Record<string, any>) {
     }
   }
 }
-

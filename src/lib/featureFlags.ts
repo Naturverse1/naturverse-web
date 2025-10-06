@@ -4,7 +4,7 @@ export const flags = {
 };
 
 export const analyticsCfg = {
-  posthogKey: import.meta.env.VITE_POSTHOG_KEY || '',
-  posthogHost: import.meta.env.VITE_POSTHOG_HOST || 'https://app.posthog.com',
+  posthogKey: import.meta.env.VITE_PUBLIC_POSTHOG_KEY || '',
+  posthogHost: import.meta.env.VITE_PUBLIC_POSTHOG_HOST || '',
   sentryDsn: import.meta.env.VITE_SENTRY_DSN || '',
 };
