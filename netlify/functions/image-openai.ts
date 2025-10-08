@@ -53,7 +53,6 @@ export const handler: Handler = async (event) => {
   const requestPayload: Record<string, unknown> = {
     model,
     prompt,
-    response_format: "b64_json",
     size: `${size}x${size}`,
   };
 
@@ -62,12 +61,18 @@ export const handler: Handler = async (event) => {
   if (user) requestPayload.user = user;
 
   try {
+    const headers: Record<string, string> = {
+      "content-type": "application/json",
+      authorization: `Bearer ${apiKey}`,
+    };
+    const projectId = process.env.OPENAI_PROJECT_ID?.trim();
+    if (projectId) {
+      headers["OpenAI-Project"] = projectId;
+    }
+
     const response = await fetch(OPENAI_URL, {
       method: "POST",
-      headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${apiKey}`,
-      },
+      headers,
       body: JSON.stringify(requestPayload),
     });
 
@@ -88,8 +93,11 @@ export const handler: Handler = async (event) => {
     for (const entry of entries) {
       if (entry && typeof entry === "object") {
         if (typeof entry.b64_json === "string" && entry.b64_json.length > 0) {
+          const imageBase64 = entry.b64_json;
+          const imageUrl = `data:image/png;base64,${imageBase64}`;
           return respond(200, {
-            imageUrl: `data:image/png;base64,${entry.b64_json}`,
+            imageBase64,
+            imageUrl,
             provider: "openai",
           });
         }

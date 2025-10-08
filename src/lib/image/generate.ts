@@ -8,8 +8,9 @@ type GenerateRequest = {
 };
 
 type ImageResponse = {
-  imageUrl: string;
-  provider: Provider;
+  imageUrl?: string;
+  imageBase64?: string;
+  provider?: Provider;
 };
 
 export async function generateImage({ provider, prompt, size }: GenerateRequest): Promise<ImageResponse> {
@@ -25,12 +26,24 @@ export async function generateImage({ provider, prompt, size }: GenerateRequest)
     body: JSON.stringify(payload),
   });
 
-  if (!result || typeof result.imageUrl !== "string" || result.imageUrl.length === 0) {
+  if (!result) {
+    throw new Error("invalid_image_response");
+  }
+
+  const base64 = typeof result.imageBase64 === "string" && result.imageBase64.length > 0 ? result.imageBase64 : undefined;
+  const imageUrl =
+    typeof result.imageUrl === "string" && result.imageUrl.length > 0
+      ? result.imageUrl
+      : base64
+      ? `data:image/png;base64,${base64}`
+      : undefined;
+
+  if (!imageUrl) {
     throw new Error("invalid_image_response");
   }
 
   return {
-    imageUrl: result.imageUrl,
-    provider: result.provider ?? provider,
+    imageUrl,
+    provider: (result.provider as Provider | undefined) ?? provider,
   };
 }
