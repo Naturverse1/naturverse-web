@@ -12,29 +12,27 @@
   included_files = ["netlify/functions/**"]
   external_node_modules = []
 
-  [functions."*"]
-    timeout = 26
+[functions."*"]
+  timeout = 26
 
-# SPA routing
 [[redirects]]
   from = "/*"
   to = "/index.html"
   status = 200
 
-# Security (CSP kept simple to avoid blocking)
 [[headers]]
   for = "/*"
   [headers.values]
-    X-Frame-Options = "DENY"
-    X-Content-Type-Options = "nosniff"
-    Referrer-Policy = "strict-origin-when-cross-origin"
+  X-Frame-Options = "DENY"
+  X-Content-Type-Options = "nosniff"
+  Referrer-Policy = "strict-origin-when-cross-origin"
 
 [[headers]]
-  for = "/.netlify/functions/ai"
+  for = "/.netlify/functions/*"
   [headers.values]
-    Access-Control-Allow-Origin = "*"
+  Access-Control-Allow-Origin = "*"
 
 [[headers]]
   for = "/*"
   [headers.values]
-    Cache-Control = "public, max-age=1800"
+  Cache-Control = "public, max-age=0, must-revalidate"
