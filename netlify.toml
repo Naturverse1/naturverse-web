@@ -11,6 +11,7 @@
   directory = "netlify/functions"
   included_files = ["netlify/functions/**"]
   external_node_modules = []
+  timeout = 26
 
   [functions."*"]
     timeout = 26
