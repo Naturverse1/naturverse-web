@@ -9,8 +9,11 @@
 [functions]
   node_bundler = "esbuild"
   directory = "netlify/functions"
-  included_files = []
+  included_files = ["netlify/functions/**"]
   external_node_modules = []
+
+  [functions."*"]
+    timeout = 26
 
 # SPA routing
 [[redirects]]
