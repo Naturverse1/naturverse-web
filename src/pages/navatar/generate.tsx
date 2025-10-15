@@ -70,27 +70,17 @@ export default function DescribeAndGeneratePage() {
         size,
       });
       setUsedProvider(used);
-      setPreviewUrl(imageUrl);
 
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const file = new File([blob], `navatar-${Date.now()}.png`, {
-          type: blob.type || "image/png",
-        });
-        const localUrl = URL.createObjectURL(blob);
-        setGeneratedFile(file);
-        setObjectUrl(localUrl);
-        setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
-      } catch (err) {
-        console.error(err);
-        setPreviewUrl(imageUrl);
-        toast({
-          text: "Generation succeeded, but we couldn't prepare the image for saving.",
-          kind: "err",
-        });
-      }
+      const response = await fetch(imageUrl);
+      const blob = await response.blob();
+      const file = new File([blob], `navatar-${Date.now()}.png`, {
+        type: blob.type || "image/png",
+      });
+      const localUrl = URL.createObjectURL(file);
+      setGeneratedFile(file);
+      setObjectUrl(localUrl);
+      setPreviewUrl(localUrl);
+      void logEvent("avatar.created", { method: "generate", provider: used, size });
     } catch (e) {
       console.error(e);
       const message = e instanceof Error ? e.message : "Generation failed.";
