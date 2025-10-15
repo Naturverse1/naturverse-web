@@ -3,19 +3,16 @@ import type { Handler } from "@netlify/functions";
 const CORS_HEADERS = {
   "Access-Control-Allow-Origin": "*",
   "Access-Control-Allow-Headers": "Content-Type, Authorization",
-  "Access-Control-Allow-Methods": "POST,OPTIONS",
+  "Access-Control-Allow-Methods": "POST, OPTIONS"
 } as const;
 
 const OPENAI_URL = "https://api.openai.com/v1/images/generations";
 const DEFAULT_MODEL = "gpt-image-1";
 
 interface RequestBody {
-  prompt?: unknown;
-  size?: unknown;
-  model?: unknown;
-  quality?: unknown;
-  style?: unknown;
-  user?: unknown;
+  prompt?: string;
+  size?: number;
+  model?: string;
 }
 
 export const handler: Handler = async (event) => {
@@ -27,144 +24,109 @@ export const handler: Handler = async (event) => {
     return respond(405, { error: "method_not_allowed" });
   }
 
-  const apiKey = process.env.OPENAI_API_KEY || process.env.OPENAI_API_KEY_BEARER || "";
+  const apiKey = process.env.OPENAI_API_KEY;
   if (!apiKey) {
-    return respond(500, { error: "missing_openai_key" });
+    return respond(500, { error: "missing_openai_api_key" });
   }
 
   let payload: RequestBody;
   try {
-    payload = JSON.parse(event.body || "{}") as RequestBody;
-  } catch (error) {
+    payload = JSON.parse(event.body || "{}");
+  } catch {
     return respond(400, { error: "invalid_json" });
   }
 
-  const prompt = normalisePrompt(payload.prompt);
+  const prompt = normaliseString(payload.prompt);
   if (!prompt) {
-    return respond(400, { error: "prompt_required" });
+    return respond(400, { error: "missing_prompt" });
   }
 
-  const size = normaliseSize(payload.size) || 1024;
+  const size = normaliseSize(payload.size);
   const model = normaliseString(payload.model) || DEFAULT_MODEL;
-  const quality = normaliseString(payload.quality);
-  const style = normaliseString(payload.style);
-  const user = normaliseString(payload.user);
 
-  const requestPayload: Record<string, unknown> = {
+  const requestPayload = {
     model,
     prompt,
-    response_format: "b64_json",
     size: `${size}x${size}`,
+    response_format: "b64_json"
   };
-
-  if (quality) requestPayload.quality = quality;
-  if (style) requestPayload.style = style;
-  if (user) requestPayload.user = user;
 
   try {
     const response = await fetch(OPENAI_URL, {
       method: "POST",
       headers: {
-        "content-type": "application/json",
-        authorization: `Bearer ${apiKey}`,
+        "Content-Type": "application/json",
+        Authorization: `Bearer ${apiKey}`,
       },
-      body: JSON.stringify(requestPayload),
+      body: JSON.stringify(requestPayload)
     });
 
     const rawText = await response.text();
     let raw: any = null;
+
     try {
-      raw = rawText ? JSON.parse(rawText) : null;
+      raw = JSON.parse(rawText);
     } catch {
       raw = null;
     }
 
     if (!response.ok) {
-      const details = extractError(raw) || rawText;
-      return respond(response.status, { error: "openai_error", details: trimDetails(details) });
+      return respond(response.status, {
+        error: "openai_error",
+        details: raw?.error?.message || "unknown error"
+      });
     }
 
     const entries = Array.isArray(raw?.data) ? raw.data : [];
     for (const entry of entries) {
-      if (entry && typeof entry === "object") {
-        if (typeof entry.b64_json === "string" && entry.b64_json.length > 0) {
-          return respond(200, {
-            imageUrl: `data:image/png;base64,${entry.b64_json}`,
-            provider: "openai",
-          });
-        }
-        if (typeof (entry as any).url === "string" && (entry as any).url.length > 0) {
-          return respond(200, { imageUrl: (entry as any).url, provider: "openai" });
-        }
+      if (entry && typeof entry.b64_json === "string") {
+        return respond(200, {
+          imageUrl: `data:image/png;base64,${entry.b64_json}`,
+          provider: "openai"
+        });
       }
     }
 
-    return respond(502, { error: "openai_no_image" });
+    return respond(502, { error: "no_image_returned" });
+
   } catch (error: any) {
     return respond(500, {
       error: "openai_unexpected",
-      details: trimDetails(error?.message || String(error)),
+      details: error?.message || "unknown_error"
     });
   }
 };
 
-function respond(statusCode: number, payload?: Record<string, unknown>) {
+// ---------- Utility functions ----------
+
+function respond(statusCode: number, payload?: Record<string, any>) {
   return {
     statusCode,
     headers: {
       ...CORS_HEADERS,
       "Content-Type": "application/json",
-      "Cache-Control": "no-store",
+      "Cache-Control": "no-store"
     },
-    body: payload ? JSON.stringify(payload) : "",
+    body: payload ? JSON.stringify(payload) : ""
   };
 }
 
-function normalisePrompt(value: unknown) {
-  if (typeof value !== "string") return "";
-  const trimmed = value.trim();
-  return trimmed;
-}
-
-function normaliseString(value: unknown) {
+function normaliseString(value: unknown): string | undefined {
   if (typeof value !== "string") return undefined;
   const trimmed = value.trim();
   return trimmed.length > 0 ? trimmed : undefined;
 }
 
-function normaliseSize(value: unknown) {
-  if (typeof value === "number" && Number.isFinite(value)) {
-    const clamped = clampSize(Math.round(value));
-    return clamped;
-  }
-  if (typeof value === "string") {
-    const numeric = Number.parseInt(value, 10);
-    if (Number.isFinite(numeric)) {
-      return clampSize(numeric);
-    }
-  }
-  return undefined;
-}
-
-function clampSize(value: number) {
+function normaliseSize(value: unknown): number {
   const allowed = [256, 512, 1024, 2048];
+  let numeric: number = 512;
+  if (typeof value === "number" && Number.isFinite(value)) numeric = value;
+  if (typeof value === "string") {
+    const parsed = parseInt(value);
+    if (Number.isFinite(parsed)) numeric = parsed;
+  }
   for (const option of allowed) {
-    if (value <= option) {
-      return option;
-    }
+    if (numeric <= option) return option;
   }
   return allowed[allowed.length - 1];
-}
-
-function extractError(data: any) {
-  if (!data || typeof data !== "object") return "";
-  if (typeof data.error === "string") return data.error;
-  if (data.error && typeof data.error === "object") {
-    if (typeof data.error.message === "string") return data.error.message;
-  }
-  return "";
-}
-
-function trimDetails(details: string) {
-  return details ? details.slice(0, 4000) : "";
 }
