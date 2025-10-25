@@ -37,7 +37,8 @@ export default function NavatarGenerate() {
       });
       setImg(out);
     } catch (error: any) {
-      setErr(error?.message || "Generation failed");
+      const message = typeof error?.message === "string" ? error.message.trim() : "";
+      setErr(message || `Generation failed with ${provider.toUpperCase()}. Try a different provider or size.`);
     } finally {
       setBusy(false);
     }

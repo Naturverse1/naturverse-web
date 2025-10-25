@@ -39,8 +39,8 @@ export const handler: Handler = async (event) => {
       body: JSON.stringify({
         model: "gpt-image-1",
         prompt,
+        // OpenAI Images no longer accepts response_format; default returns b64_json.
         size,
-        response_format: "b64_json",
       }),
     });
 
@@ -50,13 +50,22 @@ export const handler: Handler = async (event) => {
     }
 
     const data = await response.json();
-    const base64 = data?.data?.[0]?.b64_json;
+    const entries = Array.isArray(data?.data) ? data.data : [];
 
-    if (!base64) {
-      return withCors({ ok: false, error: "OpenAI: empty image" }, 502);
+    for (const entry of entries) {
+      if (entry && typeof entry === "object") {
+        const b64 = (entry as any).b64_json;
+        const url = (entry as any).url;
+        if (typeof b64 === "string") {
+          return withCors({ ok: true, image_base64: `data:image/png;base64,${b64}` });
+        }
+        if (typeof url === "string") {
+          return withCors({ ok: true, image_url: url });
+        }
+      }
     }
 
-    return withCors({ ok: true, image_base64: `data:image/png;base64,${base64}` });
+    return withCors({ ok: false, error: "OpenAI: empty image" }, 502);
   } catch (error: any) {
     return withCors({ ok: false, error: error?.message || "OpenAI handler error" }, 500);
   }
