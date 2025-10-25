@@ -1,204 +1,96 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import Breadcrumbs from "../../components/Breadcrumbs";
-import NavatarCard from "../../components/NavatarCard";
-import BackToMyNavatar from "../../components/BackToMyNavatar";
-import NavatarTabs from "../../components/NavatarTabs";
-import { uploadNavatar } from "../../lib/navatar";
-import { setActiveNavatarId } from "../../lib/localNavatar";
-import { useToast } from "../../components/Toast";
-import { generateImage } from "@/lib/image/generate";
-import {
-  getSelectedProvider,
-  setSelectedProvider,
-  type Provider,
-  listProviders,
-  providerLabel,
-} from "@/lib/image/providers";
-import { logEvent } from "@/lib/activity";
-import "../../styles/navatar.css";
+import { useState } from "react";
+import { generateImage, type Provider } from "../../lib/navatar/generateClient";
 
-const SIZE_OPTIONS = [512, 1024, 2048] as const;
+const pill =
+  "inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold transition " +
+  "bg-blue-600 text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-400";
 
-export default function DescribeAndGeneratePage() {
-  const toast = useToast();
-  const nav = useNavigate();
-  const [provider, setProvider] = useState<Provider>(getSelectedProvider());
+const tab =
+  "inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold transition " +
+  "bg-slate-100 text-slate-800 hover:bg-slate-200";
+
+const providers: Provider[] = ["openai", "stability", "deepai", "huggingface"];
+
+export default function NavatarGenerate() {
+  const [provider, setProvider] = useState<Provider>("openai");
   const [prompt, setPrompt] = useState("");
-  const [size, setSize] = useState<number>(1024);
-  const [name, setName] = useState("");
-  const [isGenerating, setIsGenerating] = useState(false);
-  const [isSaving, setIsSaving] = useState(false);
-  const [generatedFile, setGeneratedFile] = useState<File | null>(null);
-  const [previewUrl, setPreviewUrl] = useState<string | null>(null);
-  const [objectUrl, setObjectUrl] = useState<string | null>(null);
-  const [usedProvider, setUsedProvider] = useState<Provider | null>(null);
-  const providerOptions = listProviders();
-
-  useEffect(() => {
-    setSelectedProvider(provider);
-  }, [provider]);
-
-  useEffect(() => {
-    return () => {
-      if (objectUrl) {
-        URL.revokeObjectURL(objectUrl);
-      }
-    };
-  }, [objectUrl]);
+  const [img, setImg] = useState<string | null>(null);
+  const [err, setErr] = useState<string | null>(null);
+  const [busy, setBusy] = useState(false);
 
   async function onGenerate() {
+    setErr(null);
+    setImg(null);
+
     if (!prompt.trim()) {
-      toast({ text: "Enter a description first.", kind: "warn" });
+      setErr("Please enter a prompt.");
       return;
     }
 
-    if (objectUrl) {
-      URL.revokeObjectURL(objectUrl);
-      setObjectUrl(null);
-    }
-
-    setIsGenerating(true);
-    setGeneratedFile(null);
-    setPreviewUrl(null);
-    setUsedProvider(null);
-
+    setBusy(true);
     try {
-      const { imageUrl, provider: used } = await generateImage({
-        provider,
-        prompt: prompt.trim(),
-        size,
+      const out = await generateImage(provider, {
+        prompt,
+        size: "512x512",
+        width: 512,
+        height: 512,
       });
-      setUsedProvider(used);
-      setPreviewUrl(imageUrl);
-
-      try {
-        const response = await fetch(imageUrl);
-        const blob = await response.blob();
-        const file = new File([blob], `navatar-${Date.now()}.png`, {
-          type: blob.type || "image/png",
-        });
-        const localUrl = URL.createObjectURL(blob);
-        setGeneratedFile(file);
-        setObjectUrl(localUrl);
-        setPreviewUrl(localUrl);
-        void logEvent("avatar.created", { method: "generate", provider: used, size });
-      } catch (err) {
-        console.error(err);
-        setPreviewUrl(imageUrl);
-        toast({
-          text: "Generation succeeded, but we couldn't prepare the image for saving.",
-          kind: "err",
-        });
-      }
-    } catch (e) {
-      console.error(e);
-      const message = e instanceof Error ? e.message : "Generation failed.";
-      const detail = typeof (e as any)?.details === "string" ? (e as any).details : "";
-      const extra = detail ? ` — ${detail.slice(0, 160)}` : "";
-      toast({ text: `${message || "Generation failed."}${extra}`, kind: "err" });
+      setImg(out);
+    } catch (error: any) {
+      setErr(error?.message || "Generation failed");
     } finally {
-      setIsGenerating(false);
+      setBusy(false);
     }
   }
-
-  async function onSave(e: React.FormEvent<HTMLFormElement>) {
-    e.preventDefault();
-    if (isSaving) return;
-
-    if (!generatedFile) {
-      toast({ text: "Generate an image first.", kind: "err" });
-      return;
-    }
-
-    setIsSaving(true);
-    try {
-      const row = await uploadNavatar(generatedFile, name || undefined);
-      setActiveNavatarId(row.id);
-      toast({ text: "Saved ✓", kind: "ok" });
-      const methodProvider = usedProvider ?? provider;
-      void logEvent("avatar.saved", { method: "generate", provider: methodProvider, id: row.id });
-      nav("/navatar");
-    } catch (error) {
-      console.error(error);
-      toast({ text: "Save failed", kind: "err" });
-    } finally {
-      setIsSaving(false);
-    }
-  }
-
-  const canSave = Boolean(generatedFile) && !isSaving;
-  const cardTitle = name.trim() || "My Navatar";
 
   return (
-    <main className="page-pad mx-auto max-w-4xl p-4">
-      <div className="bcRow">
-        <Breadcrumbs
-          items={[{ href: "/", label: "Home" }, { href: "/navatar", label: "Navatar" }, { label: "Describe & Generate" }]}
-        />
-      </div>
-      <h1 className="pageTitle mt-6 mb-12">Describe &amp; Generate</h1>
-      <BackToMyNavatar />
-      <NavatarTabs context="subpage" />
-      <form
-        onSubmit={onSave}
-        style={{ maxWidth: 520, margin: "16px auto", display: "grid", justifyItems: "center", gap: 12 }}
-      >
-        <div className="navatar-generator-switch" role="tablist" aria-label="Image provider">
-          {providerOptions.map((option) => (
-            <button
-              key={option.id}
-              type="button"
-              className={`pill${provider === option.id ? " pill--active" : ""}`}
-              onClick={() => setProvider(option.id)}
-              disabled={isGenerating || isSaving}
-            >
-              {option.label}
-            </button>
-          ))}
-        </div>
+    <div className="mx-auto max-w-3xl p-4">
+      <h1 className="text-2xl font-bold mb-4">Create your NAVATAR</h1>
 
+      <div className="flex gap-2 flex-wrap mb-4">
+        {providers.map((p) => (
+          <button
+            key={p}
+            className={p === provider ? pill : tab}
+            onClick={() => setProvider(p)}
+            type="button"
+          >
+            {p.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      <div className="mb-3">
+        <label className="block text-sm font-medium mb-1">Prompt</label>
         <textarea
+          className="w-full rounded border border-slate-300 p-2"
+          rows={3}
           value={prompt}
           onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your Navatar…"
-          rows={3}
-          style={{ width: "100%", marginBottom: "0.5rem" }}
-          disabled={isGenerating || isSaving}
+          placeholder="Describe your NAVATAR in Naturverse style…"
         />
-        <div style={{ marginBottom: "0.75rem", width: "100%" }}>
-          <label>Size</label>{" "}
-          <select value={size} onChange={(e) => setSize(Number(e.target.value))} disabled={isGenerating || isSaving}>
-            {SIZE_OPTIONS.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
+      </div>
+
+      <button
+        className={pill}
+        onClick={onGenerate}
+        disabled={busy}
+        type="button"
+      >
+        {busy ? "Generating…" : "Generate"}
+      </button>
+
+      {err && <p className="mt-3 text-red-600 text-sm">{err}</p>}
+
+      {img && (
+        <div className="mt-6">
+          <img
+            src={img}
+            alt="Generated NAVATAR"
+            className="w-full max-w-md rounded border border-slate-200"
+          />
         </div>
-
-        <button className="btn-primary" type="button" onClick={onGenerate} disabled={isGenerating || isSaving}>
-          {isGenerating ? "Generating…" : "Generate"}
-        </button>
-
-        <NavatarCard src={previewUrl ?? undefined} title={cardTitle} />
-
-        <input
-          style={{ display: "block", width: "100%" }}
-          placeholder="Name (optional)"
-          value={name}
-          onChange={(e) => setName(e.target.value)}
-          disabled={isSaving}
-        />
-        <button className="pill pill--active" type="submit" style={{ marginTop: 8 }} disabled={!canSave}>
-          {isSaving ? "Saving…" : "Save"}
-        </button>
-      </form>
-      {previewUrl && usedProvider && (
-        <p className="center" style={{ opacity: 0.8 }}>
-          Generated with {providerLabel(usedProvider)}.
-        </p>
       )}
-    </main>
+    </div>
   );
 }
