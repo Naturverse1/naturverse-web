@@ -1,96 +1,221 @@
-import { useState } from "react";
+import { useState, type FormEvent } from "react";
+import { useNavigate } from "react-router-dom";
+import Breadcrumbs from "../../components/Breadcrumbs";
+import BackToMyNavatar from "../../components/BackToMyNavatar";
+import NavatarTabs from "../../components/NavatarTabs";
+import NavatarCard from "../../components/NavatarCard";
+import { useToast } from "../../components/Toast";
+import { listProviders, getSelectedProvider } from "../../lib/image/providers";
+import { setActiveNavatarId } from "../../lib/localNavatar";
+import { uploadNavatar } from "../../lib/navatar";
 import { generateImage, type Provider } from "../../lib/navatar/generateClient";
+import "../../styles/navatar.css";
 
-const pill =
-  "inline-flex items-center rounded-full px-3 py-1 text-sm font-semibold transition " +
-  "bg-blue-600 text-white hover:opacity-90 focus:outline-none focus:ring-2 focus:ring-blue-400";
+const sizeOptions = ["256x256", "512x512", "1024x1024"] as const;
 
-const tab =
-  "inline-flex items-center rounded-md px-3 py-2 text-sm font-semibold transition " +
-  "bg-slate-100 text-slate-800 hover:bg-slate-200";
-
-const providers: Provider[] = ["openai", "stability", "deepai", "huggingface"];
+const providerOptions = listProviders();
 
 export default function NavatarGenerate() {
-  const [provider, setProvider] = useState<Provider>("openai");
+  const [provider, setProvider] = useState<Provider>(() => getSelectedProvider());
   const [prompt, setPrompt] = useState("");
-  const [img, setImg] = useState<string | null>(null);
-  const [err, setErr] = useState<string | null>(null);
+  const [name, setName] = useState("");
+  const [size, setSize] = useState<(typeof sizeOptions)[number]>("512x512");
+  const [preview, setPreview] = useState<string | null>(null);
+  const [generatedFile, setGeneratedFile] = useState<File | null>(null);
   const [busy, setBusy] = useState(false);
+  const [saving, setSaving] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+
+  const toast = useToast();
+  const nav = useNavigate();
+
+  const providerLabel =
+    providerOptions.find((opt) => opt.id === provider)?.label ?? provider.toUpperCase();
+  const showSizeSelector = provider !== "huggingface";
+  const hasMultipleProviders = providerOptions.length > 1;
 
   async function onGenerate() {
-    setErr(null);
-    setImg(null);
+    if (busy) return;
 
-    if (!prompt.trim()) {
-      setErr("Please enter a prompt.");
+    const trimmed = prompt.trim();
+    if (!trimmed) {
+      setError("Please enter a prompt.");
+      toast({ text: "Please enter a prompt.", kind: "warn" });
       return;
     }
 
     setBusy(true);
+    setError(null);
+    setPreview(null);
+    setGeneratedFile(null);
+
     try {
-      const out = await generateImage(provider, {
-        prompt,
-        size: "512x512",
+      const image = await generateImage(provider, {
+        prompt: trimmed,
+        size,
         width: 512,
         height: 512,
       });
-      setImg(out);
-    } catch (error: any) {
-      setErr(error?.message || "Generation failed");
+
+      const file = dataUrlToFile(image, `navatar-${Date.now()}.png`);
+      setPreview(image);
+      setGeneratedFile(file);
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Request failed";
+      setError(message);
+      toast({ text: message, kind: "err" });
     } finally {
       setBusy(false);
     }
   }
 
+  async function onSave(e: FormEvent<HTMLFormElement>) {
+    e.preventDefault();
+    if (!generatedFile || saving) return;
+
+    setSaving(true);
+    setError(null);
+
+    try {
+      const row = await uploadNavatar(generatedFile, name || undefined);
+      setActiveNavatarId(row.id);
+      toast({ text: "Saved ✓", kind: "ok" });
+      nav("/navatar");
+    } catch (err) {
+      const message = err instanceof Error ? err.message : "Request failed";
+      setError(message);
+      toast({ text: message, kind: "err" });
+    } finally {
+      setSaving(false);
+    }
+  }
+
   return (
-    <div className="mx-auto max-w-3xl p-4">
-      <h1 className="text-2xl font-bold mb-4">Create your NAVATAR</h1>
-
-      <div className="flex gap-2 flex-wrap mb-4">
-        {providers.map((p) => (
-          <button
-            key={p}
-            className={p === provider ? pill : tab}
-            onClick={() => setProvider(p)}
-            type="button"
-          >
-            {p.toUpperCase()}
-          </button>
-        ))}
-      </div>
-
-      <div className="mb-3">
-        <label className="block text-sm font-medium mb-1">Prompt</label>
-        <textarea
-          className="w-full rounded border border-slate-300 p-2"
-          rows={3}
-          value={prompt}
-          onChange={(e) => setPrompt(e.target.value)}
-          placeholder="Describe your NAVATAR in Naturverse style…"
+    <main className="page-pad mx-auto max-w-4xl p-4">
+      <div className="bcRow">
+        <Breadcrumbs
+          items={[
+            { href: "/", label: "Home" },
+            { href: "/navatar", label: "Navatar" },
+            { label: "Generate" },
+          ]}
         />
       </div>
 
-      <button
-        className={pill}
-        onClick={onGenerate}
-        disabled={busy}
-        type="button"
+      <h1 className="pageTitle mt-6 mb-12">Create your Navatar</h1>
+      <BackToMyNavatar />
+      <NavatarTabs context="subpage" />
+
+      <form
+        onSubmit={onSave}
+        className="mt-8 grid justify-items-center gap-6"
+        style={{ maxWidth: 520, margin: "0 auto" }}
       >
-        {busy ? "Generating…" : "Generate"}
-      </button>
+        <NavatarCard src={preview} title={name || "My Navatar"} />
 
-      {err && <p className="mt-3 text-red-600 text-sm">{err}</p>}
+        <input
+          style={{ display: "block", width: "100%" }}
+          placeholder="Name (optional)"
+          value={name}
+          onChange={(e) => setName(e.target.value)}
+        />
 
-      {img && (
-        <div className="mt-6">
-          <img
-            src={img}
-            alt="Generated NAVATAR"
-            className="w-full max-w-md rounded border border-slate-200"
+        <div style={{ width: "100%" }}>
+          <label className="block text-sm font-medium mb-1" htmlFor="navatar-prompt">
+            Prompt
+          </label>
+          <textarea
+            id="navatar-prompt"
+            className="w-full rounded border border-slate-300 p-2"
+            rows={3}
+            value={prompt}
+            onChange={(e) => setPrompt(e.target.value)}
+            placeholder="Describe your NAVATAR in Naturverse style…"
           />
         </div>
-      )}
-    </div>
+
+        <div className="flex w-full flex-wrap items-center gap-2">
+          {hasMultipleProviders ? (
+            providerOptions.map((opt) => (
+              <button
+                key={opt.id}
+                type="button"
+                className={opt.id === provider ? "pill pill--active" : "pill"}
+                onClick={() => setProvider(opt.id)}
+              >
+                {opt.label}
+              </button>
+            ))
+          ) : (
+            <span className="pill pill--active" aria-live="polite">
+              {providerLabel}
+            </span>
+          )}
+        </div>
+
+        {showSizeSelector ? (
+          <div style={{ width: "100%" }}>
+            <label className="block text-sm font-medium mb-1" htmlFor="navatar-size">
+              Image size
+            </label>
+            <select
+              id="navatar-size"
+              className="w-full rounded border border-slate-300 p-2"
+              value={size}
+              onChange={(e) => setSize(e.target.value as (typeof sizeOptions)[number])}
+            >
+              {sizeOptions.map((opt) => (
+                <option key={opt} value={opt}>
+                  {opt}
+                </option>
+              ))}
+            </select>
+          </div>
+        ) : null}
+
+        <div className="flex w-full flex-wrap gap-3">
+          <button
+            type="button"
+            className="pill"
+            onClick={onGenerate}
+            disabled={busy}
+          >
+            {busy ? "Generating…" : "Generate"}
+          </button>
+          <button
+            type="submit"
+            className="pill pill--active"
+            disabled={saving || !generatedFile}
+          >
+            {saving ? "Saving…" : "Save"}
+          </button>
+        </div>
+
+        {error ? <p className="text-sm text-red-600">{error}</p> : null}
+      </form>
+    </main>
   );
+}
+
+function dataUrlToFile(dataUrl: string, fileName: string): File {
+  if (!dataUrl.startsWith("data:")) {
+    throw new Error("Generation did not return a data URL image");
+  }
+
+  const [header, base64] = dataUrl.split(",", 2);
+  if (!base64) {
+    throw new Error("Malformed data URL image");
+  }
+
+  const match = header.match(/data:(.*?);base64/);
+  const mime = match?.[1] || "image/png";
+  const binary = atob(base64);
+  const len = binary.length;
+  const bytes = new Uint8Array(len);
+
+  for (let i = 0; i < len; i += 1) {
+    bytes[i] = binary.charCodeAt(i);
+  }
+
+  return new File([bytes], fileName, { type: mime });
 }

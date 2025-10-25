@@ -36,12 +36,24 @@ export async function generateImage(provider: Provider, params: GenerateParams) 
   const json = await response.json().catch(() => ({}));
 
   if (!response.ok || !json?.ok) {
-    throw new Error(json?.error || `Request failed (${provider})`);
+    const message = typeof json?.error === "string" && json.error.trim().length
+      ? json.error
+      : `Request failed (${provider})`;
+    throw new Error(message);
   }
 
-  const image = json.image_base64 || json.image_url;
+  const image =
+    (typeof json.image_base64 === "string" && json.image_base64.trim()) ||
+    (typeof json.imageDataUrl === "string" && json.imageDataUrl.trim()) ||
+    (typeof json.image_url === "string" && json.image_url.trim()) ||
+    "";
+
   if (!image) {
     throw new Error("No image returned");
+  }
+
+  if (provider === "huggingface" && !image.startsWith("data:")) {
+    return `data:image/png;base64,${image}`;
   }
 
   return image as string;

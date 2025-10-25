@@ -17,9 +17,13 @@ export async function generateWithHuggingFace(prompt: string): Promise<string> {
     throw new Error(message);
   }
 
-  const image = json?.imageDataUrl;
-  if (typeof image !== "string" || !image) {
+  const image = typeof json?.imageDataUrl === "string" ? json.imageDataUrl.trim() : "";
+  if (!image) {
     throw new Error("Invalid image response from Hugging Face Space");
+  }
+
+  if (!image.startsWith("data:")) {
+    throw new Error("Hugging Face Space returned a non-data URL image");
   }
 
   return image;
