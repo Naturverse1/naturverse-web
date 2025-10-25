@@ -1,6 +1,9 @@
 import type { Handler } from "@netlify/functions";
 import { preflight, withCors } from "./_utils/cors";
 
+// v1-6 often 404s now. SDXL works on current accounts, override via STABILITY_ENGINE.
+const DEFAULT_ENGINE = process.env.STABILITY_ENGINE || "sdxl-1024-v1-0";
+
 export const handler: Handler = async (event) => {
   if (event.httpMethod === "OPTIONS") {
     return preflight();
@@ -23,6 +26,7 @@ export const handler: Handler = async (event) => {
   }
 
   const prompt = typeof payload.prompt === "string" ? payload.prompt : "";
+  const engine = normaliseString(payload.model) || DEFAULT_ENGINE;
   const width = normaliseNumber(payload.width, 512);
   const height = normaliseNumber(payload.height, 512);
   const steps = normaliseNumber(payload.steps, 30);
@@ -33,24 +37,21 @@ export const handler: Handler = async (event) => {
   }
 
   try {
-    const response = await fetch(
-      "https://api.stability.ai/v1/generation/stable-diffusion-v1-6/text-to-image",
-      {
-        method: "POST",
-        headers: {
-          authorization: `Bearer ${apiKey}`,
-          "content-type": "application/json",
-          accept: "application/json",
-        },
-        body: JSON.stringify({
-          height,
-          width,
-          steps,
-          cfg_scale: cfgScale,
-          text_prompts: [{ text: prompt }],
-        }),
+    const response = await fetch(`https://api.stability.ai/v1/generation/${engine}/text-to-image`, {
+      method: "POST",
+      headers: {
+        authorization: `Bearer ${apiKey}`,
+        "content-type": "application/json",
+        accept: "application/json",
       },
-    );
+      body: JSON.stringify({
+        height,
+        width,
+        steps,
+        cfg_scale: cfgScale,
+        text_prompts: [{ text: prompt }],
+      }),
+    });
 
     if (!response.ok) {
       const text = await response.text();
@@ -81,4 +82,14 @@ function normaliseNumber(value: unknown, fallback: number) {
     }
   }
   return fallback;
+}
+
+function normaliseString(value: unknown) {
+  if (typeof value === "string") {
+    const trimmed = value.trim();
+    if (trimmed) {
+      return trimmed;
+    }
+  }
+  return "";
 }
