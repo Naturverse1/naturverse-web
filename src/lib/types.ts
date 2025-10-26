@@ -11,6 +11,7 @@ export type ProfileRow = {
 export type NavatarRow = {
   id: string;
   owner_id: string;
+  user_id: string;
   name: string | null;
   base_type: 'animal' | 'fruit' | 'insect' | 'spirit';
   species: string | null;
