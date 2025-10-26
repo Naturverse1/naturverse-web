@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { supabase } from "@/lib/supabaseClient";
+import { DEFAULT_REDIRECT_PATH } from "@/lib/auth";
 import LazyImg from "./LazyImg";
 
 type SessionUser = {
@@ -43,16 +44,11 @@ export default function UserMenu() {
   }, []);
 
   if (!user) {
+    const next = typeof window !== "undefined"
+      ? encodeURIComponent(window.location.pathname + window.location.search || DEFAULT_REDIRECT_PATH)
+      : encodeURIComponent(DEFAULT_REDIRECT_PATH);
     return (
-      <a
-        className="btn"
-        href="/login"
-        onClick={() => {
-          try {
-            sessionStorage.setItem("naturverse.returnTo", window.location.pathname + window.location.search);
-          } catch {}
-        }}
-      >
+      <a className="btn" href={`/login?next=${next}`}>
         Sign in
       </a>
     );

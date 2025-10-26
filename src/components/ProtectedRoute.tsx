@@ -1,42 +1,39 @@
-import { ComponentType, useEffect, useState } from 'react';
-import { supabase } from '@/lib/supabaseClient';
+import { ComponentType } from 'react';
+import { useLocation } from 'react-router-dom';
+import { useAuthUser } from '@/lib/session';
+import { DEFAULT_REDIRECT_PATH } from '@/lib/auth';
 
 type Props = { component: ComponentType<any> };
 
 export default function ProtectedRoute({ component: C }: Props) {
-  const [ok, setOk] = useState<boolean | null>(null);
+  const { user, loading } = useAuthUser();
+  const location = useLocation();
 
-  useEffect(() => {
-    let on = true;
-    (async () => {
-      const { data } = await supabase.auth.getSession();
-      if (!on) return;
-      if (data.session) {
-        setOk(true);
-      } else {
-        try {
-          sessionStorage.setItem('naturverse.returnTo', window.location.pathname + window.location.search);
-        } catch {}
-        setOk(false);
-      }
-    })();
-    return () => {
-      on = false;
-    };
-  }, []);
+  if (loading) {
+    return (
+      <div className="guard">
+        <h1>Checking access…</h1>
+        <p className="muted">Hold on while we confirm your session.</p>
+      </div>
+    );
+  }
 
-  if (ok === null) return null;
+  if (!user) {
+    const next = location.pathname + location.search || DEFAULT_REDIRECT_PATH;
+    return <UnauthedFallback next={next} />;
+  }
 
-  return ok ? <C /> : <UnauthedFallback />;
+  return <C />;
 }
 
-function UnauthedFallback() {
+function UnauthedFallback({ next }: { next: string }) {
+  const href = `/login?next=${encodeURIComponent(next)}`;
   return (
     <div className="guard">
       <h1>Sign in required</h1>
       <p className="muted">Please sign in to access this page.</p>
       <div className="row">
-        <a className="btn" href="/login">
+        <a className="btn" href={href}>
           Sign in
         </a>
         <a className="btn outline" href="/">

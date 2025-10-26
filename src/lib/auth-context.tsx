@@ -1,5 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from 'react';
-import { supabase, signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
+import { supabase } from '@/lib/supabaseClient';
+import { DEFAULT_REDIRECT_PATH, signInWithGoogle as startGoogleOAuth, sendMagicLink } from './auth';
 
 type Ctx = {
   ready: boolean;
@@ -33,9 +34,9 @@ export function AuthProvider({
   const signInWithMagicLink = async () => {
     const email = window.prompt('Enter your email to receive a sign-in link')?.trim();
     if (!email) return;
-    sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
     try {
-      await sendMagicLink(email);
+      const target = window.location.pathname + window.location.search || DEFAULT_REDIRECT_PATH;
+      await sendMagicLink(email, target);
       alert('Check your inbox for the sign-in link ✉️');
     } catch (err) {
       alert((err as { message: string }).message);
@@ -43,9 +44,9 @@ export function AuthProvider({
   };
 
   const signInWithGoogle = async () => {
-    sessionStorage.setItem('postAuthRedirect', window.location.pathname + window.location.search);
     try {
-      await startGoogleOAuth();
+      const target = window.location.pathname + window.location.search || DEFAULT_REDIRECT_PATH;
+      await startGoogleOAuth(target);
     } catch (err) {
       alert((err as { message: string }).message);
     }

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { useState } from 'react';
 import { supabase } from '@/lib/supabaseClient';
+import { buildAuthRedirect, DEFAULT_REDIRECT_PATH } from '@/lib/auth';
 
 type Props = {
   cta?: string;           // e.g., "Create account"
@@ -15,10 +16,10 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
     const email = window.prompt("Enter your email to receive a sign-in link")?.trim();
     if (!email) return;
     setLoading("ml");
-    sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
+    const target = window.location.pathname + window.location.search || DEFAULT_REDIRECT_PATH;
     const { error } = await supabase.auth.signInWithOtp({
       email,
-      options: { emailRedirectTo: `${window.location.origin}/auth/callback` }
+      options: { emailRedirectTo: buildAuthRedirect(target, target) }
     });
     setLoading("");
     if (error) alert(error.message);
@@ -27,10 +28,13 @@ export default function AuthButtons({ cta = "Create account", variant="solid", s
 
   const signInWithGoogle = async () => {
     setLoading("google");
-    sessionStorage.setItem("postAuthRedirect", window.location.pathname + window.location.search);
+    const target = window.location.pathname + window.location.search || DEFAULT_REDIRECT_PATH;
     const { error } = await supabase.auth.signInWithOAuth({
       provider: "google",
-      options: { redirectTo: `${window.location.origin}/auth/callback` }
+      options: {
+        redirectTo: buildAuthRedirect(target, target),
+        queryParams: { prompt: "select_account" },
+      }
     });
     setLoading("");
     if (error) alert(error.message);
