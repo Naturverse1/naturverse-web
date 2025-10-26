@@ -1,11 +1,13 @@
 import type { Handler } from "@netlify/functions";
-
-const SPACE = process.env.HF_SPACE_URL;
+import { normalizeSpaceUrl } from "../../src/lib/normalizeUrl";
 
 export const handler: Handler = async (event) => {
   try {
-    if (!SPACE) {
-      return resp(500, { errors: ["HF_SPACE_URL not set"] });
+    const space = normalizeSpaceUrl(
+      process.env.HUGGINGFACE_SPACE_URL || process.env.HF_SPACE_URL
+    );
+    if (!space) {
+      return resp(500, { errors: ["HUGGINGFACE_SPACE_URL is not set"] });
     }
     if (event.httpMethod !== "POST") {
       return resp(405, { errors: ["Method not allowed"] });
@@ -16,7 +18,7 @@ export const handler: Handler = async (event) => {
       return resp(400, { errors: ["Missing prompt"] });
     }
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
+    const gradio = await fetch(`${space}/api/predict/`, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({ data: [prompt] }),
@@ -36,7 +38,7 @@ export const handler: Handler = async (event) => {
       if (typeof first === "string" && first.startsWith("data:image/")) {
         imageDataUrl = first;
       } else if (first && typeof first === "object" && typeof first.name === "string") {
-        imageDataUrl = `${SPACE}/${first.name.replace(/^file=*/, "")}`;
+        imageDataUrl = `${space}/${first.name.replace(/^file=*/, "")}`;
       }
     }
 
