@@ -1,4 +1,5 @@
 import type { Handler } from "@netlify/functions";
+import { generateImage } from "./hfClient";
 
 const SPACE = process.env.HF_SPACE_URL;
 
@@ -16,18 +17,11 @@ export const handler: Handler = async (event) => {
       return resp(400, { errors: ["Missing prompt"] });
     }
 
-    const gradio = await fetch(`${SPACE}/api/predict/`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json", Accept: "application/json" },
-      body: JSON.stringify({ data: [prompt] }),
-    });
+    const data: any = await generateImage(prompt);
 
-    if (!gradio.ok) {
-      const raw = await gradio.text();
-      return resp(gradio.status, { errors: ["Space request failed"], raw });
+    if (data && typeof data === "object" && "raw" in data) {
+      return resp(502, { errors: ["Unexpected Space response"], raw: data.raw });
     }
-
-    const data = await gradio.json();
 
     let imageDataUrl: string | null = null;
 
