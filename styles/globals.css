@@ -675,3 +675,10 @@ footer a:hover {
 .card h3, .card h4, .card .label, .card .section-title {
   color: var(--naturverse-blue);
 }
+
+@keyframes fall {
+  to {
+    transform: translateY(100vh);
+    opacity: 0;
+  }
+}

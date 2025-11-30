@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { demoGrant } from '@/lib/naturbank';
 import { demoAddStamp } from '@/lib/passport';
+import MyQuestsCard from './MyQuestsCard';
 import './turian.css';
 
 type Role = 'user' | 'bot' | 'notice';
@@ -30,16 +31,32 @@ type ChatQuestEntry = {
   createdAt: number;
   acceptedAt?: number;
   receipt?: string;
+  completedAt?: number;
 };
 
 type ChatEntry = ChatMessageEntry | ChatQuestEntry;
 
 type OfflineQuest = QuestOffer & { instructions: string };
 
+type ActiveQuestState = {
+  id: string;
+  title: string;
+  rewardNatur: number;
+  world: string;
+  stampLabel: string;
+  acceptedAt: string;
+};
+
+type NaturverseQuestEventDetail =
+  | { type: 'questAccepted'; quest: ActiveQuestState }
+  | { type: 'questCompleted'; quest: ActiveQuestState };
+
 const STORAGE_KEY = 'naturverse.turian.thread.v1';
 const QUEST_TAG = /<<quest\|([^|]+)\|([^|]+)\|([^|]+)\|([^|>]+)(?:\|([^|>]+))?>>/i;
 const QUEST_REWARD = 5;
 const MAX_ENTRIES = 80;
+const ACTIVE_QUEST_STORAGE_KEY = 'natur:questActive:v1';
+const NATURVERSE_EVENT = 'naturverse';
 
 const INITIAL_ENTRIES: ChatEntry[] = [
   {
@@ -131,7 +148,8 @@ const sanitizeQuestEntry = (item: any): ChatQuestEntry | null => {
   const status: QuestStatus = item.status === 'accepted' ? 'accepted' : 'offered';
   const acceptedAt = typeof item.acceptedAt === 'number' ? item.acceptedAt : undefined;
   const receipt = typeof item.receipt === 'string' ? item.receipt : undefined;
-  return { id, kind: 'quest', quest, status, createdAt, acceptedAt, receipt };
+  const completedAt = typeof item.completedAt === 'number' ? item.completedAt : undefined;
+  return { id, kind: 'quest', quest, status, createdAt, acceptedAt, receipt, completedAt };
 };
 
 const loadStoredEntries = (): ChatEntry[] | null => {
@@ -199,6 +217,33 @@ const limitEntries = (entries: ChatEntry[]) => {
   if (entries.length <= MAX_ENTRIES) return entries;
   return entries.slice(entries.length - MAX_ENTRIES);
 };
+
+const persistActiveQuest = (quest: ActiveQuestState | null) => {
+  if (typeof window === 'undefined') return;
+  try {
+    if (quest) {
+      window.localStorage.setItem(ACTIVE_QUEST_STORAGE_KEY, JSON.stringify(quest));
+    } else {
+      window.localStorage.removeItem(ACTIVE_QUEST_STORAGE_KEY);
+    }
+  } catch {}
+};
+
+const dispatchNaturverseEvent = (detail: NaturverseQuestEventDetail) => {
+  if (typeof window === 'undefined') return;
+  try {
+    window.dispatchEvent(new CustomEvent(NATURVERSE_EVENT, { detail }));
+  } catch {}
+};
+
+const buildActiveQuestState = (quest: QuestOffer, acceptedAt: number): ActiveQuestState => ({
+  id: quest.id,
+  title: quest.title,
+  rewardNatur: quest.rewardNatur,
+  world: quest.world,
+  stampLabel: quest.stampLabel,
+  acceptedAt: new Date(acceptedAt).toISOString(),
+});
 
 export function TurianChat() {
   const [entries, setEntries] = useState<ChatEntry[]>(() => INITIAL_ENTRIES);
@@ -336,22 +381,54 @@ export function TurianChat() {
     }
   };
 
-  const acceptQuest = async (entry: ChatQuestEntry) => {
+  const acceptQuest = (entry: ChatQuestEntry) => {
     if (entry.status === 'accepted') return;
+    setProcessingQuestId(entry.id);
+    const acceptedAt = Date.now();
+    const activeQuest = buildActiveQuestState(entry.quest, acceptedAt);
+    try {
+      persistActiveQuest(activeQuest);
+      dispatchNaturverseEvent({ type: 'questAccepted', quest: activeQuest });
+      setEntries(prev => prev.map(item => {
+        if (item.kind === 'quest' && item.id === entry.id) {
+          return {
+            ...item,
+            status: 'accepted',
+            acceptedAt,
+            completedAt: undefined,
+            receipt: 'Accepted! Mark complete once you finish the quest.',
+          };
+        }
+        return item;
+      }));
+      setToast('Quest accepted! Track it in My Quests.');
+    } catch {
+      setToast('Whoops! I could not save that quest. Try again in a moment.');
+    } finally {
+      setProcessingQuestId(null);
+    }
+  };
+
+  const completeQuest = (entry: ChatQuestEntry) => {
+    if (entry.status !== 'accepted' || entry.completedAt) return;
     setProcessingQuestId(entry.id);
     const receipt = `+${entry.quest.rewardNatur} NATUR granted • Stamp added (${entry.quest.stampLabel})`;
     try {
       demoGrant(entry.quest.rewardNatur, `Quest: ${entry.quest.title}`);
       demoAddStamp(entry.quest.world, entry.quest.title);
+      const acceptedAt = entry.acceptedAt ?? Date.now();
+      const questState = buildActiveQuestState(entry.quest, acceptedAt);
+      persistActiveQuest(null);
+      dispatchNaturverseEvent({ type: 'questCompleted', quest: questState });
       setEntries(prev => prev.map(item => {
         if (item.kind === 'quest' && item.id === entry.id) {
-          return { ...item, status: 'accepted', acceptedAt: Date.now(), receipt };
+          return { ...item, receipt, completedAt: Date.now() };
         }
         return item;
       }));
-      setToast(receipt);
+      setToast('Quest completed! Reward granted 🎉');
     } catch {
-      setToast('Whoops! I could not grant that reward. Try again in a moment.');
+      setToast('Whoops! I could not record that completion. Try again in a moment.');
     } finally {
       setProcessingQuestId(null);
     }
@@ -361,7 +438,7 @@ export function TurianChat() {
     setToast('Quest saved for later! Accept when you are ready.');
     setEntries(prev => prev.map(item => {
       if (item.kind === 'quest' && item.id === entry.id) {
-        return { ...item, status: 'offered' };
+        return { ...item, status: 'offered', acceptedAt: undefined, completedAt: undefined, receipt: undefined };
       }
       return item;
     }));
@@ -370,13 +447,14 @@ export function TurianChat() {
   const canSend = useMemo(() => input.trim().length > 0 && !busy, [input, busy]);
 
   return (
-    <div className="turian-chat_card" aria-live="polite">
-      <div className="turian-status" role="status">
-        <span className={`turian-dot ${online ? 'turian-dot--online' : 'turian-dot--offline'}`} />
-        <span>{online ? 'Online' : 'Offline mode'}</span>
-      </div>
+    <>
+      <div className="turian-chat_card" aria-live="polite">
+        <div className="turian-status" role="status">
+          <span className={`turian-dot ${online ? 'turian-dot--online' : 'turian-dot--offline'}`} />
+          <span>{online ? 'Online' : 'Offline mode'}</span>
+        </div>
 
-      <div ref={view} className="turian-thread" style={{ maxHeight: 420, overflowY: 'auto', padding: 4 }}>
+        <div ref={view} className="turian-thread" style={{ maxHeight: 420, overflowY: 'auto', padding: 4 }}>
         {entries.map(entry => {
           if (entry.kind === 'message') {
             return (
@@ -386,15 +464,28 @@ export function TurianChat() {
             );
           }
           const accepted = entry.status === 'accepted';
-          const accepting = processingQuestId === entry.id;
+          const busyEntry = processingQuestId === entry.id;
+          const completed = accepted && typeof entry.completedAt === 'number';
           return (
             <div key={entry.id} className={`turian-quest ${accepted ? 'turian-quest--accepted' : ''}`}>
               <div className="turian-quest__title">{entry.quest.title}</div>
               <div className="turian-quest__reward">Reward: +{entry.quest.rewardNatur} NATUR &amp; 1 Passport stamp ({entry.quest.stampLabel})</div>
               {accepted ? (
                 <div className="turian-quest__footer">
-                  <span className="turian-quest__status">Accepted ✓</span>
+                  <span className="turian-quest__status">{completed ? 'Completed 🎉' : 'Accepted ✓'}</span>
                   {entry.receipt && <div className="turian-quest__receipt">{entry.receipt}</div>}
+                  {!completed && (
+                    <div className="turian-quest__actions">
+                      <button
+                        type="button"
+                        className="turian-quest__btn turian-quest__btn--accept"
+                        onClick={() => completeQuest(entry)}
+                        disabled={busyEntry}
+                      >
+                        {busyEntry ? 'Completing…' : 'Mark complete'}
+                      </button>
+                    </div>
+                  )}
                   <div className="turian-quest__links">
                     <a href="/naturbank" className="turian-quest__link">View in NaturBank</a>
                     <a href="/passport" className="turian-quest__link">View Passport</a>
@@ -406,15 +497,15 @@ export function TurianChat() {
                     type="button"
                     className="turian-quest__btn turian-quest__btn--accept"
                     onClick={() => acceptQuest(entry)}
-                    disabled={accepting}
+                    disabled={busyEntry}
                   >
-                    {accepting ? 'Accepting…' : 'Accept'}
+                    {busyEntry ? 'Accepting…' : 'Accept'}
                   </button>
                   <button
                     type="button"
                     className="turian-quest__btn turian-quest__btn--later"
                     onClick={() => markLater(entry)}
-                    disabled={accepting}
+                    disabled={busyEntry}
                   >
                     Later
                   </button>
@@ -423,11 +514,11 @@ export function TurianChat() {
             </div>
           );
         })}
-      </div>
+        </div>
 
-      <div className="turian-composer">
-        <input
-          className="turian-input"
+        <div className="turian-composer">
+          <input
+            className="turian-input"
           placeholder="Ask Turian something..."
           value={input}
           onChange={e => setInput(e.target.value)}
@@ -448,7 +539,9 @@ export function TurianChat() {
       {toast && (
         <div className="turian-toast" role="status" aria-live="assertive">{toast}</div>
       )}
-    </div>
+      </div>
+      <MyQuestsCard />
+    </>
   );
 }
 
