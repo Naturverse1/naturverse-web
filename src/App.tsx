@@ -7,6 +7,7 @@ import ToasterListener from './components/Toaster';
 import RouteFX from './components/RouteFX';
 import TurianAssistant from './components/TurianAssistant';
 import { useAuth } from './lib/auth-context';
+import { mountConfettiOnce } from './lib/confetti';
 import './styles/magic.css';
 // TEMP: disable interactions while we isolate the crash
 // import { initInteractions } from './init/interactions';
@@ -17,6 +18,10 @@ export default function App() {
   const isAuthed = ready && !!user;
   useEffect(() => {
     // SAFE MODE: interactions temporarily disabled
+    const detach = mountConfettiOnce();
+    return () => {
+      detach?.();
+    };
   }, []);
   return (
     <CartProvider>
